@@ -2,7 +2,8 @@ import {
   DEFAULT_CONFIG,
   createBaseBoard,
   getCapitalSlots,
-  placeSpecialTiles
+  placeSpecialTiles,
+  type BoardState
 } from "@bridgefront/engine";
 import { createRngState, parseHexKey } from "@bridgefront/shared";
 
@@ -25,6 +26,20 @@ export type BoardPreview = {
   forgeKeys: string[];
   homeMineKeys: string[];
   mineKeys: string[];
+};
+
+export const buildHexRender = (board: BoardState): HexRender[] => {
+  return Object.values(board.hexes).map((hex) => {
+    const { q, r } = parseHexKey(hex.key);
+    const { x, y } = axialToPixel(q, r);
+    return {
+      key: hex.key,
+      x,
+      y,
+      tile: hex.tile,
+      mineValue: hex.mineValue
+    };
+  });
 };
 
 const normalizeSeed = (seedInput: string) => {
@@ -58,17 +73,7 @@ export const buildBoardPreview = (playerCount: number, seedInput: string): Board
     }
   );
 
-  const hexRender: HexRender[] = Object.values(placedBoard.hexes).map((hex) => {
-    const { q, r } = parseHexKey(hex.key);
-    const { x, y } = axialToPixel(q, r);
-    return {
-      key: hex.key,
-      x,
-      y,
-      tile: hex.tile,
-      mineValue: hex.mineValue
-    };
-  });
+  const hexRender = buildHexRender(placedBoard);
 
   return {
     seedValue,

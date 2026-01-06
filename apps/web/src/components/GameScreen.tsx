@@ -1,22 +1,36 @@
 import { useMemo } from "react";
 
 import { BoardView } from "./BoardView";
-import { buildBoardPreview } from "../lib/board-preview";
+import { buildSampleGame } from "../lib/sample-game";
 
 export const GameScreen = () => {
-  const preview = useMemo(() => buildBoardPreview(3, "42"), []);
+  const sample = useMemo(() => buildSampleGame(3, "42"), []);
+  const { state } = sample;
+  const leadPlayer = state.players.find((player) => player.seatIndex === state.leadSeatIndex);
+  const activePlayer = state.players[0];
+  const handCount = activePlayer?.deck.hand.length ?? 0;
+  const phaseLabel = state.phase.replace("round.", "").replace(".", " ");
 
   return (
     <section className="game-screen">
       <header className="game-screen__header">
         <div>
           <p className="eyebrow">Bridgefront Game</p>
-          <h1>Round 1 · Action Phase</h1>
-          <p className="subhead">Live engine state will replace these placeholders.</p>
+          <h1>
+            Round {state.round} · {phaseLabel}
+          </h1>
+          <p className="subhead">Sample engine state (auto-setup for UI preview).</p>
         </div>
         <div className="game-screen__meta">
-          <span className="status-pill status-pill--ready">Lead: Player 1</span>
-          <span className="status-pill">Players: 3</span>
+          {leadPlayer ? (
+            <span className="status-pill status-pill--ready">Lead: {leadPlayer.name}</span>
+          ) : null}
+          <span className="status-pill">Players: {state.players.length}</span>
+          {state.winnerPlayerId ? (
+            <span className="status-pill status-pill--winner">
+              Winner: {state.winnerPlayerId}
+            </span>
+          ) : null}
         </div>
       </header>
 
@@ -24,7 +38,7 @@ export const GameScreen = () => {
         <section className="panel game-board">
           <div className="game-board__placeholder">
             <h2>Board</h2>
-            <p className="muted">Preview board (seed 42, 3 players).</p>
+            <p className="muted">Sample board (seed 42, 3 players).</p>
             <div className="legend legend--compact">
               <div className="legend__item legend__item--capital">Capital</div>
               <div className="legend__item legend__item--forge">Forge</div>
@@ -32,7 +46,8 @@ export const GameScreen = () => {
               <div className="legend__item legend__item--center">Center</div>
             </div>
             <BoardView
-              hexes={preview.hexRender}
+              hexes={sample.hexRender}
+              board={state.board}
               showCoords={false}
               showTags
               showMineValues={false}
@@ -48,17 +63,19 @@ export const GameScreen = () => {
             <h3>Resources</h3>
             <div className="resource-row">
               <span>Gold</span>
-              <strong>0</strong>
+              <strong>{activePlayer?.resources.gold ?? 0}</strong>
             </div>
             <div className="resource-row">
               <span>Mana</span>
-              <strong>0</strong>
+              <strong>{activePlayer?.resources.mana ?? 0}</strong>
             </div>
           </div>
 
           <div className="sidebar-section">
             <h3>Hand</h3>
-            <div className="hand-empty">No cards yet.</div>
+            <div className="hand-empty">
+              {handCount > 0 ? `${handCount} cards in hand.` : "No cards yet."}
+            </div>
           </div>
 
           <div className="sidebar-section">
@@ -70,7 +87,15 @@ export const GameScreen = () => {
 
           <div className="sidebar-section">
             <h3>Log</h3>
-            <div className="log-empty">Waiting for events.</div>
+            {state.logs.length === 0 ? (
+              <div className="log-empty">Waiting for events.</div>
+            ) : (
+              <ul className="log-list">
+                {state.logs.map((entry, index) => (
+                  <li key={`${entry.type}-${index}`}>{entry.type}</li>
+                ))}
+              </ul>
+            )}
           </div>
         </aside>
       </div>

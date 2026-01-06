@@ -11,7 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- agent-2: Add sample game preview to UI (auto-setup) and render bridges/units in BoardView. Files: apps/web/src/lib/sample-game.ts, apps/web/src/components/BoardView.tsx, apps/web/src/components/GameScreen.tsx, apps/web/src/styles.css. Status: in progress.
+- (none)
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.
@@ -66,6 +66,7 @@
 ## Milestone 4 progress
 - Added a game screen placeholder layout in `apps/web` (board area + sidebar stubs), no server wiring yet.
 - Game screen now renders a preview board using the shared board view component (seeded example).
+- Game screen now uses a sample engine state (auto-setup) and BoardView renders bridges/units.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
