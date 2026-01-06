@@ -196,16 +196,16 @@ Goal: allow two browsers to complete setup and reach the action phase quickly.
 Goal: make the action phase match the rules: simultaneous declarations + initiative resolve.
 
 ### Tasks (engine)
-- Implement Action Steps:
+- [x] Implement Action Steps:
   - block on `actionStep.declarations`
   - collect one declaration per eligible player
   - pay costs on declaration reveal (or on submit; choose one and stay consistent)
   - resolve cards by initiative, then basic actions by lead order
   - after each resolution, run immediate battle checks
-- Implement deck/hand operations:
+- [x] Implement deck/hand operations:
   - draw with reshuffle
   - hand limit overflow goes to discard
-- Implement the first batch of starter cards using primitives:
+- [x] Implement the first batch of starter cards using primitives:
   - Supply Cache (+2 gold)
   - March Orders (move stack up to 2 along bridges)
   - Scout Report (look top 3: put 1 into hand, discard 2) -> prompt required
@@ -213,11 +213,11 @@ Goal: make the action phase match the rules: simultaneous declarations + initiat
   - Bridge Crew (build bridge then immediate move)
 
 ### Tasks (web)
-- Implement hand UI:
+- [x] Implement hand UI:
   - show your hand
   - click card -> shows required targets
   - submit play
-- Implement action step UI:
+- [x] Implement action step UI:
   - show “choose action” panel
   - show who has submitted this step
   - show “done” option
@@ -228,28 +228,58 @@ Goal: make the action phase match the rules: simultaneous declarations + initiat
 
 ---
 
+## Milestone 5.5 — UI interaction + visual polish (web)
+
+Goal: make the board + hand feel responsive, clear, and pleasant to use.
+
+### Tasks (web)
+- [ ] Rework hand UI into a card row/fan with hover zoom, selected state, and disabled styling.
+- [x] Add a card details panel with consistent layout (name, initiative, rules text, targets).
+- [ ] Implement target preview overlays for cards/actions: highlight valid hexes/edges/paths and current selection (current selection highlight in place; valid-target overlay pending).
+- [ ] Improve board hover/click interactions: hover highlight on hex/edge, click selects in pick mode, ignore clicks after pan.
+- [ ] Add interaction state styling for board + controls (active/hover/selected/disabled/error).
+- [ ] Add lightweight motion (card play, target highlight pulse, selection fade) to reduce the "debug UI" feel.
+- [ ] Add tooltips for hex stacks/bridges/units and per-player action status (hex/bridge/unit tooltips done).
+- [ ] Clean up sidebar/board layout spacing and typography for readability.
+- [ ] Improve UI such that it's very clear which phase of the game we are in and what's happening. Show and hide relevant information / modals depending on the phase / what is going on.
+
+
+### Tasks (web - pan/zoom)
+- [x] Fix world-to-screen coordinate transforms so picks stay accurate under zoom.
+- [ ] Make wheel zoom anchor to cursor; clamp zoom levels; keep board in view with soft bounds (anchor + clamp done; soft bounds pending).
+- [ ] Improve drag panning (ignore clicks after drag threshold); add touch/pinch support if feasible (drag threshold done; touch/pinch pending).
+- [x] Add "fit board" view reset that works across screen sizes and on resize.
+
+### Acceptance criteria
+- Hand is presented as actual cards (not a list), with clear playable/selected states and readable text.
+- Selecting a card or action highlights only legal targets and updates as you hover/click.
+- Board clicks are reliable at all zoom levels; panning and selection do not conflict.
+- Pan/zoom feels stable: wheel zoom anchors to cursor, drag does not mis-select, reset view recenters.
+
+---
+
 ## Milestone 6 — Market phase + collection prompts + power deck
 
 ### Tasks (engine)
 - [x] Implement market reveal with preview count per round (config-driven mapping).
-- [ ] Implement bid collection block:
+- [x] Implement bid collection block:
   - accept buy/pass bids
   - resolve with tie-break roll-offs
   - enforce “one market win per round”
   - implement pass pot logic
-- [ ] Implement gain-card insertion random into draw pile.
-- [ ] Implement collection prompts:
+- [x] Implement gain-card insertion random into draw pile.
+- [x] Implement collection prompts:
   - mines: gold or mine draft (reveal 1 market card -> choose gain or not)
   - forges: reforge (scrap 1) or forge draft (reveal 3 -> gain 1)
-  - center: power pick (reveal 2 -> gain 1)
+  - center: power pick (reveal 2 -> gain 1; currently drawn from market deck until power decks land)
 
 ### Tasks (web)
 - [ ] Market UI:
-  - show row cards
-  - for current card, show bid controls
-  - show reveal + results in log
-- [ ] Collection UI:
-  - present tile-based choices and resolve prompts
+  - [x] show row cards
+  - [x] for current card, show bid controls
+  - [ ] show reveal + results in log
+- [x] Collection UI:
+  - [x] present tile-based choices and resolve prompts
 
 ### Acceptance criteria
 - A full round runs with:
@@ -288,6 +318,10 @@ Goal: make the action phase match the rules: simultaneous declarations + initiat
 ### Acceptance criteria
 - At least one faction passive changes combat outcome in the expected situations.
 - A champion can be deployed, take damage, die, pay bounty, and be removed.
+
+## Milestone 7.5 — Script to Generate Art for Cards
+
+I want to have a script that lets me select a subset of n cards and hits some sort of API to generate epic card art for them, saves it locally and then makes the card reference that image so it gets rendered somehow. Very TBD on this so we'll have to figure it out together, which services to use and how it works etc...
 
 ---
 

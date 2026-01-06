@@ -12,7 +12,7 @@
 
 ## Active tasks
 - agent-2: power deck scaffolding + center pick uses power decks (owner: agent-2; scope: add power deck lists/init, store in state, and update collection flow/tests to draw center picks from power decks; files: `packages/engine/src/types.ts`, `packages/engine/src/content/power-decks.ts`, `packages/engine/src/market.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/market.test.ts`; status: in-progress)
-- agent-3: avoid spending mana/gold on invalid action submissions (owner: agent-3; scope: validate actions before resource deductions + add regression test; files: `packages/engine/src/action-flow.ts`, `packages/engine/src/action-flow.test.ts`; status: in-progress)
+- agent-3: add a smoke sim test to auto-resolve blocks across a few rounds (owner: agent-3; scope: deterministic auto-choices for setup/market/action/collection; files: `packages/engine/src/smoke.test.ts`; status: in-progress)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -41,6 +41,7 @@
 - Reprioritized setup UX into a new Milestone 4.5 (playtest unblock) in `implementation_plan.md`.
 - Audited docs for stale items (implementation plan checkboxes, market preview naming/mapping, dev nav notes).
 - Added Milestone 5.5 UI interaction + polish tasks (hand/board targeting/pan-zoom) to `implementation_plan.md`.
+- Refreshed Milestones 5-6 checkboxes and noted partial UI polish status in `implementation_plan.md`.
 
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.
