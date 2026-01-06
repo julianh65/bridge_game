@@ -17,7 +17,7 @@ import {
   createStartingBridgesBlock,
   finalizeCapitalDraft
 } from "./setup-flow";
-import { applyRoundReset } from "./round-flow";
+import { applyCollection, applyRoundReset } from "./round-flow";
 import { applyActionDeclaration, createActionStepBlock, resolveActionStep } from "./action-flow";
 import { resolveSieges } from "./combat";
 
@@ -173,6 +173,16 @@ export const runUntilBlocked = (state: GameState): GameState => {
       nextState = {
         ...nextState,
         phase: "round.collection",
+        blocks: undefined
+      };
+      continue;
+    }
+
+    if (nextState.phase === "round.collection") {
+      nextState = applyCollection(nextState);
+      nextState = {
+        ...nextState,
+        phase: "round.scoring",
         blocks: undefined
       };
       continue;

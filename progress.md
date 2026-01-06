@@ -44,6 +44,7 @@
 - Added action step declarations block with basic actions (build bridge, march 1, capital reinforce), auto-advancing `round.market` -> `round.action`, plus tests.
 - Round reset now rotates `leadSeatIndex` by round, with tests.
 - Added combat resolution for contested non-capital hexes and sieges at end of action phase; `runUntilBlocked` now advances into `round.collection`.
+- Added minimal collection (mine gold only) and phase advance into `round.scoring`, with tests.
 
 ## Content system progress
 - Added starter card data modules and a registry under `packages/engine/src/content/cards`.
