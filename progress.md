@@ -18,6 +18,7 @@
 - none
 
 ## Bug audit progress
+- Updated `docs/bugs.md` to move resolved items into a Resolved section and keep the open list focused on missing server/web tests.
 - Logged potential issues from the quick scan in `docs/bugs.md`.
 - Fixed force unit id generation to avoid collisions and added coverage.
 - Guarded combat resolution against no-hit stalemates and added a test.
