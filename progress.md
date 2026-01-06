@@ -6,7 +6,7 @@
 - Card defs in `technical_spec.md` now described as data-first TS modules with stable IDs, targetSpec, and effects/resolve rules.
 
 ## Active tasks
-- None currently (all queued tasks complete).
+- owner: agent-2; scope: Milestone 2a base board generation + capital slots; files: packages/engine/src/board-generation.ts, packages/engine/src/board-generation.test.ts, packages/engine/src/index.ts; status: completed
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
@@ -17,6 +17,9 @@
 - Added engine core types/config defaults plus skeleton entry points (`createNewGame`, `runUntilBlocked`, `applyCommand`, `buildView`) and a setup block test.
 - Added shared hex utilities (axial neighbors, distance, radius generation, canonical edge keys) with engine tests and inlined shared for Vitest.
 - Added board helpers for bridges/occupancy (two-player-per-hex checks) with unit tests.
+
+## Milestone 2 progress
+- Added base board generation (axial hex grid, center tile) and capital slot mapping with tests.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
@@ -38,3 +41,8 @@
 - Define axial coord types + canonical `HexKey`/`EdgeKey` helpers in shared.
 - Implement `neighbors`, `distance`, `withinRadius` utilities.
 - Export from shared barrel and add engine tests for determinism and adjacency invariants.
+
+## Milestone 2a plan (agent-2)
+- Implement base board generation: axial hex grid for radius, center tile at (0,0), empty occupants/bridges/units.
+- Implement capital slot list per player count (corner slots; 5-player special slots).
+- Tests: radius counts/center placement, slot mapping per player count, invalid counts handled.

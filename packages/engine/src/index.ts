@@ -1,4 +1,5 @@
 export { DEFAULT_CONFIG } from "./config";
+export { createBaseBoard, getCapitalSlots } from "./board-generation";
 export {
   countPlayersOnHex,
   getBridgeKey,
