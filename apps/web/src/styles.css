@@ -1420,8 +1420,20 @@ h1 {
   color: var(--muted);
 }
 
+.action-field > span {
+  transition: color 0.2s ease;
+}
+
 .action-field:focus-within > span {
   color: var(--accent);
+}
+
+.action-field.is-active > span {
+  color: var(--accent);
+}
+
+.action-field.is-error > span {
+  color: #b91c1c;
 }
 
 .action-field__controls {
@@ -1665,6 +1677,17 @@ h1 {
   margin-bottom: 10px;
 }
 
+.board-tools.is-targeting {
+  border-color: rgba(180, 83, 9, 0.45);
+  background: #fff3df;
+  box-shadow: inset 0 0 0 1px rgba(180, 83, 9, 0.12);
+}
+
+.board-tools.is-targeting .board-tools__hint {
+  color: #b45309;
+  font-weight: 600;
+}
+
 .board-tools__hint {
   font-size: 12px;
   color: var(--muted);
@@ -1681,7 +1704,19 @@ h1 {
   touch-action: none;
 }
 
+.board-svg--interactive.is-targeting {
+  cursor: crosshair;
+  background: rgba(255, 245, 224, 0.6);
+  border-radius: 16px;
+  outline: 2px dashed rgba(180, 83, 9, 0.4);
+  outline-offset: 6px;
+}
+
 .board-svg--interactive.is-panning {
+  cursor: grabbing;
+}
+
+.board-svg--interactive.is-targeting.is-panning {
   cursor: grabbing;
 }
 
@@ -1701,6 +1736,8 @@ h1 {
   stroke: #cbbfae;
   stroke-width: 1;
   fill: var(--normal);
+  transition: stroke 0.18s ease, stroke-width 0.18s ease, opacity 0.18s ease,
+    filter 0.18s ease;
 }
 
 .hex--clickable {
@@ -1723,6 +1760,7 @@ h1 {
 .hex--inactive {
   opacity: 0.35;
   filter: saturate(0.6);
+  cursor: not-allowed;
 }
 
 .hex--target {
@@ -1730,17 +1768,20 @@ h1 {
   stroke-width: 2;
   stroke-dasharray: 4 3;
   animation: targetPulse 1.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(14, 165, 233, 0.35));
 }
 
 .hex--highlight {
   stroke: #2563eb;
   stroke-width: 2.5;
   stroke-dasharray: 6 4;
+  filter: drop-shadow(0 0 6px rgba(37, 99, 235, 0.35));
 }
 
 .hex--selected {
   stroke: #f59e0b;
   stroke-width: 3;
+  filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.45));
 }
 
 .hex--capital {
@@ -1810,6 +1851,8 @@ h1 {
   stroke-width: 4;
   stroke-linecap: round;
   opacity: 0.9;
+  transition: stroke 0.18s ease, stroke-width 0.18s ease, opacity 0.18s ease,
+    filter 0.18s ease;
 }
 
 .board-svg--interactive .bridge:hover {
@@ -1855,6 +1898,7 @@ h1 {
   stroke-dasharray: 6 4;
   opacity: 0.75;
   animation: targetPulse 1.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(37, 99, 235, 0.28));
 }
 
 .bridge--p0 {

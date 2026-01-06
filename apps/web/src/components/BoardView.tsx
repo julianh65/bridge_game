@@ -30,6 +30,7 @@ type BoardViewProps = {
   highlightHexKeys?: string[];
   validHexKeys?: string[];
   previewEdgeKeys?: string[];
+  isTargeting?: boolean;
 };
 
 const tileTag = (tile: string) => {
@@ -107,7 +108,8 @@ export const BoardView = ({
   selectedHexKey = null,
   highlightHexKeys = [],
   validHexKeys = [],
-  previewEdgeKeys = []
+  previewEdgeKeys = [],
+  isTargeting = false
 }: BoardViewProps) => {
   const baseViewBox = useMemo(() => boundsForHexes(hexes), [hexes]);
   const [viewBox, setViewBox] = useState(baseViewBox);
@@ -522,6 +524,9 @@ export const BoardView = ({
   const svgClasses = [className ?? "board-svg"];
   if (enablePanZoom || clickable) {
     svgClasses.push("board-svg--interactive");
+  }
+  if (isTargeting) {
+    svgClasses.push("is-targeting");
   }
   if (isPanning) {
     svgClasses.push("is-panning");

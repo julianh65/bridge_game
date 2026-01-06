@@ -173,6 +173,7 @@ export const GameScreen = ({
   const isActionPhase = view.public.phase === "round.action";
   const canDeclareAction =
     status === "connected" && Boolean(localPlayer) && isActionPhase && !localPlayer?.doneThisRound;
+  const isBoardTargeting = boardPickMode !== "none";
   const availableMana = localPlayer?.resources.mana ?? 0;
   const availableGold = localPlayer?.resources.gold ?? 0;
 
@@ -961,7 +962,7 @@ export const GameScreen = ({
               <div className="legend__item legend__item--mine">Mine</div>
               <div className="legend__item legend__item--center">Center</div>
             </div>
-            <div className="board-tools">
+            <div className={`board-tools ${isBoardTargeting ? "is-targeting" : ""}`}>
               <span className="board-tools__hint">Drag to pan · Scroll to zoom</span>
               <div className="board-tools__meta">
                 <span className="chip">
@@ -989,6 +990,7 @@ export const GameScreen = ({
               highlightHexKeys={highlightHexKeys}
               validHexKeys={validHexKeys}
               previewEdgeKeys={previewEdgeKeys}
+              isTargeting={isBoardTargeting}
               onHexClick={handleBoardHexClick}
               onEdgeClick={handleBoardEdgeClick}
             />

@@ -216,7 +216,7 @@ export const ActionPanel = ({
           Capital Reinforce (-1 mana, -1 gold)
         </button>
       </div>
-      <label className="action-field">
+      <label className={`action-field ${isPickingBridge ? "is-active" : ""}`}>
         <span>Bridge edge</span>
         <div className="action-field__controls">
           <div
@@ -268,7 +268,7 @@ export const ActionPanel = ({
         Build Bridge (-1 mana)
       </button>
       <div className="action-panel__march">
-        <label className="action-field">
+        <label className={`action-field ${isPickingMarchFrom ? "is-active" : ""}`}>
           <span>March from</span>
           <div className="action-field__controls">
             <div
@@ -307,7 +307,7 @@ export const ActionPanel = ({
             </button>
           </div>
         </label>
-        <label className="action-field">
+        <label className={`action-field ${isPickingMarchTo ? "is-active" : ""}`}>
           <span>March to</span>
           <div className="action-field__controls">
             <div
@@ -386,7 +386,11 @@ export const ActionPanel = ({
           </button>
         </div>
       </label>
-      <label className="action-field">
+      <label
+        className={`action-field ${isPickingCardTarget ? "is-active" : ""} ${
+          targetsError ? "is-error" : ""
+        }`}
+      >
         <span>Card targets</span>
         <div
           className={`action-field__value ${

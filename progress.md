@@ -16,6 +16,7 @@
 
 ## Active tasks
 - [agent-3] Implement modifier duration expiry handling in engine cleanup/phase flow; scope: add expiry helpers + tests. Files: `packages/engine/src/modifiers.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/__tests__/modifiers.test.ts` (status: claimed)
+- [agent-4] Clarify setup TODOs in rules/spec and plan (seating order, starter deck vs faction, champion in opening hand); scope: doc alignment + plan checkbox. Files: `rules_draft.md`, `technical_spec.md`, `implementation_plan.md`, `progress.md` (status: claimed)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -90,7 +91,7 @@ none
 - Removed manual axial-coordinate inputs for action/setup bridge/march picks, added card hex target picking, and surfaced target summaries in the action panel.
 - Added per-player action status tooltips on the player list in the game sidebar.
 - Added lightweight motion for target highlights, preview bridges, selected cards, and card detail reveals.
-- Added interaction state styling for board + controls (active/hover/selected/disabled/error).
+- Added interaction state styling for board + controls (targeting outline, hex/bridge transitions, action-field active/error labels).
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
