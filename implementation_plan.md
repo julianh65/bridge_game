@@ -151,6 +151,9 @@ Goal: get the board game “moving pieces and fighting” ASAP.
   - [x] create/join room UI
   - [x] seat list
   - [x] auto-start at 2 connected players (no ready UI)
+- [ ] Lobby polish:
+  - [x] room code copy to clipboard
+  - [ ] board preview panel + reroll control (requires server command)
 - [x] Implement Game Screen minimal:
   - [x] render board (SVG hexes)
   - [x] show units + bridges

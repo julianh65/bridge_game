@@ -1,3 +1,5 @@
+import { useRef, useState } from "react";
+
 import type { GameView } from "@bridgefront/engine";
 
 import type { RoomConnectionStatus } from "../lib/room-client";
@@ -29,6 +31,49 @@ export const Lobby = ({ view, playerId, roomId, status, onLeave }: LobbyProps) =
       : status === "error"
         ? "status-pill--error"
         : "status-pill--waiting";
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
+  const copyTimeoutRef = useRef<number | null>(null);
+  const roomInputRef = useRef<HTMLInputElement | null>(null);
+
+  const scheduleCopyReset = () => {
+    if (copyTimeoutRef.current) {
+      window.clearTimeout(copyTimeoutRef.current);
+    }
+    copyTimeoutRef.current = window.setTimeout(() => {
+      setCopyStatus("idle");
+    }, 2000);
+  };
+
+  const fallbackCopyRoom = () => {
+    const input = roomInputRef.current;
+    if (!input) {
+      return false;
+    }
+    input.focus();
+    input.select();
+    try {
+      return document.execCommand("copy");
+    } catch {
+      return false;
+    }
+  };
+
+  const handleCopyRoom = async () => {
+    let success = false;
+    if (navigator?.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(roomId);
+        success = true;
+      } catch {
+        success = false;
+      }
+    }
+    if (!success) {
+      success = fallbackCopyRoom();
+    }
+    setCopyStatus(success ? "copied" : "failed");
+    scheduleCopyReset();
+  };
 
   return (
     <section className="lobby">
@@ -41,10 +86,37 @@ export const Lobby = ({ view, playerId, roomId, status, onLeave }: LobbyProps) =
           </p>
         </div>
         <div className="lobby__status">
-          <span className="status-pill">
-            {connectedCount}/{players.length} connected
-          </span>
-          <span className={`status-pill ${statusClass}`}>{statusLabel}</span>
+          <div className="lobby__status-pills">
+            <span className="status-pill">
+              {connectedCount}/{players.length} connected
+            </span>
+            <span className={`status-pill ${statusClass}`}>{statusLabel}</span>
+          </div>
+          <div className="lobby__room">
+            <span className="lobby__room-label">Room code</span>
+            <div className="room-copy">
+              <input
+                ref={roomInputRef}
+                type="text"
+                value={roomId}
+                readOnly
+                aria-label="Room code"
+                onFocus={(event) => event.currentTarget.select()}
+              />
+              <button type="button" className="btn btn-secondary" onClick={handleCopyRoom}>
+                {copyStatus === "copied" ? "Copied" : "Copy"}
+              </button>
+            </div>
+            {copyStatus === "copied" ? (
+              <span className="room-copy__status room-copy__status--ok">
+                Copied to clipboard
+              </span>
+            ) : copyStatus === "failed" ? (
+              <span className="room-copy__status room-copy__status--error">
+                Copy failed
+              </span>
+            ) : null}
+          </div>
         </div>
       </header>
 

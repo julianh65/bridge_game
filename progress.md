@@ -29,6 +29,7 @@
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
 - Added guidance to `agent_instructions.md` on reconciling other-agent/tooling changes.
 - Updated `agent_instructions.md` to require logging task scope/files in `progress.md` before coding and clearing entries after completion.
+- Added a Lobby polish item to `implementation_plan.md` for board preview + reroll (future work).
 
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.
@@ -95,6 +96,7 @@
 - Documented PartyKit multi-tab behavior and cleaned up resolved issues; client now guards against null rejoin tokens.
 - Added a basic action panel in the game sidebar with command wiring (done, capital reinforce, build bridge edge key, march from/to).
 - Game sidebar now lists hand card IDs, deck counts, and a market row summary.
+- Lobby now includes a room code copy control with clipboard fallback.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
