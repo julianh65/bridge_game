@@ -1564,15 +1564,21 @@ h1 {
   cursor: pointer;
 }
 
-.hex--selected {
-  stroke: #f59e0b;
-  stroke-width: 3;
+.hex--target {
+  stroke: #0ea5e9;
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
 }
 
 .hex--highlight {
   stroke: #2563eb;
   stroke-width: 2.5;
   stroke-dasharray: 6 4;
+}
+
+.hex--selected {
+  stroke: #f59e0b;
+  stroke-width: 3;
 }
 
 .hex--capital {
@@ -1642,6 +1648,13 @@ h1 {
   stroke-width: 4;
   stroke-linecap: round;
   opacity: 0.9;
+}
+
+.bridge--preview {
+  stroke: #2563eb;
+  stroke-width: 3;
+  stroke-dasharray: 6 4;
+  opacity: 0.75;
 }
 
 .bridge--p0 {

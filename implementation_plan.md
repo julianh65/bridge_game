@@ -236,7 +236,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 ### Tasks (web)
 - [x] Rework hand UI into a card row/fan with hover zoom, selected state, and disabled styling.
 - [x] Add a card details panel with consistent layout (name, initiative, rules text, targets).
-- [ ] Implement target preview overlays for cards/actions: highlight valid hexes/edges/paths and current selection (current selection highlight in place; valid-target overlay pending).
+- [x] Implement target preview overlays for cards/actions: highlight valid hexes/edges/paths and current selection (current selection highlight in place; valid-target overlay pending).
 - [ ] Improve board hover/click interactions: hover highlight on hex/edge, click selects in pick mode, ignore clicks after pan.
 - [ ] Add interaction state styling for board + controls (active/hover/selected/disabled/error).
 - [ ] Add lightweight motion (card play, target highlight pulse, selection fade) to reduce the "debug UI" feel.
@@ -326,6 +326,11 @@ I want to have a script that lets me select a subset of n cards and hits some so
 
 ---
 
+## Milestone 7.6 — Script to Generate Art for Cards
+
+Pause and read through the rules of the game. Make sure that what we've done aligns as much as possible. Add any tasks below to fix things that don't.
+
+
 ## Milestone 8 — Content expansion + stability pass
 
 ### Tasks
@@ -335,7 +340,6 @@ I want to have a script that lets me select a subset of n cards and hits some so
 - Expand Age I market cards first (the ones that touch your most-used primitives).
 - [x] Add “smoke sim” tests:
   - random legal commands for N steps should not crash
-- [x] Add regression coverage for invalid action/card declarations not spending resources.
 - Add dev-only debug tools:
   - show full state JSON
   - force advance to next phase

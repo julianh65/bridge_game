@@ -11,7 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- agent-2: add valid target previews for board pick modes (hex/edge highlights) (owner: agent-2; scope: target preview logic + board overlays; files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`; status: in-progress)
+- none
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -75,6 +75,7 @@ none
 - Tightened board panning drag threshold to avoid click misfires.
 - Added soft bounds clamping on board pan/zoom so the map stays in view.
 - Reworked the hand UI into a fan-style card row with hover zoom, selected highlighting, and disabled styling.
+- Added valid-target overlays for board pick modes (hex highlights + edge previews) during action/card targeting.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.

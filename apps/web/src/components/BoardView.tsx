@@ -2,9 +2,17 @@ import { useMemo, useRef, useState, useEffect } from "react";
 import type { PointerEventHandler, WheelEventHandler } from "react";
 
 import type { BoardState } from "@bridgefront/engine";
+import { parseEdgeKey } from "@bridgefront/shared";
 
 import { HEX_SIZE, hexPoints } from "../lib/hex-geometry";
 import type { HexRender } from "../lib/board-preview";
+
+type ViewBox = {
+  minX: number;
+  minY: number;
+  width: number;
+  height: number;
+};
 
 type BoardViewProps = {
   hexes: HexRender[];
@@ -19,6 +27,8 @@ type BoardViewProps = {
   onHexClick?: (hexKey: string) => void;
   selectedHexKey?: string | null;
   highlightHexKeys?: string[];
+  validHexKeys?: string[];
+  previewEdgeKeys?: string[];
 };
 
 const tileTag = (tile: string) => {
@@ -36,7 +46,7 @@ const tileTag = (tile: string) => {
   }
 };
 
-const boundsForHexes = (hexes: HexRender[]) => {
+const boundsForHexes = (hexes: HexRender[]): ViewBox => {
   let minX = Number.POSITIVE_INFINITY;
   let maxX = Number.NEGATIVE_INFINITY;
   let minY = Number.POSITIVE_INFINITY;
@@ -61,6 +71,26 @@ const boundsForHexes = (hexes: HexRender[]) => {
 const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value));
 
+const clampViewBox = (viewBox: ViewBox, baseViewBox: ViewBox): ViewBox => {
+  const baseMaxX = baseViewBox.minX + baseViewBox.width;
+  const baseMaxY = baseViewBox.minY + baseViewBox.height;
+  const marginX = viewBox.width * 0.15;
+  const marginY = viewBox.height * 0.15;
+  const minAllowedX = baseViewBox.minX - marginX;
+  const maxAllowedX = baseMaxX + marginX - viewBox.width;
+  const minAllowedY = baseViewBox.minY - marginY;
+  const maxAllowedY = baseMaxY + marginY - viewBox.height;
+  const minX =
+    minAllowedX > maxAllowedX
+      ? baseViewBox.minX + (baseViewBox.width - viewBox.width) / 2
+      : clamp(viewBox.minX, minAllowedX, maxAllowedX);
+  const minY =
+    minAllowedY > maxAllowedY
+      ? baseViewBox.minY + (baseViewBox.height - viewBox.height) / 2
+      : clamp(viewBox.minY, minAllowedY, maxAllowedY);
+  return { ...viewBox, minX, minY };
+};
+
 export const BoardView = ({
   hexes,
   board,
@@ -73,7 +103,9 @@ export const BoardView = ({
   resetViewToken,
   onHexClick,
   selectedHexKey = null,
-  highlightHexKeys = []
+  highlightHexKeys = [],
+  validHexKeys = [],
+  previewEdgeKeys = []
 }: BoardViewProps) => {
   const baseViewBox = useMemo(() => boundsForHexes(hexes), [hexes]);
   const [viewBox, setViewBox] = useState(baseViewBox);
@@ -83,6 +115,7 @@ export const BoardView = ({
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
   const didDragRef = useRef(false);
   const highlightSet = useMemo(() => new Set(highlightHexKeys), [highlightHexKeys]);
+  const validSet = useMemo(() => new Set(validHexKeys), [validHexKeys]);
 
   useEffect(() => {
     setViewBox(baseViewBox);
@@ -120,6 +153,37 @@ export const BoardView = ({
     }
     return segments;
   }, [board, hexCenters]);
+
+  const previewSegments = useMemo(() => {
+    if (previewEdgeKeys.length === 0) {
+      return [];
+    }
+    const segments: Array<{
+      key: string;
+      from: { x: number; y: number };
+      to: { x: number; y: number };
+    }> = [];
+    for (const edgeKey of previewEdgeKeys) {
+      let rawA: string;
+      let rawB: string;
+      try {
+        [rawA, rawB] = parseEdgeKey(edgeKey);
+      } catch {
+        continue;
+      }
+      const from = hexCenters.get(rawA);
+      const to = hexCenters.get(rawB);
+      if (!from || !to) {
+        continue;
+      }
+      segments.push({
+        key: edgeKey,
+        from,
+        to
+      });
+    }
+    return segments;
+  }, [previewEdgeKeys, hexCenters]);
 
   const unitStacks = useMemo(() => {
     if (!board) {
@@ -240,12 +304,15 @@ export const BoardView = ({
       );
       const widthRatio = nextWidth / current.width;
       const heightRatio = nextHeight / current.height;
-      return {
-        minX: point.x - (point.x - current.minX) * widthRatio,
-        minY: point.y - (point.y - current.minY) * heightRatio,
-        width: nextWidth,
-        height: nextHeight
-      };
+      return clampViewBox(
+        {
+          minX: point.x - (point.x - current.minX) * widthRatio,
+          minY: point.y - (point.y - current.minY) * heightRatio,
+          width: nextWidth,
+          height: nextHeight
+        },
+        baseViewBox
+      );
     });
   };
 
@@ -286,11 +353,16 @@ export const BoardView = ({
     const dx = dragRef.current.x - point.x;
     const dy = dragRef.current.y - point.y;
     dragRef.current = point;
-    setViewBox((current) => ({
-      ...current,
-      minX: current.minX + dx,
-      minY: current.minY + dy
-    }));
+    setViewBox((current) =>
+      clampViewBox(
+        {
+          ...current,
+          minX: current.minX + dx,
+          minY: current.minY + dy
+        },
+        baseViewBox
+      )
+    );
   };
 
   const handlePointerUp: PointerEventHandler<SVGSVGElement> = (event) => {
@@ -338,6 +410,7 @@ export const BoardView = ({
         const valueY = tag ? hex.y + (hasLowerText ? 20 : 12) : hex.y + 12;
         const isSelected = selectedHexKey === hex.key;
         const isHighlighted = highlightSet.has(hex.key);
+        const isValidTarget = validSet.has(hex.key);
         const occupantCount = board
           ? Object.values(board.hexes[hex.key]?.occupants ?? {}).filter(
               (unitIds) => unitIds.length > 0
@@ -359,7 +432,8 @@ export const BoardView = ({
           `hex--${hex.tile}`,
           clickable ? "hex--clickable" : "",
           isSelected ? "hex--selected" : "",
-          isHighlighted ? "hex--highlight" : ""
+          isHighlighted ? "hex--highlight" : "",
+          isValidTarget ? "hex--target" : ""
         ]
           .filter(Boolean)
           .join(" ");
@@ -404,6 +478,17 @@ export const BoardView = ({
           </g>
         );
       })}
+
+      {previewSegments.map((segment) => (
+        <line
+          key={`preview-${segment.key}`}
+          className="bridge bridge--preview"
+          x1={segment.from.x}
+          y1={segment.from.y}
+          x2={segment.to.x}
+          y2={segment.to.y}
+        />
+      ))}
 
       {bridgeSegments.map((bridge) => {
         const index = bridge.ownerPlayerId
