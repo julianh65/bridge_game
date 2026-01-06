@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent2 | scope: make action-step status more obvious in player list (summary + row highlight) and update plan item | files: apps/web/src/components/GameScreen.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md | status: in progress
+none
 
 ## Milestone 8.5 progress
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.
@@ -30,6 +30,7 @@
 - Added an order rail to the market overlay and tightened market card sizing so the overlay reads as a sequenced card run; marked the related checklist items complete in `implementation_plan.md`.
 - Hid market bid details in the status list until all bids are submitted and marked the plan item complete in `implementation_plan.md`.
 - Added a market winner highlight/animation on the overlay cards and marked the plan item complete in `implementation_plan.md`.
+- Enabled direct edge clicks for bridge/card edge targeting (preview edges even before selecting a start hex) and noted the subtask in `implementation_plan.md`.
 - Fixed edge-pick hex selection by letting unit stack clicks trigger hex targeting (Bridge Crew/build bridge) and marked the plan item complete in `implementation_plan.md`.
 
 ## Bug audit progress
@@ -84,6 +85,7 @@
 - Added guidance to `agent_instructions.md` on reconciling other-agent/tooling changes.
 - Updated `agent_instructions.md` to require logging task scope/files in `progress.md` before coding and clearing entries after completion.
 - Added git hygiene guidance in `agent_instructions.md` to minimize user interruptions and preserve work.
+- Updated `agent_instructions.md` to allow overlapping edits for throughput and to include unclaimed changes with logging.
 - Audited `implementation_plan.md` and marked Milestone 5.5 interaction styling + Milestone 6 Market UI as complete.
 - Marked the Milestone 6.5 board target friction task complete in `implementation_plan.md`.
 - Added a Lobby polish item to `implementation_plan.md` for board preview + reroll (future work).

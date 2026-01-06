@@ -434,6 +434,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 ### Tasks (web - action flow + layout)
 - [ ] Reduce card targeting clicks so board picks are direct and visible once selected.
+  - [x] Allow direct edge clicks for bridge/card edge picks via preview edges.
 - [x] Add a large "Submit/Lock In" action button for action declarations.
 - [ ] Consolidate or rearrange panels so the game screen feels cohesive.
 
@@ -465,6 +466,8 @@ Also we need a good victory screen!
 We should add nicer displays for the units / champions on the board and the factions.
 
 Note: Factions should be mutually exclusive, two people can't pick the same faction
+
+I'd like there to be an animation when the cards are drawn and you can see the draw and discard decks on either side along with the direction and how many cards are in each
 
 ## Milestone 9.5 -- Card Art + Description
 

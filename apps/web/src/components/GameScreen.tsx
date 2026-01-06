@@ -495,7 +495,11 @@ export const GameScreen = ({
       return false;
     };
 
-    const addEdgeCandidatesFrom = (start: string, requiresOccupiedEndpoint: boolean) => {
+    const addEdgeCandidatesFrom = (
+      start: string,
+      requiresOccupiedEndpoint: boolean,
+      markNeighborTargets = true
+    ) => {
       const startOccupied = isOccupied(start);
       for (const neighbor of neighbors(start)) {
         if (hasBridge(board, start, neighbor)) {
@@ -505,7 +509,9 @@ export const GameScreen = ({
           continue;
         }
         previewEdges.add(getBridgeKey(start, neighbor));
-        validTargets.add(neighbor);
+        if (markNeighborTargets) {
+          validTargets.add(neighbor);
+        }
       }
     };
 
@@ -553,6 +559,7 @@ export const GameScreen = ({
       } else {
         for (const key of startCandidates) {
           validTargets.add(key);
+          addEdgeCandidatesFrom(key, requiresOccupiedEndpoint, false);
         }
       }
     }
@@ -578,6 +585,7 @@ export const GameScreen = ({
       } else {
         for (const key of startCandidates) {
           validTargets.add(key);
+          addEdgeCandidatesFrom(key, requiresOccupiedEndpoint, false);
         }
       }
     }
@@ -846,8 +854,8 @@ export const GameScreen = ({
                 </div>
                 <p className="card-detail__hint">
                   {pendingEdgeStart
-                    ? `Pick adjacent hex to ${pendingEdgeStart}`
-                    : "Pick two adjacent hexes to set edge."}
+                    ? `Pick adjacent hex to ${pendingEdgeStart} or click a highlighted edge.`
+                    : "Click a highlighted edge or pick two adjacent hexes."}
                 </p>
               </div>
             );

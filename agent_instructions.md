@@ -13,18 +13,19 @@ By the way sometimes in implementation plan I (the boss) sometimes just add rand
 ## Parallel agent workflow
 If multiple agents are running at once:
 - Before coding, claim a task in progress.md with: owner, scope, files you plan to touch, and status (this is mandatory).
-- Avoid overlapping file edits with other agents. If a file is already claimed, pick a different task.
-- One agent may code while another agent reads/analyses and writes notes only; avoid simultaneous coding in the same area.
+- Overlapping file edits are acceptable for throughput; if a file is already claimed and you still need it, note the overlap in progress.md and try to avoid touching the same lines when possible.
+- Prefer to avoid simultaneous coding in the same area, but do not block if it slows progress.
 - After finishing a task or subtask, update progress.md to remove the active task entry, add a short completion note, and commit.
 Coordination vibe: plan first, log early/often, and if you're blocked by another task, document the dependency and pause after planning.
 If you notice changes that clearly belong to another agent’s claimed scope, treat them as expected: avoid touching those files, don’t revert them, and only surface conflicts or blockers.
-If you see unclaimed changes in your scope that you didn’t make, pause and ask before editing or staging them.
-If you see unexpected changes that are plausibly from other agents or tooling, reconcile them when safe and log in `progress.md`; only raise to the user if required by policy or if the changes block your work.
+If you see unclaimed changes in your scope that you didn’t make, assume they are from another agent and proceed; include them in your commit and log the overlap in `progress.md`.
+If you see unexpected changes that are not plausibly from other agents or tooling, pause and ask before proceeding.
 
 ## Git hygiene + autonomy
 Use common sense to keep work moving without pulling the user in for routine git cleanup.
 - Prefer `git add <paths>` over `git add .` and check `git status -sb` before committing.
 - If unrelated files are staged, unstage them (e.g., `git restore --staged <path>`) instead of asking the user.
 - If a commit accidentally includes extra benign files, leave it and move on; only fix with a follow-up commit (no history rewrites) when it would cause harm or confusion.
+- It's fine to include other agents' unclaimed changes in your commit when working in the same area; keep a note in `progress.md`.
 - Avoid deleting/overwriting other agents' work; never use destructive git commands unless explicitly asked.
 - Escalate to the user only when a git issue blocks progress, risks data loss, or policy requires it (still follow the stop rule for truly unexpected changes).
