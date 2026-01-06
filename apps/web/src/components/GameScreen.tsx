@@ -4,6 +4,7 @@ import {
   CARD_DEFS,
   getBridgeKey,
   type ActionDeclaration,
+  type Bid,
   type GameView
 } from "@bridgefront/engine";
 import { areAdjacent, parseHexKey } from "@bridgefront/shared";
@@ -23,6 +24,7 @@ type GameScreenProps = {
   roomId: string;
   status: RoomConnectionStatus;
   onSubmitAction: (declaration: ActionDeclaration) => void;
+  onSubmitMarketBid: (bid: Bid) => void;
   onLeave: () => void;
 };
 
@@ -32,6 +34,7 @@ export const GameScreen = ({
   roomId,
   status,
   onSubmitAction,
+  onSubmitMarketBid,
   onLeave
 }: GameScreenProps) => {
   const hexRender = useMemo(() => buildHexRender(view.public.board), [view.public.board]);
@@ -525,7 +528,14 @@ export const GameScreen = ({
             />
           </div>
 
-          <MarketPanel market={view.public.market} players={view.public.players} />
+          <MarketPanel
+            market={view.public.market}
+            players={view.public.players}
+            phase={view.public.phase}
+            player={localPlayer ?? null}
+            status={status}
+            onSubmitBid={onSubmitMarketBid}
+          />
 
           <div className="sidebar-section">
             <h3>Log</h3>

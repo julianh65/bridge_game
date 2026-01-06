@@ -12,6 +12,7 @@
 
 ## Active tasks
 - [in progress] owner: agent3; scope: engine collection prompts (mine/forge/center choices) + resolution; files: packages/engine/src/types.ts, packages/engine/src/engine.ts, packages/engine/src/round-flow.ts, packages/engine/src/cards.ts, packages/engine/src/market.ts, packages/engine/src/content
+- [in progress] owner: agent2; scope: add hover tooltips for hex/stack details in BoardView; files: apps/web/src/components/BoardView.tsx
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -35,6 +36,7 @@
 - Documented the new Cards debug view in `docs/cards.md`.
 - Reprioritized setup UX into a new Milestone 4.5 (playtest unblock) in `implementation_plan.md`.
 - Audited docs for stale items (implementation plan checkboxes, market preview naming/mapping, dev nav notes).
+- Added Milestone 5.5 UI interaction + polish tasks (hand/board targeting/pan-zoom) to `implementation_plan.md`.
 
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.
@@ -147,6 +149,7 @@
 - Added market row prep using preview mapping + deck draws, plus cleanup resets to clear the row each round.
 - Added market row tests covering preview composition and no-op behavior when a row exists.
 - Market sidebar now shows card names and bid/pass status per player.
+- Added market bid controls in the web client and wired `SubmitMarketBid` commands.
 - Implemented market bidding block (buy/pass, tie-break roll-offs, pass pot, one-win-per-round) with command handling + resolution, added market bidding tests, and updated setup/action tests to auto-resolve market.
 
 ## Open decisions
