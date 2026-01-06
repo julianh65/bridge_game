@@ -65,7 +65,7 @@ The aim is to reach “playable with friends” quickly while preserving a clean
 ### Tasks
 - [x] Implement capital slot logic per player count.
 - [x] Make board generation rules configurable via `DEFAULT_CONFIG` (capital slots + placement rules).
-- [x] Implement pre-game screen and logic, faction choosing, settings choosing (leave these blank / placeholder for now), a ready up and start game system
+- [x] Implement pre-game screen and logic, faction choosing, settings choosing (placeholders), a ready up and start game system.
 - [x] Implement capital draft block and command:
   - `SubmitSetupChoice { kind: "pickCapital", hexKey }`
 - [x] Implement procedural placement:
@@ -96,29 +96,29 @@ The aim is to reach “playable with friends” quickly while preserving a clean
 Goal: get the board game “moving pieces and fighting” ASAP.
 
 ### Tasks
-- Implement phases:
+- [ ] Implement phases (reset/action/sieges/collection done; scoring/cleanup/ageUpdate pending):
   - reset -> action -> sieges -> collection -> scoring -> cleanup -> ageUpdate
-- Implement reset:
+- [x] Implement reset:
   - income, mana reset, draw to 6, enforce hand limit
-- Implement basic actions:
+- [x] Implement basic actions:
   - Build Bridge
   - March 1
   - Capital Reinforce
-- Implement move execution:
+- [x] Implement move execution:
   - requires bridge by default
   - stop and battle on entering enemy-occupied non-capital
   - enforce two-player-per-hex
-- Implement battle resolution (random hit assignment):
+- [x] Implement battle resolution (random hit assignment):
   - combat rounds to death
   - champion hp + bounty
-- Implement siege resolution at end of action phase.
-- Implement collection minimal:
+- [x] Implement siege resolution at end of action phase.
+- [x] Implement collection minimal:
   - mines: take gold only (skip mine draft for now)
   - forges/center: no-op placeholder
-- Implement scoring:
+- [ ] Implement scoring:
   - compute control VP and total VP
   - win check
-- Implement cleanup:
+- [ ] Implement cleanup:
   - discard hand
   - expire end-of-round modifiers
   - destroy temporary bridges

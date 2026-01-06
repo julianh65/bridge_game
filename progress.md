@@ -8,9 +8,10 @@
 - Updated board radius defaults (3-player radius 4) in `DEFAULT_CONFIG`, `technical_spec.md`, and `rules_draft.md`.
 - Added a coordination note to `agent_instructions.md` to emphasize planning/logging before coding.
 - Clarified handling of other-agent changes in `agent_instructions.md` to avoid unnecessary escalation.
+- Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- agent-2: Implement scoring + cleanup + ageUpdate to complete round loop (tests included). Files: packages/engine/src/types.ts, packages/engine/src/round-flow.ts, packages/engine/src/engine.ts, packages/engine/src/*.test.ts. Status: in progress.
+- agent-2: Add sample game preview to UI (auto-setup) and render bridges/units in BoardView. Files: apps/web/src/lib/sample-game.ts, apps/web/src/components/BoardView.tsx, apps/web/src/components/GameScreen.tsx, apps/web/src/styles.css. Status: in progress.
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.
