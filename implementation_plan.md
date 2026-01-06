@@ -42,6 +42,7 @@ The aim is to reach “playable with friends” quickly while preserving a clean
   - `applyCommand(state, cmd, playerId)`
   - `runUntilBlocked(state)`
   - `buildView(state, viewerPlayerId)`
+- [x] Extracted view construction into `packages/engine/src/view.ts` for clarity.
 
 ### Acceptance criteria
 - A single test creates a 2-player game state, runs `runUntilBlocked`, and ends blocked on the first setup input (capital draft).

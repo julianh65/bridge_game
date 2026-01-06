@@ -12,7 +12,6 @@
 
 ## Active tasks
 - agent-2: add valid target previews for board pick modes (hex/edge highlights) (owner: agent-2; scope: target preview logic + board overlays; files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`; status: in-progress)
-- agent-1: extract `buildView` and setup view helpers into `packages/engine/src/view.ts` (owner: agent-1; scope: move view construction out of `engine.ts` and update exports; files: `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/index.ts`; status: in-progress)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -62,9 +61,10 @@
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.
 - Added card/deck helpers (`cards.ts`), unit helper (`units.ts`), and starter deck data (`content/starter-decks.ts`).
+- Moved view construction (`buildView` + setup view helpers) into `packages/engine/src/view.ts` and updated exports.
 
 ## Cleanup/organization TODOs
-- Consider moving view construction into `packages/engine/src/view.ts` if `buildView` grows.
+none
 
 ## UI polish TODOs
 - none

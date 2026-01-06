@@ -15,10 +15,10 @@ export {
 } from "./board";
 export {
   applyCommand,
-  buildView,
   createNewGame,
   runUntilBlocked
 } from "./engine";
+export { buildView } from "./view";
 export { applyRoundReset } from "./round-flow";
 export { emit } from "./events";
 export type {
