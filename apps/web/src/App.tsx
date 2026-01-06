@@ -1,9 +1,10 @@
 import { useState } from "react";
 
 import { DebugBoard } from "./components/DebugBoard";
+import { GameScreen } from "./components/GameScreen";
 import { Lobby } from "./components/Lobby";
 
-type AppView = "lobby" | "debug";
+type AppView = "lobby" | "debug" | "game";
 
 export default function App() {
   const [view, setView] = useState<AppView>("lobby");
@@ -22,6 +23,13 @@ export default function App() {
           </button>
           <button
             type="button"
+            className={view === "game" ? "is-active" : ""}
+            onClick={() => setView("game")}
+          >
+            Game
+          </button>
+          <button
+            type="button"
             className={view === "debug" ? "is-active" : ""}
             onClick={() => setView("debug")}
           >
@@ -30,7 +38,9 @@ export default function App() {
         </div>
       </nav>
 
-      {view === "lobby" ? <Lobby onStart={() => setView("debug")} /> : <DebugBoard />}
+      {view === "lobby" ? <Lobby onStart={() => setView("game")} /> : null}
+      {view === "game" ? <GameScreen /> : null}
+      {view === "debug" ? <DebugBoard /> : null}
     </main>
   );
 }

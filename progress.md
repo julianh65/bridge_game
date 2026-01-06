@@ -42,6 +42,9 @@
 - Board inspector now labels special tiles (CAP/FORGE/MINE/CTR) on the hexes.
 - Fixed hex fill styles so tiles render in their intended colors.
 
+## Milestone 4 progress
+- Added a game screen placeholder layout in `apps/web` (board area + sidebar stubs), no server wiring yet.
+
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
 
