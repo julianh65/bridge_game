@@ -1412,21 +1412,100 @@ h1 {
   gap: 12px;
 }
 
+.market-order {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(130px, 1fr);
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+}
+
+.market-order__step {
+  display: grid;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(111, 90, 70, 0.2);
+  background: #f6e7d2;
+  min-width: 120px;
+}
+
+.market-order__step.is-resolved {
+  opacity: 0.6;
+}
+
+.market-order__step.is-active {
+  border-color: #f59e0b;
+  background: #fff1d0;
+  box-shadow: 0 10px 18px rgba(245, 158, 11, 0.22);
+}
+
+.market-order__step.is-winner {
+  border-color: #22c55e;
+  background: #ecfdf3;
+  box-shadow: 0 12px 20px rgba(34, 197, 94, 0.25);
+}
+
+.market-order__index {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.market-order__label {
+  font-size: 12px;
+  color: var(--ink);
+}
+
 .market-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 220px));
   gap: 16px;
+  justify-content: start;
 }
 
 .market-card {
+  position: relative;
   display: grid;
   gap: 8px;
+  width: 100%;
+  max-width: 220px;
+  min-height: 280px;
+  aspect-ratio: 2 / 3;
   padding: 14px;
   border-radius: 18px;
   border: 1px solid var(--border);
   background: #fffdf6;
   box-shadow: 0 14px 28px rgba(35, 28, 19, 0.12);
+  overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+@keyframes marketWinPulse {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  35% {
+    transform: translateY(-4px) scale(1.02);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes marketWinBanner {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .market-card__art {
@@ -1501,6 +1580,41 @@ h1 {
   border-color: #f59e0b;
   box-shadow: 0 16px 32px rgba(245, 158, 11, 0.28);
   transform: translateY(-2px);
+}
+
+.market-card.is-winner {
+  border-color: #22c55e;
+  box-shadow: 0 18px 32px rgba(34, 197, 94, 0.25);
+  animation: marketWinPulse 1.4s ease;
+}
+
+.market-card__winner {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: grid;
+  gap: 2px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: linear-gradient(120deg, #16a34a, #22c55e);
+  color: #f0fdf4;
+  text-align: center;
+  box-shadow: 0 10px 22px rgba(34, 197, 94, 0.3);
+  pointer-events: none;
+  animation: marketWinBanner 0.4s ease-out;
+}
+
+.market-card__winner-title {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.market-card__winner-detail {
+  font-size: 10px;
+  font-weight: 600;
 }
 
 .market-panel__bids {

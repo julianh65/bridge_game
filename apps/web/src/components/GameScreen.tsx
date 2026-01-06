@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, type CSSProperties } from "react";
+import { useMemo, useState, useEffect, useRef, type CSSProperties } from "react";
 
 import {
   CARD_DEFS,
@@ -34,6 +34,15 @@ type ChampionTargetOption = {
   hex: string;
   hp: number;
   maxHp: number;
+};
+
+type MarketWinnerHighlight = {
+  cardId: string;
+  cardIndex: number | null;
+  playerName: string;
+  kind: "buy" | "pass";
+  amount: number | null;
+  passPot: number | null;
 };
 
 const parseTargets = (raw: string): Record<string, unknown> | null => {
@@ -126,11 +135,14 @@ export const GameScreen = ({
   const [boardPickMode, setBoardPickMode] = useState<BoardPickMode>("none");
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
   const [isMarketOverlayOpen, setIsMarketOverlayOpen] = useState(false);
+  const [marketWinner, setMarketWinner] = useState<MarketWinnerHighlight | null>(null);
   const [selectedHexKey, setSelectedHexKey] = useState<string | null>(null);
   const [pendingEdgeStart, setPendingEdgeStart] = useState<string | null>(null);
   const [pendingStackFrom, setPendingStackFrom] = useState<string | null>(null);
   const [pendingPath, setPendingPath] = useState<string[]>([]);
   const [resetViewToken, setResetViewToken] = useState(0);
+  const lastMarketEventIndex = useRef(-1);
+  const hasMarketLogBaseline = useRef(false);
   const targetRecord = useMemo(() => parseTargets(cardTargetsRaw), [cardTargetsRaw]);
   const selectedChampionId =
     getTargetString(targetRecord, "unitId") ?? getTargetString(targetRecord, "championId");
@@ -185,6 +197,20 @@ export const GameScreen = ({
       ? "Action: waiting for declaration."
       : "Action: declaration submitted.";
   };
+  const getActionStatusBadge = (
+    playerId: string
+  ): { label: string; className: string } | null => {
+    if (!actionStep) {
+      return null;
+    }
+    if (!actionEligible.has(playerId)) {
+      return { label: "Idle", className: "" };
+    }
+    if (actionWaiting.has(playerId)) {
+      return { label: "Waiting", className: "status-pill--waiting" };
+    }
+    return { label: "Submitted", className: "status-pill--ready" };
+  };
   const isActionPhase = view.public.phase === "round.action";
   const isMarketPhase = view.public.phase === "round.market";
   const isCollectionPhase = view.public.phase === "round.collection";
@@ -238,6 +264,64 @@ export const GameScreen = ({
       setIsMarketOverlayOpen(false);
     }
   }, [isMarketPhase]);
+
+  useEffect(() => {
+    const logs = view.public.logs;
+    if (!hasMarketLogBaseline.current) {
+      hasMarketLogBaseline.current = true;
+      if (logs.length > 0) {
+        lastMarketEventIndex.current = logs.length - 1;
+        return;
+      }
+    }
+    if (logs.length === 0) {
+      return;
+    }
+    if (logs.length - 1 < lastMarketEventIndex.current) {
+      lastMarketEventIndex.current = logs.length - 1;
+      return;
+    }
+    let foundIndex = -1;
+    for (let i = logs.length - 1; i > lastMarketEventIndex.current; i -= 1) {
+      const event = logs[i];
+      if (event.type === "market.buy" || event.type === "market.pass") {
+        foundIndex = i;
+        break;
+      }
+    }
+    if (foundIndex < 0) {
+      return;
+    }
+    const event = logs[foundIndex];
+    const payload = event.payload ?? {};
+    const cardId = typeof payload.cardId === "string" ? payload.cardId : "unknown";
+    const cardIndex = typeof payload.cardIndex === "number" ? payload.cardIndex : null;
+    const playerId = typeof payload.playerId === "string" ? payload.playerId : null;
+    const playerName = playerId ? playerNames.get(playerId) ?? playerId : "Unknown";
+    const amount = typeof payload.amount === "number" ? payload.amount : null;
+    const passPot = typeof payload.passPot === "number" ? payload.passPot : null;
+    lastMarketEventIndex.current = foundIndex;
+    setMarketWinner({
+      cardId,
+      cardIndex,
+      playerName,
+      kind: event.type === "market.buy" ? "buy" : "pass",
+      amount,
+      passPot
+    });
+  }, [view.public.logs, playerNames]);
+
+  useEffect(() => {
+    if (!marketWinner) {
+      return;
+    }
+    const timeout = window.setTimeout(() => {
+      setMarketWinner(null);
+    }, 3500);
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [marketWinner]);
 
   const setCardTargetsObject = (targets: Record<string, unknown> | null) => {
     setCardTargetsRaw(targets ? JSON.stringify(targets) : "");
@@ -1153,6 +1237,7 @@ export const GameScreen = ({
               player={localPlayer ?? null}
               status={status}
               onSubmitBid={onSubmitMarketBid}
+              winnerHighlight={marketWinner}
               onClose={() => setIsMarketOverlayOpen(false)}
             />
           </div>
@@ -1189,31 +1274,42 @@ export const GameScreen = ({
     <div className="sidebar-section">
       <h3>Players</h3>
       <ul className="player-list">
-        {view.public.players.map((player) => (
-          <li
-            key={player.id}
-            className="player-row"
-            title={getActionStatusTooltip(player.id)}
-          >
-            <div className="player-row__info">
-              <span
-                className="player-swatch"
-                style={playerSwatchStyle(player.seatIndex)}
-              />
-              <div>
-                <span className="player-name">{player.name}</span>
-                <span className="player-meta">Seat {player.seatIndex}</span>
-              </div>
-            </div>
-            <span
-              className={`status-pill ${
-                player.connected ? "status-pill--ready" : "status-pill--waiting"
-              }`}
+        {view.public.players.map((player) => {
+          const actionStatus = getActionStatusBadge(player.id);
+          const actionStatusClass = actionStatus
+            ? ["status-pill", actionStatus.className].filter(Boolean).join(" ")
+            : "";
+          return (
+            <li
+              key={player.id}
+              className="player-row"
+              title={getActionStatusTooltip(player.id)}
             >
-              {player.connected ? "On" : "Off"}
-            </span>
-          </li>
-        ))}
+              <div className="player-row__info">
+                <span
+                  className="player-swatch"
+                  style={playerSwatchStyle(player.seatIndex)}
+                />
+                <div>
+                  <span className="player-name">{player.name}</span>
+                  <span className="player-meta">Seat {player.seatIndex}</span>
+                </div>
+              </div>
+              <div className="seat__status">
+                <span
+                  className={`status-pill ${
+                    player.connected ? "status-pill--ready" : "status-pill--waiting"
+                  }`}
+                >
+                  {player.connected ? "On" : "Off"}
+                </span>
+                {actionStatus ? (
+                  <span className={actionStatusClass}>{actionStatus.label}</span>
+                ) : null}
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

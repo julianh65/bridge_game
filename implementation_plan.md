@@ -416,7 +416,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 ### Tasks (web - home + onboarding)
 - [x] Refresh the main landing page layout and typography.
 - [x] Add a placeholder panel for rules/tutorial access.
-- [ ] Fix the non-auto setup flow (faction picks + start gating) so manual setup works.
+- [x] Fix the non-auto setup flow (faction picks + start gating) so manual setup works.
 
 ### Tasks (web - market overlay + cards)
 - [x] Replace the market focus row with a full-screen overlay that can be shown/hidden.
@@ -424,8 +424,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Shrink the board presence while the market overlay is open so the cards dominate.
 - [x] The market overlay should clearly denote the order of cards still to be played
 - [x] The cards on the market overlay look a little bit wide style wise, they should look like cards.
-- [ ] The bids in the market should not be public / show in the bid status until everyone has bid
-- [ ]  We need a clear animation or something to show who won the card
+- [x] The bids in the market should not be public / show in the bid status until everyone has bid
+- [x] We need a clear animation or something to show who won the card
 
 ### Tasks (web - deck + player status)
 - [x] Add a deck viewer so players can browse all cards in their current deck.
@@ -438,8 +438,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Consolidate or rearrange panels so the game screen feels cohesive.
 
 ### Tasks (web - motion + phase clarity)
-- [ ] Add card-play reveal animation (who played what, where it landed).
-- [ ] Add clearer phase transition cues between round phases. Make it flash on screen in big text slowly to everyone simultaneously
+- [ ] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen.
+- [ ] Add clearer phase transition cues between round phases. Make it flash on screen in big text slowly to everyone simultaneously.
 
 ### Tasks (web - targeting reliability)
 - [ ] Fix hex selection for Bridge Crew and Build Bridge edge picking.
@@ -447,8 +447,10 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 ### Tasks UI
 - [ ] We need to more clearly guide the player what to do. The basic actions thing is too cluttered, we should probably keep that where the cards are and it should fan it when you click basic actions and show their mana cost and everything with a description
 - [ ] The Log is taking up too much screen real estate, make that a seperate area or modal or something
-- [ ] Urgent: Card targets are still not be selected properly when you click on the board
+- [ ] Urgent: Card targets are still not be selected properly when you click on the board. For example the bridge crew
 - [ ] We need to reduce the amount of clicks, to play a card you shouldn't have to click then specify capital or something else then click where, it should just know.
+- [ ] Also can you double check, does it only work for 2 players right now?
+- [ ] The standard setup still doesn't work, only auto setup works.
 
 ## Milestone 9 — Add Polish
 
@@ -460,9 +462,15 @@ Low priority but add a test for each card effect / card
 
 Also we need a good victory screen!
 
+We should add nicer displays for the units / champions on the board and the factions.
+
+Note: Factions should be mutually exclusive, two people can't pick the same faction
+
 ## Milestone 9.5 -- Card Art + Description
 
 Add a way for each card to have related card art and a card description that is thematic. This will be done with diffusion models so we need to have a script and some way to query to automatically pull card art for n cards and store them and let me view them. In addition to this we need other ways to style it up and make this look cool. I guess make the hexes look cool, the capitals, the pieces and forces and battles. It needs to have a bit of oomf. We can add some tasks here later when we get to it
+
+The overall cards viewer should also denote which ones are faction specific etc...
 
 ## Milestone 10 -- Basic AI to play against
 Something that just takes random actions is fine

@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- Owner: agent2 — Scope: hide market bid status details until all bids submitted; Files: `apps/web/src/components/MarketPanel.tsx` (status: in progress)
+none
 
 ## Milestone 8.5 progress
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.
@@ -27,6 +27,8 @@
 - Added action status pills (idle/waiting/submitted) to the player list for action phase visibility; plan update deferred until `implementation_plan.md` is free.
 - Replaced market focus row with a full-screen overlay + toggle, redesigned market cards with art placeholders and metadata, and marked Milestone 8.5 market tasks complete in `implementation_plan.md`.
 - Added an order rail to the market overlay and tightened market card sizing so the overlay reads as a sequenced card run; marked the related checklist items complete in `implementation_plan.md`.
+- Hid market bid details in the status list until all bids are submitted and marked the plan item complete in `implementation_plan.md`.
+- Added a market winner highlight/animation on the overlay cards and marked the plan item complete in `implementation_plan.md`.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.

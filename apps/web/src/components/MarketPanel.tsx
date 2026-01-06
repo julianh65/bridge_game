@@ -6,6 +6,15 @@ import type { RoomConnectionStatus } from "../lib/room-client";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 
+type MarketWinnerHighlight = {
+  cardId: string;
+  cardIndex: number | null;
+  playerName: string;
+  kind: "buy" | "pass";
+  amount: number | null;
+  passPot: number | null;
+};
+
 type MarketPanelProps = {
   market: MarketState;
   players: Array<{ id: string; name: string }>;
@@ -13,6 +22,7 @@ type MarketPanelProps = {
   player: GameView["public"]["players"][number] | null;
   status: RoomConnectionStatus;
   onSubmitBid: (bid: Bid) => void;
+  winnerHighlight?: MarketWinnerHighlight | null;
   layout?: "sidebar" | "overlay";
   onClose?: () => void;
 };
@@ -24,6 +34,7 @@ export const MarketPanel = ({
   player,
   status,
   onSubmitBid,
+  winnerHighlight,
   layout = "sidebar",
   onClose
 }: MarketPanelProps) => {
@@ -42,6 +53,13 @@ export const MarketPanel = ({
     Boolean(currentCard) &&
     !isOut &&
     !playerBid;
+  const eligiblePlayerIds = players
+    .map((entry) => entry.id)
+    .filter((id) => !market.playersOut[id]);
+  const shouldRevealBidDetails =
+    phase !== "round.market" ||
+    !currentCard ||
+    eligiblePlayerIds.every((id) => market.bids[id]);
   const [bidAmount, setBidAmount] = useState(0);
   const bidEntries = players.map((player) => {
     const bid = market.bids[player.id];
@@ -50,7 +68,11 @@ export const MarketPanel = ({
     if (isOut) {
       status = "Out";
     } else if (bid) {
-      status = bid.kind === "buy" ? `Buy ${bid.amount}` : "Pass";
+      status = shouldRevealBidDetails
+        ? bid.kind === "buy"
+          ? `Buy ${bid.amount}`
+          : "Pass"
+        : "Submitted";
     }
     return { id: player.id, name: player.name, status };
   });
@@ -91,6 +113,41 @@ export const MarketPanel = ({
       ? `Buy ${playerBid.amount}`
       : `Pass ${playerBid.amount}`
     : null;
+
+  const winnerAnnouncement = winnerHighlight
+    ? {
+        title: `${winnerHighlight.playerName} won`,
+        detail:
+          winnerHighlight.kind === "buy"
+            ? winnerHighlight.amount !== null
+              ? `Bought for ${winnerHighlight.amount}g`
+              : "Bought"
+            : winnerHighlight.passPot && winnerHighlight.passPot > 0
+              ? `Pass pot ${winnerHighlight.passPot}g`
+              : "Won on pass"
+      }
+    : null;
+
+  const isWinnerCard = (index: number, cardId: string) => {
+    if (!winnerHighlight) {
+      return false;
+    }
+    if (typeof winnerHighlight.cardIndex === "number") {
+      return winnerHighlight.cardIndex === index;
+    }
+    return winnerHighlight.cardId === cardId;
+  };
+
+  const cardOrder = currentRow.map((card, index) => {
+    const def = CARD_DEFS_BY_ID.get(card.cardId);
+    const isHidden = !card.revealed;
+    const isActive = index === rowIndexResolving;
+    const isResolved = index < rowIndexResolving;
+    const label = isHidden ? "Face down" : def?.name ?? card.cardId;
+    const isWinner = isWinnerCard(index, card.cardId);
+    return { card, def, index, isHidden, isActive, isResolved, isWinner, label };
+  });
+  const showOrderRail = isOverlay && currentRow.length > 0;
 
   let bidHint = "Enter a bid amount to buy or pass.";
   if (status !== "connected") {
@@ -140,64 +197,96 @@ export const MarketPanel = ({
           {currentRow.length === 0 ? (
             <div className="hand-empty">No market cards revealed.</div>
           ) : (
-            <div className="market-card-grid">
-              {currentRow.map((card, index) => {
-                const isHidden = !card.revealed;
-                const isActive = index === rowIndexResolving;
-                const def = CARD_DEFS_BY_ID.get(card.cardId);
-                const label = isHidden ? "Face down" : def?.name ?? card.cardId;
-                const manaCost = def?.cost.mana ?? null;
-                const goldCost = def?.cost.gold ?? 0;
-                const initiative = def?.initiative ?? null;
-                const tags = def?.tags ?? [];
-                return (
-                  <article
-                    key={`${card.cardId}-${index}`}
-                    className={`market-card${isHidden ? " is-hidden" : ""}${
-                      isActive ? " is-active" : ""
-                    }`}
-                  >
-                    <div className="market-card__art">
-                      <span>{isHidden ? "Face down" : "Art"}</span>
-                    </div>
-                    <div className="market-card__header">
-                      <span className="market-card__eyebrow">Card {index + 1}</span>
-                      <h4>{label}</h4>
-                    </div>
-                    <div className="market-card__meta">
-                      <span className="market-chip">
-                        Init {initiative ?? "?"}
-                      </span>
-                      <span className="market-chip">
-                        Mana {manaCost ?? "?"}
-                      </span>
-                      {goldCost > 0 ? (
-                        <span className="market-chip">Gold {goldCost}</span>
-                      ) : null}
-                      <span className="market-chip">{def?.type ?? "Card"}</span>
-                    </div>
-                    {isHidden ? (
-                      <p className="market-card__rules market-card__rules--hidden">
-                        Unrevealed market card.
-                      </p>
-                    ) : (
-                      <p className="market-card__rules">
-                        {def?.rulesText ?? "Rules pending."}
-                      </p>
-                    )}
-                    {!isHidden && tags.length > 0 ? (
-                      <div className="market-card__tags">
-                        {tags.map((tag) => (
-                          <span key={`${card.cardId}-${tag}`} className="card-tag">
-                            {tag}
+            <>
+              {showOrderRail ? (
+                <ol className="market-order" aria-label="Market order">
+                  {cardOrder.map((entry) => (
+                    <li
+                      key={`${entry.card.cardId}-${entry.index}`}
+                      className={`market-order__step${
+                        entry.isResolved ? " is-resolved" : ""
+                      }${entry.isActive ? " is-active" : ""}${
+                        entry.isWinner ? " is-winner" : ""
+                      }`}
+                    >
+                      <span className="market-order__index">{entry.index + 1}</span>
+                      <span className="market-order__label">{entry.label}</span>
+                    </li>
+                  ))}
+                </ol>
+              ) : null}
+              <div className="market-card-grid">
+                {cardOrder.map((entry) => {
+                  const manaCost = entry.def?.cost.mana ?? null;
+                  const goldCost = entry.def?.cost.gold ?? 0;
+                  const initiative = entry.def?.initiative ?? null;
+                  const tags = entry.def?.tags ?? [];
+                  return (
+                    <article
+                      key={`${entry.card.cardId}-${entry.index}`}
+                      className={`market-card${entry.isHidden ? " is-hidden" : ""}${
+                        entry.isActive ? " is-active" : ""
+                      }${entry.isWinner ? " is-winner" : ""}`}
+                    >
+                      {entry.isWinner && winnerAnnouncement ? (
+                        <div className="market-card__winner" role="status" aria-live="polite">
+                          <span className="market-card__winner-title">
+                            {winnerAnnouncement.title}
                           </span>
-                        ))}
+                          <span className="market-card__winner-detail">
+                            {winnerAnnouncement.detail}
+                          </span>
+                        </div>
+                      ) : null}
+                      <div className="market-card__art">
+                        <span>{entry.isHidden ? "Face down" : "Art"}</span>
                       </div>
-                    ) : null}
-                  </article>
-                );
-              })}
-            </div>
+                      <div className="market-card__header">
+                        <span className="market-card__eyebrow">
+                          Card {entry.index + 1}
+                        </span>
+                        <h4>{entry.label}</h4>
+                      </div>
+                      <div className="market-card__meta">
+                        <span className="market-chip">
+                          Init {initiative ?? "?"}
+                        </span>
+                        <span className="market-chip">
+                          Mana {manaCost ?? "?"}
+                        </span>
+                        {goldCost > 0 ? (
+                          <span className="market-chip">Gold {goldCost}</span>
+                        ) : null}
+                        <span className="market-chip">
+                          {entry.def?.type ?? "Card"}
+                        </span>
+                      </div>
+                      {entry.isHidden ? (
+                        <p className="market-card__rules market-card__rules--hidden">
+                          Unrevealed market card.
+                        </p>
+                      ) : (
+                        <p className="market-card__rules">
+                          {entry.def?.rulesText ?? "Rules pending."}
+                        </p>
+                      )}
+                      {!entry.isHidden && tags.length > 0 ? (
+                        <div className="market-card__tags">
+                          {tags.map((tag) => (
+                            <span
+                              key={`${entry.card.cardId}-${tag}`}
+                              className="card-tag"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                    </article>
+                  );
+                })}
+              </div>
+            </>
           )}
         </div>
 
