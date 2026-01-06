@@ -11,8 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- (none)
-- [agent1] Implement action-step card declarations for no-target cards (Supply Cache) with initiative-ordered resolution + discard/burn handling; add tests. Files: `packages/engine/src/types.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/cards.ts`, `packages/engine/src/card-effects.ts` (new), `packages/engine/src/action-flow.test.ts`. Status: in progress.
+- [agent3] Add Cards debug view with filters (age/deck, cost, type, tags) and initiative sort; document card editing location + new browser. Files: `apps/web/src/App.tsx`, `apps/web/src/components/CardsBrowser.tsx`, `apps/web/src/styles.css`, `packages/engine/src/index.ts`, `docs/cards.md`, `progress.md`. Status: in progress.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -97,6 +96,9 @@
 - Added a basic action panel in the game sidebar with command wiring (done, capital reinforce, build bridge edge key, march from/to).
 - Game sidebar now lists hand card IDs, deck counts, and a market row summary.
 - Lobby now includes a room code copy control with clipboard fallback.
+
+## Milestone 5 progress
+- Added action-step card declarations for no-target cards (gain gold/draw cards) with initiative-ordered resolution before basic actions; cards leave hand on declaration and discard/burn after resolution, plus Supply Cache coverage.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

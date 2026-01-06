@@ -134,3 +134,41 @@ export const drawToHandSize = (
   const needed = Math.max(0, targetHandSize - player.deck.hand.length);
   return drawCards(state, playerId, needed);
 };
+
+export const removeCardFromHand = (
+  state: GameState,
+  playerId: PlayerID,
+  cardInstanceId: CardInstanceID
+): GameState => {
+  const player = getPlayer(state, playerId);
+  if (!player.deck.hand.includes(cardInstanceId)) {
+    return state;
+  }
+
+  const hand = player.deck.hand.filter((id) => id !== cardInstanceId);
+  return updatePlayerDeck(state, playerId, { hand });
+};
+
+export const addCardToDiscardPile = (
+  state: GameState,
+  playerId: PlayerID,
+  cardInstanceId: CardInstanceID
+): GameState => {
+  const player = getPlayer(state, playerId);
+  return updatePlayerDeck(state, playerId, {
+    discardPile: [...player.deck.discardPile, cardInstanceId]
+  });
+};
+
+export const addCardToBurned = (
+  state: GameState,
+  playerId: PlayerID,
+  cardInstanceId: CardInstanceID
+): GameState => {
+  return {
+    ...state,
+    players: state.players.map((player) =>
+      player.id === playerId ? { ...player, burned: [...player.burned, cardInstanceId] } : player
+    )
+  };
+};

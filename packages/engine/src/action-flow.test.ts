@@ -2,6 +2,7 @@ import { neighborHexKeys, parseEdgeKey } from "@bridgefront/shared";
 import { describe, expect, it } from "vitest";
 
 import type { BoardState, EdgeKey, GameState, HexKey } from "./types";
+import { createCardInstance } from "./cards";
 import { applyCommand, createNewGame, DEFAULT_CONFIG, getBridgeKey, runUntilBlocked } from "./index";
 
 const pickStartingEdges = (capital: HexKey, board: BoardState): EdgeKey[] => {
@@ -92,6 +93,36 @@ const setupToActionPhase = (): { state: GameState; p1Capital: HexKey; p1Edges: E
   state = runUntilBlocked(state);
 
   return { state, p1Capital, p1Edges };
+};
+
+const addCardToHand = (
+  state: GameState,
+  playerId: string,
+  cardDefId: string
+): { state: GameState; instanceId: string } => {
+  const created = createCardInstance(state, cardDefId);
+  const player = created.state.players.find((entry) => entry.id === playerId);
+  if (!player) {
+    throw new Error(`missing player: ${playerId}`);
+  }
+
+  return {
+    state: {
+      ...created.state,
+      players: created.state.players.map((entry) =>
+        entry.id === playerId
+          ? {
+              ...entry,
+              deck: {
+                ...entry.deck,
+                hand: [...entry.deck.hand, created.instanceId]
+              }
+            }
+          : entry
+      )
+    },
+    instanceId: created.instanceId
+  };
 };
 
 describe("action flow", () => {
@@ -195,5 +226,34 @@ describe("action flow", () => {
     const p1 = state.players.find((player) => player.id === "p1");
     expect(p1?.resources.gold).toBe(startingGold - 1);
     expect(p1?.resources.mana).toBe(DEFAULT_CONFIG.MAX_MANA - 1);
+  });
+
+  it("plays a no-target card and discards it after resolution", () => {
+    let { state } = setupToActionPhase();
+    const injected = addCardToHand(state, "p1", "starter.supply_cache");
+    state = injected.state;
+
+    const p1Before = state.players.find((player) => player.id === "p1");
+    if (!p1Before) {
+      throw new Error("missing p1 state");
+    }
+
+    state = applyCommand(
+      state,
+      { type: "SubmitAction", payload: { kind: "card", cardInstanceId: injected.instanceId } },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state");
+    }
+    expect(p1After.resources.gold).toBe(p1Before.resources.gold + 2);
+    expect(p1After.resources.mana).toBe(p1Before.resources.mana - 1);
+    expect(p1After.deck.hand.includes(injected.instanceId)).toBe(false);
+    expect(p1After.deck.discardPile).toContain(injected.instanceId);
   });
 });

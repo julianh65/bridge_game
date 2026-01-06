@@ -4,12 +4,17 @@ import type {
   ActionDeclaration,
   BasicAction,
   BlockState,
+  CardPlayDeclaration,
   GameState,
   PlayerID,
   PlayerState
 } from "./types";
 import { getBridgeKey, hasBridge, isOccupiedByPlayer, wouldExceedTwoPlayers } from "./board";
+import { addCardToBurned, addCardToDiscardPile, removeCardFromHand } from "./cards";
+import { resolveCardEffects, isCardPlayable } from "./card-effects";
 import { resolveImmediateBattles } from "./combat";
+import type { CardDef } from "./content/cards";
+import { getCardDef } from "./content/cards";
 import { emit } from "./events";
 import { addForcesToHex, moveStack } from "./units";
 
@@ -27,16 +32,32 @@ type BuildBridgePlan = {
   key: string;
 };
 
-const getDeclarationCost = (declaration: ActionDeclaration): ActionCost => {
-  if (declaration.kind !== "basic") {
-    return { mana: 0, gold: 0 };
+const getCardDefinition = (state: GameState, cardInstanceId: string) => {
+  const instance = state.cardsByInstanceId[cardInstanceId];
+  if (!instance) {
+    return null;
+  }
+  return getCardDef(instance.defId) ?? null;
+};
+
+const getDeclarationCost = (state: GameState, declaration: ActionDeclaration): ActionCost => {
+  if (declaration.kind === "card") {
+    const card = getCardDefinition(state, declaration.cardInstanceId);
+    if (!card) {
+      return { mana: 0, gold: 0 };
+    }
+    return { mana: card.cost.mana, gold: card.cost.gold ?? 0 };
   }
 
-  if (declaration.action.kind === "capitalReinforce") {
-    return { mana: BASIC_ACTION_MANA_COST, gold: REINFORCE_GOLD_COST };
+  if (declaration.kind === "basic") {
+    if (declaration.action.kind === "capitalReinforce") {
+      return { mana: BASIC_ACTION_MANA_COST, gold: REINFORCE_GOLD_COST };
+    }
+
+    return { mana: BASIC_ACTION_MANA_COST, gold: 0 };
   }
 
-  return { mana: BASIC_ACTION_MANA_COST, gold: 0 };
+  return { mana: 0, gold: 0 };
 };
 
 const getBuildBridgePlan = (
@@ -141,16 +162,41 @@ const isBasicActionValid = (state: GameState, playerId: PlayerID, action: BasicA
   }
 };
 
+const isCardDeclarationValid = (
+  state: GameState,
+  player: PlayerState,
+  declaration: CardPlayDeclaration
+): boolean => {
+  const card = getCardDefinition(state, declaration.cardInstanceId);
+  if (!card) {
+    return false;
+  }
+
+  if (!player.deck.hand.includes(declaration.cardInstanceId)) {
+    return false;
+  }
+
+  return isCardPlayable(card, declaration.targets);
+};
+
 const isDeclarationValid = (
   state: GameState,
-  playerId: PlayerID,
+  player: PlayerState,
   declaration: ActionDeclaration
 ): boolean => {
   if (declaration.kind === "done") {
     return true;
   }
 
-  return isBasicActionValid(state, playerId, declaration.action);
+  if (declaration.kind === "basic") {
+    return isBasicActionValid(state, player.id, declaration.action);
+  }
+
+  if (declaration.kind === "card") {
+    return isCardDeclarationValid(state, player, declaration);
+  }
+
+  return false;
 };
 
 const getLeadOrderedPlayers = (players: PlayerState[], leadSeatIndex: number): PlayerState[] => {
@@ -160,6 +206,18 @@ const getLeadOrderedPlayers = (players: PlayerState[], leadSeatIndex: number): P
     return ordered;
   }
   return [...ordered.slice(leadIndex), ...ordered.slice(0, leadIndex)];
+};
+
+const finalizeCardPlay = (
+  state: GameState,
+  playerId: PlayerID,
+  cardInstanceId: string,
+  card: CardDef | null
+): GameState => {
+  if (card && (card.burn || card.type === "Champion")) {
+    return addCardToBurned(state, playerId, cardInstanceId);
+  }
+  return addCardToDiscardPile(state, playerId, cardInstanceId);
 };
 
 export const createActionStepBlock = (state: GameState): BlockState | null => {
@@ -207,11 +265,11 @@ export const applyActionDeclaration = (
     return state;
   }
 
-  if (!isDeclarationValid(state, playerId, declaration)) {
+  if (!isDeclarationValid(state, player, declaration)) {
     return state;
   }
 
-  const cost = getDeclarationCost(declaration);
+  const cost = getDeclarationCost(state, declaration);
   if (player.resources.mana < cost.mana || player.resources.gold < cost.gold) {
     return state;
   }
@@ -228,7 +286,7 @@ export const applyActionDeclaration = (
       : entry
   );
 
-  return {
+  let nextState: GameState = {
     ...state,
     players: nextPlayers,
     blocks: {
@@ -243,6 +301,12 @@ export const applyActionDeclaration = (
       }
     }
   };
+
+  if (declaration.kind === "card") {
+    nextState = removeCardFromHand(nextState, playerId, declaration.cardInstanceId);
+  }
+
+  return nextState;
 };
 
 export const resolveActionStep = (
@@ -251,24 +315,60 @@ export const resolveActionStep = (
 ): GameState => {
   let nextState = state;
   const orderedPlayers = getLeadOrderedPlayers(state.players, state.leadSeatIndex);
+  const leadOrderIndex = new Map(
+    orderedPlayers.map((player, index) => [player.id, index])
+  );
+
+  const cardPlays: Array<{
+    player: PlayerState;
+    declaration: CardPlayDeclaration;
+    card: CardDef | null;
+  }> = [];
 
   for (const player of orderedPlayers) {
     const declaration = declarations[player.id];
-    if (!declaration) {
-      continue;
-    }
-
-    if (declaration.kind === "done") {
-      nextState = emit(nextState, {
-        type: "action.done",
-        payload: { playerId: player.id }
+    if (declaration?.kind === "card") {
+      cardPlays.push({
+        player,
+        declaration,
+        card: getCardDefinition(state, declaration.cardInstanceId)
       });
-      nextState = {
-        ...nextState,
-        players: nextState.players.map((entry) =>
-          entry.id === player.id ? { ...entry, doneThisRound: true } : entry
-        )
-      };
+    }
+  }
+
+  const orderedCardPlays = [...cardPlays].sort((a, b) => {
+    const aInitiative = a.card?.initiative ?? Number.MAX_SAFE_INTEGER;
+    const bInitiative = b.card?.initiative ?? Number.MAX_SAFE_INTEGER;
+    if (aInitiative !== bInitiative) {
+      return aInitiative - bInitiative;
+    }
+    return (leadOrderIndex.get(a.player.id) ?? 0) - (leadOrderIndex.get(b.player.id) ?? 0);
+  });
+
+  for (const entry of orderedCardPlays) {
+    const cardId = entry.card?.id ?? "unknown";
+    nextState = emit(nextState, {
+      type: `action.card.${cardId}`,
+      payload: {
+        playerId: entry.player.id,
+        cardId
+      }
+    });
+    if (entry.card) {
+      nextState = resolveCardEffects(nextState, entry.player.id, entry.card);
+    }
+    nextState = finalizeCardPlay(
+      nextState,
+      entry.player.id,
+      entry.declaration.cardInstanceId,
+      entry.card
+    );
+    nextState = resolveImmediateBattles(nextState);
+  }
+
+  for (const player of orderedPlayers) {
+    const declaration = declarations[player.id];
+    if (!declaration || declaration.kind !== "basic") {
       continue;
     }
 
@@ -278,6 +378,23 @@ export const resolveActionStep = (
     });
     nextState = resolveBasicAction(nextState, player.id, declaration.action);
     nextState = resolveImmediateBattles(nextState);
+  }
+
+  for (const player of orderedPlayers) {
+    const declaration = declarations[player.id];
+    if (!declaration || declaration.kind !== "done") {
+      continue;
+    }
+    nextState = emit(nextState, {
+      type: "action.done",
+      payload: { playerId: player.id }
+    });
+    nextState = {
+      ...nextState,
+      players: nextState.players.map((entry) =>
+        entry.id === player.id ? { ...entry, doneThisRound: true } : entry
+      )
+    };
   }
 
   return nextState;

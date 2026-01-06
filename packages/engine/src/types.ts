@@ -252,8 +252,17 @@ export type BasicAction =
   | { kind: "march"; from: HexKey; to: HexKey }
   | { kind: "capitalReinforce" };
 
+export type CardPlayTargets = Record<string, unknown> | null;
+
+export type CardPlayDeclaration = {
+  kind: "card";
+  cardInstanceId: CardInstanceID;
+  targets?: CardPlayTargets;
+};
+
 export type ActionDeclaration =
   | { kind: "basic"; action: BasicAction }
+  | CardPlayDeclaration
   | { kind: "done" };
 
 export type Command = {
