@@ -551,13 +551,22 @@ For each mine, assign value:
 
 ### 10.1 Card definitions
 Card defs are data-first so they can be edited without touching engine code.
-For MVP, store them as TypeScript data modules (or JSON) and load them at runtime.
+For MVP, store them as TypeScript data modules and load them at runtime.
+Card IDs are stable and never change once published (e.g., `age2.focus_fire`).
 
-- `id`, `name`, `type`
+UI-facing fields are purely data:
+- `name`, `rulesText`, `cost`, `initiative`, `type`, `tags`, `deck`
+
+Core data fields:
+- `id`, `type`, `deck`
 - `cost: { mana, gold? }`
 - `initiative: number`
 - `burn: boolean` (champions always burn; some spells burn)
-- `effectId: string` (maps to a resolver in code; data-only)
+- `targetSpec` (how to target; do not bury targeting in code)
+- `effects?: EffectSpec[]` (data-first effect array)
+- `resolve?: (ctx, state, card, targets) => void` (only for genuinely weird cards)
+
+All card logic must call engine primitives via `ctx.fx.*`; card code must never mutate state directly.
 
 Champion-specific data:
 - `champion: { hp, attackDice, hitFaces, bounty, goldCostByChampionCount }`
@@ -580,6 +589,8 @@ Reusable actions that most cards compose:
 - board: `deployForces`, `moveStack`, `buildBridge`, `destroyBridge`, `lockBridge`, `unlockBridge`
 - combat: `dealDamageToChampion`, `destroyForcesRandom`, `startBattleNow`
 - effects: `addModifier`, `removeModifier`
+
+Cards invoke these through `ctx.fx.*` from effect processing or `resolve`.
 
 ### 10.4 Prompts
 Prompts are needed for:
