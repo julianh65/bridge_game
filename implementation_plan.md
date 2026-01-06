@@ -343,7 +343,6 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Align special tile counts across rules/spec/config (mines/forges/center per player count).
 - [x] Align mine value distribution across rules/spec/config (values + weights, including current 3/7 entries).
 - [x] Decide `VP_TO_WIN` target and update rules/spec/config (currently 8? vs 10).
-- [ ] Clarify setup TODOs: seating order randomization, faction-specific starter deck vs shared, champion in opening hand.
 - [x] Clarify setup TODOs: seating order randomization, faction-specific starter deck vs shared, champion in opening hand.
 - [x] Fix market preview round mapping typo in rules (Age II Round 6 preview count).
 

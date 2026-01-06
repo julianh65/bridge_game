@@ -147,7 +147,7 @@ For each player, compute distance from their Capital to nearest Mine.
 If max − min > 2, reroll placement.
 8) Setup
 Choose factions.
-Randomize seating order. TODO: Think about what this means and how it should pass around
+Seating order follows lobby seat assignment (no randomization yet).
 Capital draft: in reverse seating order, each player chooses a Capital slot.
 Generate the board:
 Place Center
@@ -156,14 +156,11 @@ Assign Mine Values
 Starting units: each player starts with 4 Forces in their Capital.
 Starting resources: each player starts with 4 gold.
 Deck setup:
-TODO: Probably just have a starter deck for each faction
-Take your common starter deck (§22.1)
-Add your faction starter spell (§22.2)
-Add your faction Champion (§22.3)
+Take the common starter deck (§22.1) shared across factions.
+Add your faction starter spell (§22.2) and faction Champion (§22.3).
+If no faction is chosen, default to Bastion.
 Shuffle to form your draw pile
-Put your faction Champion card into your hand first
-TODO: Should this be the case?
-Then draw until you have 6 cards in hand total
+Put your faction Champion card into your hand first, then draw until you have 6 cards in hand total.
 Starting bridges: each player places 2 Bridges simultaneously.
 Each Bridge must have at least one endpoint within distance 2 of your Capital.
 If multiple players place the same Bridge, it is placed once.

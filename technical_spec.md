@@ -341,6 +341,7 @@ Setup steps:
    - place center at (0,0)
 2. Assign capital slots available (per player count). Capital draft:
    - block: `setup.capitalDraft`
+   - seating order follows lobby seat assignment (no randomization yet)
    - in reverse seating order, each chooses a slot
 3. Procedural placement:
    - place forges (count by P)
@@ -353,6 +354,7 @@ Setup steps:
    - gold = START_GOLD
 6. Deck setup:
    - common starter deck + faction starter spell + faction champion
+   - if faction is unassigned/unknown, resolve to default (Bastion)
    - champion card goes into opening hand first
    - draw until 6
 7. Starting bridges:
