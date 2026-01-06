@@ -72,6 +72,7 @@
 - Game screen now uses a sample engine state (auto-setup) and BoardView renders bridges/units.
 - Implemented PartyKit room server with join/command handling, in-memory game state, revision bumping, and rejoin tokens (`apps/server/src/server.ts`).
 - Added a PartyKit web client hook + Home screen for room join; Lobby/GameScreen now render from live `GameView` data with connection state, board, and logs.
+- Added pre-game waiting panel in the web client and pruned disconnected lobby seats so stale entries do not block new joins.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

@@ -91,6 +91,13 @@ export default function App() {
         </section>
       ) : null}
 
+      {view === "play" && roomConfig && !room.view && room.status === "connected" ? (
+        <section className="panel">
+          <h2>Waiting for players</h2>
+          <p className="muted">The game will start once at least 2 players have joined.</p>
+        </section>
+      ) : null}
+
       {view === "play" && roomConfig && !room.view && room.status === "closed" ? (
         <section className="panel">
           <h2>Disconnected</h2>

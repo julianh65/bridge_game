@@ -172,6 +172,58 @@ export default class Server implements Party.Server {
     }
   }
 
+  private pruneDisconnectedLobbyPlayers(): void {
+    if (this.state) {
+      return;
+    }
+    const activeIds = new Set(
+      this.lobbyPlayers
+        .filter((player) => (this.playerConnections.get(player.id) ?? 0) > 0)
+        .map((player) => player.id)
+    );
+    if (activeIds.size === this.lobbyPlayers.length) {
+      return;
+    }
+    const removedIds = new Set(
+      this.lobbyPlayers.filter((player) => !activeIds.has(player.id)).map((player) => player.id)
+    );
+    this.lobbyPlayers = this.lobbyPlayers.filter((player) => activeIds.has(player.id));
+    for (const [token, playerId] of this.rejoinTokens.entries()) {
+      if (removedIds.has(playerId)) {
+        this.rejoinTokens.delete(token);
+      }
+    }
+    this.syncLobbySeatIndices();
+  }
+
+  private removeLobbyPlayer(playerId: PlayerID): void {
+    if (this.state) {
+      return;
+    }
+    if ((this.playerConnections.get(playerId) ?? 0) > 0) {
+      return;
+    }
+    if (!this.lobbyPlayers.some((player) => player.id === playerId)) {
+      return;
+    }
+    this.lobbyPlayers = this.lobbyPlayers.filter((player) => player.id !== playerId);
+    for (const [token, tokenPlayerId] of this.rejoinTokens.entries()) {
+      if (tokenPlayerId === playerId) {
+        this.rejoinTokens.delete(token);
+      }
+    }
+    this.syncLobbySeatIndices();
+  }
+
+  private nextPlayerId(): PlayerID {
+    const used = new Set(this.lobbyPlayers.map((player) => player.id));
+    let index = 1;
+    while (used.has(`p${index}`)) {
+      index += 1;
+    }
+    return `p${index}`;
+  }
+
   private maybeStartGame(): void {
     if (this.state) {
       return;
@@ -277,13 +329,15 @@ export default class Server implements Party.Server {
       return;
     }
 
+    this.pruneDisconnectedLobbyPlayers();
+
     if (this.lobbyPlayers.length >= MAX_PLAYERS) {
       this.sendError(connection, "lobby is full");
       return;
     }
 
     const seatIndex = this.lobbyPlayers.length;
-    const playerId = `p${seatIndex + 1}`;
+    const playerId = this.nextPlayerId();
     const name =
       typeof message.name === "string" && message.name.trim().length > 0
         ? message.name.trim()
@@ -374,7 +428,9 @@ export default class Server implements Party.Server {
       this.unregisterPlayerConnection(meta.playerId);
       if (this.state) {
         this.broadcastUpdate();
+        return;
       }
+      this.removeLobbyPlayer(meta.playerId);
     }
   }
 }
