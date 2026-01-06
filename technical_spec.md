@@ -362,7 +362,7 @@ For each player:
 Market row size = P cards.
 
 Preview behavior should be config-driven by round number:
-- `previewNextAgeCountByRound[round] -> N`
+- `marketPreviewByRound[round] -> N`
 - Default mapping (tunable):
   - R1: 0
   - R2: 1

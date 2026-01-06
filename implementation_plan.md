@@ -136,7 +136,7 @@ Goal: get the board game “moving pieces and fighting” ASAP.
 ## Milestone 4 — Multiplayer server + room protocol + minimal UI
 
 ### Tasks (server)
-- [x] Implement PartyKit room server (auto-starts at 2 connected players; engine handles legality checks):
+- [x] Implement PartyKit room server (host-controlled start; engine handles legality checks):
   - create room state
   - handle join (assign seat or spectator)
   - handle command messages -> apply to engine -> broadcast update
@@ -150,10 +150,10 @@ Goal: get the board game “moving pieces and fighting” ASAP.
 - [x] Implement Home + Lobby:
   - [x] create/join room UI
   - [x] seat list
-  - [x] auto-start at 2 connected players (no ready UI) (to be replaced by host start)
-- [ ] Lobby polish:
+  - [x] host-controlled start with pre-game lobby snapshot
+- [x] Lobby polish:
   - [x] room code copy to clipboard
-  - [ ] board preview panel + reroll control (requires server command)
+  - [x] board preview panel + reroll control
 - [x] Implement Game Screen minimal:
   - [x] render board (SVG hexes)
   - [x] show units + bridges
@@ -171,20 +171,20 @@ Goal: get the board game “moving pieces and fighting” ASAP.
 Goal: allow two browsers to complete setup and reach the action phase quickly.
 
 ### Tasks (server)
-- [ ] Replace auto-start with host-controlled start (agent2 work).
-- [ ] Optional dev-only auto-setup command (server-side) for fast testing.
+- [x] Replace auto-start with host-controlled start (agent2 work).
+- [x] Optional dev-only auto-setup command (server-side) for fast testing.
 
 ### Tasks (web)
-- [ ] Setup UI for `setup.capitalDraft`:
+- [x] Setup UI for `setup.capitalDraft`:
   - show available slots
   - submit pick
-- [ ] Setup UI for `setup.startingBridges`:
+- [x] Setup UI for `setup.startingBridges`:
   - allow edge input or click to place bridges
   - show remaining bridges per player
-- [ ] Setup UI for `setup.freeStartingCardPick`:
+- [x] Setup UI for `setup.freeStartingCardPick`:
   - show 3 offers
   - submit pick
-- [ ] Optional “Auto-setup” button (dev/testing) to submit valid choices.
+- [x] Optional “Auto-setup” button (dev/testing) to submit valid choices.
 
 ### Acceptance criteria
 - Two browsers can join a room, complete setup (manual or auto), and reach `round.action`.
@@ -231,24 +231,24 @@ Goal: make the action phase match the rules: simultaneous declarations + initiat
 ## Milestone 6 — Market phase + collection prompts + power deck
 
 ### Tasks (engine)
-- Implement market reveal with preview count per round (config-driven mapping).
-- Implement bid collection block:
+- [x] Implement market reveal with preview count per round (config-driven mapping).
+- [ ] Implement bid collection block:
   - accept buy/pass bids
   - resolve with tie-break roll-offs
   - enforce “one market win per round”
   - implement pass pot logic
-- Implement gain-card insertion random into draw pile.
-- Implement collection prompts:
+- [ ] Implement gain-card insertion random into draw pile.
+- [ ] Implement collection prompts:
   - mines: gold or mine draft (reveal 1 market card -> choose gain or not)
   - forges: reforge (scrap 1) or forge draft (reveal 3 -> gain 1)
   - center: power pick (reveal 2 -> gain 1)
 
 ### Tasks (web)
-- Market UI:
+- [ ] Market UI:
   - show row cards
   - for current card, show bid controls
   - show reveal + results in log
-- Collection UI:
+- [ ] Collection UI:
   - present tile-based choices and resolve prompts
 
 ### Acceptance criteria

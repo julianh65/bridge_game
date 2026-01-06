@@ -12,6 +12,7 @@
 
 ## Active tasks
 None.
+- [in progress] owner: agent1; scope: implement market bid collection block (buy/pass, tie-break roll-offs, pass pot, one-win-per-round) with engine tests; files: packages/engine/src/engine.ts, packages/engine/src/market.ts, packages/engine/src/blocks.ts, packages/engine/src/types.ts, packages/engine/src/market.test.ts
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -33,6 +34,7 @@ None.
 - Added a Lobby polish item to `implementation_plan.md` for board preview + reroll (future work).
 - Documented the new Cards debug view in `docs/cards.md`.
 - Reprioritized setup UX into a new Milestone 4.5 (playtest unblock) in `implementation_plan.md`.
+- Audited docs for stale items (implementation plan checkboxes, market preview naming/mapping, dev nav notes).
 
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.
@@ -65,7 +67,7 @@ None.
 
 ## Milestone 2 progress
 - Added base board generation (axial hex grid, center tile) and capital slot mapping with tests.
-- Added setup flow blocks and commands for capital draft, starting bridges, and free starting card; setup now advances to `round.reset` with tests. Free starting card uses a placeholder pool in config (to be replaced by real card defs/deck).
+- Added setup flow blocks and commands for capital draft, starting bridges, and free starting card; setup now advances to `round.reset` with tests. Free starting card uses the configured card pool (now real card IDs).
 - Added starting forces + starter deck initialization after capital draft (defaulting to Bastion if no faction chosen), with champion in hand and draw to 6 before starting bridges.
 - Wired special tile placement into setup after capital draft (mines/forges now land on the game board with mine values assigned).
 - Added procedural placement for forges/mines (including home mines) and mine values with deterministic tests.
@@ -93,7 +95,6 @@ None.
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.
 - Board inspector now labels special tiles (CAP/FORGE/MINE/CTR) on the hexes.
 - Fixed hex fill styles so tiles render in their intended colors.
-- Added initiative gradient styling to the Cards browser initiative chip.
 
 ## Milestone 4 progress
 - Added a game screen placeholder layout in `apps/web` (board area + sidebar stubs), no server wiring yet.

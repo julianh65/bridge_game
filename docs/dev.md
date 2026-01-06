@@ -5,7 +5,7 @@
   - `npm run dev:web`
 - Open `http://localhost:5173`.
 - Hot reload: edits in `apps/web/src` refresh automatically (Vite HMR).
-- Use the view toggle in the top nav to switch between Play/Board Debug.
+- Use the view toggle in the top nav to switch between Play/Board Debug/Cards.
 - Play mode connects to PartyKit rooms via the Home screen.
 
 ## PartyKit server (room prototype)

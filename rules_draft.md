@@ -1,3 +1,6 @@
+The Plot / Story / Vibe 🙂
+
+
 Bridgefront — Complete Ruleset (Stand‑Alone v3)
 A simultaneous‑planning, hex‑board, bridge‑network, deck‑building wargame for 2–6 players.
 1) Core Idea
@@ -47,7 +50,6 @@ If you need to draw and your draw pile is empty: shuffle discard into draw pile.
 HAND_LIMIT = 10. If you are at HAND_LIMIT and draw then those cards get sent to the discard pile.
 2.6 Initiative
 Each card has an Initiative number. Lower numbers resolve earlier.
-Note: Some cards list two initiative numbers in this draft; the second is a placeholder for later tuning and should be replaced with a single final value.
 2.7 Dice
 All dice are standard d6.
 “Roll 1 die” means roll 1d6.
@@ -65,8 +67,8 @@ More Gold
 4) Board, Bridges, and Movement
 4.1 Board Size
 Hexagon-shaped hex grid:
-2 players: radius R = 3 (including center, diameter 7)
-3-6 players: radius R = 4 (diameter 9)
+2–3 players: radius R = 4 (Including Center, that is to say diameter 7)
+4–6 players: radius R = 5 (Diameter 9)
 4.2 Bridges
 A Bridge is an edge connecting two adjacent hexes.
 Movement between adjacent hexes is allowed only if a Bridge exists on that edge, unless a card/Champion says it ignores Bridges.
@@ -87,7 +89,12 @@ Use these for:
 3 players: {C0, C2, C4} 
 4 players: {C0, C1, C3, C4}
 6 players: {C0, C1, C2, C3, C4, C5}
-5 players: {C0, C1, C2, C3, C4} (omit C5)
+5 players (R = 5): use these 5 fixed outer-ring slots:
+S1: (-5, 0)
+S2: (-4, 5)
+S3: (2, 2)
+S4: (5, -3)
+S5: (1, -5)
 Players draft Capital slots from the available set during setup.
 6) Special Tiles
 6.1 Tile Counts (recommended)
@@ -207,22 +214,21 @@ For each player:
 Gain +1 gold
 Set mana to MAX_MANA
 Draw until you have 6 cards in hand
-If a draw would exceed HAND_LIMIT, the drawn cards go straight to the discard pile (no choice).
+If hand > 10, discard down to 10 immediately
 11) Market Bid‑Draft Phase
 Let P = number of players.
 11.0 Soft Age Preview (Market only)
 When revealing the Market row, Ages I and II “preview” the next Age. That is to say that during earlier rounds, some subset of the cards that are bid-able will be from the next age.
 Determine Preview Count N:
-Default mapping (tunable):
-Round 1 → 0 next‑Age cards
-Round 2 → 1 next‑Age cards
-Round 3 → 1 next‑Age cards
-Round 4 → 0 next‑Age cards
-Round 5 → 1 next‑Age cards
+Default mapping (config-driven; clamp to P):
+Round 1 → 0 next‑Age card
+Round 2 → 1 next‑Age card
+Round 3 → 1 next‑Age card
+Round 4 → 0 next‑Age card
+Round 5 → 1 next‑Age card
 Round 6 → 2 next‑Age cards
 Round 7 → 2 next‑Age cards
-Age III → 0 next‑Age cards
-N is capped at P.
+Round 8+ → 0 next‑Age cards
 Reveal:
 Reveal N cards from the next Age Market deck (Age II previews in Age I; Age III previews in Age II)
 Reveal (P − N) cards from the current Age Market deck
@@ -274,7 +280,6 @@ Cost: 1 mana + 1 gold
 Deploy 1 Force into your Capital.
 If enemies are in your Capital, this contributes to the siege (no immediate battle).
 12.3 Reveal and Resolve
-Lead starts with the first player in seat order in Round 1 and rotates clockwise each round.
 After all players reveal their choice for the Action Step:
 Resolve all played cards in ascending Initiative (lower first)
 Resolve all Basic Actions in seat order, starting from Lead and moving clockwise
@@ -399,8 +404,7 @@ Passive B — Wings: If you occupy the center you may deploy to it as if it were
 21.4 Miners (Mines / Gold Guys)
 Passive A — Ore Cut: Mines you collect from each give +1 gold.
 Passive B — Mine Militia: When defending in a mine your Forces hit on 1-3.
-Passive C — Win all ties in card bids
-// slightly under powered?
+Passive C — Deep tunnels: All occupied mines are considered adjacent and connected.
 21.5 Card MFs (Planning)
 Passive A — Quiet Study: At the start of each round, after drawing to 6, you may discard up to 2 cards then draw that many.
 Passive C — When you have the option to pick from n cards, pick from n + 1.
@@ -459,7 +463,7 @@ Zap ×1
 Cost: 1 mana
 Init: 20 / 100
 Type: Order
-Deal 1 damage to any Champion
+Deal 1 damage to any Champion within 1 cell of a cell you occupy.
 22.2 Faction Unique Starter Spells (1 each)
 Bastion — Hold the Line
 Cost: 1 mana
@@ -568,6 +572,7 @@ Move 1 stack 1 hex ignoring Bridges.
 Column Advance
 Cost: 2 mana — Init: 55 / 120 — Type: Order
 Move 1 stack up to 3 along Bridges; must stop if it enters any occupied hex.
+
 B) Recruitment (5)
 Recruit Detachment
 Cost: 2 mana + 1 gold — Init: 45 / 115 — Type: Order
@@ -584,6 +589,16 @@ Deploy 3 Forces to a Mine or Forge you occupy. OR 1 Force to your Capital.
 Frontier Claim
 Cost: 2 mana + 2 gold — Init: 55 / 130 — Type: Order
 Deploy 4 Forces to an empty hex within dist 1 of your Capital (Ignoring bridges)
+Propaganda Recruitment
+Cost: 1 mana + 2 gold — Init: 55 / 130 — Type: Order
+Deploy 0 forces into your capital. Increase the amount of forces by 1 every time this card is played. (Max 10)
+National Service
+Cost: 0 mana + 1 gold — Init: 55 / 130 — Type: Order
+Deploy 1 force into your capital.
+Future Investment
+Cost: 1 mana + 2 gold — Init: 55 / 130 — Type: Order
+Deploy 2 forcs into your capital. Increase the amount of forces by 1 every time this card is discarded. (Max 10). Burn.
+
 C) Economy (5)
 Prospecting
 Cost: 1 mana — Init: 30 / 100 — Type: Order
@@ -599,17 +614,30 @@ Cost: 1 mana — Init: 50 / 125 — Type: Order
 Gain +1 gold. Draw 1.
 D) Deckcraft
 Quick Study
-Cost: 1 mana — Init: 25 / 95 — Type: Order
+Cost: 1 mana — Init: 25 / 95 — Type: Spell
 Draw 2.
 Cycle Notes
-Cost: 1 mana — Init: 45 / 110 — Type: Order
+Cost: 1 mana — Init: 45 / 110 — Type: Spell
 Draw 2, discard 1.
 Hard Mulligan
-Cost: 2 mana — Init: 70 / 140 — Type: Order
+Cost: 2 mana — Init: 70 / 140 — Type: Spell
 Discard up to 3 cards, then draw that many.
 Make a Play
-Cost: 0 mana — Init: 70 / 140 — Type: Order
+Cost: 0 mana — Init: 70 / 140 — Type: Spell
 Gain 1 mana (BURN)
+Spellcaster
+Cost: 1 mana — Init: 70 / 140 — Type: Spell
+Draw 1 card, if you draw a spell, draw 2 more.
+Small Hands
+Cost: 1 mana — Init: 70 / 140 — Type: Spell
+If this is the last card in your hand, draw 3 cards.
+Paid Logistics
+Cost: 0 mana + 6 gold — Init: 70 / 140 — Type: Spell
+Gain 1 mana.
+Precise Planning
+Cost: 1 mana— Init: 70 / 140 — Type: Spell
+If there are exactly 0 cards in your draw pile. Draw 3 and gain 1 mana.
+
 E) Combat / Tactics
 Entrench
 Cost: 1 mana — Init: 40 / 110 — Type: Spell
@@ -636,6 +664,9 @@ Build 2 Bridges, each touching a hex you occupy.
 Bridge Trap
 Cost: 1 mana — Init: 55 / 130 — Type: Spell
 Choose a Bridge adjacent to a hex you occupy. The first enemy stack to cross it this round loses 1 Force (random) before any battle.
+Tunnel Network
+Cost: 1 mana — Init: 80 / 155 — Type: Order
+Your capital is considered connected to the center by a bridge until the end of the round. Burn.
 G) Synergy / Gambits
 Dice: Forked Road
 Cost: 1 mana — Init: 30 / 100 — Type: Order
@@ -683,7 +714,15 @@ Brute
 Cost: 2 mana — Gold 2/4/6 — Init: 35 / 105 — Type: Champion
 HP 6 — 1d hit 1–3 — Bounty 2
 If there is no enemy champion in this hex, roll 2 extra dice (total 3) that hit on 1-3
+Sergeant
+Cost: 1 mana — Gold 1/1/1 — Init: 35 / 105 — Type: Champion
+HP 3 — 1d hit 1–3 — Bounty 0
+Traitor
+Cost: 1 mana — Gold 1/1/1 — Init: 35 / 105 — Type: Champion
+HP 5 — 3d hit 1–4 — Bounty 3
+Upon death instantly set the owners mana to 0.
 23.2 Age II Market (47 cards)
+Note to self: these should be cool abilities as well as a mix of incremental more powerful versions of the age I market cards
 A) Movement (5)
 Triple March
 Cost: 1 mana — Init: 40 / 105 — Type: Order
@@ -697,6 +736,9 @@ Move 1 Champion to any occupied hex. Heal it 1 HP.
 Breakthrough Line
 Cost: 2 mana — Init: 75 / 145 — Type: Order
 Move 1 stack up to 2 along Bridges. If it wins a battle this round, draw 2 at Cleanup.
+Set to Skirmish
+Cost: 1 mana — Init: 75 / 145 — Type: Order
+Select a hex, until the end of the round iif a battle were to happen in that hex with your forces, all forces and your champion retreat to a random unoccupied adjacent hex (ignoring bridges). If no hexes are unoccupied all forces and champion die.
 B) Recruitment (5)
 Battalion Contract
 Cost: 3 mana + 2 gold — Init: 80 / 155 — Type: Order
@@ -710,6 +752,16 @@ Deploy 4 Forces to a Mine/Forge you occupy or your Capital.
 Conscription Drive
 Cost: 1 mana + 1 gold — Init: 70 / 145 — Type: Order
 Deploy 5 Forces to your Capital, then discard 1 card.
+Miner Army
+Cost: 1 mana + 1 gold— Init: 70 / 145 — Type: Order
+Deploy 2 forces into all mains you currently occupy.
+Command Logistics
+Cost: 2 mana + 1 gold— Init: 70 / 145 — Type: Order
+Deploy 1 force into your capital for every card in your hand.
+Swam Logistics
+Cost: 2 mana + 1 gold mana— Init: 70 / 145 — Type: Order
+Deploy 1 force into your capital for every card you’ve played this round
+
 C) Economy (5)
 War Taxes
 Cost: 1 mana — Init: 60 / 135 — Type: Order
@@ -736,6 +788,12 @@ Burn 1 card from your hand.
 Tactical Reorder
 Cost: 1 mana — Init: 50 / 120 — Type: Order
 Draw 1; you may place 1 card from hand on top of your draw pile.
+Stall
+Cost: 0 mana — Init: 50 / 120 — Type: Order
+Do nothing.
+Interrupt
+Cost: 1 mana — Init: 50 / 120 — Type: Order
+Draw 2 cards. All other players draw 1 card.
 E) Combat / Tactics (5)
 Focus Fire
 Cost: 1 mana — Init: 30 / 95 — Type: Spell
@@ -749,9 +807,18 @@ Choose a friendly Champion. It can’t be targeted by enemy cards this round.
 Frenzy
 Cost: 1 mana — Init: 35 / 100 — Type: Spell
 Friendly Champion rolls +2 dice this round; it takes 2 damage immediately.
+Repair Orders
+Cost: 1 mana — Init: 35 / 100 — Type: Spell
+All your champions heal 1.
+Gold Plated Armor
+Cost: 2 mana — Init: 35 / 100 — Type: Spell
+Select a champion,this round, every time it takes 1 damage lose 2 gold and prevent that damage.
 Mortar Shot
 Cost: 2 mana — Init: very high initial like 300 so it’s dodgeable — Type: Spell
 Target a hex within distance 2 of your forces, 50% chance it hits that hex, 50%/num_adjacent_hexes chance each it hits one of the surrounding hexes. Destroy 4 forces and deal 2 damage to any champions in that hex.
+Champion Recall
+Cost: 2 mana — Init: 35 / 100 — Type: Spell
+Recall a champion to your hand.
 F) Bridges / Terrain
 Demolish Bridge
 Cost: 2 mana — Init: 55 / 125 — Type: Order
@@ -765,6 +832,9 @@ Build 3 Bridges, each touching a hex you occupy.
 Wormhole Link
 Cost: 2 mana — Init: 80 / 155 — Type: Spell
 Choose 2 hexes within dist 3 of your Champions; treat as adjacent until the end of round. BURN
+Bridge Pivot
+Cost: 1 mana — Init: 80 / 155 — Type: Spell
+Choose a hex, destroy one bridge connected to that hex and place a new bridge connected to that hex.
 G) Synergy / Gambits
 Foundry Heist
 Cost: 2 mana — Init: 50 / 120 — Type: Order
@@ -782,7 +852,7 @@ Roll 1 die.
 6: Gain 9 gold
 Encirclement
 Cost: 1 mana — Init: 70 / 145 — Type: Spell
-Choose an enemy‑occupied hex. If you occupy at least three different adjacent hexes to it, destroy up to 5 enemy Forces there.
+Choose an enemy‑occupied hex. If you occupy at least three different adjacent hexes to it, destroy up to 6 enemy Forces there.
 H) Victory (4) — +1 or +2 Permanent VP when gained
 Strategic Triumph
 Cost: 1 mana — Init: 55 / 125 — Type: Victory
@@ -794,13 +864,17 @@ Banner of Resolve
 Cost: 1 mana — Init: 75 / 145 — Type: Victory
 When played: Deploy 2 forces to your capital.
 Big VP Gainer
-Cost: 1 mana — Init: 75 / 145 — Type: Victory
+Cost: 0 mana — Init: 75 / 145 — Type: Victory
 Gives +2 VP
 When played: No Effect
 I) Champions (8)
 Jet Striker
 Cost: 2 mana — Gold 1/3/5 — Init: 45 / 115 — Type: Champion
-HP 4 — 3d hit 1–2 — Bounty 3
+HP 5 — 3d hit 1–2 — Bounty 3
+Guerilla Native Mercenary
+Cost: 2 mana — Gold 1/3/5 — Init: 45 / 115 — Type: Champion
+HP 4 — 2d hit 1–2 — Bounty 3
+Can be deployed to any unoccupied hex on the board (in addition to being able to be deployed to anywhere you occupy)
 Tax Reaver
 Cost: 2 mana — Gold 2/4/6 — Init: 70 / 145 — Type: Champion
 HP 6 — 2d hit 1–3 — Bounty 3
@@ -820,140 +894,121 @@ If there are no friendly forces roll 3 extra dice.
 Reliable Veteran
 Cost: 2 mana — Gold 2/4/6 — Init: 65 / 135 — Type: Champion
 HP 6 — 1d hit 1–5 — Bounty 3
+Exodia
+Cost: 2 mana — Gold 0/0/0 — Init: 65 / 135 — Type: Champion
+HP 15 — 5d hit 1–4 — Bounty 5
+Can only be played while player has 3 champions or more on the board. Destroy all of players champions.
+Capturer
+Cost: 1 mana — Gold 1/1/1 — Init: 35 / 105 — Type: Champion
+HP 5 — 2d hit 1–3 — Bounty 0
+Everytime this champion wins a battle, deploy 1 force to the hex the champion occupies
 23.3 Age III Market (47 cards)
+Note to self: there should be less of these and they should be not incremental improvements as much but more interesting ender type stuff. And there should be more VPs in this deck
 A) Movement (5)
 Grand Maneuver
 Cost: 3 mana — Init: 45 / 110 — Type: Order
 Move 2 stacks up to 3 along Bridges each.
 Ghost Step
-Cost: 2 mana — Init: 30 / 95 — Type: Order
-Move 1 stack up to 3 ignoring Bridges. Burn this card.
-Warp Column
-Cost: 2 mana — Init: 60 / 130 — Type: Order
-Move 1 stack up to 2 ignoring Bridges; must end adjacent to one of your Champions.
+Cost: 1 mana — Init: 30 / 95 — Type: Order
+Move 1 stack up to 2 ignoring Bridges. Burn.
 Final Push
-Cost: 2 mana — Init: 55 / 125 — Type: Order
-Move 1 stack up to 2 along Bridges; if it ends on Center or Forge, draw 1.
+Cost: 1 mana — Init: 55 / 125 — Type: Order
+Move 1 stack up to 1 along Bridges; if it ends in combat draw 2.
 Extraction Run
 Cost: 1 mana — Init: 70 / 145 — Type: Order
-Move 1 Champion to a Mine you occupy (ignores Bridges). If moved, gain +1 gold.
+Move 1 Champion to a Mine. Gain +1 gold.
 B) Recruitment (5)
 Deep Reserves
-Cost: 3 mana + 3 gold — Init: 80 / 155 — Type: Order
-Deploy 9 Forces to your Capital.
+Cost: 2 mana + 2 gold — Init: 80 / 155 — Type: Order
+Deploy 8 Forces to your Capital.
 Endless Conscription
-Cost: 2 mana + 2 gold — Init: 60 / 130 — Type: Order
-Deploy X Forces to your Capital where X = 4 + cards you’ve played this round.
+Cost: 2 mana + 1 gold — Init: 60 / 130 — Type: Order
+Deploy X Forces to your Capital where X is the number of cards in your hand.
 Elite Guard
 Cost: 2 mana + 3 gold — Init: 50 / 120 — Type: Order
 Deploy 5 Forces to your Capital; heal a Champion there 2.
 Forward Legion
-Cost: 2 mana + 2 gold — Init: 70 / 145 — Type: Order
-Deploy 4 Forces to a hex you occupy that contains a Champion. Then that stack may immediately March 1 for free.
-Last Reserves
-Cost: 1 mana + 3 gold — Init: 40 / 110 — Type: Order
-Deploy 4 Forces to your Capital and immediately March 1 with them.
+Cost: 1 mana + 3 gold — Init: 70 / 145 — Type: Order
+Deploy 5 Forces to a hex you occupy.
 C) Economy (5)
 Royal Mint
-Cost: 2 mana — Init: 65 / 135 — Type: Order
+Cost: 1 mana — Init: 65 / 135 — Type: Order
 Gain +5 gold.
-Plunder
-Cost: 1 mana — Init: 55 / 125 — Type: Order
-If you occupy an enemy Capital, gain +5 gold; else gain +2.
 Market Squeeze
 Cost: 2 mana — Init: 45 / 115 — Type: Order
-Choose opponent: they lose up to 2 gold; you gain that much.
-Blood Price
-Cost: 1 mana — Init: 75 / 150 — Type: Order
-Gain +2 gold; if an enemy Champion died this round, gain +2 more.
+Choose opponent: they lose up to 3 gold; you gain that much.
 Black Market Pull
+Cost: 1 mana — Init: 35 / 100 — Type: Order
+Gain 2 random Age III Market card to your hand. Burn this card.
+Pulling Strings
 Cost: 2 mana — Init: 35 / 100 — Type: Order
-Gain 1 random Age III Market card to your draw pile. Burn this card.
+Whenever two other players fight a battle this round gain 3 gold.
 D) Deckcraft (5)
 Master Plan
-Cost: 2 mana — Init: 30 / 95 — Type: Order
+Cost: 1 mana — Init: 30 / 95 — Type: Order
 Draw 4, discard 2.
 Perfect Cycle
-Cost: 2 mana — Init: 45 / 110 — Type: Order
-Look top 6; put 3 in hand, discard 3.
-Erase Weakness
-Cost: 2 mana — Init: 70 / 145 — Type: Order
-Scrap 1 from hand; gain +1 gold.
+Cost: 1 mana — Init: 45 / 110 — Type: Order
+Draw 1, Burn 1.
 Tome of Orders
 Cost: 1 mana — Init: 60 / 130 — Type: Order
 Draw 2; place 1 card from hand on top of your draw pile.
 Last Lecture
-Cost: 3 mana — Init: 80 / 155 — Type: Order
+Cost: 2 mana — Init: 80 / 155 — Type: Order
 Draw 5. Burn this card.
-E) Combat / Tactics (5)
-Cataclysm Shot
-Cost: 3 mana — Init: 55 / 120 — Type: Spell
-Choose a hex within dist 2 of your Champion: destroy all Forces there; Champions there take 2 damage.
+E) Combat / Tactics
 Execution Order
 Cost: 2 mana — Init: 35 / 100 — Type: Spell
 Deal 3 damage to an enemy Champion within dist 2 of your Champion.
-Doom Mark
-Cost: 1 mana — Init: 25 / 90 — Type: Spell
-Mark enemy Champion within dist 3 of your Champion. If it dies this round, gain +5 gold.
-War Cry
-Cost: 2 mana — Init: 40 / 105 — Type: Spell
-In your next battle this round, your Forces hit on 1–4 in combat round 1.
 Attrition
+Cost: 1 mana — Init: 65 / 135 — Type: Spell
+Enemy stack within dist 1 of your Champion: destroy up to 3 enemy Forces (random). Champions there take 1 damage.
+Civilizational Hero
 Cost: 2 mana — Init: 65 / 135 — Type: Spell
-Enemy stack within dist 2 of your Champion: destroy up to 5 enemy Forces (random). Champions there take 1 damage.
-F) Bridges / Terrain (5)
+If you have only 1 champion on the board, permanently double it’s health and then max heal it. BURN.
+Complete Encirclement
+Cost: 2 mana — Init: 70 / 145 — Type: Spell
+Choose an enemy‑occupied hex. If you occupy at least four different adjacent hexes to it, destroy all forces in that hex and deal 3 damage to all champions.
+F) Bridges / Terrain
 Ruin the Span
 Cost: 3 mana — Init: 60 / 130 — Type: Order
 Destroy 2 Bridges anywhere.
-Total Blackout
-Cost: 2 mana — Init: 30 / 95 — Type: Spell
-Until end of round, Bridges cannot be built or destroyed.
-Bridge Fortress
-Cost: 2 mana — Init: 75 / 150 — Type: Order
-Build 1 Bridge; deploy 2 Forces split between its endpoints.
 Wormhole Gate
 Cost: 3 mana — Init: 45 / 110 — Type: Spell
-Choose 2 hexes within dist 4 of your Champions; treat as adjacent this round. Burn this card.
-Spanbreaker Raid
-Cost: 2 mana — Init: 80 / 155 — Type: Order
-Destroy a Bridge adjacent to your Champion; then move that Champion’s stack up to 2 along Bridges.
+Choose 2 hexes anywhere on the board treat as adjacent this round. Burn.
 G) Synergy / Gambits (5)
 Siege Writ
-Cost: 2 mana — Init: 70 / 145 — Type: Spell
-If you will be the Attacker in a Capital siege this round: before combat round 1, destroy up to 4 defending Forces there (random).
+Cost: 1 mana — Init: 70 / 145 — Type: Spell
+If you occupy a hex adjacent to a capital, destroy 4 forces in that hex.
 Last Contract
-Cost: 1 mana — Init: 20 / 90 — Type: Order
-The next Champion card you play this round costs 0 gold (you still pay mana). Burn this card.
-Blood Trail
-Cost: 2 mana — Init: 55 / 125 — Type: Order
-If an enemy Champion died this round, move 1 stack up to 3 along Bridges.
-Dice: Overdrill Protocol
-Cost: 1 mana + 1 gold — Init: 45 / 115 — Type: Order
-Roll 1 die. Then choose one option from your result:
-1–2: (A) Increase a Mine you occupy by +1 value (max 6), OR (B) Gain +3 gold
-3–4: (A) Increase a Mine you occupy by +1 value AND gain +1 gold, OR (B) Deploy 4 Forces to your Capital
-5–6: (A) Gain gold equal to the Mine Value of a Mine you occupy, OR (B) Destroy up to 3 enemy Forces on a Mine within dist 2 of your Champion (random)
-Forgeblood Engine
-Cost: 2 mana — Init: 60 / 130 — Type: Spell
-If you occupy a Forge: your first card played after Collection this round costs −1 mana (min 1). (Still ends this round.)
-H) Victory (4) — +1 Permanent VP when gained
-Monument Plan
+Cost: 0 mana — Init: 20 / 90 — Type: Order
+The next Champion card you play this round costs 0 gold and 0 mana. Burn.
+Mana Surge
+Cost: 0 mana — Init: 55 / 125 — Type: Spell
+Gain 1 mana.
+H) Victory (4)
+Monument Plan (2 copies)
 Cost: 1 mana — Init: 60 / 130 — Type: Victory
-When played: Scry 2.
-Conquest Record
+Gives + 2 VP
+When played: Discard 1 card.
+Conquest Record (2 copies)
 Cost: 1 mana — Init: 50 / 120 — Type: Victory
-When played: Gain +1 gold.
-Forge Inscription
-Cost: 1 mana — Init: 40 / 110 — Type: Victory
-When played: If you occupy a Forge, draw 1 then discard 1.
-Final Oath
+When played: Gain +3 gold.
+Final Oath (2 copies)
 Cost: 1 mana — Init: 35 / 105 — Type: Victory
-When played: Heal a friendly Champion anywhere 1.
+When played: Heal a friendly Champion anywhere 2.
+Timer
+Cost: 4 mana — Init: 35 / 105 — Type: Victory
+Must be played when your own mana is 5 or greater. At the end of the round if you did not lose any battles add 3 permanent VPs. (Burn)
+
 I) Champions (8)
 Titan Vanguard
 Cost: 3 mana — Gold 2/4/6 — Init: 70 / 145 — Type: Champion
-HP 9 — 3d hit 1–3 — Bounty 4
-Juggernaut (1/battle): ignore the first hit assigned to Titan Vanguard.
+HP 10 — 2d hit 1–3 — Bounty 5
+Center Bannerman
+Cost: 2 mana — Gold 2/4/6 — Init: 55 / 125 — Type: Champion
+HP 3 — 2d hit 1–2 — Bounty 5
+Worth 1 VP while occupying the center.
 Blood Banker
 Cost: 2 mana — Gold 2/4/6 — Init: 55 / 125 — Type: Champion
 HP 7 — 2d hit 1–3 — Bounty 3
@@ -962,41 +1017,33 @@ Stormcaller
 Cost: 3 mana — Gold 2/4/6 — Init: 45 / 110 — Type: Champion
 HP 8 — 3d hit 1–2 — Bounty 4
 Tempest (1/round): deal 1 damage to every enemy Champion in adjacent hexes.
-Spanbreaker Titan
-Cost: 3 mana — Gold 3/5/7 — Init: 80 / 155 — Type: Champion
-HP 9 — 2d hit 1–3 — Bounty 4
-On deploy: destroy up to 2 Bridges within dist 3.
 Grand Strategist
 Cost: 2 mana — Gold 2/4/6 — Init: 25 / 90 — Type: Champion
 HP 6 — 2d hit 1–3 — Bounty 3
-Tactical Hand (1/round): in a battle it’s in, you may assign 1 of your hits.
+Tactical Hand (1/round): in a battle it’s in, you may assign 3 of your hits.
 Capital Breaker
 Cost: 3 mana — Gold 2/4/6 — Init: 60 / 130 — Type: Champion
 HP 8 — 3d hit 1–3 — Bounty 4
 Breach — In Capital sieges this round, your Forces in that siege hit on 1–3 in combat round 1.
-Void Agent
-Cost: 2 mana — Gold 2/4/6 — Init: 40 / 105 — Type: Champion
-HP 6 — 3d hit 1–2 — Bounty 3
-Slipstep — Once this round, this Champion may move 2 hexes ignoring Bridges (declare the path; stop if it enters battle).
 24) Power Decks (Center Picks)
 Center uses the current Age Power deck.
 Power Pick: Reveal 2, choose 1 to gain (random insert), put the other on bottom.
 Power decks are about 50% Victory cards (Power‑Victory are still Victory: +1 Permanent VP when gained).
-Note: These should mainly be burnable cards, like little extra powerful powers
+Note: These should mainly be burnable cards, like little extra powerful powers that you can one off use. But they should be decently strong
 24.1 Age I Power (12)
 Non‑Victory Power (6)
 Command Surge
 Cost: 0 mana — Init: 10 / 80 — Type: Spell
 Gain +2 mana. Burn.
 Instant Bridge Net
-Cost: 2 mana — Init: 35 / 105 — Type: Order
-Build 3 Bridges, each touching a hex you occupy.
+Cost: 1 mana — Init: 35 / 105 — Type: Order
+Build 3 Bridges, each touching a hex you occupy. Burn.
 Secret Plans
 Cost: 1 mana — Init: 15 / 85 — Type: Order
-Draw 3, discard 2.
+Draw 4. Burn.
 Emergency Pay
 Cost: 1 mana — Init: 50 / 120 — Type: Order
-Gain +4 gold. Burn.
+Gain +5 gold. Burn.
 Shock Drill
 Cost: 1 mana — Init: 45 / 110 — Type: Spell
 In your next battle this round, your Forces hit on 1–5 in combat round 1. Burn
@@ -1012,7 +1059,7 @@ Cost: 1 mana — Init: 30 / 100 — Type: Victory
 When played: You may discard 1 card; if you do, draw 2.
 Center Writ
 Cost: 1 mana — Init: 25 / 95 — Type: Victory
-When played: If you occupy Center, gain +1 mana; otherwise scry 1.
+When played: If you occupy Center, gain +1 mana.
 Oathstone
 Cost: 1 mana — Init: 70 / 145 — Type: Victory
 When played: Heal a friendly Champion in your hex 2.
@@ -1020,32 +1067,20 @@ Banner of Sparks
 Cost: 1 mana — Init: 60 / 130 — Type: Victory
 When played: Deploy 3 Forces to your Capital.
 24.2 Age II Power (12)
-Non‑Victory Power (6)
-Killer’s Contract
-Cost: 1 mana — Init: 25 / 95 — Type: Spell
-Mark any enemy Champion. If it dies before end of next round, gain +6 gold.
+Non‑Victory Power
 Immunity Field
 Cost: 2 mana — Init: 40 / 110 — Type: Spell
-Up to 2 friendly Champions can’t be targeted by enemy cards this round.
-Hit Control
-Cost: 1 mana — Init: 30 / 100 — Type: Spell
-In your next battle this round, choose: your hits are assigned to Forces first OR Champions first.
+Your champions cannot be targeted by enemy spells this round. Burn.
 Rapid Reinforcements
-Cost: 2 mana + 1 gold — Init: 55 / 125 — Type: Order
-Deploy 6 Forces to your Capital.
-Span Dominion
-Cost: 2 mana — Init: 70 / 145 — Type: Spell
-Choose 3 edges; movement across them ignores Bridges this round.
-Vault of Notes
-Cost: 1 mana — Init: 15 / 85 — Type: Order
-Look top 7; put 3 in hand, discard 4.
+Cost: 1 mana — Init: 55 / 125 — Type: Order
+Deploy 6 forces to any cell you occupy. Burn.
+A Hero Joins the Battle
+Cost: 1 mana — Init: 55 / 125 — Type: Order
+Randomly select from all 2 mana heroes and deploy them for free into your capital. Burn.
 Power Victory (6) — +1 Permanent VP when gained
 Writ of Industry
 Cost: 1 mana — Init: 55 / 120 — Type: Victory
 When played: If you occupy a Mine, gain +2 gold; else gain +1.
-Forge Seal
-Cost: 1 mana — Init: 45 / 115 — Type: Victory
-When played: If you occupy a Forge, you may scrap 1 card from hand; if you do, draw 1.
 Bridge Charter
 Cost: 1 mana — Init: 60 / 130 — Type: Victory
 When played: Build 2 Bridges, each touching a hex you occupy.
@@ -1055,26 +1090,27 @@ When played: Deploy 2 Forces to a hex you occupy that contains a Champion.
 Chronicle of War
 Cost: 1 mana — Init: 65 / 135 — Type: Victory
 When played: Draw 1; then you may discard 1 to gain +1 mana.
-Oath of Safekeeping
-Cost: 1 mana — Init: 75 / 150 — Type: Victory
-When played: Heal 2 total damage split among friendly Champions in one hex.
+Power Champion Cards
+Bannerman
+Cost: 3 mana — Gold 2/4/6 — Init: 55 / 125 — Type: Champion
+HP 3 — 2d hit 1–2 — Bounty 5
+Worth 1 VP while on the board.
 24.3 Age III Power (12)
 Non‑Victory Power (6)
 Cataclysm Core
 Cost: 3 mana — Init: 45 / 110 — Type: Spell
-Choose hex: destroy all Forces there; Champions there take 3 damage.
-Absolute Mobilization
-Cost: 3 mana — Init: 60 / 130 — Type: Order
-Move 3 stacks up to 2 along Bridges each.
+Choose hex: destroy all Forces there; Champions there take 3 damage. Burn.
+Quick Mobilization
+Cost: 1 mana — Init: 60 / 130 — Type: Order
+Move 2 stacks up to 3 along Bridges each. Burn.
 Forge Miracle
 Cost: 2 mana — Init: 35 / 105 — Type: Order
-Reveal bottom 5 of Age III Market, gain any 2, put the rest back on bottom.
-Last Stand
+Add 3 Age I Market cards to your hand and give them the Burn keyword. They cost 0 mana and 0 gold and have initiative 0. Burn.
+Final Funding
+Cost: 3 mana — Init: 50 / 120 — Type: Order
+Gain +15 gold. Burn.Last Stand
 Cost: 2 mana — Init: 75 / 150 — Type: Spell
 Until end of round, the first time an enemy stack enters your Capital, destroy 3 entering enemy Forces (random) before the siege.
-Final Funding
-Cost: 2 mana — Init: 50 / 120 — Type: Order
-Gain +7 gold. Burn.
 Power Victory (6) — +1 Permanent VP when gained
 Imperial Warrant
 Cost: 1 mana — Init: 40 / 110 — Type: Victory
