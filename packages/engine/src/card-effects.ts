@@ -1,17 +1,20 @@
 import type { CardDef } from "./content/cards";
-import { areAdjacent, parseEdgeKey, parseHexKey } from "@bridgefront/shared";
+import { areAdjacent, axialDistance, parseEdgeKey, parseHexKey } from "@bridgefront/shared";
 
 import type { CardPlayTargets, GameState, PlayerID, TileType } from "./types";
 import { getBridgeKey, hasBridge, hasEnemyUnits, isOccupiedByPlayer, wouldExceedTwoPlayers } from "./board";
 import { drawCards } from "./cards";
 
-const SUPPORTED_TARGET_KINDS = new Set(["none", "edge", "stack", "path"]);
+const SUPPORTED_TARGET_KINDS = new Set(["none", "edge", "stack", "path", "champion"]);
 const SUPPORTED_EFFECTS = new Set([
   "gainGold",
   "drawCards",
   "prospecting",
   "buildBridge",
-  "moveStack"
+  "moveStack",
+  "healChampion",
+  "dealChampionDamage",
+  "patchUp"
 ]);
 
 type TargetRecord = Record<string, unknown>;
@@ -76,6 +79,79 @@ const getMovePathTarget = (targets: CardPlayTargets): string[] | null => {
     return null;
   }
   return [stack.from, stack.to];
+};
+
+const getChampionTargetId = (targets: CardPlayTargets): string | null => {
+  const record = getTargetRecord(targets);
+  const unitId = record?.unitId ?? record?.championId;
+  return typeof unitId === "string" && unitId.length > 0 ? unitId : null;
+};
+
+const isWithinDistance = (from: string, to: string, maxDistance: number): boolean => {
+  if (!Number.isFinite(maxDistance) || maxDistance < 0) {
+    return false;
+  }
+  try {
+    return axialDistance(parseHexKey(from), parseHexKey(to)) <= maxDistance;
+  } catch {
+    return false;
+  }
+};
+
+const hasFriendlyChampionWithinRange = (
+  state: GameState,
+  playerId: PlayerID,
+  targetHex: string,
+  maxDistance: number
+): boolean => {
+  return Object.values(state.board.units).some(
+    (unit) =>
+      unit.kind === "champion" &&
+      unit.ownerPlayerId === playerId &&
+      isWithinDistance(unit.hex, targetHex, maxDistance)
+  );
+};
+
+const getChampionTarget = (
+  state: GameState,
+  playerId: PlayerID,
+  targetSpec: TargetRecord,
+  targets: CardPlayTargets
+): { unitId: string; unit: GameState["board"]["units"][string] } | null => {
+  const unitId = getChampionTargetId(targets);
+  if (!unitId) {
+    return null;
+  }
+
+  const unit = state.board.units[unitId];
+  if (!unit || unit.kind !== "champion") {
+    return null;
+  }
+
+  if (!state.board.hexes[unit.hex]) {
+    return null;
+  }
+
+  const owner = typeof targetSpec.owner === "string" ? targetSpec.owner : "self";
+  if (owner !== "self" && owner !== "enemy" && owner !== "any") {
+    return null;
+  }
+  if (owner === "self" && unit.ownerPlayerId !== playerId) {
+    return null;
+  }
+  if (owner === "enemy" && unit.ownerPlayerId === playerId) {
+    return null;
+  }
+
+  if (targetSpec.requiresFriendlyChampion === true) {
+    const maxDistance =
+      typeof targetSpec.maxDistance === "number" ? targetSpec.maxDistance : NaN;
+    if (!hasFriendlyChampionWithinRange(state, playerId, unit.hex, maxDistance)) {
+      return null;
+    }
+  }
+
+  return { unitId, unit };
 };
 
 const getBuildBridgePlan = (
@@ -302,8 +378,61 @@ export const isCardPlayable = (
   }
 
   if (card.targetSpec.kind === "edge") {
+    const plan = getBuildBridgePlan(
+      state,
+      playerId,
+      card.targetSpec as TargetRecord,
+      targets ?? null
+    );
+    if (!plan) {
+      return false;
+    }
+
+    const movePath = getMovePathTarget(targets ?? null);
+    if (!movePath) {
+      return true;
+    }
+
+    const moveEffect = card.effects?.find(
+      (effect) => effect.kind === "moveStack"
+    ) as TargetRecord | undefined;
+    if (!moveEffect) {
+      return true;
+    }
+
+    const maxDistance =
+      typeof moveEffect.maxDistance === "number"
+        ? moveEffect.maxDistance
+        : typeof card.targetSpec.maxDistance === "number"
+          ? card.targetSpec.maxDistance
+          : undefined;
+    const requiresBridge =
+      moveEffect.requiresBridge === false ? false : card.targetSpec.requiresBridge !== false;
+
+    let moveState = state;
+    if (card.effects?.some((effect) => effect.kind === "buildBridge")) {
+      moveState = {
+        ...state,
+        board: {
+          ...state.board,
+          bridges: {
+            ...state.board.bridges,
+            [plan.key]: {
+              key: plan.key,
+              from: plan.from,
+              to: plan.to
+            }
+          }
+        }
+      };
+    }
+
     return Boolean(
-      getBuildBridgePlan(state, playerId, card.targetSpec as TargetRecord, targets ?? null)
+      validateMovePath(moveState, playerId, movePath, {
+        maxDistance,
+        requiresBridge,
+        requireStartOccupied: true
+      })
     );
   }
 
@@ -325,6 +454,12 @@ export const isCardPlayable = (
         requiresBridge,
         requireStartOccupied: true
       })
+    );
+  }
+
+  if (card.targetSpec.kind === "champion") {
+    return Boolean(
+      getChampionTarget(state, playerId, card.targetSpec as TargetRecord, targets ?? null)
     );
   }
 
@@ -350,6 +485,109 @@ const addGold = (state: GameState, playerId: PlayerID, amount: number): GameStat
         : player
     )
   };
+};
+
+const healChampion = (state: GameState, unitId: string, amount: number): GameState => {
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return state;
+  }
+
+  const unit = state.board.units[unitId];
+  if (!unit || unit.kind !== "champion") {
+    return state;
+  }
+
+  const nextHp = Math.min(unit.maxHp, unit.hp + amount);
+  if (nextHp === unit.hp) {
+    return state;
+  }
+
+  return {
+    ...state,
+    board: {
+      ...state.board,
+      units: {
+        ...state.board.units,
+        [unitId]: {
+          ...unit,
+          hp: nextHp
+        }
+      }
+    }
+  };
+};
+
+const dealChampionDamage = (
+  state: GameState,
+  sourcePlayerId: PlayerID,
+  unitId: string,
+  amount: number
+): GameState => {
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return state;
+  }
+
+  const unit = state.board.units[unitId];
+  if (!unit || unit.kind !== "champion") {
+    return state;
+  }
+
+  const nextHp = unit.hp - amount;
+  if (nextHp > 0) {
+    return {
+      ...state,
+      board: {
+        ...state.board,
+        units: {
+          ...state.board.units,
+          [unitId]: {
+            ...unit,
+            hp: nextHp
+          }
+        }
+      }
+    };
+  }
+
+  const units = { ...state.board.units };
+  delete units[unitId];
+
+  let nextState: GameState = {
+    ...state,
+    board: {
+      ...state.board,
+      units
+    }
+  };
+
+  const hex = state.board.hexes[unit.hex];
+  if (hex) {
+    const updatedHex = {
+      ...hex,
+      occupants: {
+        ...hex.occupants,
+        [unit.ownerPlayerId]: (hex.occupants[unit.ownerPlayerId] ?? []).filter(
+          (id) => id !== unitId
+        )
+      }
+    };
+    nextState = {
+      ...nextState,
+      board: {
+        ...nextState.board,
+        hexes: {
+          ...nextState.board.hexes,
+          [unit.hex]: updatedHex
+        }
+      }
+    };
+  }
+
+  if (unit.ownerPlayerId !== sourcePlayerId && unit.bounty > 0) {
+    nextState = addGold(nextState, sourcePlayerId, unit.bounty);
+  }
+
+  return nextState;
 };
 
 const playerOccupiesTile = (
@@ -391,6 +629,54 @@ export const resolveCardEffects = (
             ? bonusIfMine
             : 0);
         nextState = addGold(nextState, playerId, amount);
+        break;
+      }
+      case "healChampion": {
+        const target = getChampionTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null
+        );
+        if (!target) {
+          break;
+        }
+        const amount = typeof effect.amount === "number" ? effect.amount : 0;
+        nextState = healChampion(nextState, target.unitId, amount);
+        break;
+      }
+      case "dealChampionDamage": {
+        const target = getChampionTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null
+        );
+        if (!target) {
+          break;
+        }
+        const amount = typeof effect.amount === "number" ? effect.amount : 0;
+        nextState = dealChampionDamage(nextState, playerId, target.unitId, amount);
+        break;
+      }
+      case "patchUp": {
+        const target = getChampionTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null
+        );
+        if (!target) {
+          break;
+        }
+        const baseHeal = typeof effect.baseHeal === "number" ? effect.baseHeal : 0;
+        const capitalBonus = typeof effect.capitalBonus === "number" ? effect.capitalBonus : 0;
+        let amount = baseHeal;
+        const player = nextState.players.find((entry) => entry.id === playerId);
+        if (player?.capitalHex && target.unit.hex === player.capitalHex) {
+          amount += capitalBonus;
+        }
+        nextState = healChampion(nextState, target.unitId, amount);
         break;
       }
       case "buildBridge": {

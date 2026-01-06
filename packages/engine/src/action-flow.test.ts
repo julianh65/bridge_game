@@ -126,6 +126,67 @@ const addCardToHand = (
   };
 };
 
+const addChampionToHex = (
+  state: GameState,
+  playerId: string,
+  hexKey: HexKey,
+  options?: { hp?: number; maxHp?: number; bounty?: number }
+): { state: GameState; unitId: string } => {
+  const hex = state.board.hexes[hexKey];
+  if (!hex) {
+    throw new Error(`hex not found: ${hexKey}`);
+  }
+
+  let index = 1;
+  let unitId = `c_${index}`;
+  while (state.board.units[unitId]) {
+    index += 1;
+    unitId = `c_${index}`;
+  }
+
+  const hp = options?.hp ?? 2;
+  const maxHp = options?.maxHp ?? hp;
+  const bounty = options?.bounty ?? 2;
+
+  const champion = {
+    id: unitId,
+    ownerPlayerId: playerId,
+    kind: "champion" as const,
+    hex: hexKey,
+    cardDefId: `test.${unitId}`,
+    hp,
+    maxHp,
+    attackDice: 0,
+    hitFaces: 0,
+    bounty,
+    abilityUses: {}
+  };
+
+  return {
+    state: {
+      ...state,
+      board: {
+        ...state.board,
+        units: {
+          ...state.board.units,
+          [unitId]: champion
+        },
+        hexes: {
+          ...state.board.hexes,
+          [hexKey]: {
+            ...hex,
+            occupants: {
+              ...hex.occupants,
+              [playerId]: [...(hex.occupants[playerId] ?? []), unitId]
+            }
+          }
+        }
+      }
+    },
+    unitId
+  };
+};
+
 const findMineHex = (state: GameState): HexKey => {
   const mineHex = Object.values(state.board.hexes).find((hex) => hex.tile === "mine");
   if (!mineHex) {
@@ -379,6 +440,38 @@ describe("action flow", () => {
     expect(state.board.bridges[edgeKey]?.temporary).toBe(true);
   });
 
+  it("plays bridge crew to build a bridge and move along it", () => {
+    let { state, p1Capital } = setupToActionPhase();
+    const edgeKey = pickOpenBridgeEdge(p1Capital, state.board);
+    const [a, b] = parseEdgeKey(edgeKey);
+    const to = a === p1Capital ? b : a;
+
+    const injected = addCardToHand(state, "p1", "starter.bridge_crew");
+    state = injected.state;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { edgeKey, path: [p1Capital, to] }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    expect(state.board.bridges[edgeKey]).toBeTruthy();
+    const fromHex = state.board.hexes[p1Capital];
+    const toHex = state.board.hexes[to];
+    expect(fromHex.occupants["p1"]?.length ?? 0).toBe(0);
+    expect(toHex.occupants["p1"]?.length ?? 0).toBe(4);
+  });
+
   it("plays prospecting and gains base gold without a mine", () => {
     let { state } = setupToActionPhase();
     const injected = addCardToHand(state, "p1", "age1.prospecting");
@@ -434,5 +527,109 @@ describe("action flow", () => {
       throw new Error("missing p1 state");
     }
     expect(p1After.resources.gold).toBe(p1Before.resources.gold + 3);
+  });
+
+  it("plays field medic to heal a champion and caps at max HP", () => {
+    let { state, p1Capital } = setupToActionPhase();
+    const created = addChampionToHex(state, "p1", p1Capital, { hp: 1, maxHp: 3 });
+    state = created.state;
+
+    const injected = addCardToHand(state, "p1", "starter.field_medic");
+    state = injected.state;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { unitId: created.unitId }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const healed = state.board.units[created.unitId];
+    if (!healed || healed.kind !== "champion") {
+      throw new Error("missing healed champion");
+    }
+    expect(healed.hp).toBe(3);
+  });
+
+  it("plays patch up to heal extra when the champion is in the capital", () => {
+    let { state, p1Capital } = setupToActionPhase();
+    const created = addChampionToHex(state, "p1", p1Capital, { hp: 1, maxHp: 6 });
+    state = created.state;
+
+    const injected = addCardToHand(state, "p1", "age1.patch_up");
+    state = injected.state;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { unitId: created.unitId }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const healed = state.board.units[created.unitId];
+    if (!healed || healed.kind !== "champion") {
+      throw new Error("missing patched champion");
+    }
+    expect(healed.hp).toBe(5);
+  });
+
+  it("plays zap to damage a champion, remove it, and award bounty", () => {
+    let { state } = setupToActionPhase();
+    const p2Capital = state.players.find((player) => player.id === "p2")?.capitalHex;
+    if (!p2Capital) {
+      throw new Error("missing p2 capital");
+    }
+    const created = addChampionToHex(state, "p2", p2Capital, { hp: 1, maxHp: 3, bounty: 4 });
+    state = created.state;
+
+    const injected = addCardToHand(state, "p1", "starter.zap");
+    state = injected.state;
+
+    const p1Before = state.players.find((player) => player.id === "p1");
+    if (!p1Before) {
+      throw new Error("missing p1 state");
+    }
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { unitId: created.unitId }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    expect(state.board.units[created.unitId]).toBeUndefined();
+    expect(state.board.hexes[p2Capital]?.occupants["p2"] ?? []).not.toContain(created.unitId);
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state");
+    }
+    expect(p1After.resources.gold).toBe(p1Before.resources.gold + 4);
   });
 });
