@@ -7,7 +7,7 @@
 - Added `docs/cards.md` with card data module editing guidelines.
 
 ## Active tasks
-- agent-2: Fix debug board rendering (currently shows coords, missing visual tile distinctions). Files: apps/web/src/components/DebugBoard.tsx, apps/web/src/styles.css. Status: in progress.
+- agent-2: Implement action step declarations + basic actions (build bridge, march 1, capital reinforce) with tests. Files: packages/engine/src/types.ts, packages/engine/src/action-flow.ts, packages/engine/src/engine.ts, packages/engine/src/units.ts, packages/engine/src/round-flow.ts, packages/engine/src/*.test.ts. Status: in progress.
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.
@@ -19,6 +19,7 @@
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
 - `apps/web` Vite + React placeholder renders; `apps/server` PartyKit room echoes messages; `packages/engine` Vitest smoke test passes.
+- Added `docs/dev.md` with local dev commands and hot reload notes.
 
 ## Milestone 1 progress
 - Added deterministic RNG module in shared with `nextUint32`, `randInt`, `rollDie`, `shuffle`, plus Vitest coverage in engine.
