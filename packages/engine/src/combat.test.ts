@@ -2,7 +2,7 @@ import { createRngState } from "@bridgefront/shared";
 import { describe, expect, it } from "vitest";
 
 import { createBaseBoard } from "./board-generation";
-import { resolveImmediateBattles, resolveSieges } from "./combat";
+import { resolveBattleAtHex, resolveImmediateBattles, resolveSieges } from "./combat";
 import { DEFAULT_CONFIG, createNewGame } from "./index";
 
 const createChampion = (
@@ -76,6 +76,42 @@ describe("combat resolution", () => {
     expect(skirmish.occupants["p2"] ?? []).toHaveLength(0);
     expect(capital.occupants["p2"] ?? []).toHaveLength(1);
     expect(resolved.board.units["c2"]).toBeDefined();
+  });
+
+  it("halts battles when neither side can hit", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        p1: ["c1"],
+        p2: ["c2"]
+      }
+    };
+    board.units = {
+      c1: createChampion("c1", "p1", hexKey, 2, 0, 2),
+      c2: createChampion("c2", "p2", hexKey, 2, 0, 2)
+    };
+
+    const state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(1),
+      board
+    };
+
+    const resolved = resolveBattleAtHex(state, hexKey);
+    const hex = resolved.board.hexes[hexKey];
+
+    expect(hex.occupants["p1"]).toEqual(["c1"]);
+    expect(hex.occupants["p2"]).toEqual(["c2"]);
   });
 
   it("resolves sieges on contested capitals", () => {

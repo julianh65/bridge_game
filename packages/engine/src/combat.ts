@@ -125,6 +125,16 @@ const resolveHits = (
   return { removedUnitIds, updatedChampions, bounty };
 };
 
+const unitCanHit = (unit?: UnitState): boolean => {
+  if (!unit) {
+    return false;
+  }
+  if (unit.kind === "force") {
+    return true;
+  }
+  return unit.attackDice > 0 && unit.hitFaces > 0;
+};
+
 const applyBounty = (state: GameState, playerId: PlayerID, amount: number): GameState => {
   if (amount <= 0) {
     return state;
@@ -171,6 +181,11 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
     const attackers = currentHex.occupants[participants[0]] ?? [];
     const defenders = currentHex.occupants[participants[1]] ?? [];
     if (attackers.length === 0 || defenders.length === 0) {
+      break;
+    }
+    const attackersCanHit = attackers.some((unitId) => unitCanHit(nextUnits[unitId]));
+    const defendersCanHit = defenders.some((unitId) => unitCanHit(nextUnits[unitId]));
+    if (!attackersCanHit && !defendersCanHit) {
       break;
     }
 

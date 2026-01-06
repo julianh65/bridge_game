@@ -11,11 +11,12 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- Owner: Codex (assistant). Scope: prevent combat infinite loop when no hits occur; add coverage. Files: packages/engine/src/combat.ts, packages/engine/src/combat.test.ts. Status: in progress.
+- (none)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
 - Fixed force unit id generation to avoid collisions and added coverage.
+- Guarded combat resolution against no-hit stalemates and added a test.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
