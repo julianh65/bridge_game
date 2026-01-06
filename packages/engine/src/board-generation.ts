@@ -112,8 +112,8 @@ type SpecialTilePlacementOptions = {
 };
 
 const CENTER_KEY = "0,0";
-const CAPITAL_BALANCE_WEIGHT = 4;
-const GLOBAL_SPREAD_WEIGHT = 3;
+const CAPITAL_BALANCE_WEIGHT = 5;
+const GLOBAL_SPREAD_WEIGHT = 5;
 
 const cloneBoard = (board: BoardState): BoardState => {
   const hexes: Record<HexKey, HexState> = {};

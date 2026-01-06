@@ -11,7 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- (none)
+- [agent2] Add basic event logging for commands + phase transitions (engine-level), files: `packages/engine/src/engine.ts`; status: in progress.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -27,6 +27,7 @@
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.
 - Added a capital-balance penalty to special-tile scoring to spread forges/mines more evenly across capitals.
 - Added a global-spread score so mines/forges avoid clustering and reduce empty regions (notably 3-5 players).
+- Increased spread/balance weights to push specials into emptier regions.
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.
