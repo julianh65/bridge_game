@@ -11,7 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [in progress] owner: agent3; scope: engine collection prompts (mine/forge/center choices) + resolution; files: packages/engine/src/types.ts, packages/engine/src/engine.ts, packages/engine/src/round-flow.ts, packages/engine/src/cards.ts, packages/engine/src/market.ts, packages/engine/src/content
+- none
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -26,6 +26,7 @@
 ## Testing progress
 - Added card draw tests covering reshuffle behavior and hand-limit overflow in `packages/engine/src/cards.test.ts`.
 - Added tests for card instance id sequencing and random draw-pile insertion in `packages/engine/src/cards.test.ts`.
+- Ran `npm test` (engine Vitest).
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
@@ -152,6 +153,7 @@
 - Market sidebar now shows card names and bid/pass status per player.
 - Added market bid controls in the web client and wired `SubmitMarketBid` commands.
 - Implemented market bidding block (buy/pass, tie-break roll-offs, pass pot, one-win-per-round) with command handling + resolution, added market bidding tests, and updated setup/action tests to auto-resolve market.
+- Added collection choice block (mine/forge/center prompts with market-deck reveals), resolution logic, and collection view data; center picks currently use the market deck pending power-deck content.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

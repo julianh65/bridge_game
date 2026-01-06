@@ -149,6 +149,23 @@ export const removeCardFromHand = (
   return updatePlayerDeck(state, playerId, { hand });
 };
 
+export const scrapCardFromHand = (
+  state: GameState,
+  playerId: PlayerID,
+  cardInstanceId: CardInstanceID
+): GameState => {
+  const player = getPlayer(state, playerId);
+  if (!player.deck.hand.includes(cardInstanceId)) {
+    return state;
+  }
+
+  const hand = player.deck.hand.filter((id) => id !== cardInstanceId);
+  return updatePlayerDeck(state, playerId, {
+    hand,
+    scrapped: [...player.deck.scrapped, cardInstanceId]
+  });
+};
+
 export const addCardToDiscardPile = (
   state: GameState,
   playerId: PlayerID,

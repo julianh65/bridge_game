@@ -1,6 +1,21 @@
-import type { GameState, PlayerID } from "./types";
+import { shuffle } from "@bridgefront/shared";
+
+import type {
+  BlockState,
+  CardDefId,
+  CollectionChoice,
+  CollectionPrompt,
+  GameState,
+  PlayerID,
+  PlayerState
+} from "./types";
 import { getPlayerIdsOnHex, hasEnemyUnits } from "./board";
-import { drawToHandSize } from "./cards";
+import {
+  createCardInstance,
+  drawToHandSize,
+  insertCardIntoDrawPileRandom,
+  scrapCardFromHand
+} from "./cards";
 
 export const applyRoundReset = (state: GameState): GameState => {
   const nextRound = state.round + 1;
@@ -30,43 +45,390 @@ export const applyRoundReset = (state: GameState): GameState => {
   };
 };
 
-export const applyCollection = (state: GameState): GameState => {
-  const goldGains: Record<PlayerID, number> = {};
+type DeckDraw = {
+  drawn: CardDefId[];
+  remaining: CardDefId[];
+};
 
-  for (const hex of Object.values(state.board.hexes)) {
-    if (hex.tile !== "mine") {
-      continue;
-    }
-    if (!hex.mineValue || hex.mineValue <= 0) {
-      continue;
-    }
+const takeFromDeck = (deck: CardDefId[], count: number): DeckDraw => {
+  if (count <= 0 || deck.length === 0) {
+    return { drawn: [], remaining: deck };
+  }
+  const drawn = deck.slice(0, count);
+  const remaining = deck.slice(count);
+  return { drawn, remaining };
+};
+
+const getSeatOrderedPlayers = (players: PlayerState[]): PlayerState[] => {
+  return [...players].sort((a, b) => a.seatIndex - b.seatIndex);
+};
+
+const getPromptKey = (kind: CollectionPrompt["kind"], hexKey: string) => `${kind}:${hexKey}`;
+
+const getPlayer = (state: GameState, playerId: PlayerID) => {
+  const player = state.players.find((entry) => entry.id === playerId);
+  if (!player) {
+    throw new Error(`player not found: ${playerId}`);
+  }
+  return player;
+};
+
+const addGold = (state: GameState, playerId: PlayerID, amount: number): GameState => {
+  if (amount <= 0) {
+    return state;
+  }
+  return {
+    ...state,
+    players: state.players.map((player) =>
+      player.id === playerId
+        ? {
+            ...player,
+            resources: {
+              ...player.resources,
+              gold: player.resources.gold + amount
+            }
+          }
+        : player
+    )
+  };
+};
+
+const returnToBottomRandom = (
+  state: GameState,
+  deck: CardDefId[],
+  cardIds: CardDefId[]
+): { state: GameState; deck: CardDefId[] } => {
+  if (cardIds.length === 0) {
+    return { state, deck };
+  }
+  if (cardIds.length === 1) {
+    return { state, deck: [...deck, ...cardIds] };
+  }
+  const { value, next } = shuffle(state.rngState, cardIds);
+  return { state: { ...state, rngState: next }, deck: [...deck, ...value] };
+};
+
+const buildCollectionPrompts = (state: GameState): Record<PlayerID, CollectionPrompt[]> => {
+  const prompts: Record<PlayerID, CollectionPrompt[]> = Object.fromEntries(
+    state.players.map((player) => [player.id, []])
+  );
+
+  const specialHexes = Object.values(state.board.hexes)
+    .filter((hex) => hex.tile === "mine" || hex.tile === "forge" || hex.tile === "center")
+    .sort((a, b) => a.key.localeCompare(b.key));
+
+  for (const hex of specialHexes) {
     const occupants = getPlayerIdsOnHex(hex);
     if (occupants.length !== 1) {
       continue;
     }
     const playerId = occupants[0];
-    goldGains[playerId] = (goldGains[playerId] ?? 0) + hex.mineValue;
+    if (!prompts[playerId]) {
+      continue;
+    }
+    if (hex.tile === "mine") {
+      prompts[playerId].push({
+        kind: "mine",
+        hexKey: hex.key,
+        mineValue: hex.mineValue ?? 0,
+        revealed: []
+      });
+    } else if (hex.tile === "forge") {
+      prompts[playerId].push({
+        kind: "forge",
+        hexKey: hex.key,
+        revealed: []
+      });
+    } else if (hex.tile === "center") {
+      prompts[playerId].push({
+        kind: "center",
+        hexKey: hex.key,
+        revealed: []
+      });
+    }
   }
 
-  if (Object.keys(goldGains).length === 0) {
+  return prompts;
+};
+
+export const createCollectionBlock = (
+  state: GameState
+): { state: GameState; block: BlockState | null } => {
+  const promptsByPlayer = buildCollectionPrompts(state);
+  const playersInSeatOrder = getSeatOrderedPlayers(state.players);
+
+  const currentAge = state.market.age;
+  let marketDeck = state.marketDecks[currentAge] ?? [];
+  const nextPrompts: Record<PlayerID, CollectionPrompt[]> = { ...promptsByPlayer };
+
+  for (const player of playersInSeatOrder) {
+    const prompts = promptsByPlayer[player.id] ?? [];
+    if (prompts.length === 0) {
+      continue;
+    }
+    const resolved: CollectionPrompt[] = [];
+    for (const prompt of prompts) {
+      let drawn: CardDefId[] = [];
+      if (prompt.kind === "mine") {
+        const draw = takeFromDeck(marketDeck, 1);
+        drawn = draw.drawn;
+        marketDeck = draw.remaining;
+      } else if (prompt.kind === "forge") {
+        const draw = takeFromDeck(marketDeck, 3);
+        drawn = draw.drawn;
+        marketDeck = draw.remaining;
+      } else if (prompt.kind === "center") {
+        const draw = takeFromDeck(marketDeck, 2);
+        drawn = draw.drawn;
+        marketDeck = draw.remaining;
+      }
+      if (prompt.kind === "center" && drawn.length === 0) {
+        continue;
+      }
+      resolved.push({ ...prompt, revealed: drawn });
+    }
+    nextPrompts[player.id] = resolved;
+  }
+
+  const waitingFor = playersInSeatOrder
+    .filter((player) => (nextPrompts[player.id] ?? []).length > 0)
+    .map((player) => player.id);
+
+  if (waitingFor.length === 0) {
+    return {
+      state: {
+        ...state,
+        marketDecks: {
+          ...state.marketDecks,
+          [currentAge]: marketDeck
+        }
+      },
+      block: null
+    };
+  }
+
+  const nextState: GameState = {
+    ...state,
+    marketDecks: {
+      ...state.marketDecks,
+      [currentAge]: marketDeck
+    }
+  };
+
+  return {
+    state: nextState,
+    block: {
+      type: "collection.choices",
+      waitingFor,
+      payload: {
+        prompts: nextPrompts,
+        choices: Object.fromEntries(
+          state.players.map((player) => [player.id, null])
+        ) as Record<PlayerID, CollectionChoice[] | null>
+      }
+    }
+  };
+};
+
+const isCollectionChoiceValid = (
+  state: GameState,
+  playerId: PlayerID,
+  prompt: CollectionPrompt,
+  choice: CollectionChoice
+): boolean => {
+  if (prompt.kind !== choice.kind || prompt.hexKey !== choice.hexKey) {
+    return false;
+  }
+
+  if (choice.kind === "mine") {
+    if (choice.choice === "gold") {
+      return true;
+    }
+    return prompt.revealed.length > 0 && typeof choice.gainCard === "boolean";
+  }
+
+  if (choice.kind === "forge") {
+    if (choice.choice === "reforge") {
+      const player = getPlayer(state, playerId);
+      return player.deck.hand.includes(choice.scrapCardId);
+    }
+    return prompt.revealed.includes(choice.cardId);
+  }
+
+  if (choice.kind === "center") {
+    return prompt.revealed.includes(choice.cardId);
+  }
+
+  return false;
+};
+
+const areCollectionChoicesValid = (
+  state: GameState,
+  playerId: PlayerID,
+  prompts: CollectionPrompt[],
+  choices: CollectionChoice[]
+): boolean => {
+  if (choices.length !== prompts.length) {
+    return false;
+  }
+
+  const promptMap = new Map<string, CollectionPrompt>(
+    prompts.map((prompt) => [getPromptKey(prompt.kind, prompt.hexKey), prompt])
+  );
+  const seen = new Set<string>();
+
+  for (const choice of choices) {
+    const key = getPromptKey(choice.kind, choice.hexKey);
+    if (seen.has(key)) {
+      return false;
+    }
+    const prompt = promptMap.get(key);
+    if (!prompt) {
+      return false;
+    }
+    if (!isCollectionChoiceValid(state, playerId, prompt, choice)) {
+      return false;
+    }
+    seen.add(key);
+  }
+
+  return seen.size === prompts.length;
+};
+
+export const applyCollectionChoice = (
+  state: GameState,
+  choices: CollectionChoice[],
+  playerId: PlayerID
+): GameState => {
+  if (state.phase !== "round.collection") {
+    return state;
+  }
+
+  const block = state.blocks;
+  if (!block || block.type !== "collection.choices") {
+    return state;
+  }
+
+  if (!block.waitingFor.includes(playerId)) {
+    return state;
+  }
+
+  if (block.payload.choices[playerId]) {
+    return state;
+  }
+
+  const prompts = block.payload.prompts[playerId] ?? [];
+  if (prompts.length === 0) {
+    return state;
+  }
+
+  if (!areCollectionChoicesValid(state, playerId, prompts, choices)) {
     return state;
   }
 
   return {
     ...state,
-    players: state.players.map((player) => {
-      const gain = goldGains[player.id] ?? 0;
-      if (gain <= 0) {
-        return player;
-      }
-      return {
-        ...player,
-        resources: {
-          ...player.resources,
-          gold: player.resources.gold + gain
+    blocks: {
+      ...block,
+      waitingFor: block.waitingFor.filter((id) => id !== playerId),
+      payload: {
+        ...block.payload,
+        choices: {
+          ...block.payload.choices,
+          [playerId]: choices
         }
-      };
-    })
+      }
+    }
+  };
+};
+
+export const resolveCollectionChoices = (state: GameState): GameState => {
+  const block = state.blocks;
+  if (!block || block.type !== "collection.choices") {
+    return state;
+  }
+
+  const currentAge = state.market.age;
+  let marketDeck = state.marketDecks[currentAge] ?? [];
+  let nextState: GameState = state;
+  const playersInSeatOrder = getSeatOrderedPlayers(state.players);
+
+  for (const player of playersInSeatOrder) {
+    const prompts = block.payload.prompts[player.id] ?? [];
+    const choices = block.payload.choices[player.id] ?? [];
+    if (prompts.length === 0) {
+      continue;
+    }
+    const choiceMap = new Map(
+      choices.map((choice) => [getPromptKey(choice.kind, choice.hexKey), choice])
+    );
+
+    for (const prompt of prompts) {
+      const choice = choiceMap.get(getPromptKey(prompt.kind, prompt.hexKey));
+      if (!choice) {
+        continue;
+      }
+
+      if (choice.kind === "mine") {
+        const revealed = prompt.revealed[0];
+        if (choice.choice === "gold") {
+          nextState = addGold(nextState, player.id, prompt.mineValue);
+          if (revealed) {
+            marketDeck = [...marketDeck, revealed];
+          }
+        } else if (revealed) {
+          if (choice.gainCard) {
+            const created = createCardInstance(nextState, revealed);
+            nextState = insertCardIntoDrawPileRandom(
+              created.state,
+              player.id,
+              created.instanceId
+            );
+          } else {
+            marketDeck = [...marketDeck, revealed];
+          }
+        }
+      } else if (choice.kind === "forge") {
+        if (choice.choice === "reforge") {
+          nextState = scrapCardFromHand(nextState, player.id, choice.scrapCardId);
+          const returned = returnToBottomRandom(nextState, marketDeck, prompt.revealed);
+          nextState = returned.state;
+          marketDeck = returned.deck;
+        } else if (prompt.revealed.includes(choice.cardId)) {
+          const leftovers = prompt.revealed.filter((cardId) => cardId !== choice.cardId);
+          const returned = returnToBottomRandom(nextState, marketDeck, leftovers);
+          nextState = returned.state;
+          marketDeck = returned.deck;
+          const created = createCardInstance(nextState, choice.cardId);
+          nextState = insertCardIntoDrawPileRandom(
+            created.state,
+            player.id,
+            created.instanceId
+          );
+        }
+      } else if (choice.kind === "center") {
+        if (prompt.revealed.includes(choice.cardId)) {
+          const leftovers = prompt.revealed.filter((cardId) => cardId !== choice.cardId);
+          const returned = returnToBottomRandom(nextState, marketDeck, leftovers);
+          nextState = returned.state;
+          marketDeck = returned.deck;
+          const created = createCardInstance(nextState, choice.cardId);
+          nextState = insertCardIntoDrawPileRandom(
+            created.state,
+            player.id,
+            created.instanceId
+          );
+        }
+      }
+    }
+  }
+
+  return {
+    ...nextState,
+    marketDecks: {
+      ...nextState.marketDecks,
+      [currentAge]: marketDeck
+    }
   };
 };
 

@@ -23,9 +23,11 @@ import {
 import {
   applyAgeUpdate,
   applyCleanup,
-  applyCollection,
   applyRoundReset,
-  applyScoring
+  applyScoring,
+  applyCollectionChoice,
+  createCollectionBlock,
+  resolveCollectionChoices
 } from "./round-flow";
 import { applyActionDeclaration, createActionStepBlock, resolveActionStep } from "./action-flow";
 import { resolveSieges } from "./combat";
@@ -78,7 +80,17 @@ const enterPhase = (state: GameState, phase: GameState["phase"]): GameState => {
   );
 };
 
-const buildSetupPublicView = (block: BlockState): SetupPublicView => {
+type SetupBlockState = Extract<
+  BlockState,
+  { type: "setup.capitalDraft" | "setup.startingBridges" | "setup.freeStartingCardPick" }
+>;
+
+const isSetupBlock = (block: BlockState): block is SetupBlockState =>
+  block.type === "setup.capitalDraft" ||
+  block.type === "setup.startingBridges" ||
+  block.type === "setup.freeStartingCardPick";
+
+const buildSetupPublicView = (block: SetupBlockState): SetupPublicView => {
   if (block.type === "setup.capitalDraft") {
     return {
       type: block.type,
@@ -105,7 +117,7 @@ const buildSetupPublicView = (block: BlockState): SetupPublicView => {
   };
 };
 
-const buildSetupPrivateView = (block: BlockState, playerId: PlayerID): SetupPrivateView => {
+const buildSetupPrivateView = (block: SetupBlockState, playerId: PlayerID): SetupPrivateView => {
   if (block.type !== "setup.freeStartingCardPick") {
     return null;
   }
@@ -175,6 +187,10 @@ export const applyCommand = (
 
   if (_command.type === "SubmitMarketBid") {
     return applyMarketBid(state, _command.payload, _playerId);
+  }
+
+  if (_command.type === "SubmitCollectionChoices") {
+    return applyCollectionChoice(state, _command.payload, _playerId);
   }
 
   return state;
@@ -263,9 +279,33 @@ export const runUntilBlocked = (state: GameState): GameState => {
     }
 
     if (nextState.phase === "round.collection") {
-      nextState = applyCollection(nextState);
-      nextState = enterPhase(nextState, "round.scoring");
-      continue;
+      if (!nextState.blocks) {
+        const collection = createCollectionBlock(nextState);
+        if (!collection.block) {
+          nextState = enterPhase(collection.state, "round.scoring");
+          continue;
+        }
+        nextState = {
+          ...collection.state,
+          blocks: collection.block
+        };
+        continue;
+      }
+
+      if (nextState.blocks.type === "collection.choices") {
+        if (nextState.blocks.waitingFor.length > 0) {
+          return nextState;
+        }
+        nextState = resolveCollectionChoices(nextState);
+        nextState = {
+          ...nextState,
+          blocks: undefined
+        };
+        nextState = enterPhase(nextState, "round.scoring");
+        continue;
+      }
+
+      return nextState;
     }
 
     if (nextState.phase === "round.scoring") {
@@ -346,10 +386,23 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
         }
       : null;
   const setupPublic =
-    state.phase === "setup" && state.blocks ? buildSetupPublicView(state.blocks) : null;
+    state.phase === "setup" && state.blocks && isSetupBlock(state.blocks)
+      ? buildSetupPublicView(state.blocks)
+      : null;
   const setupPrivate =
-    viewer && state.phase === "setup" && state.blocks
+    viewer && state.phase === "setup" && state.blocks && isSetupBlock(state.blocks)
       ? buildSetupPrivateView(state.blocks, viewer.id)
+      : null;
+  const collectionPublic =
+    state.phase === "round.collection" && state.blocks?.type === "collection.choices"
+      ? { waitingForPlayerIds: state.blocks.waitingFor }
+      : null;
+  const collectionPrivate =
+    viewer && state.phase === "round.collection" && state.blocks?.type === "collection.choices"
+      ? {
+          prompts: state.blocks.payload.prompts[viewer.id] ?? [],
+          choices: state.blocks.payload.choices[viewer.id] ?? null
+        }
       : null;
 
   return {
@@ -370,6 +423,7 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
       })),
       actionStep,
       setup: setupPublic,
+      collection: collectionPublic,
       winnerPlayerId: state.winnerPlayerId
     },
     private: viewer
@@ -386,7 +440,8 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
             scrapped: viewer.deck.scrapped.length
           },
           vp: viewer.vp,
-          setup: setupPrivate
+          setup: setupPrivate,
+          collection: collectionPrivate
         }
       : null
   };

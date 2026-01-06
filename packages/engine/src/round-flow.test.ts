@@ -6,9 +6,11 @@ import { DEFAULT_CONFIG, createNewGame } from "./index";
 import {
   applyAgeUpdate,
   applyCleanup,
-  applyCollection,
   applyRoundReset,
-  applyScoring
+  applyScoring,
+  applyCollectionChoice,
+  createCollectionBlock,
+  resolveCollectionChoices
 } from "./round-flow";
 
 describe("round reset", () => {
@@ -82,27 +84,32 @@ describe("round reset", () => {
 });
 
 describe("collection", () => {
-  it("grants mine gold to the sole occupying player", () => {
+  it("resolves mine gold and forge draft choices", () => {
     const base = createNewGame(DEFAULT_CONFIG, 1, [
       { id: "p1", name: "Player 1" },
       { id: "p2", name: "Player 2" }
     ]);
+    const deck = [
+      "age1.quick_march",
+      "age1.trade_caravan",
+      "age1.patch_up",
+      "age1.temporary_bridge"
+    ];
 
     const board = createBaseBoard(1);
-    board.hexes["1,0"] = {
-      ...board.hexes["1,0"],
-      tile: "mine",
-      mineValue: 3,
-      occupants: {
-        p1: ["u1"]
-      }
-    };
     board.hexes["0,1"] = {
       ...board.hexes["0,1"],
       tile: "mine",
       mineValue: 2,
       occupants: {
-        p2: ["u2"]
+        p1: ["u1"]
+      }
+    };
+    board.hexes["1,0"] = {
+      ...board.hexes["1,0"],
+      tile: "forge",
+      occupants: {
+        p1: ["u2"]
       }
     };
     board.units = {
@@ -110,31 +117,63 @@ describe("collection", () => {
         id: "u1",
         ownerPlayerId: "p1",
         kind: "force",
-        hex: "1,0"
+        hex: "0,1"
       },
       u2: {
         id: "u2",
-        ownerPlayerId: "p2",
+        ownerPlayerId: "p1",
         kind: "force",
-        hex: "0,1"
+        hex: "1,0"
       }
     };
 
     const state = {
       ...base,
+      phase: "round.collection" as const,
       board,
+      market: {
+        ...base.market,
+        age: "I"
+      },
+      marketDecks: {
+        I: deck,
+        II: [],
+        III: []
+      },
       players: base.players.map((player) => ({
         ...player,
         resources: { ...player.resources, gold: 0 }
       }))
     };
 
-    const next = applyCollection(state);
-    const p1 = next.players.find((player) => player.id === "p1");
-    const p2 = next.players.find((player) => player.id === "p2");
+    const created = createCollectionBlock(state);
+    expect(created.block).not.toBeNull();
+    const block = created.block!;
+    const prompts = block.payload.prompts.p1 ?? [];
+    expect(prompts).toHaveLength(2);
+    const promptMap = new Map(prompts.map((prompt) => [`${prompt.kind}:${prompt.hexKey}`, prompt]));
+    expect(promptMap.get("mine:0,1")?.revealed).toEqual([deck[0]]);
+    expect(promptMap.get("forge:1,0")?.revealed).toEqual(deck.slice(1, 4));
+    expect(created.state.marketDecks.I).toHaveLength(0);
 
-    expect(p1?.resources.gold).toBe(3);
-    expect(p2?.resources.gold).toBe(2);
+    let nextState = { ...created.state, blocks: block };
+    nextState = applyCollectionChoice(
+      nextState,
+      [
+        { kind: "mine", hexKey: "0,1", choice: "gold" },
+        { kind: "forge", hexKey: "1,0", choice: "draft", cardId: deck[1] }
+      ],
+      "p1"
+    );
+    expect(nextState.blocks?.waitingFor).toHaveLength(0);
+
+    const resolved = resolveCollectionChoices(nextState);
+    const player = resolved.players.find((entry) => entry.id === "p1");
+    expect(player?.resources.gold).toBe(2);
+    expect(player?.deck.drawPile.length).toBe(1);
+    const gainedCard = player?.deck.drawPile[0];
+    expect(resolved.cardsByInstanceId[gainedCard ?? ""]?.defId).toBe(deck[1]);
+    expect([...resolved.marketDecks.I].sort()).toEqual([deck[0], deck[2], deck[3]].sort());
   });
 });
 

@@ -209,6 +209,13 @@ export type BlockState = {
     cardIndex: number;
   };
 } | {
+  type: "collection.choices";
+  waitingFor: PlayerID[];
+  payload: {
+    prompts: Record<PlayerID, CollectionPrompt[]>;
+    choices: Record<PlayerID, CollectionChoice[] | null>;
+  };
+} | {
   type: "actionStep.declarations";
   waitingFor: PlayerID[];
   payload: {
@@ -284,6 +291,9 @@ export type Command = {
 } | {
   type: "SubmitMarketBid";
   payload: Bid;
+} | {
+  type: "SubmitCollectionChoices";
+  payload: CollectionChoice[];
 };
 
 export type PlayerPublicView = {
@@ -306,11 +316,64 @@ export type PlayerPrivateView = {
   };
   vp: { permanent: number; control: number; total: number };
   setup: SetupPrivateView | null;
+  collection: CollectionPrivateView | null;
 };
 
 export type ActionStepPublicView = {
   eligiblePlayerIds: PlayerID[];
   waitingForPlayerIds: PlayerID[];
+};
+
+export type CollectionPrompt =
+  | {
+      kind: "mine";
+      hexKey: HexKey;
+      mineValue: number;
+      revealed: CardDefId[];
+    }
+  | {
+      kind: "forge";
+      hexKey: HexKey;
+      revealed: CardDefId[];
+    }
+  | {
+      kind: "center";
+      hexKey: HexKey;
+      revealed: CardDefId[];
+    };
+
+export type CollectionChoice =
+  | {
+      kind: "mine";
+      hexKey: HexKey;
+      choice: "gold" | "draft";
+      gainCard?: boolean;
+    }
+  | {
+      kind: "forge";
+      hexKey: HexKey;
+      choice: "reforge";
+      scrapCardId: CardInstanceID;
+    }
+  | {
+      kind: "forge";
+      hexKey: HexKey;
+      choice: "draft";
+      cardId: CardDefId;
+    }
+  | {
+      kind: "center";
+      hexKey: HexKey;
+      cardId: CardDefId;
+    };
+
+export type CollectionPublicView = {
+  waitingForPlayerIds: PlayerID[];
+};
+
+export type CollectionPrivateView = {
+  prompts: CollectionPrompt[];
+  choices: CollectionChoice[] | null;
 };
 
 export type SetupPublicView =
@@ -352,6 +415,7 @@ export type GameView = {
     players: PlayerPublicView[];
     actionStep: ActionStepPublicView | null;
     setup: SetupPublicView | null;
+    collection: CollectionPublicView | null;
     winnerPlayerId: PlayerID | null;
   };
   private: PlayerPrivateView | null;
