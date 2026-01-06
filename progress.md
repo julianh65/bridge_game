@@ -11,8 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- (none)
-- Owner: Agent 3 (Codex). Scope: improve special-tile placement fairness with minimal algorithm tweaks. Files: packages/engine/src/board-generation.ts. Status: in progress.
+- Owner: Codex (assistant). Scope: prevent combat infinite loop when no hits occur; add coverage. Files: packages/engine/src/combat.ts, packages/engine/src/combat.test.ts. Status: in progress.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -24,6 +23,7 @@
 
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.
+- Added a capital-balance penalty to special-tile scoring to spread forges/mines more evenly across capitals.
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.

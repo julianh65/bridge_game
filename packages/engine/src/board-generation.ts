@@ -112,6 +112,7 @@ type SpecialTilePlacementOptions = {
 };
 
 const CENTER_KEY = "0,0";
+const CAPITAL_BALANCE_WEIGHT = 4;
 
 const cloneBoard = (board: BoardState): BoardState => {
   const hexes: Record<HexKey, HexState> = {};
@@ -146,6 +147,34 @@ const minDistanceToSet = (key: HexKey, others: HexKey[]): number => {
     }
   }
   return min;
+};
+
+const closestCapitalIndex = (key: HexKey, capitalHexes: HexKey[]): number => {
+  let bestIndex = 0;
+  let bestDistance = Number.POSITIVE_INFINITY;
+  for (let i = 0; i < capitalHexes.length; i += 1) {
+    const dist = distanceBetweenKeys(key, capitalHexes[i]);
+    if (dist < bestDistance) {
+      bestDistance = dist;
+      bestIndex = i;
+      continue;
+    }
+    if (dist === bestDistance) {
+      if (compareHexKeys(capitalHexes[i], capitalHexes[bestIndex]) < 0) {
+        bestIndex = i;
+      }
+    }
+  }
+  return bestIndex;
+};
+
+const countByClosestCapital = (keys: HexKey[], capitalHexes: HexKey[]): number[] => {
+  const counts = Array.from({ length: capitalHexes.length }, () => 0);
+  for (const key of keys) {
+    const index = closestCapitalIndex(key, capitalHexes);
+    counts[index] += 1;
+  }
+  return counts;
 };
 
 const respectsMinDistance = (key: HexKey, others: HexKey[], minDistance: number): boolean => {
@@ -186,12 +215,21 @@ const isEligibleForSpecialTile = (
   return true;
 };
 
-const scoreCandidate = (candidate: HexKey, sameTypeKeys: HexKey[], capitalHexes: HexKey[]): number => {
+const scoreCandidate = (
+  candidate: HexKey,
+  sameTypeKeys: HexKey[],
+  capitalHexes: HexKey[],
+  capitalCounts?: number[]
+): number => {
   const minSameType = minDistanceToSet(candidate, sameTypeKeys);
   const minToCapital = minDistanceToSet(candidate, capitalHexes);
   const sameTypeScore = Number.isFinite(minSameType) ? minSameType * 10 : 1000;
   const capitalScore = Number.isFinite(minToCapital) ? minToCapital : 0;
-  return sameTypeScore + capitalScore;
+  const balancePenalty =
+    capitalCounts && capitalCounts.length > 0
+      ? capitalCounts[closestCapitalIndex(candidate, capitalHexes)] * CAPITAL_BALANCE_WEIGHT
+      : 0;
+  return sameTypeScore + capitalScore - balancePenalty;
 };
 
 const chooseCandidate = (
@@ -201,10 +239,11 @@ const chooseCandidate = (
   capitalHexes: HexKey[],
   topK: number
 ): { key: HexKey; rngState: RNGState } => {
+  const capitalCounts = countByClosestCapital(sameTypeKeys, capitalHexes);
   const ranked = candidates
     .map((key) => ({
       key,
-      score: scoreCandidate(key, sameTypeKeys, capitalHexes)
+      score: scoreCandidate(key, sameTypeKeys, capitalHexes, capitalCounts)
     }))
     .sort((a, b) => {
       if (a.score !== b.score) {
