@@ -7,9 +7,10 @@
 - Added `docs/cards.md` with card data module editing guidelines.
 - Updated board radius defaults (3-player radius 4) in `DEFAULT_CONFIG`, `technical_spec.md`, and `rules_draft.md`.
 - Added a coordination note to `agent_instructions.md` to emphasize planning/logging before coding.
+- Clarified handling of other-agent changes in `agent_instructions.md` to avoid unnecessary escalation.
 
 ## Active tasks
-- (none)
+- agent-2: Implement scoring + cleanup + ageUpdate to complete round loop (tests included). Files: packages/engine/src/types.ts, packages/engine/src/round-flow.ts, packages/engine/src/engine.ts, packages/engine/src/*.test.ts. Status: in progress.
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.

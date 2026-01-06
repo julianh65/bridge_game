@@ -14,3 +14,5 @@ If multiple agents are running at once:
 - Avoid overlapping file edits with other agents. If a file is already claimed, pick a different task.
 - One agent may code while another agent reads/analyses and writes notes only; avoid simultaneous coding in the same area.
 - After finishing a task or subtask, update progress.md and commit.
+Coordination vibe: plan first, log early/often, and if you're blocked by another task, document the dependency and pause after planning.
+If you notice changes that clearly belong to another agent’s claimed scope, treat them as expected: avoid touching those files, don’t revert them, and only surface conflicts or blockers.
