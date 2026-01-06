@@ -113,6 +113,7 @@ type SpecialTilePlacementOptions = {
 
 const CENTER_KEY = "0,0";
 const CAPITAL_BALANCE_WEIGHT = 4;
+const GLOBAL_SPREAD_WEIGHT = 3;
 
 const cloneBoard = (board: BoardState): BoardState => {
   const hexes: Record<HexKey, HexState> = {};
@@ -219,17 +220,20 @@ const scoreCandidate = (
   candidate: HexKey,
   sameTypeKeys: HexKey[],
   capitalHexes: HexKey[],
-  capitalCounts?: number[]
+  capitalCounts?: number[],
+  allSpecialKeys: HexKey[] = []
 ): number => {
   const minSameType = minDistanceToSet(candidate, sameTypeKeys);
+  const minAnySpecial = minDistanceToSet(candidate, allSpecialKeys);
   const minToCapital = minDistanceToSet(candidate, capitalHexes);
   const sameTypeScore = Number.isFinite(minSameType) ? minSameType * 10 : 1000;
+  const spreadScore = Number.isFinite(minAnySpecial) ? minAnySpecial * GLOBAL_SPREAD_WEIGHT : 0;
   const capitalScore = Number.isFinite(minToCapital) ? minToCapital : 0;
   const balancePenalty =
     capitalCounts && capitalCounts.length > 0
       ? capitalCounts[closestCapitalIndex(candidate, capitalHexes)] * CAPITAL_BALANCE_WEIGHT
       : 0;
-  return sameTypeScore + capitalScore - balancePenalty;
+  return sameTypeScore + spreadScore + capitalScore - balancePenalty;
 };
 
 const chooseCandidate = (
@@ -237,13 +241,20 @@ const chooseCandidate = (
   candidates: HexKey[],
   sameTypeKeys: HexKey[],
   capitalHexes: HexKey[],
-  topK: number
+  topK: number,
+  allSpecialKeys?: HexKey[]
 ): { key: HexKey; rngState: RNGState } => {
   const capitalCounts = countByClosestCapital(sameTypeKeys, capitalHexes);
   const ranked = candidates
     .map((key) => ({
       key,
-      score: scoreCandidate(key, sameTypeKeys, capitalHexes, capitalCounts)
+      score: scoreCandidate(
+        key,
+        sameTypeKeys,
+        capitalHexes,
+        capitalCounts,
+        allSpecialKeys ?? sameTypeKeys
+      )
     }))
     .sort((a, b) => {
       if (a.score !== b.score) {
@@ -380,7 +391,7 @@ export const placeSpecialTiles = (
         placementFailed = true;
         break;
       }
-      const choice = chooseCandidate(rng, remaining, forgeKeys, capitalHexes, topK);
+      const choice = chooseCandidate(rng, remaining, forgeKeys, capitalHexes, topK, forgeKeys);
       rng = choice.rngState;
       forgeKeys.push(choice.key);
       working.hexes[choice.key] = {
@@ -421,7 +432,14 @@ export const placeSpecialTiles = (
         break;
       }
 
-      const choice = chooseCandidate(rng, candidates, homeMineKeys, capitalHexes, topK);
+      const choice = chooseCandidate(
+        rng,
+        candidates,
+        homeMineKeys,
+        capitalHexes,
+        topK,
+        [...forgeKeys, ...homeMineKeys]
+      );
       rng = choice.rngState;
       homeMineKeys.push(choice.key);
       working.hexes[choice.key] = {
@@ -458,7 +476,8 @@ export const placeSpecialTiles = (
         candidates,
         [...homeMineKeys, ...mineKeys],
         capitalHexes,
-        topK
+        topK,
+        [...forgeKeys, ...homeMineKeys, ...mineKeys]
       );
       rng = choice.rngState;
       mineKeys.push(choice.key);
