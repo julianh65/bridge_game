@@ -18,7 +18,6 @@
 ## Active tasks
 - [agent-1] Champion ability hooks: implement Bodyguard redirect, Flight movement override, and Assassin’s Edge pre-combat damage with tests. Files: `packages/engine/src/modifiers.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/commands.ts`, `packages/engine/src/modifiers.test.ts` (status: claimed; implementation_plan update deferred until agent-4 frees `implementation_plan.md`)
 - [agent-3] Reduce board target click friction by gating invalid hex clicks and allowing reselection of start points; scope: `apps/web/src/components/GameScreen.tsx` (status: claimed)
-- [agent-4] Add an Age I market Victory card (Banner Claim) using existing moveStack effect and update registry. Files: `packages/engine/src/content/cards/age1.ts`, `implementation_plan.md` (status: claimed)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -63,6 +62,7 @@
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
 - Converted Milestone 6.5 notes into checklist tasks and marked the market quick-bid UX item complete in `implementation_plan.md`.
 - Expanded the Milestone 5.5 phase-focused layout task with subitems and marked the focus row/log+player move subtasks complete.
+- Noted Banner Claim addition under the Milestone 8 Age I market expansion tasks in `implementation_plan.md`.
 - Added guidance to `agent_instructions.md` on reconciling other-agent/tooling changes.
 - Updated `agent_instructions.md` to require logging task scope/files in `progress.md` before coding and clearing entries after completion.
 - Added git hygiene guidance in `agent_instructions.md` to minimize user interruptions and preserve work.
@@ -149,6 +149,7 @@ none
 - Added faction starter spells and champions data modules to the card registry.
 - Added initial Age I market card stubs and wired the free starting card pool to real card IDs.
 - Added Age I market cards using existing effects: Flank Step, Scavenger's Market, Supply Ledger, Patrol Record.
+- Added Banner Claim (Victory: move 1 stack 1 hex along a Bridge) to the Age I market card list.
 - Added card registry tests for unique IDs and starter/free-start coverage.
 - Added an initial Age I market deck list export under `packages/engine/src/content/market-decks.ts`.
 - Added market deck tests to validate ids are unique, registered, and age-appropriate.

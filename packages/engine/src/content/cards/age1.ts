@@ -161,6 +161,25 @@ export const PATROL_RECORD: CardDef = {
   effects: [{ kind: "drawCards", count: 1 }]
 };
 
+export const BANNER_CLAIM: CardDef = {
+  id: "age1.banner_claim",
+  name: "Banner Claim",
+  rulesText: "When played: Move 1 Force you control 1 hex along a Bridge.",
+  type: "Victory",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1 },
+  initiative: 60,
+  burn: false,
+  targetSpec: {
+    kind: "stack",
+    owner: "self",
+    maxDistance: 1,
+    requiresBridge: true
+  },
+  effects: [{ kind: "moveStack", maxDistance: 1 }]
+};
+
 export const AGE1_CARDS: CardDef[] = [
   QUICK_MARCH,
   FLANK_STEP,
@@ -171,5 +190,6 @@ export const AGE1_CARDS: CardDef[] = [
   PATCH_UP,
   QUICK_STUDY,
   SUPPLY_LEDGER,
-  PATROL_RECORD
+  PATROL_RECORD,
+  BANNER_CLAIM
 ];

@@ -376,6 +376,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - minimal tests per card
 - Expand Age I market cards first (the ones that touch your most-used primitives).
   - [x] Added Flank Step, Scavenger's Market, Supply Ledger, Patrol Record (existing effects only).
+  - [x] Added Banner Claim (Victory: move 1 stack 1 hex along a Bridge).
 - [x] Add “smoke sim” tests:
   - random legal commands for N steps should not crash
 - [x] Add dev-only debug tools:
