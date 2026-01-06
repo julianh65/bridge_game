@@ -18,7 +18,9 @@
 ## Active tasks
 - owner: agent4; scope: add private deck view data + client deck viewer tab; files: `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/App.tsx`, `apps/web/src/components/DeckViewer.tsx`, `progress.md`
 - owner: agent3; scope: format Milestone 8.5 checklist and build full-screen market overlay with richer card layout + toggle; files: `implementation_plan.md`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/styles.css`, `progress.md`
-- owner: agent1; scope: add rules/tutorial placeholder panel to Home landing page; files: `apps/web/src/components/Home.tsx`, `progress.md`; status: in progress
+
+## Milestone 8.5 progress
+- Added a rules/tutorial placeholder panel on the Home landing page; plan checkbox update deferred until `implementation_plan.md` is free (agent3 editing).
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.

@@ -134,24 +134,43 @@ export const Home = ({ onJoin }: HomeProps) => {
           </div>
         </section>
 
-        <section className="panel home__panel">
-          <h2>How it works</h2>
-          <p className="muted">
-            Each room is a PartyKit instance. Share the room code so others can join and
-            sync the same board state. When the server is online, this screen will connect
-            automatically.
-          </p>
-          <div className="home__tips">
-            <div>
-              <span className="label">Default host</span>
-              <span className="value">{defaultHost}</span>
+        <div className="home__panel">
+          <section className="panel home__panel">
+            <h2>How it works</h2>
+            <p className="muted">
+              Each room is a PartyKit instance. Share the room code so others can join and
+              sync the same board state. When the server is online, this screen will connect
+              automatically.
+            </p>
+            <div className="home__tips">
+              <div>
+                <span className="label">Default host</span>
+                <span className="value">{defaultHost}</span>
+              </div>
+              <div>
+                <span className="label">Local dev</span>
+                <span className="value">Run PartyKit on port 1999.</span>
+              </div>
             </div>
-            <div>
-              <span className="label">Local dev</span>
-              <span className="value">Run PartyKit on port 1999.</span>
+          </section>
+
+          <section className="panel home__panel">
+            <h2>Rules & Tutorial</h2>
+            <p className="muted">
+              A quickstart guide and full rules walkthrough will live here soon.
+            </p>
+            <div className="home__tips">
+              <div>
+                <span className="label">Quickstart</span>
+                <span className="value">Coming soon</span>
+              </div>
+              <div>
+                <span className="label">Full rules</span>
+                <span className="value">PDF + in-app</span>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
     </section>
   );
