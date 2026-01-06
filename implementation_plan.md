@@ -245,7 +245,10 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Add a clear phase marker in the header/status area.
 - [x] Gate phase-specific panels (action/market/collection) and add an idle-phase callout.
 - [x] Move the hand panel into a full-width bottom panel during the action phase.
-- [ ] Add phase-focused layouts (market/collection focus + log/player repositioning). For exapmle the market we should kind of see like all cards laid out nicely with their effects and initiative and everything, do this for all the different phases
+- [ ] Add phase-focused layouts (market/collection focus + log/player repositioning).
+  - [x] Add a focus row for market/collection panels above the board.
+  - [x] Move log + player list into a secondary row during market/collection phases.
+  - [ ] Expand market/collection focus cards (initiative/effects) for richer phase layouts.
 - [ ] Add collapsible/relocatable panels so not everything lives in the right sidebar.
 - [ ] Make the phase market at the top part much bigger and cooler
 - [x] During the game we don't need to see all the room id and those little details and top bar, those can be collapsed

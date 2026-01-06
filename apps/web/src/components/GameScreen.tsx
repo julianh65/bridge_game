@@ -117,6 +117,7 @@ export const GameScreen = ({
   const [cardInstanceId, setCardInstanceId] = useState("");
   const [cardTargetsRaw, setCardTargetsRaw] = useState("");
   const [boardPickMode, setBoardPickMode] = useState<BoardPickMode>("none");
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
   const [selectedHexKey, setSelectedHexKey] = useState<string | null>(null);
   const [pendingEdgeStart, setPendingEdgeStart] = useState<string | null>(null);
   const [pendingStackFrom, setPendingStackFrom] = useState<string | null>(null);
@@ -180,12 +181,16 @@ export const GameScreen = ({
   const isMarketPhase = view.public.phase === "round.market";
   const isCollectionPhase = view.public.phase === "round.collection";
   const isInteractivePhase = isActionPhase || isMarketPhase || isCollectionPhase;
+  const showPhaseFocus = isMarketPhase || isCollectionPhase;
   const showHandPanel = Boolean(view.private) && isActionPhase;
   const canDeclareAction =
     status === "connected" && Boolean(localPlayer) && isActionPhase && !localPlayer?.doneThisRound;
   const isBoardTargeting = boardPickMode !== "none";
   const availableMana = localPlayer?.resources.mana ?? 0;
   const availableGold = localPlayer?.resources.gold ?? 0;
+  const toggleHeaderCollapsed = () => {
+    setIsHeaderCollapsed((value) => !value);
+  };
 
   useEffect(() => {
     if (cardInstanceId && !handCards.some((card) => card.id === cardInstanceId)) {
@@ -1049,33 +1054,136 @@ export const GameScreen = ({
     </section>
   ) : null;
 
+  const phaseFocusPanel = showPhaseFocus ? (
+    <div className="game-screen__focus">
+      {isMarketPhase ? (
+        <MarketPanel
+          market={view.public.market}
+          players={view.public.players}
+          phase={view.public.phase}
+          player={localPlayer ?? null}
+          status={status}
+          onSubmitBid={onSubmitMarketBid}
+        />
+      ) : null}
+      {isCollectionPhase ? (
+        <CollectionPanel
+          phase={view.public.phase}
+          player={localPlayer ?? null}
+          players={view.public.players}
+          status={status}
+          handCards={handCards}
+          collectionPublic={view.public.collection}
+          collectionPrivate={view.private?.collection ?? null}
+          onSubmitChoices={onSubmitCollectionChoices}
+        />
+      ) : null}
+    </div>
+  ) : null;
+
+  const logSection = (
+    <div className="sidebar-section">
+      <h3>Log</h3>
+      {view.public.logs.length === 0 ? (
+        <div className="log-empty">Waiting for events.</div>
+      ) : (
+        <ul className="log-list">
+          {view.public.logs.map((entry, index) => (
+            <li key={`${entry.type}-${index}`}>{formatGameEvent(entry, playerNames)}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+
+  const playersSection = (
+    <div className="sidebar-section">
+      <h3>Players</h3>
+      <ul className="player-list">
+        {view.public.players.map((player) => (
+          <li
+            key={player.id}
+            className="player-row"
+            title={getActionStatusTooltip(player.id)}
+          >
+            <div>
+              <span className="player-name">{player.name}</span>
+              <span className="player-meta">Seat {player.seatIndex}</span>
+            </div>
+            <span
+              className={`status-pill ${
+                player.connected ? "status-pill--ready" : "status-pill--waiting"
+              }`}
+            >
+              {player.connected ? "On" : "Off"}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+
+  const auxPanels = showPhaseFocus ? (
+    <div className="game-screen__aux">
+      {logSection}
+      {playersSection}
+    </div>
+  ) : null;
+
   return (
     <section className="game-screen">
-      <header className="game-screen__header">
-        <div>
-          <p className="eyebrow">Bridgefront</p>
-          <h1>Room {roomId}</h1>
-          <p className="subhead">
-            Round {view.public.round} · Phase {phaseLabel}
-          </p>
-        </div>
-        <div className="game-screen__meta">
-          <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
-          <span className="status-pill status-pill--phase">Phase: {phaseLabel}</span>
-          <span className="status-pill">Round {view.public.round}</span>
-          <span className="status-pill">Players: {view.public.players.length}</span>
-          {view.public.winnerPlayerId ? (
-            <span className="status-pill status-pill--winner">
-              Winner: {view.public.winnerPlayerId}
-            </span>
-          ) : null}
-          <button type="button" className="btn btn-secondary" onClick={onLeave}>
-            Leave Room
-          </button>
-        </div>
+      <header className={`game-screen__header ${isHeaderCollapsed ? "is-collapsed" : ""}`}>
+        {isHeaderCollapsed ? (
+          <div className="game-screen__collapsed-bar">
+            <div className="game-screen__collapsed-meta">
+              <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
+              <span className="status-pill status-pill--phase">Phase: {phaseLabel}</span>
+              <span className="status-pill">Round {view.public.round}</span>
+            </div>
+            <div className="game-screen__collapsed-actions">
+              <button type="button" className="btn btn-tertiary" onClick={toggleHeaderCollapsed}>
+                Show HUD
+              </button>
+              <button type="button" className="btn btn-secondary" onClick={onLeave}>
+                Leave Room
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div>
+              <p className="eyebrow">Bridgefront</p>
+              <h1>Room {roomId}</h1>
+              <p className="subhead">
+                Round {view.public.round} · Phase {phaseLabel}
+              </p>
+            </div>
+            <div className="game-screen__meta">
+              <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
+              <span className="status-pill status-pill--phase">Phase: {phaseLabel}</span>
+              <span className="status-pill">Round {view.public.round}</span>
+              <span className="status-pill">Players: {view.public.players.length}</span>
+              {view.public.winnerPlayerId ? (
+                <span className="status-pill status-pill--winner">
+                  Winner: {view.public.winnerPlayerId}
+                </span>
+              ) : null}
+              <button type="button" className="btn btn-tertiary" onClick={toggleHeaderCollapsed}>
+                Hide HUD
+              </button>
+              <button type="button" className="btn btn-secondary" onClick={onLeave}>
+                Leave Room
+              </button>
+            </div>
+          </>
+        )}
       </header>
 
-      <div className="game-screen__layout">
+      {phaseFocusPanel}
+
+      <div
+        className={`game-screen__layout ${showPhaseFocus ? "game-screen__layout--focus" : ""}`}
+      >
         <section className="panel game-board">
           <div className="game-board__placeholder">
             <h2>Board</h2>
@@ -1172,76 +1280,17 @@ export const GameScreen = ({
             </div>
           ) : null}
 
-          {isMarketPhase ? (
-            <MarketPanel
-              market={view.public.market}
-              players={view.public.players}
-              phase={view.public.phase}
-              player={localPlayer ?? null}
-              status={status}
-              onSubmitBid={onSubmitMarketBid}
-            />
-          ) : null}
-
-          {isCollectionPhase ? (
-            <CollectionPanel
-              phase={view.public.phase}
-              player={localPlayer ?? null}
-              players={view.public.players}
-              status={status}
-              handCards={handCards}
-              collectionPublic={view.public.collection}
-              collectionPrivate={view.private?.collection ?? null}
-              onSubmitChoices={onSubmitCollectionChoices}
-            />
-          ) : null}
-
           {!isInteractivePhase ? (
             <div className="sidebar-section">
               <h3>Phase</h3>
               <p className="muted">Resolving {phaseLabel}. Waiting on the server.</p>
             </div>
           ) : null}
-
-          <div className="sidebar-section">
-            <h3>Log</h3>
-            {view.public.logs.length === 0 ? (
-              <div className="log-empty">Waiting for events.</div>
-            ) : (
-              <ul className="log-list">
-                {view.public.logs.map((entry, index) => (
-                  <li key={`${entry.type}-${index}`}>{formatGameEvent(entry, playerNames)}</li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <div className="sidebar-section">
-            <h3>Players</h3>
-            <ul className="player-list">
-              {view.public.players.map((player) => (
-                <li
-                  key={player.id}
-                  className="player-row"
-                  title={getActionStatusTooltip(player.id)}
-                >
-                  <div>
-                    <span className="player-name">{player.name}</span>
-                    <span className="player-meta">Seat {player.seatIndex}</span>
-                  </div>
-                  <span
-                    className={`status-pill ${
-                      player.connected ? "status-pill--ready" : "status-pill--waiting"
-                    }`}
-                  >
-                    {player.connected ? "On" : "Off"}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {!showPhaseFocus ? logSection : null}
+          {!showPhaseFocus ? playersSection : null}
         </aside>
       </div>
+      {auxPanels}
       {handPanel}
     </section>
   );

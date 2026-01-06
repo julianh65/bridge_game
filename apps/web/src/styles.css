@@ -978,6 +978,25 @@ h1 {
   gap: 20px;
 }
 
+.game-screen__layout--focus {
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 360px);
+}
+
+.game-screen__focus {
+  display: grid;
+  gap: 12px;
+}
+
+.game-screen__focus .sidebar-section {
+  padding: 18px;
+}
+
+.game-screen__aux {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
 .game-board {
   min-height: 420px;
 }
@@ -2045,6 +2064,10 @@ h1 {
   }
 
   .game-screen__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .game-screen__aux {
     grid-template-columns: 1fr;
   }
 

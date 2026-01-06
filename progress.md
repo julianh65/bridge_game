@@ -17,6 +17,8 @@
 
 ## Active tasks
 - [agent-1] Champion ability hooks: implement Bodyguard redirect, Flight movement override, and Assassin’s Edge pre-combat damage with tests. Files: `packages/engine/src/modifiers.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/commands.ts`, `packages/engine/src/modifiers.test.ts` (status: claimed; implementation_plan update deferred until agent-4 frees `implementation_plan.md`)
+- [agent-3] Reduce board target click friction by gating invalid hex clicks and allowing reselection of start points; scope: `apps/web/src/components/GameScreen.tsx` (status: claimed)
+- [agent-4] Add an Age I market Victory card (Banner Claim) using existing moveStack effect and update registry. Files: `packages/engine/src/content/cards/age1.ts`, `implementation_plan.md` (status: claimed)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -60,6 +62,7 @@
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
 - Converted Milestone 6.5 notes into checklist tasks and marked the market quick-bid UX item complete in `implementation_plan.md`.
+- Expanded the Milestone 5.5 phase-focused layout task with subitems and marked the focus row/log+player move subtasks complete.
 - Added guidance to `agent_instructions.md` on reconciling other-agent/tooling changes.
 - Updated `agent_instructions.md` to require logging task scope/files in `progress.md` before coding and clearing entries after completion.
 - Added git hygiene guidance in `agent_instructions.md` to minimize user interruptions and preserve work.
@@ -109,6 +112,7 @@ none
 - Added phase status pills and an idle-phase callout, with phase-gated action/market/collection panels in the game sidebar.
 - Moved the hand UI into a full-width bottom panel during the action phase and surfaced VP in the resources block.
 - Added a collapsible GameScreen header with a compact HUD toggle for play sessions.
+- Added a phase-focused layout row for market/collection panels and moved log/player sections into a secondary row during those phases.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
