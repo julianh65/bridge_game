@@ -1037,6 +1037,89 @@ h1 {
   color: var(--ink);
 }
 
+.card-tag--clickable {
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  font-family: inherit;
+}
+
+.card-tag--clickable:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(35, 28, 19, 0.12);
+}
+
+.card-tag--clickable:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.card-tag--clickable.is-selected {
+  border-color: #f59e0b;
+  background: #fde68a;
+  color: #7c2d12;
+}
+
+.card-detail {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #fff7e6;
+  display: grid;
+  gap: 8px;
+}
+
+.card-detail__header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+}
+
+.card-detail__meta {
+  font-size: 11px;
+  color: var(--muted);
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f6f0e4;
+}
+
+.card-detail__rules {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.card-detail__targets {
+  display: grid;
+  gap: 6px;
+}
+
+.card-detail__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.card-detail__row-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.card-detail__hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #f6f0e4;
+}
+
 .card-tag--hidden {
   color: var(--muted);
   border-style: dashed;
@@ -1108,6 +1191,16 @@ h1 {
   color: var(--muted);
 }
 
+.action-field__controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.action-field__controls input {
+  flex: 1;
+}
+
 .action-field input {
   padding: 10px 12px;
   border-radius: 10px;
@@ -1147,6 +1240,21 @@ h1 {
   color: #fff6e7;
   border-color: var(--accent);
   box-shadow: 0 8px 18px rgba(180, 83, 9, 0.2);
+}
+
+.btn-tertiary {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px dashed var(--border);
+  background: #f6f0e4;
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.btn-tertiary.is-active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: #fff0d4;
 }
 
 .btn-secondary {
@@ -1224,10 +1332,57 @@ h1 {
   height: min(54vh, 520px);
 }
 
+.board-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #fffdf6;
+  margin-bottom: 10px;
+}
+
+.board-tools__hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.board-tools__meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.board-svg--interactive {
+  cursor: grab;
+  touch-action: none;
+}
+
+.board-svg--interactive.is-panning {
+  cursor: grabbing;
+}
+
 .hex {
   stroke: #cbbfae;
   stroke-width: 1;
   fill: var(--normal);
+}
+
+.hex--clickable {
+  cursor: pointer;
+}
+
+.hex--selected {
+  stroke: #f59e0b;
+  stroke-width: 3;
+}
+
+.hex--highlight {
+  stroke: #2563eb;
+  stroke-width: 2.5;
+  stroke-dasharray: 6 4;
 }
 
 .hex--capital {

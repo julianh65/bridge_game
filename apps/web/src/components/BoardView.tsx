@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
+import type { PointerEventHandler, WheelEventHandler } from "react";
 
 import type { BoardState } from "@bridgefront/engine";
 
@@ -13,6 +14,11 @@ type BoardViewProps = {
   showMineValues?: boolean;
   labelByHex?: Record<string, string>;
   className?: string;
+  enablePanZoom?: boolean;
+  resetViewToken?: number;
+  onHexClick?: (hexKey: string) => void;
+  selectedHexKey?: string | null;
+  highlightHexKeys?: string[];
 };
 
 const tileTag = (tile: string) => {
@@ -52,6 +58,9 @@ const boundsForHexes = (hexes: HexRender[]) => {
   };
 };
 
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, value));
+
 export const BoardView = ({
   hexes,
   board,
@@ -59,9 +68,24 @@ export const BoardView = ({
   showTags = true,
   showMineValues = true,
   labelByHex,
-  className
+  className,
+  enablePanZoom = false,
+  resetViewToken,
+  onHexClick,
+  selectedHexKey = null,
+  highlightHexKeys = []
 }: BoardViewProps) => {
-  const viewBox = useMemo(() => boundsForHexes(hexes), [hexes]);
+  const baseViewBox = useMemo(() => boundsForHexes(hexes), [hexes]);
+  const [viewBox, setViewBox] = useState(baseViewBox);
+  const [isPanning, setIsPanning] = useState(false);
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const dragRef = useRef<{ x: number; y: number } | null>(null);
+  const didDragRef = useRef(false);
+  const highlightSet = useMemo(() => new Set(highlightHexKeys), [highlightHexKeys]);
+
+  useEffect(() => {
+    setViewBox(baseViewBox);
+  }, [baseViewBox, resetViewToken]);
   const hexCenters = useMemo(() => {
     const map = new Map<string, { x: number; y: number }>();
     for (const hex of hexes) {
@@ -168,10 +192,122 @@ export const BoardView = ({
     return new Map(sorted.map((id, index) => [id, index]));
   }, [unitStacks, bridgeSegments]);
 
+  const toSvgPoint = (clientX: number, clientY: number) => {
+    const svg = svgRef.current;
+    if (!svg) {
+      return null;
+    }
+    const point = svg.createSVGPoint();
+    point.x = clientX;
+    point.y = clientY;
+    const matrix = svg.getScreenCTM();
+    if (!matrix) {
+      return null;
+    }
+    const transformed = point.matrixTransform(matrix.inverse());
+    return { x: transformed.x, y: transformed.y };
+  };
+
+  const handleWheel: WheelEventHandler<SVGSVGElement> = (event) => {
+    if (!enablePanZoom) {
+      return;
+    }
+    const point = toSvgPoint(event.clientX, event.clientY);
+    if (!point) {
+      return;
+    }
+    event.preventDefault();
+    const zoomFactor = event.deltaY > 0 ? 1.12 : 0.9;
+    setViewBox((current) => {
+      const nextWidth = clamp(
+        current.width * zoomFactor,
+        baseViewBox.width * 0.4,
+        baseViewBox.width * 2.5
+      );
+      const nextHeight = clamp(
+        current.height * zoomFactor,
+        baseViewBox.height * 0.4,
+        baseViewBox.height * 2.5
+      );
+      const widthRatio = nextWidth / current.width;
+      const heightRatio = nextHeight / current.height;
+      return {
+        minX: point.x - (point.x - current.minX) * widthRatio,
+        minY: point.y - (point.y - current.minY) * heightRatio,
+        width: nextWidth,
+        height: nextHeight
+      };
+    });
+  };
+
+  const handlePointerDown: PointerEventHandler<SVGSVGElement> = (event) => {
+    if (!enablePanZoom || event.button !== 0) {
+      return;
+    }
+    const point = toSvgPoint(event.clientX, event.clientY);
+    if (!point) {
+      return;
+    }
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragRef.current = point;
+    didDragRef.current = false;
+    setIsPanning(true);
+  };
+
+  const handlePointerMove: PointerEventHandler<SVGSVGElement> = (event) => {
+    if (!enablePanZoom || !dragRef.current) {
+      return;
+    }
+    const point = toSvgPoint(event.clientX, event.clientY);
+    if (!point) {
+      return;
+    }
+    const dx = dragRef.current.x - point.x;
+    const dy = dragRef.current.y - point.y;
+    if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+      didDragRef.current = true;
+    }
+    dragRef.current = point;
+    setViewBox((current) => ({
+      ...current,
+      minX: current.minX + dx,
+      minY: current.minY + dy
+    }));
+  };
+
+  const handlePointerUp: PointerEventHandler<SVGSVGElement> = (event) => {
+    if (!enablePanZoom) {
+      return;
+    }
+    event.currentTarget.releasePointerCapture(event.pointerId);
+    dragRef.current = null;
+    setIsPanning(false);
+  };
+
+  const handlePointerLeave = () => {
+    dragRef.current = null;
+    setIsPanning(false);
+  };
+
+  const clickable = Boolean(onHexClick);
+  const svgClasses = [className ?? "board-svg"];
+  if (enablePanZoom || clickable) {
+    svgClasses.push("board-svg--interactive");
+  }
+  if (isPanning) {
+    svgClasses.push("is-panning");
+  }
+
   return (
     <svg
-      className={className ?? "board-svg"}
+      ref={svgRef}
+      className={svgClasses.join(" ")}
       viewBox={`${viewBox.minX} ${viewBox.minY} ${viewBox.width} ${viewBox.height}`}
+      onWheel={handleWheel}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerLeave}
     >
       {hexes.map((hex) => {
         const tag = showTags ? tileTag(hex.tile) : "";
@@ -180,12 +316,29 @@ export const BoardView = ({
         const coordsY = tag ? hex.y + 8 : hex.y;
         const hasLowerText = showCoordsText || Boolean(labelText);
         const valueY = tag ? hex.y + (hasLowerText ? 20 : 12) : hex.y + 12;
+        const isSelected = selectedHexKey === hex.key;
+        const isHighlighted = highlightSet.has(hex.key);
+        const polygonClasses = [
+          "hex",
+          `hex--${hex.tile}`,
+          clickable ? "hex--clickable" : "",
+          isSelected ? "hex--selected" : "",
+          isHighlighted ? "hex--highlight" : ""
+        ]
+          .filter(Boolean)
+          .join(" ");
 
         return (
           <g key={hex.key}>
             <polygon
-              className={`hex hex--${hex.tile}`}
+              className={polygonClasses}
               points={hexPoints(hex.x, hex.y, HEX_SIZE)}
+              onClick={() => {
+                if (didDragRef.current) {
+                  return;
+                }
+                onHexClick?.(hex.key);
+              }}
             />
             {tag ? (
               <text x={hex.x} y={hex.y - 6} className="hex__tag">

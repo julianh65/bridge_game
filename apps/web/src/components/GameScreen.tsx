@@ -1,8 +1,14 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 
-import { CARD_DEFS, type ActionDeclaration, type GameView } from "@bridgefront/engine";
+import {
+  CARD_DEFS,
+  getBridgeKey,
+  type ActionDeclaration,
+  type GameView
+} from "@bridgefront/engine";
+import { areAdjacent, parseHexKey } from "@bridgefront/shared";
 
-import { ActionPanel } from "./ActionPanel";
+import { ActionPanel, type BoardPickMode } from "./ActionPanel";
 import { BoardView } from "./BoardView";
 import { MarketPanel } from "./MarketPanel";
 import { buildHexRender } from "../lib/board-preview";
@@ -45,6 +51,296 @@ export const GameScreen = ({
       : status === "error"
         ? "status-pill--error"
         : "status-pill--waiting";
+  const [edgeKey, setEdgeKey] = useState("");
+  const [marchFrom, setMarchFrom] = useState("");
+  const [marchTo, setMarchTo] = useState("");
+  const [cardInstanceId, setCardInstanceId] = useState("");
+  const [cardTargetsRaw, setCardTargetsRaw] = useState("");
+  const [boardPickMode, setBoardPickMode] = useState<BoardPickMode>("none");
+  const [selectedHexKey, setSelectedHexKey] = useState<string | null>(null);
+  const [pendingEdgeStart, setPendingEdgeStart] = useState<string | null>(null);
+  const [pendingStackFrom, setPendingStackFrom] = useState<string | null>(null);
+  const [pendingPath, setPendingPath] = useState<string[]>([]);
+  const [resetViewToken, setResetViewToken] = useState(0);
+
+  const selectedCard = handCards.find((card) => card.id === cardInstanceId) ?? null;
+  const selectedCardDef = selectedCard
+    ? CARD_DEFS_BY_ID.get(selectedCard.defId) ?? null
+    : null;
+  const cardTargetKind = selectedCardDef?.targetSpec.kind ?? "none";
+  const leadSeatIndex =
+    view.public.players.length > 0
+      ? (view.public.round - 1 + view.public.players.length) % view.public.players.length
+      : 0;
+  const leadPlayer = view.public.players.find((player) => player.seatIndex === leadSeatIndex) ?? null;
+
+  useEffect(() => {
+    if (cardInstanceId && !handCards.some((card) => card.id === cardInstanceId)) {
+      setCardInstanceId("");
+      setCardTargetsRaw("");
+    }
+  }, [cardInstanceId, handCards]);
+
+  const setBoardPickModeSafe = (mode: BoardPickMode) => {
+    setBoardPickMode(mode);
+    setPendingEdgeStart(null);
+    setPendingStackFrom(null);
+    setPendingPath([]);
+  };
+
+  const setCardTargetsObject = (targets: Record<string, unknown> | null) => {
+    setCardTargetsRaw(targets ? JSON.stringify(targets) : "");
+  };
+
+  const isAdjacent = (from: string, to: string) => {
+    try {
+      return areAdjacent(parseHexKey(from), parseHexKey(to));
+    } catch {
+      return false;
+    }
+  };
+
+  const handleBoardHexClick = (hexKey: string) => {
+    setSelectedHexKey(hexKey);
+
+    if (boardPickMode === "marchFrom") {
+      setMarchFrom(hexKey);
+      setBoardPickMode("marchTo");
+      return;
+    }
+    if (boardPickMode === "marchTo") {
+      setMarchTo(hexKey);
+      return;
+    }
+    if (boardPickMode === "bridgeEdge" || boardPickMode === "cardEdge") {
+      if (!pendingEdgeStart || pendingEdgeStart === hexKey) {
+        setPendingEdgeStart(hexKey);
+        if (boardPickMode === "cardEdge") {
+          setCardTargetsObject(null);
+        }
+        return;
+      }
+      if (!isAdjacent(pendingEdgeStart, hexKey)) {
+        setPendingEdgeStart(hexKey);
+        if (boardPickMode === "cardEdge") {
+          setCardTargetsObject(null);
+        }
+        return;
+      }
+      const edge = getBridgeKey(pendingEdgeStart, hexKey);
+      if (boardPickMode === "bridgeEdge") {
+        setEdgeKey(edge);
+      } else {
+        setCardTargetsObject({ edgeKey: edge });
+      }
+      setPendingEdgeStart(null);
+      return;
+    }
+    if (boardPickMode === "cardStack") {
+      if (!pendingStackFrom || pendingStackFrom === hexKey) {
+        setPendingStackFrom(hexKey);
+        setCardTargetsObject(null);
+        return;
+      }
+      setCardTargetsObject({ from: pendingStackFrom, to: hexKey });
+      setPendingStackFrom(null);
+      return;
+    }
+    if (boardPickMode === "cardPath") {
+      setPendingPath((current) => {
+        if (current.length === 0) {
+          const next = [hexKey];
+          setCardTargetsObject(null);
+          return next;
+        }
+        const last = current[current.length - 1];
+        if (last === hexKey) {
+          return current;
+        }
+        if (!isAdjacent(last, hexKey)) {
+          const next = [hexKey];
+          setCardTargetsObject(null);
+          return next;
+        }
+        const next = [...current, hexKey];
+        if (next.length >= 2) {
+          setCardTargetsObject({ path: next });
+        }
+        return next;
+      });
+      return;
+    }
+    if (boardPickMode === "cardChoice") {
+      setCardTargetsObject({ choice: "occupiedHex", hexKey });
+    }
+  };
+
+  const highlightHexKeys = useMemo(() => {
+    const keys = new Set<string>();
+    if (pendingEdgeStart) {
+      keys.add(pendingEdgeStart);
+    }
+    if (pendingStackFrom) {
+      keys.add(pendingStackFrom);
+    }
+    for (const key of pendingPath) {
+      keys.add(key);
+    }
+    return Array.from(keys);
+  }, [pendingEdgeStart, pendingStackFrom, pendingPath]);
+
+  const cardCostLabel = selectedCardDef
+    ? `${selectedCardDef.cost.mana} mana${
+        selectedCardDef.cost.gold ? `, ${selectedCardDef.cost.gold} gold` : ""
+      }`
+    : null;
+
+  const cardTargetPanel = selectedCardDef
+    ? (() => {
+        switch (cardTargetKind) {
+          case "none":
+            return <p className="card-detail__hint">No targets required.</p>;
+          case "edge":
+            return (
+              <div className="card-detail__targets">
+                <div className="card-detail__row">
+                  <span>Target edge</span>
+                  <button
+                    type="button"
+                    className={`btn btn-tertiary ${
+                      boardPickMode === "cardEdge" ? "is-active" : ""
+                    }`}
+                    onClick={() =>
+                      setBoardPickModeSafe(
+                        boardPickMode === "cardEdge" ? "none" : "cardEdge"
+                      )
+                    }
+                  >
+                    Pick on board
+                  </button>
+                </div>
+                <p className="card-detail__hint">
+                  {pendingEdgeStart
+                    ? `Pick adjacent hex to ${pendingEdgeStart}`
+                    : "Pick two adjacent hexes to set edge."}
+                </p>
+              </div>
+            );
+          case "stack":
+            return (
+              <div className="card-detail__targets">
+                <div className="card-detail__row">
+                  <span>Target stack</span>
+                  <button
+                    type="button"
+                    className={`btn btn-tertiary ${
+                      boardPickMode === "cardStack" ? "is-active" : ""
+                    }`}
+                    onClick={() =>
+                      setBoardPickModeSafe(
+                        boardPickMode === "cardStack" ? "none" : "cardStack"
+                      )
+                    }
+                  >
+                    Pick on board
+                  </button>
+                </div>
+                <p className="card-detail__hint">
+                  {pendingStackFrom
+                    ? `Pick destination from ${pendingStackFrom}`
+                    : "Pick a start hex, then a destination hex."}
+                </p>
+              </div>
+            );
+          case "path":
+            return (
+              <div className="card-detail__targets">
+                <div className="card-detail__row">
+                  <span>Target path</span>
+                  <div className="card-detail__row-actions">
+                    <button
+                      type="button"
+                      className={`btn btn-tertiary ${
+                        boardPickMode === "cardPath" ? "is-active" : ""
+                      }`}
+                      onClick={() =>
+                        setBoardPickModeSafe(
+                          boardPickMode === "cardPath" ? "none" : "cardPath"
+                        )
+                      }
+                    >
+                      Pick on board
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-tertiary"
+                      onClick={() => {
+                        setPendingPath([]);
+                        setCardTargetsRaw("");
+                      }}
+                    >
+                      Clear path
+                    </button>
+                  </div>
+                </div>
+                <p className="card-detail__hint">
+                  {pendingPath.length > 0
+                    ? `Path: ${pendingPath.join(" → ")}`
+                    : "Click hexes to build a contiguous path."}
+                </p>
+              </div>
+            );
+          case "choice":
+            return (
+              <div className="card-detail__targets">
+                <div className="card-detail__row">
+                  <span>Target choice</span>
+                  <div className="card-detail__row-actions">
+                    <button
+                      type="button"
+                      className="btn btn-tertiary"
+                      onClick={() => {
+                        setBoardPickModeSafe("none");
+                        setCardTargetsObject({ choice: "capital" });
+                      }}
+                    >
+                      Capital
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn btn-tertiary ${
+                        boardPickMode === "cardChoice" ? "is-active" : ""
+                      }`}
+                      onClick={() =>
+                        setBoardPickModeSafe(
+                          boardPickMode === "cardChoice" ? "none" : "cardChoice"
+                        )
+                      }
+                    >
+                      Occupied hex
+                    </button>
+                  </div>
+                </div>
+                <p className="card-detail__hint">
+                  Pick capital immediately or select an occupied hex on the board.
+                </p>
+              </div>
+            );
+          case "champion":
+            return (
+              <p className="card-detail__hint">
+                Enter the champion unit id in targets JSON (unitId).
+              </p>
+            );
+          default:
+            return (
+              <p className="card-detail__hint">
+                Target kind: {cardTargetKind}. Use targets JSON for now.
+              </p>
+            );
+        }
+      })()
+    : null;
 
   return (
     <section className="game-screen">
@@ -81,6 +377,21 @@ export const GameScreen = ({
               <div className="legend__item legend__item--mine">Mine</div>
               <div className="legend__item legend__item--center">Center</div>
             </div>
+            <div className="board-tools">
+              <span className="board-tools__hint">Drag to pan · Scroll to zoom</span>
+              <div className="board-tools__meta">
+                <span className="chip">
+                  {selectedHexKey ? `Selected ${selectedHexKey}` : "No hex selected"}
+                </span>
+                <button
+                  type="button"
+                  className="btn btn-tertiary"
+                  onClick={() => setResetViewToken((value) => value + 1)}
+                >
+                  Reset view
+                </button>
+              </div>
+            </div>
             <BoardView
               hexes={hexRender}
               board={view.public.board}
@@ -88,6 +399,11 @@ export const GameScreen = ({
               showTags
               showMineValues={false}
               className="board-svg board-svg--game"
+              enablePanZoom
+              resetViewToken={resetViewToken}
+              selectedHexKey={selectedHexKey}
+              highlightHexKeys={highlightHexKeys}
+              onHexClick={handleBoardHexClick}
             />
           </div>
         </section>
@@ -105,6 +421,10 @@ export const GameScreen = ({
               <span>Mana</span>
               <strong>{localPlayer?.resources.mana ?? 0}</strong>
             </div>
+            <div className="resource-row">
+              <span>Lead</span>
+              <strong>{leadPlayer ? leadPlayer.name : "—"}</strong>
+            </div>
           </div>
 
           <div className="sidebar-section">
@@ -120,13 +440,42 @@ export const GameScreen = ({
                   {handCards.map((card) => {
                     const def = CARD_DEFS_BY_ID.get(card.defId);
                     const label = def?.name ?? card.defId;
+                    const isSelected = card.id === cardInstanceId;
                     return (
-                      <li key={card.id} className="card-tag" title={card.defId}>
-                        {label} · {card.id}
+                      <li key={card.id}>
+                        <button
+                          type="button"
+                          className={`card-tag card-tag--clickable ${
+                            isSelected ? "is-selected" : ""
+                          }`}
+                          title={card.defId}
+                          onClick={() => {
+                            setCardInstanceId(card.id);
+                            setCardTargetsRaw("");
+                            setBoardPickModeSafe("none");
+                          }}
+                        >
+                          {label} · {card.id}
+                        </button>
                       </li>
                     );
                   })}
                 </ul>
+                {selectedCardDef ? (
+                  <div className="card-detail">
+                    <div className="card-detail__header">
+                      <strong>{selectedCardDef.name}</strong>
+                      {cardCostLabel ? (
+                        <span className="card-detail__meta">Cost {cardCostLabel}</span>
+                      ) : null}
+                      <span className="card-detail__meta">
+                        Init {selectedCardDef.initiative}
+                      </span>
+                    </div>
+                    <p className="card-detail__rules">{selectedCardDef.rulesText}</p>
+                    {cardTargetPanel}
+                  </div>
+                ) : null}
               </>
             )}
             {deckCounts ? (
@@ -160,7 +509,19 @@ export const GameScreen = ({
               players={view.public.players}
               actionStep={view.public.actionStep}
               status={status}
+              edgeKey={edgeKey}
+              marchFrom={marchFrom}
+              marchTo={marchTo}
+              cardInstanceId={cardInstanceId}
+              cardTargetsRaw={cardTargetsRaw}
+              boardPickMode={boardPickMode}
               onSubmit={onSubmitAction}
+              onEdgeKeyChange={setEdgeKey}
+              onMarchFromChange={setMarchFrom}
+              onMarchToChange={setMarchTo}
+              onCardInstanceIdChange={setCardInstanceId}
+              onCardTargetsRawChange={setCardTargetsRaw}
+              onBoardPickModeChange={setBoardPickModeSafe}
             />
           </div>
 

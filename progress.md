@@ -11,7 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [in progress] owner: agent2; scope: UI polish pass (board pan/zoom + click selection + card selection helpers); files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/BoardView.tsx, apps/web/src/components/ActionPanel.tsx, apps/web/src/styles.css
+- [in progress] owner: agent3; scope: engine collection prompts (mine/forge/center choices) + resolution; files: packages/engine/src/types.ts, packages/engine/src/engine.ts, packages/engine/src/round-flow.ts, packages/engine/src/cards.ts, packages/engine/src/market.ts, packages/engine/src/content
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -51,11 +51,8 @@
 - Consider moving view construction into `packages/engine/src/view.ts` if `buildView` grows.
 
 ## UI polish TODOs
-- Add board pan/zoom controls (mouse wheel + drag + reset view).
-- Add board click selection + highlight for targeting hexes/edges.
-- Make hand cards clickable to select + show card details.
-- Add action targeting helpers to fill inputs from board clicks.
-- Surface "lead/turn" indicator in game UI.
+- Add champion-target picker for card targets (unit selection).
+- Add hover tooltips for hex/stack details.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
@@ -121,6 +118,10 @@
 - Added a Cards debug tab with filters (age/deck, mana cost, type, tags) and initiative sorting.
 - Polished the Cards tab layout for denser grids, deck accents, and compact rule previews.
 - Refined Cards tab tag styling with tighter radius and centered labels.
+- Game board now supports pan/zoom + reset view, with click selection/highlights for targeting.
+- Hand cards are clickable to prefill card play inputs and show card details/target helpers.
+- Action panel now supports board-pick buttons for bridge/march inputs and shows board pick mode.
+- Player panel now surfaces lead player in the resources block.
 
 ## Milestone 4.5 progress
 - Added a capital draft panel in the setup lobby that lists available slots, shows pick order/status, and submits `pickCapital` choices from the client.

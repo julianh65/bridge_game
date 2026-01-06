@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import type { ActionDeclaration, GameView } from "@bridgefront/engine";
 
 import type { RoomConnectionStatus } from "../lib/room-client";
@@ -12,10 +10,32 @@ type ActionPanelProps = {
   players: PlayerView[];
   actionStep: GameView["public"]["actionStep"];
   status: RoomConnectionStatus;
+  edgeKey: string;
+  marchFrom: string;
+  marchTo: string;
+  cardInstanceId: string;
+  cardTargetsRaw: string;
+  boardPickMode: BoardPickMode;
   onSubmit: (declaration: ActionDeclaration) => void;
+  onEdgeKeyChange: (value: string) => void;
+  onMarchFromChange: (value: string) => void;
+  onMarchToChange: (value: string) => void;
+  onCardInstanceIdChange: (value: string) => void;
+  onCardTargetsRawChange: (value: string) => void;
+  onBoardPickModeChange: (mode: BoardPickMode) => void;
 };
 
 type CardTargets = Record<string, unknown> | null;
+
+export type BoardPickMode =
+  | "none"
+  | "marchFrom"
+  | "marchTo"
+  | "bridgeEdge"
+  | "cardEdge"
+  | "cardStack"
+  | "cardPath"
+  | "cardChoice";
 
 const getActionHint = (
   phase: GameView["public"]["phase"],
@@ -46,13 +66,20 @@ export const ActionPanel = ({
   players,
   actionStep,
   status,
-  onSubmit
+  edgeKey,
+  marchFrom,
+  marchTo,
+  cardInstanceId,
+  cardTargetsRaw,
+  boardPickMode,
+  onSubmit,
+  onEdgeKeyChange,
+  onMarchFromChange,
+  onMarchToChange,
+  onCardInstanceIdChange,
+  onCardTargetsRawChange,
+  onBoardPickModeChange
 }: ActionPanelProps) => {
-  const [edgeKey, setEdgeKey] = useState("");
-  const [marchFrom, setMarchFrom] = useState("");
-  const [marchTo, setMarchTo] = useState("");
-  const [cardInstanceId, setCardInstanceId] = useState("");
-  const [cardTargetsRaw, setCardTargetsRaw] = useState("");
   const isActionPhase = phase === "round.action";
   const mana = player?.resources.mana ?? 0;
   const gold = player?.resources.gold ?? 0;
@@ -82,6 +109,22 @@ export const ActionPanel = ({
   const canPlayCard =
     canSubmitAction && trimmedCardId.length > 0 && targetsError === null;
   const hint = getActionHint(phase, status, player);
+  const pickLabel =
+    boardPickMode === "marchFrom"
+      ? "Board pick: March from"
+      : boardPickMode === "marchTo"
+        ? "Board pick: March to"
+        : boardPickMode === "bridgeEdge"
+          ? "Board pick: Bridge edge"
+          : boardPickMode === "cardEdge"
+            ? "Board pick: Card edge"
+            : boardPickMode === "cardStack"
+              ? "Board pick: Card stack"
+              : boardPickMode === "cardPath"
+                ? "Board pick: Card path"
+                : boardPickMode === "cardChoice"
+                  ? "Board pick: Card choice"
+                  : "Board pick: none";
   const actionStepStatus = actionStep
     ? (() => {
         const eligible = new Set(actionStep.eligiblePlayerIds);
@@ -119,12 +162,27 @@ export const ActionPanel = ({
       </div>
       <label className="action-field">
         <span>Build bridge (edge key)</span>
-        <input
-          type="text"
-          placeholder="q,r|q,r"
-          value={edgeKey}
-          onChange={(event) => setEdgeKey(event.target.value)}
-        />
+        <div className="action-field__controls">
+          <input
+            type="text"
+            placeholder="q,r|q,r"
+            value={edgeKey}
+            onChange={(event) => onEdgeKeyChange(event.target.value)}
+          />
+          <button
+            type="button"
+            className={`btn btn-tertiary ${
+              boardPickMode === "bridgeEdge" ? "is-active" : ""
+            }`}
+            onClick={() =>
+              onBoardPickModeChange(
+                boardPickMode === "bridgeEdge" ? "none" : "bridgeEdge"
+              )
+            }
+          >
+            Pick
+          </button>
+        </div>
       </label>
       <button
         type="button"
@@ -142,21 +200,51 @@ export const ActionPanel = ({
       <div className="action-panel__march">
         <label className="action-field">
           <span>March from</span>
-          <input
-            type="text"
-            placeholder="q,r"
-            value={marchFrom}
-            onChange={(event) => setMarchFrom(event.target.value)}
-          />
+          <div className="action-field__controls">
+            <input
+              type="text"
+              placeholder="q,r"
+              value={marchFrom}
+              onChange={(event) => onMarchFromChange(event.target.value)}
+            />
+            <button
+              type="button"
+              className={`btn btn-tertiary ${
+                boardPickMode === "marchFrom" ? "is-active" : ""
+              }`}
+              onClick={() =>
+                onBoardPickModeChange(
+                  boardPickMode === "marchFrom" ? "none" : "marchFrom"
+                )
+              }
+            >
+              Pick
+            </button>
+          </div>
         </label>
         <label className="action-field">
           <span>March to</span>
-          <input
-            type="text"
-            placeholder="q,r"
-            value={marchTo}
-            onChange={(event) => setMarchTo(event.target.value)}
-          />
+          <div className="action-field__controls">
+            <input
+              type="text"
+              placeholder="q,r"
+              value={marchTo}
+              onChange={(event) => onMarchToChange(event.target.value)}
+            />
+            <button
+              type="button"
+              className={`btn btn-tertiary ${
+                boardPickMode === "marchTo" ? "is-active" : ""
+              }`}
+              onClick={() =>
+                onBoardPickModeChange(
+                  boardPickMode === "marchTo" ? "none" : "marchTo"
+                )
+              }
+            >
+              Pick
+            </button>
+          </div>
         </label>
       </div>
       <button
@@ -178,7 +266,7 @@ export const ActionPanel = ({
           type="text"
           placeholder="ci_12"
           value={cardInstanceId}
-          onChange={(event) => setCardInstanceId(event.target.value)}
+          onChange={(event) => onCardInstanceIdChange(event.target.value)}
         />
       </label>
       <label className="action-field">
@@ -187,7 +275,7 @@ export const ActionPanel = ({
           type="text"
           placeholder='{"edgeKey":"q,r|q,r"}'
           value={cardTargetsRaw}
-          onChange={(event) => setCardTargetsRaw(event.target.value)}
+          onChange={(event) => onCardTargetsRawChange(event.target.value)}
         />
       </label>
       <button
@@ -216,6 +304,7 @@ export const ActionPanel = ({
         Targets examples:{" "}
         {"{\"from\":\"0,0\",\"to\":\"1,0\"} | {\"path\":[\"0,0\",\"1,0\"]} | {\"edgeKey\":\"0,0|1,0\"}"}
       </p>
+      <p className="action-panel__hint">{pickLabel}</p>
       <p className="action-panel__hint">{hint}</p>
       {actionStepStatus ? (
         <>
