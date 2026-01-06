@@ -11,7 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent3] Tweak Cards tab tag styling (radius, alignment) for better visual polish. Files: `apps/web/src/styles.css`, `progress.md`. Status: in progress.
+- (none)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -101,6 +101,7 @@
 - Lobby now includes a room code copy control with clipboard fallback.
 - Added a Cards debug tab with filters (age/deck, mana cost, type, tags) and initiative sorting.
 - Polished the Cards tab layout for denser grids, deck accents, and compact rule previews.
+- Refined Cards tab tag styling with tighter radius and centered labels.
 
 ## Milestone 5 progress
 - Added action-step card declarations for no-target cards (gain gold/draw cards) with initiative-ordered resolution before basic actions; cards leave hand on declaration and discard/burn after resolution, plus Supply Cache coverage.

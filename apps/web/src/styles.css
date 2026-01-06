@@ -618,12 +618,17 @@ h1 {
 
 .filter-pill {
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: 8px;
   background: #fdf2e1;
   color: var(--muted);
   padding: 6px 10px;
   font-size: 11px;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.1;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -686,6 +691,7 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
+  align-items: center;
 }
 
 .card-entry__text {
@@ -701,8 +707,14 @@ h1 {
 
 .cards-browser .card-tag {
   font-size: 11px;
-  padding: 3px 8px;
+  padding: 4px 8px;
   background: #f9efe1;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.1;
 }
 
 .card-entry[data-deck="starter"] {
