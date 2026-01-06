@@ -1,20 +1,6 @@
-import { useMemo, useState } from "react";
+import type { GameView } from "@bridgefront/engine";
 
-type LobbyPlayer = {
-  id: string;
-  name: string;
-  seatIndex: number;
-  ready: boolean;
-  isHost?: boolean;
-};
-
-const LOCAL_PLAYER_ID = "p1";
-
-const initialPlayers: LobbyPlayer[] = [
-  { id: "p1", name: "Player 1", seatIndex: 1, ready: false, isHost: true },
-  { id: "p2", name: "Player 2", seatIndex: 2, ready: false },
-  { id: "p3", name: "Player 3", seatIndex: 3, ready: false }
-];
+import type { RoomConnectionStatus } from "../lib/room-client";
 
 const placeholderFactions = [
   "Bastion",
@@ -26,38 +12,39 @@ const placeholderFactions = [
 ];
 
 type LobbyProps = {
-  onStart: () => void;
+  view: GameView;
+  playerId: string | null;
+  roomId: string;
+  status: RoomConnectionStatus;
+  onLeave: () => void;
 };
 
-export const Lobby = ({ onStart }: LobbyProps) => {
-  const [players, setPlayers] = useState(initialPlayers);
-
-  const readyCount = useMemo(() => players.filter((player) => player.ready).length, [players]);
-  const allReady = readyCount === players.length;
-  const localReady = players.find((player) => player.id === LOCAL_PLAYER_ID)?.ready ?? false;
-
-  const toggleReady = (playerId: string) => {
-    setPlayers((current) =>
-      current.map((player) =>
-        player.id === playerId ? { ...player, ready: !player.ready } : player
-      )
-    );
-  };
+export const Lobby = ({ view, playerId, roomId, status, onLeave }: LobbyProps) => {
+  const players = view.public.players;
+  const connectedCount = players.filter((player) => player.connected).length;
+  const statusLabel = status === "connected" ? "Live" : status === "error" ? "Error" : "Waiting";
+  const statusClass =
+    status === "connected"
+      ? "status-pill--ready"
+      : status === "error"
+        ? "status-pill--error"
+        : "status-pill--waiting";
 
   return (
     <section className="lobby">
       <header className="lobby__header">
         <div>
-          <p className="eyebrow">Bridgefront Lobby</p>
-          <h1>Pre-game Check-In</h1>
+          <p className="eyebrow">Room Lobby</p>
+          <h1>Room {roomId}</h1>
           <p className="subhead">
-            Factions and settings are placeholders for now. Ready up to unlock the start button.
+            Players will draft capitals and place starting bridges once the server begins setup.
           </p>
         </div>
         <div className="lobby__status">
           <span className="status-pill">
-            {readyCount}/{players.length} ready
+            {connectedCount}/{players.length} connected
           </span>
+          <span className={`status-pill ${statusClass}`}>{statusLabel}</span>
         </div>
       </header>
 
@@ -66,30 +53,20 @@ export const Lobby = ({ onStart }: LobbyProps) => {
           <h2>Seats</h2>
           <ul className="seat-list">
             {players.map((player) => (
-              <li key={player.id} className={`seat ${player.ready ? "is-ready" : ""}`}>
+              <li key={player.id} className={`seat ${player.connected ? "is-ready" : ""}`}>
                 <div className="seat__info">
                   <span className="seat__name">{player.name}</span>
                   <span className="seat__meta">Seat {player.seatIndex}</span>
                 </div>
                 <div className="seat__status">
-                  {player.isHost ? <span className="chip chip--host">Host</span> : null}
-                  {player.id === LOCAL_PLAYER_ID ? (
-                    <span className="chip chip--local">You</span>
-                  ) : null}
+                  {player.id === playerId ? <span className="chip chip--local">You</span> : null}
                   <span
                     className={`status-pill ${
-                      player.ready ? "status-pill--ready" : "status-pill--waiting"
+                      player.connected ? "status-pill--ready" : "status-pill--waiting"
                     }`}
                   >
-                    {player.ready ? "Ready" : "Waiting"}
+                    {player.connected ? "Connected" : "Offline"}
                   </span>
-                  <button
-                    type="button"
-                    className="seat__toggle"
-                    onClick={() => toggleReady(player.id)}
-                  >
-                    Toggle
-                  </button>
                 </div>
               </li>
             ))}
@@ -132,16 +109,8 @@ export const Lobby = ({ onStart }: LobbyProps) => {
       </div>
 
       <div className="lobby__actions">
-        <button type="button" className="btn btn-secondary" onClick={() => toggleReady(LOCAL_PLAYER_ID)}>
-          {localReady ? "Unready" : "Ready Up"}
-        </button>
-        <button
-          type="button"
-          className="btn btn-primary"
-          disabled={!allReady}
-          onClick={onStart}
-        >
-          Start Game
+        <button type="button" className="btn btn-secondary" onClick={onLeave}>
+          Leave Room
         </button>
       </div>
     </section>

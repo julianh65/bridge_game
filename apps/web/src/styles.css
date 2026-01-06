@@ -54,6 +54,13 @@ select {
   box-shadow: 0 10px 24px rgba(46, 36, 20, 0.08);
 }
 
+.app__nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .app__nav-label {
   font-size: 11px;
   letter-spacing: 0.18em;
@@ -112,6 +119,79 @@ h1 {
   margin: 0;
   color: var(--muted);
   max-width: 420px;
+}
+
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.home__header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.home__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 1fr);
+  gap: 20px;
+}
+
+.home__form {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.field input {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 14px;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--ink);
+}
+
+.home__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.home__panel {
+  display: grid;
+  gap: 16px;
+}
+
+.home__tips {
+  display: grid;
+  gap: 12px;
+}
+
+.home__tips .label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.home__tips .value {
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .controls {
@@ -279,6 +359,11 @@ h1 {
 
 .status-pill--waiting {
   background: #fee2e2;
+  color: #991b1b;
+}
+
+.status-pill--error {
+  background: #fecaca;
   color: #991b1b;
 }
 
@@ -500,6 +585,34 @@ h1 {
   background: #f6f0e4;
 }
 
+.player-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #fffdf6;
+}
+
+.player-name {
+  display: block;
+  font-weight: 600;
+}
+
+.player-meta {
+  font-size: 12px;
+  color: var(--muted);
+}
 .log-list {
   margin: 0;
   padding-left: 18px;
@@ -764,6 +877,10 @@ h1 {
   }
 
   .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .home__grid {
     grid-template-columns: 1fr;
   }
 

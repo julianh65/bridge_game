@@ -12,7 +12,6 @@
 
 ## Active tasks
 - (none)
-- Agent2: Wire web client room connection (join, welcome/update handling), add basic room UI flow (home/lobby/game) backed by server views, keep debug board intact. Files: `apps/web/src/App.tsx`, `apps/web/src/components/Home.tsx`, `apps/web/src/components/Lobby.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/lib/room-client.ts`, `apps/web/src/styles.css`. Status: in progress.
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.
@@ -69,6 +68,7 @@
 - Game screen now renders a preview board using the shared board view component (seeded example).
 - Game screen now uses a sample engine state (auto-setup) and BoardView renders bridges/units.
 - Implemented PartyKit room server with join/command handling, in-memory game state, revision bumping, and rejoin tokens (`apps/server/src/server.ts`).
+- Added a PartyKit web client hook + Home screen for room join; Lobby/GameScreen now render from live `GameView` data with connection state, board, and logs.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

@@ -1,36 +1,53 @@
 import { useMemo } from "react";
 
-import { BoardView } from "./BoardView";
-import { buildSampleGame } from "../lib/sample-game";
+import type { GameView } from "@bridgefront/engine";
 
-export const GameScreen = () => {
-  const sample = useMemo(() => buildSampleGame(3, "42"), []);
-  const { state } = sample;
-  const leadPlayer = state.players.find((player) => player.seatIndex === state.leadSeatIndex);
-  const activePlayer = state.players[0];
-  const handCount = activePlayer?.deck.hand.length ?? 0;
-  const phaseLabel = state.phase.replace("round.", "").replace(".", " ");
+import { BoardView } from "./BoardView";
+import { buildHexRender } from "../lib/board-preview";
+import type { RoomConnectionStatus } from "../lib/room-client";
+
+type GameScreenProps = {
+  view: GameView;
+  playerId: string | null;
+  roomId: string;
+  status: RoomConnectionStatus;
+  onLeave: () => void;
+};
+
+export const GameScreen = ({ view, playerId, roomId, status, onLeave }: GameScreenProps) => {
+  const hexRender = useMemo(() => buildHexRender(view.public.board), [view.public.board]);
+  const localPlayer = view.public.players.find((player) => player.id === playerId);
+  const handCount = view.private?.hand.length ?? 0;
+  const phaseLabel = view.public.phase.replace("round.", "").replace(".", " ");
+  const connectionLabel = status === "connected" ? "Live" : "Waiting";
+  const connectionClass =
+    status === "connected"
+      ? "status-pill--ready"
+      : status === "error"
+        ? "status-pill--error"
+        : "status-pill--waiting";
 
   return (
     <section className="game-screen">
       <header className="game-screen__header">
         <div>
-          <p className="eyebrow">Bridgefront Game</p>
+          <p className="eyebrow">Bridgefront</p>
           <h1>
-            Round {state.round} · {phaseLabel}
+            Room {roomId} · Round {view.public.round} · {phaseLabel}
           </h1>
-          <p className="subhead">Sample engine state (auto-setup for UI preview).</p>
+          <p className="subhead">Live room state from the PartyKit server.</p>
         </div>
         <div className="game-screen__meta">
-          {leadPlayer ? (
-            <span className="status-pill status-pill--ready">Lead: {leadPlayer.name}</span>
-          ) : null}
-          <span className="status-pill">Players: {state.players.length}</span>
-          {state.winnerPlayerId ? (
+          <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
+          <span className="status-pill">Players: {view.public.players.length}</span>
+          {view.public.winnerPlayerId ? (
             <span className="status-pill status-pill--winner">
-              Winner: {state.winnerPlayerId}
+              Winner: {view.public.winnerPlayerId}
             </span>
           ) : null}
+          <button type="button" className="btn btn-secondary" onClick={onLeave}>
+            Leave Room
+          </button>
         </div>
       </header>
 
@@ -38,7 +55,7 @@ export const GameScreen = () => {
         <section className="panel game-board">
           <div className="game-board__placeholder">
             <h2>Board</h2>
-            <p className="muted">Sample board (seed 42, 3 players).</p>
+            <p className="muted">Shared board state.</p>
             <div className="legend legend--compact">
               <div className="legend__item legend__item--capital">Capital</div>
               <div className="legend__item legend__item--forge">Forge</div>
@@ -46,8 +63,8 @@ export const GameScreen = () => {
               <div className="legend__item legend__item--center">Center</div>
             </div>
             <BoardView
-              hexes={sample.hexRender}
-              board={state.board}
+              hexes={hexRender}
+              board={view.public.board}
               showCoords={false}
               showTags
               showMineValues={false}
@@ -63,11 +80,11 @@ export const GameScreen = () => {
             <h3>Resources</h3>
             <div className="resource-row">
               <span>Gold</span>
-              <strong>{activePlayer?.resources.gold ?? 0}</strong>
+              <strong>{localPlayer?.resources.gold ?? 0}</strong>
             </div>
             <div className="resource-row">
               <span>Mana</span>
-              <strong>{activePlayer?.resources.mana ?? 0}</strong>
+              <strong>{localPlayer?.resources.mana ?? 0}</strong>
             </div>
           </div>
 
@@ -76,6 +93,11 @@ export const GameScreen = () => {
             <div className="hand-empty">
               {handCount > 0 ? `${handCount} cards in hand.` : "No cards yet."}
             </div>
+            {view.private?.vp ? (
+              <div className="hand-empty">
+                VP: {view.private.vp.total} (control {view.private.vp.control})
+              </div>
+            ) : null}
           </div>
 
           <div className="sidebar-section">
@@ -87,15 +109,36 @@ export const GameScreen = () => {
 
           <div className="sidebar-section">
             <h3>Log</h3>
-            {state.logs.length === 0 ? (
+            {view.public.logs.length === 0 ? (
               <div className="log-empty">Waiting for events.</div>
             ) : (
               <ul className="log-list">
-                {state.logs.map((entry, index) => (
+                {view.public.logs.map((entry, index) => (
                   <li key={`${entry.type}-${index}`}>{entry.type}</li>
                 ))}
               </ul>
             )}
+          </div>
+
+          <div className="sidebar-section">
+            <h3>Players</h3>
+            <ul className="player-list">
+              {view.public.players.map((player) => (
+                <li key={player.id} className="player-row">
+                  <div>
+                    <span className="player-name">{player.name}</span>
+                    <span className="player-meta">Seat {player.seatIndex}</span>
+                  </div>
+                  <span
+                    className={`status-pill ${
+                      player.connected ? "status-pill--ready" : "status-pill--waiting"
+                    }`}
+                  >
+                    {player.connected ? "On" : "Off"}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
         </aside>
       </div>
