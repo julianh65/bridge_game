@@ -47,6 +47,7 @@
 
 ## Milestone 4 progress
 - Added a game screen placeholder layout in `apps/web` (board area + sidebar stubs), no server wiring yet.
+- Game screen now renders a preview board using the shared board view component (seeded example).
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

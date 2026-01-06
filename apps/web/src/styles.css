@@ -538,6 +538,11 @@ h1 {
   color: var(--muted);
 }
 
+.legend--compact {
+  gap: 6px;
+  font-size: 11px;
+}
+
 .legend__item {
   display: inline-flex;
   align-items: center;
@@ -572,9 +577,13 @@ h1 {
   background: var(--center);
 }
 
-svg {
+.board-svg {
   width: 100%;
   height: min(72vh, 680px);
+}
+
+.board-svg--game {
+  height: min(54vh, 520px);
 }
 
 .hex {

@@ -1,4 +1,11 @@
+import { useMemo } from "react";
+
+import { BoardView } from "./BoardView";
+import { buildBoardPreview } from "../lib/board-preview";
+
 export const GameScreen = () => {
+  const preview = useMemo(() => buildBoardPreview(3, "42"), []);
+
   return (
     <section className="game-screen">
       <header className="game-screen__header">
@@ -17,12 +24,20 @@ export const GameScreen = () => {
         <section className="panel game-board">
           <div className="game-board__placeholder">
             <h2>Board</h2>
-            <p className="muted">Board rendering hooks into engine view next.</p>
-            <div className="game-board__grid">
-              {Array.from({ length: 12 }).map((_, index) => (
-                <div key={index} className="game-board__hex" />
-              ))}
+            <p className="muted">Preview board (seed 42, 3 players).</p>
+            <div className="legend legend--compact">
+              <div className="legend__item legend__item--capital">Capital</div>
+              <div className="legend__item legend__item--forge">Forge</div>
+              <div className="legend__item legend__item--mine">Mine</div>
+              <div className="legend__item legend__item--center">Center</div>
             </div>
+            <BoardView
+              hexes={preview.hexRender}
+              showCoords={false}
+              showTags
+              showMineValues={false}
+              className="board-svg board-svg--game"
+            />
           </div>
         </section>
 
