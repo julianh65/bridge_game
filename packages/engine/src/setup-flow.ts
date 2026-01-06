@@ -15,6 +15,7 @@ import type {
   SetupChoice
 } from "./types";
 import { getBridgeKey } from "./board";
+import { placeSpecialTiles } from "./board-generation";
 import {
   createCardInstance,
   createCardInstances,
@@ -131,6 +132,39 @@ export const initializeStartingAssets = (state: GameState): GameState => {
   }
 
   return nextState;
+};
+
+export const finalizeCapitalDraft = (state: GameState): GameState => {
+  const capitalHexes = state.players.map((player) => {
+    if (!player.capitalHex) {
+      throw new Error("player missing capital after draft");
+    }
+    return player.capitalHex;
+  });
+  const uniqueCapitals = new Set(capitalHexes);
+  if (uniqueCapitals.size !== capitalHexes.length) {
+    throw new Error("capital draft resulted in duplicate capitals");
+  }
+
+  const tileCounts = state.config.tileCountsByPlayerCount[state.players.length];
+  if (!tileCounts) {
+    throw new Error("missing tile counts for player count");
+  }
+
+  const placement = placeSpecialTiles(state.board, state.rngState, {
+    capitalHexes,
+    forgeCount: tileCounts.forges,
+    mineCount: tileCounts.mines,
+    rules: state.config.boardGenerationRules
+  });
+
+  const nextState = {
+    ...state,
+    board: placement.board,
+    rngState: placement.rngState
+  };
+
+  return initializeStartingAssets(nextState);
 };
 
 export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId: PlayerID): GameState => {

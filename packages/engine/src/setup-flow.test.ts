@@ -71,6 +71,16 @@ describe("setup flow", () => {
     expect(p1Hex?.occupants["p1"]?.length).toBe(4);
     expect(p2Hex?.occupants["p2"]?.length).toBe(4);
 
+    const hexes = Object.values(state.board.hexes);
+    const mineCount = hexes.filter((hex) => hex.tile === "mine");
+    const forgeCount = hexes.filter((hex) => hex.tile === "forge");
+    const tileCounts = DEFAULT_CONFIG.tileCountsByPlayerCount[2];
+    expect(mineCount.length).toBe(tileCounts.mines);
+    expect(forgeCount.length).toBe(tileCounts.forges);
+    for (const mine of mineCount) {
+      expect(mine.mineValue).toBeTypeOf("number");
+    }
+
     const [p1EdgeA, p1EdgeB] = pickStartingEdges(p1Capital as HexKey, state.board);
     const [p2EdgeA, p2EdgeB] = pickStartingEdges(p2Capital as HexKey, state.board);
 

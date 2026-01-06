@@ -15,7 +15,7 @@ import {
   createCapitalDraftBlock,
   createFreeStartingCardBlock,
   createStartingBridgesBlock,
-  initializeStartingAssets
+  finalizeCapitalDraft
 } from "./setup-flow";
 
 const createPlayerState = (player: LobbyPlayer, seatIndex: number, startingGold: number): PlayerState => {
@@ -135,7 +135,7 @@ export const runUntilBlocked = (state: GameState): GameState => {
     }
 
     if (nextState.blocks.type === "setup.capitalDraft") {
-      const setupState = initializeStartingAssets(nextState);
+      const setupState = finalizeCapitalDraft(nextState);
       nextState = {
         ...setupState,
         blocks: createStartingBridgesBlock(setupState.players)

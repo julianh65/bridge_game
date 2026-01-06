@@ -6,7 +6,7 @@
 - Card defs in `technical_spec.md` now described as data-first TS modules with stable IDs, targetSpec, and effects/resolve rules.
 
 ## Active tasks
-- None currently.
+- agent-2: Fix debug board rendering (currently shows coords, missing visual tile distinctions). Files: apps/web/src/components/DebugBoard.tsx, apps/web/src/styles.css. Status: in progress.
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.
@@ -30,6 +30,7 @@
 - Added base board generation (axial hex grid, center tile) and capital slot mapping with tests.
 - Added setup flow blocks and commands for capital draft, starting bridges, and free starting card; setup now advances to `round.reset` with tests. Free starting card uses a placeholder pool in config (to be replaced by real card defs/deck).
 - Added starting forces + starter deck initialization after capital draft (defaulting to Bastion if no faction chosen), with champion in hand and draw to 6 before starting bridges.
+- Wired special tile placement into setup after capital draft (mines/forges now land on the game board with mine values assigned).
 - Added procedural placement for forges/mines (including home mines) and mine values with deterministic tests.
 - Board generation is now configurable via `DEFAULT_CONFIG` (radius, capital slots, placement rules). Added `docs/configuration.md`.
 - Updated default 4-player capital slots in `DEFAULT_CONFIG`.
