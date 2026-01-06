@@ -16,7 +16,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent3] Commit all outstanding repo changes (tracked edits + new RoomDebugPanel + partykit_docs) and add ignore for `apps/web/dist/`. Files: `progress.md`, `.gitignore`, `agent_instructions.md`, `apps/server/src/server.ts`, `apps/web/src/lib/room-client.ts`, `apps/web/src/components/RoomDebugPanel.tsx`, `packages/engine/src/board-generation.ts`, `packages/engine/src/config.ts`, `rules_draft.md`, `partykit_docs/*`. Status: in progress.
+none
+- [agent4] Make action status more obvious in the player list (visual row emphasis + summary). Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `progress.md`, `implementation_plan.md`. Status: in progress.
 
 ## Milestone 8.5 progress
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.
@@ -94,6 +95,7 @@
 - Audited `rules_draft.md` alignment and logged follow-ups in `implementation_plan.md`.
 - Expanded Milestone 5.5 layout tasks in `implementation_plan.md` with phase-focused subtasks.
 - Marked Bastion Shield Wall faction passive as done in `implementation_plan.md`.
+- Added PartyKit docs to the repo, added `apps/web/dist` to `.gitignore`, and captured outstanding tracked edits in git.
 
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.
