@@ -11,8 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent2] Add event logging for round phase transitions (reset/market/action/etc.) in `packages/engine/src/engine.ts`; status: in progress.
-- [agent3] Add basic action-step UI in game screen (done + capital reinforce) with command wiring. Files: `apps/web/src/App.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/styles.css`. Status: in progress.
+- (none)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -21,6 +20,9 @@
 - Added combat start/end event logs (with outcomes) and coverage.
 - Wired event logs for phase transitions and action resolution so UI logs are populated.
 - Logged setup actions (capital picks, starting bridges, free starting card) so UI logs show setup activity.
+
+## Testing progress
+- Added card draw tests covering reshuffle behavior and hand-limit overflow in `packages/engine/src/cards.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
@@ -90,6 +92,7 @@
 - Added a PartyKit web client hook + Home screen for room join; Lobby/GameScreen now render from live `GameView` data with connection state, board, and logs.
 - Added pre-game waiting panel in the web client and pruned disconnected lobby seats so stale entries do not block new joins.
 - Documented PartyKit multi-tab behavior and cleaned up resolved issues; client now guards against null rejoin tokens.
+- Added a basic action panel (done + capital reinforce) in the game sidebar with command wiring.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
