@@ -136,12 +136,12 @@ Goal: get the board game “moving pieces and fighting” ASAP.
 ## Milestone 4 — Multiplayer server + room protocol + minimal UI
 
 ### Tasks (server)
-- Implement PartyKit room server:
+- [x] Implement PartyKit room server (auto-starts at 2 connected players; engine handles legality checks):
   - create room state
   - handle join (assign seat or spectator)
   - handle command messages -> apply to engine -> broadcast update
   - maintain revision and reject out-of-turn / invalid block commands (lightly)
-- Implement rejoin token:
+- [x] Implement rejoin token:
   - generate per-seat token
   - store mapping in room memory
   - allow reclaiming seat on reconnect
