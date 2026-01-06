@@ -12,7 +12,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
+- owner: agent-2; scope: align rules/spec with config for board sizing, capital slots, tile counts, and mine value distribution; files: rules_draft.md, technical_spec.md, implementation_plan.md, progress.md; status: in progress
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -82,6 +82,7 @@ none
 - Added hover highlight styling for interactive hexes/edges and clickable preview edges for edge pick modes.
 - Added touch/pinch support for board pan/zoom in the board view.
 - Removed manual axial-coordinate inputs for action/setup bridge/march picks, added card hex target picking, and surfaced target summaries in the action panel.
+- Added per-player action status tooltips on the player list in the game sidebar.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.

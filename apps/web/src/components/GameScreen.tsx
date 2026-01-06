@@ -102,6 +102,9 @@ export const GameScreen = ({
       : status === "error"
         ? "status-pill--error"
         : "status-pill--waiting";
+  const actionStep = view.public.actionStep;
+  const actionEligible = new Set(actionStep?.eligiblePlayerIds ?? []);
+  const actionWaiting = new Set(actionStep?.waitingForPlayerIds ?? []);
   const [edgeKey, setEdgeKey] = useState("");
   const [marchFrom, setMarchFrom] = useState("");
   const [marchTo, setMarchTo] = useState("");
@@ -156,6 +159,17 @@ export const GameScreen = ({
       ? (view.public.round - 1 + view.public.players.length) % view.public.players.length
       : 0;
   const leadPlayer = view.public.players.find((player) => player.seatIndex === leadSeatIndex) ?? null;
+  const getActionStatusTooltip = (playerId: string): string => {
+    if (!actionStep) {
+      return `Action: not active (${phaseLabel}).`;
+    }
+    if (!actionEligible.has(playerId)) {
+      return "Action: not eligible this step.";
+    }
+    return actionWaiting.has(playerId)
+      ? "Action: waiting for declaration."
+      : "Action: declaration submitted.";
+  };
   const isActionPhase = view.public.phase === "round.action";
   const canDeclareAction =
     status === "connected" && Boolean(localPlayer) && isActionPhase && !localPlayer?.doneThisRound;
@@ -1169,7 +1183,11 @@ export const GameScreen = ({
             <h3>Players</h3>
             <ul className="player-list">
               {view.public.players.map((player) => (
-                <li key={player.id} className="player-row">
+                <li
+                  key={player.id}
+                  className="player-row"
+                  title={getActionStatusTooltip(player.id)}
+                >
                   <div>
                     <span className="player-name">{player.name}</span>
                     <span className="player-meta">Seat {player.seatIndex}</span>
