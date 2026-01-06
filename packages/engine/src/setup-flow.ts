@@ -61,11 +61,23 @@ export const createFreeStartingCardBlock = (
   }
 
   let rngState = state.rngState;
+  const deck: CardDefId[] = [];
+  const minCards = state.players.length * 3;
+  while (deck.length < minCards) {
+    deck.push(...pool);
+  }
+  const { value: shuffledDeck, next: shuffledState } = shuffle(rngState, deck);
+  rngState = shuffledState;
+
   const offers: Record<PlayerID, CardDefId[]> = {};
+  let remainingDeck = shuffledDeck.slice();
   for (const player of state.players) {
-    const { value: shuffled, next } = shuffle(rngState, pool);
-    rngState = next;
-    offers[player.id] = shuffled.slice(0, 3);
+    const offer = remainingDeck.slice(0, 3);
+    if (offer.length < 3) {
+      throw new Error("freeStartingCardPool must have enough cards for all players");
+    }
+    offers[player.id] = offer;
+    remainingDeck = remainingDeck.slice(3);
   }
 
   return {
@@ -75,7 +87,8 @@ export const createFreeStartingCardBlock = (
       waitingFor: state.players.map((player) => player.id),
       payload: {
         offers,
-        chosen: Object.fromEntries(state.players.map((player) => [player.id, null]))
+        chosen: Object.fromEntries(state.players.map((player) => [player.id, null])),
+        remainingDeck
       }
     }
   };
@@ -343,8 +356,16 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
       throw new Error("player already chose a free starting card");
     }
 
-    const { state: stateWithCard, instanceId } = createCardInstance(state, choice.cardId);
+    const unchosen = offers.filter((cardId) => cardId !== choice.cardId);
+    const { value: returnedCards, next } = shuffle(state.rngState, unchosen);
+    const stateWithReturnedCards = { ...state, rngState: next };
+
+    const { state: stateWithCard, instanceId } = createCardInstance(
+      stateWithReturnedCards,
+      choice.cardId
+    );
     const updatedState = insertCardIntoDrawPileRandom(stateWithCard, playerId, instanceId);
+    const remainingDeck = [...block.payload.remainingDeck, ...returnedCards];
 
     const nextState = {
       ...updatedState,
@@ -356,7 +377,8 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
           chosen: {
             ...block.payload.chosen,
             [playerId]: choice.cardId
-          }
+          },
+          remainingDeck
         }
       }
     };

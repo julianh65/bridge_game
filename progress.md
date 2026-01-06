@@ -11,8 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- (none)
-- [agent2] Fix free-starting-card shared deck handling + ActionPanel “Done” gating. Files: `packages/engine/src/setup-flow.ts`, `packages/engine/src/types.ts`, `packages/engine/src/setup-flow.test.ts`, `apps/web/src/components/ActionPanel.tsx`, `progress.md`. Status: in progress.
+- [agent3] Tweak Cards tab tag styling (radius, alignment) for better visual polish. Files: `apps/web/src/styles.css`, `progress.md`. Status: in progress.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -21,6 +20,8 @@
 - Added combat start/end event logs (with outcomes) and coverage.
 - Wired event logs for phase transitions and action resolution so UI logs are populated.
 - Logged setup actions (capital picks, starting bridges, free starting card) so UI logs show setup activity.
+- Free starting card now uses a shared deck (offers without independent shuffles) and returns unchosen cards to the bottom.
+- ActionPanel now allows “Done” submissions even when mana is 0.
 
 ## Testing progress
 - Added card draw tests covering reshuffle behavior and hand-limit overflow in `packages/engine/src/cards.test.ts`.

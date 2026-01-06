@@ -198,6 +198,7 @@ export type BlockState = {
   payload: {
     offers: Record<PlayerID, CardDefId[]>;
     chosen: Record<PlayerID, CardDefId | null>;
+    remainingDeck: CardDefId[];
   };
 } | {
   type: "actionStep.declarations";

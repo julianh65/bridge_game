@@ -31,7 +31,7 @@ const getActionHint = (
     return "You already submitted this action step.";
   }
   if (player.resources.mana < 1) {
-    return "Need at least 1 mana to declare an action.";
+    return "No mana for actions; you can choose done.";
   }
   return "Declare one action or choose done.";
 };
@@ -43,15 +43,13 @@ export const ActionPanel = ({ phase, player, status, onSubmit }: ActionPanelProp
   const isActionPhase = phase === "round.action";
   const mana = player?.resources.mana ?? 0;
   const gold = player?.resources.gold ?? 0;
-  const canSubmit =
-    status === "connected" &&
-    Boolean(player) &&
-    isActionPhase &&
-    !player?.doneThisRound &&
-    mana >= 1;
-  const canReinforce = canSubmit && gold >= 1;
-  const canBuildBridge = canSubmit && edgeKey.trim().length > 0;
-  const canMarch = canSubmit && marchFrom.trim().length > 0 && marchTo.trim().length > 0;
+  const canSubmitDone =
+    status === "connected" && Boolean(player) && isActionPhase && !player?.doneThisRound;
+  const canSubmitAction = canSubmitDone && mana >= 1;
+  const canReinforce = canSubmitAction && gold >= 1;
+  const canBuildBridge = canSubmitAction && edgeKey.trim().length > 0;
+  const canMarch =
+    canSubmitAction && marchFrom.trim().length > 0 && marchTo.trim().length > 0;
   const hint = getActionHint(phase, status, player);
 
   return (
@@ -60,7 +58,7 @@ export const ActionPanel = ({ phase, player, status, onSubmit }: ActionPanelProp
         <button
           type="button"
           className="btn btn-primary"
-          disabled={!canSubmit}
+          disabled={!canSubmitDone}
           onClick={() => onSubmit({ kind: "done" })}
         >
           Done
