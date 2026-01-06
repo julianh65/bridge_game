@@ -238,11 +238,11 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Add a card details panel with consistent layout (name, initiative, rules text, targets).
 - [x] Implement target preview overlays for cards/actions: highlight valid hexes/edges/paths and current selection (current selection highlight in place; valid-target overlay pending).
 - [x] Improve board hover/click interactions: hover highlight on hex/edge, click selects in pick mode, ignore clicks after pan.
-- [ ] Add interaction state styling for board + controls (active/hover/selected/disabled/error).
+- [x] Add interaction state styling for board + controls (active/hover/selected/disabled/error).
 - [x] Add lightweight motion (card play, target highlight pulse, selection fade) to reduce the "debug UI" feel.
 - [x] Add tooltips for hex stacks/bridges/units and per-player action status (hex/bridge/unit tooltips done).
 - [ ] Clean up sidebar/board layout spacing and typography for readability.
-- [ ] Improve UI such that it's very clear which phase of the game we are in and what's happening. Show and hide relevant information / modals depending on the phase / what is going on. Not all the info panels should live on the right hand side. For example the cards / hand should be visible during those phases and be large and on the bottom. And so on and so forth. Use your best judgement while doing this tasks to add more tasks below that will streamline and make the UI clean and make sense. Then do one of the tasks and return.
+- [ ] Improve UI such that it's very clear which phase of the game we are in and what's happening. Show and hide relevant information / modals depending on the phase / what is going on. Not all the info panels should live on the right hand side. It's very cramped. We need a whole UI nice redesign that is intelligent. For example the cards / hand should be visible during those phases and be large and on the bottom. And so on and so forth. Use your best judgement while doing this tasks to add more tasks below that will streamline and make the UI clean and make sense. Then do one of the tasks and return.
 
 
 ### Tasks (web - pan/zoom)
@@ -275,7 +275,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - center: power pick (reveal 2 -> gain 1; currently drawn from market deck until power decks land)
 
 ### Tasks (web)
-- [ ] Market UI:
+- [x] Market UI:
   - [x] show row cards
   - [x] for current card, show bid controls
   - [x] show reveal + results in log
@@ -322,6 +322,11 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - At least one faction passive changes combat outcome in the expected situations.
 - A champion can be deployed, take damage, die, pay bounty, and be removed.
 
+## Milestone 7.2 — Factions + champions + modifiers (core “exceptions” framework)
+
+Start going through the rules_draft and adding the logic for the different types of cards, keep track of which have been implemented or not and try to make it as extensible and smart as possible.
+
+
 ## Milestone 7.5 — Script to Generate Art for Cards
 
 I want to have a script that lets me select a subset of n cards and hits some sort of API to generate epic card art for them, saves it locally and then makes the card reference that image so it gets rendered somehow. Very TBD on this so we'll have to figure it out together, which services to use and how it works etc...
@@ -358,7 +363,11 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 ## Milestone 9 — Add Polish
 
-Make this flow nicely, make the battles cool, make everything work. Do a refresh of the UI.
+Make this flow nicely, make the battles cool, make everything work. Do a refresh of the UI. As cards are being played in the action phase all players should be "watching" to see what everyone did. It should feel smooth and fun. Make the bridges look nicer and add a bit of padding between the hexes to give it that shattered plains look.
+
+## Milestone 9.5 -- Card Art + Description
+
+Add a way for each card to have related card art and a card description that is thematic. This will be done with diffusion models so we need to have a script and some way to query to automatically pull card art for n cards and store them and let me view them.
 
 ## Milestone 10 -- Basic AI to play against
 Something that just takes random actions is fine

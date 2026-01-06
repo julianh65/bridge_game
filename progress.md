@@ -50,6 +50,7 @@
 - Added guidance to `agent_instructions.md` on reconciling other-agent/tooling changes.
 - Updated `agent_instructions.md` to require logging task scope/files in `progress.md` before coding and clearing entries after completion.
 - Added git hygiene guidance in `agent_instructions.md` to minimize user interruptions and preserve work.
+- Audited `implementation_plan.md` and marked Milestone 5.5 interaction styling + Milestone 6 Market UI as complete.
 - Added a Lobby polish item to `implementation_plan.md` for board preview + reroll (future work).
 - Documented the new Cards debug view in `docs/cards.md`.
 - Reprioritized setup UX into a new Milestone 4.5 (playtest unblock) in `implementation_plan.md`.
