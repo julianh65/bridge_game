@@ -11,8 +11,6 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent2] Add card effect support for moveStack/buildBridge with target validation + tests. Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/action-flow.test.ts`, `progress.md`. Status: in progress.
-- [agent3] Add room-code copy control to the pre-game waiting screen (host can share before lobby starts). Files: `apps/web/src/App.tsx`, `apps/web/src/components/Lobby.tsx`, `apps/web/src/components/RoomCodeCopy.tsx`, `apps/web/src/styles.css`, `progress.md`. Status: in progress.
 - [agent1] Add lobby host/seed badges (reroll lock already done). Blocked on agent3 edits to `apps/web/src/components/Lobby.tsx`. Files: `apps/web/src/components/Lobby.tsx`, `progress.md`. Status: blocked.
 
 ## Bug audit progress
@@ -102,6 +100,7 @@
 - Game sidebar now lists hand card IDs, deck counts, and a market row summary.
 - Game log list now formats key events into readable strings (setup/actions/combat/phase).
 - Lobby now includes a room code copy control with clipboard fallback.
+- Pre-game waiting panel now surfaces a room-code copy control for hosts before the lobby starts.
 - Lobby map preview now rolls from the game seed and host can reroll the map during setup.
 - Lobby map reroll now locks after the first capital pick (server guard).
 - Added a Cards debug tab with filters (age/deck, mana cost, type, tags) and initiative sorting.
@@ -111,6 +110,7 @@
 ## Milestone 5 progress
 - Added action-step card declarations for no-target cards (gain gold/draw cards) with initiative-ordered resolution before basic actions; cards leave hand on declaration and discard/burn after resolution, plus Supply Cache coverage.
 - Added Prospecting card effect handling (base + mine bonus gold) with action-flow tests.
+- Added moveStack/buildBridge card effect support with target validation and action-flow tests (stack/path moves + temporary bridge).
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

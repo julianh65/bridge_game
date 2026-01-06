@@ -134,6 +134,31 @@ const findMineHex = (state: GameState): HexKey => {
   return mineHex.key;
 };
 
+const findEmptyEdge = (state: GameState): EdgeKey => {
+  const hexes = Object.values(state.board.hexes);
+  const isEmpty = (hex: BoardState["hexes"][string]) =>
+    Object.values(hex.occupants).every((units) => units.length === 0);
+
+  for (const hex of hexes) {
+    if (!isEmpty(hex)) {
+      continue;
+    }
+    const neighbors = neighborHexKeys(hex.key).filter((key) => Boolean(state.board.hexes[key]));
+    for (const neighborKey of neighbors) {
+      const neighbor = state.board.hexes[neighborKey];
+      if (!neighbor || !isEmpty(neighbor)) {
+        continue;
+      }
+      const edgeKey = getBridgeKey(hex.key, neighborKey);
+      if (!state.board.bridges[edgeKey]) {
+        return edgeKey;
+      }
+    }
+  }
+
+  throw new Error("no empty edge available");
+};
+
 describe("action flow", () => {
   it("creates an action step block once the market phase passes", () => {
     const { state } = setupToActionPhase();
@@ -217,6 +242,68 @@ describe("action flow", () => {
     expect(toHex.occupants["p1"]?.length ?? 0).toBe(4);
   });
 
+  it("plays a stack-move card along a bridge", () => {
+    let { state, p1Capital, p1Edges } = setupToActionPhase();
+    const [edge] = p1Edges;
+    const [a, b] = parseEdgeKey(edge);
+    const to = a === p1Capital ? b : a;
+
+    const injected = addCardToHand(state, "p1", "starter.quick_move");
+    state = injected.state;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { from: p1Capital, to }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const fromHex = state.board.hexes[p1Capital];
+    const toHex = state.board.hexes[to];
+    expect(fromHex.occupants["p1"]?.length ?? 0).toBe(0);
+    expect(toHex.occupants["p1"]?.length ?? 0).toBe(4);
+  });
+
+  it("plays a path-move card along a bridge", () => {
+    let { state, p1Capital, p1Edges } = setupToActionPhase();
+    const [edge] = p1Edges;
+    const [a, b] = parseEdgeKey(edge);
+    const to = a === p1Capital ? b : a;
+
+    const injected = addCardToHand(state, "p1", "starter.march_orders");
+    state = injected.state;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { path: [p1Capital, to] }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const fromHex = state.board.hexes[p1Capital];
+    const toHex = state.board.hexes[to];
+    expect(fromHex.occupants["p1"]?.length ?? 0).toBe(0);
+    expect(toHex.occupants["p1"]?.length ?? 0).toBe(4);
+  });
+
   it("reinforces a capital and spends gold", () => {
     let { state, p1Capital } = setupToActionPhase();
     const startingGold = DEFAULT_CONFIG.START_GOLD + DEFAULT_CONFIG.BASE_INCOME;
@@ -264,6 +351,32 @@ describe("action flow", () => {
     expect(p1After.resources.mana).toBe(p1Before.resources.mana - 1);
     expect(p1After.deck.hand.includes(injected.instanceId)).toBe(false);
     expect(p1After.deck.discardPile).toContain(injected.instanceId);
+  });
+
+  it("plays a bridge-building card on an empty edge", () => {
+    let { state } = setupToActionPhase();
+    const edgeKey = findEmptyEdge(state);
+    const injected = addCardToHand(state, "p1", "age1.temporary_bridge");
+    state = injected.state;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { edgeKey }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    expect(state.board.bridges[edgeKey]).toBeTruthy();
+    expect(state.board.bridges[edgeKey]?.temporary).toBe(true);
   });
 
   it("plays prospecting and gains base gold without a mine", () => {

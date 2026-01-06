@@ -176,7 +176,7 @@ const isCardDeclarationValid = (
     return false;
   }
 
-  return isCardPlayable(card, declaration.targets);
+  return isCardPlayable(state, player.id, card, declaration.targets);
 };
 
 const isDeclarationValid = (
@@ -355,7 +355,12 @@ export const resolveActionStep = (
       }
     });
     if (entry.card) {
-      nextState = resolveCardEffects(nextState, entry.player.id, entry.card);
+      nextState = resolveCardEffects(
+        nextState,
+        entry.player.id,
+        entry.card,
+        entry.declaration.targets
+      );
     }
     nextState = finalizeCardPlay(
       nextState,
