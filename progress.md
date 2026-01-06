@@ -38,6 +38,7 @@
 ## Debug UI progress
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.
 - Board inspector now labels special tiles (CAP/FORGE/MINE/CTR) on the hexes.
+- Fixed hex fill styles so tiles render in their intended colors.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

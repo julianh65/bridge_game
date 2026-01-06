@@ -486,58 +486,64 @@ svg {
   height: min(72vh, 680px);
 }
 
-.hex polygon {
+.hex {
   stroke: #cbbfae;
   stroke-width: 1;
   fill: var(--normal);
 }
 
-.hex--capital polygon {
+.hex--capital {
   fill: rgba(159, 18, 57, 0.9);
 }
 
-.hex--forge polygon {
+.hex--forge {
   fill: rgba(217, 119, 6, 0.85);
 }
 
-.hex--mine polygon {
+.hex--mine {
   fill: rgba(21, 128, 61, 0.85);
 }
 
-.hex--center polygon {
+.hex--center {
   fill: rgba(15, 118, 110, 0.9);
+}
+
+.hex__label,
+.hex__tag,
+.hex__coords,
+.hex__value {
+  text-anchor: middle;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: rgba(27, 23, 18, 0.45);
 }
 
 .hex__label {
   font-size: 12px;
   font-weight: 600;
-  fill: #fef8ec;
-  text-anchor: middle;
-  pointer-events: none;
+  fill: #fff7e6;
+  stroke-width: 2;
 }
 
 .hex__tag {
   font-size: 11px;
   font-weight: 700;
   fill: #fff7e6;
-  text-anchor: middle;
-  pointer-events: none;
+  stroke-width: 2;
 }
 
 .hex__coords {
   font-size: 9px;
   font-weight: 600;
   fill: rgba(255, 248, 236, 0.85);
-  text-anchor: middle;
-  pointer-events: none;
+  stroke-width: 1.4;
 }
 
 .hex__value {
   font-size: 10px;
   font-weight: 700;
   fill: #fff7e6;
-  text-anchor: middle;
-  pointer-events: none;
+  stroke-width: 1.6;
 }
 
 .error {
