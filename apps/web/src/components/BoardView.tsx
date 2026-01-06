@@ -192,6 +192,14 @@ export const BoardView = ({
     return new Map(sorted.map((id, index) => [id, index]));
   }, [unitStacks, bridgeSegments]);
 
+  const playerLabel = (playerId?: string) => {
+    if (!playerId) {
+      return "neutral";
+    }
+    const index = playerIndex.get(playerId);
+    return index !== undefined ? `P${index + 1}` : playerId;
+  };
+
   const toSvgPoint = (clientX: number, clientY: number) => {
     const svg = svgRef.current;
     if (!svg) {
@@ -318,6 +326,22 @@ export const BoardView = ({
         const valueY = tag ? hex.y + (hasLowerText ? 20 : 12) : hex.y + 12;
         const isSelected = selectedHexKey === hex.key;
         const isHighlighted = highlightSet.has(hex.key);
+        const occupantCount = board
+          ? Object.values(board.hexes[hex.key]?.occupants ?? {}).filter(
+              (unitIds) => unitIds.length > 0
+            ).length
+          : 0;
+        const hexTitleParts = [`Hex ${hex.key}`];
+        if (hex.tile && hex.tile !== "normal") {
+          hexTitleParts.push(`Tile: ${hex.tile}`);
+        }
+        if (hex.tile === "mine" && hex.mineValue) {
+          hexTitleParts.push(`Mine value: ${hex.mineValue}`);
+        }
+        if (occupantCount > 0) {
+          hexTitleParts.push(`Stacks: ${occupantCount}`);
+        }
+        const hexTitle = hexTitleParts.join("\n");
         const polygonClasses = [
           "hex",
           `hex--${hex.tile}`,
@@ -330,6 +354,7 @@ export const BoardView = ({
 
         return (
           <g key={hex.key}>
+            <title>{hexTitle}</title>
             <polygon
               className={polygonClasses}
               points={hexPoints(hex.x, hex.y, HEX_SIZE)}
@@ -373,15 +398,20 @@ export const BoardView = ({
           ? playerIndex.get(bridge.ownerPlayerId)
           : undefined;
         const className = index !== undefined ? `bridge bridge--p${index}` : "bridge";
+        const bridgeTitle = bridge.ownerPlayerId
+          ? `Bridge ${bridge.key}\nOwner: ${playerLabel(bridge.ownerPlayerId)}`
+          : `Bridge ${bridge.key}`;
         return (
-          <line
-            key={bridge.key}
-            className={className}
-            x1={bridge.from.x}
-            y1={bridge.from.y}
-            x2={bridge.to.x}
-            y2={bridge.to.y}
-          />
+          <g key={bridge.key}>
+            <title>{bridgeTitle}</title>
+            <line
+              className={className}
+              x1={bridge.from.x}
+              y1={bridge.from.y}
+              x2={bridge.to.x}
+              y2={bridge.to.y}
+            />
+          </g>
         );
       })}
 
@@ -397,8 +427,14 @@ export const BoardView = ({
         const offset = offsets[stack.offsetIndex % offsets.length] ?? offsets[0];
         const cx = stack.x + offset.dx;
         const cy = stack.y + offset.dy;
+        const stackTitle = [
+          `Stack ${playerLabel(stack.ownerPlayerId)}`,
+          `Forces: ${stack.forceCount}`,
+          `Champions: ${stack.championCount}`
+        ].join("\n");
         return (
           <g key={stack.key} className="unit-stack">
+            <title>{stackTitle}</title>
             <circle className={`unit unit--p${index}`} cx={cx} cy={cy} r={10} />
             {stack.forceCount > 0 ? (
               <text x={cx} y={cy + 3} className="unit__count">

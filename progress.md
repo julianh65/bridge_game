@@ -12,7 +12,6 @@
 
 ## Active tasks
 - [in progress] owner: agent3; scope: engine collection prompts (mine/forge/center choices) + resolution; files: packages/engine/src/types.ts, packages/engine/src/engine.ts, packages/engine/src/round-flow.ts, packages/engine/src/cards.ts, packages/engine/src/market.ts, packages/engine/src/content
-- [in progress] owner: agent2; scope: add hover tooltips for hex/stack details in BoardView; files: apps/web/src/components/BoardView.tsx
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -54,7 +53,9 @@
 
 ## UI polish TODOs
 - Add champion-target picker for card targets (unit selection).
-- Add hover tooltips for hex/stack details.
+
+## UI polish progress
+- Added hover tooltips for hexes, bridges, and unit stacks in the board view.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
