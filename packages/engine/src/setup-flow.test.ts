@@ -92,6 +92,9 @@ describe("setup flow", () => {
     const p2HandDefs = (p2?.deck.hand ?? []).map((cardId) => state.cardsByInstanceId[cardId]?.defId);
     expect(p1HandDefs).toContain(starter.championId);
     expect(p2HandDefs).toContain(starter.championId);
+    const modifierIds = state.modifiers.map((modifier) => modifier.id);
+    expect(modifierIds).toContain(`faction.${DEFAULT_FACTION_ID}.p1.shield_wall`);
+    expect(modifierIds).toContain(`faction.${DEFAULT_FACTION_ID}.p2.shield_wall`);
 
     const p1Hex = state.board.hexes[p1Capital as HexKey];
     const p2Hex = state.board.hexes[p2Capital as HexKey];

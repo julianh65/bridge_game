@@ -46,6 +46,7 @@
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (champion play/cost/limit coverage).
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/modifiers.test.ts src/combat.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts src/setup-flow.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
@@ -61,6 +62,7 @@
 - Refreshed Milestones 5-6 checkboxes and noted partial UI polish status in `implementation_plan.md`.
 - Marked the Milestone 8 smoke sim task complete in `implementation_plan.md`.
 - Audited `rules_draft.md` alignment and logged follow-ups in `implementation_plan.md`.
+- Pending: mark Milestone 7 faction passive item in `implementation_plan.md` once agent-2 finishes the current UI/plan edits.
 
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.
@@ -199,6 +201,7 @@ none
 ## Milestone 7 progress
 - Implemented champion card play (hex targeting validation + deployment), champion gold cost scaling, and champion limit checks in engine with tests.
 - Added champion HP details to board stack tooltips in the UI.
+- Added Bastion Shield Wall passive as a permanent faction modifier, wired during setup, with setup/combat coverage.
 - Added combat modifier query pipeline (force/champion stats + hit assignment policy), before/after combat hook dispatch, and coverage.
 - Implemented modifier duration expiry (end-of-battle/end-of-round + uses consumption) with tests.
 

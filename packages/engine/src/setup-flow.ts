@@ -25,6 +25,7 @@ import {
 } from "./cards";
 import { resolveStarterFactionCards } from "./content/starter-decks";
 import { emit } from "./events";
+import { addFactionModifiers } from "./faction-passives";
 import { addForcesToHex } from "./units";
 
 const withUpdatedPlayer = (state: GameState, playerId: PlayerID, update: (player: PlayerState) => PlayerState) => {
@@ -113,15 +114,17 @@ export const initializeStartingAssets = (state: GameState): GameState => {
     };
 
     const starter = resolveStarterFactionCards(player.factionId);
+    let workingState = nextState;
     if (starter.factionId !== player.factionId) {
-      nextState = withUpdatedPlayer(nextState, playerId, (entry) => ({
+      workingState = withUpdatedPlayer(workingState, playerId, (entry) => ({
         ...entry,
         factionId: starter.factionId
       }));
     }
+    workingState = addFactionModifiers(workingState, playerId, starter.factionId);
 
     const { state: withDeckCards, instanceIds: deckInstances } = createCardInstances(
-      nextState,
+      workingState,
       [...starter.deck, starter.starterSpellId]
     );
     const { state: withChampion, instanceIds: championInstances } = createCardInstances(

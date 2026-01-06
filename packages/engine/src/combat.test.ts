@@ -5,6 +5,7 @@ import * as shared from "@bridgefront/shared";
 import { createBaseBoard } from "./board-generation";
 import { resolveBattleAtHex, resolveImmediateBattles, resolveSieges } from "./combat";
 import { emit } from "./events";
+import { createFactionModifiers } from "./faction-passives";
 import { DEFAULT_CONFIG, createNewGame } from "./index";
 import type { Modifier } from "./types";
 
@@ -286,6 +287,47 @@ describe("combat resolution", () => {
 
     expect(resolved.logs[1]?.payload?.reason).toBe("noHits");
     expect(hex.occupants["p1"]).toEqual(["f1"]);
+    expect(hex.occupants["p2"]).toEqual(["f2"]);
+  });
+
+  it("applies bastion shield wall to defender forces in round 1", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({
+      value: 3,
+      next: rng
+    }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        p1: ["f1"],
+        p2: ["f2"]
+      }
+    };
+    board.units = {
+      f1: { id: "f1", ownerPlayerId: "p1", kind: "force", hex: hexKey },
+      f2: { id: "f2", ownerPlayerId: "p2", kind: "force", hex: hexKey }
+    };
+
+    const state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(12),
+      board,
+      modifiers: createFactionModifiers("bastion", "p2")
+    };
+
+    const resolved = resolveBattleAtHex(state, hexKey);
+    const hex = resolved.board.hexes[hexKey];
+
+    expect(hex.occupants["p1"]).toHaveLength(0);
     expect(hex.occupants["p2"]).toEqual(["f2"]);
   });
 
