@@ -16,8 +16,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
+- [agent-2] Review `rules_draft.md` for new card/rules changes and add any major missing tasks to `implementation_plan.md`. Files: `rules_draft.md`, `implementation_plan.md`, `progress.md` (status: claimed)
 - [agent-1] Champion ability hooks: implement Bodyguard redirect, Flight movement override, and Assassin’s Edge pre-combat damage with tests. Files: `packages/engine/src/modifiers.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/commands.ts`, `packages/engine/src/modifiers.test.ts` (status: claimed; implementation_plan update deferred until agent-4 frees `implementation_plan.md`)
-- [agent-3] Reduce board target click friction by gating invalid hex clicks and allowing reselection of start points; scope: `apps/web/src/components/GameScreen.tsx` (status: claimed)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -67,6 +67,7 @@
 - Updated `agent_instructions.md` to require logging task scope/files in `progress.md` before coding and clearing entries after completion.
 - Added git hygiene guidance in `agent_instructions.md` to minimize user interruptions and preserve work.
 - Audited `implementation_plan.md` and marked Milestone 5.5 interaction styling + Milestone 6 Market UI as complete.
+- Marked the Milestone 6.5 board target friction task complete in `implementation_plan.md`.
 - Added a Lobby polish item to `implementation_plan.md` for board preview + reroll (future work).
 - Documented the new Cards debug view in `docs/cards.md`.
 - Reprioritized setup UX into a new Milestone 4.5 (playtest unblock) in `implementation_plan.md`.
@@ -113,6 +114,7 @@ none
 - Moved the hand UI into a full-width bottom panel during the action phase and surfaced VP in the resources block.
 - Added a collapsible GameScreen header with a compact HUD toggle for play sessions.
 - Added a phase-focused layout row for market/collection panels and moved log/player sections into a secondary row during those phases.
+- Reduced board target click friction by ignoring invalid hex clicks while targeting and allowing start reselects for multi-step picks.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.

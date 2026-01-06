@@ -230,6 +230,13 @@ export const GameScreen = ({
   };
 
   const handleBoardHexClick = (hexKey: string) => {
+    const isPickable =
+      boardPickMode === "none" ||
+      validHexKeys.includes(hexKey) ||
+      startHexKeys.includes(hexKey);
+    if (!isPickable) {
+      return;
+    }
     setSelectedHexKey(hexKey);
 
     if (boardPickMode === "marchFrom") {
@@ -333,13 +340,14 @@ export const GameScreen = ({
     return Array.from(keys);
   }, [pendingEdgeStart, pendingStackFrom, pendingPath]);
 
-  const { validHexKeys, previewEdgeKeys } = useMemo(() => {
+  const { validHexKeys, previewEdgeKeys, startHexKeys } = useMemo(() => {
     if (!localPlayerId) {
-      return { validHexKeys: [], previewEdgeKeys: [] };
+      return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
     }
 
     const validTargets = new Set<string>();
     const previewEdges = new Set<string>();
+    const startTargets = new Set<string>();
     const board = view.public.board;
     const boardHexes = board.hexes;
     const hexKeys = Object.keys(boardHexes);
@@ -411,7 +419,7 @@ export const GameScreen = ({
 
     if (boardPickMode === "marchTo") {
       if (!marchFrom || !hasHex(marchFrom) || !isOccupied(marchFrom)) {
-        return { validHexKeys: [], previewEdgeKeys: [] };
+        return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
       for (const neighbor of neighbors(marchFrom)) {
         if (!hasBridge(board, marchFrom, neighbor)) {
@@ -426,13 +434,18 @@ export const GameScreen = ({
 
     if (boardPickMode === "bridgeEdge") {
       const requiresOccupiedEndpoint = true;
+      const startCandidates = new Set<string>();
+      for (const key of hexKeys) {
+        if (!hasAnyEdgeCandidate(key, requiresOccupiedEndpoint)) {
+          continue;
+        }
+        startCandidates.add(key);
+        startTargets.add(key);
+      }
       if (pendingEdgeStart && hasHex(pendingEdgeStart)) {
         addEdgeCandidatesFrom(pendingEdgeStart, requiresOccupiedEndpoint);
       } else {
-        for (const key of hexKeys) {
-          if (!hasAnyEdgeCandidate(key, requiresOccupiedEndpoint)) {
-            continue;
-          }
+        for (const key of startCandidates) {
           validTargets.add(key);
         }
       }
@@ -440,19 +453,24 @@ export const GameScreen = ({
 
     if (boardPickMode === "cardEdge") {
       if (!selectedCardDef || cardTargetKind !== "edge") {
-        return { validHexKeys: [], previewEdgeKeys: [] };
+        return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
       const edgeSpec = selectedCardDef.targetSpec as Record<string, unknown>;
       const allowAnywhere = edgeSpec.anywhere === true;
       const requiresOccupiedEndpoint =
         allowAnywhere || edgeSpec.requiresOccupiedEndpoint === false ? false : true;
+      const startCandidates = new Set<string>();
+      for (const key of hexKeys) {
+        if (!hasAnyEdgeCandidate(key, requiresOccupiedEndpoint)) {
+          continue;
+        }
+        startCandidates.add(key);
+        startTargets.add(key);
+      }
       if (pendingEdgeStart && hasHex(pendingEdgeStart)) {
         addEdgeCandidatesFrom(pendingEdgeStart, requiresOccupiedEndpoint);
       } else {
-        for (const key of hexKeys) {
-          if (!hasAnyEdgeCandidate(key, requiresOccupiedEndpoint)) {
-            continue;
-          }
+        for (const key of startCandidates) {
           validTargets.add(key);
         }
       }
@@ -460,10 +478,26 @@ export const GameScreen = ({
 
     if (boardPickMode === "cardStack") {
       if (!selectedCardDef || cardTargetKind !== "stack") {
-        return { validHexKeys: [], previewEdgeKeys: [] };
+        return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
       const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
       const requiresBridge = targetSpec.requiresBridge !== false;
+      const startCandidates = new Set<string>();
+      for (const key of hexKeys) {
+        if (!isOccupied(key)) {
+          continue;
+        }
+        const hasDestination = neighbors(key).some((neighbor) => {
+          if (requiresBridge && !hasBridge(board, key, neighbor)) {
+            return false;
+          }
+          return canEnter(neighbor);
+        });
+        if (hasDestination) {
+          startCandidates.add(key);
+          startTargets.add(key);
+        }
+      }
       const fromKey = pendingStackFrom;
       if (fromKey && hasHex(fromKey)) {
         for (const neighbor of neighbors(fromKey)) {
@@ -476,35 +510,23 @@ export const GameScreen = ({
           validTargets.add(neighbor);
         }
       } else {
-        for (const key of hexKeys) {
-          if (!isOccupied(key)) {
-            continue;
-          }
-          const hasDestination = neighbors(key).some((neighbor) => {
-            if (requiresBridge && !hasBridge(board, key, neighbor)) {
-              return false;
-            }
-            return canEnter(neighbor);
-          });
-          if (hasDestination) {
-            validTargets.add(key);
-          }
+        for (const key of startCandidates) {
+          validTargets.add(key);
         }
       }
     }
 
     if (boardPickMode === "cardPath") {
       if (!selectedCardDef || cardTargetKind !== "path") {
-        return { validHexKeys: [], previewEdgeKeys: [] };
+        return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
       const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
       const requiresBridge = targetSpec.requiresBridge !== false;
       const maxDistance =
         typeof targetSpec.maxDistance === "number" ? targetSpec.maxDistance : null;
-      if (pendingPath.length === 0) {
-        if (maxDistance !== null && maxDistance < 1) {
-          return { validHexKeys: [], previewEdgeKeys: [] };
-        }
+      const canStart = maxDistance === null || maxDistance >= 1;
+      const startCandidates = new Set<string>();
+      if (canStart) {
         for (const key of hexKeys) {
           if (!isOccupied(key)) {
             continue;
@@ -516,20 +538,41 @@ export const GameScreen = ({
             return canEnter(neighbor);
           });
           if (hasStep) {
-            validTargets.add(key);
+            startCandidates.add(key);
+            startTargets.add(key);
           }
+        }
+      }
+      if (pendingPath.length === 0) {
+        if (!canStart) {
+          return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
+        }
+        for (const key of startCandidates) {
+          validTargets.add(key);
         }
       } else {
         const stepsSoFar = pendingPath.length - 1;
         if (maxDistance !== null && stepsSoFar >= maxDistance) {
-          return { validHexKeys: [], previewEdgeKeys: [] };
+          return {
+            validHexKeys: [],
+            previewEdgeKeys: [],
+            startHexKeys: Array.from(startTargets)
+          };
         }
         const last = pendingPath[pendingPath.length - 1];
         if (!last || !hasHex(last)) {
-          return { validHexKeys: [], previewEdgeKeys: [] };
+          return {
+            validHexKeys: [],
+            previewEdgeKeys: [],
+            startHexKeys: Array.from(startTargets)
+          };
         }
         if (pendingPath.length > 1 && hasEnemy(last)) {
-          return { validHexKeys: [], previewEdgeKeys: [] };
+          return {
+            validHexKeys: [],
+            previewEdgeKeys: [],
+            startHexKeys: Array.from(startTargets)
+          };
         }
         for (const neighbor of neighbors(last)) {
           if (requiresBridge && !hasBridge(board, last, neighbor)) {
@@ -545,7 +588,7 @@ export const GameScreen = ({
 
     if (boardPickMode === "cardChoice") {
       if (!selectedCardDef || cardTargetKind !== "choice") {
-        return { validHexKeys: [], previewEdgeKeys: [] };
+        return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
       const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
       const options = Array.isArray(targetSpec.options) ? targetSpec.options : [];
@@ -554,7 +597,7 @@ export const GameScreen = ({
           option && typeof option === "object" && (option as Record<string, unknown>).kind === "occupiedHex"
       ) as Record<string, unknown> | undefined;
       if (!occupiedOption) {
-        return { validHexKeys: [], previewEdgeKeys: [] };
+        return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
       const owner = typeof occupiedOption.owner === "string" ? occupiedOption.owner : "self";
       for (const key of hexKeys) {
@@ -581,12 +624,12 @@ export const GameScreen = ({
 
     if (boardPickMode === "cardHex") {
       if (!selectedCardDef || cardTargetKind !== "hex") {
-        return { validHexKeys: [], previewEdgeKeys: [] };
+        return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
       const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
       const owner = typeof targetSpec.owner === "string" ? targetSpec.owner : "any";
       if (owner !== "self" && owner !== "enemy" && owner !== "any") {
-        return { validHexKeys: [], previewEdgeKeys: [] };
+        return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
       const requiresOccupied = targetSpec.occupied === true;
       const tile = typeof targetSpec.tile === "string" ? targetSpec.tile : null;
@@ -650,7 +693,8 @@ export const GameScreen = ({
 
     return {
       validHexKeys: Array.from(validTargets),
-      previewEdgeKeys: Array.from(previewEdges)
+      previewEdgeKeys: Array.from(previewEdges),
+      startHexKeys: Array.from(startTargets)
     };
   }, [
     localPlayerId,
