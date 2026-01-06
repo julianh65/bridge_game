@@ -14,8 +14,8 @@ const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 
 type CollectionPanelProps = {
   phase: GameView["public"]["phase"];
-  publicCollection: GameView["public"]["collection"];
-  privateCollection: GameView["private"]["collection"] | null;
+  collectionPublic: GameView["public"]["collection"];
+  collectionPrivate: GameView["private"]["collection"] | null;
   player: GameView["public"]["players"][number] | null;
   players: Array<{ id: string; name: string }>;
   handCards: CardInstance[];
@@ -67,16 +67,16 @@ const isChoiceValid = (
 
 export const CollectionPanel = ({
   phase,
-  publicCollection,
-  privateCollection,
+  collectionPublic,
+  collectionPrivate,
   player,
   players,
   handCards,
   status,
   onSubmitChoices
 }: CollectionPanelProps) => {
-  const prompts = privateCollection?.prompts ?? [];
-  const existingChoices = privateCollection?.choices ?? null;
+  const prompts = collectionPrivate?.prompts ?? [];
+  const existingChoices = collectionPrivate?.choices ?? null;
   const promptSignature = useMemo(
     () => prompts.map(getPromptSignature).join("|"),
     [prompts]
@@ -87,7 +87,7 @@ export const CollectionPanel = ({
     () => new Map(players.map((entry) => [entry.id, entry.name])),
     [players]
   );
-  const waitingFor = publicCollection?.waitingForPlayerIds ?? [];
+  const waitingFor = collectionPublic?.waitingForPlayerIds ?? [];
 
   useEffect(() => {
     const next: Record<string, CollectionChoice | null> = {};

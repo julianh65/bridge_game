@@ -11,8 +11,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
-- agent-1: collection UI + command wiring (owner: agent-1; scope: add collection prompt panel, submit `SubmitCollectionChoices` from UI, minimal styles; files: `apps/web/src/App.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`; status: in-progress)
+- agent-2: power deck scaffolding + center pick uses power decks (owner: agent-2; scope: add power deck lists/init, store in state, and update collection flow/tests to draw center picks from power decks; files: `packages/engine/src/types.ts`, `packages/engine/src/content/power-decks.ts`, `packages/engine/src/market.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/market.test.ts`; status: in-progress)
+- agent-3: avoid spending mana/gold on invalid action submissions (owner: agent-3; scope: validate actions before resource deductions + add regression test; files: `packages/engine/src/action-flow.ts`, `packages/engine/src/action-flow.test.ts`; status: in-progress)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -162,6 +162,7 @@
 - Implemented market bidding block (buy/pass, tie-break roll-offs, pass pot, one-win-per-round) with command handling + resolution, added market bidding tests, and updated setup/action tests to auto-resolve market.
 - Added collection choice block (mine/forge/center prompts with market-deck reveals), resolution logic, and collection view data; center picks currently use the market deck pending power-deck content.
 - Added a collection sidebar panel that renders mine/forge/center prompts and submits `SubmitCollectionChoices` commands.
+- Aligned the collection panel props with `GameScreen` and added collection prompt styles in `apps/web/src/styles.css`.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

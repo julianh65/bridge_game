@@ -1135,6 +1135,62 @@ h1 {
   background: #f6f0e4;
 }
 
+.collection-prompts {
+  display: grid;
+  gap: 10px;
+}
+
+.collection-prompt {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #fff7e6;
+}
+
+.collection-prompt__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.collection-prompt__title {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.collection-prompt__meta {
+  font-size: 11px;
+  color: var(--muted);
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f6f0e4;
+}
+
+.collection-prompt__section {
+  display: grid;
+  gap: 6px;
+}
+
+.collection-prompt__label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.collection-prompt__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.collection-prompt__note {
+  font-size: 12px;
+  color: var(--muted);
+}
+
 .card-tag--hidden {
   color: var(--muted);
   border-style: dashed;
