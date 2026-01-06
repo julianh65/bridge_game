@@ -6,7 +6,7 @@
 - Card defs in `technical_spec.md` now described as data-first TS modules with stable IDs, targetSpec, and effects/resolve rules.
 
 ## Active tasks
-- None currently.
+- agent-2: Fix debug board rendering (currently shows coords, missing visual tile distinctions). Files: apps/web/src/components/DebugBoard.tsx, apps/web/src/styles.css. Status: in progress.
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.

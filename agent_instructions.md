@@ -2,6 +2,8 @@ We are currently implementing a web based board game. I've written up all the ga
 
 When starting a new task, read the instructions, `progress.md`, and `implementation_plan.md`, then decide what you will work on next and log it in `progress.md` so other agents can coordinate. If your task depends on another agent, do the planning/reading first, document the dependency, and avoid overlapping edits until it is unblocked.
 
+Keep a short log in `progress.md` of what you did and what's next; if you're blocked by another agent, log the dependency and stop after planning. Clear your active task entry once the work is complete.
+
 As we develop I want us to create tests and run them to ensure that things work properly. Don't worry about the UI too much right now, just make things render and have like basic styling, I'll work on the styling later. The styling setup should be such that I can easily change things up later and even move and shift components around (essentially it shouldn't be too tightly coupled with the state if I want to make changes later).
 
 When you create components or things I don't want these single massive files, obviously use your best judgement but if you can try to seperate components into different files and organize code cleanly and well.
