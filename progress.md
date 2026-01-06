@@ -15,10 +15,9 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- owner: agent-4; scope: implement modifier query/event hooks for combat (force hit faces + champion stats), plus tests and plumbing; files: packages/engine/src/modifiers.ts, packages/engine/src/types.ts, packages/engine/src/combat.ts, packages/engine/src/combat.test.ts, implementation_plan.md, progress.md; status: in progress
 
 ## Bug audit progress
-- Updated `docs/bugs.md` to move resolved items into a Resolved section and keep the open list focused on missing server/web tests.
 - Logged potential issues from the quick scan in `docs/bugs.md`.
 - Fixed force unit id generation to avoid collisions and added coverage.
 - Guarded combat resolution against no-hit stalemates and added a test.
@@ -49,6 +48,7 @@
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
 - Added guidance to `agent_instructions.md` on reconciling other-agent/tooling changes.
 - Updated `agent_instructions.md` to require logging task scope/files in `progress.md` before coding and clearing entries after completion.
+- Added git hygiene guidance in `agent_instructions.md` to minimize user interruptions and preserve work.
 - Added a Lobby polish item to `implementation_plan.md` for board preview + reroll (future work).
 - Documented the new Cards debug view in `docs/cards.md`.
 - Reprioritized setup UX into a new Milestone 4.5 (playtest unblock) in `implementation_plan.md`.
@@ -88,6 +88,7 @@ none
 - Removed manual axial-coordinate inputs for action/setup bridge/march picks, added card hex target picking, and surfaced target summaries in the action panel.
 - Added per-player action status tooltips on the player list in the game sidebar.
 - Added lightweight motion for target highlights, preview bridges, selected cards, and card detail reveals.
+- Added interaction state styling for board + controls (active/hover/selected/disabled/error).
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.

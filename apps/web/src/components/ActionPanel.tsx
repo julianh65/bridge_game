@@ -139,6 +139,11 @@ export const ActionPanel = ({
   const canMarch =
     canSubmitAction && marchFrom.trim().length > 0 && marchTo.trim().length > 0;
   const canPickMarchTo = marchFrom.trim().length > 0;
+  const isPickingBridge = boardPickMode === "bridgeEdge";
+  const isPickingMarchFrom = boardPickMode === "marchFrom";
+  const isPickingMarchTo = boardPickMode === "marchTo";
+  const isPickingCardTarget =
+    boardPickMode !== "none" && boardPickMode.startsWith("card");
   const trimmedCardId = cardInstanceId.trim();
   const trimmedTargets = cardTargetsRaw.trim();
   let parsedTargets: CardTargets | undefined;
@@ -215,7 +220,9 @@ export const ActionPanel = ({
         <span>Bridge edge</span>
         <div className="action-field__controls">
           <div
-            className={`action-field__value ${edgeKey.trim().length > 0 ? "" : "is-empty"}`}
+            className={`action-field__value ${
+              edgeKey.trim().length > 0 ? "" : "is-empty"
+            } ${isPickingBridge ? "is-active" : ""}`}
           >
             {edgeKey.trim().length > 0 ? edgeKey : "Pick an edge on the board"}
           </div>
@@ -265,7 +272,9 @@ export const ActionPanel = ({
           <span>March from</span>
           <div className="action-field__controls">
             <div
-              className={`action-field__value ${marchFrom.trim().length > 0 ? "" : "is-empty"}`}
+              className={`action-field__value ${
+                marchFrom.trim().length > 0 ? "" : "is-empty"
+              } ${isPickingMarchFrom ? "is-active" : ""}`}
             >
               {marchFrom.trim().length > 0 ? marchFrom : "Pick a start hex"}
             </div>
@@ -302,7 +311,9 @@ export const ActionPanel = ({
           <span>March to</span>
           <div className="action-field__controls">
             <div
-              className={`action-field__value ${marchTo.trim().length > 0 ? "" : "is-empty"}`}
+              className={`action-field__value ${
+                marchTo.trim().length > 0 ? "" : "is-empty"
+              } ${isPickingMarchTo ? "is-active" : ""}`}
             >
               {marchTo.trim().length > 0 ? marchTo : "Pick a destination hex"}
             </div>
@@ -380,6 +391,8 @@ export const ActionPanel = ({
         <div
           className={`action-field__value ${
             trimmedTargets.length > 0 ? "" : "is-empty"
+          } ${isPickingCardTarget ? "is-active" : ""} ${
+            targetsError ? "is-error" : ""
           }`}
         >
           {formatTargetsSummary(parsedTargets, trimmedTargets)}
@@ -406,7 +419,9 @@ export const ActionPanel = ({
       >
         Play Card (-card cost)
       </button>
-      {targetsError ? <p className="action-panel__hint">{targetsError}</p> : null}
+      {targetsError ? (
+        <p className="action-panel__hint action-panel__hint--error">{targetsError}</p>
+      ) : null}
       <p className="action-panel__hint">{pickLabel}</p>
       <p className="action-panel__hint">{hint}</p>
       {actionStepStatus ? (

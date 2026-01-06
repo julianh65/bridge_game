@@ -804,7 +804,21 @@ h1 {
   justify-content: center;
   text-align: center;
   line-height: 1.1;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease,
+    border-color 0.2s ease, color 0.2s ease;
+}
+
+.filter-pill:hover,
+.filter-pill:focus-visible {
+  background: #ffeccc;
+  border-color: #f1c27d;
+  color: #7c2d12;
+  box-shadow: 0 6px 12px rgba(245, 158, 11, 0.2);
+  outline: none;
+}
+
+.filter-pill:active {
+  transform: translateY(1px);
 }
 
 .filter-pill.is-active {
@@ -1406,6 +1420,10 @@ h1 {
   color: var(--muted);
 }
 
+.action-field:focus-within > span {
+  color: var(--accent);
+}
+
 .action-field__controls {
   display: flex;
   gap: 8px;
@@ -1427,11 +1445,27 @@ h1 {
   background: #f6f0e4;
   font-size: 13px;
   color: var(--ink);
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease,
+    color 0.2s ease;
 }
 
 .action-field__value.is-empty {
   color: var(--muted);
   font-style: italic;
+}
+
+.action-field__value.is-active {
+  border-style: solid;
+  border-color: var(--accent);
+  background: #fff2d6;
+  box-shadow: 0 8px 16px rgba(180, 83, 9, 0.12);
+}
+
+.action-field__value.is-error {
+  border-style: solid;
+  border-color: #ef4444;
+  background: #fff1f1;
+  color: #991b1b;
 }
 
 .action-field input {
@@ -1452,13 +1486,35 @@ h1 {
   background: #f6f0e4;
 }
 
+.action-panel__hint--error {
+  color: #991b1b;
+  background: #fff1f1;
+  border: 1px solid #fecaca;
+}
+
 .btn {
   padding: 12px 18px;
   border-radius: 12px;
   font-size: 14px;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease,
+    background 0.2s ease, color 0.2s ease;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(35, 28, 19, 0.12);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 5px 12px rgba(35, 28, 19, 0.16);
+}
+
+.btn:focus-visible {
+  outline: 2px solid rgba(180, 83, 9, 0.4);
+  outline-offset: 2px;
 }
 
 .btn:disabled {
@@ -1475,6 +1531,18 @@ h1 {
   box-shadow: 0 8px 18px rgba(180, 83, 9, 0.2);
 }
 
+.btn-primary:hover:not(:disabled) {
+  background: #c2410c;
+  border-color: #c2410c;
+  box-shadow: 0 10px 22px rgba(180, 83, 9, 0.28);
+}
+
+.btn-primary:active:not(:disabled) {
+  background: #9a3412;
+  border-color: #9a3412;
+  box-shadow: 0 6px 14px rgba(154, 52, 18, 0.3);
+}
+
 .btn-tertiary {
   padding: 8px 12px;
   border-radius: 10px;
@@ -1484,16 +1552,36 @@ h1 {
   font-size: 12px;
 }
 
+.btn-tertiary:hover:not(:disabled) {
+  border-style: solid;
+  border-color: #d6c4ad;
+  background: #fff3d6;
+}
+
+.btn-tertiary:active:not(:disabled) {
+  background: #ffe7bf;
+}
+
 .btn-tertiary.is-active {
   border-color: var(--accent);
   color: var(--accent);
   background: #fff0d4;
+  box-shadow: 0 6px 14px rgba(180, 83, 9, 0.18);
 }
 
 .btn-secondary {
   background: #fff;
   border-color: var(--border);
   color: var(--ink);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: #cbbfae;
+  background: #fff7e8;
+}
+
+.btn-secondary:active:not(:disabled) {
+  background: #f6ead7;
 }
 
 .board {
@@ -1619,9 +1707,22 @@ h1 {
   cursor: pointer;
 }
 
-.board-svg--interactive .hex--clickable:hover:not(.hex--selected):not(.hex--highlight):not(.hex--target) {
+.board-svg--interactive
+  .hex--clickable:hover:not(.hex--selected):not(.hex--highlight):not(.hex--target):not(
+    .hex--inactive
+  ) {
   stroke: #475569;
   stroke-width: 2;
+}
+
+.board-svg--interactive .hex--clickable:active:not(.hex--inactive) {
+  stroke: #1f2937;
+  stroke-width: 2.5;
+}
+
+.hex--inactive {
+  opacity: 0.35;
+  filter: saturate(0.6);
 }
 
 .hex--target {
@@ -1716,6 +1817,11 @@ h1 {
   stroke-width: 5;
 }
 
+.board-svg--interactive .bridge--clickable:active {
+  stroke-width: 5;
+  stroke: #1d4ed8;
+}
+
 .bridge--clickable {
   cursor: pointer;
 }
@@ -1733,6 +1839,12 @@ h1 {
 
 .bridge-preview:hover .bridge--preview {
   stroke: #0ea5e9;
+  stroke-width: 4;
+  opacity: 1;
+}
+
+.bridge-preview.is-clickable:active .bridge--preview {
+  stroke: #1d4ed8;
   stroke-width: 4;
   opacity: 1;
 }

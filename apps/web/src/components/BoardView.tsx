@@ -124,6 +124,7 @@ export const BoardView = ({
   );
   const highlightSet = useMemo(() => new Set(highlightHexKeys), [highlightHexKeys]);
   const validSet = useMemo(() => new Set(validHexKeys), [validHexKeys]);
+  const hasValidTargets = validSet.size > 0;
 
   useEffect(() => {
     setViewBox(baseViewBox);
@@ -556,6 +557,8 @@ export const BoardView = ({
         const isSelected = selectedHexKey === hex.key;
         const isHighlighted = highlightSet.has(hex.key);
         const isValidTarget = validSet.has(hex.key);
+        const isInactive =
+          clickable && hasValidTargets && !isValidTarget && !isSelected && !isHighlighted;
         const occupantCount = board
           ? Object.values(board.hexes[hex.key]?.occupants ?? {}).filter(
               (unitIds) => unitIds.length > 0
@@ -578,7 +581,8 @@ export const BoardView = ({
           clickable ? "hex--clickable" : "",
           isSelected ? "hex--selected" : "",
           isHighlighted ? "hex--highlight" : "",
-          isValidTarget ? "hex--target" : ""
+          isValidTarget ? "hex--target" : "",
+          isInactive ? "hex--inactive" : ""
         ]
           .filter(Boolean)
           .join(" ");

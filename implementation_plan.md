@@ -356,6 +356,15 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - force advance to next phase
   - seed controls
 
+## Milestone 9 — Add Polish
+
+Make this flow nicely, make the battles cool, make everything work. Do a refresh of the UI.
+
+## Milestone 10 -- Basic AI to play against
+Something that just takes random actions is fine
+
+## Milestone 11 -- Give me a way to balance the game in terms of running n where n is a large number of games where they all take random actions and give me win stats per card and faction and other important metrics
+
 ### Acceptance criteria
 - 2–4 friends can play a complete game session without needing a restart.
 - Adding a new card usually requires:
