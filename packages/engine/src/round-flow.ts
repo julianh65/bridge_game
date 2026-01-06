@@ -19,6 +19,8 @@ import {
 } from "./cards";
 import { applyModifierQuery, expireEndOfRoundModifiers } from "./modifiers";
 
+const MINE_OVERSEER_CHAMPION_ID = "champion.prospect.mine_overseer";
+
 export const applyRoundReset = (state: GameState): GameState => {
   const nextRound = state.round + 1;
   const playerCount = state.players.length;
@@ -95,18 +97,31 @@ const addGold = (state: GameState, playerId: PlayerID, amount: number): GameStat
   };
 };
 
+const hasMineOverseer = (state: GameState, playerId: PlayerID, hexKey: HexKey): boolean => {
+  const hex = state.board.hexes[hexKey];
+  if (!hex) {
+    return false;
+  }
+  const unitIds = hex.occupants[playerId] ?? [];
+  return unitIds.some((unitId) => {
+    const unit = state.board.units[unitId];
+    return unit?.kind === "champion" && unit.cardDefId === MINE_OVERSEER_CHAMPION_ID;
+  });
+};
+
 const getMineGoldValue = (
   state: GameState,
   playerId: PlayerID,
   hexKey: HexKey,
   mineValue: number
 ): number => {
+  const baseValue = mineValue + (hasMineOverseer(state, playerId, hexKey) ? 1 : 0);
   return applyModifierQuery(
     state,
     state.modifiers,
     (hooks) => hooks.getMineGoldValue,
     { playerId, hexKey, mineValue },
-    mineValue
+    baseValue
   );
 };
 

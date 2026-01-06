@@ -248,7 +248,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Add phase-focused layouts (market/collection focus + log/player repositioning). For exapmle the market we should kind of see like all cards laid out nicely with their effects and initiative and everything, do this for all the different phases
 - [ ] Add collapsible/relocatable panels so not everything lives in the right sidebar.
 - [ ] Make the phase market at the top part much bigger and cooler
-- [ ] During the game we don't need to see all the room id and those little details and top bar, those can be collapsed
+- [x] During the game we don't need to see all the room id and those little details and top bar, those can be collapsed
 
 
 ### Tasks (web - pan/zoom)
@@ -297,6 +297,14 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 
 ---
 
+## Milestone 6.5 -- Code Cleanup + Misc Things I'm just adding (the boss is adding)
+Some of the code is getting long, would it make sense to do a small bit of refactoring to clean things up for the longer files?
+The viewing of the board looks a bit weird, like the pan isn't correct there's this weird "cutoff" area.
+The market bidding needs to have be more intuitive, like there should be a few default buttons like 1, 2, 3, 4 or something and then they can also enter how much
+We need to more cleanly seperate out the basic actions from the cards and that whole UI. The flow should be like Okay you pick a basic action or card, then you pick from the board which hex or where you're targetting etc.
+And the panel on the right and hand panel still aren't optimal, the cards maybe should just like float there and it should look much better you know.
+right now the clicking on the board doesn't really work consistently, and there's too many clicks overall we need to make this more intuitive and easy to use and declutter it up a bit
+
 ## Milestone 7 — Factions + champions + modifiers (core “exceptions” framework)
 
 ### Tasks (engine)
@@ -316,9 +324,11 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] champion limit
   - [x] champion cards always burn after play
 - Implement a few champion abilities using hooks:
-  - Bodyguard redirect
-  - Flight movement permission override
-  - “before combat round 1” damage effect (Assassin’s Edge)
+  - [ ] Bodyguard redirect
+  - [ ] Flight movement permission override
+  - [ ] “before combat round 1” damage effect (Assassin’s Edge)
+  - [x] Mine Overseer Extraction (+1 mine gold while occupying a mine)
+- [ ] Quick check in, the rules in rules_draft are kind of living and breathing as I update things or change balance so make sure that everything is still correct, and add a few more champions and their abilities and everything in to test
 
 ### Tasks (web)
 - Champion UI:

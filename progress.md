@@ -16,7 +16,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- [agent-4] Dev-only debug tools: add room debug commands (state JSON, advance phase, reset with seed) plus a debug panel in the Board Debug view; update `implementation_plan.md`. Files: `apps/server/src/server.ts`, `apps/web/src/lib/room-client.ts`, `apps/web/src/App.tsx`, `apps/web/src/components/RoomDebugPanel.tsx`, `implementation_plan.md` (status: claimed)
+- [agent-1] Champion ability hooks: implement Bodyguard redirect, Flight movement override, and Assassin’s Edge pre-combat damage with tests. Files: `packages/engine/src/modifiers.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/commands.ts`, `packages/engine/src/modifiers.test.ts` (status: claimed; implementation_plan update deferred until agent-4 frees `implementation_plan.md`)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -51,6 +52,7 @@
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts src/setup-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts src/round-flow.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
@@ -102,6 +104,7 @@ none
 - Added interaction state styling for board + controls (targeting outline, hex/bridge transitions, action-field active/error labels).
 - Added phase status pills and an idle-phase callout, with phase-gated action/market/collection panels in the game sidebar.
 - Moved the hand UI into a full-width bottom panel during the action phase and surfaced VP in the resources block.
+- Added a collapsible GameScreen header with a compact HUD toggle for play sessions.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
@@ -214,6 +217,7 @@ none
 - Added combat modifier query pipeline (force/champion stats + hit assignment policy), before/after combat hook dispatch, and coverage.
 - Implemented modifier duration expiry (end-of-battle/end-of-round + uses consumption) with tests.
 - Added `deployForces` and `increaseMineValue` card effect support for faction starter spells (Air Drop, Rich Veins) with action-flow coverage.
+- Added Mine Overseer Extraction bonus (+1 mine gold while occupying a mine) with collection coverage.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
