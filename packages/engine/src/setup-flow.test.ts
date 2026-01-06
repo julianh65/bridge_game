@@ -125,8 +125,8 @@ describe("setup flow", () => {
     );
 
     state = runUntilBlocked(state);
-    expect(state.phase).toBe("round.market");
-    expect(state.blocks).toBeUndefined();
+    expect(state.phase).toBe("round.action");
+    expect(state.blocks?.type).toBe("actionStep.declarations");
     expect(state.round).toBe(1);
 
     const p1AfterReset = state.players.find((player) => player.id === "p1");

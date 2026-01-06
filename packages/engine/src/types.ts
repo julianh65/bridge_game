@@ -199,6 +199,12 @@ export type BlockState = {
     offers: Record<PlayerID, CardDefId[]>;
     chosen: Record<PlayerID, CardDefId | null>;
   };
+} | {
+  type: "actionStep.declarations";
+  waitingFor: PlayerID[];
+  payload: {
+    declarations: Record<PlayerID, ActionDeclaration | null>;
+  };
 };
 
 export type GameEvent = {
@@ -240,9 +246,21 @@ export type SetupChoice =
   | { kind: "placeStartingBridge"; edgeKey: EdgeKey }
   | { kind: "pickFreeStartingCard"; cardId: CardDefId };
 
+export type BasicAction =
+  | { kind: "buildBridge"; edgeKey: EdgeKey }
+  | { kind: "march"; from: HexKey; to: HexKey }
+  | { kind: "capitalReinforce" };
+
+export type ActionDeclaration =
+  | { kind: "basic"; action: BasicAction }
+  | { kind: "done" };
+
 export type Command = {
   type: "SubmitSetupChoice";
   payload: SetupChoice;
+} | {
+  type: "SubmitAction";
+  payload: ActionDeclaration;
 };
 
 export type PlayerPublicView = {

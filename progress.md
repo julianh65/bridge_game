@@ -7,7 +7,7 @@
 - Added `docs/cards.md` with card data module editing guidelines.
 
 ## Active tasks
-- agent-2: Implement action step declarations + basic actions (build bridge, march 1, capital reinforce) with tests. Files: packages/engine/src/types.ts, packages/engine/src/action-flow.ts, packages/engine/src/engine.ts, packages/engine/src/units.ts, packages/engine/src/round-flow.ts, packages/engine/src/*.test.ts. Status: in progress.
+- (none)
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.
@@ -40,6 +40,7 @@
 
 ## Milestone 3 progress
 - Implemented round reset phase logic (income, mana reset, draw to 6 with hand-limit overflow) and wired `runUntilBlocked` to auto-advance into `round.market`.
+- Added action step declarations block with basic actions (build bridge, march 1, capital reinforce), auto-advancing `round.market` -> `round.action`, plus tests.
 - Round reset now rotates `leadSeatIndex` by round, with tests.
 
 ## Debug UI progress

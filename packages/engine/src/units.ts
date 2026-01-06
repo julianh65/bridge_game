@@ -46,3 +46,59 @@ export const addForcesToHex = (
     }
   };
 };
+
+export const moveStack = (
+  board: BoardState,
+  playerId: PlayerID,
+  from: HexKey,
+  to: HexKey
+): BoardState => {
+  if (from === to) {
+    return board;
+  }
+
+  const fromHex = board.hexes[from];
+  const toHex = board.hexes[to];
+  if (!fromHex || !toHex) {
+    return board;
+  }
+
+  const movingUnits = fromHex.occupants[playerId] ?? [];
+  if (movingUnits.length === 0) {
+    return board;
+  }
+
+  const units = { ...board.units };
+  for (const unitId of movingUnits) {
+    const unit = units[unitId];
+    if (!unit) {
+      continue;
+    }
+    units[unitId] = {
+      ...unit,
+      hex: to
+    };
+  }
+
+  return {
+    ...board,
+    units,
+    hexes: {
+      ...board.hexes,
+      [from]: {
+        ...fromHex,
+        occupants: {
+          ...fromHex.occupants,
+          [playerId]: []
+        }
+      },
+      [to]: {
+        ...toHex,
+        occupants: {
+          ...toHex.occupants,
+          [playerId]: [...(toHex.occupants[playerId] ?? []), ...movingUnits]
+        }
+      }
+    }
+  };
+};

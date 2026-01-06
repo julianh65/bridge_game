@@ -18,6 +18,7 @@ import {
   finalizeCapitalDraft
 } from "./setup-flow";
 import { applyRoundReset } from "./round-flow";
+import { applyActionDeclaration, createActionStepBlock, resolveActionStep } from "./action-flow";
 
 const createPlayerState = (player: LobbyPlayer, seatIndex: number, startingGold: number): PlayerState => {
   return {
@@ -104,11 +105,15 @@ export const applyCommand = (
   _command: Command,
   _playerId: PlayerID
 ): GameState => {
-  if (_command.type !== "SubmitSetupChoice") {
-    return state;
+  if (_command.type === "SubmitSetupChoice") {
+    return applySetupChoice(state, _command.payload, _playerId);
   }
 
-  return applySetupChoice(state, _command.payload, _playerId);
+  if (_command.type === "SubmitAction") {
+    return applyActionDeclaration(state, _command.payload, _playerId);
+  }
+
+  return state;
 };
 
 export const runUntilBlocked = (state: GameState): GameState => {
@@ -118,6 +123,47 @@ export const runUntilBlocked = (state: GameState): GameState => {
     if (nextState.phase === "round.reset") {
       nextState = applyRoundReset(nextState);
       continue;
+    }
+
+    if (nextState.phase === "round.market") {
+      nextState = {
+        ...nextState,
+        phase: "round.action",
+        blocks: undefined
+      };
+      continue;
+    }
+
+    if (nextState.phase === "round.action") {
+      if (!nextState.blocks) {
+        const block = createActionStepBlock(nextState);
+        if (!block) {
+          nextState = {
+            ...nextState,
+            phase: "round.sieges"
+          };
+          continue;
+        }
+        nextState = {
+          ...nextState,
+          blocks: block
+        };
+        continue;
+      }
+
+      if (nextState.blocks.type === "actionStep.declarations") {
+        if (nextState.blocks.waitingFor.length > 0) {
+          return nextState;
+        }
+        nextState = resolveActionStep(nextState, nextState.blocks.payload.declarations);
+        nextState = {
+          ...nextState,
+          blocks: undefined
+        };
+        continue;
+      }
+
+      return nextState;
     }
 
     if (nextState.phase !== "setup") {

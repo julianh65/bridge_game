@@ -21,6 +21,8 @@ export { applyRoundReset } from "./round-flow";
 export { emit } from "./events";
 export type {
   Age,
+  ActionDeclaration,
+  BasicAction,
   Bid,
   BoardGenerationRules,
   BlockState,
