@@ -16,9 +16,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent-4] Dev-only debug tools: add room debug commands (state JSON, advance phase, reset with seed) plus a debug panel in the Board Debug view; update `implementation_plan.md`. Files: `apps/server/src/server.ts`, `apps/web/src/lib/room-client.ts`, `apps/web/src/App.tsx`, `apps/web/src/components/RoomDebugPanel.tsx`, `implementation_plan.md` (status: claimed)
+- none
 - [agent-1] Champion ability hooks: implement Bodyguard redirect, Flight movement override, and Assassin’s Edge pre-combat damage with tests. Files: `packages/engine/src/modifiers.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/commands.ts`, `packages/engine/src/modifiers.test.ts` (status: claimed; implementation_plan update deferred until agent-4 frees `implementation_plan.md`)
-- [agent-3] Market bidding UX: add quick bid buttons (1-4) alongside the input and keep bid amount synced/clamped. Files: `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/styles.css` (status: claimed)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -154,6 +153,7 @@ none
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.
 - Board inspector now labels special tiles (CAP/FORGE/MINE/CTR) on the hexes.
 - Fixed hex fill styles so tiles render in their intended colors.
+- Added dev-only room debug tools (state JSON fetch, advance phase, reset with seed) plus server debug commands for host-only use.
 
 ## Milestone 4 progress
 - Added a game screen placeholder layout in `apps/web` (board area + sidebar stubs), no server wiring yet.
@@ -207,6 +207,7 @@ none
 - Added market row tests covering preview composition and no-op behavior when a row exists.
 - Market sidebar now shows card names and bid/pass status per player.
 - Added market bid controls in the web client and wired `SubmitMarketBid` commands.
+- Added quick bid buttons (1-4) in the Market panel to set common bid amounts faster (plan update deferred until `implementation_plan.md` is free).
 - Implemented market bidding block (buy/pass, tie-break roll-offs, pass pot, one-win-per-round) with command handling + resolution, added market bidding tests, and updated setup/action tests to auto-resolve market.
 - Added power deck scaffolding + init (currently seeded from market deck lists as a placeholder), and center picks now draw from power decks; updated collection resolution/tests accordingly.
 - Added a collection sidebar panel that renders mine/forge/center prompts and submits `SubmitCollectionChoices` commands.

@@ -59,6 +59,7 @@ export const MarketPanel = ({
   }, [gold]);
 
   const clampBid = (value: number) => Math.max(0, Math.min(gold, Math.floor(value)));
+  const quickBidAmounts = [1, 2, 3, 4];
 
   const handleBidChange = (event: ChangeEvent<HTMLInputElement>) => {
     const nextValue = Number(event.target.value);
@@ -66,6 +67,10 @@ export const MarketPanel = ({
       return;
     }
     setBidAmount(clampBid(nextValue));
+  };
+
+  const handleQuickBid = (amount: number) => {
+    setBidAmount(clampBid(amount));
   };
 
   const handleSubmit = (kind: Bid["kind"]) => {
@@ -154,6 +159,23 @@ export const MarketPanel = ({
                     value={bidAmount}
                     onChange={handleBidChange}
                   />
+                </div>
+                <div className="market-bid__quick">
+                  {quickBidAmounts.map((amount) => {
+                    const isActive = amount === bidAmount;
+                    return (
+                      <button
+                        key={amount}
+                        type="button"
+                        className={`btn btn-tertiary${isActive ? " is-active" : ""}`}
+                        disabled={amount > gold}
+                        aria-pressed={isActive}
+                        onClick={() => handleQuickBid(amount)}
+                      >
+                        {amount}
+                      </button>
+                    );
+                  })}
                 </div>
               </label>
               <div className="action-panel__buttons">

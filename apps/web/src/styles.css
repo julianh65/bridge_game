@@ -951,6 +951,27 @@ h1 {
   flex-wrap: wrap;
 }
 
+.game-screen__header.is-collapsed {
+  align-items: center;
+}
+
+.game-screen__collapsed-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.game-screen__collapsed-meta,
+.game-screen__collapsed-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .game-screen__layout {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(260px, 340px);
@@ -1462,6 +1483,16 @@ h1 {
 
 .action-field__controls input {
   flex: 1;
+}
+
+.market-bid__quick {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(36px, 1fr));
+  gap: 6px;
+}
+
+.market-bid__quick .btn {
+  padding: 8px 0;
 }
 
 .action-field__value {
