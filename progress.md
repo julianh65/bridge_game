@@ -12,7 +12,6 @@
 
 ## Active tasks
 - none
-- [in progress] owner: agent3; scope: add collection-choice resolution coverage (mine draft, forge reforge, center pick); files: packages/engine/src/round-flow.test.ts
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -28,6 +27,8 @@
 - Added card draw tests covering reshuffle behavior and hand-limit overflow in `packages/engine/src/cards.test.ts`.
 - Added tests for card instance id sequencing and random draw-pile insertion in `packages/engine/src/cards.test.ts`.
 - Ran `npm test` (engine Vitest).
+- Added collection-choice resolution tests (mine draft accept/decline, forge reforge, center pick) in `packages/engine/src/round-flow.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.

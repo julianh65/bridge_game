@@ -175,6 +175,255 @@ describe("collection", () => {
     expect(resolved.cardsByInstanceId[gainedCard ?? ""]?.defId).toBe(deck[1]);
     expect([...resolved.marketDecks.I].sort()).toEqual([deck[0], deck[2], deck[3]].sort());
   });
+
+  it("returns mine draft cards to the market deck when declined", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const deck = ["age1.quick_march"];
+
+    const board = createBaseBoard(1);
+    board.hexes["0,1"] = {
+      ...board.hexes["0,1"],
+      tile: "mine",
+      mineValue: 3,
+      occupants: {
+        p1: ["u1"]
+      }
+    };
+    board.units = {
+      u1: {
+        id: "u1",
+        ownerPlayerId: "p1",
+        kind: "force",
+        hex: "0,1"
+      }
+    };
+
+    const state = {
+      ...base,
+      phase: "round.collection" as const,
+      board,
+      market: {
+        ...base.market,
+        age: "I"
+      },
+      marketDecks: {
+        I: deck,
+        II: [],
+        III: []
+      }
+    };
+
+    const created = createCollectionBlock(state);
+    const block = created.block!;
+    let nextState = { ...created.state, blocks: block };
+    nextState = applyCollectionChoice(
+      nextState,
+      [{ kind: "mine", hexKey: "0,1", choice: "draft", gainCard: false }],
+      "p1"
+    );
+
+    const resolved = resolveCollectionChoices(nextState);
+    const player = resolved.players.find((entry) => entry.id === "p1");
+    expect(player?.deck.drawPile).toHaveLength(0);
+    expect(resolved.marketDecks.I).toEqual(deck);
+  });
+
+  it("grants mine draft cards to the draw pile when accepted", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 2, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const deck = ["age1.trade_caravan"];
+
+    const board = createBaseBoard(1);
+    board.hexes["0,1"] = {
+      ...board.hexes["0,1"],
+      tile: "mine",
+      mineValue: 2,
+      occupants: {
+        p1: ["u1"]
+      }
+    };
+    board.units = {
+      u1: {
+        id: "u1",
+        ownerPlayerId: "p1",
+        kind: "force",
+        hex: "0,1"
+      }
+    };
+
+    const state = {
+      ...base,
+      phase: "round.collection" as const,
+      board,
+      market: {
+        ...base.market,
+        age: "I"
+      },
+      marketDecks: {
+        I: deck,
+        II: [],
+        III: []
+      }
+    };
+
+    const created = createCollectionBlock(state);
+    const block = created.block!;
+    let nextState = { ...created.state, blocks: block };
+    nextState = applyCollectionChoice(
+      nextState,
+      [{ kind: "mine", hexKey: "0,1", choice: "draft", gainCard: true }],
+      "p1"
+    );
+
+    const resolved = resolveCollectionChoices(nextState);
+    const player = resolved.players.find((entry) => entry.id === "p1");
+    expect(player?.deck.drawPile.length).toBe(1);
+    const gainedCard = player?.deck.drawPile[0];
+    expect(resolved.cardsByInstanceId[gainedCard ?? ""]?.defId).toBe(deck[0]);
+    expect(resolved.marketDecks.I).toHaveLength(0);
+  });
+
+  it("reforges at a forge by scrapping a card and returning reveals", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const deck = ["age1.quick_march", "age1.trade_caravan", "age1.patch_up"];
+    const createdCards = createCardInstances(base, ["test.scrap.card"]);
+    const scrapCardId = createdCards.instanceIds[0];
+
+    const board = createBaseBoard(1);
+    board.hexes["1,0"] = {
+      ...board.hexes["1,0"],
+      tile: "forge",
+      occupants: {
+        p1: ["u1"]
+      }
+    };
+    board.units = {
+      u1: {
+        id: "u1",
+        ownerPlayerId: "p1",
+        kind: "force",
+        hex: "1,0"
+      }
+    };
+
+    const state = {
+      ...createdCards.state,
+      phase: "round.collection" as const,
+      board,
+      market: {
+        ...base.market,
+        age: "I"
+      },
+      marketDecks: {
+        I: deck,
+        II: [],
+        III: []
+      },
+      players: createdCards.state.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              deck: {
+                ...player.deck,
+                hand: [scrapCardId]
+              }
+            }
+          : player
+      )
+    };
+
+    const created = createCollectionBlock(state);
+    const block = created.block!;
+    let nextState = { ...created.state, blocks: block };
+    nextState = applyCollectionChoice(
+      nextState,
+      [
+        {
+          kind: "forge",
+          hexKey: "1,0",
+          choice: "reforge",
+          scrapCardId
+        }
+      ],
+      "p1"
+    );
+
+    const resolved = resolveCollectionChoices(nextState);
+    const player = resolved.players.find((entry) => entry.id === "p1");
+    expect(player?.deck.hand).not.toContain(scrapCardId);
+    expect(player?.deck.scrapped).toContain(scrapCardId);
+    expect([...resolved.marketDecks.I].sort()).toEqual(deck.slice().sort());
+  });
+
+  it("resolves center pick gains a card and returns leftovers", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 3, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const deck = ["age1.temporary_bridge", "age1.quick_march"];
+
+    const board = createBaseBoard(1);
+    board.hexes["0,0"] = {
+      ...board.hexes["0,0"],
+      tile: "center",
+      occupants: {
+        p1: ["u1"]
+      }
+    };
+    board.units = {
+      u1: {
+        id: "u1",
+        ownerPlayerId: "p1",
+        kind: "force",
+        hex: "0,0"
+      }
+    };
+
+    const state = {
+      ...base,
+      phase: "round.collection" as const,
+      board,
+      market: {
+        ...base.market,
+        age: "I"
+      },
+      marketDecks: {
+        I: deck,
+        II: [],
+        III: []
+      }
+    };
+
+    const created = createCollectionBlock(state);
+    const block = created.block!;
+    let nextState = { ...created.state, blocks: block };
+    nextState = applyCollectionChoice(
+      nextState,
+      [
+        {
+          kind: "center",
+          hexKey: "0,0",
+          cardId: deck[1]
+        }
+      ],
+      "p1"
+    );
+
+    const resolved = resolveCollectionChoices(nextState);
+    const player = resolved.players.find((entry) => entry.id === "p1");
+    expect(player?.deck.drawPile.length).toBe(1);
+    const gainedCard = player?.deck.drawPile[0];
+    expect(resolved.cardsByInstanceId[gainedCard ?? ""]?.defId).toBe(deck[1]);
+    expect(resolved.marketDecks.I).toEqual([deck[0]]);
+  });
 });
 
 describe("scoring", () => {
