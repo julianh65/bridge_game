@@ -159,6 +159,8 @@ export type MarketState = {
   playersOut: Record<PlayerID, boolean>;
 };
 
+export type MarketDeckState = Record<Age, CardDefId[]>;
+
 export type Duration =
   | { type: "permanent" }
   | { type: "endOfRound" }
@@ -231,6 +233,7 @@ export type GameState = {
   phase: PhaseState;
   board: BoardState;
   market: MarketState;
+  marketDecks: MarketDeckState;
   logs: GameEvent[];
   modifiers: Modifier[];
   blocks?: BlockState;

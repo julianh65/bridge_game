@@ -196,7 +196,15 @@ export const applyCleanup = (state: GameState): GameState => {
       ...state.board,
       bridges
     },
-    modifiers
+    modifiers,
+    market: {
+      ...state.market,
+      currentRow: [],
+      rowIndexResolving: 0,
+      passPot: 0,
+      bids: Object.fromEntries(players.map((player) => [player.id, null])),
+      playersOut: Object.fromEntries(players.map((player) => [player.id, false]))
+    }
   };
 };
 

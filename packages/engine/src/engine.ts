@@ -30,6 +30,7 @@ import {
 import { applyActionDeclaration, createActionStepBlock, resolveActionStep } from "./action-flow";
 import { resolveSieges } from "./combat";
 import { emit } from "./events";
+import { initializeMarketDecks, prepareMarketRow } from "./market";
 
 const createPlayerState = (player: LobbyPlayer, seatIndex: number, startingGold: number): PlayerState => {
   return {
@@ -128,7 +129,7 @@ export const createNewGame = (
   const board = createBaseBoard(radius);
   const capitalSlots = getCapitalSlots(playerCount, radius, config.capitalSlotsByPlayerCount);
 
-  const state: GameState = {
+  let state: GameState = {
     config,
     seed,
     rngState: createRngState(normalizeSeed(seed)),
@@ -147,6 +148,7 @@ export const createNewGame = (
       bids: Object.fromEntries(players.map((player) => [player.id, null])),
       playersOut: Object.fromEntries(players.map((player) => [player.id, false]))
     },
+    marketDecks: { I: [], II: [], III: [] },
     logs: [],
     modifiers: [],
     blocks: createCapitalDraftBlock(players, capitalSlots),
@@ -154,6 +156,7 @@ export const createNewGame = (
     winnerPlayerId: null
   };
 
+  state = initializeMarketDecks(state);
   return state;
 };
 
@@ -191,6 +194,7 @@ export const runUntilBlocked = (state: GameState): GameState => {
     }
 
     if (nextState.phase === "round.market") {
+      nextState = prepareMarketRow(nextState);
       nextState = enterPhase(nextState, "round.action");
       continue;
     }

@@ -11,7 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [in progress] owner: agent3; scope: market deck + preview reveal scaffolding (engine, no UI); files: packages/engine/src/types.ts, packages/engine/src/engine.ts, packages/engine/src/round-flow.ts, packages/engine/src/market.ts (new), packages/engine/src/market.test.ts
+None.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -135,6 +135,11 @@
 - Added Recruit choice targeting (capital vs occupied hex) with effect handling and tests.
 - Added debug card-play inputs in the action panel to submit card declarations with optional targets JSON during the action phase.
 - GameView now surfaces action-step eligible/waiting players, and the action panel lists waiting/submitted names.
+
+## Milestone 6 progress
+- Added market deck scaffolding per age with shuffle on game creation (Age II/III placeholders for now).
+- Added market row prep using preview mapping + deck draws, plus cleanup resets to clear the row each round.
+- Added market row tests covering preview composition and no-op behavior when a row exists.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
