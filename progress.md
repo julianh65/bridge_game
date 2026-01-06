@@ -9,6 +9,8 @@
 - owner: codex; scope: Milestone 0 scaffolding (repo structure, configs, base apps/packages); files: package.json, package-lock.json, tsconfig*.json, apps/*, packages/*, partykit.json, eslint/prettier configs, .gitignore; status: completed
 - owner: agent-2; scope: Milestone 1a deterministic RNG module + tests; files: packages/shared/src/rng.ts, packages/shared/src/index.ts, packages/engine/src/rng.test.ts; status: completed
 - owner: codex; scope: Milestone 1 core types/config + engine skeleton; files: packages/engine/src/types.ts, packages/engine/src/config.ts, packages/engine/src/engine.ts, packages/engine/src/index.ts, packages/engine/src/index.test.ts; status: completed
+- owner: codex; scope: Milestone 1 hex utilities + edge keys; files: packages/shared/src/hex.ts, packages/shared/src/index.ts, packages/engine/src/hex.test.ts; status: completed
+- owner: agent-2; scope: Milestone 1c hex utils + edge key helpers + tests; files: packages/shared/src/hex.ts, packages/shared/src/index.ts, packages/engine/src/hex.test.ts; status: in-progress
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
@@ -17,6 +19,7 @@
 ## Milestone 1 progress
 - Added deterministic RNG module in shared with `nextUint32`, `randInt`, `rollDie`, `shuffle`, plus Vitest coverage in engine.
 - Added engine core types/config defaults plus skeleton entry points (`createNewGame`, `runUntilBlocked`, `applyCommand`, `buildView`) and a setup block test.
+- Added shared hex utilities (axial neighbors, distance, radius generation, canonical edge keys) with engine tests.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
@@ -33,3 +36,8 @@
 - Implement pure helpers in shared: `next(state)`, `randInt(state, min, max)`, `rollDie(state, sides)`, `shuffle(state, items)`.
 - Export from shared package barrel for engine usage.
 - Tests (Vitest in engine): fixed-seed sequences, bounds checks, shuffle is permutation + deterministic across runs.
+
+## Milestone 1c plan (agent-2)
+- Define axial coord types + canonical `HexKey`/`EdgeKey` helpers in shared.
+- Implement `neighbors`, `distance`, `withinRadius` utilities.
+- Export from shared barrel and add engine tests for determinism and adjacency invariants.
