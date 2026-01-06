@@ -1,16 +1,18 @@
 import { useMemo, useState } from "react";
 
 import { CardsBrowser } from "./components/CardsBrowser";
+import { DeckViewer } from "./components/DeckViewer";
 import { DebugBoard } from "./components/DebugBoard";
 import { GameScreen } from "./components/GameScreen";
 import { Home, type RoomJoinParams } from "./components/Home";
 import { Lobby } from "./components/Lobby";
 import { LobbyDice } from "./components/LobbyDice";
 import { PreGameLobby } from "./components/PreGameLobby";
+import { RoomDebugPanel } from "./components/RoomDebugPanel";
 import { RoomCodeCopy } from "./components/RoomCodeCopy";
 import { useRoom } from "./lib/room-client";
 
-type AppView = "play" | "debug" | "cards";
+type AppView = "play" | "debug" | "cards" | "deck";
 
 const statusLabels: Record<string, string> = {
   idle: "Idle",
@@ -79,11 +81,31 @@ export default function App() {
           >
             Cards
           </button>
+          <button
+            type="button"
+            className={view === "deck" ? "is-active" : ""}
+            onClick={() => setView("deck")}
+          >
+            Deck
+          </button>
         </div>
       </nav>
 
-      {view === "debug" ? <DebugBoard /> : null}
+      {view === "debug" ? (
+        <>
+          <DebugBoard />
+          <RoomDebugPanel room={room} />
+        </>
+      ) : null}
       {view === "cards" ? <CardsBrowser /> : null}
+      {view === "deck" ? (
+        <DeckViewer
+          view={room.view}
+          playerId={room.playerId}
+          roomId={roomConfig?.roomId ?? null}
+          status={room.status}
+        />
+      ) : null}
 
       {view === "play" && !roomConfig ? <Home onJoin={setRoomConfig} /> : null}
 

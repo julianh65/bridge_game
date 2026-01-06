@@ -16,11 +16,13 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent4; scope: add private deck view data + client deck viewer tab; files: `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/App.tsx`, `apps/web/src/components/DeckViewer.tsx`, `progress.md`
-- owner: agent3; scope: format Milestone 8.5 checklist and build full-screen market overlay with richer card layout + toggle; files: `implementation_plan.md`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/styles.css`, `progress.md`
+none
 
 ## Milestone 8.5 progress
 - Added a rules/tutorial placeholder panel on the Home landing page; plan checkbox update deferred until `implementation_plan.md` is free (agent3 editing).
+- Added a Deck tab that shows hand/draw/discard/scrapped piles for the local player, backed by new private `deckCards` data in `GameView`.
+- Implementation plan update for the deck-view task deferred until `implementation_plan.md` is free (agent3 editing).
+- Replaced market focus row with a full-screen overlay + toggle, redesigned market cards with art placeholders and metadata, and marked Milestone 8.5 market tasks complete in `implementation_plan.md`.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.

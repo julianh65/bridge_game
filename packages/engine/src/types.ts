@@ -394,6 +394,11 @@ export type PlayerPrivateView = {
     discardPile: number;
     scrapped: number;
   };
+  deckCards: {
+    drawPile: CardInstance[];
+    discardPile: CardInstance[];
+    scrapped: CardInstance[];
+  };
   vp: { permanent: number; control: number; total: number };
   setup: SetupPrivateView | null;
   collection: CollectionPrivateView | null;

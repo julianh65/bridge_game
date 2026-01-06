@@ -55,6 +55,13 @@ const buildSetupPrivateView = (block: SetupBlockState, playerId: PlayerID): Setu
   };
 };
 
+const mapCardInstances = (state: GameState, instanceIds: string[]) => {
+  return instanceIds.map(
+    (instanceId) =>
+      state.cardsByInstanceId[instanceId] ?? { id: instanceId, defId: "unknown" }
+  );
+};
+
 export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): GameView => {
   const viewer = state.players.find((player) => player.id === viewerPlayerId) ?? null;
   const actionStep =
@@ -109,14 +116,16 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
       ? {
           playerId: viewer.id,
           hand: viewer.deck.hand,
-          handCards: viewer.deck.hand.map(
-            (instanceId) =>
-              state.cardsByInstanceId[instanceId] ?? { id: instanceId, defId: "unknown" }
-          ),
+          handCards: mapCardInstances(state, viewer.deck.hand),
           deckCounts: {
             drawPile: viewer.deck.drawPile.length,
             discardPile: viewer.deck.discardPile.length,
             scrapped: viewer.deck.scrapped.length
+          },
+          deckCards: {
+            drawPile: mapCardInstances(state, viewer.deck.drawPile),
+            discardPile: mapCardInstances(state, viewer.deck.discardPile),
+            scrapped: mapCardInstances(state, viewer.deck.scrapped)
           },
           vp: viewer.vp,
           setup: setupPrivate,
