@@ -152,6 +152,9 @@ export default function App() {
             roomId={roomConfig.roomId}
             status={room.status}
             onRerollMap={() => room.sendLobbyCommand("rerollMap")}
+            onSubmitSetupChoice={(choice) =>
+              room.sendCommand({ type: "SubmitSetupChoice", payload: choice })
+            }
             onLeave={handleLeave}
           />
         </>

@@ -349,12 +349,14 @@ h1 {
   flex-wrap: wrap;
 }
 
-.lobby__room {
+.lobby__room,
+.room-copy-block {
   display: grid;
   gap: 6px;
 }
 
-.lobby__room-label {
+.lobby__room-label,
+.room-copy-label {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -431,6 +433,56 @@ h1 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 20px;
+}
+
+.setup-draft {
+  display: grid;
+  gap: 12px;
+}
+
+.setup-draft__summary {
+  display: grid;
+  gap: 6px;
+}
+
+.setup-draft__slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.setup-draft__players {
+  display: grid;
+  gap: 8px;
+}
+
+.setup-draft__player-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #f7f1e6;
+  font-size: 13px;
+}
+
+.setup-draft__player-row--active {
+  border: 1px solid rgba(180, 83, 9, 0.35);
+  background: #fff3e0;
+}
+
+.lobby-dice {
+  display: grid;
+  gap: 12px;
+}
+
+.lobby-dice__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .seat-list {
