@@ -49,6 +49,7 @@
 - Added faction starter spells and champions data modules to the card registry.
 - Added initial Age I market card stubs and wired the free starting card pool to real card IDs.
 - Added card registry tests for unique IDs and starter/free-start coverage.
+- Added an initial Age I market deck list export under `packages/engine/src/content/market-decks.ts`.
 
 ## Debug UI progress
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.
