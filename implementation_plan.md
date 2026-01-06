@@ -429,7 +429,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 ### Tasks (web - deck + player status)
 - [x] Add a deck viewer so players can browse all cards in their current deck.
-- [ ] Add per-player colors and reflect ownership in player list + board occupancy.
+- [x] Add per-player colors and reflect ownership in player list + board occupancy.
 - [ ] Make action status more obvious (who still needs to act, who is done).
 
 ### Tasks (web - action flow + layout)

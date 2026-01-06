@@ -95,6 +95,13 @@ export const GameScreen = ({
     () => new Map(view.public.players.map((player) => [player.id, player.name])),
     [view.public.players]
   );
+  const playerColorIndexById = useMemo(() => {
+    const mapping: Record<string, number> = {};
+    for (const player of view.public.players) {
+      mapping[player.id] = player.seatIndex;
+    }
+    return mapping;
+  }, [view.public.players]);
   const localPlayer = view.public.players.find((player) => player.id === playerId);
   const localPlayerId = localPlayer?.id ?? null;
   const handCards = view.private?.handCards ?? [];
@@ -191,6 +198,12 @@ export const GameScreen = ({
   const availableGold = localPlayer?.resources.gold ?? 0;
   const toggleHeaderCollapsed = () => {
     setIsHeaderCollapsed((value) => !value);
+  };
+  const playerSwatchStyle = (seatIndex: number): CSSProperties => {
+    const index = Math.max(0, Math.min(5, Math.floor(seatIndex)));
+    return {
+      "--player-color": `var(--player-color-${index})`
+    } as CSSProperties;
   };
 
   useEffect(() => {
@@ -1182,9 +1195,15 @@ export const GameScreen = ({
             className="player-row"
             title={getActionStatusTooltip(player.id)}
           >
-            <div>
-              <span className="player-name">{player.name}</span>
-              <span className="player-meta">Seat {player.seatIndex}</span>
+            <div className="player-row__info">
+              <span
+                className="player-swatch"
+                style={playerSwatchStyle(player.seatIndex)}
+              />
+              <div>
+                <span className="player-name">{player.name}</span>
+                <span className="player-meta">Seat {player.seatIndex}</span>
+              </div>
             </div>
             <span
               className={`status-pill ${
@@ -1290,6 +1309,7 @@ export const GameScreen = ({
             <BoardView
               hexes={hexRender}
               board={view.public.board}
+              playerIndexById={playerColorIndexById}
               showCoords={false}
               showTags
               showMineValues={false}

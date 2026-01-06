@@ -17,6 +17,7 @@ type ViewBox = {
 type BoardViewProps = {
   hexes: HexRender[];
   board?: BoardState;
+  playerIndexById?: Record<string, number>;
   showCoords?: boolean;
   showTags?: boolean;
   showMineValues?: boolean;
@@ -73,6 +74,13 @@ const boundsForHexes = (hexes: HexRender[]): ViewBox => {
 const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value));
 
+const normalizeColorIndex = (value: number | undefined) => {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return undefined;
+  }
+  return Math.max(0, Math.min(5, Math.floor(value)));
+};
+
 const viewBoxEquals = (a: ViewBox, b: ViewBox): boolean => {
   const epsilon = 0.01;
   return (
@@ -106,6 +114,7 @@ const clampViewBox = (viewBox: ViewBox, baseViewBox: ViewBox): ViewBox => {
 export const BoardView = ({
   hexes,
   board,
+  playerIndexById,
   showCoords = true,
   showTags = true,
   showMineValues = true,
@@ -299,7 +308,7 @@ export const BoardView = ({
     return stacks;
   }, [board, hexCenters]);
 
-  const playerIndex = useMemo(() => {
+  const fallbackPlayerIndex = useMemo(() => {
     const ids = new Set<string>();
     for (const stack of unitStacks) {
       ids.add(stack.ownerPlayerId);
@@ -312,6 +321,22 @@ export const BoardView = ({
     const sorted = Array.from(ids).sort();
     return new Map(sorted.map((id, index) => [id, index]));
   }, [unitStacks, bridgeSegments]);
+
+  const playerIndex = useMemo(() => {
+    if (!playerIndexById) {
+      return fallbackPlayerIndex;
+    }
+    const merged = new Map<string, number>();
+    for (const [id, index] of Object.entries(playerIndexById)) {
+      merged.set(id, index);
+    }
+    for (const [id, index] of fallbackPlayerIndex) {
+      if (!merged.has(id)) {
+        merged.set(id, index);
+      }
+    }
+    return merged;
+  }, [playerIndexById, fallbackPlayerIndex]);
 
   const playerLabel = (playerId?: string) => {
     if (!playerId) {
@@ -679,10 +704,11 @@ export const BoardView = ({
       ))}
 
       {bridgeSegments.map((bridge) => {
-        const index = bridge.ownerPlayerId
-          ? playerIndex.get(bridge.ownerPlayerId)
-          : undefined;
-        const className = index !== undefined ? `bridge bridge--p${index}` : "bridge";
+        const colorIndex = normalizeColorIndex(
+          bridge.ownerPlayerId ? playerIndex.get(bridge.ownerPlayerId) : undefined
+        );
+        const className =
+          colorIndex !== undefined ? `bridge bridge--p${colorIndex}` : "bridge";
         const bridgeTitle = bridge.ownerPlayerId
           ? `Bridge ${bridge.key}\nOwner: ${playerLabel(bridge.ownerPlayerId)}`
           : `Bridge ${bridge.key}`;
@@ -701,7 +727,7 @@ export const BoardView = ({
       })}
 
       {unitStacks.map((stack) => {
-        const index = playerIndex.get(stack.ownerPlayerId) ?? 0;
+        const colorIndex = normalizeColorIndex(playerIndex.get(stack.ownerPlayerId));
         const offsets =
           stack.occupantCount > 1
             ? [
@@ -729,7 +755,14 @@ export const BoardView = ({
         return (
           <g key={stack.key} className="unit-stack">
             <title>{stackTitle}</title>
-            <circle className={`unit unit--p${index}`} cx={cx} cy={cy} r={10} />
+            <circle
+              className={
+                colorIndex !== undefined ? `unit unit--p${colorIndex}` : "unit"
+              }
+              cx={cx}
+              cy={cy}
+              r={10}
+            />
             {stack.forceCount > 0 ? (
               <text x={cx} y={cy + 3} className="unit__count">
                 {stack.forceCount}
