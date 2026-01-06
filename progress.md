@@ -39,6 +39,7 @@
 
 ## Milestone 3 progress
 - Implemented round reset phase logic (income, mana reset, draw to 6 with hand-limit overflow) and wired `runUntilBlocked` to auto-advance into `round.market`.
+- Round reset now rotates `leadSeatIndex` by round, with tests.
 
 ## Debug UI progress
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.

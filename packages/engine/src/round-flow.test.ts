@@ -55,4 +55,21 @@ describe("round reset", () => {
     expect(player.deck.hand.length).toBe(config.HAND_LIMIT);
     expect(player.deck.drawPile.length + player.deck.discardPile.length).toBe(3);
   });
+
+  it("rotates lead seat index by round", () => {
+    const state = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const next = applyRoundReset({
+      ...state,
+      round: 1,
+      leadSeatIndex: 0,
+      phase: "round.reset"
+    });
+
+    expect(next.round).toBe(2);
+    expect(next.leadSeatIndex).toBe(1);
+  });
 });
