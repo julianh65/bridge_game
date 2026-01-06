@@ -281,7 +281,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] show reveal + results in log
 - [x] Collection UI:
   - [x] present tile-based choices and resolve prompts
-- [] Remove / replace all the hard to use panels that require users to enter axial coords.
+- [x] Remove / replace all the hard to use panels that require users to enter axial coords.
 
 ### Acceptance criteria
 - A full round runs with:
@@ -338,7 +338,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Align mine value distribution across rules/spec/config (values + weights, including current 3/7 entries).
 - [ ] Decide `VP_TO_WIN` target and update rules/spec/config (currently 8? vs 10).
 - [ ] Clarify setup TODOs: seating order randomization, faction-specific starter deck vs shared, champion in opening hand.
-- [ ] Fix market preview round mapping typo in rules (Age II Round 6 preview count).
+- [x] Fix market preview round mapping typo in rules (Age II Round 6 preview count).
 
 
 ## Milestone 8 — Content expansion + stability pass

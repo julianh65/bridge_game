@@ -1391,6 +1391,24 @@ h1 {
   flex: 1;
 }
 
+.action-field__value {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px dashed var(--border);
+  background: #f6f0e4;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.action-field__value.is-empty {
+  color: var(--muted);
+  font-style: italic;
+}
+
 .action-field input {
   padding: 10px 12px;
   border-radius: 10px;

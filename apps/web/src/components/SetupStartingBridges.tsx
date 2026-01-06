@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import {
   getBridgeKey,
@@ -82,7 +82,6 @@ export const SetupStartingBridges = ({
   onSubmitChoice
 }: SetupStartingBridgesProps) => {
   const setup = view.public.setup;
-  const [edgeKey, setEdgeKey] = useState("");
   const startingBridges =
     setup && setup.type === "setup.startingBridges" ? setup : null;
 
@@ -117,8 +116,6 @@ export const SetupStartingBridges = ({
     [view.public.board, capitalHex, localPlaced, startingBridges]
   );
   const canPlace = status === "connected" && Boolean(playerId) && isWaiting;
-  const trimmedEdgeKey = edgeKey.trim();
-  const canSubmit = canPlace && trimmedEdgeKey.length > 0;
   const helperText = (() => {
     if (status !== "connected") {
       return "Connect to place starting bridges.";
@@ -135,14 +132,13 @@ export const SetupStartingBridges = ({
     if (localRemaining <= 0) {
       return "You have placed all starting bridges.";
     }
-    return `Place ${localRemaining} more starting bridge${
+    return `Select ${localRemaining} more starting bridge${
       localRemaining === 1 ? "" : "s"
     }.`;
   })();
 
   const handleSubmit = (edge: EdgeKey) => {
     onSubmitChoice({ kind: "placeStartingBridge", edgeKey: edge });
-    setEdgeKey("");
   };
 
   if (!startingBridges) {
@@ -167,25 +163,6 @@ export const SetupStartingBridges = ({
           </div>
         ) : null}
       </div>
-      <div className="setup-bridges__inputs">
-        <label className="action-field">
-          <span>Edge key</span>
-          <input
-            type="text"
-            placeholder="q,r|q,r"
-            value={edgeKey}
-            onChange={(event) => setEdgeKey(event.target.value)}
-          />
-        </label>
-        <button
-          type="button"
-          className="btn btn-secondary"
-          disabled={!canSubmit}
-          onClick={() => handleSubmit(trimmedEdgeKey)}
-        >
-          Place bridge
-        </button>
-      </div>
       {suggestions.length > 0 ? (
         <div className="setup-bridges__suggestions">
           {suggestions.map((edge) => (
@@ -203,7 +180,7 @@ export const SetupStartingBridges = ({
           ))}
         </div>
       ) : (
-        <p className="muted">No suggestions yet. Enter an edge key to place a bridge.</p>
+        <p className="muted">No suggested edges available yet.</p>
       )}
       <div className="setup-bridges__players">
         {players.map((player) => {

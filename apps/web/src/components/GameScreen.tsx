@@ -12,7 +12,7 @@ import {
   type GameView,
   wouldExceedTwoPlayers
 } from "@bridgefront/engine";
-import { areAdjacent, neighborHexKeys, parseHexKey } from "@bridgefront/shared";
+import { areAdjacent, axialDistance, neighborHexKeys, parseHexKey } from "@bridgefront/shared";
 
 import { ActionPanel, type BoardPickMode } from "./ActionPanel";
 import { BoardView } from "./BoardView";
@@ -261,6 +261,9 @@ export const GameScreen = ({
     if (boardPickMode === "cardChoice") {
       setCardTargetsObject({ choice: "occupiedHex", hexKey });
     }
+    if (boardPickMode === "cardHex") {
+      setCardTargetsObject({ hexKey });
+    }
   };
 
   const handleBoardEdgeClick = (edgeKey: string) => {
@@ -308,6 +311,13 @@ export const GameScreen = ({
     const hasEnemy = (key: string) => {
       const hex = boardHexes[key];
       return hex ? hasEnemyUnits(hex, localPlayerId) : false;
+    };
+    const hasAnyOccupants = (key: string) => {
+      const hex = boardHexes[key];
+      if (!hex) {
+        return false;
+      }
+      return Object.values(hex.occupants).some((unitIds) => unitIds.length > 0);
     };
     const canEnter = (key: string) => {
       const hex = boardHexes[key];
@@ -528,6 +538,75 @@ export const GameScreen = ({
       }
     }
 
+    if (boardPickMode === "cardHex") {
+      if (!selectedCardDef || cardTargetKind !== "hex") {
+        return { validHexKeys: [], previewEdgeKeys: [] };
+      }
+      const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
+      const owner = typeof targetSpec.owner === "string" ? targetSpec.owner : "any";
+      if (owner !== "self" && owner !== "enemy" && owner !== "any") {
+        return { validHexKeys: [], previewEdgeKeys: [] };
+      }
+      const requiresOccupied = targetSpec.occupied === true;
+      const tile = typeof targetSpec.tile === "string" ? targetSpec.tile : null;
+      const allowCapital = targetSpec.allowCapital !== false;
+      const maxDistanceFromChampion =
+        typeof targetSpec.maxDistanceFromFriendlyChampion === "number"
+          ? targetSpec.maxDistanceFromFriendlyChampion
+          : null;
+
+      const hasFriendlyChampionWithinRange = (hexKey: string) => {
+        if (maxDistanceFromChampion === null) {
+          return true;
+        }
+        for (const unit of Object.values(board.units)) {
+          if (unit.kind !== "champion") {
+            continue;
+          }
+          if (unit.ownerPlayerId !== localPlayerId) {
+            continue;
+          }
+          try {
+            if (
+              axialDistance(parseHexKey(unit.hex), parseHexKey(hexKey)) <=
+              maxDistanceFromChampion
+            ) {
+              return true;
+            }
+          } catch {
+            continue;
+          }
+        }
+        return false;
+      };
+
+      for (const key of hexKeys) {
+        const hex = boardHexes[key];
+        if (!hex) {
+          continue;
+        }
+        if (owner === "self" && !isOccupiedByPlayer(hex, localPlayerId)) {
+          continue;
+        }
+        if (owner === "enemy" && !hasEnemyUnits(hex, localPlayerId)) {
+          continue;
+        }
+        if (requiresOccupied && !hasAnyOccupants(key)) {
+          continue;
+        }
+        if (tile && hex.tile !== tile) {
+          continue;
+        }
+        if (!allowCapital && hex.tile === "capital") {
+          continue;
+        }
+        if (!hasFriendlyChampionWithinRange(key)) {
+          continue;
+        }
+        validTargets.add(key);
+      }
+    }
+
     return {
       validHexKeys: Array.from(validTargets),
       previewEdgeKeys: Array.from(previewEdges)
@@ -681,6 +760,77 @@ export const GameScreen = ({
                 </p>
               </div>
             );
+          case "hex": {
+            const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
+            const owner =
+              typeof targetSpec.owner === "string" ? targetSpec.owner : "any";
+            const ownerLabel =
+              owner === "self" ? "friendly" : owner === "enemy" ? "enemy" : "any";
+            const requiresOccupied = targetSpec.occupied === true;
+            const tile = typeof targetSpec.tile === "string" ? targetSpec.tile : null;
+            const allowCapital = targetSpec.allowCapital !== false;
+            const maxDistanceFromChampion =
+              typeof targetSpec.maxDistanceFromFriendlyChampion === "number"
+                ? targetSpec.maxDistanceFromFriendlyChampion
+                : null;
+            const requirementBits: string[] = [];
+            if (requiresOccupied) {
+              requirementBits.push("occupied");
+            }
+            if (tile) {
+              requirementBits.push(`${tile} tile`);
+            }
+            if (!allowCapital) {
+              requirementBits.push("non-capital");
+            }
+            if (owner !== "any") {
+              requirementBits.push(`${ownerLabel} controlled`);
+            }
+            if (maxDistanceFromChampion !== null) {
+              requirementBits.push(`within ${maxDistanceFromChampion} of friendly champion`);
+            }
+            const requirementLabel =
+              requirementBits.length > 0
+                ? `Eligible hexes: ${requirementBits.join(", ")}.`
+                : "Pick a hex on the board.";
+            const selectedHex = getTargetString(targetRecord, "hexKey");
+            return (
+              <div className="card-detail__targets">
+                <div className="card-detail__row">
+                  <span>Target hex</span>
+                  <div className="card-detail__row-actions">
+                    <button
+                      type="button"
+                      className={`btn btn-tertiary ${
+                        boardPickMode === "cardHex" ? "is-active" : ""
+                      }`}
+                      onClick={() =>
+                        setBoardPickModeSafe(
+                          boardPickMode === "cardHex" ? "none" : "cardHex"
+                        )
+                      }
+                    >
+                      Pick on board
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-tertiary"
+                      onClick={() => {
+                        setBoardPickModeSafe("none");
+                        setCardTargetsRaw("");
+                      }}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+                {selectedHex ? (
+                  <p className="card-detail__hint">Selected: {selectedHex}.</p>
+                ) : null}
+                <p className="card-detail__hint">{requirementLabel}</p>
+              </div>
+            );
+          }
           case "champion": {
             const rawOwner = selectedCardDef.targetSpec.owner;
             const owner =
@@ -755,7 +905,7 @@ export const GameScreen = ({
           default:
             return (
               <p className="card-detail__hint">
-                Target kind: {cardTargetKind}. Use targets JSON for now.
+                Target kind: {cardTargetKind}. Targeting UI is not available yet.
               </p>
             );
         }

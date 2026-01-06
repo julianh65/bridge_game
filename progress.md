@@ -3,6 +3,7 @@
 ## Docs alignment (spec/rules)
 - Aligned `technical_spec.md` with `rules_draft.md`: added round/lead tracking, VP privacy in views, champion limit + cost scaling, round-cap tiebreaker, hand-limit overflow behavior, market preview mapping, and clarified market tie-break roll-off.
 - Updated `rules_draft.md`: clarified initiative placeholders, fixed market preview mapping, and defined lead rotation.
+- Fixed market preview round mapping in `rules_draft.md` (Age II rounds 6-7) and marked the task complete in `implementation_plan.md`.
 - Card defs in `technical_spec.md` now described as data-first TS modules with stable IDs, targetSpec, and effects/resolve rules.
 - Added `docs/cards.md` with card data module editing guidelines.
 - Updated board radius defaults (3-player radius 4) in `DEFAULT_CONFIG`, `technical_spec.md`, and `rules_draft.md`.
@@ -11,7 +12,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent-2; scope: remove axial-coordinate input panels in action/setup UI (bridge/march/starting bridges) and replace with board/suggestion selection; files: apps/web/src/components/ActionPanel.tsx, apps/web/src/components/SetupStartingBridges.tsx, apps/web/src/styles.css; status: in progress
+none
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -79,6 +80,7 @@ none
 - Reworked the hand UI into a fan-style card row with hover zoom, selected highlighting, and disabled styling.
 - Added valid-target overlays for board pick modes (hex highlights + edge previews) during action/card targeting.
 - Added hover highlight styling for interactive hexes/edges and clickable preview edges for edge pick modes.
+- Removed manual axial-coordinate inputs for action/setup bridge/march picks, added card hex target picking, and surfaced target summaries in the action panel.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.

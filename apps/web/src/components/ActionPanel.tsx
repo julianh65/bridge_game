@@ -33,9 +33,57 @@ export type BoardPickMode =
   | "marchTo"
   | "bridgeEdge"
   | "cardEdge"
+  | "cardHex"
   | "cardStack"
   | "cardPath"
   | "cardChoice";
+
+const formatTargetsSummary = (
+  targets: CardTargets | undefined,
+  raw: string
+): string => {
+  if (raw.trim().length === 0) {
+    return "No targets selected.";
+  }
+  if (!targets || typeof targets !== "object") {
+    return "Targets set.";
+  }
+  const record = targets as Record<string, unknown>;
+  const edgeKey = record.edgeKey;
+  if (typeof edgeKey === "string" && edgeKey.length > 0) {
+    return `Edge ${edgeKey}`;
+  }
+  const hexKey = record.hexKey;
+  if (typeof hexKey === "string" && hexKey.length > 0) {
+    return `Hex ${hexKey}`;
+  }
+  const from = record.from;
+  const to = record.to;
+  if (typeof from === "string" && typeof to === "string") {
+    return `From ${from} -> ${to}`;
+  }
+  const path = record.path;
+  if (
+    Array.isArray(path) &&
+    path.every((entry) => typeof entry === "string" && entry.length > 0)
+  ) {
+    return `Path ${path.join(" -> ")}`;
+  }
+  const choice = record.choice ?? record.kind;
+  if (choice === "capital") {
+    return "Choice: capital";
+  }
+  if (choice === "occupiedHex") {
+    return typeof hexKey === "string" && hexKey.length > 0
+      ? `Choice: occupied hex ${hexKey}`
+      : "Choice: occupied hex";
+  }
+  const unitId = record.unitId ?? record.championId;
+  if (typeof unitId === "string" && unitId.length > 0) {
+    return `Champion ${unitId}`;
+  }
+  return "Targets set.";
+};
 
 const getActionHint = (
   phase: GameView["public"]["phase"],
@@ -90,6 +138,7 @@ export const ActionPanel = ({
   const canBuildBridge = canSubmitAction && edgeKey.trim().length > 0;
   const canMarch =
     canSubmitAction && marchFrom.trim().length > 0 && marchTo.trim().length > 0;
+  const canPickMarchTo = marchFrom.trim().length > 0;
   const trimmedCardId = cardInstanceId.trim();
   const trimmedTargets = cardTargetsRaw.trim();
   let parsedTargets: CardTargets | undefined;
@@ -118,6 +167,8 @@ export const ActionPanel = ({
           ? "Board pick: Bridge edge"
           : boardPickMode === "cardEdge"
             ? "Board pick: Card edge"
+            : boardPickMode === "cardHex"
+              ? "Board pick: Card hex"
             : boardPickMode === "cardStack"
               ? "Board pick: Card stack"
               : boardPickMode === "cardPath"
@@ -161,14 +212,13 @@ export const ActionPanel = ({
         </button>
       </div>
       <label className="action-field">
-        <span>Build bridge (edge key)</span>
+        <span>Bridge edge</span>
         <div className="action-field__controls">
-          <input
-            type="text"
-            placeholder="q,r|q,r"
-            value={edgeKey}
-            onChange={(event) => onEdgeKeyChange(event.target.value)}
-          />
+          <div
+            className={`action-field__value ${edgeKey.trim().length > 0 ? "" : "is-empty"}`}
+          >
+            {edgeKey.trim().length > 0 ? edgeKey : "Pick an edge on the board"}
+          </div>
           <button
             type="button"
             className={`btn btn-tertiary ${
@@ -181,6 +231,19 @@ export const ActionPanel = ({
             }
           >
             Pick
+          </button>
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={edgeKey.trim().length === 0}
+            onClick={() => {
+              onEdgeKeyChange("");
+              if (boardPickMode === "bridgeEdge") {
+                onBoardPickModeChange("none");
+              }
+            }}
+          >
+            Clear
           </button>
         </div>
       </label>
@@ -201,12 +264,11 @@ export const ActionPanel = ({
         <label className="action-field">
           <span>March from</span>
           <div className="action-field__controls">
-            <input
-              type="text"
-              placeholder="q,r"
-              value={marchFrom}
-              onChange={(event) => onMarchFromChange(event.target.value)}
-            />
+            <div
+              className={`action-field__value ${marchFrom.trim().length > 0 ? "" : "is-empty"}`}
+            >
+              {marchFrom.trim().length > 0 ? marchFrom : "Pick a start hex"}
+            </div>
             <button
               type="button"
               className={`btn btn-tertiary ${
@@ -220,22 +282,36 @@ export const ActionPanel = ({
             >
               Pick
             </button>
+            <button
+              type="button"
+              className="btn btn-tertiary"
+              disabled={marchFrom.trim().length === 0 && marchTo.trim().length === 0}
+              onClick={() => {
+                onMarchFromChange("");
+                onMarchToChange("");
+                if (boardPickMode === "marchFrom" || boardPickMode === "marchTo") {
+                  onBoardPickModeChange("none");
+                }
+              }}
+            >
+              Clear
+            </button>
           </div>
         </label>
         <label className="action-field">
           <span>March to</span>
           <div className="action-field__controls">
-            <input
-              type="text"
-              placeholder="q,r"
-              value={marchTo}
-              onChange={(event) => onMarchToChange(event.target.value)}
-            />
+            <div
+              className={`action-field__value ${marchTo.trim().length > 0 ? "" : "is-empty"}`}
+            >
+              {marchTo.trim().length > 0 ? marchTo : "Pick a destination hex"}
+            </div>
             <button
               type="button"
               className={`btn btn-tertiary ${
                 boardPickMode === "marchTo" ? "is-active" : ""
               }`}
+              disabled={!canPickMarchTo}
               onClick={() =>
                 onBoardPickModeChange(
                   boardPickMode === "marchTo" ? "none" : "marchTo"
@@ -243,6 +319,19 @@ export const ActionPanel = ({
               }
             >
               Pick
+            </button>
+            <button
+              type="button"
+              className="btn btn-tertiary"
+              disabled={marchTo.trim().length === 0}
+              onClick={() => {
+                onMarchToChange("");
+                if (boardPickMode === "marchTo") {
+                  onBoardPickModeChange("none");
+                }
+              }}
+            >
+              Clear
             </button>
           </div>
         </label>
@@ -261,22 +350,40 @@ export const ActionPanel = ({
         March (-1 mana)
       </button>
       <label className="action-field">
-        <span>Play card (instance id)</span>
-        <input
-          type="text"
-          placeholder="ci_12"
-          value={cardInstanceId}
-          onChange={(event) => onCardInstanceIdChange(event.target.value)}
-        />
+        <span>Selected card</span>
+        <div className="action-field__controls">
+          <div
+            className={`action-field__value ${
+              trimmedCardId.length > 0 ? "" : "is-empty"
+            }`}
+          >
+            {trimmedCardId.length > 0 ? trimmedCardId : "Select a card from your hand"}
+          </div>
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={trimmedCardId.length === 0}
+            onClick={() => {
+              onCardInstanceIdChange("");
+              onCardTargetsRawChange("");
+              if (boardPickMode !== "none") {
+                onBoardPickModeChange("none");
+              }
+            }}
+          >
+            Clear
+          </button>
+        </div>
       </label>
       <label className="action-field">
-        <span>Card targets JSON (optional)</span>
-        <input
-          type="text"
-          placeholder='{"edgeKey":"q,r|q,r"}'
-          value={cardTargetsRaw}
-          onChange={(event) => onCardTargetsRawChange(event.target.value)}
-        />
+        <span>Card targets</span>
+        <div
+          className={`action-field__value ${
+            trimmedTargets.length > 0 ? "" : "is-empty"
+          }`}
+        >
+          {formatTargetsSummary(parsedTargets, trimmedTargets)}
+        </div>
       </label>
       <button
         type="button"
@@ -300,10 +407,6 @@ export const ActionPanel = ({
         Play Card (-card cost)
       </button>
       {targetsError ? <p className="action-panel__hint">{targetsError}</p> : null}
-      <p className="action-panel__hint">
-        Targets examples:{" "}
-        {"{\"from\":\"0,0\",\"to\":\"1,0\"} | {\"path\":[\"0,0\",\"1,0\"]} | {\"edgeKey\":\"0,0|1,0\"}"}
-      </p>
       <p className="action-panel__hint">{pickLabel}</p>
       <p className="action-panel__hint">{hint}</p>
       {actionStepStatus ? (
