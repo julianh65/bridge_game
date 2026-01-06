@@ -12,10 +12,15 @@
 
 ## Active tasks
 - (none)
+- Owner: Agent 3 (Codex). Scope: improve special-tile placement fairness with minimal algorithm tweaks. Files: packages/engine/src/board-generation.ts. Status: in progress.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
 - Fixed force unit id generation to avoid collisions and added coverage.
+
+## Docs maintenance
+- Updated milestone checkboxes in `implementation_plan.md` to match current status.
+- Added guidance to `agent_instructions.md` on reconciling other-agent/tooling changes.
 
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.

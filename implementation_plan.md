@@ -96,7 +96,7 @@ The aim is to reach “playable with friends” quickly while preserving a clean
 Goal: get the board game “moving pieces and fighting” ASAP.
 
 ### Tasks
-- [ ] Implement phases (reset/action/sieges/collection done; scoring/cleanup/ageUpdate pending):
+- [x] Implement phases (reset/action/sieges/collection/scoring/cleanup/ageUpdate):
   - reset -> action -> sieges -> collection -> scoring -> cleanup -> ageUpdate
 - [x] Implement reset:
   - income, mana reset, draw to 6, enforce hand limit
@@ -115,10 +115,10 @@ Goal: get the board game “moving pieces and fighting” ASAP.
 - [x] Implement collection minimal:
   - mines: take gold only (skip mine draft for now)
   - forges/center: no-op placeholder
-- [ ] Implement scoring:
+- [x] Implement scoring:
   - compute control VP and total VP
   - win check
-- [ ] Implement cleanup:
+- [x] Implement cleanup:
   - discard hand
   - expire end-of-round modifiers
   - destroy temporary bridges
@@ -147,14 +147,15 @@ Goal: get the board game “moving pieces and fighting” ASAP.
   - allow reclaiming seat on reconnect
 
 ### Tasks (web)
-- Implement Home + Lobby:
-  - create/join room UI
-  - seat list + ready/start game
-- Implement Game Screen minimal:
-  - render board (SVG hexes)
-  - show units + bridges
-  - show resources and phase
-  - show log events as text
+- [ ] Implement Home + Lobby:
+  - [x] create/join room UI
+  - [x] seat list
+  - [ ] ready/start game
+- [x] Implement Game Screen minimal:
+  - [x] render board (SVG hexes)
+  - [x] show units + bridges
+  - [x] show resources and phase
+  - [x] show log events as text
 
 ### Acceptance criteria
 - Two browser tabs can join the same room and see shared state updates live.
