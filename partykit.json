@@ -1,0 +1,7 @@
+{
+  "name": "bridgefront",
+  "main": "apps/server/src/server.ts",
+  "port": 1999,
+  "persist": ".partykit/state",
+  "compatibilityDate": "2024-09-02"
+}

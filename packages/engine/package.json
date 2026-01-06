@@ -1,0 +1,19 @@
+{
+  "name": "@bridgefront/engine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@bridgefront/shared": "0.0.0"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  }
+}

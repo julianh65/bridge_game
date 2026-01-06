@@ -1,0 +1,29 @@
+{
+  "name": "bridgefront",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run -w @bridgefront/web dev",
+    "build:web": "npm run -w @bridgefront/web build",
+    "preview:web": "npm run -w @bridgefront/web preview",
+    "dev:server": "partykit dev",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "npm run -w @bridgefront/engine test",
+    "test:watch": "npm run -w @bridgefront/engine test:watch",
+    "typecheck": "tsc -b"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.3.2",
+    "typescript": "^5.5.4"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "@bridgefront/server",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "partykit": "^0.0.115"
+  }
+}

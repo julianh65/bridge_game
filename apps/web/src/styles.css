@@ -1,0 +1,35 @@
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background: #f5f4ef;
+  color: #1d1b16;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.card {
+  border-radius: 12px;
+  border: 1px solid #dedad1;
+  padding: 24px 28px;
+  background: #ffffff;
+  max-width: 560px;
+}
+
+h1 {
+  margin: 0 0 12px;
+  font-size: 32px;
+}
+
+p {
+  margin: 0;
+  line-height: 1.5;
+}
