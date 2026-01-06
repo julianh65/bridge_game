@@ -26,6 +26,7 @@ import {
 } from "./round-flow";
 import { applyActionDeclaration, createActionStepBlock, resolveActionStep } from "./action-flow";
 import { resolveSieges } from "./combat";
+import { emit } from "./events";
 
 const createPlayerState = (player: LobbyPlayer, seatIndex: number, startingGold: number): PlayerState => {
   return {
@@ -64,6 +65,13 @@ const normalizeSeed = (seed: GameState["seed"]): number => {
   }
 
   return hash >>> 0;
+};
+
+const enterPhase = (state: GameState, phase: GameState["phase"]): GameState => {
+  return emit(
+    { ...state, phase, blocks: undefined },
+    { type: `phase.${phase}`, payload: { round: state.round } }
+  );
 };
 
 export const createNewGame = (
@@ -133,16 +141,16 @@ export const runUntilBlocked = (state: GameState): GameState => {
     }
 
     if (nextState.phase === "round.reset") {
-      nextState = applyRoundReset(nextState);
+      const resetState = applyRoundReset(nextState);
+      nextState =
+        resetState.phase !== nextState.phase
+          ? enterPhase(resetState, resetState.phase)
+          : resetState;
       continue;
     }
 
     if (nextState.phase === "round.market") {
-      nextState = {
-        ...nextState,
-        phase: "round.action",
-        blocks: undefined
-      };
+      nextState = enterPhase(nextState, "round.action");
       continue;
     }
 
@@ -150,11 +158,7 @@ export const runUntilBlocked = (state: GameState): GameState => {
       if (!nextState.blocks) {
         const block = createActionStepBlock(nextState);
         if (!block) {
-          nextState = {
-            ...nextState,
-            phase: "round.sieges",
-            blocks: undefined
-          };
+          nextState = enterPhase(nextState, "round.sieges");
           continue;
         }
         nextState = {
@@ -181,21 +185,13 @@ export const runUntilBlocked = (state: GameState): GameState => {
 
     if (nextState.phase === "round.sieges") {
       nextState = resolveSieges(nextState);
-      nextState = {
-        ...nextState,
-        phase: "round.collection",
-        blocks: undefined
-      };
+      nextState = enterPhase(nextState, "round.collection");
       continue;
     }
 
     if (nextState.phase === "round.collection") {
       nextState = applyCollection(nextState);
-      nextState = {
-        ...nextState,
-        phase: "round.scoring",
-        blocks: undefined
-      };
+      nextState = enterPhase(nextState, "round.scoring");
       continue;
     }
 
@@ -204,31 +200,19 @@ export const runUntilBlocked = (state: GameState): GameState => {
       if (nextState.winnerPlayerId) {
         return nextState;
       }
-      nextState = {
-        ...nextState,
-        phase: "round.cleanup",
-        blocks: undefined
-      };
+      nextState = enterPhase(nextState, "round.cleanup");
       continue;
     }
 
     if (nextState.phase === "round.cleanup") {
       nextState = applyCleanup(nextState);
-      nextState = {
-        ...nextState,
-        phase: "round.ageUpdate",
-        blocks: undefined
-      };
+      nextState = enterPhase(nextState, "round.ageUpdate");
       continue;
     }
 
     if (nextState.phase === "round.ageUpdate") {
       nextState = applyAgeUpdate(nextState);
-      nextState = {
-        ...nextState,
-        phase: "round.reset",
-        blocks: undefined
-      };
+      nextState = enterPhase(nextState, "round.reset");
       continue;
     }
 
@@ -271,11 +255,7 @@ export const runUntilBlocked = (state: GameState): GameState => {
     }
 
     if (nextState.blocks.type === "setup.freeStartingCardPick") {
-      nextState = {
-        ...nextState,
-        phase: "round.reset",
-        blocks: undefined
-      };
+      nextState = enterPhase(nextState, "round.reset");
       continue;
     }
 

@@ -10,6 +10,7 @@ import type {
 } from "./types";
 import { getBridgeKey, hasBridge, isOccupiedByPlayer, wouldExceedTwoPlayers } from "./board";
 import { resolveImmediateBattles } from "./combat";
+import { emit } from "./events";
 import { addForcesToHex, moveStack } from "./units";
 
 const BASIC_ACTION_MANA_COST = 1;
@@ -258,6 +259,10 @@ export const resolveActionStep = (
     }
 
     if (declaration.kind === "done") {
+      nextState = emit(nextState, {
+        type: "action.done",
+        payload: { playerId: player.id }
+      });
       nextState = {
         ...nextState,
         players: nextState.players.map((entry) =>
@@ -267,6 +272,10 @@ export const resolveActionStep = (
       continue;
     }
 
+    nextState = emit(nextState, {
+      type: `action.basic.${declaration.action.kind}`,
+      payload: { playerId: player.id, action: declaration.action }
+    });
     nextState = resolveBasicAction(nextState, player.id, declaration.action);
     nextState = resolveImmediateBattles(nextState);
   }
