@@ -4,8 +4,9 @@ import { areAdjacent, axialDistance, parseEdgeKey, parseHexKey } from "@bridgefr
 import type { CardPlayTargets, GameState, PlayerID, TileType } from "./types";
 import { getBridgeKey, hasBridge, hasEnemyUnits, isOccupiedByPlayer, wouldExceedTwoPlayers } from "./board";
 import { drawCards } from "./cards";
+import { addForcesToHex } from "./units";
 
-const SUPPORTED_TARGET_KINDS = new Set(["none", "edge", "stack", "path", "champion"]);
+const SUPPORTED_TARGET_KINDS = new Set(["none", "edge", "stack", "path", "champion", "choice"]);
 const SUPPORTED_EFFECTS = new Set([
   "gainGold",
   "drawCards",
@@ -14,7 +15,8 @@ const SUPPORTED_EFFECTS = new Set([
   "moveStack",
   "healChampion",
   "dealChampionDamage",
-  "patchUp"
+  "patchUp",
+  "recruit"
 ]);
 
 type TargetRecord = Record<string, unknown>;
@@ -79,6 +81,24 @@ const getMovePathTarget = (targets: CardPlayTargets): string[] | null => {
     return null;
   }
   return [stack.from, stack.to];
+};
+
+const getChoiceTarget = (
+  targets: CardPlayTargets
+): { kind: "capital" } | { kind: "occupiedHex"; hexKey: string } | null => {
+  const record = getTargetRecord(targets);
+  const choice = record?.choice ?? record?.kind;
+  if (choice === "capital") {
+    return { kind: "capital" };
+  }
+  if (choice === "occupiedHex") {
+    const hexKey = record?.hexKey;
+    if (typeof hexKey !== "string" || hexKey.length === 0) {
+      return null;
+    }
+    return { kind: "occupiedHex", hexKey };
+  }
+  return null;
 };
 
 const getChampionTargetId = (targets: CardPlayTargets): string | null => {
@@ -463,6 +483,42 @@ export const isCardPlayable = (
     );
   }
 
+  if (card.targetSpec.kind === "choice") {
+    const choice = getChoiceTarget(targets ?? null);
+    if (!choice) {
+      return false;
+    }
+    const options = Array.isArray(card.targetSpec.options)
+      ? (card.targetSpec.options as TargetRecord[])
+      : [];
+    if (!options.some((option) => option.kind === choice.kind)) {
+      return false;
+    }
+
+    if (choice.kind === "capital") {
+      const player = state.players.find((entry) => entry.id === playerId);
+      if (!player?.capitalHex) {
+        return false;
+      }
+      const capitalHex = state.board.hexes[player.capitalHex];
+      if (!capitalHex) {
+        return false;
+      }
+      return !wouldExceedTwoPlayers(capitalHex, playerId);
+    }
+
+    if (choice.kind === "occupiedHex") {
+      const hex = state.board.hexes[choice.hexKey];
+      if (!hex) {
+        return false;
+      }
+      if (!isOccupiedByPlayer(hex, playerId)) {
+        return false;
+      }
+      return !wouldExceedTwoPlayers(hex, playerId);
+    }
+  }
+
   return false;
 };
 
@@ -629,6 +685,44 @@ export const resolveCardEffects = (
             ? bonusIfMine
             : 0);
         nextState = addGold(nextState, playerId, amount);
+        break;
+      }
+      case "recruit": {
+        const choice = getChoiceTarget(targets ?? null);
+        if (!choice) {
+          break;
+        }
+        if (choice.kind === "capital") {
+          const player = nextState.players.find((entry) => entry.id === playerId);
+          if (!player?.capitalHex) {
+            break;
+          }
+          const capitalHex = nextState.board.hexes[player.capitalHex];
+          if (!capitalHex || wouldExceedTwoPlayers(capitalHex, playerId)) {
+            break;
+          }
+          nextState = {
+            ...nextState,
+            board: addForcesToHex(nextState.board, playerId, player.capitalHex, 2)
+          };
+          break;
+        }
+        if (choice.kind === "occupiedHex") {
+          const hex = nextState.board.hexes[choice.hexKey];
+          if (!hex) {
+            break;
+          }
+          if (!isOccupiedByPlayer(hex, playerId)) {
+            break;
+          }
+          if (wouldExceedTwoPlayers(hex, playerId)) {
+            break;
+          }
+          nextState = {
+            ...nextState,
+            board: addForcesToHex(nextState.board, playerId, choice.hexKey, 1)
+          };
+        }
         break;
       }
       case "healChampion": {

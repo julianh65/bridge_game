@@ -529,6 +529,68 @@ describe("action flow", () => {
     expect(p1After.resources.gold).toBe(p1Before.resources.gold + 3);
   });
 
+  it("plays recruit to add forces to the capital", () => {
+    let { state, p1Capital } = setupToActionPhase();
+    const injected = addCardToHand(state, "p1", "starter.recruit");
+    state = injected.state;
+
+    const before = state.board.hexes[p1Capital].occupants["p1"]?.length ?? 0;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { choice: "capital" }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const after = state.board.hexes[p1Capital].occupants["p1"]?.length ?? 0;
+    expect(after).toBe(before + 2);
+  });
+
+  it("plays recruit to add a force to an occupied hex", () => {
+    let { state, p1Capital } = setupToActionPhase();
+    const neighbor = neighborHexKeys(p1Capital).find((key) => Boolean(state.board.hexes[key]));
+    if (!neighbor) {
+      throw new Error("missing neighbor for recruit test");
+    }
+    state = {
+      ...state,
+      board: addForcesToHex(state.board, "p1", neighbor, 1)
+    };
+    const injected = addCardToHand(state, "p1", "starter.recruit");
+    state = injected.state;
+
+    const before = state.board.hexes[neighbor].occupants["p1"]?.length ?? 0;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { choice: "occupiedHex", hexKey: neighbor }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const after = state.board.hexes[neighbor].occupants["p1"]?.length ?? 0;
+    expect(after).toBe(before + 1);
+  });
+
   it("plays field medic to heal a champion and caps at max HP", () => {
     let { state, p1Capital } = setupToActionPhase();
     const created = addChampionToHex(state, "p1", p1Capital, { hp: 1, maxHp: 3 });
