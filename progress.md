@@ -12,6 +12,7 @@
 
 ## Active tasks
 - (none)
+- [agent1] Implement action-step card declarations for no-target cards (Supply Cache) with initiative-ordered resolution + discard/burn handling; add tests. Files: `packages/engine/src/types.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/cards.ts`, `packages/engine/src/card-effects.ts` (new), `packages/engine/src/action-flow.test.ts`. Status: in progress.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -92,7 +93,8 @@
 - Added a PartyKit web client hook + Home screen for room join; Lobby/GameScreen now render from live `GameView` data with connection state, board, and logs.
 - Added pre-game waiting panel in the web client and pruned disconnected lobby seats so stale entries do not block new joins.
 - Documented PartyKit multi-tab behavior and cleaned up resolved issues; client now guards against null rejoin tokens.
-- Added a basic action panel (done + capital reinforce) in the game sidebar with command wiring.
+- Added a basic action panel in the game sidebar with command wiring (done, capital reinforce, build bridge edge key, march from/to).
+- Game sidebar now lists hand card IDs, deck counts, and a market row summary.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

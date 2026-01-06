@@ -1,8 +1,10 @@
 import { useMemo } from "react";
 
-import type { GameView } from "@bridgefront/engine";
+import type { ActionDeclaration, GameView } from "@bridgefront/engine";
 
+import { ActionPanel } from "./ActionPanel";
 import { BoardView } from "./BoardView";
+import { MarketPanel } from "./MarketPanel";
 import { buildHexRender } from "../lib/board-preview";
 import type { RoomConnectionStatus } from "../lib/room-client";
 
@@ -11,13 +13,22 @@ type GameScreenProps = {
   playerId: string | null;
   roomId: string;
   status: RoomConnectionStatus;
+  onSubmitAction: (declaration: ActionDeclaration) => void;
   onLeave: () => void;
 };
 
-export const GameScreen = ({ view, playerId, roomId, status, onLeave }: GameScreenProps) => {
+export const GameScreen = ({
+  view,
+  playerId,
+  roomId,
+  status,
+  onSubmitAction,
+  onLeave
+}: GameScreenProps) => {
   const hexRender = useMemo(() => buildHexRender(view.public.board), [view.public.board]);
   const localPlayer = view.public.players.find((player) => player.id === playerId);
   const handCount = view.private?.hand.length ?? 0;
+  const deckCounts = view.private?.deckCounts ?? null;
   const phaseLabel = view.public.phase.replace("round.", "").replace(".", " ");
   const connectionLabel = status === "connected" ? "Live" : "Waiting";
   const connectionClass =
@@ -90,9 +101,38 @@ export const GameScreen = ({ view, playerId, roomId, status, onLeave }: GameScre
 
           <div className="sidebar-section">
             <h3>Hand</h3>
-            <div className="hand-empty">
-              {handCount > 0 ? `${handCount} cards in hand.` : "No cards yet."}
-            </div>
+            {!view.private ? (
+              <div className="hand-empty">Spectators do not have a hand.</div>
+            ) : handCount === 0 ? (
+              <div className="hand-empty">No cards yet.</div>
+            ) : (
+              <>
+                <div className="hand-meta">{handCount} cards in hand</div>
+                <ul className="card-list">
+                  {view.private.hand.map((cardId) => (
+                    <li key={cardId} className="card-tag">
+                      {cardId}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            {deckCounts ? (
+              <div className="deck-counts">
+                <div className="resource-row">
+                  <span>Draw</span>
+                  <strong>{deckCounts.drawPile}</strong>
+                </div>
+                <div className="resource-row">
+                  <span>Discard</span>
+                  <strong>{deckCounts.discardPile}</strong>
+                </div>
+                <div className="resource-row">
+                  <span>Scrapped</span>
+                  <strong>{deckCounts.scrapped}</strong>
+                </div>
+              </div>
+            ) : null}
             {view.private?.vp ? (
               <div className="hand-empty">
                 VP: {view.private.vp.total} (control {view.private.vp.control})
@@ -102,10 +142,15 @@ export const GameScreen = ({ view, playerId, roomId, status, onLeave }: GameScre
 
           <div className="sidebar-section">
             <h3>Actions</h3>
-            <button type="button" className="btn btn-secondary" disabled>
-              Choose Action
-            </button>
+            <ActionPanel
+              phase={view.public.phase}
+              player={localPlayer ?? null}
+              status={status}
+              onSubmit={onSubmitAction}
+            />
           </div>
+
+          <MarketPanel market={view.public.market} />
 
           <div className="sidebar-section">
             <h3>Log</h3>

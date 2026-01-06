@@ -585,6 +585,52 @@ h1 {
   background: #f6f0e4;
 }
 
+.hand-meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.deck-counts,
+.market-summary {
+  display: grid;
+  gap: 6px;
+}
+
+.card-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.card-list--market {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.card-tag {
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #f5ece0;
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.card-tag--hidden {
+  color: var(--muted);
+  border-style: dashed;
+  background: #efe3d2;
+}
+
+.card-tag--active {
+  border-color: #f59e0b;
+  background: #fde68a;
+  color: #7c2d12;
+}
+
 .player-list {
   margin: 0;
   padding: 0;
@@ -620,6 +666,46 @@ h1 {
   color: var(--muted);
   display: grid;
   gap: 4px;
+}
+
+.action-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.action-panel__buttons {
+  display: grid;
+  gap: 8px;
+}
+
+.action-panel__march {
+  display: grid;
+  gap: 8px;
+}
+
+.action-field {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.action-field input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.action-panel__hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #f6f0e4;
 }
 
 .btn {

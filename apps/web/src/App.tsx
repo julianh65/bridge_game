@@ -124,6 +124,9 @@ export default function App() {
           playerId={room.playerId}
           roomId={roomConfig.roomId}
           status={room.status}
+          onSubmitAction={(declaration) =>
+            room.sendCommand({ type: "SubmitAction", payload: declaration })
+          }
           onLeave={handleLeave}
         />
       ) : null}
