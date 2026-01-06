@@ -106,6 +106,7 @@
 
 ## Milestone 5 progress
 - Added action-step card declarations for no-target cards (gain gold/draw cards) with initiative-ordered resolution before basic actions; cards leave hand on declaration and discard/burn after resolution, plus Supply Cache coverage.
+- Added Prospecting card effect handling (base + mine bonus gold) with action-flow tests.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

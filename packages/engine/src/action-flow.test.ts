@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import type { BoardState, EdgeKey, GameState, HexKey } from "./types";
 import { createCardInstance } from "./cards";
 import { applyCommand, createNewGame, DEFAULT_CONFIG, getBridgeKey, runUntilBlocked } from "./index";
+import { addForcesToHex } from "./units";
 
 const pickStartingEdges = (capital: HexKey, board: BoardState): EdgeKey[] => {
   const neighbors = neighborHexKeys(capital).filter((key) => Boolean(board.hexes[key]));
@@ -123,6 +124,14 @@ const addCardToHand = (
     },
     instanceId: created.instanceId
   };
+};
+
+const findMineHex = (state: GameState): HexKey => {
+  const mineHex = Object.values(state.board.hexes).find((hex) => hex.tile === "mine");
+  if (!mineHex) {
+    throw new Error("mine hex not found");
+  }
+  return mineHex.key;
 };
 
 describe("action flow", () => {
@@ -255,5 +264,62 @@ describe("action flow", () => {
     expect(p1After.resources.mana).toBe(p1Before.resources.mana - 1);
     expect(p1After.deck.hand.includes(injected.instanceId)).toBe(false);
     expect(p1After.deck.discardPile).toContain(injected.instanceId);
+  });
+
+  it("plays prospecting and gains base gold without a mine", () => {
+    let { state } = setupToActionPhase();
+    const injected = addCardToHand(state, "p1", "age1.prospecting");
+    state = injected.state;
+
+    const p1Before = state.players.find((player) => player.id === "p1");
+    if (!p1Before) {
+      throw new Error("missing p1 state");
+    }
+
+    state = applyCommand(
+      state,
+      { type: "SubmitAction", payload: { kind: "card", cardInstanceId: injected.instanceId } },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state");
+    }
+    expect(p1After.resources.gold).toBe(p1Before.resources.gold + 2);
+  });
+
+  it("plays prospecting and gains bonus gold when occupying a mine", () => {
+    let { state } = setupToActionPhase();
+    const mineHex = findMineHex(state);
+    state = {
+      ...state,
+      board: addForcesToHex(state.board, "p1", mineHex, 1)
+    };
+    const injected = addCardToHand(state, "p1", "age1.prospecting");
+    state = injected.state;
+
+    const p1Before = state.players.find((player) => player.id === "p1");
+    if (!p1Before) {
+      throw new Error("missing p1 state");
+    }
+
+    state = applyCommand(
+      state,
+      { type: "SubmitAction", payload: { kind: "card", cardInstanceId: injected.instanceId } },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state");
+    }
+    expect(p1After.resources.gold).toBe(p1Before.resources.gold + 3);
   });
 });
