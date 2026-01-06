@@ -6,11 +6,7 @@
 - Card defs in `technical_spec.md` now described as data-first TS modules with stable IDs, targetSpec, and effects/resolve rules.
 
 ## Active tasks
-- owner: codex; scope: Milestone 0 scaffolding (repo structure, configs, base apps/packages); files: package.json, package-lock.json, tsconfig*.json, apps/*, packages/*, partykit.json, eslint/prettier configs, .gitignore; status: completed
-- owner: agent-2; scope: Milestone 1a deterministic RNG module + tests; files: packages/shared/src/rng.ts, packages/shared/src/index.ts, packages/engine/src/rng.test.ts; status: completed
-- owner: codex; scope: Milestone 1 core types/config + engine skeleton; files: packages/engine/src/types.ts, packages/engine/src/config.ts, packages/engine/src/engine.ts, packages/engine/src/index.ts, packages/engine/src/index.test.ts; status: completed
-- owner: agent-2; scope: Milestone 1c hex utils + edge key helpers + tests; files: packages/shared/src/hex.ts, packages/shared/src/index.ts, packages/engine/src/hex.test.ts, packages/engine/vitest.config.ts; status: completed
-- owner: codex; scope: Milestone 1 board storage helpers + tests (bridges/occupancy); files: packages/engine/src/board.ts, packages/engine/src/board.test.ts, packages/engine/src/index.ts, progress.md; status: completed
+- None currently (all queued tasks complete).
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
