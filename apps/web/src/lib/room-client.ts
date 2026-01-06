@@ -16,9 +16,9 @@ type RoomMessage =
   | {
       type: "welcome";
       playerId: PlayerID;
-      seatIndex: number;
-      rejoinToken: string;
-      view: GameView;
+      seatIndex: number | null;
+      rejoinToken?: string | null;
+      view?: GameView | null;
       revision?: number;
     }
   | {
@@ -144,13 +144,15 @@ export const useRoom = (options: RoomOptions | null) => {
       }
 
       if (parsed.type === "welcome") {
-        storeRejoinToken(options.roomId, parsed.rejoinToken);
+        if (typeof parsed.rejoinToken === "string" && parsed.rejoinToken.length > 0) {
+          storeRejoinToken(options.roomId, parsed.rejoinToken);
+        }
         setState((prev) => ({
           ...prev,
           status: "connected",
           playerId: parsed.playerId,
           seatIndex: parsed.seatIndex,
-          view: parsed.view,
+          view: parsed.view ?? null,
           revision: parsed.revision ?? prev.revision,
           error: null
         }));

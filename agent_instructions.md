@@ -16,4 +16,5 @@ If multiple agents are running at once:
 - After finishing a task or subtask, update progress.md and commit.
 Coordination vibe: plan first, log early/often, and if you're blocked by another task, document the dependency and pause after planning.
 If you notice changes that clearly belong to another agent’s claimed scope, treat them as expected: avoid touching those files, don’t revert them, and only surface conflicts or blockers.
+If you see unclaimed changes in your scope that you didn’t make, pause and ask before editing or staging them.
 If you see unexpected changes that are plausibly from other agents or tooling, reconcile them when safe and log in `progress.md`; only raise to the user if required by policy or if the changes block your work.

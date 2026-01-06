@@ -147,10 +147,10 @@ Goal: get the board game “moving pieces and fighting” ASAP.
   - allow reclaiming seat on reconnect
 
 ### Tasks (web)
-- [ ] Implement Home + Lobby:
+- [x] Implement Home + Lobby:
   - [x] create/join room UI
   - [x] seat list
-  - [ ] ready/start game
+  - [x] auto-start at 2 connected players (no ready UI)
 - [x] Implement Game Screen minimal:
   - [x] render board (SVG hexes)
   - [x] show units + bridges
