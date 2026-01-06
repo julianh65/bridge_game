@@ -1,3 +1,5 @@
+import { createRngState } from "@bridgefront/shared";
+
 import type {
   BlockState,
   Command,
@@ -35,6 +37,23 @@ const createPlayerState = (player: LobbyPlayer, seatIndex: number, startingGold:
   };
 };
 
+const normalizeSeed = (seed: GameState["seed"]): number => {
+  if (typeof seed === "number") {
+    if (!Number.isFinite(seed)) {
+      throw new Error("seed must be a finite number");
+    }
+    return seed >>> 0;
+  }
+
+  let hash = 2166136261;
+  for (let i = 0; i < seed.length; i += 1) {
+    hash ^= seed.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+
+  return hash >>> 0;
+};
+
 export const createNewGame = (
   config: GameState["config"] = DEFAULT_CONFIG,
   seed: GameState["seed"],
@@ -49,7 +68,7 @@ export const createNewGame = (
   const state: GameState = {
     config,
     seed,
-    rngState: { seed: Number(seed) || 0, position: 0 },
+    rngState: createRngState(normalizeSeed(seed)),
     revision: 0,
     createdAt: Date.now(),
     players,

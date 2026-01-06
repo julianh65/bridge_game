@@ -1,3 +1,5 @@
+import type { RNGState } from "@bridgefront/shared";
+
 export type PlayerID = string;
 export type CardDefId = string;
 export type CardInstanceID = string;
@@ -19,11 +21,6 @@ export type Phase =
 export type PhaseState = Phase;
 
 export type Age = "I" | "II" | "III";
-
-export type RNGState = {
-  seed: number;
-  position: number;
-};
 
 export type TileCounts = {
   mines: number;
