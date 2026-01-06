@@ -921,6 +921,17 @@ export default class Server implements Party.Server {
       this.sendError(connection, "all players must pick a faction before starting");
       return;
     }
+    const uniqueFactions = new Set<string>();
+    for (const player of this.lobbyPlayers) {
+      if (!player.factionId) {
+        continue;
+      }
+      if (uniqueFactions.has(player.factionId)) {
+        this.sendError(connection, "factions must be unique before starting");
+        return;
+      }
+      uniqueFactions.add(player.factionId);
+    }
 
     this.startGameFromLobby();
     if (!this.state) {
@@ -961,6 +972,13 @@ export default class Server implements Party.Server {
     const player = this.lobbyPlayers.find((entry) => entry.id === meta.playerId);
     if (!player) {
       this.sendError(connection, "player not found in lobby");
+      return;
+    }
+    const claimedBy = this.lobbyPlayers.find(
+      (entry) => entry.factionId === normalized && entry.id !== meta.playerId
+    );
+    if (claimedBy) {
+      this.sendError(connection, `faction already claimed by ${claimedBy.name}`);
       return;
     }
     player.factionId = normalized;

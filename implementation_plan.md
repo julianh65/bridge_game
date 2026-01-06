@@ -430,7 +430,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 ### Tasks (web - deck + player status)
 - [x] Add a deck viewer so players can browse all cards in their current deck.
 - [x] Add per-player colors and reflect ownership in player list + board occupancy.
-- [ ] Make action status more obvious (who still needs to act, who is done).
+- [x] Make action status more obvious (who still needs to act, who is done).
 
 ### Tasks (web - action flow + layout)
 - [ ] Reduce card targeting clicks so board picks are direct and visible once selected.
@@ -440,7 +440,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 ### Tasks (web - motion + phase clarity)
 - [ ] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen.
-- [ ] Add clearer phase transition cues between round phases. Make it flash on screen in big text slowly to everyone simultaneously.
+- [x] Add clearer phase transition cues between round phases. Make it flash on screen in big text slowly to everyone simultaneously.
 
 ### Tasks (web - targeting reliability)
 - [x] Fix hex selection for Bridge Crew and Build Bridge edge picking.
@@ -448,10 +448,11 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 ### Tasks UI
 - [ ] We need to more clearly guide the player what to do. The basic actions thing is too cluttered, we should probably keep that where the cards are and it should fan it when you click basic actions and show their mana cost and everything with a description
 - [ ] The Log is taking up too much screen real estate, make that a seperate area or modal or something
-- [ ] Urgent: Card targets are still not be selected properly when you click on the board. For example the bridge crew
+- [ ] Urgent: Card targets are still not be selected properly when you click on the board. For example the bridge crew still doesn't work. I see the edge flash but it doesn't select it properly still.
 - [ ] We need to reduce the amount of clicks, to play a card you shouldn't have to click then specify capital or something else then click where, it should just know.
 - [ ] Also can you double check, does it only work for 2 players right now?
 - [ ] The standard setup still doesn't work, only auto setup works.
+- [ ] The done button is a bit confusing, we need little helpers over the different buttons
 
 ## Milestone 9 — Add Polish
 
@@ -462,7 +463,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Add a host-only board state editor/debug panel (JSON view + light patch tools) for test games, only if it stays simple.
 - [ ] Add a victory screen (winner, final VP, recap, rematch/exit).
 - [ ] Upgrade on-board visuals for units/champions/factions (distinct tokens, faction badges).
-- [ ] Enforce faction uniqueness in setup (no duplicate faction picks).
+- [x] Enforce faction uniqueness in setup (no duplicate faction picks).
 - [ ] Add deck UI with draw/discard piles, counts, direction arrows, and draw/discard animations.
 - [ ] Low priority: add at least one targeted test for each card effect/card.
 

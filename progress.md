@@ -16,8 +16,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
-- owner: agent2 | scope: make action-step status more obvious in player list (summary + row highlight) | files: apps/web/src/components/GameScreen.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md | status: in progress
+- owner: agent4 | scope: investigate/fix board click target selection for bridge/hex picks (urgent card targeting not selecting) | files: apps/web/src/components/BoardView.tsx, apps/web/src/components/GameScreen.tsx, apps/web/src/components/ActionPanel.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md | status: in progress
+- owner: agent3 | scope: investigate/fix manual setup flow (standard setup not working without auto) | files: apps/web/src/components/SetupCapitalDraft.tsx, apps/web/src/components/SetupStartingBridges.tsx, apps/web/src/components/SetupFreeStartingCardPick.tsx, apps/web/src/components/PreGameLobby.tsx, apps/server/src/server.ts, progress.md, implementation_plan.md | status: in progress
 
 ## Milestone 8.5 progress
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.
@@ -26,6 +26,8 @@ none
 - Added seat-index player colors for units/bridges and player list swatches, and marked the plan item complete in `implementation_plan.md`.
 - Added pregame faction selection with start gating on all picks, surfaced chosen factions in the setup lobby, and marked the plan item complete in `implementation_plan.md`.
 - Added action status pills (idle/waiting/submitted) to the player list for action phase visibility; plan update deferred until `implementation_plan.md` is free.
+- Added a phase transition cue overlay that flashes round phase changes in big text and marked the plan item complete in `implementation_plan.md`.
+- Made action status more obvious with a player-list summary and row highlighting, and marked the plan item complete in `implementation_plan.md`.
 - Added a large Submit/Lock In action button to the action panel and marked the plan item complete in `implementation_plan.md`.
 - Replaced market focus row with a full-screen overlay + toggle, redesigned market cards with art placeholders and metadata, and marked Milestone 8.5 market tasks complete in `implementation_plan.md`.
 - Added an order rail to the market overlay and tightened market card sizing so the overlay reads as a sequenced card run; marked the related checklist items complete in `implementation_plan.md`.
@@ -33,6 +35,9 @@ none
 - Added a market winner highlight/animation on the overlay cards and marked the plan item complete in `implementation_plan.md`.
 - Enabled direct edge clicks for bridge/card edge targeting (preview edges even before selecting a start hex) and noted the subtask in `implementation_plan.md`.
 - Fixed edge-pick hex selection by letting unit stack clicks trigger hex targeting (Bridge Crew/build bridge) and marked the plan item complete in `implementation_plan.md`.
+
+## Milestone 9 progress
+- Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.

@@ -530,6 +530,11 @@ h1 {
   color: #0369a1;
 }
 
+.status-pill--idle {
+  background: #f4efe2;
+  color: #8a7b63;
+}
+
 .muted {
   color: var(--muted);
   font-size: 14px;
@@ -788,6 +793,25 @@ h1 {
   color: var(--muted);
 }
 
+.faction-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.faction-card.is-selected {
+  border-style: solid;
+  border-color: #93c5fd;
+  background: #eff6ff;
+  color: #1f2937;
+}
+
+.faction-card.is-taken {
+  border-style: solid;
+  border-color: #fca5a5;
+  background: #fff1f2;
+  color: #7f1d1d;
+}
+
 .faction-card__tag {
   font-size: 10px;
   text-transform: uppercase;
@@ -1038,6 +1062,52 @@ h1 {
   gap: 20px;
 }
 
+.phase-cue {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 60;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 242, 214, 0.72),
+    rgba(255, 242, 214, 0) 60%
+  );
+  animation: phaseCueFade 2.6s ease-in-out forwards;
+}
+
+.phase-cue__panel {
+  display: grid;
+  gap: 6px;
+  padding: 22px 30px;
+  border-radius: 24px;
+  border: 1px solid rgba(180, 83, 9, 0.25);
+  background: rgba(255, 250, 240, 0.96);
+  box-shadow: 0 18px 40px rgba(43, 30, 12, 0.2);
+  text-align: center;
+  animation: phaseCuePop 2.6s ease-in-out forwards;
+}
+
+.phase-cue__eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.phase-cue__label {
+  font-size: clamp(26px, 5vw, 56px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.phase-cue__round {
+  font-size: 14px;
+  color: var(--muted);
+}
+
 .game-screen__header {
   display: flex;
   align-items: flex-end;
@@ -1096,6 +1166,40 @@ h1 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 16px;
+}
+
+@keyframes phaseCueFade {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes phaseCuePop {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0) scale(1.02);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px) scale(1.02);
+  }
 }
 
 .game-board {
@@ -1885,6 +1989,12 @@ h1 {
   gap: 10px;
 }
 
+.player-list__summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .player-row {
   display: flex;
   align-items: center;
@@ -1893,6 +2003,22 @@ h1 {
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid var(--border);
+  background: #fffdf6;
+}
+
+.player-row--waiting {
+  border-color: rgba(220, 38, 38, 0.45);
+  background: #fff1f1;
+  box-shadow: inset 4px 0 0 rgba(220, 38, 38, 0.35);
+}
+
+.player-row--submitted {
+  border-color: rgba(22, 163, 74, 0.45);
+  background: #f0fdf4;
+  box-shadow: inset 4px 0 0 rgba(22, 163, 74, 0.35);
+}
+
+.player-row--idle {
   background: #fffdf6;
 }
 

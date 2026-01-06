@@ -29,6 +29,11 @@ export const PreGameLobby = ({
   const missingFactions = lobby.players
     .filter((player) => !player.factionId)
     .map((player) => player.name);
+  const takenByFaction = new Map(
+    lobby.players
+      .filter((player) => player.factionId)
+      .map((player) => [player.factionId as string, player])
+  );
   const allFactionsPicked = missingFactions.length === 0;
   const hostId = lobby.players.find((player) => player.seatIndex === 0)?.id ?? null;
   const isHost = Boolean(playerId && hostId === playerId);
@@ -104,19 +109,27 @@ export const PreGameLobby = ({
           <div className="faction-grid">
             {FACTIONS.map((faction) => {
               const isSelected = faction.id === localFactionId;
+              const takenBy = takenByFaction.get(faction.id) ?? null;
+              const isTaken = Boolean(takenBy && takenBy.id !== playerId);
+              const isDisabled = !canPickFaction || isTaken;
+              const tagLabel = isSelected ? "Selected" : isTaken ? "Taken" : "Pick";
+              const cardClass = `faction-card${isSelected ? " is-selected" : ""}${
+                isTaken ? " is-taken" : ""
+              }`;
               return (
                 <button
                   key={faction.id}
                   type="button"
-                  className="faction-card"
-                  disabled={!canPickFaction}
+                  className={cardClass}
+                  disabled={isDisabled}
+                  title={isTaken && takenBy ? `Taken by ${takenBy.name}` : undefined}
                   onClick={() => onPickFaction(faction.id)}
                 >
                   <span>{faction.name}</span>
                   {isSelected ? (
                     <span className="chip chip--local">Selected</span>
                   ) : (
-                    <span className="faction-card__tag">Pick</span>
+                    <span className="faction-card__tag">{tagLabel}</span>
                   )}
                 </button>
               );
