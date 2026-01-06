@@ -1,9 +1,17 @@
 import { describe, expect, it } from "vitest";
 
-import { ENGINE_VERSION } from "./index";
+import { DEFAULT_CONFIG, createNewGame, runUntilBlocked } from "./index";
 
 describe("engine", () => {
-  it("exposes a version placeholder", () => {
-    expect(ENGINE_VERSION).toBe("0.0.0");
+  it("blocks on capital draft during setup", () => {
+    const state = createNewGame(DEFAULT_CONFIG, 123, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const next = runUntilBlocked(state);
+
+    expect(next.phase).toBe("setup");
+    expect(next.blocks?.type).toBe("setup.capitalDraft");
+    expect(next.blocks?.waitingFor).toEqual(["p2", "p1"]);
   });
 });
