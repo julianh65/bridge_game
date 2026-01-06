@@ -415,7 +415,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 ### Tasks (web - home + onboarding)
 - [ ] Refresh the main landing page layout and typography.
-- [ ] Add a placeholder panel for rules/tutorial access.
+- [x] Add a placeholder panel for rules/tutorial access.
 - [ ] Fix the non-auto setup flow (faction picks + start gating) so manual setup works.
 
 ### Tasks (web - market overlay + cards)
@@ -424,7 +424,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Shrink the board presence while the market overlay is open so the cards dominate.
 
 ### Tasks (web - deck + player status)
-- [ ] Add a deck viewer so players can browse all cards in their current deck.
+- [x] Add a deck viewer so players can browse all cards in their current deck.
 - [ ] Add per-player colors and reflect ownership in player list + board occupancy.
 - [ ] Make action status more obvious (who still needs to act, who is done).
 
