@@ -41,6 +41,7 @@ export type {
   PlayerID,
   PlayerState,
   ResourceState,
+  SetupChoice,
   TileType,
   UnitID,
   UnitState

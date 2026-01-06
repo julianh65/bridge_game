@@ -7,7 +7,7 @@
 
 ## Active tasks
 - owner: agent-2; scope: Milestone 2c procedural placement (forges/mines + mine values); files: packages/engine/src/board-generation.ts, packages/engine/src/board-generation.test.ts, packages/engine/src/index.ts; status: completed
-- owner: agent-1; scope: Milestone 2b setup flow blocks + setup commands (capital draft/starting bridges/free starting card); files: packages/engine/src/engine.ts, packages/engine/src/types.ts, packages/engine/src/index.test.ts; status: in_progress; dependency: board generation outputs/capital slots, card data for free starting card
+- owner: agent-1; scope: Milestone 2b setup flow blocks + setup commands (capital draft/starting bridges/free starting card); files: packages/engine/src/engine.ts, packages/engine/src/types.ts, packages/engine/src/index.test.ts; status: completed; dependency: board generation outputs/capital slots, card data for free starting card
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
@@ -21,6 +21,7 @@
 
 ## Milestone 2 progress
 - Added base board generation (axial hex grid, center tile) and capital slot mapping with tests.
+- Added setup flow blocks and commands for capital draft, starting bridges, and free starting card; setup now advances to `round.reset` with tests. Free starting card uses a placeholder pool in config (to be replaced by real card defs/deck).
 - Added procedural placement for forges/mines (including home mines) and mine values with deterministic tests.
 
 ## Open decisions

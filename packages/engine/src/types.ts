@@ -40,6 +40,7 @@ export type GameConfig = {
   tileCountsByPlayerCount: Record<number, TileCounts>;
   ageByRound: Record<number, Age>;
   marketPreviewByRound: Record<number, number>;
+  freeStartingCardPool: CardDefId[];
 };
 
 export type ResourceState = {
@@ -52,6 +53,7 @@ export type PlayerState = {
   name: string;
   seatIndex: number;
   factionId: string;
+  capitalHex?: HexKey;
   resources: ResourceState;
   vp: { permanent: number };
   doneThisRound: boolean;
@@ -157,9 +159,26 @@ export type Modifier = {
 };
 
 export type BlockState = {
-  type: string;
+  type: "setup.capitalDraft";
   waitingFor: PlayerID[];
-  payload?: Record<string, unknown>;
+  payload: {
+    availableSlots: HexKey[];
+    choices: Record<PlayerID, HexKey | null>;
+  };
+} | {
+  type: "setup.startingBridges";
+  waitingFor: PlayerID[];
+  payload: {
+    remaining: Record<PlayerID, number>;
+    placedEdges: Record<PlayerID, EdgeKey[]>;
+  };
+} | {
+  type: "setup.freeStartingCardPick";
+  waitingFor: PlayerID[];
+  payload: {
+    offers: Record<PlayerID, CardDefId[]>;
+    chosen: Record<PlayerID, CardDefId | null>;
+  };
 };
 
 export type GameEvent = {
@@ -196,9 +215,14 @@ export type LobbyPlayer = {
   name: string;
 };
 
+export type SetupChoice =
+  | { kind: "pickCapital"; hexKey: HexKey }
+  | { kind: "placeStartingBridge"; edgeKey: EdgeKey }
+  | { kind: "pickFreeStartingCard"; cardId: CardDefId };
+
 export type Command = {
-  type: string;
-  payload?: Record<string, unknown>;
+  type: "SubmitSetupChoice";
+  payload: SetupChoice;
 };
 
 export type PlayerPublicView = {

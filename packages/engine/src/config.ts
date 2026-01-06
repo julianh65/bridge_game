@@ -45,5 +45,13 @@ export const DEFAULT_CONFIG: GameConfig = {
     8: 0,
     9: 0,
     10: 0
-  }
+  },
+  freeStartingCardPool: [
+    "age1.placeholder.a",
+    "age1.placeholder.b",
+    "age1.placeholder.c",
+    "age1.placeholder.d",
+    "age1.placeholder.e",
+    "age1.placeholder.f"
+  ]
 };
