@@ -6,7 +6,14 @@
 - Card defs in `technical_spec.md` now described as data-first TS modules with stable IDs, targetSpec, and effects/resolve rules.
 
 ## Active tasks
-- owner: agent-2; scope: Config-driven board generation + radius updates + config docs; files: packages/engine/src/config.ts, packages/engine/src/types.ts, packages/engine/src/board-generation.ts, packages/engine/src/engine.ts, packages/engine/src/board-generation.test.ts, apps/web/src/App.tsx, implementation_plan.md, technical_spec.md, docs/configuration.md; status: completed
+- None currently.
+
+## Cleanup/organization progress
+- Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.
+
+## Cleanup/organization TODOs
+- Move card/deck instance helpers into a dedicated module once deck initialization starts.
+- Consider moving view construction into `packages/engine/src/view.ts` if `buildView` grows.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
