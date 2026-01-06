@@ -4,9 +4,10 @@
 - Aligned `technical_spec.md` with `rules_draft.md`: added round/lead tracking, VP privacy in views, champion limit + cost scaling, round-cap tiebreaker, hand-limit overflow behavior, market preview mapping, and clarified market tie-break roll-off.
 - Updated `rules_draft.md`: clarified initiative placeholders, fixed market preview mapping, and defined lead rotation.
 - Card defs in `technical_spec.md` now described as data-first TS modules with stable IDs, targetSpec, and effects/resolve rules.
+- Added `docs/cards.md` with card data module editing guidelines.
 
 ## Active tasks
-- agent-2: Fix debug board rendering (currently shows coords, missing visual tile distinctions). Files: apps/web/src/components/DebugBoard.tsx, apps/web/src/styles.css. Status: in progress.
+- None currently.
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.

@@ -73,7 +73,7 @@ The aim is to reach “playable with friends” quickly while preserving a clean
   - mines + home mines
   - mine values
   - sanity check with rerolls
-- [ ] Implement starting units/resources/deck initialization:
+- [x] Implement starting units/resources/deck initialization:
   - starter deck instances
   - faction starter spell + faction champion instance
   - champion starts in hand, draw to 6
