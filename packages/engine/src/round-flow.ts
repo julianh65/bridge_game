@@ -159,6 +159,7 @@ export const createCollectionBlock = (
 
   const currentAge = state.market.age;
   let marketDeck = state.marketDecks[currentAge] ?? [];
+  let powerDeck = state.powerDecks[currentAge] ?? [];
   const nextPrompts: Record<PlayerID, CollectionPrompt[]> = { ...promptsByPlayer };
 
   for (const player of playersInSeatOrder) {
@@ -178,9 +179,9 @@ export const createCollectionBlock = (
         drawn = draw.drawn;
         marketDeck = draw.remaining;
       } else if (prompt.kind === "center") {
-        const draw = takeFromDeck(marketDeck, 2);
+        const draw = takeFromDeck(powerDeck, 2);
         drawn = draw.drawn;
-        marketDeck = draw.remaining;
+        powerDeck = draw.remaining;
       }
       if (prompt.kind === "center" && drawn.length === 0) {
         continue;
@@ -201,6 +202,10 @@ export const createCollectionBlock = (
         marketDecks: {
           ...state.marketDecks,
           [currentAge]: marketDeck
+        },
+        powerDecks: {
+          ...state.powerDecks,
+          [currentAge]: powerDeck
         }
       },
       block: null
@@ -212,6 +217,10 @@ export const createCollectionBlock = (
     marketDecks: {
       ...state.marketDecks,
       [currentAge]: marketDeck
+    },
+    powerDecks: {
+      ...state.powerDecks,
+      [currentAge]: powerDeck
     }
   };
 
@@ -350,6 +359,7 @@ export const resolveCollectionChoices = (state: GameState): GameState => {
 
   const currentAge = state.market.age;
   let marketDeck = state.marketDecks[currentAge] ?? [];
+  let powerDeck = state.powerDecks[currentAge] ?? [];
   let nextState: GameState = state;
   const playersInSeatOrder = getSeatOrderedPlayers(state.players);
 
@@ -409,9 +419,9 @@ export const resolveCollectionChoices = (state: GameState): GameState => {
       } else if (choice.kind === "center") {
         if (prompt.revealed.includes(choice.cardId)) {
           const leftovers = prompt.revealed.filter((cardId) => cardId !== choice.cardId);
-          const returned = returnToBottomRandom(nextState, marketDeck, leftovers);
+          const returned = returnToBottomRandom(nextState, powerDeck, leftovers);
           nextState = returned.state;
-          marketDeck = returned.deck;
+          powerDeck = returned.deck;
           const created = createCardInstance(nextState, choice.cardId);
           nextState = insertCardIntoDrawPileRandom(
             created.state,
@@ -428,6 +438,10 @@ export const resolveCollectionChoices = (state: GameState): GameState => {
     marketDecks: {
       ...nextState.marketDecks,
       [currentAge]: marketDeck
+    },
+    powerDecks: {
+      ...nextState.powerDecks,
+      [currentAge]: powerDeck
     }
   };
 };

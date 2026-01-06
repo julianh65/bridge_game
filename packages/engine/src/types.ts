@@ -160,6 +160,7 @@ export type MarketState = {
 };
 
 export type MarketDeckState = Record<Age, CardDefId[]>;
+export type PowerDeckState = Record<Age, CardDefId[]>;
 
 export type Duration =
   | { type: "permanent" }
@@ -247,6 +248,7 @@ export type GameState = {
   board: BoardState;
   market: MarketState;
   marketDecks: MarketDeckState;
+  powerDecks: PowerDeckState;
   logs: GameEvent[];
   modifiers: Modifier[];
   blocks?: BlockState;

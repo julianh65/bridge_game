@@ -395,7 +395,7 @@ describe("collection", () => {
         ...base.market,
         age: "I"
       },
-      marketDecks: {
+      powerDecks: {
         I: deck,
         II: [],
         III: []
@@ -422,7 +422,7 @@ describe("collection", () => {
     expect(player?.deck.drawPile.length).toBe(1);
     const gainedCard = player?.deck.drawPile[0];
     expect(resolved.cardsByInstanceId[gainedCard ?? ""]?.defId).toBe(deck[1]);
-    expect(resolved.marketDecks.I).toEqual([deck[0]]);
+    expect(resolved.powerDecks.I).toEqual([deck[0]]);
   });
 });
 

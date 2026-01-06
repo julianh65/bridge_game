@@ -1,6 +1,7 @@
 import { randInt, rollDie, shuffle } from "@bridgefront/shared";
 
 import { MARKET_DECKS_BY_AGE } from "./content/market-decks";
+import { POWER_DECKS_BY_AGE } from "./content/power-decks";
 import type { Age, Bid, BlockState, CardDefId, GameState, MarketRowCard, PlayerID } from "./types";
 import { createCardInstance, insertCardIntoDrawPileRandom } from "./cards";
 import { emit } from "./events";
@@ -109,6 +110,20 @@ export const initializeMarketDecks = (state: GameState): GameState => {
   }
 
   return { ...nextState, marketDecks };
+};
+
+export const initializePowerDecks = (state: GameState): GameState => {
+  let rngState = state.rngState;
+  const powerDecks = { I: [], II: [], III: [] } as Record<Age, CardDefId[]>;
+
+  for (const age of AGE_ORDER) {
+    const baseDeck = POWER_DECKS_BY_AGE[age] ?? [];
+    const { value, next } = shuffle(rngState, baseDeck);
+    powerDecks[age] = value;
+    rngState = next;
+  }
+
+  return { ...state, powerDecks };
 };
 
 export const prepareMarketRow = (state: GameState): GameState => {

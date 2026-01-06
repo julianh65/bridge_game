@@ -4,6 +4,7 @@ import * as shared from "@bridgefront/shared";
 import { DEFAULT_CONFIG } from "./config";
 import { createNewGame, applyCommand, runUntilBlocked } from "./engine";
 import { AGE1_MARKET_DECK } from "./content/market-decks";
+import { AGE1_POWER_DECK } from "./content/power-decks";
 import { prepareMarketRow } from "./market";
 import type { GameState } from "./types";
 
@@ -22,6 +23,10 @@ describe("market", () => {
     expect(state.marketDecks.II.length).toBe(0);
     expect(state.marketDecks.III.length).toBe(0);
     expect([...state.marketDecks.I].sort()).toEqual([...AGE1_MARKET_DECK].sort());
+    expect(state.powerDecks.I.length).toBe(AGE1_POWER_DECK.length);
+    expect(state.powerDecks.II.length).toBe(0);
+    expect(state.powerDecks.III.length).toBe(0);
+    expect([...state.powerDecks.I].sort()).toEqual([...AGE1_POWER_DECK].sort());
   });
 
   it("builds a market row using preview counts", () => {

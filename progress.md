@@ -11,7 +11,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- agent-2: power deck scaffolding + center pick uses power decks (owner: agent-2; scope: add power deck lists/init, store in state, and update collection flow/tests to draw center picks from power decks; files: `packages/engine/src/types.ts`, `packages/engine/src/content/power-decks.ts`, `packages/engine/src/market.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/market.test.ts`; status: in-progress)
+- agent-3: add a smoke sim test to auto-resolve blocks across a few rounds (owner: agent-3; scope: deterministic auto-choices for setup/market/action/collection; files: `packages/engine/src/smoke.test.ts`; status: in-progress)
+- agent-1: rework hand UI into a card row/fan with hover zoom, selected state, and disabled styling (owner: agent-1; scope: hand card layout + styles in game UI; files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/styles.css`; status: in-progress)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.

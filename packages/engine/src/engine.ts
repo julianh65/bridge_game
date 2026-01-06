@@ -32,7 +32,14 @@ import {
 import { applyActionDeclaration, createActionStepBlock, resolveActionStep } from "./action-flow";
 import { resolveSieges } from "./combat";
 import { emit } from "./events";
-import { applyMarketBid, createMarketBidBlock, initializeMarketDecks, prepareMarketRow, resolveMarketBids } from "./market";
+import {
+  applyMarketBid,
+  createMarketBidBlock,
+  initializeMarketDecks,
+  initializePowerDecks,
+  prepareMarketRow,
+  resolveMarketBids
+} from "./market";
 
 const createPlayerState = (player: LobbyPlayer, seatIndex: number, startingGold: number): PlayerState => {
   return {
@@ -161,6 +168,7 @@ export const createNewGame = (
       playersOut: Object.fromEntries(players.map((player) => [player.id, false]))
     },
     marketDecks: { I: [], II: [], III: [] },
+    powerDecks: { I: [], II: [], III: [] },
     logs: [],
     modifiers: [],
     blocks: createCapitalDraftBlock(players, capitalSlots),
@@ -169,6 +177,7 @@ export const createNewGame = (
   };
 
   state = initializeMarketDecks(state);
+  state = initializePowerDecks(state);
   return state;
 };
 
