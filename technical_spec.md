@@ -88,6 +88,7 @@ Minimum required fields:
 - `board: BoardState`
 - `market: MarketState`
 - `logs: GameEvent[]` (bounded list for UI; full log optional)
+- `winnerPlayerId: PlayerID | null`
 - `modifiers: Modifier[]` (temporary/permanent rule modifiers)
 - `blocks?: BlockState` (what the engine is waiting on; if any)
 
@@ -97,7 +98,7 @@ Minimum required fields:
 - `seatIndex: number`
 - `factionId: string`
 - `resources: { gold: number; mana: number }`
-- `vp: { permanent: number }` (control is computed)
+- `vp: { permanent: number, control: number, total: number }`
 - `doneThisRound: boolean`
 - `deck: DeckState`
 - `burned: CardInstanceID[]`

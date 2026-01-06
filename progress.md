@@ -6,6 +6,7 @@
 - Card defs in `technical_spec.md` now described as data-first TS modules with stable IDs, targetSpec, and effects/resolve rules.
 - Added `docs/cards.md` with card data module editing guidelines.
 - Updated board radius defaults (3-player radius 4) in `DEFAULT_CONFIG`, `technical_spec.md`, and `rules_draft.md`.
+- Added a coordination note to `agent_instructions.md` to emphasize planning/logging before coding.
 
 ## Active tasks
 - (none)
@@ -45,6 +46,7 @@
 - Round reset now rotates `leadSeatIndex` by round, with tests.
 - Added combat resolution for contested non-capital hexes and sieges at end of action phase; `runUntilBlocked` now advances into `round.collection`.
 - Added minimal collection (mine gold only) and phase advance into `round.scoring`, with tests.
+- Implemented scoring (control VP + win/tiebreak), cleanup (discard/expire temp), and age update phases; round loop now advances to `round.reset`.
 
 ## Content system progress
 - Added starter card data modules and a registry under `packages/engine/src/content/cards`.
@@ -52,6 +54,7 @@
 - Added initial Age I market card stubs and wired the free starting card pool to real card IDs.
 - Added card registry tests for unique IDs and starter/free-start coverage.
 - Added an initial Age I market deck list export under `packages/engine/src/content/market-decks.ts`.
+- Added market deck tests to validate ids are unique, registered, and age-appropriate.
 
 ## Debug UI progress
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.

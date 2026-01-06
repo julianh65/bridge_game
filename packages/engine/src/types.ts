@@ -75,7 +75,7 @@ export type PlayerState = {
   factionId: string;
   capitalHex?: HexKey;
   resources: ResourceState;
-  vp: { permanent: number };
+  vp: { permanent: number; control: number; total: number };
   doneThisRound: boolean;
   deck: DeckState;
   burned: CardInstanceID[];
@@ -234,6 +234,7 @@ export type GameState = {
   modifiers: Modifier[];
   blocks?: BlockState;
   cardsByInstanceId: Record<CardInstanceID, CardInstance>;
+  winnerPlayerId: PlayerID | null;
 };
 
 export type LobbyPlayer = {
@@ -280,7 +281,7 @@ export type PlayerPrivateView = {
     discardPile: number;
     scrapped: number;
   };
-  vp: { permanent: number };
+  vp: { permanent: number; control: number; total: number };
 };
 
 export type GameView = {
@@ -291,6 +292,7 @@ export type GameView = {
     market: MarketState;
     logs: GameEvent[];
     players: PlayerPublicView[];
+    winnerPlayerId: PlayerID | null;
   };
   private: PlayerPrivateView | null;
 };

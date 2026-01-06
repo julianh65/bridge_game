@@ -17,7 +17,13 @@ import {
   createStartingBridgesBlock,
   finalizeCapitalDraft
 } from "./setup-flow";
-import { applyCollection, applyRoundReset } from "./round-flow";
+import {
+  applyAgeUpdate,
+  applyCleanup,
+  applyCollection,
+  applyRoundReset,
+  applyScoring
+} from "./round-flow";
 import { applyActionDeclaration, createActionStepBlock, resolveActionStep } from "./action-flow";
 import { resolveSieges } from "./combat";
 
@@ -29,7 +35,7 @@ const createPlayerState = (player: LobbyPlayer, seatIndex: number, startingGold:
     factionId: "unassigned",
     capitalHex: undefined,
     resources: { gold: startingGold, mana: 0 },
-    vp: { permanent: 0 },
+    vp: { permanent: 0, control: 0, total: 0 },
     doneThisRound: false,
     deck: {
       drawPile: [],
@@ -95,7 +101,8 @@ export const createNewGame = (
     logs: [],
     modifiers: [],
     blocks: createCapitalDraftBlock(players, capitalSlots),
-    cardsByInstanceId: {}
+    cardsByInstanceId: {},
+    winnerPlayerId: null
   };
 
   return state;
@@ -121,6 +128,10 @@ export const runUntilBlocked = (state: GameState): GameState => {
   let nextState = state;
 
   while (true) {
+    if (nextState.winnerPlayerId) {
+      return nextState;
+    }
+
     if (nextState.phase === "round.reset") {
       nextState = applyRoundReset(nextState);
       continue;
@@ -183,6 +194,39 @@ export const runUntilBlocked = (state: GameState): GameState => {
       nextState = {
         ...nextState,
         phase: "round.scoring",
+        blocks: undefined
+      };
+      continue;
+    }
+
+    if (nextState.phase === "round.scoring") {
+      nextState = applyScoring(nextState);
+      if (nextState.winnerPlayerId) {
+        return nextState;
+      }
+      nextState = {
+        ...nextState,
+        phase: "round.cleanup",
+        blocks: undefined
+      };
+      continue;
+    }
+
+    if (nextState.phase === "round.cleanup") {
+      nextState = applyCleanup(nextState);
+      nextState = {
+        ...nextState,
+        phase: "round.ageUpdate",
+        blocks: undefined
+      };
+      continue;
+    }
+
+    if (nextState.phase === "round.ageUpdate") {
+      nextState = applyAgeUpdate(nextState);
+      nextState = {
+        ...nextState,
+        phase: "round.reset",
         blocks: undefined
       };
       continue;
@@ -256,7 +300,8 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
         resources: player.resources,
         doneThisRound: player.doneThisRound,
         connected: player.visibility.connected
-      }))
+      })),
+      winnerPlayerId: state.winnerPlayerId
     },
     private: viewer
       ? {

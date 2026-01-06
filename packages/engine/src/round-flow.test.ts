@@ -3,7 +3,13 @@ import { describe, expect, it } from "vitest";
 import { createCardInstances } from "./cards";
 import { createBaseBoard } from "./board-generation";
 import { DEFAULT_CONFIG, createNewGame } from "./index";
-import { applyCollection, applyRoundReset } from "./round-flow";
+import {
+  applyAgeUpdate,
+  applyCleanup,
+  applyCollection,
+  applyRoundReset,
+  applyScoring
+} from "./round-flow";
 
 describe("round reset", () => {
   it("applies income, mana reset, and draws with hand limit overflow", () => {
@@ -129,5 +135,180 @@ describe("collection", () => {
 
     expect(p1?.resources.gold).toBe(3);
     expect(p2?.resources.gold).toBe(2);
+  });
+});
+
+describe("scoring", () => {
+  it("computes control VP and declares a winner when threshold is met", () => {
+    const config = {
+      ...DEFAULT_CONFIG,
+      VP_TO_WIN: 5
+    };
+    const base = createNewGame(config, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    board.hexes["0,0"] = {
+      ...board.hexes["0,0"],
+      tile: "center",
+      occupants: { p1: ["u1"] }
+    };
+    board.hexes["1,0"] = {
+      ...board.hexes["1,0"],
+      tile: "forge",
+      occupants: { p1: ["u2"] }
+    };
+    board.hexes["0,1"] = {
+      ...board.hexes["0,1"],
+      tile: "capital",
+      ownerPlayerId: "p2",
+      occupants: { p1: ["u3"] }
+    };
+    board.hexes["0,-1"] = {
+      ...board.hexes["0,-1"],
+      tile: "capital",
+      ownerPlayerId: "p1",
+      occupants: {}
+    };
+
+    board.units = {
+      u1: { id: "u1", ownerPlayerId: "p1", kind: "force", hex: "0,0" },
+      u2: { id: "u2", ownerPlayerId: "p1", kind: "force", hex: "1,0" },
+      u3: { id: "u3", ownerPlayerId: "p1", kind: "force", hex: "0,1" }
+    };
+
+    const state = {
+      ...base,
+      board,
+      players: base.players.map((player) =>
+        player.id === "p1"
+          ? { ...player, capitalHex: "0,-1", vp: { ...player.vp, permanent: 2 } }
+          : player
+      )
+    };
+
+    const next = applyScoring(state);
+    const p1 = next.players.find((player) => player.id === "p1");
+    const p2 = next.players.find((player) => player.id === "p2");
+
+    expect(p1?.vp.control).toBe(3);
+    expect(p1?.vp.total).toBe(5);
+    expect(p2?.vp.control).toBe(0);
+    expect(next.winnerPlayerId).toBe("p1");
+  });
+
+  it("applies round cap tiebreakers when no one meets the VP threshold", () => {
+    const config = {
+      ...DEFAULT_CONFIG,
+      VP_TO_WIN: 10,
+      ROUNDS_MAX: 1
+    };
+    const base = createNewGame(config, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    board.hexes["0,0"] = {
+      ...board.hexes["0,0"],
+      tile: "center",
+      occupants: { p2: ["u1"] }
+    };
+    board.units = {
+      u1: { id: "u1", ownerPlayerId: "p2", kind: "force", hex: "0,0" }
+    };
+
+    const state = {
+      ...base,
+      round: 1,
+      board,
+      players: base.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              vp: { ...player.vp, permanent: 1 },
+              resources: { ...player.resources, gold: 5 }
+            }
+          : {
+              ...player,
+              vp: { ...player.vp, permanent: 1 },
+              resources: { ...player.resources, gold: 3 }
+            }
+      )
+    };
+
+    const next = applyScoring(state);
+    expect(next.winnerPlayerId).toBe("p2");
+  });
+});
+
+describe("cleanup", () => {
+  it("discards hands, removes end-of-round modifiers, and clears temporary bridges", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    board.bridges = {
+      "0,0|1,0": {
+        key: "0,0|1,0",
+        from: "0,0",
+        to: "1,0",
+        temporary: true
+      }
+    };
+
+    const state = {
+      ...base,
+      board,
+      modifiers: [
+        { id: "m1", source: { type: "card", sourceId: "test" }, duration: { type: "endOfRound" } },
+        { id: "m2", source: { type: "card", sourceId: "test" }, duration: { type: "permanent" } }
+      ],
+      players: base.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              deck: { ...player.deck, hand: ["c1"], discardPile: ["c2"] }
+            }
+          : player
+      )
+    };
+
+    const next = applyCleanup(state);
+    const p1 = next.players.find((player) => player.id === "p1");
+
+    expect(p1?.deck.hand).toEqual([]);
+    expect(p1?.deck.discardPile).toEqual(["c2", "c1"]);
+    expect(Object.keys(next.board.bridges)).toHaveLength(0);
+    expect(next.modifiers.map((modifier) => modifier.id)).toEqual(["m2"]);
+  });
+});
+
+describe("age update", () => {
+  it("updates market age based on next round mapping", () => {
+    const config = {
+      ...DEFAULT_CONFIG,
+      ageByRound: {
+        1: "I",
+        2: "II"
+      }
+    };
+    const base = createNewGame(config, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const state = {
+      ...base,
+      round: 1,
+      market: { ...base.market, age: "I" }
+    };
+
+    const next = applyAgeUpdate(state);
+    expect(next.market.age).toBe("II");
   });
 });
