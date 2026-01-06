@@ -11,12 +11,14 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- (none)
+- [agent2] Add event logging for round phase transitions (reset/market/action/etc.) in `packages/engine/src/engine.ts`; status: in progress.
+- [agent3] Add basic action-step UI in game screen (done + capital reinforce) with command wiring. Files: `apps/web/src/App.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/styles.css`. Status: in progress.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
 - Fixed force unit id generation to avoid collisions and added coverage.
 - Guarded combat resolution against no-hit stalemates and added a test.
+- Added combat start/end event logs (with outcomes) and coverage.
 - Wired event logs for phase transitions and action resolution so UI logs are populated.
 - Logged setup actions (capital picks, starting bridges, free starting card) so UI logs show setup activity.
 

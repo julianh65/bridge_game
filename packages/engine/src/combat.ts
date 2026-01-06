@@ -9,6 +9,7 @@ import type {
   UnitState
 } from "./types";
 import { getPlayerIdsOnHex, isContestedHex } from "./board";
+import { emit } from "./events";
 
 const FORCE_HIT_FACES = 2;
 const MAX_STALE_COMBAT_ROUNDS = 20;
@@ -28,6 +29,14 @@ type HitResolution = {
   updatedChampions: Record<UnitID, ChampionUnitState>;
   bounty: number;
 };
+
+type CombatantSummary = {
+  forces: number;
+  champions: number;
+  total: number;
+};
+
+type CombatEndReason = "eliminated" | "noHits" | "stale";
 
 const rollHitsForUnits = (
   unitIds: UnitID[],
@@ -157,6 +166,28 @@ const applyBounty = (state: GameState, playerId: PlayerID, amount: number): Game
   };
 };
 
+const summarizeUnits = (
+  unitIds: UnitID[],
+  units: Record<UnitID, UnitState>
+): CombatantSummary => {
+  let forces = 0;
+  let champions = 0;
+
+  for (const unitId of unitIds) {
+    const unit = units[unitId];
+    if (!unit) {
+      continue;
+    }
+    if (unit.kind === "force") {
+      forces += 1;
+    } else {
+      champions += 1;
+    }
+  }
+
+  return { forces, champions, total: forces + champions };
+};
+
 export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState => {
   const hex = state.board.hexes[hexKey];
   if (!hex) {
@@ -168,11 +199,27 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
     return state;
   }
 
-  let nextState = state;
-  let nextBoard = state.board;
-  let nextUnits = state.board.units;
-  let rngState = state.rngState;
+  const initialAttackers = hex.occupants[participants[0]] ?? [];
+  const initialDefenders = hex.occupants[participants[1]] ?? [];
+  let nextState = emit(state, {
+    type: "combat.start",
+    payload: {
+      hexKey,
+      attackers: {
+        playerId: participants[0],
+        ...summarizeUnits(initialAttackers, state.board.units)
+      },
+      defenders: {
+        playerId: participants[1],
+        ...summarizeUnits(initialDefenders, state.board.units)
+      }
+    }
+  });
+  let nextBoard = nextState.board;
+  let nextUnits = nextState.board.units;
+  let rngState = nextState.rngState;
   let staleRounds = 0;
+  let endReason: CombatEndReason = "eliminated";
 
   while (true) {
     const currentHex = nextBoard.hexes[hexKey];
@@ -183,11 +230,13 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
     const attackers = currentHex.occupants[participants[0]] ?? [];
     const defenders = currentHex.occupants[participants[1]] ?? [];
     if (attackers.length === 0 || defenders.length === 0) {
+      endReason = "eliminated";
       break;
     }
     const attackersCanHit = attackers.some((unitId) => unitCanHit(nextUnits[unitId]));
     const defendersCanHit = defenders.some((unitId) => unitCanHit(nextUnits[unitId]));
     if (!attackersCanHit && !defendersCanHit) {
+      endReason = "noHits";
       break;
     }
 
@@ -199,6 +248,7 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
     if (attackerRoll.hits + defenderRoll.hits === 0) {
       staleRounds += 1;
       if (staleRounds >= MAX_STALE_COMBAT_ROUNDS) {
+        endReason = "stale";
         break;
       }
       continue;
@@ -263,6 +313,33 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
     nextBoard = nextState.board;
     nextUnits = nextState.board.units;
   }
+
+  const finalHex = nextBoard.hexes[hexKey];
+  const finalAttackers = finalHex?.occupants[participants[0]] ?? [];
+  const finalDefenders = finalHex?.occupants[participants[1]] ?? [];
+  const winnerPlayerId =
+    finalAttackers.length > 0 && finalDefenders.length === 0
+      ? participants[0]
+      : finalDefenders.length > 0 && finalAttackers.length === 0
+        ? participants[1]
+        : null;
+
+  nextState = emit(nextState, {
+    type: "combat.end",
+    payload: {
+      hexKey,
+      reason: endReason,
+      winnerPlayerId,
+      attackers: {
+        playerId: participants[0],
+        ...summarizeUnits(finalAttackers, nextUnits)
+      },
+      defenders: {
+        playerId: participants[1],
+        ...summarizeUnits(finalDefenders, nextUnits)
+      }
+    }
+  });
 
   return {
     ...nextState,
