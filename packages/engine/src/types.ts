@@ -296,6 +296,7 @@ export type PlayerPrivateView = {
 
 export type GameView = {
   public: {
+    seed: GameState["seed"];
     round: number;
     phase: PhaseState;
     board: BoardState;

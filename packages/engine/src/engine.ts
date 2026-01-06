@@ -268,6 +268,7 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
 
   return {
     public: {
+      seed: state.seed,
       round: state.round,
       phase: state.phase,
       board: state.board,

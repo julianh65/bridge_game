@@ -123,6 +123,7 @@ export default function App() {
           playerId={room.playerId}
           roomId={roomConfig.roomId}
           status={room.status}
+          onRerollMap={() => room.sendLobbyCommand("rerollMap")}
           onLeave={handleLeave}
         />
       ) : null}

@@ -35,7 +35,13 @@ type CommandMessage = {
   command: Command;
 };
 
-type ClientMessage = JoinMessage | CommandMessage;
+type LobbyCommandMessage = {
+  type: "lobbyCommand";
+  playerId: PlayerID;
+  command: "rerollMap";
+};
+
+type ClientMessage = JoinMessage | CommandMessage | LobbyCommandMessage;
 
 const MIN_PLAYERS = 2;
 const MAX_PLAYERS = 6;
@@ -46,7 +52,11 @@ const safeParseMessage = (message: string): ClientMessage | null => {
     if (!parsed || typeof parsed !== "object") {
       return null;
     }
-    if (parsed.type === "join" || parsed.type === "command") {
+    if (
+      parsed.type === "join" ||
+      parsed.type === "command" ||
+      parsed.type === "lobbyCommand"
+    ) {
       return parsed as ClientMessage;
     }
   } catch {
@@ -118,6 +128,10 @@ export default class Server implements Party.Server {
       ...this.state,
       revision: this.state.revision + 1
     };
+  }
+
+  private createMapSeed(): number {
+    return Math.floor(Math.random() * 0xffffffff);
   }
 
   private collectEvents(): GameEvent[] {
@@ -244,7 +258,7 @@ export default class Server implements Party.Server {
       this.lobbyPlayers = activePlayers;
       this.syncLobbySeatIndices();
     }
-    const seed = this.room.id;
+    const seed = this.createMapSeed();
     const created = createNewGame(DEFAULT_CONFIG, seed, this.lobbyPlayers);
     this.state = runUntilBlocked(created);
     this.bumpRevision();
@@ -396,6 +410,64 @@ export default class Server implements Party.Server {
     }
   }
 
+  private handleLobbyCommand(
+    message: LobbyCommandMessage,
+    connection: Party.Connection
+  ): void {
+    if (message.command === "rerollMap") {
+      this.handleRerollMap(message, connection);
+    }
+  }
+
+  private handleRerollMap(
+    message: LobbyCommandMessage,
+    connection: Party.Connection
+  ): void {
+    if (!this.state) {
+      this.sendError(connection, "game has not started");
+      return;
+    }
+    if (this.state.phase !== "setup") {
+      this.sendError(connection, "map reroll is only available during setup");
+      return;
+    }
+    const meta = this.getConnectionState(connection);
+    if (!meta || meta.spectator) {
+      this.sendError(connection, "spectators cannot reroll the map");
+      return;
+    }
+    if (message.playerId !== meta.playerId) {
+      this.sendError(connection, "player id does not match connection");
+      return;
+    }
+    const hostId = this.state.players.find((player) => player.seatIndex === 0)?.id;
+    if (!hostId || hostId !== meta.playerId) {
+      this.sendError(connection, "only the host can reroll the map");
+      return;
+    }
+
+    const lobbyPlayers = [...this.state.players]
+      .sort((a, b) => a.seatIndex - b.seatIndex)
+      .map((player) => ({ id: player.id, name: player.name }));
+    const seed = this.createMapSeed();
+    let nextState = runUntilBlocked(
+      createNewGame(this.state.config ?? DEFAULT_CONFIG, seed, lobbyPlayers)
+    );
+    nextState = {
+      ...nextState,
+      players: nextState.players.map((player) => ({
+        ...player,
+        visibility: {
+          connected: (this.playerConnections.get(player.id) ?? 0) > 0
+        }
+      }))
+    };
+    const nextRevision = this.state.revision + 1;
+    this.state = { ...nextState, revision: nextRevision };
+    this.lastLogCount = this.state.logs.length;
+    this.broadcastUpdate();
+  }
+
   onConnect(connection: Party.Connection) {
     this.send(connection, {
       type: "connected",
@@ -419,6 +491,10 @@ export default class Server implements Party.Server {
     }
     if (parsed.type === "command") {
       this.handleCommand(parsed, sender);
+      return;
+    }
+    if (parsed.type === "lobbyCommand") {
+      this.handleLobbyCommand(parsed, sender);
     }
   }
 

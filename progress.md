@@ -12,6 +12,8 @@
 
 ## Active tasks
 - (none)
+- [agent3] Improve GameScreen log readability (format key events into readable strings). Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/lib/event-format.ts`, `progress.md`. Status: in progress.
+- [agent2] Add card effect support for moveStack/buildBridge with target validation + tests. Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/action-flow.test.ts`, `progress.md`. Status: in progress.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -99,7 +101,7 @@
 - Added a basic action panel in the game sidebar with command wiring (done, capital reinforce, build bridge edge key, march from/to).
 - Game sidebar now lists hand card IDs, deck counts, and a market row summary.
 - Lobby now includes a room code copy control with clipboard fallback.
-- Lobby now includes a map preview panel using the live board state.
+- Lobby map preview now rolls from the game seed and host can reroll the map during setup.
 - Added a Cards debug tab with filters (age/deck, mana cost, type, tags) and initiative sorting.
 - Polished the Cards tab layout for denser grids, deck accents, and compact rule previews.
 - Refined Cards tab tag styling with tighter radius and centered labels.

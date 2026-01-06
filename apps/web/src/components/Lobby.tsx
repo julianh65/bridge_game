@@ -3,7 +3,7 @@ import { useMemo, useRef, useState } from "react";
 import type { GameView } from "@bridgefront/engine";
 
 import { BoardView } from "./BoardView";
-import { buildHexRender } from "../lib/board-preview";
+import { buildBoardPreview } from "../lib/board-preview";
 import type { RoomConnectionStatus } from "../lib/room-client";
 
 const placeholderFactions = [
@@ -20,10 +20,18 @@ type LobbyProps = {
   playerId: string | null;
   roomId: string;
   status: RoomConnectionStatus;
+  onRerollMap: () => void;
   onLeave: () => void;
 };
 
-export const Lobby = ({ view, playerId, roomId, status, onLeave }: LobbyProps) => {
+export const Lobby = ({
+  view,
+  playerId,
+  roomId,
+  status,
+  onRerollMap,
+  onLeave
+}: LobbyProps) => {
   const players = view.public.players;
   const connectedCount = players.filter((player) => player.connected).length;
   const statusLabel = status === "connected" ? "Live" : status === "error" ? "Error" : "Waiting";
@@ -36,7 +44,12 @@ export const Lobby = ({ view, playerId, roomId, status, onLeave }: LobbyProps) =
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
   const copyTimeoutRef = useRef<number | null>(null);
   const roomInputRef = useRef<HTMLInputElement | null>(null);
-  const hexRender = useMemo(() => buildHexRender(view.public.board), [view.public.board]);
+  const hostId = players.find((player) => player.seatIndex === 0)?.id ?? null;
+  const isHost = Boolean(playerId && hostId === playerId);
+  const canReroll = isHost && status === "connected";
+  const mapPreview = useMemo(() => {
+    return buildBoardPreview(players.length, String(view.public.seed ?? 0));
+  }, [players.length, view.public.seed]);
 
   const scheduleCopyReset = () => {
     if (copyTimeoutRef.current) {
@@ -186,13 +199,25 @@ export const Lobby = ({ view, playerId, roomId, status, onLeave }: LobbyProps) =
           <h2>Map Preview</h2>
           <p className="muted">Current map layout for this room.</p>
           <BoardView
-            hexes={hexRender}
-            board={view.public.board}
+            hexes={mapPreview.hexRender}
+            board={mapPreview.board}
             showCoords={false}
             showTags
             showMineValues={false}
             className="board-svg board-svg--game"
           />
+          {isHost ? (
+            <div className="lobby__actions">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={onRerollMap}
+                disabled={!canReroll}
+              >
+                Reroll Map
+              </button>
+            </div>
+          ) : null}
         </section>
       </div>
 

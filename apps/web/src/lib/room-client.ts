@@ -12,6 +12,8 @@ export type RoomOptions = {
   asSpectator?: boolean;
 };
 
+export type LobbyCommand = "rerollMap";
+
 type RoomMessage =
   | {
       type: "welcome";
@@ -222,6 +224,23 @@ export const useRoom = (options: RoomOptions | null) => {
     [state.playerId]
   );
 
+  const sendLobbyCommand = useCallback(
+    (command: LobbyCommand) => {
+      const socket = socketRef.current;
+      if (!socket || socket.readyState !== WebSocket.OPEN || !state.playerId) {
+        return false;
+      }
+      const payload = {
+        type: "lobbyCommand",
+        playerId: state.playerId,
+        command
+      };
+      socket.send(JSON.stringify(payload));
+      return true;
+    },
+    [state.playerId]
+  );
+
   const disconnect = useCallback(() => {
     if (socketRef.current) {
       socketRef.current.close();
@@ -233,8 +252,9 @@ export const useRoom = (options: RoomOptions | null) => {
     () => ({
       ...state,
       sendCommand,
+      sendLobbyCommand,
       disconnect
     }),
-    [state, sendCommand, disconnect]
+    [state, sendCommand, sendLobbyCommand, disconnect]
   );
 };
