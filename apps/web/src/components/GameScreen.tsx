@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, type CSSProperties } from "react";
 
 import {
   CARD_DEFS,
@@ -151,6 +151,11 @@ export const GameScreen = ({
       ? (view.public.round - 1 + view.public.players.length) % view.public.players.length
       : 0;
   const leadPlayer = view.public.players.find((player) => player.seatIndex === leadSeatIndex) ?? null;
+  const isActionPhase = view.public.phase === "round.action";
+  const canDeclareAction =
+    status === "connected" && Boolean(localPlayer) && isActionPhase && !localPlayer?.doneThisRound;
+  const availableMana = localPlayer?.resources.mana ?? 0;
+  const availableGold = localPlayer?.resources.gold ?? 0;
 
   useEffect(() => {
     if (cardInstanceId && !handCards.some((card) => card.id === cardInstanceId)) {
@@ -579,31 +584,65 @@ export const GameScreen = ({
             ) : (
               <>
                 <div className="hand-meta">{handCount} cards in hand</div>
-                <ul className="card-list">
-                  {handCards.map((card) => {
+                <div className="hand-row">
+                  {handCards.map((card, index) => {
                     const def = CARD_DEFS_BY_ID.get(card.defId);
                     const label = def?.name ?? card.defId;
                     const isSelected = card.id === cardInstanceId;
+                    const manaCost = def?.cost.mana ?? 0;
+                    const goldCost = def?.cost.gold ?? 0;
+                    const canAfford = availableMana >= manaCost && availableGold >= goldCost;
+                    const isPlayable = canDeclareAction && canAfford;
+                    const totalCards = handCards.length;
+                    const centerIndex = (totalCards - 1) / 2;
+                    const offset = index - centerIndex;
+                    const fanRotation = totalCards > 1 ? offset * 4 : 0;
+                    const fanLift = Math.abs(offset) * 4;
+                    const depth = totalCards - Math.abs(offset);
+                    const costLabel = def
+                      ? `M${manaCost}${goldCost ? ` G${goldCost}` : ""}`
+                      : "M-";
+                    const typeLabel = def?.type ?? "Card";
+                    const initiativeLabel = def ? `Init ${def.initiative}` : "Init -";
+                    const handStyle = {
+                      zIndex: 10 + depth,
+                      "--hand-rotate": `${fanRotation}deg`,
+                      "--hand-lift": `${fanLift}px`
+                    } as CSSProperties;
                     return (
-                      <li key={card.id}>
-                        <button
-                          type="button"
-                          className={`card-tag card-tag--clickable ${
-                            isSelected ? "is-selected" : ""
-                          }`}
-                          title={card.defId}
-                          onClick={() => {
-                            setCardInstanceId(card.id);
-                            setCardTargetsRaw("");
-                            setBoardPickModeSafe("none");
-                          }}
-                        >
-                          {label} · {card.id}
-                        </button>
-                      </li>
+                      <button
+                        key={card.id}
+                        type="button"
+                        className={`hand-card ${isSelected ? "is-selected" : ""} ${
+                          isPlayable ? "" : "is-disabled"
+                        }`}
+                        style={handStyle}
+                        aria-pressed={isSelected}
+                        aria-disabled={!isPlayable}
+                        title={`${label} (${card.id})`}
+                        onClick={() => {
+                          setCardInstanceId(card.id);
+                          setCardTargetsRaw("");
+                          setBoardPickModeSafe("none");
+                        }}
+                      >
+                        <div className="hand-card__face">
+                          <div className="hand-card__top">
+                            <span className="hand-card__name">{label}</span>
+                            <span className="hand-card__cost">{costLabel}</span>
+                          </div>
+                          <div className="hand-card__body">
+                            <span className="hand-card__type">{typeLabel}</span>
+                            <span className="hand-card__meta">{initiativeLabel}</span>
+                          </div>
+                          <div className="hand-card__footer">
+                            <span className="hand-card__id">{card.id}</span>
+                          </div>
+                        </div>
+                      </button>
                     );
                   })}
-                </ul>
+                </div>
                 {selectedCardDef ? (
                   <div className="card-detail">
                     <div className="card-detail__header">

@@ -11,8 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- agent-3: add a smoke sim test to auto-resolve blocks across a few rounds (owner: agent-3; scope: deterministic auto-choices for setup/market/action/collection; files: `packages/engine/src/smoke.test.ts`; status: in-progress)
-- agent-1: rework hand UI into a card row/fan with hover zoom, selected state, and disabled styling (owner: agent-1; scope: hand card layout + styles in game UI; files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/styles.css`; status: in-progress)
+- agent-3: extend smoke sim to run randomized legal commands for N steps (owner: agent-3; scope: randomized command selection + stability assertions; files: `packages/engine/src/smoke.test.ts`; status: in-progress)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -68,6 +67,7 @@
 - Added a champion-target picker in the card detail panel to set unit targets from the board state.
 - Tightened board panning drag threshold to avoid click misfires.
 - Added soft bounds clamping on board pan/zoom so the map stays in view.
+- Reworked the hand UI into a fan-style card row with hover zoom, selected highlighting, and disabled styling.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.

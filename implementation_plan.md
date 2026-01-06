@@ -233,7 +233,7 @@ Goal: make the action phase match the rules: simultaneous declarations + initiat
 Goal: make the board + hand feel responsive, clear, and pleasant to use.
 
 ### Tasks (web)
-- [ ] Rework hand UI into a card row/fan with hover zoom, selected state, and disabled styling.
+- [x] Rework hand UI into a card row/fan with hover zoom, selected state, and disabled styling.
 - [x] Add a card details panel with consistent layout (name, initiative, rules text, targets).
 - [ ] Implement target preview overlays for cards/actions: highlight valid hexes/edges/paths and current selection (current selection highlight in place; valid-target overlay pending).
 - [ ] Improve board hover/click interactions: hover highlight on hex/edge, click selects in pick mode, ignore clicks after pan.
@@ -246,7 +246,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 
 ### Tasks (web - pan/zoom)
 - [x] Fix world-to-screen coordinate transforms so picks stay accurate under zoom.
-- [ ] Make wheel zoom anchor to cursor; clamp zoom levels; keep board in view with soft bounds (anchor + clamp done; soft bounds pending).
+- [x] Make wheel zoom anchor to cursor; clamp zoom levels; keep board in view with soft bounds.
 - [ ] Improve drag panning (ignore clicks after drag threshold); add touch/pinch support if feasible (drag threshold done; touch/pinch pending).
 - [x] Add "fit board" view reset that works across screen sizes and on resize.
 
