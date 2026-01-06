@@ -38,6 +38,7 @@
 - Added a randomized smoke sim test that picks legal commands in `packages/engine/src/smoke.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/smoke.test.ts`.
 - Added regression coverage for invalid card declarations not spending resources or removing cards in `packages/engine/src/action-flow.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (invalid card regression coverage).
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
