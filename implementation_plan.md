@@ -35,7 +35,7 @@ The aim is to reach “playable with friends” quickly while preserving a clean
   - canonical EdgeKey
   - bridge existence checks
   - occupancy checks (“two-player-per-hex”)
-- [ ] Implement event log helper:
+- [x] Implement event log helper:
   - `emit(event)` appends and returns
 - [x] Implement engine entry points:
   - `createNewGame(config, seed, lobbyPlayers)`

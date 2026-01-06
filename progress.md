@@ -24,12 +24,14 @@
 - Added engine core types/config defaults plus skeleton entry points (`createNewGame`, `runUntilBlocked`, `applyCommand`, `buildView`) and a setup block test.
 - Added shared hex utilities (axial neighbors, distance, radius generation, canonical edge keys) with engine tests and inlined shared for Vitest.
 - Added board helpers for bridges/occupancy (two-player-per-hex checks) with unit tests.
+- Added `emit` event log helper with a 200-event cap and tests.
 
 ## Milestone 2 progress
 - Added base board generation (axial hex grid, center tile) and capital slot mapping with tests.
 - Added setup flow blocks and commands for capital draft, starting bridges, and free starting card; setup now advances to `round.reset` with tests. Free starting card uses a placeholder pool in config (to be replaced by real card defs/deck).
 - Added procedural placement for forges/mines (including home mines) and mine values with deterministic tests.
 - Board generation is now configurable via `DEFAULT_CONFIG` (radius, capital slots, placement rules). Added `docs/configuration.md`.
+- Updated default 4-player capital slots in `DEFAULT_CONFIG`.
 
 ## Debug UI progress
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.

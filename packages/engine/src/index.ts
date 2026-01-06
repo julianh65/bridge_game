@@ -17,6 +17,7 @@ export {
   createNewGame,
   runUntilBlocked
 } from "./engine";
+export { emit } from "./events";
 export type {
   Age,
   Bid,
