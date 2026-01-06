@@ -32,6 +32,7 @@
 - Added card draw tests covering reshuffle behavior and hand-limit overflow in `packages/engine/src/cards.test.ts`.
 - Added tests for card instance id sequencing and random draw-pile insertion in `packages/engine/src/cards.test.ts`.
 - Ran `npm test` (engine Vitest).
+- Added Victory card gain VP coverage in `packages/engine/src/cards.test.ts`.
 - Added collection-choice resolution tests (mine draft accept/decline, forge reforge, center pick) in `packages/engine/src/round-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts`.
@@ -46,6 +47,7 @@
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (champion play/cost/limit coverage).
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/modifiers.test.ts src/combat.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/cards.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts src/setup-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts`.
 
@@ -201,6 +203,7 @@ none
 - Added a collection sidebar panel that renders mine/forge/center prompts and submits `SubmitCollectionChoices` commands.
 - Aligned the collection panel props with `GameScreen` and added collection prompt styles in `apps/web/src/styles.css`.
 - Added market row reveal events and formatted market buy/pass logs in the UI.
+- Victory cards now grant +1 permanent VP on gain (via draw pile insertion).
 
 ## Milestone 7 progress
 - Implemented champion card play (hex targeting validation + deployment), champion gold cost scaling, and champion limit checks in engine with tests.

@@ -2,7 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import { createRngState, randInt } from "@bridgefront/shared";
 
-import { createCardInstances, drawCards, insertCardIntoDrawPileRandom } from "./cards";
+import {
+  createCardInstance,
+  createCardInstances,
+  drawCards,
+  insertCardIntoDrawPileRandom
+} from "./cards";
 import { DEFAULT_CONFIG } from "./config";
 import { createNewGame } from "./engine";
 
@@ -147,5 +152,18 @@ describe("cards", () => {
     expect(p1?.deck.drawPile).toEqual(expectedDrawPile);
     expect(p2?.deck.drawPile).toEqual([]);
     expect(nextState.rngState).toEqual(expectedRng);
+  });
+
+  it("awards permanent VP when gaining a Victory card", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 91, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const created = createCardInstance(base, "age1.supply_ledger");
+    const nextState = insertCardIntoDrawPileRandom(created.state, "p1", created.instanceId);
+    const p1 = nextState.players.find((player) => player.id === "p1");
+
+    expect(p1?.vp.permanent).toBe(1);
   });
 });

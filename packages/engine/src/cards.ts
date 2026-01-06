@@ -1,6 +1,7 @@
 import { randInt, shuffle } from "@bridgefront/shared";
 
 import type { CardDefId, CardInstanceID, GameState, PlayerID } from "./types";
+import { getCardDef } from "./content/cards";
 
 const getPlayer = (state: GameState, playerId: PlayerID) => {
   const player = state.players.find((entry) => entry.id === playerId);
@@ -19,6 +20,27 @@ const updatePlayerDeck = (
     ...state,
     players: state.players.map((player) =>
       player.id === playerId ? { ...player, deck: { ...player.deck, ...deckUpdate } } : player
+    )
+  };
+};
+
+const addPermanentVp = (state: GameState, playerId: PlayerID, amount: number): GameState => {
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return state;
+  }
+
+  return {
+    ...state,
+    players: state.players.map((player) =>
+      player.id === playerId
+        ? {
+            ...player,
+            vp: {
+              ...player.vp,
+              permanent: player.vp.permanent + amount
+            }
+          }
+        : player
     )
   };
 };
@@ -115,7 +137,13 @@ export const insertCardIntoDrawPileRandom = (
   const drawPile = player.deck.drawPile.slice();
   drawPile.splice(insertIndex, 0, instanceId);
 
-  return updatePlayerDeck({ ...state, rngState: next }, playerId, { drawPile });
+  let nextState = updatePlayerDeck({ ...state, rngState: next }, playerId, { drawPile });
+  const defId = state.cardsByInstanceId[instanceId]?.defId;
+  const cardDef = defId ? getCardDef(defId) : undefined;
+  if (cardDef?.type === "Victory") {
+    nextState = addPermanentVp(nextState, playerId, 1);
+  }
+  return nextState;
 };
 
 export const addCardToHandWithOverflow = (

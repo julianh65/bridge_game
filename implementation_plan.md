@@ -245,8 +245,10 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Add a clear phase marker in the header/status area.
 - [x] Gate phase-specific panels (action/market/collection) and add an idle-phase callout.
 - [x] Move the hand panel into a full-width bottom panel during the action phase.
-- [ ] Add phase-focused layouts (market/collection focus + log/player repositioning).
+- [ ] Add phase-focused layouts (market/collection focus + log/player repositioning). For exapmle the market we should kind of see like all cards laid out nicely with their effects and initiative and everything, do this for all the different phases
 - [ ] Add collapsible/relocatable panels so not everything lives in the right sidebar.
+- [ ] Make the phase market at the top part much bigger and cooler
+- [ ] During the game we don't need to see all the room id and those little details and top bar, those can be collapsed
 
 
 ### Tasks (web - pan/zoom)
@@ -273,6 +275,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - enforce “one market win per round”
   - implement pass pot logic
 - [x] Implement gain-card insertion random into draw pile.
+- [x] Victory cards grant +1 permanent VP on gain.
 - [x] Implement collection prompts:
   - mines: gold or mine draft (reveal 1 market card -> choose gain or not)
   - forges: reforge (scrap 1) or forge draft (reveal 3 -> gain 1)
