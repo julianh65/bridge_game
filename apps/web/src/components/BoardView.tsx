@@ -25,6 +25,7 @@ type BoardViewProps = {
   enablePanZoom?: boolean;
   resetViewToken?: number;
   onHexClick?: (hexKey: string) => void;
+  onEdgeClick?: (edgeKey: string) => void;
   selectedHexKey?: string | null;
   highlightHexKeys?: string[];
   validHexKeys?: string[];
@@ -102,6 +103,7 @@ export const BoardView = ({
   enablePanZoom = false,
   resetViewToken,
   onHexClick,
+  onEdgeClick,
   selectedHexKey = null,
   highlightHexKeys = [],
   validHexKeys = [],
@@ -382,6 +384,7 @@ export const BoardView = ({
   };
 
   const clickable = Boolean(onHexClick);
+  const edgeClickable = Boolean(onEdgeClick);
   const svgClasses = [className ?? "board-svg"];
   if (enablePanZoom || clickable) {
     svgClasses.push("board-svg--interactive");
@@ -389,6 +392,13 @@ export const BoardView = ({
   if (isPanning) {
     svgClasses.push("is-panning");
   }
+
+  const handleEdgeClick = (edgeKey: string) => {
+    if (didDragRef.current) {
+      return;
+    }
+    onEdgeClick?.(edgeKey);
+  };
 
   return (
     <svg
@@ -480,14 +490,28 @@ export const BoardView = ({
       })}
 
       {previewSegments.map((segment) => (
-        <line
+        <g
           key={`preview-${segment.key}`}
-          className="bridge bridge--preview"
-          x1={segment.from.x}
-          y1={segment.from.y}
-          x2={segment.to.x}
-          y2={segment.to.y}
-        />
+          className={edgeClickable ? "bridge-preview is-clickable" : "bridge-preview"}
+        >
+          {edgeClickable ? (
+            <line
+              className="bridge bridge--preview bridge--hitbox"
+              x1={segment.from.x}
+              y1={segment.from.y}
+              x2={segment.to.x}
+              y2={segment.to.y}
+              onClick={() => handleEdgeClick(segment.key)}
+            />
+          ) : null}
+          <line
+            className={`bridge bridge--preview ${edgeClickable ? "bridge--clickable" : ""}`}
+            x1={segment.from.x}
+            y1={segment.from.y}
+            x2={segment.to.x}
+            y2={segment.to.y}
+          />
+        </g>
       ))}
 
       {bridgeSegments.map((bridge) => {

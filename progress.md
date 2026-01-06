@@ -12,6 +12,8 @@
 
 ## Active tasks
 - none
+- owner: agent-4; scope: champion card play (hex targeting + spawn), champion gold cost scaling + limit checks; files: packages/engine/src/action-flow.ts, packages/engine/src/card-effects.ts, packages/engine/src/units.ts, packages/engine/src/action-flow.test.ts; status: in progress
+- owner: agent-2; scope: rules/technical_spec alignment audit (Milestone 7.6) + add missing follow-up tasks; files: progress.md, implementation_plan.md; status: in progress
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -76,6 +78,7 @@ none
 - Added soft bounds clamping on board pan/zoom so the map stays in view.
 - Reworked the hand UI into a fan-style card row with hover zoom, selected highlighting, and disabled styling.
 - Added valid-target overlays for board pick modes (hex highlights + edge previews) during action/card targeting.
+- Added hover highlight styling for interactive hexes/edges and clickable preview edges for edge pick modes.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.

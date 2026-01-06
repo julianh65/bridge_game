@@ -263,6 +263,18 @@ export const GameScreen = ({
     }
   };
 
+  const handleBoardEdgeClick = (edgeKey: string) => {
+    if (boardPickMode === "bridgeEdge") {
+      setEdgeKey(edgeKey);
+      setPendingEdgeStart(null);
+      return;
+    }
+    if (boardPickMode === "cardEdge") {
+      setCardTargetsObject({ edgeKey });
+      setPendingEdgeStart(null);
+    }
+  };
+
   const highlightHexKeys = useMemo(() => {
     const keys = new Set<string>();
     if (pendingEdgeStart) {
@@ -814,6 +826,7 @@ export const GameScreen = ({
               validHexKeys={validHexKeys}
               previewEdgeKeys={previewEdgeKeys}
               onHexClick={handleBoardHexClick}
+              onEdgeClick={handleBoardEdgeClick}
             />
           </div>
         </section>

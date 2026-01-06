@@ -237,7 +237,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Rework hand UI into a card row/fan with hover zoom, selected state, and disabled styling.
 - [x] Add a card details panel with consistent layout (name, initiative, rules text, targets).
 - [x] Implement target preview overlays for cards/actions: highlight valid hexes/edges/paths and current selection (current selection highlight in place; valid-target overlay pending).
-- [ ] Improve board hover/click interactions: hover highlight on hex/edge, click selects in pick mode, ignore clicks after pan.
+- [x] Improve board hover/click interactions: hover highlight on hex/edge, click selects in pick mode, ignore clicks after pan.
 - [ ] Add interaction state styling for board + controls (active/hover/selected/disabled/error).
 - [ ] Add lightweight motion (card play, target highlight pulse, selection fade) to reduce the "debug UI" feel.
 - [ ] Add tooltips for hex stacks/bridges/units and per-player action status (hex/bridge/unit tooltips done).
@@ -292,6 +292,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 ## Milestone 7 — Factions + champions + modifiers (core “exceptions” framework)
 
 ### Tasks (engine)
+- [x] Do a quick align on rules_draft to remaining implementation plan
 - Implement `modifiers` with:
   - duration expiry
   - query application pipeline
@@ -299,7 +300,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - Implement faction passives as permanent modifiers:
   - Bastion Shield Wall
   - Prospect Ore Cut / Mine Militia
-  - etc. (start with 1–2 factions)
+  - etc. (start with 1–2 factions but first double check the rules from rules_draft)
 - Implement champions:
   - play champion card => spawn champion unit
   - champion gold cost scaling by “nth champion currently controlled”
@@ -326,9 +327,17 @@ I want to have a script that lets me select a subset of n cards and hits some so
 
 ---
 
-## Milestone 7.6 — Script to Generate Art for Cards
+## Milestone 7.6 — Rules alignment review
 
 Pause and read through the rules of the game. Make sure that what we've done aligns as much as possible. Add any tasks below to fix things that don't.
+
+### Tasks
+- [ ] Resolve board sizing + capital slot mapping across `rules_draft.md`, `technical_spec.md`, and `DEFAULT_CONFIG` (radius + slots per player count).
+- [ ] Align special tile counts across rules/spec/config (mines/forges/center per player count).
+- [ ] Align mine value distribution across rules/spec/config (values + weights, including current 3/7 entries).
+- [ ] Decide `VP_TO_WIN` target and update rules/spec/config (currently 8? vs 10).
+- [ ] Clarify setup TODOs: seating order randomization, faction-specific starter deck vs shared, champion in opening hand.
+- [ ] Fix market preview round mapping typo in rules (Age II Round 6 preview count).
 
 
 ## Milestone 8 — Content expansion + stability pass
