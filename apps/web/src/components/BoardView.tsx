@@ -80,6 +80,7 @@ export const BoardView = ({
   const [isPanning, setIsPanning] = useState(false);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const dragRef = useRef<{ x: number; y: number } | null>(null);
+  const dragStartRef = useRef<{ x: number; y: number } | null>(null);
   const didDragRef = useRef(false);
   const highlightSet = useMemo(() => new Set(highlightHexKeys), [highlightHexKeys]);
 
@@ -258,23 +259,32 @@ export const BoardView = ({
     }
     event.currentTarget.setPointerCapture(event.pointerId);
     dragRef.current = point;
+    dragStartRef.current = { x: event.clientX, y: event.clientY };
     didDragRef.current = false;
-    setIsPanning(true);
+    setIsPanning(false);
   };
 
   const handlePointerMove: PointerEventHandler<SVGSVGElement> = (event) => {
-    if (!enablePanZoom || !dragRef.current) {
+    if (!enablePanZoom || !dragRef.current || !dragStartRef.current) {
       return;
     }
     const point = toSvgPoint(event.clientX, event.clientY);
     if (!point) {
       return;
     }
+    if (!didDragRef.current) {
+      const dx = event.clientX - dragStartRef.current.x;
+      const dy = event.clientY - dragStartRef.current.y;
+      if (Math.hypot(dx, dy) < 6) {
+        return;
+      }
+      didDragRef.current = true;
+      setIsPanning(true);
+      dragRef.current = point;
+      return;
+    }
     const dx = dragRef.current.x - point.x;
     const dy = dragRef.current.y - point.y;
-    if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
-      didDragRef.current = true;
-    }
     dragRef.current = point;
     setViewBox((current) => ({
       ...current,
@@ -289,11 +299,13 @@ export const BoardView = ({
     }
     event.currentTarget.releasePointerCapture(event.pointerId);
     dragRef.current = null;
+    dragStartRef.current = null;
     setIsPanning(false);
   };
 
   const handlePointerLeave = () => {
     dragRef.current = null;
+    dragStartRef.current = null;
     setIsPanning(false);
   };
 

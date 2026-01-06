@@ -11,7 +11,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- agent-3: add minimal Collection phase UI (owner: agent-3; scope: render collection prompts and submit choices; files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/App.tsx`, `apps/web/src/styles.css`; status: in-progress)
+- agent-1: collection UI + command wiring (owner: agent-1; scope: add collection prompt panel, submit `SubmitCollectionChoices` from UI, minimal styles; files: `apps/web/src/App.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`; status: in-progress)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -61,6 +62,7 @@
 ## UI polish progress
 - Added hover tooltips for hexes, bridges, and unit stacks in the board view.
 - Added a champion-target picker in the card detail panel to set unit targets from the board state.
+- Tightened board panning drag threshold to avoid click misfires.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
