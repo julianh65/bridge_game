@@ -39,7 +39,8 @@ type CommandMessage = {
 type LobbyCommandMessage = {
   type: "lobbyCommand";
   playerId: PlayerID;
-  command: "rerollMap" | "rollDice" | "startGame";
+  command: "rerollMap" | "rollDice" | "startGame" | "pickFaction";
+  factionId?: string;
 };
 
 type ClientMessage = JoinMessage | CommandMessage | LobbyCommandMessage;
@@ -49,6 +50,7 @@ type LobbyPlayerView = {
   name: string;
   seatIndex: number;
   connected: boolean;
+  factionId: string | null;
 };
 
 type LobbySnapshot = {
@@ -59,6 +61,14 @@ type LobbySnapshot = {
 
 const MIN_PLAYERS = 2;
 const MAX_PLAYERS = 6;
+const FACTION_IDS = new Set([
+  "bastion",
+  "veil",
+  "aerial",
+  "prospect",
+  "cipher",
+  "gatewright"
+]);
 
 const safeParseMessage = (message: string): ClientMessage | null => {
   try {
@@ -188,7 +198,8 @@ export default class Server implements Party.Server {
       id: player.id,
       name: player.name,
       seatIndex: index,
-      connected: (this.playerConnections.get(player.id) ?? 0) > 0
+      connected: (this.playerConnections.get(player.id) ?? 0) > 0,
+      factionId: player.factionId ?? null
     }));
     return {
       players,
@@ -461,6 +472,10 @@ export default class Server implements Party.Server {
       this.handleStartGame(message, connection);
       return;
     }
+    if (message.command === "pickFaction") {
+      this.handlePickFaction(message, connection);
+      return;
+    }
     if (message.command === "rerollMap") {
       this.handleRerollMap(message, connection);
       return;
@@ -496,6 +511,10 @@ export default class Server implements Party.Server {
       this.sendError(connection, `need at least ${MIN_PLAYERS} players to start`);
       return;
     }
+    if (this.lobbyPlayers.some((player) => !player.factionId)) {
+      this.sendError(connection, "all players must pick a faction before starting");
+      return;
+    }
 
     this.startGameFromLobby();
     if (!this.state) {
@@ -503,6 +522,43 @@ export default class Server implements Party.Server {
       return;
     }
     this.broadcastUpdate();
+  }
+
+  private handlePickFaction(
+    message: LobbyCommandMessage,
+    connection: Party.Connection
+  ): void {
+    if (this.state) {
+      this.sendError(connection, "game already started");
+      return;
+    }
+    const meta = this.getConnectionState(connection);
+    if (!meta || meta.spectator) {
+      this.sendError(connection, "spectators cannot pick a faction");
+      return;
+    }
+    if (message.playerId !== meta.playerId) {
+      this.sendError(connection, "player id does not match connection");
+      return;
+    }
+    const rawFactionId =
+      typeof message.factionId === "string" ? message.factionId.trim() : "";
+    if (!rawFactionId) {
+      this.sendError(connection, "missing faction id");
+      return;
+    }
+    const normalized = rawFactionId.toLowerCase();
+    if (!FACTION_IDS.has(normalized)) {
+      this.sendError(connection, "unknown faction id");
+      return;
+    }
+    const player = this.lobbyPlayers.find((entry) => entry.id === meta.playerId);
+    if (!player) {
+      this.sendError(connection, "player not found in lobby");
+      return;
+    }
+    player.factionId = normalized;
+    this.broadcastLobby();
   }
 
   private handleRollDice(
@@ -581,7 +637,7 @@ export default class Server implements Party.Server {
 
     const lobbyPlayers = [...this.state.players]
       .sort((a, b) => a.seatIndex - b.seatIndex)
-      .map((player) => ({ id: player.id, name: player.name }));
+      .map((player) => ({ id: player.id, name: player.name, factionId: player.factionId }));
     const seed = this.createMapSeed();
     let nextState = runUntilBlocked(
       createNewGame(this.state.config ?? DEFAULT_CONFIG, seed, lobbyPlayers)

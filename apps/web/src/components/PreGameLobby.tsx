@@ -1,6 +1,7 @@
 import type { PlayerID } from "@bridgefront/engine";
 
 import { RoomCodeCopy } from "./RoomCodeCopy";
+import { FACTIONS, getFactionName } from "../lib/factions";
 import type { LobbyView, RoomConnectionStatus } from "../lib/room-client";
 
 type PreGameLobbyProps = {
@@ -9,6 +10,7 @@ type PreGameLobbyProps = {
   roomId: string;
   status: RoomConnectionStatus;
   onStartGame: () => void;
+  onPickFaction: (factionId: string) => void;
   onLeave: () => void;
 };
 
@@ -18,13 +20,24 @@ export const PreGameLobby = ({
   roomId,
   status,
   onStartGame,
+  onPickFaction,
   onLeave
 }: PreGameLobbyProps) => {
   const connectedCount = lobby.players.filter((player) => player.connected).length;
+  const localFactionId =
+    lobby.players.find((player) => player.id === playerId)?.factionId ?? null;
+  const missingFactions = lobby.players
+    .filter((player) => !player.factionId)
+    .map((player) => player.name);
+  const allFactionsPicked = missingFactions.length === 0;
   const hostId = lobby.players.find((player) => player.seatIndex === 0)?.id ?? null;
   const isHost = Boolean(playerId && hostId === playerId);
   const canStart =
-    isHost && status === "connected" && connectedCount >= lobby.minPlayers;
+    isHost &&
+    status === "connected" &&
+    connectedCount >= lobby.minPlayers &&
+    allFactionsPicked;
+  const canPickFaction = status === "connected" && Boolean(playerId);
   const statusLabel = status === "connected" ? "Live" : status === "error" ? "Error" : "Waiting";
   const statusClass =
     status === "connected"
@@ -67,6 +80,9 @@ export const PreGameLobby = ({
                     {player.id === playerId ? <span className="chip chip--local">You</span> : null}
                   </span>
                   <span className="seat__meta">Seat {player.seatIndex}</span>
+                  <span className="seat__meta">
+                    Faction {getFactionName(player.factionId)}
+                  </span>
                 </div>
                 <div className="seat__status">
                   <span
@@ -80,6 +96,37 @@ export const PreGameLobby = ({
               </li>
             ))}
           </ul>
+        </section>
+
+        <section className="panel">
+          <h2>Factions</h2>
+          <p className="muted">Choose your faction before the host starts the game.</p>
+          <div className="faction-grid">
+            {FACTIONS.map((faction) => {
+              const isSelected = faction.id === localFactionId;
+              return (
+                <button
+                  key={faction.id}
+                  type="button"
+                  className="faction-card"
+                  disabled={!canPickFaction}
+                  onClick={() => onPickFaction(faction.id)}
+                >
+                  <span>{faction.name}</span>
+                  {isSelected ? (
+                    <span className="chip chip--local">Selected</span>
+                  ) : (
+                    <span className="faction-card__tag">Pick</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          {!canPickFaction ? (
+            <p className="muted">Connect to pick a faction.</p>
+          ) : !localFactionId ? (
+            <p className="muted">Select a faction to ready up.</p>
+          ) : null}
         </section>
 
         <section className="panel">
@@ -99,6 +146,10 @@ export const PreGameLobby = ({
             <p className="muted">Waiting for the host to start.</p>
           ) : connectedCount < lobby.minPlayers ? (
             <p className="muted">Need {lobby.minPlayers} connected players to start.</p>
+          ) : !allFactionsPicked ? (
+            <p className="muted">
+              Waiting for faction picks from {missingFactions.join(", ")}.
+            </p>
           ) : null}
         </section>
       </div>

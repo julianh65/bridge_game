@@ -337,6 +337,7 @@ export type GameState = {
 export type LobbyPlayer = {
   id: PlayerID;
   name: string;
+  factionId?: string;
 };
 
 export type SetupChoice =
@@ -380,6 +381,7 @@ export type PlayerPublicView = {
   id: PlayerID;
   name: string;
   seatIndex: number;
+  factionId: string;
   resources: ResourceState;
   doneThisRound: boolean;
   connected: boolean;

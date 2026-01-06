@@ -103,6 +103,7 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
         id: player.id,
         name: player.name,
         seatIndex: player.seatIndex,
+        factionId: player.factionId,
         resources: player.resources,
         doneThisRound: player.doneThisRound,
         connected: player.visibility.connected

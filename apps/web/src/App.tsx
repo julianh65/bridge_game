@@ -156,6 +156,9 @@ export default function App() {
           roomId={roomConfig.roomId}
           status={room.status}
           onStartGame={() => room.sendLobbyCommand("startGame")}
+          onPickFaction={(factionId) =>
+            room.sendLobbyCommand({ command: "pickFaction", factionId })
+          }
           onLeave={handleLeave}
         />
       ) : null}

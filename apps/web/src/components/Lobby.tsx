@@ -8,16 +8,8 @@ import { SetupCapitalDraft } from "./SetupCapitalDraft";
 import { SetupFreeStartingCardPick } from "./SetupFreeStartingCardPick";
 import { SetupStartingBridges } from "./SetupStartingBridges";
 import { buildBoardPreview } from "../lib/board-preview";
+import { getFactionName } from "../lib/factions";
 import type { RoomConnectionStatus } from "../lib/room-client";
-
-const placeholderFactions = [
-  "Bastion",
-  "Veil",
-  "Aerial",
-  "Prospect",
-  "Cipher",
-  "Gatewright"
-];
 
 type LobbyProps = {
   view: GameView;
@@ -118,15 +110,13 @@ export const Lobby = ({
         </section>
 
         <section className="panel">
-          <h2>Factions (placeholder)</h2>
-          <p className="muted">
-            Faction picks will live here once the deck/champion data is wired in.
-          </p>
-          <div className="faction-grid">
-            {placeholderFactions.map((name) => (
-              <div key={name} className="faction-card">
-                <span>{name}</span>
-                <span className="faction-card__tag">Locked</span>
+          <h2>Factions</h2>
+          <p className="muted">Chosen in the pre-game lobby.</p>
+          <div className="settings-grid">
+            {players.map((player) => (
+              <div key={player.id} className="settings-row">
+                <span className="settings-label">{player.name}</span>
+                <span className="settings-value">{getFactionName(player.factionId)}</span>
               </div>
             ))}
           </div>

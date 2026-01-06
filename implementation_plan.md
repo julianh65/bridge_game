@@ -422,8 +422,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Replace the market focus row with a full-screen overlay that can be shown/hidden.
 - [x] Redesign market cards to show art placeholder, cost, initiative, type, tags, and rules text.
 - [x] Shrink the board presence while the market overlay is open so the cards dominate.
-- [ ] The market overlay should clearly denote the order of cards still to be played
-- [ ] The cards on the market overlay look a little bit wide style wise, they should look like cards.
+- [x] The market overlay should clearly denote the order of cards still to be played
+- [x] The cards on the market overlay look a little bit wide style wise, they should look like cards.
 - [ ] The bids in the market should not be public / show in the bid status until everyone has bid
 - [ ]  We need a clear animation or something to show who won the card
 

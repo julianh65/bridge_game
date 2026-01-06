@@ -18,12 +18,18 @@ export type LobbyView = {
     name: string;
     seatIndex: number;
     connected: boolean;
+    factionId: string | null;
   }>;
   minPlayers: number;
   maxPlayers: number;
 };
 
-export type LobbyCommand = "rerollMap" | "rollDice" | "startGame" | "autoSetup";
+export type LobbyCommand =
+  | "rerollMap"
+  | "rollDice"
+  | "startGame"
+  | "autoSetup"
+  | { command: "pickFaction"; factionId: string };
 
 type RoomMessage =
   | {
@@ -258,11 +264,18 @@ export const useRoom = (options: RoomOptions | null) => {
       if (!socket || socket.readyState !== WebSocket.OPEN || !state.playerId) {
         return false;
       }
-      const payload = {
-        type: "lobbyCommand",
-        playerId: state.playerId,
-        command
-      };
+      const payload =
+        typeof command === "string"
+          ? {
+              type: "lobbyCommand",
+              playerId: state.playerId,
+              command
+            }
+          : {
+              type: "lobbyCommand",
+              playerId: state.playerId,
+              ...command
+            };
       socket.send(JSON.stringify(payload));
       return true;
     },

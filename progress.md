@@ -16,14 +16,17 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
+- Owner: agent2 — Scope: hide market bid status details until all bids submitted; Files: `apps/web/src/components/MarketPanel.tsx` (status: in progress)
 
 ## Milestone 8.5 progress
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.
 - Added a Deck tab that shows hand/draw/discard/scrapped piles for the local player, backed by new private `deckCards` data in `GameView`, and marked the plan item complete in `implementation_plan.md`.
 - Refreshed the Home landing page layout/typography and marked the plan item complete in `implementation_plan.md`.
 - Added seat-index player colors for units/bridges and player list swatches, and marked the plan item complete in `implementation_plan.md`.
+- Added pregame faction selection with start gating on all picks, surfaced chosen factions in the setup lobby, and marked the plan item complete in `implementation_plan.md`.
+- Added action status pills (idle/waiting/submitted) to the player list for action phase visibility; plan update deferred until `implementation_plan.md` is free.
 - Replaced market focus row with a full-screen overlay + toggle, redesigned market cards with art placeholders and metadata, and marked Milestone 8.5 market tasks complete in `implementation_plan.md`.
+- Added an order rail to the market overlay and tightened market card sizing so the overlay reads as a sequenced card run; marked the related checklist items complete in `implementation_plan.md`.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.

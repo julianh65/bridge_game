@@ -42,7 +42,7 @@ const createPlayerState = (player: LobbyPlayer, seatIndex: number, startingGold:
     id: player.id,
     name: player.name,
     seatIndex,
-    factionId: "unassigned",
+    factionId: player.factionId ?? "unassigned",
     capitalHex: undefined,
     resources: { gold: startingGold, mana: 0 },
     vp: { permanent: 0, control: 0, total: 0 },
