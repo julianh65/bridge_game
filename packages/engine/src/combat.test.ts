@@ -347,4 +347,61 @@ describe("combat resolution", () => {
       events.indexOf("combat.end")
     );
   });
+
+  it("expires end-of-battle modifiers after combat", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    const otherHex = "1,0";
+
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        p1: ["f1"],
+        p2: ["f2"]
+      }
+    };
+    board.units = {
+      f1: { id: "f1", ownerPlayerId: "p1", kind: "force", hex: hexKey },
+      f2: { id: "f2", ownerPlayerId: "p2", kind: "force", hex: hexKey }
+    };
+
+    const modifiers: Modifier[] = [
+      {
+        id: "m1",
+        source: { type: "card", sourceId: "test" },
+        attachedHex: hexKey,
+        duration: { type: "endOfBattle" }
+      },
+      {
+        id: "m2",
+        source: { type: "card", sourceId: "test" },
+        attachedHex: otherHex,
+        duration: { type: "endOfBattle" }
+      },
+      {
+        id: "m3",
+        source: { type: "card", sourceId: "test" },
+        duration: { type: "permanent" }
+      }
+    ];
+
+    const state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(17),
+      board,
+      modifiers
+    };
+
+    const resolved = resolveBattleAtHex(state, hexKey);
+    const remaining = resolved.modifiers.map((modifier) => modifier.id).sort();
+
+    expect(remaining).toEqual(["m2", "m3"]);
+  });
 });

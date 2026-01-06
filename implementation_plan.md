@@ -243,6 +243,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Add tooltips for hex stacks/bridges/units and per-player action status (hex/bridge/unit tooltips done).
 - [ ] Clean up sidebar/board layout spacing and typography for readability.
 - [ ] Improve UI such that it's very clear which phase of the game we are in and what's happening. Show and hide relevant information / modals depending on the phase / what is going on. Not all the info panels should live on the right hand side. It's very cramped. We need a whole UI nice redesign that is intelligent. For example the cards / hand should be visible during those phases and be large and on the bottom. And so on and so forth. Use your best judgement while doing this tasks to add more tasks below that will streamline and make the UI clean and make sense. Then do one of the tasks and return.
+- [ ] I also want there to be a clear marker on which phase we are currently in at the top.
 
 
 ### Tasks (web - pan/zoom)
@@ -295,7 +296,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 ### Tasks (engine)
 - [x] Do a quick align on rules_draft to remaining implementation plan
 - Implement `modifiers` with:
-  - [ ] duration expiry
+  - [x] duration expiry
   - [x] query application pipeline (combat queries wired)
   - [x] event trigger dispatch (combat before/after hooks)
 - Implement faction passives as permanent modifiers:
@@ -343,6 +344,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Align mine value distribution across rules/spec/config (values + weights, including current 3/7 entries).
 - [x] Decide `VP_TO_WIN` target and update rules/spec/config (currently 8? vs 10).
 - [ ] Clarify setup TODOs: seating order randomization, faction-specific starter deck vs shared, champion in opening hand.
+- [x] Clarify setup TODOs: seating order randomization, faction-specific starter deck vs shared, champion in opening hand.
 - [x] Fix market preview round mapping typo in rules (Age II Round 6 preview count).
 
 

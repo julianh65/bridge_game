@@ -18,7 +18,12 @@ import type {
 } from "./types";
 import { getPlayerIdsOnHex, isContestedHex } from "./board";
 import { emit } from "./events";
-import { applyModifierQuery, getCombatModifiers, runModifierEvents } from "./modifiers";
+import {
+  applyModifierQuery,
+  expireEndOfBattleModifiers,
+  getCombatModifiers,
+  runModifierEvents
+} from "./modifiers";
 
 const FORCE_HIT_FACES = 2;
 const MAX_STALE_COMBAT_ROUNDS = 20;
@@ -597,7 +602,7 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
     endContext
   );
 
-  return nextState;
+  return expireEndOfBattleModifiers(nextState, hexKey);
 };
 
 export const resolveImmediateBattles = (state: GameState): GameState => {

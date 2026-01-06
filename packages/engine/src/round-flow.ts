@@ -16,6 +16,7 @@ import {
   insertCardIntoDrawPileRandom,
   scrapCardFromHand
 } from "./cards";
+import { expireEndOfRoundModifiers } from "./modifiers";
 
 export const applyRoundReset = (state: GameState): GameState => {
   const nextRound = state.round + 1;
@@ -563,7 +564,7 @@ export const applyCleanup = (state: GameState): GameState => {
     Object.entries(state.board.bridges).filter(([, bridge]) => !bridge.temporary)
   );
 
-  const modifiers = state.modifiers.filter((modifier) => modifier.duration.type !== "endOfRound");
+  const modifiers = expireEndOfRoundModifiers(state).modifiers;
 
   return {
     ...state,

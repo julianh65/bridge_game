@@ -4,6 +4,7 @@
 - Aligned `technical_spec.md` with `rules_draft.md`: added round/lead tracking, VP privacy in views, champion limit + cost scaling, round-cap tiebreaker, hand-limit overflow behavior, market preview mapping, and clarified market tie-break roll-off.
 - Updated `rules_draft.md`: clarified initiative placeholders, fixed market preview mapping, and defined lead rotation.
 - Fixed market preview round mapping in `rules_draft.md` (Age II rounds 6-7) and marked the task complete in `implementation_plan.md`.
+- Clarified setup notes in `rules_draft.md` + `technical_spec.md`: seating order uses lobby assignment (no randomization yet), shared starter deck + faction spell/champion defaults, and champion starts in opening hand; marked plan item complete.
 - Card defs in `technical_spec.md` now described as data-first TS modules with stable IDs, targetSpec, and effects/resolve rules.
 - Added `docs/cards.md` with card data module editing guidelines.
 - Updated board radius defaults (3-player radius 4) in `DEFAULT_CONFIG`, `technical_spec.md`, and `rules_draft.md`.
@@ -15,8 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent-3] Implement modifier duration expiry handling in engine cleanup/phase flow; scope: add expiry helpers + tests. Files: `packages/engine/src/modifiers.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/__tests__/modifiers.test.ts` (status: claimed)
-- [agent-4] Clarify setup TODOs in rules/spec and plan (seating order, starter deck vs faction, champion in opening hand); scope: doc alignment + plan checkbox. Files: `rules_draft.md`, `technical_spec.md`, `implementation_plan.md`, `progress.md` (status: claimed)
+- [agent-2] Phase-aware UI panel visibility + phase header clarity; scope: conditionally render hand/action/market/collection panels by phase and add phase emphasis styling. Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md` (status: claimed)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -45,6 +45,7 @@
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (invalid card regression coverage).
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (champion play/cost/limit coverage).
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/modifiers.test.ts src/combat.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
@@ -199,6 +200,7 @@ none
 - Implemented champion card play (hex targeting validation + deployment), champion gold cost scaling, and champion limit checks in engine with tests.
 - Added champion HP details to board stack tooltips in the UI.
 - Added combat modifier query pipeline (force/champion stats + hit assignment policy), before/after combat hook dispatch, and coverage.
+- Implemented modifier duration expiry (end-of-battle/end-of-round + uses consumption) with tests.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

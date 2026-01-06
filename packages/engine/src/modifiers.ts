@@ -18,6 +18,43 @@ const getHooks = (modifier: Modifier): ModifierHooks | null => {
   return modifier.hooks as ModifierHooks;
 };
 
+const isModifierActive = (modifier: Modifier): boolean => {
+  if (modifier.duration.type === "uses") {
+    return modifier.duration.remaining > 0;
+  }
+  return true;
+};
+
+const consumeModifierUse = (state: GameState, modifierId: string): GameState => {
+  const index = state.modifiers.findIndex((modifier) => modifier.id === modifierId);
+  if (index < 0) {
+    return state;
+  }
+
+  const modifier = state.modifiers[index];
+  if (modifier.duration.type !== "uses") {
+    return state;
+  }
+
+  const remaining = modifier.duration.remaining - 1;
+  const nextModifiers = [...state.modifiers];
+
+  if (remaining <= 0) {
+    nextModifiers.splice(index, 1);
+  } else {
+    nextModifiers[index] = {
+      ...modifier,
+      duration: { type: "uses", remaining }
+    };
+  }
+
+  return { ...state, modifiers: nextModifiers };
+};
+
+const filterActiveModifiers = (modifiers: Modifier[]): Modifier[] => {
+  return modifiers.filter((modifier) => isModifierActive(modifier));
+};
+
 export const getCombatModifiers = (state: GameState, hexKey: HexKey): Modifier[] => {
   return state.modifiers.filter((modifier) => {
     if (modifier.attachedHex && modifier.attachedHex !== hexKey) {
@@ -30,6 +67,28 @@ export const getCombatModifiers = (state: GameState, hexKey: HexKey): Modifier[]
   });
 };
 
+export const expireEndOfRoundModifiers = (state: GameState): GameState => {
+  const modifiers = filterActiveModifiers(
+    state.modifiers.filter((modifier) => modifier.duration.type !== "endOfRound")
+  );
+  return modifiers.length === state.modifiers.length ? state : { ...state, modifiers };
+};
+
+export const expireEndOfBattleModifiers = (state: GameState, hexKey: HexKey): GameState => {
+  const modifiers = filterActiveModifiers(
+    state.modifiers.filter((modifier) => {
+      if (modifier.duration.type !== "endOfBattle") {
+        return true;
+      }
+      if (!modifier.attachedHex) {
+        return false;
+      }
+      return modifier.attachedHex !== hexKey;
+    })
+  );
+  return modifiers.length === state.modifiers.length ? state : { ...state, modifiers };
+};
+
 export const applyModifierQuery = <TContext, TValue>(
   state: GameState,
   modifiers: Modifier[],
@@ -39,6 +98,9 @@ export const applyModifierQuery = <TContext, TValue>(
 ): TValue => {
   let value = base;
   for (const modifier of modifiers) {
+    if (!isModifierActive(modifier)) {
+      continue;
+    }
     const hooks = getHooks(modifier);
     if (!hooks) {
       continue;
@@ -60,6 +122,9 @@ export const runModifierEvents = <TContext>(
 ): GameState => {
   let nextState = state;
   for (const modifier of modifiers) {
+    if (!isModifierActive(modifier)) {
+      continue;
+    }
     const hooks = getHooks(modifier);
     if (!hooks) {
       continue;
@@ -69,6 +134,7 @@ export const runModifierEvents = <TContext>(
       continue;
     }
     nextState = hook({ ...context, modifier, state: nextState });
+    nextState = consumeModifierUse(nextState, modifier.id);
   }
   return nextState;
 };
