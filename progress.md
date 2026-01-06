@@ -8,7 +8,7 @@
 - Updated board radius defaults (3-player radius 4) in `DEFAULT_CONFIG`, `technical_spec.md`, and `rules_draft.md`.
 
 ## Active tasks
-- agent-2: Implement action step declarations + basic actions (build bridge, march 1, capital reinforce) with tests. Files: packages/engine/src/types.ts, packages/engine/src/action-flow.ts, packages/engine/src/engine.ts, packages/engine/src/units.ts, packages/engine/src/round-flow.ts, packages/engine/src/*.test.ts. Status: in progress.
+- agent-2: Implement immediate battle resolution for contested non-capital hexes and siege resolution at end of action phase (tests included). Files: packages/engine/src/combat.ts, packages/engine/src/action-flow.ts, packages/engine/src/engine.ts, packages/engine/src/*.test.ts. Status: in progress.
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.
@@ -46,6 +46,7 @@
 
 ## Content system progress
 - Added starter card data modules and a registry under `packages/engine/src/content/cards`.
+- Added faction starter spells and champions data modules to the card registry.
 
 ## Debug UI progress
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.
