@@ -7,7 +7,7 @@
 - Added `docs/cards.md` with card data module editing guidelines.
 
 ## Active tasks
-- (none)
+- agent-2: Implement action step declarations + basic actions (build bridge, march 1, capital reinforce) with tests. Files: packages/engine/src/types.ts, packages/engine/src/action-flow.ts, packages/engine/src/engine.ts, packages/engine/src/units.ts, packages/engine/src/round-flow.ts, packages/engine/src/*.test.ts. Status: in progress.
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.
@@ -42,6 +42,9 @@
 - Implemented round reset phase logic (income, mana reset, draw to 6 with hand-limit overflow) and wired `runUntilBlocked` to auto-advance into `round.market`.
 - Added action step declarations block with basic actions (build bridge, march 1, capital reinforce), auto-advancing `round.market` -> `round.action`, plus tests.
 - Round reset now rotates `leadSeatIndex` by round, with tests.
+
+## Content system progress
+- Added starter card data modules and a registry under `packages/engine/src/content/cards`.
 
 ## Debug UI progress
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.
