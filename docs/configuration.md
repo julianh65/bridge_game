@@ -46,9 +46,10 @@ boardGenerationRules: {
   topK: 5,
   mineValueWeights: [
     { value: 3, weight: 25 },
-    { value: 4, weight: 40 },
+    { value: 4, weight: 35 },
     { value: 5, weight: 25 },
-    { value: 6, weight: 10 }
+    { value: 6, weight: 10 },
+    { value: 7, weight: 5 }
   ]
 }
 ```
