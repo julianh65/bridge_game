@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;600;700&family=Cinzel:wght@500;700&display=swap");
+
 :root {
   color-scheme: light;
   --bg: #f5efe2;
@@ -6,12 +8,24 @@
   --ink: #1f1b16;
   --muted: #6d6356;
   --accent: #b45309;
+  --accent-strong: #c2410c;
+  --accent-soft: #f3d3a5;
+  --hero-border: #e5d3ba;
+  --hero-panel: #fffdf6;
+  --hero-shadow: rgba(120, 63, 17, 0.18);
+  --display-font: "Cinzel", "Alegreya Sans", "Trebuchet MS", "Lucida Grande", sans-serif;
   --border: #dfd4c6;
   --capital: #9f1239;
   --forge: #d97706;
   --mine: #15803d;
   --center: #0f766e;
   --normal: #fef8ec;
+  --player-color-0: #d66b6b;
+  --player-color-1: #4b8fd1;
+  --player-color-2: #e0b54b;
+  --player-color-3: #5fbf7f;
+  --player-color-4: #b584f0;
+  --player-color-5: #d38cb4;
 }
 
 * {
@@ -124,25 +138,100 @@ h1 {
 .home {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 28px;
 }
 
-.home__header {
+.home__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.9fr);
+  gap: 24px;
+  padding: 28px;
+  border-radius: 24px;
+  border: 1px solid var(--hero-border);
+  background: radial-gradient(circle at top left, #fff4db, transparent 55%),
+    radial-gradient(circle at 20% 65%, #f4e1c5, transparent 58%),
+    linear-gradient(135deg, #fff6e4 0%, #f4e1c5 55%, #f0dcc1 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.home__hero::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 20px;
+  border: 1px dashed rgba(196, 144, 82, 0.35);
+  pointer-events: none;
+}
+
+.home__hero-copy {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.home__hero h1 {
+  font-family: var(--display-font);
+  font-size: 44px;
+  letter-spacing: 0.02em;
+}
+
+.home__hero .subhead {
+  max-width: 520px;
+}
+
+.home__hero-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.home__hero-meta-item {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(226, 200, 164, 0.7);
+}
+
+.home__hero-meta-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.home__hero-meta-value {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.home__hero-card {
+  position: relative;
+  z-index: 1;
+  background: var(--hero-panel);
+  border: 1px solid var(--hero-border);
+  box-shadow: 0 18px 38px var(--hero-shadow);
+}
+
+.home__hero-card h2 {
+  font-family: var(--display-font);
 }
 
 .home__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
 }
 
 .home__form {
   display: grid;
   gap: 14px;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .field {
@@ -173,7 +262,19 @@ h1 {
 
 .home__panel {
   display: grid;
-  gap: 16px;
+  gap: 14px;
+  border: 1px solid var(--hero-border);
+  background: linear-gradient(180deg, #fffaf0 0%, #fef3e0 100%);
+}
+
+.home__panel h2 {
+  font-family: var(--display-font);
+  font-size: 20px;
+}
+
+.home__panel--signal {
+  background: linear-gradient(180deg, #fff6e4 0%, #f7e2c8 100%);
+  border: 1px solid rgba(202, 142, 78, 0.6);
 }
 
 .home__tips {
@@ -1681,6 +1782,22 @@ h1 {
   background: #fffdf6;
 }
 
+.player-row__info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.player-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--player-color, var(--player-color-0));
+  border: 1px solid rgba(27, 23, 18, 0.35);
+  box-shadow: 0 0 0 2px rgba(255, 248, 236, 0.6);
+}
+
 .player-name {
   display: block;
   font-weight: 600;
@@ -1961,12 +2078,6 @@ h1 {
 }
 
 .board-svg {
-  --player-color-0: #d66b6b;
-  --player-color-1: #4b8fd1;
-  --player-color-2: #e0b54b;
-  --player-color-3: #5fbf7f;
-  --player-color-4: #b584f0;
-  --player-color-5: #d38cb4;
   --bridge-neutral: rgba(45, 39, 32, 0.6);
   width: 100%;
   height: min(72vh, 680px);
@@ -2320,6 +2431,19 @@ h1 {
 
   .home__grid {
     grid-template-columns: 1fr;
+  }
+
+  .home__hero {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .home__hero::after {
+    inset: 8px;
+  }
+
+  .home__hero h1 {
+    font-size: 36px;
   }
 
   .controls {

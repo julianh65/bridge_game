@@ -414,7 +414,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 ## Milestone 8.5 -- Things I've noticed and nice to haves
 
 ### Tasks (web - home + onboarding)
-- [ ] Refresh the main landing page layout and typography.
+- [x] Refresh the main landing page layout and typography.
 - [x] Add a placeholder panel for rules/tutorial access.
 - [ ] Fix the non-auto setup flow (faction picks + start gating) so manual setup works.
 
@@ -422,6 +422,10 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Replace the market focus row with a full-screen overlay that can be shown/hidden.
 - [x] Redesign market cards to show art placeholder, cost, initiative, type, tags, and rules text.
 - [x] Shrink the board presence while the market overlay is open so the cards dominate.
+- [ ] The market overlay should clearly denote the order of cards still to be played
+- [ ] The cards on the market overlay look a little bit wide style wise, they should look like cards.
+- [ ] The bids in the market should not be public / show in the bid status until everyone has bid
+- [ ]  We need a clear animation or something to show who won the card
 
 ### Tasks (web - deck + player status)
 - [x] Add a deck viewer so players can browse all cards in their current deck.
@@ -435,14 +439,24 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 ### Tasks (web - motion + phase clarity)
 - [ ] Add card-play reveal animation (who played what, where it landed).
-- [ ] Add clearer phase transition cues between round phases.
+- [ ] Add clearer phase transition cues between round phases. Make it flash on screen in big text slowly to everyone simultaneously
 
 ### Tasks (web - targeting reliability)
 - [ ] Fix hex selection for Bridge Crew and Build Bridge edge picking.
 
+### Tasks UI
+- [ ] We need to more clearly guide the player what to do. The basic actions thing is too cluttered, we should probably keep that where the cards are and it should fan it when you click basic actions and show their mana cost and everything with a description
+- [ ] The Log is taking up too much screen real estate, make that a seperate area or modal or something
+- [ ] Urgent: Card targets are still not be selected properly when you click on the board
+- [ ] We need to reduce the amount of clicks, to play a card you shouldn't have to click then specify capital or something else then click where, it should just know.
+
 ## Milestone 9 — Add Polish
 
 Make this flow nicely, make the battles cool, make everything work. Do a refresh of the UI. As cards are being played in the action phase all players should be "watching" to see what everyone did. It should feel smooth and fun. Make the bridges look nicer and add a bit of padding between the hexes to give it that shattered plains look. The dice rolls during battle should be they need to click to roll dice and we see the hits gets assigned and everyone is watching type vibe.
+
+Is there a way to edit the board state for host directly? For me probably in case I run test games and cards don't do what's expected? Only do this if it's easy. Is the state stored as json or what?
+
+Low priority but add a test for each card effect / card
 
 Also we need a good victory screen!
 
@@ -457,6 +471,7 @@ Something that just takes random actions is fine
 
 ## Milestone 12 -- Host it
 What do I need to do to host this?
+Can I somehow add analytics to this? see players where, etc etc...
 
 ### Acceptance criteria
 - 2–4 friends can play a complete game session without needing a restart.

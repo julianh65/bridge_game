@@ -74,25 +74,30 @@ export const Home = ({ onJoin }: HomeProps) => {
 
   return (
     <section className="home">
-      <header className="home__header">
-        <div>
+      <header className="home__hero">
+        <div className="home__hero-copy">
           <p className="eyebrow">Bridgefront</p>
-          <h1>Join a Room</h1>
+          <h1>Enter the War Table</h1>
           <p className="subhead">
-            Create a room for friends or join an existing room to sync the game state.
+            Create a room for friends or join an existing command to sync the battlefield.
           </p>
+          <div className="home__hero-meta">
+            <div className="home__hero-meta-item">
+              <span className="home__hero-meta-label">Players</span>
+              <span className="home__hero-meta-value">2-6 commanders</span>
+            </div>
+            <div className="home__hero-meta-item">
+              <span className="home__hero-meta-label">Session</span>
+              <span className="home__hero-meta-value">45-90 minutes</span>
+            </div>
+            <div className="home__hero-meta-item">
+              <span className="home__hero-meta-label">Core loop</span>
+              <span className="home__hero-meta-value">Draft, act, score</span>
+            </div>
+          </div>
         </div>
-      </header>
 
-      {error ? (
-        <section className="panel error">
-          <h2>Check your info</h2>
-          <p>{error}</p>
-        </section>
-      ) : null}
-
-      <div className="home__grid">
-        <section className="panel">
+        <section className="panel home__hero-card">
           <h2>Room Details</h2>
           <div className="home__form">
             <label className="field">
@@ -133,44 +138,51 @@ export const Home = ({ onJoin }: HomeProps) => {
             </button>
           </div>
         </section>
+      </header>
 
-        <div className="home__panel">
-          <section className="panel home__panel">
-            <h2>How it works</h2>
-            <p className="muted">
-              Each room is a PartyKit instance. Share the room code so others can join and
-              sync the same board state. When the server is online, this screen will connect
-              automatically.
-            </p>
-            <div className="home__tips">
-              <div>
-                <span className="label">Default host</span>
-                <span className="value">{defaultHost}</span>
-              </div>
-              <div>
-                <span className="label">Local dev</span>
-                <span className="value">Run PartyKit on port 1999.</span>
-              </div>
-            </div>
-          </section>
+      {error ? (
+        <section className="panel error">
+          <h2>Check your info</h2>
+          <p>{error}</p>
+        </section>
+      ) : null}
 
-          <section className="panel home__panel">
-            <h2>Rules & Tutorial</h2>
-            <p className="muted">
-              A quickstart guide and full rules walkthrough will live here soon.
-            </p>
-            <div className="home__tips">
-              <div>
-                <span className="label">Quickstart</span>
-                <span className="value">Coming soon</span>
-              </div>
-              <div>
-                <span className="label">Full rules</span>
-                <span className="value">PDF + in-app</span>
-              </div>
+      <div className="home__grid">
+        <section className="panel home__panel">
+          <h2>How it works</h2>
+          <p className="muted">
+            Each room is a PartyKit instance. Share the room code so others can join and
+            sync the same board state. When the server is online, this screen will connect
+            automatically.
+          </p>
+          <div className="home__tips">
+            <div>
+              <span className="label">Default host</span>
+              <span className="value">{defaultHost}</span>
             </div>
-          </section>
-        </div>
+            <div>
+              <span className="label">Local dev</span>
+              <span className="value">Run PartyKit on port 1999.</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="panel home__panel home__panel--signal">
+          <h2>Rules & Tutorial</h2>
+          <p className="muted">
+            A quickstart guide and full rules walkthrough will live here soon.
+          </p>
+          <div className="home__tips">
+            <div>
+              <span className="label">Quickstart</span>
+              <span className="value">Coming soon</span>
+            </div>
+            <div>
+              <span className="label">Full rules</span>
+              <span className="value">PDF + in-app</span>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
   );
