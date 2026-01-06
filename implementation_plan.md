@@ -306,6 +306,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Bastion Shield Wall
   - [ ] Prospect Ore Cut / Mine Militia
   - [ ] etc. (start with 1–2 factions but first double check the rules from rules_draft)
+- [x] Support faction starter spell effects with existing primitives (Air Drop deployForces, Rich Veins increaseMineValue).
 - Implement champions:
   - [x] play champion card => spawn champion unit
   - [x] champion gold cost scaling by “nth champion currently controlled”

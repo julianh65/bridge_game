@@ -47,6 +47,7 @@
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/modifiers.test.ts src/combat.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts src/setup-flow.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
@@ -207,6 +208,7 @@ none
 - Added Bastion Shield Wall passive as a permanent faction modifier, wired during setup, with setup/combat coverage.
 - Added combat modifier query pipeline (force/champion stats + hit assignment policy), before/after combat hook dispatch, and coverage.
 - Implemented modifier duration expiry (end-of-battle/end-of-round + uses consumption) with tests.
+- Added `deployForces` and `increaseMineValue` card effect support for faction starter spells (Air Drop, Rich Veins) with action-flow coverage.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

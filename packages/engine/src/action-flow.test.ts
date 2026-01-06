@@ -727,6 +727,71 @@ describe("action flow", () => {
     expect(after).toBe(before + 1);
   });
 
+  it("plays air drop to deploy forces near a friendly champion", () => {
+    let { state, p1Capital } = setupToActionPhase();
+    const neighbor = neighborHexKeys(p1Capital).find((key) => Boolean(state.board.hexes[key]));
+    if (!neighbor) {
+      throw new Error("missing neighbor for air drop test");
+    }
+
+    state = addChampionToHex(state, "p1", p1Capital).state;
+    const injected = addCardToHand(state, "p1", "faction.aerial.air_drop");
+    state = injected.state;
+
+    const before = state.board.hexes[neighbor].occupants["p1"]?.length ?? 0;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { hexKey: neighbor }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const after = state.board.hexes[neighbor].occupants["p1"]?.length ?? 0;
+    expect(after).toBe(before + 3);
+  });
+
+  it("plays rich veins to increase a mine value", () => {
+    let { state } = setupToActionPhase();
+    const mineHex = findMineHex(state);
+    state = {
+      ...state,
+      board: addForcesToHex(state.board, "p1", mineHex, 1)
+    };
+    const injected = addCardToHand(state, "p1", "faction.prospect.rich_veins");
+    state = injected.state;
+
+    const before = state.board.hexes[mineHex].mineValue ?? 0;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { hexKey: mineHex }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const after = state.board.hexes[mineHex].mineValue ?? 0;
+    expect(after).toBe(Math.min(before + 1, 7));
+  });
+
   it("plays a champion card to deploy a champion and scales gold cost", () => {
     let { state, p1Capital } = setupToActionPhase();
     const seeded = addChampionToHex(state, "p1", p1Capital);

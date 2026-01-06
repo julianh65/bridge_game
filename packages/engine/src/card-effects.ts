@@ -21,6 +21,8 @@ const SUPPORTED_EFFECTS = new Set([
   "prospecting",
   "buildBridge",
   "moveStack",
+  "deployForces",
+  "increaseMineValue",
   "healChampion",
   "dealChampionDamage",
   "patchUp",
@@ -473,9 +475,19 @@ export const isCardPlayable = (
   }
 
   if (card.targetSpec.kind === "hex") {
-    return Boolean(
-      getHexTarget(state, playerId, card.targetSpec as TargetRecord, targets ?? null)
+    const target = getHexTarget(
+      state,
+      playerId,
+      card.targetSpec as TargetRecord,
+      targets ?? null
     );
+    if (!target) {
+      return false;
+    }
+    if (card.effects?.some((effect) => effect.kind === "deployForces")) {
+      return !wouldExceedTwoPlayers(target.hex, playerId);
+    }
+    return true;
   }
 
   if (card.targetSpec.kind === "edge") {
@@ -843,6 +855,68 @@ export const resolveCardEffects = (
             board: addForcesToHex(nextState.board, playerId, choice.hexKey, 1)
           };
         }
+        break;
+      }
+      case "deployForces": {
+        const target = getHexTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null
+        );
+        if (!target) {
+          break;
+        }
+        if (wouldExceedTwoPlayers(target.hex, playerId)) {
+          break;
+        }
+        const count = typeof effect.count === "number" ? effect.count : 0;
+        if (count <= 0) {
+          break;
+        }
+        nextState = {
+          ...nextState,
+          board: addForcesToHex(nextState.board, playerId, target.hexKey, count)
+        };
+        break;
+      }
+      case "increaseMineValue": {
+        const target = getHexTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null
+        );
+        if (!target) {
+          break;
+        }
+        const current = target.hex.mineValue;
+        if (typeof current !== "number") {
+          break;
+        }
+        const amount = typeof effect.amount === "number" ? effect.amount : NaN;
+        if (!Number.isFinite(amount) || amount <= 0) {
+          break;
+        }
+        const maxValue =
+          typeof effect.maxValue === "number" ? effect.maxValue : Number.POSITIVE_INFINITY;
+        const nextValue = Math.min(current + amount, maxValue);
+        if (nextValue === current) {
+          break;
+        }
+        nextState = {
+          ...nextState,
+          board: {
+            ...nextState.board,
+            hexes: {
+              ...nextState.board.hexes,
+              [target.hexKey]: {
+                ...target.hex,
+                mineValue: nextValue
+              }
+            }
+          }
+        };
         break;
       }
       case "healChampion": {
