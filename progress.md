@@ -12,6 +12,7 @@
 
 ## Active tasks
 - (none)
+- [agent2] Fix free-starting-card shared deck handling + ActionPanel “Done” gating. Files: `packages/engine/src/setup-flow.ts`, `packages/engine/src/types.ts`, `packages/engine/src/setup-flow.test.ts`, `apps/web/src/components/ActionPanel.tsx`, `progress.md`. Status: in progress.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -98,6 +99,7 @@
 - Game sidebar now lists hand card IDs, deck counts, and a market row summary.
 - Lobby now includes a room code copy control with clipboard fallback.
 - Added a Cards debug tab with filters (age/deck, mana cost, type, tags) and initiative sorting.
+- Polished the Cards tab layout for denser grids, deck accents, and compact rule previews.
 
 ## Milestone 5 progress
 - Added action-step card declarations for no-target cards (gain gold/draw cards) with initiative-ordered resolution before basic actions; cards leave hand on declaration and discard/burn after resolution, plus Supply Cache coverage.

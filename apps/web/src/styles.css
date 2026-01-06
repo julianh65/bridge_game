@@ -567,17 +567,25 @@ h1 {
 
 .cards-browser__layout {
   display: grid;
-  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
-  gap: 20px;
+  grid-template-columns: 1fr;
+  gap: 16px;
 }
 
 .cards-browser__filters {
   display: grid;
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px 16px;
+  background: #fff8ee;
+  box-shadow: inset 0 0 0 1px var(--border);
 }
 
 .cards-browser__filters h2 {
   margin: 0;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  grid-column: 1 / -1;
 }
 
 .filter-group {
@@ -599,6 +607,7 @@ h1 {
   background: var(--surface);
   font-size: 13px;
   color: var(--ink);
+  width: 100%;
 }
 
 .filter-pills {
@@ -610,17 +619,19 @@ h1 {
 .filter-pill {
   border: 1px solid var(--border);
   border-radius: 999px;
-  background: #f6f0e4;
+  background: #fdf2e1;
   color: var(--muted);
-  padding: 6px 12px;
-  font-size: 12px;
+  padding: 6px 10px;
+  font-size: 11px;
   cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .filter-pill.is-active {
-  background: #fff1d6;
+  background: #ffe6bf;
   border-color: #f59e0b;
   color: #7c2d12;
+  box-shadow: 0 6px 12px rgba(245, 158, 11, 0.2);
 }
 
 .cards-browser__list h2 {
@@ -629,40 +640,43 @@ h1 {
 
 .cards-grid {
   display: grid;
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
 }
 
 .card-entry {
   border-radius: 14px;
   border: 1px solid var(--border);
-  background: #fffdf6;
-  padding: 14px;
+  border-left-width: 4px;
+  background: linear-gradient(180deg, #fffdf6 0%, #fdf4e8 100%);
+  padding: 12px;
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .card-entry__header {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .card-entry__header h3 {
-  margin: 4px 0 0;
+  margin: 2px 0 0;
+  font-size: 16px;
 }
 
 .card-entry__eyebrow {
   margin: 0;
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
 .card-entry__id {
-  margin: 4px 0 0;
-  font-size: 12px;
+  margin: 2px 0 0;
+  font-size: 11px;
   color: var(--muted);
 }
 
@@ -671,13 +685,44 @@ h1 {
 .card-entry__champion {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .card-entry__text {
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--ink);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cards-browser .card-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  background: #f9efe1;
+}
+
+.card-entry[data-deck="starter"] {
+  border-left-color: #b45309;
+}
+
+.card-entry[data-deck="age1"] {
+  border-left-color: #15803d;
+}
+
+.card-entry[data-deck="age2"] {
+  border-left-color: #0f766e;
+}
+
+.card-entry[data-deck="age3"] {
+  border-left-color: #1d4ed8;
+}
+
+.card-entry[data-deck="power"] {
+  border-left-color: #7c2d12;
 }
 
 .game-screen {
@@ -1142,10 +1187,6 @@ h1 {
   .app__nav {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .cards-browser__layout {
-    grid-template-columns: 1fr;
   }
 
   .game-screen__layout {

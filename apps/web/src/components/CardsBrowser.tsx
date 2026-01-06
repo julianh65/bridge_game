@@ -202,7 +202,12 @@ export const CardsBrowser = () => {
           ) : (
             <div className="cards-grid">
               {filteredCards.map((card) => (
-                <article key={card.id} className="card-entry">
+                <article
+                  key={card.id}
+                  className="card-entry"
+                  data-deck={card.deck}
+                  data-type={card.type}
+                >
                   <div className="card-entry__header">
                     <div>
                       <p className="card-entry__eyebrow">{card.deck}</p>
@@ -219,7 +224,9 @@ export const CardsBrowser = () => {
                       {card.burn ? <span className="card-tag">Burn</span> : null}
                     </div>
                   </div>
-                  <p className="card-entry__text">{card.rulesText}</p>
+                  <p className="card-entry__text" title={card.rulesText}>
+                    {card.rulesText}
+                  </p>
                   {card.tags.length > 0 ? (
                     <div className="card-entry__tags">
                       {card.tags.map((tag) => (
