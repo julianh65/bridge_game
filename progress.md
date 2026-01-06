@@ -11,7 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- agent-3: extend smoke sim to run randomized legal commands for N steps (owner: agent-3; scope: randomized command selection + stability assertions; files: `packages/engine/src/smoke.test.ts`; status: in-progress)
+- none
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -34,6 +34,8 @@
 - Added a smoke sim auto-resolve test in `packages/engine/src/smoke.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/smoke.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/market.test.ts`.
+- Added a randomized smoke sim test that picks legal commands in `packages/engine/src/smoke.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/smoke.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
@@ -45,6 +47,7 @@
 - Audited docs for stale items (implementation plan checkboxes, market preview naming/mapping, dev nav notes).
 - Added Milestone 5.5 UI interaction + polish tasks (hand/board targeting/pan-zoom) to `implementation_plan.md`.
 - Refreshed Milestones 5-6 checkboxes and noted partial UI polish status in `implementation_plan.md`.
+- Marked the Milestone 8 smoke sim task complete in `implementation_plan.md`.
 
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.

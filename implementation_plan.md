@@ -241,7 +241,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Add lightweight motion (card play, target highlight pulse, selection fade) to reduce the "debug UI" feel.
 - [ ] Add tooltips for hex stacks/bridges/units and per-player action status (hex/bridge/unit tooltips done).
 - [ ] Clean up sidebar/board layout spacing and typography for readability.
-- [ ] Improve UI such that it's very clear which phase of the game we are in and what's happening. Show and hide relevant information / modals depending on the phase / what is going on.
+- [ ] Improve UI such that it's very clear which phase of the game we are in and what's happening. Show and hide relevant information / modals depending on the phase / what is going on. Not all the info panels should live on the right hand side. For example the cards / hand should be visible during those phases and be large and on the bottom. And so on and so forth. Use your best judgement while doing this tasks to add more tasks below that will streamline and make the UI clean and make sense. Then do one of the tasks and return.
 
 
 ### Tasks (web - pan/zoom)
@@ -332,7 +332,7 @@ I want to have a script that lets me select a subset of n cards and hits some so
   - card def file
   - minimal tests per card
 - Expand Age I market cards first (the ones that touch your most-used primitives).
-- Add “smoke sim” tests:
+- [x] Add “smoke sim” tests:
   - random legal commands for N steps should not crash
 - Add dev-only debug tools:
   - show full state JSON
