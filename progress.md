@@ -12,7 +12,6 @@
 
 ## Active tasks
 - agent-2: power deck scaffolding + center pick uses power decks (owner: agent-2; scope: add power deck lists/init, store in state, and update collection flow/tests to draw center picks from power decks; files: `packages/engine/src/types.ts`, `packages/engine/src/content/power-decks.ts`, `packages/engine/src/market.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/market.test.ts`; status: in-progress)
-- agent-3: add a smoke sim test to auto-resolve blocks across a few rounds (owner: agent-3; scope: deterministic auto-choices for setup/market/action/collection; files: `packages/engine/src/smoke.test.ts`; status: in-progress)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -31,6 +30,9 @@
 - Added collection-choice resolution tests (mine draft accept/decline, forge reforge, center pick) in `packages/engine/src/round-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts src/market.test.ts`.
+- Added a smoke sim auto-resolve test in `packages/engine/src/smoke.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/smoke.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
@@ -64,6 +66,7 @@
 - Added hover tooltips for hexes, bridges, and unit stacks in the board view.
 - Added a champion-target picker in the card detail panel to set unit targets from the board state.
 - Tightened board panning drag threshold to avoid click misfires.
+- Added soft bounds clamping on board pan/zoom so the map stays in view.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
@@ -161,7 +164,7 @@
 - Market sidebar now shows card names and bid/pass status per player.
 - Added market bid controls in the web client and wired `SubmitMarketBid` commands.
 - Implemented market bidding block (buy/pass, tie-break roll-offs, pass pot, one-win-per-round) with command handling + resolution, added market bidding tests, and updated setup/action tests to auto-resolve market.
-- Added collection choice block (mine/forge/center prompts with market-deck reveals), resolution logic, and collection view data; center picks currently use the market deck pending power-deck content.
+- Added power deck scaffolding + init (currently seeded from market deck lists as a placeholder), and center picks now draw from power decks; updated collection resolution/tests accordingly.
 - Added a collection sidebar panel that renders mine/forge/center prompts and submits `SubmitCollectionChoices` commands.
 - Aligned the collection panel props with `GameScreen` and added collection prompt styles in `apps/web/src/styles.css`.
 
