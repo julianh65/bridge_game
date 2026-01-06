@@ -63,6 +63,12 @@ const getTargetString = (
   return typeof value === "string" && value.length > 0 ? value : null;
 };
 
+const formatPhaseLabel = (phase: string) => {
+  const trimmed = phase.replace("round.", "");
+  const spaced = trimmed.replace(/([a-z])([A-Z])/g, "$1 $2").replace(".", " ");
+  return spaced.replace(/^\w/, (value) => value.toUpperCase());
+};
+
 type GameScreenProps = {
   view: GameView;
   playerId: string | null;
@@ -94,7 +100,7 @@ export const GameScreen = ({
   const handCards = view.private?.handCards ?? [];
   const handCount = view.private ? handCards.length : 0;
   const deckCounts = view.private?.deckCounts ?? null;
-  const phaseLabel = view.public.phase.replace("round.", "").replace(".", " ");
+  const phaseLabel = formatPhaseLabel(view.public.phase);
   const connectionLabel = status === "connected" ? "Live" : "Waiting";
   const connectionClass =
     status === "connected"
@@ -171,6 +177,10 @@ export const GameScreen = ({
       : "Action: declaration submitted.";
   };
   const isActionPhase = view.public.phase === "round.action";
+  const isMarketPhase = view.public.phase === "round.market";
+  const isCollectionPhase = view.public.phase === "round.collection";
+  const isInteractivePhase = isActionPhase || isMarketPhase || isCollectionPhase;
+  const showHandPanel = Boolean(view.private) && isActionPhase;
   const canDeclareAction =
     status === "connected" && Boolean(localPlayer) && isActionPhase && !localPlayer?.doneThisRound;
   const isBoardTargeting = boardPickMode !== "none";
@@ -190,6 +200,17 @@ export const GameScreen = ({
     setPendingStackFrom(null);
     setPendingPath([]);
   };
+
+  useEffect(() => {
+    if (!isActionPhase) {
+      setBoardPickMode("none");
+      setPendingEdgeStart(null);
+      setPendingStackFrom(null);
+      setPendingPath([]);
+      setCardInstanceId("");
+      setCardTargetsRaw("");
+    }
+  }, [isActionPhase]);
 
   const setCardTargetsObject = (targets: Record<string, unknown> | null) => {
     setCardTargetsRaw(targets ? JSON.stringify(targets) : "");
@@ -927,18 +948,121 @@ export const GameScreen = ({
       })()
     : null;
 
+  const handPanel = showHandPanel ? (
+    <section className="panel game-hand">
+      <div className="game-hand__header">
+        <h2>Hand</h2>
+        <span className="hand-meta">{handCount} cards</span>
+      </div>
+      {handCount === 0 ? (
+        <div className="hand-empty">No cards yet.</div>
+      ) : (
+        <>
+          <div className="hand-row">
+            {handCards.map((card, index) => {
+              const def = CARD_DEFS_BY_ID.get(card.defId);
+              const label = def?.name ?? card.defId;
+              const isSelected = card.id === cardInstanceId;
+              const manaCost = def?.cost.mana ?? 0;
+              const goldCost = def?.cost.gold ?? 0;
+              const canAfford = availableMana >= manaCost && availableGold >= goldCost;
+              const isPlayable = canDeclareAction && canAfford;
+              const totalCards = handCards.length;
+              const centerIndex = (totalCards - 1) / 2;
+              const offset = index - centerIndex;
+              const fanRotation = totalCards > 1 ? offset * 4 : 0;
+              const fanLift = Math.abs(offset) * 4;
+              const depth = totalCards - Math.abs(offset);
+              const costLabel = def ? `M${manaCost}${goldCost ? ` G${goldCost}` : ""}` : "M-";
+              const typeLabel = def?.type ?? "Card";
+              const initiativeLabel = def ? `Init ${def.initiative}` : "Init -";
+              const handStyle = {
+                zIndex: 10 + depth,
+                "--hand-rotate": `${fanRotation}deg`,
+                "--hand-lift": `${fanLift}px`
+              } as CSSProperties;
+              return (
+                <button
+                  key={card.id}
+                  type="button"
+                  className={`hand-card ${isSelected ? "is-selected" : ""} ${
+                    isPlayable ? "" : "is-disabled"
+                  }`}
+                  style={handStyle}
+                  aria-pressed={isSelected}
+                  aria-disabled={!isPlayable}
+                  title={`${label} (${card.id})`}
+                  onClick={() => {
+                    setCardInstanceId(card.id);
+                    setCardTargetsRaw("");
+                    setBoardPickModeSafe("none");
+                  }}
+                >
+                  <div className="hand-card__face">
+                    <div className="hand-card__top">
+                      <span className="hand-card__name">{label}</span>
+                      <span className="hand-card__cost">{costLabel}</span>
+                    </div>
+                    <div className="hand-card__body">
+                      <span className="hand-card__type">{typeLabel}</span>
+                      <span className="hand-card__meta">{initiativeLabel}</span>
+                    </div>
+                    <div className="hand-card__footer">
+                      <span className="hand-card__id">{card.id}</span>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          {selectedCardDef ? (
+            <div className="card-detail">
+              <div className="card-detail__header">
+                <strong>{selectedCardDef.name}</strong>
+                {cardCostLabel ? (
+                  <span className="card-detail__meta">Cost {cardCostLabel}</span>
+                ) : null}
+                <span className="card-detail__meta">Init {selectedCardDef.initiative}</span>
+              </div>
+              <p className="card-detail__rules">{selectedCardDef.rulesText}</p>
+              {cardTargetPanel}
+            </div>
+          ) : null}
+        </>
+      )}
+      {deckCounts ? (
+        <div className="deck-counts">
+          <div className="resource-row">
+            <span>Draw</span>
+            <strong>{deckCounts.drawPile}</strong>
+          </div>
+          <div className="resource-row">
+            <span>Discard</span>
+            <strong>{deckCounts.discardPile}</strong>
+          </div>
+          <div className="resource-row">
+            <span>Scrapped</span>
+            <strong>{deckCounts.scrapped}</strong>
+          </div>
+        </div>
+      ) : null}
+    </section>
+  ) : null;
+
   return (
     <section className="game-screen">
       <header className="game-screen__header">
         <div>
           <p className="eyebrow">Bridgefront</p>
-          <h1>
-            Room {roomId} · Round {view.public.round} · {phaseLabel}
-          </h1>
-          <p className="subhead">Live room state from the PartyKit server.</p>
+          <h1>Room {roomId}</h1>
+          <p className="subhead">
+            Round {view.public.round} · Phase {phaseLabel}
+          </p>
         </div>
         <div className="game-screen__meta">
           <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
+          <span className="status-pill status-pill--phase">Phase: {phaseLabel}</span>
+          <span className="status-pill">Round {view.public.round}</span>
           <span className="status-pill">Players: {view.public.players.length}</span>
           {view.public.winnerPlayerId ? (
             <span className="status-pill status-pill--winner">
@@ -1014,159 +1138,70 @@ export const GameScreen = ({
               <span>Lead</span>
               <strong>{leadPlayer ? leadPlayer.name : "—"}</strong>
             </div>
-          </div>
-
-          <div className="sidebar-section">
-            <h3>Hand</h3>
-            {!view.private ? (
-              <div className="hand-empty">Spectators do not have a hand.</div>
-            ) : handCount === 0 ? (
-              <div className="hand-empty">No cards yet.</div>
-            ) : (
-              <>
-                <div className="hand-meta">{handCount} cards in hand</div>
-                <div className="hand-row">
-                  {handCards.map((card, index) => {
-                    const def = CARD_DEFS_BY_ID.get(card.defId);
-                    const label = def?.name ?? card.defId;
-                    const isSelected = card.id === cardInstanceId;
-                    const manaCost = def?.cost.mana ?? 0;
-                    const goldCost = def?.cost.gold ?? 0;
-                    const canAfford = availableMana >= manaCost && availableGold >= goldCost;
-                    const isPlayable = canDeclareAction && canAfford;
-                    const totalCards = handCards.length;
-                    const centerIndex = (totalCards - 1) / 2;
-                    const offset = index - centerIndex;
-                    const fanRotation = totalCards > 1 ? offset * 4 : 0;
-                    const fanLift = Math.abs(offset) * 4;
-                    const depth = totalCards - Math.abs(offset);
-                    const costLabel = def
-                      ? `M${manaCost}${goldCost ? ` G${goldCost}` : ""}`
-                      : "M-";
-                    const typeLabel = def?.type ?? "Card";
-                    const initiativeLabel = def ? `Init ${def.initiative}` : "Init -";
-                    const handStyle = {
-                      zIndex: 10 + depth,
-                      "--hand-rotate": `${fanRotation}deg`,
-                      "--hand-lift": `${fanLift}px`
-                    } as CSSProperties;
-                    return (
-                      <button
-                        key={card.id}
-                        type="button"
-                        className={`hand-card ${isSelected ? "is-selected" : ""} ${
-                          isPlayable ? "" : "is-disabled"
-                        }`}
-                        style={handStyle}
-                        aria-pressed={isSelected}
-                        aria-disabled={!isPlayable}
-                        title={`${label} (${card.id})`}
-                        onClick={() => {
-                          setCardInstanceId(card.id);
-                          setCardTargetsRaw("");
-                          setBoardPickModeSafe("none");
-                        }}
-                      >
-                        <div className="hand-card__face">
-                          <div className="hand-card__top">
-                            <span className="hand-card__name">{label}</span>
-                            <span className="hand-card__cost">{costLabel}</span>
-                          </div>
-                          <div className="hand-card__body">
-                            <span className="hand-card__type">{typeLabel}</span>
-                            <span className="hand-card__meta">{initiativeLabel}</span>
-                          </div>
-                          <div className="hand-card__footer">
-                            <span className="hand-card__id">{card.id}</span>
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-                {selectedCardDef ? (
-                  <div className="card-detail">
-                    <div className="card-detail__header">
-                      <strong>{selectedCardDef.name}</strong>
-                      {cardCostLabel ? (
-                        <span className="card-detail__meta">Cost {cardCostLabel}</span>
-                      ) : null}
-                      <span className="card-detail__meta">
-                        Init {selectedCardDef.initiative}
-                      </span>
-                    </div>
-                    <p className="card-detail__rules">{selectedCardDef.rulesText}</p>
-                    {cardTargetPanel}
-                  </div>
-                ) : null}
-              </>
-            )}
-            {deckCounts ? (
-              <div className="deck-counts">
-                <div className="resource-row">
-                  <span>Draw</span>
-                  <strong>{deckCounts.drawPile}</strong>
-                </div>
-                <div className="resource-row">
-                  <span>Discard</span>
-                  <strong>{deckCounts.discardPile}</strong>
-                </div>
-                <div className="resource-row">
-                  <span>Scrapped</span>
-                  <strong>{deckCounts.scrapped}</strong>
-                </div>
-              </div>
-            ) : null}
             {view.private?.vp ? (
-              <div className="hand-empty">
-                VP: {view.private.vp.total} (control {view.private.vp.control})
+              <div className="resource-row">
+                <span>VP</span>
+                <strong>{view.private.vp.total}</strong>
               </div>
             ) : null}
           </div>
 
-          <div className="sidebar-section">
-            <h3>Actions</h3>
-            <ActionPanel
+          {isActionPhase ? (
+            <div className="sidebar-section">
+              <h3>Actions</h3>
+              <ActionPanel
+                phase={view.public.phase}
+                player={localPlayer ?? null}
+                players={view.public.players}
+                actionStep={view.public.actionStep}
+                status={status}
+                edgeKey={edgeKey}
+                marchFrom={marchFrom}
+                marchTo={marchTo}
+                cardInstanceId={cardInstanceId}
+                cardTargetsRaw={cardTargetsRaw}
+                boardPickMode={boardPickMode}
+                onSubmit={onSubmitAction}
+                onEdgeKeyChange={setEdgeKey}
+                onMarchFromChange={setMarchFrom}
+                onMarchToChange={setMarchTo}
+                onCardInstanceIdChange={setCardInstanceId}
+                onCardTargetsRawChange={setCardTargetsRaw}
+                onBoardPickModeChange={setBoardPickModeSafe}
+              />
+            </div>
+          ) : null}
+
+          {isMarketPhase ? (
+            <MarketPanel
+              market={view.public.market}
+              players={view.public.players}
+              phase={view.public.phase}
+              player={localPlayer ?? null}
+              status={status}
+              onSubmitBid={onSubmitMarketBid}
+            />
+          ) : null}
+
+          {isCollectionPhase ? (
+            <CollectionPanel
               phase={view.public.phase}
               player={localPlayer ?? null}
               players={view.public.players}
-              actionStep={view.public.actionStep}
               status={status}
-              edgeKey={edgeKey}
-              marchFrom={marchFrom}
-              marchTo={marchTo}
-              cardInstanceId={cardInstanceId}
-              cardTargetsRaw={cardTargetsRaw}
-              boardPickMode={boardPickMode}
-              onSubmit={onSubmitAction}
-              onEdgeKeyChange={setEdgeKey}
-              onMarchFromChange={setMarchFrom}
-              onMarchToChange={setMarchTo}
-              onCardInstanceIdChange={setCardInstanceId}
-              onCardTargetsRawChange={setCardTargetsRaw}
-              onBoardPickModeChange={setBoardPickModeSafe}
+              handCards={handCards}
+              collectionPublic={view.public.collection}
+              collectionPrivate={view.private?.collection ?? null}
+              onSubmitChoices={onSubmitCollectionChoices}
             />
-          </div>
+          ) : null}
 
-          <MarketPanel
-            market={view.public.market}
-            players={view.public.players}
-            phase={view.public.phase}
-            player={localPlayer ?? null}
-            status={status}
-            onSubmitBid={onSubmitMarketBid}
-          />
-
-          <CollectionPanel
-            phase={view.public.phase}
-            player={localPlayer ?? null}
-            players={view.public.players}
-            status={status}
-            handCards={handCards}
-            collectionPublic={view.public.collection}
-            collectionPrivate={view.private?.collection ?? null}
-            onSubmitChoices={onSubmitCollectionChoices}
-          />
+          {!isInteractivePhase ? (
+            <div className="sidebar-section">
+              <h3>Phase</h3>
+              <p className="muted">Resolving {phaseLabel}. Waiting on the server.</p>
+            </div>
+          ) : null}
 
           <div className="sidebar-section">
             <h3>Log</h3>
@@ -1207,6 +1242,7 @@ export const GameScreen = ({
           </div>
         </aside>
       </div>
+      {handPanel}
     </section>
   );
 };

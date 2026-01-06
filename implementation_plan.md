@@ -242,8 +242,11 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Add lightweight motion (card play, target highlight pulse, selection fade) to reduce the "debug UI" feel.
 - [x] Add tooltips for hex stacks/bridges/units and per-player action status (hex/bridge/unit tooltips done).
 - [ ] Clean up sidebar/board layout spacing and typography for readability.
-- [ ] Improve UI such that it's very clear which phase of the game we are in and what's happening. Show and hide relevant information / modals depending on the phase / what is going on. Not all the info panels should live on the right hand side. It's very cramped. We need a whole UI nice redesign that is intelligent. For example the cards / hand should be visible during those phases and be large and on the bottom. And so on and so forth. Use your best judgement while doing this tasks to add more tasks below that will streamline and make the UI clean and make sense. Then do one of the tasks and return.
-- [ ] I also want there to be a clear marker on which phase we are currently in at the top.
+- [x] Add a clear phase marker in the header/status area.
+- [x] Gate phase-specific panels (action/market/collection) and add an idle-phase callout.
+- [x] Move the hand panel into a full-width bottom panel during the action phase.
+- [ ] Add phase-focused layouts (market/collection focus + log/player repositioning).
+- [ ] Add collapsible/relocatable panels so not everything lives in the right sidebar.
 
 
 ### Tasks (web - pan/zoom)
@@ -299,10 +302,10 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] duration expiry
   - [x] query application pipeline (combat queries wired)
   - [x] event trigger dispatch (combat before/after hooks)
-- Implement faction passives as permanent modifiers:
-  - Bastion Shield Wall
-  - Prospect Ore Cut / Mine Militia
-  - etc. (start with 1–2 factions but first double check the rules from rules_draft)
+- [ ] Implement faction passives as permanent modifiers:
+  - [x] Bastion Shield Wall
+  - [ ] Prospect Ore Cut / Mine Militia
+  - [ ] etc. (start with 1–2 factions but first double check the rules from rules_draft)
 - Implement champions:
   - [x] play champion card => spawn champion unit
   - [x] champion gold cost scaling by “nth champion currently controlled”
@@ -364,16 +367,19 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 ## Milestone 9 — Add Polish
 
-Make this flow nicely, make the battles cool, make everything work. Do a refresh of the UI. As cards are being played in the action phase all players should be "watching" to see what everyone did. It should feel smooth and fun. Make the bridges look nicer and add a bit of padding between the hexes to give it that shattered plains look.
+Make this flow nicely, make the battles cool, make everything work. Do a refresh of the UI. As cards are being played in the action phase all players should be "watching" to see what everyone did. It should feel smooth and fun. Make the bridges look nicer and add a bit of padding between the hexes to give it that shattered plains look. The dice rolls during battle should be they need to click to roll dice and we see the hits gets assigned and everyone is watching type vibe.
 
 ## Milestone 9.5 -- Card Art + Description
 
-Add a way for each card to have related card art and a card description that is thematic. This will be done with diffusion models so we need to have a script and some way to query to automatically pull card art for n cards and store them and let me view them.
+Add a way for each card to have related card art and a card description that is thematic. This will be done with diffusion models so we need to have a script and some way to query to automatically pull card art for n cards and store them and let me view them. In addition to this we need other ways to style it up and make this look cool. I guess make the hexes look cool, the capitals, the pieces and forces and battles. It needs to have a bit of oomf. We can add some tasks here later when we get to it
 
 ## Milestone 10 -- Basic AI to play against
 Something that just takes random actions is fine
 
 ## Milestone 11 -- Give me a way to balance the game in terms of running n where n is a large number of games where they all take random actions and give me win stats per card and faction and other important metrics
+
+## Milestone 12 -- Host it
+What do I need to do to host this?
 
 ### Acceptance criteria
 - 2–4 friends can play a complete game session without needing a restart.

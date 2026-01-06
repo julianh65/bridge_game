@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent-2] Phase-aware UI panel visibility + phase header clarity; scope: conditionally render hand/action/market/collection panels by phase and add phase emphasis styling. Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md` (status: claimed)
+- none
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -62,7 +62,8 @@
 - Refreshed Milestones 5-6 checkboxes and noted partial UI polish status in `implementation_plan.md`.
 - Marked the Milestone 8 smoke sim task complete in `implementation_plan.md`.
 - Audited `rules_draft.md` alignment and logged follow-ups in `implementation_plan.md`.
-- Pending: mark Milestone 7 faction passive item in `implementation_plan.md` once agent-2 finishes the current UI/plan edits.
+- Expanded Milestone 5.5 layout tasks in `implementation_plan.md` with phase-focused subtasks.
+- Marked Bastion Shield Wall faction passive as done in `implementation_plan.md`.
 
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.
@@ -95,6 +96,8 @@ none
 - Added per-player action status tooltips on the player list in the game sidebar.
 - Added lightweight motion for target highlights, preview bridges, selected cards, and card detail reveals.
 - Added interaction state styling for board + controls (targeting outline, hex/bridge transitions, action-field active/error labels).
+- Added phase status pills and an idle-phase callout, with phase-gated action/market/collection panels in the game sidebar.
+- Moved the hand UI into a full-width bottom panel during the action phase and surfaced VP in the resources block.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
