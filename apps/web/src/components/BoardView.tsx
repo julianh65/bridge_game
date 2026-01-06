@@ -73,6 +73,16 @@ const boundsForHexes = (hexes: HexRender[]): ViewBox => {
 const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value));
 
+const viewBoxEquals = (a: ViewBox, b: ViewBox): boolean => {
+  const epsilon = 0.01;
+  return (
+    Math.abs(a.minX - b.minX) < epsilon &&
+    Math.abs(a.minY - b.minY) < epsilon &&
+    Math.abs(a.width - b.width) < epsilon &&
+    Math.abs(a.height - b.height) < epsilon
+  );
+};
+
 const clampViewBox = (viewBox: ViewBox, baseViewBox: ViewBox): ViewBox => {
   const baseMaxX = baseViewBox.minX + baseViewBox.width;
   const baseMaxY = baseViewBox.minY + baseViewBox.height;
@@ -115,6 +125,8 @@ export const BoardView = ({
   const [viewBox, setViewBox] = useState(baseViewBox);
   const [isPanning, setIsPanning] = useState(false);
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const lastBaseViewBoxRef = useRef<ViewBox | null>(null);
+  const lastResetTokenRef = useRef<number | null>(resetViewToken ?? null);
   const dragRef = useRef<{ x: number; y: number } | null>(null);
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
   const didDragRef = useRef(false);
@@ -129,7 +141,15 @@ export const BoardView = ({
   const hasValidTargets = validSet.size > 0;
 
   useEffect(() => {
-    setViewBox(baseViewBox);
+    const resetToken = resetViewToken ?? null;
+    const resetChanged = resetToken !== lastResetTokenRef.current;
+    const baseChanged =
+      !lastBaseViewBoxRef.current || !viewBoxEquals(lastBaseViewBoxRef.current, baseViewBox);
+    if (resetChanged || baseChanged) {
+      setViewBox(baseViewBox);
+      lastBaseViewBoxRef.current = baseViewBox;
+      lastResetTokenRef.current = resetToken;
+    }
   }, [baseViewBox, resetViewToken]);
   const hexCenters = useMemo(() => {
     const map = new Map<string, { x: number; y: number }>();

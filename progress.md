@@ -16,8 +16,9 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
+- owner: agent4; scope: add private deck view data + client deck viewer tab; files: `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/App.tsx`, `apps/web/src/components/DeckViewer.tsx`, `progress.md`
 - owner: agent3; scope: format Milestone 8.5 checklist and build full-screen market overlay with richer card layout + toggle; files: `implementation_plan.md`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/styles.css`, `progress.md`
+- owner: agent1; scope: add rules/tutorial placeholder panel to Home landing page; files: `apps/web/src/components/Home.tsx`, `progress.md`; status: in progress
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -120,6 +121,7 @@ none
 - Added a collapsible GameScreen header with a compact HUD toggle for play sessions.
 - Added a phase-focused layout row for market/collection panels and moved log/player sections into a secondary row during those phases.
 - Reduced board target click friction by ignoring invalid hex clicks while targeting and allowing start reselects for multi-step picks.
+- Stabilized BoardView pan/zoom by avoiding viewBox resets when board state updates (plan update deferred: `implementation_plan.md` locked by agent3).
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
