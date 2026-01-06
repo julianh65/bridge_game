@@ -11,6 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
+- None.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -109,6 +110,11 @@
 - Added a Cards debug tab with filters (age/deck, mana cost, type, tags) and initiative sorting.
 - Polished the Cards tab layout for denser grids, deck accents, and compact rule previews.
 - Refined Cards tab tag styling with tighter radius and centered labels.
+
+## Milestone 4.5 progress
+- Added a capital draft panel in the setup lobby that lists available slots, shows pick order/status, and submits `pickCapital` choices from the client.
+- Added a dev-only auto-setup command on the server (host-only) to auto-pick setup choices for faster testing.
+- GameView now exposes setup block info (public setup payload + private free-card offers) to support setup UI.
 
 ## Milestone 5 progress
 - Added action-step card declarations for no-target cards (gain gold/draw cards) with initiative-ordered resolution before basic actions; cards leave hand on declaration and discard/burn after resolution, plus Supply Cache coverage.

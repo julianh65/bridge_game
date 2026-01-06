@@ -1,12 +1,15 @@
 import { createRngState } from "@bridgefront/shared";
 
 import type {
+  BlockState,
   Command,
   GameState,
   GameView,
   LobbyPlayer,
   PlayerID,
-  PlayerState
+  PlayerState,
+  SetupPrivateView,
+  SetupPublicView
 } from "./types";
 import { DEFAULT_CONFIG } from "./config";
 import { createBaseBoard, getCapitalSlots } from "./board-generation";
@@ -72,6 +75,44 @@ const enterPhase = (state: GameState, phase: GameState["phase"]): GameState => {
     { ...state, phase, blocks: undefined },
     { type: `phase.${phase}`, payload: { round: state.round } }
   );
+};
+
+const buildSetupPublicView = (block: BlockState): SetupPublicView => {
+  if (block.type === "setup.capitalDraft") {
+    return {
+      type: block.type,
+      waitingForPlayerIds: block.waitingFor,
+      availableSlots: block.payload.availableSlots,
+      choices: block.payload.choices
+    };
+  }
+  if (block.type === "setup.startingBridges") {
+    return {
+      type: block.type,
+      waitingForPlayerIds: block.waitingFor,
+      remaining: block.payload.remaining,
+      placedEdges: block.payload.placedEdges
+    };
+  }
+  const chosen = Object.fromEntries(
+    Object.entries(block.payload.chosen).map(([playerId, cardId]) => [playerId, Boolean(cardId)])
+  );
+  return {
+    type: block.type,
+    waitingForPlayerIds: block.waitingFor,
+    chosen
+  };
+};
+
+const buildSetupPrivateView = (block: BlockState, playerId: PlayerID): SetupPrivateView => {
+  if (block.type !== "setup.freeStartingCardPick") {
+    return null;
+  }
+  return {
+    type: block.type,
+    offers: block.payload.offers[playerId] ?? [],
+    chosen: block.payload.chosen[playerId] ?? null
+  };
 };
 
 export const createNewGame = (
@@ -272,6 +313,12 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
           waitingForPlayerIds: state.blocks.waitingFor
         }
       : null;
+  const setupPublic =
+    state.phase === "setup" && state.blocks ? buildSetupPublicView(state.blocks) : null;
+  const setupPrivate =
+    viewer && state.phase === "setup" && state.blocks
+      ? buildSetupPrivateView(state.blocks, viewer.id)
+      : null;
 
   return {
     public: {
@@ -290,6 +337,7 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
         connected: player.visibility.connected
       })),
       actionStep,
+      setup: setupPublic,
       winnerPlayerId: state.winnerPlayerId
     },
     private: viewer
@@ -305,7 +353,8 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
             discardPile: viewer.deck.discardPile.length,
             scrapped: viewer.deck.scrapped.length
           },
-          vp: viewer.vp
+          vp: viewer.vp,
+          setup: setupPrivate
         }
       : null
   };

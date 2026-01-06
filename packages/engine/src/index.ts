@@ -50,6 +50,8 @@ export type {
   PlayerState,
   ResourceState,
   SetupChoice,
+  SetupPrivateView,
+  SetupPublicView,
   TileType,
   UnitID,
   UnitState

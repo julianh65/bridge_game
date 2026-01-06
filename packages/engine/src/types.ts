@@ -293,12 +293,41 @@ export type PlayerPrivateView = {
     scrapped: number;
   };
   vp: { permanent: number; control: number; total: number };
+  setup: SetupPrivateView | null;
 };
 
 export type ActionStepPublicView = {
   eligiblePlayerIds: PlayerID[];
   waitingForPlayerIds: PlayerID[];
 };
+
+export type SetupPublicView =
+  | {
+      type: "setup.capitalDraft";
+      waitingForPlayerIds: PlayerID[];
+      availableSlots: HexKey[];
+      choices: Record<PlayerID, HexKey | null>;
+    }
+  | {
+      type: "setup.startingBridges";
+      waitingForPlayerIds: PlayerID[];
+      remaining: Record<PlayerID, number>;
+      placedEdges: Record<PlayerID, EdgeKey[]>;
+    }
+  | {
+      type: "setup.freeStartingCardPick";
+      waitingForPlayerIds: PlayerID[];
+      chosen: Record<PlayerID, boolean>;
+    }
+  | null;
+
+export type SetupPrivateView =
+  | {
+      type: "setup.freeStartingCardPick";
+      offers: CardDefId[];
+      chosen: CardDefId | null;
+    }
+  | null;
 
 export type GameView = {
   public: {
@@ -310,6 +339,7 @@ export type GameView = {
     logs: GameEvent[];
     players: PlayerPublicView[];
     actionStep: ActionStepPublicView | null;
+    setup: SetupPublicView | null;
     winnerPlayerId: PlayerID | null;
   };
   private: PlayerPrivateView | null;
