@@ -62,8 +62,20 @@ Values that may change during tuning should live in config:
 - `ROUNDS_MAX` (default 10)
 - `VP_TO_WIN` (default 8; tune)
 - `boardRadiusByPlayerCount`: {2:3, 3:4, 4:4, 5:4, 6:4}
-- `tileCountsByPlayerCount` for Mines/Forges/Center
-- `capitalSlotsByPlayerCount`: explicit HexKey list per player count (overrides corner defaults)
+- `tileCountsByPlayerCount`: {
+  2: { mines: 4, forges: 1, center: 1 },
+  3: { mines: 5, forges: 2, center: 1 },
+  4: { mines: 6, forges: 2, center: 1 },
+  5: { mines: 7, forges: 3, center: 1 },
+  6: { mines: 8, forges: 3, center: 1 }
+}
+- `capitalSlotsByPlayerCount`: {
+  2: ["3,0", "-3,0"],
+  3: ["4,0", "-4,4", "0,-4"],
+  4: ["4,-1", "-1,4", "-4,1", "1,-4"],
+  5: ["-2,4", "-4,1", "1,-4", "2,2", "4,-2"],
+  6: ["4,0", "0,4", "-4,4", "-4,0", "0,-4", "4,-4"]
+}
 - `boardGenerationRules`: configurable placement rules
   - `minDistanceFromCapital`
   - `forgeDistanceFromCenter` / `mineDistanceFromCenter`

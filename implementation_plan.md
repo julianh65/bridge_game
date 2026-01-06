@@ -333,9 +333,9 @@ I want to have a script that lets me select a subset of n cards and hits some so
 Pause and read through the rules of the game. Make sure that what we've done aligns as much as possible. Add any tasks below to fix things that don't.
 
 ### Tasks
-- [ ] Resolve board sizing + capital slot mapping across `rules_draft.md`, `technical_spec.md`, and `DEFAULT_CONFIG` (radius + slots per player count).
-- [ ] Align special tile counts across rules/spec/config (mines/forges/center per player count).
-- [ ] Align mine value distribution across rules/spec/config (values + weights, including current 3/7 entries).
+- [x] Resolve board sizing + capital slot mapping across `rules_draft.md`, `technical_spec.md`, and `DEFAULT_CONFIG` (radius + slots per player count).
+- [x] Align special tile counts across rules/spec/config (mines/forges/center per player count).
+- [x] Align mine value distribution across rules/spec/config (values + weights, including current 3/7 entries).
 - [ ] Decide `VP_TO_WIN` target and update rules/spec/config (currently 8? vs 10).
 - [ ] Clarify setup TODOs: seating order randomization, faction-specific starter deck vs shared, champion in opening hand.
 - [x] Fix market preview round mapping typo in rules (Age II Round 6 preview count).

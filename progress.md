@@ -7,12 +7,13 @@
 - Card defs in `technical_spec.md` now described as data-first TS modules with stable IDs, targetSpec, and effects/resolve rules.
 - Added `docs/cards.md` with card data module editing guidelines.
 - Updated board radius defaults (3-player radius 4) in `DEFAULT_CONFIG`, `technical_spec.md`, and `rules_draft.md`.
+- Aligned board sizing/capital slots, tile counts, and mine value distribution across `rules_draft.md` + `technical_spec.md`.
 - Added a coordination note to `agent_instructions.md` to emphasize planning/logging before coding.
 - Clarified handling of other-agent changes in `agent_instructions.md` to avoid unnecessary escalation.
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent-2; scope: align rules/spec with config for board sizing, capital slots, tile counts, and mine value distribution; files: rules_draft.md, technical_spec.md, implementation_plan.md, progress.md; status: in progress
+- owner: agent-1; scope: add lightweight UI motion for board target highlights/selection (CSS-only); files: apps/web/src/styles.css, implementation_plan.md, progress.md; status: in progress
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
