@@ -1,7 +1,9 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import type { GameView } from "@bridgefront/engine";
 
+import { BoardView } from "./BoardView";
+import { buildHexRender } from "../lib/board-preview";
 import type { RoomConnectionStatus } from "../lib/room-client";
 
 const placeholderFactions = [
@@ -34,6 +36,7 @@ export const Lobby = ({ view, playerId, roomId, status, onLeave }: LobbyProps) =
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
   const copyTimeoutRef = useRef<number | null>(null);
   const roomInputRef = useRef<HTMLInputElement | null>(null);
+  const hexRender = useMemo(() => buildHexRender(view.public.board), [view.public.board]);
 
   const scheduleCopyReset = () => {
     if (copyTimeoutRef.current) {
@@ -177,6 +180,19 @@ export const Lobby = ({ view, playerId, roomId, status, onLeave }: LobbyProps) =
               <span className="settings-value">Default</span>
             </div>
           </div>
+        </section>
+
+        <section className="panel">
+          <h2>Map Preview</h2>
+          <p className="muted">Current map layout for this room.</p>
+          <BoardView
+            hexes={hexRender}
+            board={view.public.board}
+            showCoords={false}
+            showTags
+            showMineValues={false}
+            className="board-svg board-svg--game"
+          />
         </section>
       </div>
 
