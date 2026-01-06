@@ -18,6 +18,7 @@
 ## Active tasks
 - [agent-4] Dev-only debug tools: add room debug commands (state JSON, advance phase, reset with seed) plus a debug panel in the Board Debug view; update `implementation_plan.md`. Files: `apps/server/src/server.ts`, `apps/web/src/lib/room-client.ts`, `apps/web/src/App.tsx`, `apps/web/src/components/RoomDebugPanel.tsx`, `implementation_plan.md` (status: claimed)
 - [agent-1] Champion ability hooks: implement Bodyguard redirect, Flight movement override, and Assassin’s Edge pre-combat damage with tests. Files: `packages/engine/src/modifiers.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/commands.ts`, `packages/engine/src/modifiers.test.ts` (status: claimed; implementation_plan update deferred until agent-4 frees `implementation_plan.md`)
+- [agent-3] Market bidding UX: add quick bid buttons (1-4) alongside the input and keep bid amount synced/clamped. Files: `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/styles.css` (status: claimed)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -28,6 +29,9 @@
 - Logged setup actions (capital picks, starting bridges, free starting card) so UI logs show setup activity.
 - Free starting card now uses a shared deck (offers without independent shuffles) and returns unchosen cards to the bottom.
 - ActionPanel now allows “Done” submissions even when mana is 0.
+
+## Faction passives progress
+- Added Gatewright passives (capital assault + extortionists) and Veil clean-exit heal modifier with combat coverage; implementation plan update deferred until `implementation_plan.md` is free.
 
 ## Testing progress
 - Added card draw tests covering reshuffle behavior and hand-limit overflow in `packages/engine/src/cards.test.ts`.
@@ -53,6 +57,7 @@
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts src/round-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.

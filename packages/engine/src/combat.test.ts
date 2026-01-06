@@ -374,6 +374,153 @@ describe("combat resolution", () => {
     expect(hex.occupants["p2"]).toEqual(["f2"]);
   });
 
+  it("applies gatewright capital assault in enemy capitals", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({
+      value: 3,
+      next: rng
+    }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      tile: "capital",
+      ownerPlayerId: "p2",
+      occupants: {
+        p1: ["f1"],
+        p2: ["f2"]
+      }
+    };
+    board.units = {
+      f1: { id: "f1", ownerPlayerId: "p1", kind: "force", hex: hexKey },
+      f2: { id: "f2", ownerPlayerId: "p2", kind: "force", hex: hexKey }
+    };
+
+    const state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(21),
+      board,
+      modifiers: createFactionModifiers("gatewright", "p1")
+    };
+
+    const resolved = resolveBattleAtHex(state, hexKey);
+    const hex = resolved.board.hexes[hexKey];
+
+    expect(hex.occupants["p2"]).toHaveLength(0);
+    expect(hex.occupants["p1"]).toEqual(["f1"]);
+  });
+
+  it("steals gold on gatewright battle wins", () => {
+    let rollCount = 0;
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => {
+      rollCount += 1;
+      return { value: rollCount === 1 ? 1 : 6, next: rng };
+    });
+
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        p1: ["f1"],
+        p2: ["f2"]
+      }
+    };
+    board.units = {
+      f1: { id: "f1", ownerPlayerId: "p1", kind: "force", hex: hexKey },
+      f2: { id: "f2", ownerPlayerId: "p2", kind: "force", hex: hexKey }
+    };
+
+    const state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(22),
+      board,
+      modifiers: createFactionModifiers("gatewright", "p1"),
+      players: base.players.map((player) =>
+        player.id === "p1"
+          ? { ...player, resources: { ...player.resources, gold: 1 } }
+          : { ...player, resources: { ...player.resources, gold: 3 } }
+      )
+    };
+
+    const resolved = resolveBattleAtHex(state, hexKey);
+    const p1 = resolved.players.find((player) => player.id === "p1");
+    const p2 = resolved.players.find((player) => player.id === "p2");
+
+    expect(p1?.resources.gold).toBe(3);
+    expect(p2?.resources.gold).toBe(1);
+  });
+
+  it("heals veil champions after battle", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({
+      value: 1,
+      next: rng
+    }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        p1: ["c1"],
+        p2: ["f2"]
+      }
+    };
+    board.units = {
+      c1: {
+        id: "c1",
+        ownerPlayerId: "p1",
+        kind: "champion",
+        hex: hexKey,
+        cardDefId: "test.c1",
+        hp: 2,
+        maxHp: 3,
+        attackDice: 1,
+        hitFaces: 3,
+        bounty: 2,
+        abilityUses: {}
+      },
+      f2: { id: "f2", ownerPlayerId: "p2", kind: "force", hex: hexKey }
+    };
+
+    const state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(23),
+      board,
+      modifiers: createFactionModifiers("veil", "p1")
+    };
+
+    const resolved = resolveBattleAtHex(state, hexKey);
+    const champion = resolved.board.units["c1"];
+
+    expect(champion).toBeDefined();
+    if (!champion || champion.kind !== "champion") {
+      throw new Error("expected champion to survive");
+    }
+    expect(champion.hp).toBe(2);
+  });
+
   it("dispatches before/after combat hooks", () => {
     vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({
       value: 1,
