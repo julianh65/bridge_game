@@ -61,7 +61,7 @@ Values that may change during tuning should live in config:
 - `CHAMPION_LIMIT` (default 4)
 - `ROUNDS_MAX` (default 10)
 - `VP_TO_WIN` (default 8; tune)
-- `boardRadiusByPlayerCount`: {2:3, 3:3, 4:4, 5:4, 6:4}
+- `boardRadiusByPlayerCount`: {2:3, 3:4, 4:4, 5:4, 6:4}
 - `tileCountsByPlayerCount` for Mines/Forges/Center
 - `capitalSlotsByPlayerCount`: explicit HexKey list per player count (overrides corner defaults)
 - `boardGenerationRules`: configurable placement rules

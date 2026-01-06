@@ -65,8 +65,8 @@ More Gold
 4) Board, Bridges, and Movement
 4.1 Board Size
 Hexagon-shaped hex grid:
-2–3 players: radius R = 4 (Including Center, that is to say diameter 7)
-4–6 players: radius R = 5 (Diameter 9)
+2 players: radius R = 3 (including center, diameter 7)
+3-6 players: radius R = 4 (diameter 9)
 4.2 Bridges
 A Bridge is an edge connecting two adjacent hexes.
 Movement between adjacent hexes is allowed only if a Bridge exists on that edge, unless a card/Champion says it ignores Bridges.
@@ -87,12 +87,7 @@ Use these for:
 3 players: {C0, C2, C4} 
 4 players: {C0, C1, C3, C4}
 6 players: {C0, C1, C2, C3, C4, C5}
-5 players (R = 5): use these 5 fixed outer-ring slots:
-S1: (-5, 0)
-S2: (-4, 5)
-S3: (2, 2)
-S4: (5, -3)
-S5: (1, -5)
+5 players: {C0, C1, C2, C3, C4} (omit C5)
 Players draft Capital slots from the available set during setup.
 6) Special Tiles
 6.1 Tile Counts (recommended)

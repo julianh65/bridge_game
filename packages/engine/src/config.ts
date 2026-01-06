@@ -10,7 +10,7 @@ export const DEFAULT_CONFIG: GameConfig = {
   VP_TO_WIN: 8,
   boardRadiusByPlayerCount: {
     2: 3,
-    3: 3,
+    3: 4,
     4: 4,
     5: 4,
     6: 4
@@ -24,7 +24,7 @@ export const DEFAULT_CONFIG: GameConfig = {
   },
   capitalSlotsByPlayerCount: {
     2: ["3,0", "-3,0"],
-    3: ["3,0", "-3,3", "0,-3"],
+    3: ["4,0", "-4,4", "0,-4"],
     4: ["4,-1", "-1,4", "-4,1", "1,-4"],
     5: ["4,0", "0,4", "-4,4", "-4,0", "0,-4"],
     6: ["4,0", "0,4", "-4,4", "-4,0", "0,-4", "4,-4"]

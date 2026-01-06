@@ -5,6 +5,7 @@
 - Updated `rules_draft.md`: clarified initiative placeholders, fixed market preview mapping, and defined lead rotation.
 - Card defs in `technical_spec.md` now described as data-first TS modules with stable IDs, targetSpec, and effects/resolve rules.
 - Added `docs/cards.md` with card data module editing guidelines.
+- Updated board radius defaults (3-player radius 4) in `DEFAULT_CONFIG`, `technical_spec.md`, and `rules_draft.md`.
 
 ## Active tasks
 - agent-2: Implement action step declarations + basic actions (build bridge, march 1, capital reinforce) with tests. Files: packages/engine/src/types.ts, packages/engine/src/action-flow.ts, packages/engine/src/engine.ts, packages/engine/src/units.ts, packages/engine/src/round-flow.ts, packages/engine/src/*.test.ts. Status: in progress.
