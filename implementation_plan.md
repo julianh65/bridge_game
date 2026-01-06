@@ -328,9 +328,9 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] champion limit
   - [x] champion cards always burn after play
 - Implement a few champion abilities using hooks:
-  - [ ] Bodyguard redirect
-  - [ ] Flight movement permission override
-  - [ ] “before combat round 1” damage effect (Assassin’s Edge)
+  - [x] Bodyguard redirect
+  - [x] Flight movement permission override
+  - [x] “before combat round 1” damage effect (Assassin’s Edge)
   - [x] Mine Overseer Extraction (+1 mine gold while occupying a mine)
 - [ ] Quick check in, the rules in rules_draft are kind of living and breathing as I update things or change balance so make sure that everything is still correct, and add a few more champions and their abilities and everything in to test
 

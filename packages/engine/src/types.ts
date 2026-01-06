@@ -170,7 +170,7 @@ export type Duration =
 
 export type CombatSide = "attackers" | "defenders";
 
-export type HitAssignmentPolicy = "random" | "forcesFirst" | "championsFirst";
+export type HitAssignmentPolicy = "random" | "forcesFirst" | "championsFirst" | "bodyguard";
 
 export type CombatEndReason = "eliminated" | "noHits" | "stale";
 
@@ -205,6 +205,14 @@ export type CombatEndContext = CombatContext & {
   defenders: UnitID[];
 };
 
+export type MoveContext = {
+  playerId: PlayerID;
+  from: HexKey;
+  to: HexKey;
+  path: HexKey[];
+  movingUnitIds: UnitID[];
+};
+
 export type MineGoldContext = {
   playerId: PlayerID;
   hexKey: HexKey;
@@ -225,6 +233,7 @@ export type ModifierHooks = {
   getChampionAttackDice?: ModifierQueryHook<CombatUnitContext, number>;
   getChampionHitFaces?: ModifierQueryHook<CombatUnitContext, number>;
   getHitAssignmentPolicy?: ModifierQueryHook<CombatAssignmentContext, HitAssignmentPolicy>;
+  getMoveRequiresBridge?: ModifierQueryHook<MoveContext, boolean>;
   getMineGoldValue?: ModifierQueryHook<MineGoldContext, number>;
   beforeCombatRound?: ModifierEventHook<CombatRoundContext>;
   afterBattle?: ModifierEventHook<CombatEndContext>;

@@ -17,7 +17,6 @@
 
 ## Active tasks
 - [agent-2] Review `rules_draft.md` for new card/rules changes and add any major missing tasks to `implementation_plan.md`. Files: `rules_draft.md`, `implementation_plan.md`, `progress.md` (status: claimed)
-- [agent-1] Champion ability hooks: implement Bodyguard redirect, Flight movement override, and Assassin’s Edge pre-combat damage with tests. Files: `packages/engine/src/modifiers.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/commands.ts`, `packages/engine/src/modifiers.test.ts` (status: claimed; implementation_plan update deferred until agent-4 frees `implementation_plan.md`)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -57,9 +56,11 @@
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts src/round-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts src/action-flow.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
+- Marked the Milestone 7 champion ability hook tasks complete in `implementation_plan.md`.
 - Converted Milestone 6.5 notes into checklist tasks and marked the market quick-bid UX item complete in `implementation_plan.md`.
 - Expanded the Milestone 5.5 phase-focused layout task with subitems and marked the focus row/log+player move subtasks complete.
 - Noted Banner Claim addition under the Milestone 8 Age I market expansion tasks in `implementation_plan.md`.
@@ -231,6 +232,7 @@ none
 - Implemented modifier duration expiry (end-of-battle/end-of-round + uses consumption) with tests.
 - Added `deployForces` and `increaseMineValue` card effect support for faction starter spells (Air Drop, Rich Veins) with action-flow coverage.
 - Added Mine Overseer Extraction bonus (+1 mine gold while occupying a mine) with collection coverage.
+- Implemented champion abilities: Bodyguard hit redirect, Assassin's Edge pre-combat damage (per-round uses), and Flight movement override; added combat + action-flow coverage.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

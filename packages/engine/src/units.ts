@@ -77,7 +77,7 @@ export const addChampionToHex = (
   playerId: PlayerID,
   hexKey: HexKey,
   champion: ChampionDeployment
-): BoardState => {
+): { board: BoardState; unitId: UnitID } => {
   const hex = board.hexes[hexKey];
   if (!hex) {
     throw new Error("hex does not exist");
@@ -96,33 +96,36 @@ export const addChampionToHex = (
   const unitId = `c_${maxChampionIndex + 1}`;
 
   return {
-    ...board,
-    units: {
-      ...board.units,
-      [unitId]: {
-        id: unitId,
-        ownerPlayerId: playerId,
-        kind: "champion",
-        hex: hexKey,
-        cardDefId: champion.cardDefId,
-        hp: champion.hp,
-        maxHp: champion.hp,
-        attackDice: champion.attackDice,
-        hitFaces: champion.hitFaces,
-        bounty: champion.bounty,
-        abilityUses: {}
-      }
-    },
-    hexes: {
-      ...board.hexes,
-      [hexKey]: {
-        ...hex,
-        occupants: {
-          ...hex.occupants,
-          [playerId]: [...(hex.occupants[playerId] ?? []), unitId]
+    board: {
+      ...board,
+      units: {
+        ...board.units,
+        [unitId]: {
+          id: unitId,
+          ownerPlayerId: playerId,
+          kind: "champion",
+          hex: hexKey,
+          cardDefId: champion.cardDefId,
+          hp: champion.hp,
+          maxHp: champion.hp,
+          attackDice: champion.attackDice,
+          hitFaces: champion.hitFaces,
+          bounty: champion.bounty,
+          abilityUses: {}
+        }
+      },
+      hexes: {
+        ...board.hexes,
+        [hexKey]: {
+          ...hex,
+          occupants: {
+            ...hex.occupants,
+            [playerId]: [...(hex.occupants[playerId] ?? []), unitId]
+          }
         }
       }
-    }
+    },
+    unitId
   };
 };
 

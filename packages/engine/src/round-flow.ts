@@ -17,6 +17,7 @@ import {
   insertCardIntoDrawPileRandom,
   scrapCardFromHand
 } from "./cards";
+import { refreshChampionAbilityUsesForRound } from "./champions";
 import { applyModifierQuery, expireEndOfRoundModifiers } from "./modifiers";
 
 const MINE_OVERSEER_CHAMPION_ID = "champion.prospect.mine_overseer";
@@ -38,6 +39,8 @@ export const applyRoundReset = (state: GameState): GameState => {
       doneThisRound: false
     }))
   };
+
+  nextState = refreshChampionAbilityUsesForRound(nextState);
 
   for (const player of nextState.players) {
     nextState = drawToHandSize(nextState, player.id, 6);

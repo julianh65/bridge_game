@@ -11,7 +11,9 @@ import {
   wouldExceedTwoPlayers
 } from "./board";
 import { addCardToDiscardPile, addCardToHandWithOverflow, drawCards, takeTopCards } from "./cards";
+import { applyChampionDeployment, dealChampionDamage, healChampion } from "./champions";
 import { addChampionToHex, addForcesToHex, countPlayerChampions } from "./units";
+import { getMoveRequiresBridge } from "./modifiers";
 
 const SUPPORTED_TARGET_KINDS = new Set(["none", "edge", "stack", "path", "champion", "choice", "hex"]);
 const SUPPORTED_EFFECTS = new Set([
@@ -325,6 +327,19 @@ const validateMovePath = (
     return null;
   }
 
+  const movingUnitIds = startHex.occupants[playerId] ?? [];
+  const requiresBridge = getMoveRequiresBridge(
+    state,
+    {
+      playerId,
+      from: path[0],
+      to: path[path.length - 1],
+      path,
+      movingUnitIds
+    },
+    options.requiresBridge
+  );
+
   for (let index = 0; index < path.length - 1; index += 1) {
     const from = path[index];
     const to = path[index + 1];
@@ -335,7 +350,7 @@ const validateMovePath = (
     } catch {
       return null;
     }
-    if (options.requiresBridge && !hasBridge(state.board, from, to)) {
+    if (requiresBridge && !hasBridge(state.board, from, to)) {
       return null;
     }
     if (index < path.length - 2) {
@@ -636,109 +651,6 @@ const addGold = (state: GameState, playerId: PlayerID, amount: number): GameStat
   };
 };
 
-const healChampion = (state: GameState, unitId: string, amount: number): GameState => {
-  if (!Number.isFinite(amount) || amount <= 0) {
-    return state;
-  }
-
-  const unit = state.board.units[unitId];
-  if (!unit || unit.kind !== "champion") {
-    return state;
-  }
-
-  const nextHp = Math.min(unit.maxHp, unit.hp + amount);
-  if (nextHp === unit.hp) {
-    return state;
-  }
-
-  return {
-    ...state,
-    board: {
-      ...state.board,
-      units: {
-        ...state.board.units,
-        [unitId]: {
-          ...unit,
-          hp: nextHp
-        }
-      }
-    }
-  };
-};
-
-const dealChampionDamage = (
-  state: GameState,
-  sourcePlayerId: PlayerID,
-  unitId: string,
-  amount: number
-): GameState => {
-  if (!Number.isFinite(amount) || amount <= 0) {
-    return state;
-  }
-
-  const unit = state.board.units[unitId];
-  if (!unit || unit.kind !== "champion") {
-    return state;
-  }
-
-  const nextHp = unit.hp - amount;
-  if (nextHp > 0) {
-    return {
-      ...state,
-      board: {
-        ...state.board,
-        units: {
-          ...state.board.units,
-          [unitId]: {
-            ...unit,
-            hp: nextHp
-          }
-        }
-      }
-    };
-  }
-
-  const units = { ...state.board.units };
-  delete units[unitId];
-
-  let nextState: GameState = {
-    ...state,
-    board: {
-      ...state.board,
-      units
-    }
-  };
-
-  const hex = state.board.hexes[unit.hex];
-  if (hex) {
-    const updatedHex = {
-      ...hex,
-      occupants: {
-        ...hex.occupants,
-        [unit.ownerPlayerId]: (hex.occupants[unit.ownerPlayerId] ?? []).filter(
-          (id) => id !== unitId
-        )
-      }
-    };
-    nextState = {
-      ...nextState,
-      board: {
-        ...nextState.board,
-        hexes: {
-          ...nextState.board.hexes,
-          [unit.hex]: updatedHex
-        }
-      }
-    };
-  }
-
-  if (unit.ownerPlayerId !== sourcePlayerId && unit.bounty > 0) {
-    nextState = addGold(nextState, sourcePlayerId, unit.bounty);
-  }
-
-  return nextState;
-};
-
 const playerOccupiesTile = (
   state: GameState,
   playerId: PlayerID,
@@ -765,16 +677,18 @@ export const resolveCardEffects = (
       targets ?? null
     );
     if (target) {
+      const deployed = addChampionToHex(nextState.board, playerId, target.hexKey, {
+        cardDefId: card.id,
+        hp: card.champion.hp,
+        attackDice: card.champion.attackDice,
+        hitFaces: card.champion.hitFaces,
+        bounty: card.champion.bounty
+      });
       nextState = {
         ...nextState,
-        board: addChampionToHex(nextState.board, playerId, target.hexKey, {
-          cardDefId: card.id,
-          hp: card.champion.hp,
-          attackDice: card.champion.attackDice,
-          hitFaces: card.champion.hitFaces,
-          bounty: card.champion.bounty
-        })
+        board: deployed.board
       };
+      nextState = applyChampionDeployment(nextState, deployed.unitId, card.id, playerId);
     }
   }
 

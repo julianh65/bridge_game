@@ -4,6 +4,7 @@ import * as shared from "@bridgefront/shared";
 
 import { createBaseBoard } from "./board-generation";
 import { resolveBattleAtHex, resolveImmediateBattles, resolveSieges } from "./combat";
+import { applyChampionDeployment } from "./champions";
 import { emit } from "./events";
 import { createFactionModifiers } from "./faction-passives";
 import { DEFAULT_CONFIG, createNewGame } from "./index";
@@ -288,6 +289,143 @@ describe("combat resolution", () => {
     expect(resolved.logs[1]?.payload?.reason).toBe("noHits");
     expect(hex.occupants["p1"]).toEqual(["f1"]);
     expect(hex.occupants["p2"]).toEqual(["f2"]);
+  });
+
+  it("redirects the first champion hit to a force with Bodyguard", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({
+      value: 1,
+      next: rng
+    }));
+    vi.spyOn(shared, "randInt").mockImplementation((rng) => ({
+      value: 0,
+      next: rng
+    }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        p1: ["f1"],
+        p2: ["c1", "f2"]
+      }
+    };
+    board.units = {
+      f1: { id: "f1", ownerPlayerId: "p1", kind: "force", hex: hexKey },
+      f2: { id: "f2", ownerPlayerId: "p2", kind: "force", hex: hexKey },
+      c1: {
+        id: "c1",
+        ownerPlayerId: "p2",
+        kind: "champion",
+        hex: hexKey,
+        cardDefId: "champion.bastion.ironclad_warden",
+        hp: 6,
+        maxHp: 6,
+        attackDice: 2,
+        hitFaces: 2,
+        bounty: 3,
+        abilityUses: {}
+      }
+    };
+
+    let state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(11),
+      board,
+      modifiers: []
+    };
+
+    state = applyChampionDeployment(
+      state,
+      "c1",
+      "champion.bastion.ironclad_warden",
+      "p2"
+    );
+
+    const resolved = resolveBattleAtHex(state, hexKey);
+    const champion = resolved.board.units["c1"];
+
+    expect(champion?.kind).toBe("champion");
+    if (champion && champion.kind === "champion") {
+      expect(champion.hp).toBe(6);
+    }
+    expect(resolved.board.units["f2"]).toBeUndefined();
+  });
+
+  it("applies Assassin's Edge before combat round 1", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        p1: ["c1"],
+        p2: ["c2"]
+      }
+    };
+    board.units = {
+      c1: {
+        id: "c1",
+        ownerPlayerId: "p1",
+        kind: "champion",
+        hex: hexKey,
+        cardDefId: "champion.veil.shadeblade",
+        hp: 3,
+        maxHp: 3,
+        attackDice: 0,
+        hitFaces: 0,
+        bounty: 3,
+        abilityUses: {}
+      },
+      c2: {
+        id: "c2",
+        ownerPlayerId: "p2",
+        kind: "champion",
+        hex: hexKey,
+        cardDefId: "champion.bastion.ironclad_warden",
+        hp: 3,
+        maxHp: 3,
+        attackDice: 0,
+        hitFaces: 0,
+        bounty: 2,
+        abilityUses: {}
+      }
+    };
+
+    let state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(12),
+      board,
+      modifiers: []
+    };
+
+    state = applyChampionDeployment(state, "c1", "champion.veil.shadeblade", "p1");
+
+    const resolved = resolveBattleAtHex(state, hexKey);
+    const enemy = resolved.board.units["c2"];
+    const shadeblade = resolved.board.units["c1"];
+
+    expect(enemy?.kind).toBe("champion");
+    if (enemy && enemy.kind === "champion") {
+      expect(enemy.hp).toBe(2);
+    }
+    expect(shadeblade?.kind).toBe("champion");
+    if (shadeblade && shadeblade.kind === "champion") {
+      expect(shadeblade.abilityUses["assassins_edge"]?.remaining).toBe(0);
+    }
   });
 
   it("applies bastion shield wall to defender forces in round 1", () => {

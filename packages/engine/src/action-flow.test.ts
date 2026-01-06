@@ -4,7 +4,15 @@ import { describe, expect, it } from "vitest";
 import type { BoardState, EdgeKey, GameState, HexKey } from "./types";
 import { createCardInstance, createCardInstances } from "./cards";
 import { getCardDef } from "./content/cards";
-import { applyCommand, createNewGame, DEFAULT_CONFIG, getBridgeKey, runUntilBlocked } from "./index";
+import {
+  applyCommand,
+  countPlayersOnHex,
+  createNewGame,
+  DEFAULT_CONFIG,
+  getBridgeKey,
+  runUntilBlocked
+} from "./index";
+import { applyChampionDeployment } from "./champions";
 import { addForcesToHex } from "./units";
 
 const pickStartingEdges = (capital: HexKey, board: BoardState): EdgeKey[] => {
@@ -388,6 +396,96 @@ describe("action flow", () => {
     const toHex = state.board.hexes[to];
     expect(fromHex.occupants["p1"]?.length ?? 0).toBe(0);
     expect(toHex.occupants["p1"]?.length ?? 0).toBe(4);
+  });
+
+  it("allows flight champions to march without bridges", () => {
+    let { state } = setupToActionPhase();
+
+    let fromHex: HexKey | null = null;
+    let toHex: HexKey | null = null;
+    for (const hex of Object.values(state.board.hexes)) {
+      if (countPlayersOnHex(hex) > 0) {
+        continue;
+      }
+      const neighbors = neighborHexKeys(hex.key).filter((key) => Boolean(state.board.hexes[key]));
+      for (const neighbor of neighbors) {
+        const neighborHex = state.board.hexes[neighbor];
+        if (!neighborHex || countPlayersOnHex(neighborHex) > 0) {
+          continue;
+        }
+        const edgeKey = getBridgeKey(hex.key, neighbor);
+        if (state.board.bridges[edgeKey]) {
+          continue;
+        }
+        fromHex = hex.key;
+        toHex = neighbor;
+        break;
+      }
+      if (fromHex && toHex) {
+        break;
+      }
+    }
+
+    if (!fromHex || !toHex) {
+      throw new Error("no open adjacent hex pair without bridges");
+    }
+
+    const championId = "c_flight";
+    const champion = {
+      id: championId,
+      ownerPlayerId: "p1",
+      kind: "champion" as const,
+      hex: fromHex,
+      cardDefId: "champion.aerial.skystriker_ace",
+      hp: 4,
+      maxHp: 4,
+      attackDice: 2,
+      hitFaces: 3,
+      bounty: 3,
+      abilityUses: {}
+    };
+
+    const fromStateHex = state.board.hexes[fromHex];
+    const updatedFromHex = {
+      ...fromStateHex,
+      occupants: {
+        ...fromStateHex.occupants,
+        p1: [championId]
+      }
+    };
+
+    state = {
+      ...state,
+      board: {
+        ...state.board,
+        units: {
+          ...state.board.units,
+          [championId]: champion
+        },
+        hexes: {
+          ...state.board.hexes,
+          [fromHex]: updatedFromHex
+        }
+      }
+    };
+    state = applyChampionDeployment(state, championId, champion.cardDefId, "p1");
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: { kind: "basic", action: { kind: "march", from: fromHex, to: toHex } }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const moved = state.board.units[championId];
+    expect(moved?.hex).toBe(toHex);
+    expect(state.board.hexes[fromHex].occupants["p1"] ?? []).not.toContain(championId);
+    expect(state.board.hexes[toHex].occupants["p1"] ?? []).toContain(championId);
   });
 
   it("plays a stack-move card along a bridge", () => {

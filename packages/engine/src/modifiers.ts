@@ -6,6 +6,7 @@ import type {
   GameState,
   HexKey,
   Modifier,
+  MoveContext,
   ModifierEventHook,
   ModifierHooks,
   ModifierQueryHook
@@ -114,6 +115,20 @@ export const applyModifierQuery = <TContext, TValue>(
   return value;
 };
 
+export const getMoveRequiresBridge = (
+  state: GameState,
+  context: MoveContext,
+  base: boolean
+): boolean => {
+  return applyModifierQuery(
+    state,
+    state.modifiers,
+    (hooks) => hooks.getMoveRequiresBridge,
+    context,
+    base
+  );
+};
+
 export const runModifierEvents = <TContext>(
   state: GameState,
   modifiers: Modifier[],
@@ -143,5 +158,6 @@ export type {
   CombatAssignmentContext,
   CombatEndContext,
   CombatRoundContext,
-  CombatUnitContext
+  CombatUnitContext,
+  MoveContext
 };

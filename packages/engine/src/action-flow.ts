@@ -16,6 +16,7 @@ import { resolveImmediateBattles } from "./combat";
 import type { CardDef } from "./content/cards";
 import { getCardDef } from "./content/cards";
 import { emit } from "./events";
+import { getMoveRequiresBridge } from "./modifiers";
 import { addForcesToHex, countPlayerChampions, moveStack } from "./units";
 
 const BASIC_ACTION_MANA_COST = 1;
@@ -135,11 +136,17 @@ const canMarch = (state: GameState, playerId: PlayerID, from: string, to: string
     return false;
   }
 
-  if (!hasBridge(state.board, from, to)) {
+  if (!isOccupiedByPlayer(fromHex, playerId)) {
     return false;
   }
 
-  if (!isOccupiedByPlayer(fromHex, playerId)) {
+  const movingUnitIds = fromHex.occupants[playerId] ?? [];
+  const requiresBridge = getMoveRequiresBridge(
+    state,
+    { playerId, from, to, path: [from, to], movingUnitIds },
+    true
+  );
+  if (requiresBridge && !hasBridge(state.board, from, to)) {
     return false;
   }
 
