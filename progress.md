@@ -17,6 +17,7 @@
 
 ## Active tasks
 none
+- owner: agent2 | scope: make action-step status more obvious in player list (summary + row highlight) | files: apps/web/src/components/GameScreen.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md | status: in progress
 
 ## Milestone 8.5 progress
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.
@@ -77,6 +78,7 @@ none
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
+- Rewrote Milestone 9 notes into a coherent checklist in `implementation_plan.md`.
 - Marked the Milestone 7 champion ability hook tasks complete in `implementation_plan.md`.
 - Converted Milestone 6.5 notes into checklist tasks and marked the market quick-bid UX item complete in `implementation_plan.md`.
 - Expanded the Milestone 5.5 phase-focused layout task with subitems and marked the focus row/log+player move subtasks complete.

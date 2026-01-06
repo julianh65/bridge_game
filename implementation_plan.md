@@ -455,19 +455,16 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 ## Milestone 9 — Add Polish
 
-Make this flow nicely, make the battles cool, make everything work. Do a refresh of the UI. As cards are being played in the action phase all players should be "watching" to see what everyone did. It should feel smooth and fun. Make the bridges look nicer and add a bit of padding between the hexes to give it that shattered plains look. The dice rolls during battle should be they need to click to roll dice and we see the hits gets assigned and everyone is watching type vibe.
-
-Is there a way to edit the board state for host directly? For me probably in case I run test games and cards don't do what's expected? Only do this if it's easy. Is the state stored as json or what?
-
-Low priority but add a test for each card effect / card
-
-Also we need a good victory screen!
-
-We should add nicer displays for the units / champions on the board and the factions.
-
-Note: Factions should be mutually exclusive, two people can't pick the same faction
-
-I'd like there to be an animation when the cards are drawn and you can see the draw and discard decks on either side along with the direction and how many cards are in each
+### Tasks
+- [ ] Refresh the game flow and UI so action-phase play feels smooth, with a clear “everyone watching” reveal of what each player did.
+- [ ] Improve board visuals: nicer bridges and a bit of padding between hexes for a shattered plains look.
+- [ ] Add battle UX: click-to-roll dice with shared roll animations and visible hit assignment.
+- [ ] Add a host-only board state editor/debug panel (JSON view + light patch tools) for test games, only if it stays simple.
+- [ ] Add a victory screen (winner, final VP, recap, rematch/exit).
+- [ ] Upgrade on-board visuals for units/champions/factions (distinct tokens, faction badges).
+- [ ] Enforce faction uniqueness in setup (no duplicate faction picks).
+- [ ] Add deck UI with draw/discard piles, counts, direction arrows, and draw/discard animations.
+- [ ] Low priority: add at least one targeted test for each card effect/card.
 
 ## Milestone 9.5 -- Card Art + Description
 
