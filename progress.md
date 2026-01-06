@@ -8,7 +8,7 @@
 - Updated board radius defaults (3-player radius 4) in `DEFAULT_CONFIG`, `technical_spec.md`, and `rules_draft.md`.
 
 ## Active tasks
-- agent-2: Implement immediate battle resolution for contested non-capital hexes and siege resolution at end of action phase (tests included). Files: packages/engine/src/combat.ts, packages/engine/src/action-flow.ts, packages/engine/src/engine.ts, packages/engine/src/*.test.ts. Status: in progress.
+- (none)
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.
@@ -43,6 +43,7 @@
 - Implemented round reset phase logic (income, mana reset, draw to 6 with hand-limit overflow) and wired `runUntilBlocked` to auto-advance into `round.market`.
 - Added action step declarations block with basic actions (build bridge, march 1, capital reinforce), auto-advancing `round.market` -> `round.action`, plus tests.
 - Round reset now rotates `leadSeatIndex` by round, with tests.
+- Added combat resolution for contested non-capital hexes and sieges at end of action phase; `runUntilBlocked` now advances into `round.collection`.
 
 ## Content system progress
 - Added starter card data modules and a registry under `packages/engine/src/content/cards`.

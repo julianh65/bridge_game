@@ -19,6 +19,7 @@ import {
 } from "./setup-flow";
 import { applyRoundReset } from "./round-flow";
 import { applyActionDeclaration, createActionStepBlock, resolveActionStep } from "./action-flow";
+import { resolveSieges } from "./combat";
 
 const createPlayerState = (player: LobbyPlayer, seatIndex: number, startingGold: number): PlayerState => {
   return {
@@ -140,7 +141,8 @@ export const runUntilBlocked = (state: GameState): GameState => {
         if (!block) {
           nextState = {
             ...nextState,
-            phase: "round.sieges"
+            phase: "round.sieges",
+            blocks: undefined
           };
           continue;
         }
@@ -164,6 +166,16 @@ export const runUntilBlocked = (state: GameState): GameState => {
       }
 
       return nextState;
+    }
+
+    if (nextState.phase === "round.sieges") {
+      nextState = resolveSieges(nextState);
+      nextState = {
+        ...nextState,
+        phase: "round.collection",
+        blocks: undefined
+      };
+      continue;
     }
 
     if (nextState.phase !== "setup") {

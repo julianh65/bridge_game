@@ -9,6 +9,7 @@ import type {
   PlayerState
 } from "./types";
 import { getBridgeKey, hasBridge, isOccupiedByPlayer, wouldExceedTwoPlayers } from "./board";
+import { resolveImmediateBattles } from "./combat";
 import { addForcesToHex, moveStack } from "./units";
 
 const BASIC_ACTION_MANA_COST = 1;
@@ -143,6 +144,7 @@ export const resolveActionStep = (
     }
 
     nextState = resolveBasicAction(nextState, player.id, declaration.action);
+    nextState = resolveImmediateBattles(nextState);
   }
 
   return nextState;

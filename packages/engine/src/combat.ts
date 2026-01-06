@@ -1,0 +1,289 @@
+import { compareHexKeys, randInt, rollDie } from "@bridgefront/shared";
+
+import type {
+  ChampionUnitState,
+  GameState,
+  HexKey,
+  PlayerID,
+  UnitID,
+  UnitState
+} from "./types";
+import { getPlayerIdsOnHex, isContestedHex } from "./board";
+
+const FORCE_HIT_FACES = 2;
+
+type HitRollResult = {
+  hits: number;
+  nextState: GameState["rngState"];
+};
+
+type HitAssignmentResult = {
+  hitsByUnit: Record<UnitID, number>;
+  nextState: GameState["rngState"];
+};
+
+type HitResolution = {
+  removedUnitIds: UnitID[];
+  updatedChampions: Record<UnitID, ChampionUnitState>;
+  bounty: number;
+};
+
+const rollHitsForUnits = (
+  unitIds: UnitID[],
+  units: Record<UnitID, UnitState>,
+  rngState: GameState["rngState"]
+): HitRollResult => {
+  let hits = 0;
+  let nextState = rngState;
+
+  for (const unitId of unitIds) {
+    const unit = units[unitId];
+    if (!unit) {
+      continue;
+    }
+
+    if (unit.kind === "force") {
+      const roll = rollDie(nextState);
+      nextState = roll.next;
+      if (roll.value <= FORCE_HIT_FACES) {
+        hits += 1;
+      }
+      continue;
+    }
+
+    for (let i = 0; i < unit.attackDice; i += 1) {
+      const roll = rollDie(nextState);
+      nextState = roll.next;
+      if (roll.value <= unit.hitFaces) {
+        hits += 1;
+      }
+    }
+  }
+
+  return { hits, nextState };
+};
+
+const assignHits = (
+  unitIds: UnitID[],
+  hits: number,
+  rngState: GameState["rngState"]
+): HitAssignmentResult => {
+  const hitsByUnit: Record<UnitID, number> = {};
+  let nextState = rngState;
+
+  if (hits <= 0 || unitIds.length === 0) {
+    return { hitsByUnit, nextState };
+  }
+
+  for (let i = 0; i < hits; i += 1) {
+    const roll = randInt(nextState, 0, unitIds.length - 1);
+    nextState = roll.next;
+    const targetId = unitIds[roll.value];
+    hitsByUnit[targetId] = (hitsByUnit[targetId] ?? 0) + 1;
+  }
+
+  return { hitsByUnit, nextState };
+};
+
+const resolveHits = (
+  unitIds: UnitID[],
+  hitsByUnit: Record<UnitID, number>,
+  units: Record<UnitID, UnitState>
+): HitResolution => {
+  const removedUnitIds: UnitID[] = [];
+  const updatedChampions: Record<UnitID, ChampionUnitState> = {};
+  let bounty = 0;
+
+  for (const unitId of unitIds) {
+    const hits = hitsByUnit[unitId] ?? 0;
+    if (hits <= 0) {
+      continue;
+    }
+    const unit = units[unitId];
+    if (!unit) {
+      continue;
+    }
+
+    if (unit.kind === "force") {
+      removedUnitIds.push(unitId);
+      continue;
+    }
+
+    const nextHp = unit.hp - hits;
+    if (nextHp <= 0) {
+      removedUnitIds.push(unitId);
+      bounty += unit.bounty;
+      continue;
+    }
+
+    updatedChampions[unitId] = {
+      ...unit,
+      hp: nextHp
+    };
+  }
+
+  return { removedUnitIds, updatedChampions, bounty };
+};
+
+const applyBounty = (state: GameState, playerId: PlayerID, amount: number): GameState => {
+  if (amount <= 0) {
+    return state;
+  }
+
+  return {
+    ...state,
+    players: state.players.map((player) =>
+      player.id === playerId
+        ? {
+            ...player,
+            resources: {
+              ...player.resources,
+              gold: player.resources.gold + amount
+            }
+          }
+        : player
+    )
+  };
+};
+
+export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState => {
+  const hex = state.board.hexes[hexKey];
+  if (!hex) {
+    return state;
+  }
+
+  const participants = getPlayerIdsOnHex(hex);
+  if (participants.length !== 2) {
+    return state;
+  }
+
+  let nextState = state;
+  let nextBoard = state.board;
+  let nextUnits = state.board.units;
+  let rngState = state.rngState;
+
+  while (true) {
+    const currentHex = nextBoard.hexes[hexKey];
+    if (!currentHex) {
+      return nextState;
+    }
+
+    const attackers = currentHex.occupants[participants[0]] ?? [];
+    const defenders = currentHex.occupants[participants[1]] ?? [];
+    if (attackers.length === 0 || defenders.length === 0) {
+      break;
+    }
+
+    const attackerRoll = rollHitsForUnits(attackers, nextUnits, rngState);
+    rngState = attackerRoll.nextState;
+    const defenderRoll = rollHitsForUnits(defenders, nextUnits, rngState);
+    rngState = defenderRoll.nextState;
+
+    const assignedToDefenders = assignHits(defenders, attackerRoll.hits, rngState);
+    rngState = assignedToDefenders.nextState;
+    const assignedToAttackers = assignHits(attackers, defenderRoll.hits, rngState);
+    rngState = assignedToAttackers.nextState;
+
+    const attackerHits = resolveHits(attackers, assignedToAttackers.hitsByUnit, nextUnits);
+    const defenderHits = resolveHits(defenders, assignedToDefenders.hitsByUnit, nextUnits);
+
+    const removedSet = new Set<UnitID>([
+      ...attackerHits.removedUnitIds,
+      ...defenderHits.removedUnitIds
+    ]);
+
+    const updatedUnits: Record<UnitID, UnitState> = { ...nextUnits };
+    for (const unitId of removedSet) {
+      delete updatedUnits[unitId];
+    }
+    for (const [unitId, champion] of Object.entries(attackerHits.updatedChampions)) {
+      updatedUnits[unitId] = champion;
+    }
+    for (const [unitId, champion] of Object.entries(defenderHits.updatedChampions)) {
+      updatedUnits[unitId] = champion;
+    }
+
+    const updatedHex = {
+      ...currentHex,
+      occupants: {
+        ...currentHex.occupants,
+        [participants[0]]: attackers.filter((unitId) => !removedSet.has(unitId)),
+        [participants[1]]: defenders.filter((unitId) => !removedSet.has(unitId))
+      }
+    };
+
+    nextBoard = {
+      ...nextBoard,
+      units: updatedUnits,
+      hexes: {
+        ...nextBoard.hexes,
+        [hexKey]: updatedHex
+      }
+    };
+    nextUnits = updatedUnits;
+    nextState = {
+      ...nextState,
+      board: nextBoard,
+      rngState
+    };
+
+    if (defenderHits.bounty > 0) {
+      nextState = applyBounty(nextState, participants[0], defenderHits.bounty);
+    }
+    if (attackerHits.bounty > 0) {
+      nextState = applyBounty(nextState, participants[1], attackerHits.bounty);
+    }
+
+    nextBoard = nextState.board;
+    nextUnits = nextState.board.units;
+  }
+
+  return {
+    ...nextState,
+    rngState
+  };
+};
+
+export const resolveImmediateBattles = (state: GameState): GameState => {
+  const contested = Object.values(state.board.hexes)
+    .filter((hex) => hex.tile !== "capital" && isContestedHex(hex))
+    .map((hex) => hex.key)
+    .sort(compareHexKeys);
+
+  let nextState = state;
+  for (const hexKey of contested) {
+    nextState = resolveBattleAtHex(nextState, hexKey);
+  }
+
+  return nextState;
+};
+
+export const resolveSieges = (state: GameState): GameState => {
+  const seatIndexByPlayer = new Map<PlayerID, number>();
+  for (const player of state.players) {
+    seatIndexByPlayer.set(player.id, player.seatIndex);
+  }
+
+  const contestedCapitals = Object.values(state.board.hexes)
+    .filter((hex) => hex.tile === "capital" && isContestedHex(hex) && hex.ownerPlayerId)
+    .map((hex) => ({
+      key: hex.key,
+      defenderId: hex.ownerPlayerId as PlayerID
+    }))
+    .filter((entry) => seatIndexByPlayer.has(entry.defenderId))
+    .sort((a, b) => {
+      const seatA = seatIndexByPlayer.get(a.defenderId) ?? 0;
+      const seatB = seatIndexByPlayer.get(b.defenderId) ?? 0;
+      if (seatA !== seatB) {
+        return seatA - seatB;
+      }
+      return compareHexKeys(a.key, b.key);
+    });
+
+  let nextState = state;
+  for (const entry of contestedCapitals) {
+    nextState = resolveBattleAtHex(nextState, entry.key);
+  }
+
+  return nextState;
+};
