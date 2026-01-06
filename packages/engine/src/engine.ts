@@ -144,7 +144,7 @@ export const createNewGame = (
   );
   const radius = config.boardRadiusByPlayerCount[playerCount] ?? 0;
   const board = createBaseBoard(radius);
-  const capitalSlots = getCapitalSlots(playerCount, radius);
+  const capitalSlots = getCapitalSlots(playerCount, radius, config.capitalSlotsByPlayerCount);
 
   const state: GameState = {
     config,
@@ -403,7 +403,11 @@ export const runUntilBlocked = (state: GameState): GameState => {
     }
 
     if (!nextState.blocks) {
-      const capitalSlots = getCapitalSlots(nextState.players.length, nextState.board.radius);
+      const capitalSlots = getCapitalSlots(
+        nextState.players.length,
+        nextState.board.radius,
+        nextState.config.capitalSlotsByPlayerCount
+      );
       return {
         ...nextState,
         blocks: createCapitalDraftBlock(nextState.players, capitalSlots)

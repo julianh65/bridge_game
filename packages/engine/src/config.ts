@@ -9,11 +9,11 @@ export const DEFAULT_CONFIG: GameConfig = {
   ROUNDS_MAX: 10,
   VP_TO_WIN: 8,
   boardRadiusByPlayerCount: {
-    2: 4,
-    3: 4,
-    4: 5,
-    5: 5,
-    6: 5
+    2: 3,
+    3: 3,
+    4: 4,
+    5: 4,
+    6: 4
   },
   tileCountsByPlayerCount: {
     2: { mines: 3, forges: 1, center: 1 },
@@ -21,6 +21,29 @@ export const DEFAULT_CONFIG: GameConfig = {
     4: { mines: 5, forges: 2, center: 1 },
     5: { mines: 6, forges: 3, center: 1 },
     6: { mines: 7, forges: 3, center: 1 }
+  },
+  capitalSlotsByPlayerCount: {
+    2: ["3,0", "-3,0"],
+    3: ["3,0", "-3,3", "0,-3"],
+    4: ["4,0", "0,4", "-4,0", "0,-4"],
+    5: ["4,0", "0,4", "-4,4", "-4,0", "0,-4"],
+    6: ["4,0", "0,4", "-4,4", "-4,0", "0,-4", "4,-4"]
+  },
+  boardGenerationRules: {
+    minDistanceFromCapital: 2,
+    forgeDistanceFromCenter: [2, 3],
+    mineDistanceFromCenter: [2],
+    homeMineDistanceFromCapital: 2,
+    homeMineMinDistanceFromOtherCapitals: 2,
+    minForgeSpacing: 0,
+    minMineSpacing: 0,
+    maxAttempts: 50,
+    topK: 5,
+    mineValueWeights: [
+      { value: 4, weight: 50 },
+      { value: 5, weight: 30 },
+      { value: 6, weight: 20 }
+    ]
   },
   ageByRound: {
     1: "I",

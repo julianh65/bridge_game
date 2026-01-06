@@ -20,6 +20,7 @@ export {
 export type {
   Age,
   Bid,
+  BoardGenerationRules,
   BlockState,
   BoardState,
   CardDefId,
@@ -33,6 +34,7 @@ export type {
   GameView,
   HexKey,
   LobbyPlayer,
+  MineValueWeight,
   MarketRowCard,
   MarketState,
   Modifier,

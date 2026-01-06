@@ -64,6 +64,7 @@ The aim is to reach “playable with friends” quickly while preserving a clean
 
 ### Tasks
 - [x] Implement capital slot logic per player count.
+- [x] Make board generation rules configurable via `DEFAULT_CONFIG` (capital slots + placement rules).
 - [ ] Implement pre-game screen and logic, faction choosing, settings choosing (leave these blank / placeholder for now), a ready up and start game system
 - [x] Implement capital draft block and command:
   - `SubmitSetupChoice { kind: "pickCapital", hexKey }`

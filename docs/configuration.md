@@ -1,0 +1,57 @@
+# Configuration Guide
+
+This project keeps gameplay tuning in `packages/engine/src/config.ts` as `DEFAULT_CONFIG`.
+Edit that file to adjust rules and regenerate the board in the debug UI.
+
+## Key config sections
+
+### Board size and capitals
+- `boardRadiusByPlayerCount`: radius per player count.
+- `capitalSlotsByPlayerCount`: explicit `HexKey` lists for each player count.
+  - `HexKey` format is `"q,r"` (axial coordinates).
+  - Make sure each slot is within the board radius and that you provide exactly
+    one slot per player.
+
+Example:
+```ts
+capitalSlotsByPlayerCount: {
+  2: ["3,0", "-3,0"],
+  3: ["3,0", "-3,3", "0,-3"]
+}
+```
+
+### Special tile placement rules
+`boardGenerationRules` controls how forges and mines are placed:
+- `minDistanceFromCapital`: minimum distance from any capital for special tiles.
+- `forgeDistanceFromCenter`: allowed distances from center for forge candidates.
+- `mineDistanceFromCenter`: allowed distances from center for remaining mines.
+- `homeMineDistanceFromCapital`: exact distance from the owning capital.
+- `homeMineMinDistanceFromOtherCapitals`: minimum distance from other capitals.
+- `minForgeSpacing` / `minMineSpacing`: optional minimum spacing between same-type tiles.
+  - Use `0` to disable strict spacing (only heuristic spread).
+- `maxAttempts` / `topK`: retries and spread heuristic breadth.
+- `mineValueWeights`: weighted mine values.
+
+Example:
+```ts
+boardGenerationRules: {
+  minDistanceFromCapital: 2,
+  forgeDistanceFromCenter: [2, 3],
+  mineDistanceFromCenter: [2],
+  homeMineDistanceFromCapital: 2,
+  homeMineMinDistanceFromOtherCapitals: 2,
+  minForgeSpacing: 0,
+  minMineSpacing: 0,
+  maxAttempts: 50,
+  topK: 5,
+  mineValueWeights: [
+    { value: 4, weight: 50 },
+    { value: 5, weight: 30 },
+    { value: 6, weight: 20 }
+  ]
+}
+```
+
+## Where this is used
+- The early debug UI in `apps/web` reads `DEFAULT_CONFIG` to render the board.
+- The engine uses the same config when setting up a new game.

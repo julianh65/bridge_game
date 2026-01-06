@@ -28,6 +28,24 @@ export type TileCounts = {
   center: number;
 };
 
+export type MineValueWeight = {
+  value: number;
+  weight: number;
+};
+
+export type BoardGenerationRules = {
+  minDistanceFromCapital: number;
+  forgeDistanceFromCenter: number[];
+  mineDistanceFromCenter: number[];
+  homeMineDistanceFromCapital: number;
+  homeMineMinDistanceFromOtherCapitals: number;
+  minForgeSpacing: number;
+  minMineSpacing: number;
+  maxAttempts: number;
+  topK: number;
+  mineValueWeights: MineValueWeight[];
+};
+
 export type GameConfig = {
   MAX_MANA: number;
   START_GOLD: number;
@@ -38,6 +56,8 @@ export type GameConfig = {
   VP_TO_WIN: number;
   boardRadiusByPlayerCount: Record<number, number>;
   tileCountsByPlayerCount: Record<number, TileCounts>;
+  capitalSlotsByPlayerCount: Record<number, HexKey[]>;
+  boardGenerationRules: BoardGenerationRules;
   ageByRound: Record<number, Age>;
   marketPreviewByRound: Record<number, number>;
   freeStartingCardPool: CardDefId[];

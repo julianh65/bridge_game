@@ -33,7 +33,11 @@ const buildBoard = (playerCount: number, seedInput: string) => {
   const seedValue = Number.isFinite(seed) ? seed : 0;
   const radius = DEFAULT_CONFIG.boardRadiusByPlayerCount[playerCount] ?? 0;
   const board = createBaseBoard(radius);
-  const capitals = getCapitalSlots(playerCount, radius);
+  const capitals = getCapitalSlots(
+    playerCount,
+    radius,
+    DEFAULT_CONFIG.capitalSlotsByPlayerCount
+  );
   const hexes = { ...board.hexes };
   for (const key of capitals) {
     hexes[key] = { ...hexes[key], tile: "capital" };
@@ -46,7 +50,8 @@ const buildBoard = (playerCount: number, seedInput: string) => {
     {
       capitalHexes: capitals,
       forgeCount: DEFAULT_CONFIG.tileCountsByPlayerCount[playerCount].forges,
-      mineCount: DEFAULT_CONFIG.tileCountsByPlayerCount[playerCount].mines
+      mineCount: DEFAULT_CONFIG.tileCountsByPlayerCount[playerCount].mines,
+      rules: DEFAULT_CONFIG.boardGenerationRules
     }
   );
 

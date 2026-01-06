@@ -9,7 +9,13 @@ import {
   type RNGState
 } from "@bridgefront/shared";
 
-import type { BoardState, HexKey, HexState, TileType } from "./types";
+import type {
+  BoardGenerationRules,
+  BoardState,
+  HexKey,
+  HexState,
+  TileType
+} from "./types";
 
 const createHexState = (key: HexKey, tile: TileType): HexState => ({
   key,
@@ -32,7 +38,11 @@ export const createBaseBoard = (radius: number): BoardState => {
   };
 };
 
-export const getCapitalSlots = (playerCount: number, radius: number): HexKey[] => {
+export const getCapitalSlots = (
+  playerCount: number,
+  radius: number,
+  capitalSlotsByPlayerCount?: Record<number, HexKey[]>
+): HexKey[] => {
   if (!Number.isInteger(playerCount)) {
     throw new Error("playerCount must be an integer");
   }
@@ -43,17 +53,22 @@ export const getCapitalSlots = (playerCount: number, radius: number): HexKey[] =
     throw new Error("radius must be a positive integer");
   }
 
-  if (playerCount === 5) {
-    if (radius !== 5) {
-      throw new Error("5-player capital slots require radius 5");
+  const override = capitalSlotsByPlayerCount?.[playerCount];
+  if (override && override.length > 0) {
+    if (override.length !== playerCount) {
+      throw new Error("capital slot override length must match player count");
     }
-    return [
-      toHexKey(-5, 0),
-      toHexKey(-4, 5),
-      toHexKey(2, 2),
-      toHexKey(5, -3),
-      toHexKey(1, -5)
-    ];
+    const unique = new Set(override);
+    if (unique.size !== override.length) {
+      throw new Error("capital slot override contains duplicates");
+    }
+    for (const key of override) {
+      const dist = axialDistance(parseHexKey(key), { q: 0, r: 0 });
+      if (dist > radius) {
+        throw new Error(`capital slot ${key} is outside board radius`);
+      }
+    }
+    return [...override];
   }
 
   const corners = [
@@ -72,6 +87,8 @@ export const getCapitalSlots = (playerCount: number, radius: number): HexKey[] =
       return [corners[0], corners[2], corners[4]];
     case 4:
       return [corners[0], corners[1], corners[3], corners[4]];
+    case 5:
+      return corners.slice(0, 5);
     case 6:
       return corners;
     default:
@@ -91,13 +108,10 @@ type SpecialTilePlacementOptions = {
   capitalHexes: HexKey[];
   forgeCount: number;
   mineCount: number;
-  maxAttempts?: number;
-  topK?: number;
+  rules: BoardGenerationRules;
 };
 
 const CENTER_KEY = "0,0";
-const DEFAULT_MAX_ATTEMPTS = 50;
-const DEFAULT_TOP_K = 5;
 
 const cloneBoard = (board: BoardState): BoardState => {
   const hexes: Record<HexKey, HexState> = {};
@@ -134,7 +148,24 @@ const minDistanceToSet = (key: HexKey, others: HexKey[]): number => {
   return min;
 };
 
-const isEligibleForSpecialTile = (key: HexKey, board: BoardState, capitalSet: Set<HexKey>): boolean => {
+const respectsMinDistance = (key: HexKey, others: HexKey[], minDistance: number): boolean => {
+  if (minDistance <= 0) {
+    return true;
+  }
+  for (const other of others) {
+    if (distanceBetweenKeys(key, other) < minDistance) {
+      return false;
+    }
+  }
+  return true;
+};
+
+const isEligibleForSpecialTile = (
+  key: HexKey,
+  board: BoardState,
+  capitalSet: Set<HexKey>,
+  rules: BoardGenerationRules
+): boolean => {
   const hex = board.hexes[key];
   if (!hex) {
     return false;
@@ -147,7 +178,7 @@ const isEligibleForSpecialTile = (key: HexKey, board: BoardState, capitalSet: Se
   }
 
   for (const capital of capitalSet) {
-    if (distanceBetweenKeys(key, capital) < 2) {
+    if (distanceBetweenKeys(key, capital) < rules.minDistanceFromCapital) {
       return false;
     }
   }
@@ -187,15 +218,72 @@ const chooseCandidate = (
   return { key: ranked[index].key, rngState: next };
 };
 
-const rollMineValue = (rngState: RNGState): { value: number; rngState: RNGState } => {
-  const { value: roll, next } = randInt(rngState, 1, 100);
-  if (roll <= 50) {
-    return { value: 4, rngState: next };
+const validateRules = (rules: BoardGenerationRules) => {
+  const ensureNonNegativeInt = (value: number, label: string) => {
+    if (!Number.isInteger(value) || value < 0) {
+      throw new Error(`${label} must be a non-negative integer`);
+    }
+  };
+
+  const ensurePositiveInt = (value: number, label: string) => {
+    if (!Number.isInteger(value) || value <= 0) {
+      throw new Error(`${label} must be a positive integer`);
+    }
+  };
+
+  ensureNonNegativeInt(rules.minDistanceFromCapital, "minDistanceFromCapital");
+  ensureNonNegativeInt(rules.homeMineDistanceFromCapital, "homeMineDistanceFromCapital");
+  ensureNonNegativeInt(
+    rules.homeMineMinDistanceFromOtherCapitals,
+    "homeMineMinDistanceFromOtherCapitals"
+  );
+  ensureNonNegativeInt(rules.minForgeSpacing, "minForgeSpacing");
+  ensureNonNegativeInt(rules.minMineSpacing, "minMineSpacing");
+  ensurePositiveInt(rules.maxAttempts, "maxAttempts");
+  ensurePositiveInt(rules.topK, "topK");
+
+  if (rules.forgeDistanceFromCenter.length === 0) {
+    throw new Error("forgeDistanceFromCenter must not be empty");
   }
-  if (roll <= 80) {
-    return { value: 5, rngState: next };
+  if (rules.mineDistanceFromCenter.length === 0) {
+    throw new Error("mineDistanceFromCenter must not be empty");
   }
-  return { value: 6, rngState: next };
+
+  for (const distance of rules.forgeDistanceFromCenter) {
+    ensureNonNegativeInt(distance, "forgeDistanceFromCenter entry");
+  }
+  for (const distance of rules.mineDistanceFromCenter) {
+    ensureNonNegativeInt(distance, "mineDistanceFromCenter entry");
+  }
+
+  if (rules.mineValueWeights.length === 0) {
+    throw new Error("mineValueWeights must not be empty");
+  }
+  for (const weight of rules.mineValueWeights) {
+    ensureNonNegativeInt(weight.value, "mineValueWeights value");
+    ensurePositiveInt(weight.weight, "mineValueWeights weight");
+  }
+};
+
+const rollMineValue = (
+  rngState: RNGState,
+  weights: BoardGenerationRules["mineValueWeights"]
+): { value: number; rngState: RNGState } => {
+  const totalWeight = weights.reduce((sum, entry) => sum + entry.weight, 0);
+  if (totalWeight <= 0) {
+    throw new Error("mineValueWeights must include a positive total weight");
+  }
+
+  const { value: roll, next } = randInt(rngState, 1, totalWeight);
+  let running = 0;
+  for (const entry of weights) {
+    running += entry.weight;
+    if (roll <= running) {
+      return { value: entry.value, rngState: next };
+    }
+  }
+
+  return { value: weights[weights.length - 1].value, rngState: next };
 };
 
 export const placeSpecialTiles = (
@@ -203,13 +291,9 @@ export const placeSpecialTiles = (
   rngState: RNGState,
   options: SpecialTilePlacementOptions
 ): SpecialTilePlacementResult => {
-  const {
-    capitalHexes,
-    forgeCount,
-    mineCount,
-    maxAttempts = DEFAULT_MAX_ATTEMPTS,
-    topK = DEFAULT_TOP_K
-  } = options;
+  const { capitalHexes, forgeCount, mineCount, rules } = options;
+  validateRules(rules);
+  const { maxAttempts, topK } = rules;
 
   if (!Number.isInteger(forgeCount) || forgeCount < 0) {
     throw new Error("forgeCount must be a non-negative integer");
@@ -236,21 +320,23 @@ export const placeSpecialTiles = (
     const mineKeys: HexKey[] = [];
 
     const eligibleKeys = Object.keys(working.hexes)
-      .filter((key) => isEligibleForSpecialTile(key, working, capitalSet))
+      .filter((key) => isEligibleForSpecialTile(key, working, capitalSet, rules))
       .sort(compareHexKeys);
-
-    const forgeCandidates = eligibleKeys.filter((key) => {
-      const dist = distanceBetweenKeys(key, CENTER_KEY);
-      return dist === 2 || dist === 3;
-    });
 
     let placementFailed = false;
     let rng = state;
 
     for (let i = 0; i < forgeCount; i += 1) {
-      const remaining = forgeCandidates.filter(
-        (key) => isEligibleForSpecialTile(key, working, capitalSet)
-      );
+      const remaining = eligibleKeys.filter((key) => {
+        if (!isEligibleForSpecialTile(key, working, capitalSet, rules)) {
+          return false;
+        }
+        const dist = distanceBetweenKeys(key, CENTER_KEY);
+        if (!rules.forgeDistanceFromCenter.includes(dist)) {
+          return false;
+        }
+        return respectsMinDistance(key, forgeKeys, rules.minForgeSpacing);
+      });
       if (remaining.length === 0) {
         placementFailed = true;
         break;
@@ -274,18 +360,21 @@ export const placeSpecialTiles = (
 
     for (const capital of capitalOrder) {
       const candidates = eligibleKeys.filter((key) => {
-        if (!isEligibleForSpecialTile(key, working, capitalSet)) {
+        if (!isEligibleForSpecialTile(key, working, capitalSet, rules)) {
           return false;
         }
-        if (distanceBetweenKeys(key, capital) !== 2) {
+        if (distanceBetweenKeys(key, capital) !== rules.homeMineDistanceFromCapital) {
           return false;
         }
         for (const other of capitalHexes) {
-          if (other !== capital && distanceBetweenKeys(key, other) < 2) {
+          if (
+            other !== capital &&
+            distanceBetweenKeys(key, other) < rules.homeMineMinDistanceFromOtherCapitals
+          ) {
             return false;
           }
         }
-        return true;
+        return respectsMinDistance(key, homeMineKeys, rules.minMineSpacing);
       });
 
       if (candidates.length === 0) {
@@ -310,10 +399,14 @@ export const placeSpecialTiles = (
     const remainingMineCount = mineCount - homeMineKeys.length;
     for (let i = 0; i < remainingMineCount; i += 1) {
       const candidates = eligibleKeys.filter((key) => {
-        if (!isEligibleForSpecialTile(key, working, capitalSet)) {
+        if (!isEligibleForSpecialTile(key, working, capitalSet, rules)) {
           return false;
         }
-        return distanceBetweenKeys(key, CENTER_KEY) === 2;
+        const dist = distanceBetweenKeys(key, CENTER_KEY);
+        if (!rules.mineDistanceFromCenter.includes(dist)) {
+          return false;
+        }
+        return respectsMinDistance(key, [...homeMineKeys, ...mineKeys], rules.minMineSpacing);
       });
 
       if (candidates.length === 0) {
@@ -343,7 +436,7 @@ export const placeSpecialTiles = (
 
     const allMines = [...homeMineKeys, ...mineKeys];
     for (const mine of allMines) {
-      const roll = rollMineValue(rng);
+      const roll = rollMineValue(rng, rules.mineValueWeights);
       rng = roll.rngState;
       working.hexes[mine] = {
         ...working.hexes[mine],
