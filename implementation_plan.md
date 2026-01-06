@@ -320,6 +320,14 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Implement faction passives as permanent modifiers:
   - [x] Bastion Shield Wall
   - [x] Prospect Ore Cut / Mine Militia
+  - [ ] Bastion Home Guard (extra force on capital deploy)
+  - [ ] Assassins Contracts (bonus gold on champion kill)
+  - [ ] Aerial Tailwind (first stack move per round gets +1 hex)
+  - [ ] Aerial Wings (deploy to center as if capital when occupied)
+  - [ ] Miners Deep Tunnels (occupied mines count adjacent/connected)
+  - [ ] Cipher Quiet Study (round-start discard then redraw)
+  - [ ] Cipher Expanded Choice (pick from N+1 when choosing cards)
+  - [ ] Capital occupation VP bonus (+2 temp VP instead of +1)
   - [ ] etc. (start with 1–2 factions but first double check the rules from rules_draft)
 - [x] Support faction starter spell effects with existing primitives (Air Drop deployForces, Rich Veins increaseMineValue).
 - Implement champions:
@@ -332,6 +340,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Flight movement permission override
   - [x] “before combat round 1” damage effect (Assassin’s Edge)
   - [x] Mine Overseer Extraction (+1 mine gold while occupying a mine)
+  - [ ] Expand champion hooks for on-deploy/on-death/on-battle-win, movement exceptions, and conditional dice mods (Archivist Prime, Brute, Traitor, Siege Engineer, Capturer, Bannerman, etc.)
 - [ ] Quick check in, the rules in rules_draft are kind of living and breathing as I update things or change balance so make sure that everything is still correct, and add a few more champions and their abilities and everything in to test
 
 ### Tasks (web)
@@ -347,6 +356,16 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 ## Milestone 7.2 — Factions + champions + modifiers (core “exceptions” framework)
 
 Start going through the rules_draft and adding the logic for the different types of cards, keep track of which have been implemented or not and try to make it as extensible and smart as possible.
+
+### Tasks
+- [ ] Add per-round counters for cards played/discarded (Archivist Prime, Propaganda Recruitment, Future Investment).
+- [ ] Add draw/round-end triggers (on-draw penalties, end-of-round VP awards, marked champion payouts).
+- [ ] Add targeting immunities and marked/contract flags (Ward, Immunity Field, Marked for Coin).
+- [ ] Add movement/adjacency modifiers (bridge lockdown/trap, wormhole links, tunnel network).
+- [ ] Add hit-assignment control + battle retreat effects (Focus Fire, Tactical Hand, Set to Skirmish).
+- [ ] Add multi-target/multi-stack actions (move two stacks, build multiple bridges, deploy to multiple mines).
+- [ ] Add variable VP sources (Victory +2, center-based VP, timer VP).
+- [ ] Add champion recall + removal effects (return champion to hand, on-death penalties).
 
 
 ## Milestone 7.5 — Script to Generate Art for Cards
@@ -377,6 +396,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - Expand Age I market cards first (the ones that touch your most-used primitives).
   - [x] Added Flank Step, Scavenger's Market, Supply Ledger, Patrol Record (existing effects only).
   - [x] Added Banner Claim (Victory: move 1 stack 1 hex along a Bridge).
+- Expand Age II/III market + power deck lists to match the latest rules_draft (including power champions and burn-heavy cards).
 - [x] Add “smoke sim” tests:
   - random legal commands for N steps should not crash
 - [x] Add dev-only debug tools:

@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent-2] Review `rules_draft.md` for new card/rules changes and add any major missing tasks to `implementation_plan.md`. Files: `rules_draft.md`, `implementation_plan.md`, `progress.md` (status: claimed)
+none
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -64,6 +64,7 @@
 - Converted Milestone 6.5 notes into checklist tasks and marked the market quick-bid UX item complete in `implementation_plan.md`.
 - Expanded the Milestone 5.5 phase-focused layout task with subitems and marked the focus row/log+player move subtasks complete.
 - Noted Banner Claim addition under the Milestone 8 Age I market expansion tasks in `implementation_plan.md`.
+- Reviewed the latest `rules_draft.md` card updates and added missing plan items (remaining faction passives, champion hook expansion, new card effect primitives, Age II/III + power deck expansion).
 - Added guidance to `agent_instructions.md` on reconciling other-agent/tooling changes.
 - Updated `agent_instructions.md` to require logging task scope/files in `progress.md` before coding and clearing entries after completion.
 - Added git hygiene guidance in `agent_instructions.md` to minimize user interruptions and preserve work.
