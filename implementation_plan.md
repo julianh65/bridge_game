@@ -303,10 +303,10 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - Prospect Ore Cut / Mine Militia
   - etc. (start with 1–2 factions but first double check the rules from rules_draft)
 - Implement champions:
-  - play champion card => spawn champion unit
-  - champion gold cost scaling by “nth champion currently controlled”
-  - champion limit
-  - champion cards always burn after play
+  - [x] play champion card => spawn champion unit
+  - [x] champion gold cost scaling by “nth champion currently controlled”
+  - [x] champion limit
+  - [x] champion cards always burn after play
 - Implement a few champion abilities using hooks:
   - Bodyguard redirect
   - Flight movement permission override

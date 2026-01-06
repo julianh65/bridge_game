@@ -16,7 +16,7 @@ import { resolveImmediateBattles } from "./combat";
 import type { CardDef } from "./content/cards";
 import { getCardDef } from "./content/cards";
 import { emit } from "./events";
-import { addForcesToHex, moveStack } from "./units";
+import { addForcesToHex, countPlayerChampions, moveStack } from "./units";
 
 const BASIC_ACTION_MANA_COST = 1;
 const REINFORCE_GOLD_COST = 1;
@@ -40,13 +40,34 @@ const getCardDefinition = (state: GameState, cardInstanceId: string) => {
   return getCardDef(instance.defId) ?? null;
 };
 
-const getDeclarationCost = (state: GameState, declaration: ActionDeclaration): ActionCost => {
+const getChampionGoldCost = (card: CardDef, championCount: number): number => {
+  if (card.type !== "Champion" || !card.champion) {
+    return 0;
+  }
+  const costs = card.champion.goldCostByChampionCount;
+  if (!Array.isArray(costs) || costs.length === 0) {
+    return 0;
+  }
+  const index = Math.min(Math.max(0, championCount), costs.length - 1);
+  const cost = Number(costs[index]);
+  return Number.isFinite(cost) && cost > 0 ? cost : 0;
+};
+
+const getDeclarationCost = (
+  state: GameState,
+  playerId: PlayerID,
+  declaration: ActionDeclaration
+): ActionCost => {
   if (declaration.kind === "card") {
     const card = getCardDefinition(state, declaration.cardInstanceId);
     if (!card) {
       return { mana: 0, gold: 0 };
     }
-    return { mana: card.cost.mana, gold: card.cost.gold ?? 0 };
+    const championGold =
+      card.type === "Champion"
+        ? getChampionGoldCost(card, countPlayerChampions(state.board, playerId))
+        : 0;
+    return { mana: card.cost.mana, gold: (card.cost.gold ?? 0) + championGold };
   }
 
   if (declaration.kind === "basic") {
@@ -269,7 +290,7 @@ export const applyActionDeclaration = (
     return state;
   }
 
-  const cost = getDeclarationCost(state, declaration);
+  const cost = getDeclarationCost(state, playerId, declaration);
   if (player.resources.mana < cost.mana || player.resources.gold < cost.gold) {
     return state;
   }

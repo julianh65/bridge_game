@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import type { BoardState, EdgeKey, GameState, HexKey } from "./types";
 import { createCardInstance, createCardInstances } from "./cards";
+import { getCardDef } from "./content/cards";
 import { applyCommand, createNewGame, DEFAULT_CONFIG, getBridgeKey, runUntilBlocked } from "./index";
 import { addForcesToHex } from "./units";
 
@@ -152,6 +153,25 @@ const addCardToHand = (
     },
     instanceId: created.instanceId
   };
+};
+
+const findChampionInHand = (
+  state: GameState,
+  playerId: string
+): { instanceId: string; defId: string } => {
+  const player = state.players.find((entry) => entry.id === playerId);
+  if (!player) {
+    throw new Error(`missing player: ${playerId}`);
+  }
+
+  for (const instanceId of player.deck.hand) {
+    const defId = state.cardsByInstanceId[instanceId]?.defId;
+    if (defId?.startsWith("champion.")) {
+      return { instanceId, defId };
+    }
+  }
+
+  throw new Error("champion card not found in hand");
 };
 
 const addChampionToHex = (
@@ -705,6 +725,101 @@ describe("action flow", () => {
 
     const after = state.board.hexes[neighbor].occupants["p1"]?.length ?? 0;
     expect(after).toBe(before + 1);
+  });
+
+  it("plays a champion card to deploy a champion and scales gold cost", () => {
+    let { state, p1Capital } = setupToActionPhase();
+    const seeded = addChampionToHex(state, "p1", p1Capital);
+    state = seeded.state;
+
+    const championCard = findChampionInHand(state, "p1");
+    const cardDef = getCardDef(championCard.defId);
+    if (!cardDef?.champion) {
+      throw new Error("missing champion card def");
+    }
+
+    const existingChampions = Object.values(state.board.units).filter(
+      (unit) => unit.kind === "champion" && unit.ownerPlayerId === "p1"
+    ).length;
+    const costs = cardDef.champion.goldCostByChampionCount;
+    const expectedGoldCost =
+      costs[Math.min(existingChampions, costs.length - 1)] ?? 0;
+
+    const p1Before = state.players.find((player) => player.id === "p1");
+    if (!p1Before) {
+      throw new Error("missing p1 state");
+    }
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: championCard.instanceId,
+          targets: { hexKey: p1Capital }
+        }
+      },
+      "p1"
+    );
+
+    const p1AfterDeclaration = state.players.find((player) => player.id === "p1");
+    if (!p1AfterDeclaration) {
+      throw new Error("missing p1 state after declaration");
+    }
+    expect(p1AfterDeclaration.resources.mana).toBe(p1Before.resources.mana - cardDef.cost.mana);
+    expect(p1AfterDeclaration.resources.gold).toBe(p1Before.resources.gold - expectedGoldCost);
+
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+    state = runUntilBlocked(state);
+
+    const deployed = Object.values(state.board.units).find(
+      (unit) =>
+        unit.kind === "champion" &&
+        unit.ownerPlayerId === "p1" &&
+        unit.cardDefId === championCard.defId
+    );
+    if (!deployed || deployed.kind !== "champion") {
+      throw new Error("missing deployed champion");
+    }
+    expect(deployed.hex).toBe(p1Capital);
+    expect(deployed.hp).toBe(cardDef.champion.hp);
+    expect(deployed.maxHp).toBe(cardDef.champion.hp);
+  });
+
+  it("blocks champion play when at the champion limit", () => {
+    let { state, p1Capital } = setupToActionPhase();
+    const limit = state.config.CHAMPION_LIMIT;
+    for (let i = 0; i < limit; i += 1) {
+      state = addChampionToHex(state, "p1", p1Capital).state;
+    }
+
+    const championCard = findChampionInHand(state, "p1");
+    const p1Before = state.players.find((player) => player.id === "p1");
+    if (!p1Before) {
+      throw new Error("missing p1 state");
+    }
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: championCard.instanceId,
+          targets: { hexKey: p1Capital }
+        }
+      },
+      "p1"
+    );
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state after limit check");
+    }
+    expect(p1After.resources).toEqual(p1Before.resources);
+    expect(p1After.deck.hand).toContain(championCard.instanceId);
+    expect(state.blocks?.waitingFor ?? []).toContain("p1");
   });
 
   it("plays field medic to heal a champion and caps at max HP", () => {

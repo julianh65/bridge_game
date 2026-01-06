@@ -2,11 +2,18 @@ import type { CardDef } from "./content/cards";
 import { areAdjacent, axialDistance, parseEdgeKey, parseHexKey } from "@bridgefront/shared";
 
 import type { CardPlayTargets, GameState, PlayerID, TileType } from "./types";
-import { getBridgeKey, hasBridge, hasEnemyUnits, isOccupiedByPlayer, wouldExceedTwoPlayers } from "./board";
+import {
+  countPlayersOnHex,
+  getBridgeKey,
+  hasBridge,
+  hasEnemyUnits,
+  isOccupiedByPlayer,
+  wouldExceedTwoPlayers
+} from "./board";
 import { addCardToDiscardPile, addCardToHandWithOverflow, drawCards, takeTopCards } from "./cards";
-import { addForcesToHex } from "./units";
+import { addChampionToHex, addForcesToHex, countPlayerChampions } from "./units";
 
-const SUPPORTED_TARGET_KINDS = new Set(["none", "edge", "stack", "path", "champion", "choice"]);
+const SUPPORTED_TARGET_KINDS = new Set(["none", "edge", "stack", "path", "champion", "choice", "hex"]);
 const SUPPORTED_EFFECTS = new Set([
   "gainGold",
   "drawCards",
@@ -45,6 +52,12 @@ const getEdgeKeyTarget = (targets: CardPlayTargets): string | null => {
   const record = getTargetRecord(targets);
   const edgeKey = record?.edgeKey;
   return typeof edgeKey === "string" && edgeKey.length > 0 ? edgeKey : null;
+};
+
+const getHexKeyTarget = (targets: CardPlayTargets): string | null => {
+  const record = getTargetRecord(targets);
+  const hexKey = record?.hexKey;
+  return typeof hexKey === "string" && hexKey.length > 0 ? hexKey : null;
 };
 
 const getPathTarget = (targets: CardPlayTargets): string[] | null => {
@@ -173,6 +186,62 @@ const getChampionTarget = (
   }
 
   return { unitId, unit };
+};
+
+const getHexTarget = (
+  state: GameState,
+  playerId: PlayerID,
+  targetSpec: TargetRecord,
+  targets: CardPlayTargets
+): { hexKey: string; hex: GameState["board"]["hexes"][string] } | null => {
+  const hexKey = getHexKeyTarget(targets);
+  if (!hexKey) {
+    return null;
+  }
+
+  const hex = state.board.hexes[hexKey];
+  if (!hex) {
+    return null;
+  }
+
+  const owner = typeof targetSpec.owner === "string" ? targetSpec.owner : "any";
+  if (owner !== "self" && owner !== "enemy" && owner !== "any") {
+    return null;
+  }
+
+  if (owner === "self" && !isOccupiedByPlayer(hex, playerId)) {
+    return null;
+  }
+
+  if (owner === "enemy" && !hasEnemyUnits(hex, playerId)) {
+    return null;
+  }
+
+  const requiresOccupied = targetSpec.occupied === true;
+  if (requiresOccupied && countPlayersOnHex(hex) === 0) {
+    return null;
+  }
+
+  const tile = typeof targetSpec.tile === "string" ? targetSpec.tile : null;
+  if (tile && hex.tile !== tile) {
+    return null;
+  }
+
+  if (targetSpec.allowCapital === false && hex.tile === "capital") {
+    return null;
+  }
+
+  const maxDistance =
+    typeof targetSpec.maxDistanceFromFriendlyChampion === "number"
+      ? targetSpec.maxDistanceFromFriendlyChampion
+      : NaN;
+  if (Number.isFinite(maxDistance)) {
+    if (!hasFriendlyChampionWithinRange(state, playerId, hexKey, maxDistance)) {
+      return null;
+    }
+  }
+
+  return { hexKey, hex };
 };
 
 const getBuildBridgePlan = (
@@ -382,20 +451,31 @@ export const isCardPlayable = (
     return false;
   }
 
-  if (card.targetSpec.kind === "none" && targets != null) {
+  const hasEffects = Array.isArray(card.effects) && card.effects.length > 0;
+  const isChampionCard = card.type === "Champion";
+  if (!isChampionCard && !hasEffects) {
     return false;
   }
-
-  if (!card.effects || card.effects.length === 0) {
+  if (hasEffects && !card.effects?.every((effect) => SUPPORTED_EFFECTS.has(effect.kind))) {
     return false;
   }
-
-  if (!card.effects.every((effect) => SUPPORTED_EFFECTS.has(effect.kind))) {
-    return false;
+  if (isChampionCard) {
+    if (!card.champion) {
+      return false;
+    }
+    if (countPlayerChampions(state.board, playerId) >= state.config.CHAMPION_LIMIT) {
+      return false;
+    }
   }
 
   if (card.targetSpec.kind === "none") {
     return targets == null;
+  }
+
+  if (card.targetSpec.kind === "hex") {
+    return Boolean(
+      getHexTarget(state, playerId, card.targetSpec as TargetRecord, targets ?? null)
+    );
   }
 
   if (card.targetSpec.kind === "edge") {
@@ -664,6 +744,27 @@ export const resolveCardEffects = (
   targets?: CardPlayTargets
 ): GameState => {
   let nextState = state;
+
+  if (card.type === "Champion" && card.champion) {
+    const target = getHexTarget(
+      nextState,
+      playerId,
+      card.targetSpec as TargetRecord,
+      targets ?? null
+    );
+    if (target) {
+      nextState = {
+        ...nextState,
+        board: addChampionToHex(nextState.board, playerId, target.hexKey, {
+          cardDefId: card.id,
+          hp: card.champion.hp,
+          attackDice: card.champion.attackDice,
+          hitFaces: card.champion.hitFaces,
+          bounty: card.champion.bounty
+        })
+      };
+    }
+  }
 
   for (const effect of card.effects ?? []) {
     switch (effect.kind) {

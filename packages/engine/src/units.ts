@@ -1,4 +1,12 @@
-import type { BoardState, HexKey, PlayerID, UnitID } from "./types";
+import type { BoardState, CardDefId, HexKey, PlayerID, UnitID } from "./types";
+
+type ChampionDeployment = {
+  cardDefId: CardDefId;
+  hp: number;
+  attackDice: number;
+  hitFaces: number;
+  bounty: number;
+};
 
 export const addForcesToHex = (
   board: BoardState,
@@ -52,6 +60,66 @@ export const addForcesToHex = (
         occupants: {
           ...hex.occupants,
           [playerId]: [...(hex.occupants[playerId] ?? []), ...newUnitIds]
+        }
+      }
+    }
+  };
+};
+
+export const countPlayerChampions = (board: BoardState, playerId: PlayerID): number => {
+  return Object.values(board.units).filter(
+    (unit) => unit.kind === "champion" && unit.ownerPlayerId === playerId
+  ).length;
+};
+
+export const addChampionToHex = (
+  board: BoardState,
+  playerId: PlayerID,
+  hexKey: HexKey,
+  champion: ChampionDeployment
+): BoardState => {
+  const hex = board.hexes[hexKey];
+  if (!hex) {
+    throw new Error("hex does not exist");
+  }
+
+  let maxChampionIndex = 0;
+  for (const unitId of Object.keys(board.units)) {
+    if (!unitId.startsWith("c_")) {
+      continue;
+    }
+    const parsed = Number(unitId.slice(2));
+    if (Number.isInteger(parsed) && parsed > maxChampionIndex) {
+      maxChampionIndex = parsed;
+    }
+  }
+  const unitId = `c_${maxChampionIndex + 1}`;
+
+  return {
+    ...board,
+    units: {
+      ...board.units,
+      [unitId]: {
+        id: unitId,
+        ownerPlayerId: playerId,
+        kind: "champion",
+        hex: hexKey,
+        cardDefId: champion.cardDefId,
+        hp: champion.hp,
+        maxHp: champion.hp,
+        attackDice: champion.attackDice,
+        hitFaces: champion.hitFaces,
+        bounty: champion.bounty,
+        abilityUses: {}
+      }
+    },
+    hexes: {
+      ...board.hexes,
+      [hexKey]: {
+        ...hex,
+        occupants: {
+          ...hex.occupants,
+          [playerId]: [...(hex.occupants[playerId] ?? []), unitId]
         }
       }
     }

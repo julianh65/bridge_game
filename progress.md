@@ -11,7 +11,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent-4; scope: champion card play (hex targeting + spawn), champion gold cost scaling + limit checks; files: packages/engine/src/action-flow.ts, packages/engine/src/card-effects.ts, packages/engine/src/units.ts, packages/engine/src/action-flow.test.ts; status: in progress
+- none
+- owner: agent-2; scope: remove axial-coordinate input panels in action/setup UI (bridge/march/starting bridges) and replace with board/suggestion selection; files: apps/web/src/components/ActionPanel.tsx, apps/web/src/components/SetupStartingBridges.tsx, apps/web/src/styles.css; status: in progress
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -38,6 +39,7 @@
 - Ran `npm run -w @bridgefront/engine test -- src/smoke.test.ts`.
 - Added regression coverage for invalid card declarations not spending resources or removing cards in `packages/engine/src/action-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (invalid card regression coverage).
+- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (champion play/cost/limit coverage).
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
@@ -180,6 +182,9 @@ none
 - Added a collection sidebar panel that renders mine/forge/center prompts and submits `SubmitCollectionChoices` commands.
 - Aligned the collection panel props with `GameScreen` and added collection prompt styles in `apps/web/src/styles.css`.
 - Added market row reveal events and formatted market buy/pass logs in the UI.
+
+## Milestone 7 progress
+- Implemented champion card play (hex targeting validation + deployment), champion gold cost scaling, and champion limit checks in engine with tests.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
