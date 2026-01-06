@@ -12,7 +12,18 @@ export type RoomOptions = {
   asSpectator?: boolean;
 };
 
-export type LobbyCommand = "rerollMap";
+export type LobbyView = {
+  players: Array<{
+    id: PlayerID;
+    name: string;
+    seatIndex: number;
+    connected: boolean;
+  }>;
+  minPlayers: number;
+  maxPlayers: number;
+};
+
+export type LobbyCommand = "rerollMap" | "rollDice" | "startGame";
 
 type RoomMessage =
   | {
@@ -22,6 +33,10 @@ type RoomMessage =
       rejoinToken?: string | null;
       view?: GameView | null;
       revision?: number;
+    }
+  | {
+      type: "lobby";
+      lobby: LobbyView;
     }
   | {
       type: "update";
@@ -36,6 +51,7 @@ type RoomMessage =
 type RoomState = {
   status: RoomConnectionStatus;
   view: GameView | null;
+  lobby: LobbyView | null;
   playerId: PlayerID | null;
   seatIndex: number | null;
   roomId: string | null;
@@ -47,6 +63,7 @@ type RoomState = {
 const DEFAULT_STATE: RoomState = {
   status: "idle",
   view: null,
+  lobby: null,
   playerId: null,
   seatIndex: null,
   roomId: null,
@@ -155,7 +172,17 @@ export const useRoom = (options: RoomOptions | null) => {
           playerId: parsed.playerId,
           seatIndex: parsed.seatIndex,
           view: parsed.view ?? null,
+          lobby: parsed.view ? null : prev.lobby,
           revision: parsed.revision ?? prev.revision,
+          error: null
+        }));
+        return;
+      }
+
+      if (parsed.type === "lobby") {
+        setState((prev) => ({
+          ...prev,
+          lobby: parsed.lobby,
           error: null
         }));
         return;
@@ -166,6 +193,7 @@ export const useRoom = (options: RoomOptions | null) => {
           ...prev,
           status: "connected",
           view: parsed.view,
+          lobby: null,
           revision: parsed.revision,
           error: null
         }));

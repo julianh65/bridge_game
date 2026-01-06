@@ -4,6 +4,7 @@ import {
   buildView,
   createNewGame,
   DEFAULT_CONFIG,
+  emit,
   runUntilBlocked
 } from "@bridgefront/engine";
 import type {
@@ -38,10 +39,23 @@ type CommandMessage = {
 type LobbyCommandMessage = {
   type: "lobbyCommand";
   playerId: PlayerID;
-  command: "rerollMap";
+  command: "rerollMap" | "rollDice" | "startGame";
 };
 
 type ClientMessage = JoinMessage | CommandMessage | LobbyCommandMessage;
+
+type LobbyPlayerView = {
+  id: PlayerID;
+  name: string;
+  seatIndex: number;
+  connected: boolean;
+};
+
+type LobbySnapshot = {
+  players: LobbyPlayerView[];
+  minPlayers: number;
+  maxPlayers: number;
+};
 
 const MIN_PLAYERS = 2;
 const MAX_PLAYERS = 6;
@@ -169,6 +183,30 @@ export default class Server implements Party.Server {
     }
   }
 
+  private getLobbySnapshot(): LobbySnapshot {
+    const players = this.lobbyPlayers.map((player, index) => ({
+      id: player.id,
+      name: player.name,
+      seatIndex: index,
+      connected: (this.playerConnections.get(player.id) ?? 0) > 0
+    }));
+    return {
+      players,
+      minPlayers: MIN_PLAYERS,
+      maxPlayers: MAX_PLAYERS
+    };
+  }
+
+  private broadcastLobby(): void {
+    if (this.state) {
+      return;
+    }
+    const lobby = this.getLobbySnapshot();
+    for (const connection of this.room.getConnections()) {
+      this.send(connection, { type: "lobby", lobby });
+    }
+  }
+
   private syncLobbySeatIndices(): void {
     const seatIndexById = new Map(
       this.lobbyPlayers.map((player, index) => [player.id, index])
@@ -238,29 +276,25 @@ export default class Server implements Party.Server {
     return `p${index}`;
   }
 
-  private maybeStartGame(): void {
+  private startGameFromLobby(): void {
     if (this.state) {
       return;
     }
-    const activePlayers = this.lobbyPlayers.filter(
-      (player) => (this.playerConnections.get(player.id) ?? 0) > 0
-    );
-    if (activePlayers.length < MIN_PLAYERS) {
+    if (this.lobbyPlayers.length < MIN_PLAYERS) {
       return;
     }
-    if (activePlayers.length !== this.lobbyPlayers.length) {
-      const activeIds = new Set(activePlayers.map((player) => player.id));
-      for (const [token, playerId] of this.rejoinTokens.entries()) {
-        if (!activeIds.has(playerId)) {
-          this.rejoinTokens.delete(token);
-        }
-      }
-      this.lobbyPlayers = activePlayers;
-      this.syncLobbySeatIndices();
-    }
     const seed = this.createMapSeed();
-    const created = createNewGame(DEFAULT_CONFIG, seed, this.lobbyPlayers);
-    this.state = runUntilBlocked(created);
+    let nextState = runUntilBlocked(createNewGame(DEFAULT_CONFIG, seed, this.lobbyPlayers));
+    nextState = {
+      ...nextState,
+      players: nextState.players.map((player) => ({
+        ...player,
+        visibility: {
+          connected: (this.playerConnections.get(player.id) ?? 0) > 0
+        }
+      }))
+    };
+    this.state = nextState;
     this.bumpRevision();
     this.lastLogCount = this.state.logs.length;
   }
@@ -270,6 +304,9 @@ export default class Server implements Party.Server {
     this.playerConnections.set(playerId, count);
     if (count === 1) {
       this.markPlayerConnected(playerId, true);
+      if (!this.state) {
+        this.broadcastLobby();
+      }
     }
   }
 
@@ -281,6 +318,9 @@ export default class Server implements Party.Server {
     }
     this.playerConnections.delete(playerId);
     this.markPlayerConnected(playerId, false);
+    if (!this.state) {
+      this.broadcastLobby();
+    }
   }
 
   private handleJoin(message: JoinMessage, connection: Party.Connection): void {
@@ -318,6 +358,8 @@ export default class Server implements Party.Server {
       });
       if (this.state) {
         this.broadcastUpdate();
+      } else {
+        this.broadcastLobby();
       }
       return;
     }
@@ -366,7 +408,6 @@ export default class Server implements Party.Server {
       rejoinToken: token
     });
     this.registerPlayerConnection(playerId);
-    this.maybeStartGame();
     const view = this.state ? buildView(this.state, playerId) : null;
     this.send(connection, {
       type: "welcome",
@@ -377,6 +418,8 @@ export default class Server implements Party.Server {
     });
     if (this.state) {
       this.broadcastUpdate();
+    } else {
+      this.broadcastLobby();
     }
   }
 
@@ -414,9 +457,87 @@ export default class Server implements Party.Server {
     message: LobbyCommandMessage,
     connection: Party.Connection
   ): void {
+    if (message.command === "startGame") {
+      this.handleStartGame(message, connection);
+      return;
+    }
     if (message.command === "rerollMap") {
       this.handleRerollMap(message, connection);
+      return;
     }
+    if (message.command === "rollDice") {
+      this.handleRollDice(message, connection);
+    }
+  }
+
+  private handleStartGame(
+    message: LobbyCommandMessage,
+    connection: Party.Connection
+  ): void {
+    if (this.state) {
+      this.sendError(connection, "game already started");
+      return;
+    }
+    const meta = this.getConnectionState(connection);
+    if (!meta || meta.spectator) {
+      this.sendError(connection, "spectators cannot start the game");
+      return;
+    }
+    if (message.playerId !== meta.playerId) {
+      this.sendError(connection, "player id does not match connection");
+      return;
+    }
+    const hostId = this.lobbyPlayers[0]?.id ?? null;
+    if (!hostId || hostId !== meta.playerId) {
+      this.sendError(connection, "only the host can start the game");
+      return;
+    }
+    if (this.lobbyPlayers.length < MIN_PLAYERS) {
+      this.sendError(connection, `need at least ${MIN_PLAYERS} players to start`);
+      return;
+    }
+
+    this.startGameFromLobby();
+    if (!this.state) {
+      this.sendError(connection, "failed to start game");
+      return;
+    }
+    this.broadcastUpdate();
+  }
+
+  private handleRollDice(
+    message: LobbyCommandMessage,
+    connection: Party.Connection
+  ): void {
+    if (!this.state) {
+      this.sendError(connection, "game has not started");
+      return;
+    }
+    if (this.state.phase !== "setup") {
+      this.sendError(connection, "dice rolls are only available during the lobby");
+      return;
+    }
+    const meta = this.getConnectionState(connection);
+    if (!meta || meta.spectator) {
+      this.sendError(connection, "spectators cannot roll the dice");
+      return;
+    }
+    if (message.playerId !== meta.playerId) {
+      this.sendError(connection, "player id does not match connection");
+      return;
+    }
+
+    const roll = Math.floor(Math.random() * 6) + 1;
+    const nextState = emit(this.state, {
+      type: "lobby.diceRolled",
+      payload: { playerId: meta.playerId, roll, sides: 6 }
+    });
+    this.state = {
+      ...nextState,
+      revision: this.state.revision + 1
+    };
+    const events = this.collectEvents();
+    this.broadcastUpdate(events);
   }
 
   private handleRerollMap(
@@ -519,6 +640,7 @@ export default class Server implements Party.Server {
         return;
       }
       this.removeLobbyPlayer(meta.playerId);
+      this.broadcastLobby();
     }
   }
 }

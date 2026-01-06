@@ -11,7 +11,6 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent2; scope: replace auto-start with host-controlled start, add pre-game lobby updates, and allow up to 6 players before start; files: `apps/server/src/server.ts`, `apps/web/src/lib/room-client.ts`, `apps/web/src/App.tsx`, `apps/web/src/components/Lobby.tsx` or new lobby component, `apps/web/src/styles.css` (if needed), `progress.md`; status: in progress.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -106,6 +105,7 @@
 - Lobby now includes a shared dice roller (d6) with last-roll display and room-wide broadcast.
 - Lobby map preview now rolls from the game seed and host can reroll the map during setup.
 - Lobby map reroll now locks after the first capital pick (server guard).
+- Replaced auto-start with host-controlled start, with a pre-game lobby snapshot + start button so up to 6 players can join before setup begins.
 - Added a Cards debug tab with filters (age/deck, mana cost, type, tags) and initiative sorting.
 - Polished the Cards tab layout for denser grids, deck accents, and compact rule previews.
 - Refined Cards tab tag styling with tighter radius and centered labels.

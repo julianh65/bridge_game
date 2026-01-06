@@ -5,6 +5,9 @@ import { DebugBoard } from "./components/DebugBoard";
 import { GameScreen } from "./components/GameScreen";
 import { Home, type RoomJoinParams } from "./components/Home";
 import { Lobby } from "./components/Lobby";
+import { LobbyDice } from "./components/LobbyDice";
+import { PreGameLobby } from "./components/PreGameLobby";
+import { RoomCodeCopy } from "./components/RoomCodeCopy";
 import { useRoom } from "./lib/room-client";
 
 type AppView = "play" | "debug" | "cards";
@@ -40,6 +43,7 @@ export default function App() {
 
   const showLobby = room.view?.public.phase === "setup";
   const showGame = Boolean(room.view && room.view.public.phase !== "setup");
+  const showPreGameLobby = Boolean(room.lobby && !room.view);
 
   return (
     <main className="app">
@@ -97,13 +101,19 @@ export default function App() {
         <section className="panel">
           <h2>Connecting to room</h2>
           <p className="muted">Waiting for the server to accept the connection.</p>
+          <RoomCodeCopy roomId={roomConfig.roomId} label="Share room code" />
         </section>
       ) : null}
 
-      {view === "play" && roomConfig && !room.view && room.status === "connected" ? (
+      {view === "play" &&
+      roomConfig &&
+      !room.view &&
+      room.status === "connected" &&
+      !showPreGameLobby ? (
         <section className="panel">
           <h2>Waiting for players</h2>
-          <p className="muted">The game will start once at least 2 players have joined.</p>
+          <p className="muted">Waiting for the lobby to initialize.</p>
+          <RoomCodeCopy roomId={roomConfig.roomId} label="Share room code" />
         </section>
       ) : null}
 
@@ -117,15 +127,34 @@ export default function App() {
         </section>
       ) : null}
 
-      {view === "play" && room.view && showLobby ? (
-        <Lobby
-          view={room.view}
+      {view === "play" && roomConfig && showPreGameLobby ? (
+        <PreGameLobby
+          lobby={room.lobby!}
           playerId={room.playerId}
           roomId={roomConfig.roomId}
           status={room.status}
-          onRerollMap={() => room.sendLobbyCommand("rerollMap")}
+          onStartGame={() => room.sendLobbyCommand("startGame")}
           onLeave={handleLeave}
         />
+      ) : null}
+
+      {view === "play" && room.view && showLobby ? (
+        <>
+          <LobbyDice
+            view={room.view}
+            playerId={room.playerId}
+            status={room.status}
+            onRoll={() => room.sendLobbyCommand("rollDice")}
+          />
+          <Lobby
+            view={room.view}
+            playerId={room.playerId}
+            roomId={roomConfig.roomId}
+            status={room.status}
+            onRerollMap={() => room.sendLobbyCommand("rerollMap")}
+            onLeave={handleLeave}
+          />
+        </>
       ) : null}
 
       {view === "play" && room.view && showGame ? (
