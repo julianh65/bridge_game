@@ -16,7 +16,7 @@ import { resolveImmediateBattles } from "./combat";
 import type { CardDef } from "./content/cards";
 import { getCardDef } from "./content/cards";
 import { emit } from "./events";
-import { getMoveRequiresBridge } from "./modifiers";
+import { getDeployForcesCount, getMoveRequiresBridge } from "./modifiers";
 import { addForcesToHex, countPlayerChampions, moveStack } from "./units";
 
 const BASIC_ACTION_MANA_COST = 1;
@@ -488,8 +488,11 @@ const resolveCapitalReinforce = (state: GameState, playerId: PlayerID): GameStat
     return state;
   }
 
+  const baseCount = 1;
+  const count = getDeployForcesCount(state, { playerId, hexKey: capitalHex, baseCount }, baseCount);
+
   return {
     ...state,
-    board: addForcesToHex(state.board, playerId, capitalHex, 1)
+    board: addForcesToHex(state.board, playerId, capitalHex, count)
   };
 };

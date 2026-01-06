@@ -17,6 +17,7 @@
 
 ## Active tasks
 none
+- owner: agent3; scope: format Milestone 8.5 checklist and build full-screen market overlay with richer card layout + toggle; files: `implementation_plan.md`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/styles.css`, `progress.md`
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -30,6 +31,7 @@ none
 
 ## Faction passives progress
 - Added Gatewright passives (capital assault + extortionists) and Veil clean-exit heal modifier with combat coverage; implementation plan update deferred until `implementation_plan.md` is free.
+- Implemented Bastion Home Guard (+1 force on capital deploy) via deploy-count hook; updated action flow/card effects tests.
 
 ## Testing progress
 - Added card draw tests covering reshuffle behavior and hand-limit overflow in `packages/engine/src/cards.test.ts`.
@@ -57,6 +59,7 @@ none
 - Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts src/action-flow.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.

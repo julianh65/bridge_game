@@ -564,7 +564,7 @@ describe("action flow", () => {
     state = runUntilBlocked(state);
 
     const capital = state.board.hexes[p1Capital];
-    expect(capital.occupants["p1"]?.length ?? 0).toBe(5);
+    expect(capital.occupants["p1"]?.length ?? 0).toBe(6);
     const p1 = state.players.find((player) => player.id === "p1");
     expect(p1?.resources.gold).toBe(startingGold - 1);
     expect(p1?.resources.mana).toBe(DEFAULT_CONFIG.MAX_MANA - 1);
@@ -787,7 +787,7 @@ describe("action flow", () => {
     state = runUntilBlocked(state);
 
     const after = state.board.hexes[p1Capital].occupants["p1"]?.length ?? 0;
-    expect(after).toBe(before + 2);
+    expect(after).toBe(before + 3);
   });
 
   it("plays recruit to add a force to an occupied hex", () => {

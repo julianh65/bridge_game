@@ -3,6 +3,7 @@ import type {
   CombatEndContext,
   CombatRoundContext,
   CombatUnitContext,
+  DeployForcesContext,
   GameState,
   HexKey,
   Modifier,
@@ -129,6 +130,20 @@ export const getMoveRequiresBridge = (
   );
 };
 
+export const getDeployForcesCount = (
+  state: GameState,
+  context: DeployForcesContext,
+  base: number
+): number => {
+  return applyModifierQuery(
+    state,
+    state.modifiers,
+    (hooks) => hooks.getDeployForcesCount,
+    context,
+    base
+  );
+};
+
 export const runModifierEvents = <TContext>(
   state: GameState,
   modifiers: Modifier[],
@@ -159,5 +174,6 @@ export type {
   CombatEndContext,
   CombatRoundContext,
   CombatUnitContext,
+  DeployForcesContext,
   MoveContext
 };

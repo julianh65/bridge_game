@@ -213,6 +213,12 @@ export type MoveContext = {
   movingUnitIds: UnitID[];
 };
 
+export type DeployForcesContext = {
+  playerId: PlayerID;
+  hexKey: HexKey;
+  baseCount: number;
+};
+
 export type MineGoldContext = {
   playerId: PlayerID;
   hexKey: HexKey;
@@ -234,6 +240,7 @@ export type ModifierHooks = {
   getChampionHitFaces?: ModifierQueryHook<CombatUnitContext, number>;
   getHitAssignmentPolicy?: ModifierQueryHook<CombatAssignmentContext, HitAssignmentPolicy>;
   getMoveRequiresBridge?: ModifierQueryHook<MoveContext, boolean>;
+  getDeployForcesCount?: ModifierQueryHook<DeployForcesContext, number>;
   getMineGoldValue?: ModifierQueryHook<MineGoldContext, number>;
   beforeCombatRound?: ModifierEventHook<CombatRoundContext>;
   afterBattle?: ModifierEventHook<CombatEndContext>;

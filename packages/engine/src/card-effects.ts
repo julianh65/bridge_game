@@ -13,7 +13,7 @@ import {
 import { addCardToDiscardPile, addCardToHandWithOverflow, drawCards, takeTopCards } from "./cards";
 import { applyChampionDeployment, dealChampionDamage, healChampion } from "./champions";
 import { addChampionToHex, addForcesToHex, countPlayerChampions } from "./units";
-import { getMoveRequiresBridge } from "./modifiers";
+import { getDeployForcesCount, getMoveRequiresBridge } from "./modifiers";
 
 const SUPPORTED_TARGET_KINDS = new Set(["none", "edge", "stack", "path", "champion", "choice", "hex"]);
 const SUPPORTED_EFFECTS = new Set([
@@ -747,9 +747,15 @@ export const resolveCardEffects = (
           if (!capitalHex || wouldExceedTwoPlayers(capitalHex, playerId)) {
             break;
           }
+          const baseCount = 2;
+          const count = getDeployForcesCount(
+            nextState,
+            { playerId, hexKey: player.capitalHex, baseCount },
+            baseCount
+          );
           nextState = {
             ...nextState,
-            board: addForcesToHex(nextState.board, playerId, player.capitalHex, 2)
+            board: addForcesToHex(nextState.board, playerId, player.capitalHex, count)
           };
           break;
         }
@@ -764,9 +770,15 @@ export const resolveCardEffects = (
           if (wouldExceedTwoPlayers(hex, playerId)) {
             break;
           }
+          const baseCount = 1;
+          const count = getDeployForcesCount(
+            nextState,
+            { playerId, hexKey: choice.hexKey, baseCount },
+            baseCount
+          );
           nextState = {
             ...nextState,
-            board: addForcesToHex(nextState.board, playerId, choice.hexKey, 1)
+            board: addForcesToHex(nextState.board, playerId, choice.hexKey, count)
           };
         }
         break;
@@ -784,7 +796,15 @@ export const resolveCardEffects = (
         if (wouldExceedTwoPlayers(target.hex, playerId)) {
           break;
         }
-        const count = typeof effect.count === "number" ? effect.count : 0;
+        const baseCount = typeof effect.count === "number" ? effect.count : 0;
+        if (baseCount <= 0) {
+          break;
+        }
+        const count = getDeployForcesCount(
+          nextState,
+          { playerId, hexKey: target.hexKey, baseCount },
+          baseCount
+        );
         if (count <= 0) {
           break;
         }

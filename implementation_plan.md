@@ -251,6 +251,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [ ] Expand market/collection focus cards (initiative/effects) for richer phase layouts.
 - [ ] Add collapsible/relocatable panels so not everything lives in the right sidebar.
 - [ ] Make the phase market at the top part much bigger and cooler
+- [ ] the bridge place mechanism still doesn't work
 - [x] During the game we don't need to see all the room id and those little details and top bar, those can be collapsed
 
 
@@ -311,6 +312,8 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 
 ## Milestone 7 — Factions + champions + modifiers (core “exceptions” framework)
 
+<!-- NOTE TO AGENTS, IF YOU CAN PICK A TASK FROM ANOTHER MILESTONE DO THOSE FIRST, EVEN LATER MILESTONES -->
+
 ### Tasks (engine)
 - [x] Do a quick align on rules_draft to remaining implementation plan
 - Implement `modifiers` with:
@@ -320,7 +323,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Implement faction passives as permanent modifiers:
   - [x] Bastion Shield Wall
   - [x] Prospect Ore Cut / Mine Militia
-  - [ ] Bastion Home Guard (extra force on capital deploy)
+  - [x] Bastion Home Guard (extra force on capital deploy)
   - [ ] Assassins Contracts (bonus gold on champion kill)
   - [ ] Aerial Tailwind (first stack move per round gets +1 hex)
   - [ ] Aerial Wings (deploy to center as if capital when occupied)
@@ -355,6 +358,8 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 
 ## Milestone 7.2 — Factions + champions + modifiers (core “exceptions” framework)
 
+<!-- NOTE TO AGENTS, IF YOU CAN PICK A TASK FROM ANOTHER MILESTONE DO THOSE FIRST, EVEN LATER MILESTONES -->
+
 Start going through the rules_draft and adding the logic for the different types of cards, keep track of which have been implemented or not and try to make it as extensible and smart as possible.
 
 ### Tasks
@@ -369,6 +374,8 @@ Start going through the rules_draft and adding the logic for the different types
 
 
 ## Milestone 7.5 — Script to Generate Art for Cards
+
+<!-- NOTE TO AGENTS, IF YOU CAN PICK A TASK FROM ANOTHER MILESTONE DO THOSE FIRST, EVEN LATER MILESTONES -->
 
 I want to have a script that lets me select a subset of n cards and hits some sort of API to generate epic card art for them, saves it locally and then makes the card reference that image so it gets rendered somehow. Very TBD on this so we'll have to figure it out together, which services to use and how it works etc...
 
@@ -404,9 +411,40 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - force advance to next phase
   - seed controls
 
+## Milestone 8.5 -- Things I've noticed and nice to haves
+
+### Tasks (web - home + onboarding)
+- [ ] Refresh the main landing page layout and typography.
+- [ ] Add a placeholder panel for rules/tutorial access.
+- [ ] Fix the non-auto setup flow (faction picks + start gating) so manual setup works.
+
+### Tasks (web - market overlay + cards)
+- [ ] Replace the market focus row with a full-screen overlay that can be shown/hidden.
+- [ ] Redesign market cards to show art placeholder, cost, initiative, type, tags, and rules text.
+- [ ] Shrink the board presence while the market overlay is open so the cards dominate.
+
+### Tasks (web - deck + player status)
+- [ ] Add a deck viewer so players can browse all cards in their current deck.
+- [ ] Add per-player colors and reflect ownership in player list + board occupancy.
+- [ ] Make action status more obvious (who still needs to act, who is done).
+
+### Tasks (web - action flow + layout)
+- [ ] Reduce card targeting clicks so board picks are direct and visible once selected.
+- [ ] Add a large "Submit/Lock In" action button for action declarations.
+- [ ] Consolidate or rearrange panels so the game screen feels cohesive.
+
+### Tasks (web - motion + phase clarity)
+- [ ] Add card-play reveal animation (who played what, where it landed).
+- [ ] Add clearer phase transition cues between round phases.
+
+### Tasks (web - targeting reliability)
+- [ ] Fix hex selection for Bridge Crew and Build Bridge edge picking.
+
 ## Milestone 9 — Add Polish
 
 Make this flow nicely, make the battles cool, make everything work. Do a refresh of the UI. As cards are being played in the action phase all players should be "watching" to see what everyone did. It should feel smooth and fun. Make the bridges look nicer and add a bit of padding between the hexes to give it that shattered plains look. The dice rolls during battle should be they need to click to roll dice and we see the hits gets assigned and everyone is watching type vibe.
+
+Also we need a good victory screen!
 
 ## Milestone 9.5 -- Card Art + Description
 

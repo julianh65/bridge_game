@@ -27,6 +27,28 @@ const createBastionShieldWallModifier = (playerId: PlayerID): Modifier => ({
   }
 });
 
+const createBastionHomeGuardModifier = (playerId: PlayerID): Modifier => ({
+  id: buildModifierId("bastion", playerId, "home_guard"),
+  source: { type: "faction", sourceId: "bastion" },
+  ownerPlayerId: playerId,
+  duration: { type: "permanent" },
+  hooks: {
+    getDeployForcesCount: ({ modifier, playerId: deployerId, hexKey, state }, current) => {
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== deployerId) {
+        return current;
+      }
+      if (current <= 0) {
+        return current;
+      }
+      const player = state.players.find((entry) => entry.id === deployerId);
+      if (!player?.capitalHex || player.capitalHex !== hexKey) {
+        return current;
+      }
+      return current + 1;
+    }
+  }
+});
+
 const createProspectOreCutModifier = (playerId: PlayerID): Modifier => ({
   id: buildModifierId("prospect", playerId, "ore_cut"),
   source: { type: "faction", sourceId: "prospect" },
@@ -202,7 +224,10 @@ const createGatewrightExtortionistsModifier = (playerId: PlayerID): Modifier => 
 export const createFactionModifiers = (factionId: string, playerId: PlayerID): Modifier[] => {
   switch (factionId) {
     case "bastion":
-      return [createBastionShieldWallModifier(playerId)];
+      return [
+        createBastionShieldWallModifier(playerId),
+        createBastionHomeGuardModifier(playerId)
+      ];
     case "veil":
       return [createVeilCleanExitModifier(playerId)];
     case "prospect":
