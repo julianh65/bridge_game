@@ -11,12 +11,13 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent1] Fix action cost spending on invalid actions (validate before cost deduction) in `packages/engine/src/action-flow.ts`; status: in progress.
+- (none)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
 - Fixed force unit id generation to avoid collisions and added coverage.
 - Guarded combat resolution against no-hit stalemates and added a test.
+- Prevented invalid action declarations from spending resources; added validation helpers + test.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.

@@ -120,6 +120,39 @@ describe("action flow", () => {
     expect(p1?.resources.mana).toBe(DEFAULT_CONFIG.MAX_MANA - 1);
   });
 
+  it("does not spend resources on invalid action declarations", () => {
+    let { state, p1Capital } = setupToActionPhase();
+    const neighborSet = new Set(
+      neighborHexKeys(p1Capital).filter((key) => Boolean(state.board.hexes[key]))
+    );
+    const invalidTarget = Object.keys(state.board.hexes).find(
+      (key) => key !== p1Capital && !neighborSet.has(key)
+    );
+    if (!invalidTarget) {
+      throw new Error("no non-adjacent hex for invalid action test");
+    }
+    const invalidEdge = getBridgeKey(p1Capital, invalidTarget);
+    const p1Before = state.players.find((player) => player.id === "p1");
+    if (!p1Before) {
+      throw new Error("missing p1 state");
+    }
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: { kind: "basic", action: { kind: "buildBridge", edgeKey: invalidEdge } }
+      },
+      "p1"
+    );
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    expect(p1After?.resources.gold).toBe(p1Before.resources.gold);
+    expect(p1After?.resources.mana).toBe(p1Before.resources.mana);
+    expect(state.blocks?.payload.declarations["p1"]).toBeNull();
+    expect(state.blocks?.waitingFor).toContain("p1");
+  });
+
   it("moves a stack one hex along a bridge", () => {
     let { state, p1Capital, p1Edges } = setupToActionPhase();
     const [edge] = p1Edges;

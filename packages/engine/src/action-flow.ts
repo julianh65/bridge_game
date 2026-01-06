@@ -20,6 +20,12 @@ type ActionCost = {
   gold: number;
 };
 
+type BuildBridgePlan = {
+  from: string;
+  to: string;
+  key: string;
+};
+
 const getDeclarationCost = (declaration: ActionDeclaration): ActionCost => {
   if (declaration.kind !== "basic") {
     return { mana: 0, gold: 0 };
@@ -30,6 +36,120 @@ const getDeclarationCost = (declaration: ActionDeclaration): ActionCost => {
   }
 
   return { mana: BASIC_ACTION_MANA_COST, gold: 0 };
+};
+
+const getBuildBridgePlan = (
+  state: GameState,
+  playerId: PlayerID,
+  edgeKey: string
+): BuildBridgePlan | null => {
+  let rawA: string;
+  let rawB: string;
+  try {
+    [rawA, rawB] = parseEdgeKey(edgeKey);
+  } catch {
+    return null;
+  }
+
+  const fromHex = state.board.hexes[rawA];
+  const toHex = state.board.hexes[rawB];
+  if (!fromHex || !toHex) {
+    return null;
+  }
+
+  try {
+    if (!areAdjacent(parseHexKey(rawA), parseHexKey(rawB))) {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+
+  if (!isOccupiedByPlayer(fromHex, playerId) && !isOccupiedByPlayer(toHex, playerId)) {
+    return null;
+  }
+
+  const canonicalKey = getBridgeKey(rawA, rawB);
+  if (state.board.bridges[canonicalKey]) {
+    return null;
+  }
+
+  return { from: rawA, to: rawB, key: canonicalKey };
+};
+
+const canMarch = (state: GameState, playerId: PlayerID, from: string, to: string): boolean => {
+  const fromHex = state.board.hexes[from];
+  const toHex = state.board.hexes[to];
+  if (!fromHex || !toHex) {
+    return false;
+  }
+
+  try {
+    if (!areAdjacent(parseHexKey(from), parseHexKey(to))) {
+      return false;
+    }
+  } catch {
+    return false;
+  }
+
+  if (!hasBridge(state.board, from, to)) {
+    return false;
+  }
+
+  if (!isOccupiedByPlayer(fromHex, playerId)) {
+    return false;
+  }
+
+  if (wouldExceedTwoPlayers(toHex, playerId)) {
+    return false;
+  }
+
+  return true;
+};
+
+const getCapitalReinforceHex = (state: GameState, playerId: PlayerID): string | null => {
+  const player = state.players.find((entry) => entry.id === playerId);
+  if (!player?.capitalHex) {
+    return null;
+  }
+
+  const capitalHex = state.board.hexes[player.capitalHex];
+  if (!capitalHex) {
+    return null;
+  }
+
+  if (wouldExceedTwoPlayers(capitalHex, playerId)) {
+    return null;
+  }
+
+  return player.capitalHex;
+};
+
+const isBasicActionValid = (state: GameState, playerId: PlayerID, action: BasicAction): boolean => {
+  switch (action.kind) {
+    case "buildBridge":
+      return Boolean(getBuildBridgePlan(state, playerId, action.edgeKey));
+    case "march":
+      return canMarch(state, playerId, action.from, action.to);
+    case "capitalReinforce":
+      return Boolean(getCapitalReinforceHex(state, playerId));
+    default: {
+      const _exhaustive: never = action;
+      return _exhaustive;
+    }
+  }
+};
+
+const isDeclarationValid = (
+  state: GameState,
+  playerId: PlayerID,
+  declaration: ActionDeclaration
+): boolean => {
+  if (declaration.kind === "done") {
+    return true;
+  }
+
+  return isBasicActionValid(state, playerId, declaration.action);
 };
 
 const getLeadOrderedPlayers = (players: PlayerState[], leadSeatIndex: number): PlayerState[] => {
@@ -83,6 +203,10 @@ export const applyActionDeclaration = (
 
   const player = state.players.find((entry) => entry.id === playerId);
   if (!player) {
+    return state;
+  }
+
+  if (!isDeclarationValid(state, playerId, declaration)) {
     return state;
   }
 
@@ -166,30 +290,8 @@ const resolveBasicAction = (state: GameState, playerId: PlayerID, action: BasicA
 };
 
 const resolveBuildBridge = (state: GameState, playerId: PlayerID, edgeKey: string): GameState => {
-  let rawA: string;
-  let rawB: string;
-  try {
-    [rawA, rawB] = parseEdgeKey(edgeKey);
-  } catch {
-    return state;
-  }
-
-  const fromHex = state.board.hexes[rawA];
-  const toHex = state.board.hexes[rawB];
-  if (!fromHex || !toHex) {
-    return state;
-  }
-
-  if (!areAdjacent(parseHexKey(rawA), parseHexKey(rawB))) {
-    return state;
-  }
-
-  if (!isOccupiedByPlayer(fromHex, playerId) && !isOccupiedByPlayer(toHex, playerId)) {
-    return state;
-  }
-
-  const canonicalKey = getBridgeKey(rawA, rawB);
-  if (state.board.bridges[canonicalKey]) {
+  const plan = getBuildBridgePlan(state, playerId, edgeKey);
+  if (!plan) {
     return state;
   }
 
@@ -199,10 +301,10 @@ const resolveBuildBridge = (state: GameState, playerId: PlayerID, edgeKey: strin
       ...state.board,
       bridges: {
         ...state.board.bridges,
-        [canonicalKey]: {
-          key: canonicalKey,
-          from: rawA,
-          to: rawB,
+        [plan.key]: {
+          key: plan.key,
+          from: plan.from,
+          to: plan.to,
           ownerPlayerId: playerId
         }
       }
@@ -211,25 +313,7 @@ const resolveBuildBridge = (state: GameState, playerId: PlayerID, edgeKey: strin
 };
 
 const resolveMarch = (state: GameState, playerId: PlayerID, from: string, to: string): GameState => {
-  const fromHex = state.board.hexes[from];
-  const toHex = state.board.hexes[to];
-  if (!fromHex || !toHex) {
-    return state;
-  }
-
-  if (!areAdjacent(parseHexKey(from), parseHexKey(to))) {
-    return state;
-  }
-
-  if (!hasBridge(state.board, from, to)) {
-    return state;
-  }
-
-  if (!isOccupiedByPlayer(fromHex, playerId)) {
-    return state;
-  }
-
-  if (wouldExceedTwoPlayers(toHex, playerId)) {
+  if (!canMarch(state, playerId, from, to)) {
     return state;
   }
 
@@ -240,22 +324,13 @@ const resolveMarch = (state: GameState, playerId: PlayerID, from: string, to: st
 };
 
 const resolveCapitalReinforce = (state: GameState, playerId: PlayerID): GameState => {
-  const player = state.players.find((entry) => entry.id === playerId);
-  if (!player?.capitalHex) {
-    return state;
-  }
-
-  const capitalHex = state.board.hexes[player.capitalHex];
+  const capitalHex = getCapitalReinforceHex(state, playerId);
   if (!capitalHex) {
-    return state;
-  }
-
-  if (wouldExceedTwoPlayers(capitalHex, playerId)) {
     return state;
   }
 
   return {
     ...state,
-    board: addForcesToHex(state.board, playerId, player.capitalHex, 1)
+    board: addForcesToHex(state.board, playerId, capitalHex, 1)
   };
 };
