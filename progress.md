@@ -11,7 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [in progress] owner: agent1; scope: implement market bid collection block (buy/pass, tie-break roll-offs, pass pot, one-win-per-round) with engine tests; files: packages/engine/src/engine.ts, packages/engine/src/market.ts, packages/engine/src/blocks.ts, packages/engine/src/types.ts, packages/engine/src/market.test.ts
+- [in progress] owner: agent2; scope: UI polish pass (board pan/zoom + click selection + card selection helpers); files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/BoardView.tsx, apps/web/src/components/ActionPanel.tsx, apps/web/src/styles.css
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -51,7 +51,11 @@
 - Consider moving view construction into `packages/engine/src/view.ts` if `buildView` grows.
 
 ## UI polish TODOs
-- None currently.
+- Add board pan/zoom controls (mouse wheel + drag + reset view).
+- Add board click selection + highlight for targeting hexes/edges.
+- Make hand cards clickable to select + show card details.
+- Add action targeting helpers to fill inputs from board clicks.
+- Surface "lead/turn" indicator in game UI.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
@@ -142,6 +146,7 @@
 - Added market row prep using preview mapping + deck draws, plus cleanup resets to clear the row each round.
 - Added market row tests covering preview composition and no-op behavior when a row exists.
 - Market sidebar now shows card names and bid/pass status per player.
+- Implemented market bidding block (buy/pass, tie-break roll-offs, pass pot, one-win-per-round) with command handling + resolution, added market bidding tests, and updated setup/action tests to auto-resolve market.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

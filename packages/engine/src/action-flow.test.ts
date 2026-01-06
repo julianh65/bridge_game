@@ -25,6 +25,33 @@ const pickOpenBridgeEdge = (capital: HexKey, board: BoardState): EdgeKey => {
   throw new Error("no available edge for build bridge test");
 };
 
+const advanceThroughMarket = (state: GameState): GameState => {
+  let nextState = state;
+
+  while (nextState.phase === "round.market") {
+    if (!nextState.blocks) {
+      nextState = runUntilBlocked(nextState);
+      continue;
+    }
+
+    if (nextState.blocks.type !== "market.bidsForCard") {
+      throw new Error(`unexpected block during market: ${nextState.blocks.type}`);
+    }
+
+    for (const playerId of nextState.blocks.waitingFor) {
+      nextState = applyCommand(
+        nextState,
+        { type: "SubmitMarketBid", payload: { kind: "pass", amount: 0 } },
+        playerId
+      );
+    }
+
+    nextState = runUntilBlocked(nextState);
+  }
+
+  return nextState;
+};
+
 const setupToActionPhase = (): { state: GameState; p1Capital: HexKey; p1Edges: EdgeKey[] } => {
   let state = createNewGame(DEFAULT_CONFIG, 123, [
     { id: "p1", name: "Player 1" },
@@ -92,6 +119,7 @@ const setupToActionPhase = (): { state: GameState; p1Capital: HexKey; p1Edges: E
   );
 
   state = runUntilBlocked(state);
+  state = advanceThroughMarket(state);
 
   return { state, p1Capital, p1Edges };
 };

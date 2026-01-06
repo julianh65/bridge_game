@@ -203,6 +203,12 @@ export type BlockState = {
     remainingDeck: CardDefId[];
   };
 } | {
+  type: "market.bidsForCard";
+  waitingFor: PlayerID[];
+  payload: {
+    cardIndex: number;
+  };
+} | {
   type: "actionStep.declarations";
   waitingFor: PlayerID[];
   payload: {
@@ -275,6 +281,9 @@ export type Command = {
 } | {
   type: "SubmitAction";
   payload: ActionDeclaration;
+} | {
+  type: "SubmitMarketBid";
+  payload: Bid;
 };
 
 export type PlayerPublicView = {

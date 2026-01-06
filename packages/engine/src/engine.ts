@@ -30,7 +30,7 @@ import {
 import { applyActionDeclaration, createActionStepBlock, resolveActionStep } from "./action-flow";
 import { resolveSieges } from "./combat";
 import { emit } from "./events";
-import { initializeMarketDecks, prepareMarketRow } from "./market";
+import { applyMarketBid, createMarketBidBlock, initializeMarketDecks, prepareMarketRow, resolveMarketBids } from "./market";
 
 const createPlayerState = (player: LobbyPlayer, seatIndex: number, startingGold: number): PlayerState => {
   return {
@@ -173,6 +173,10 @@ export const applyCommand = (
     return applyActionDeclaration(state, _command.payload, _playerId);
   }
 
+  if (_command.type === "SubmitMarketBid") {
+    return applyMarketBid(state, _command.payload, _playerId);
+  }
+
   return state;
 };
 
@@ -195,8 +199,32 @@ export const runUntilBlocked = (state: GameState): GameState => {
 
     if (nextState.phase === "round.market") {
       nextState = prepareMarketRow(nextState);
-      nextState = enterPhase(nextState, "round.action");
-      continue;
+      if (!nextState.blocks) {
+        const block = createMarketBidBlock(nextState);
+        if (!block) {
+          nextState = enterPhase(nextState, "round.action");
+          continue;
+        }
+        nextState = {
+          ...nextState,
+          blocks: block
+        };
+        continue;
+      }
+
+      if (nextState.blocks.type === "market.bidsForCard") {
+        if (nextState.blocks.waitingFor.length > 0) {
+          return nextState;
+        }
+        nextState = resolveMarketBids(nextState);
+        nextState = {
+          ...nextState,
+          blocks: undefined
+        };
+        continue;
+      }
+
+      return nextState;
     }
 
     if (nextState.phase === "round.action") {

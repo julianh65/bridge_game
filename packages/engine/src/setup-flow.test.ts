@@ -1,7 +1,7 @@
 import { neighborHexKeys } from "@bridgefront/shared";
 import { describe, expect, it } from "vitest";
 
-import type { BoardState, EdgeKey, HexKey } from "./types";
+import type { BoardState, EdgeKey, GameState, HexKey } from "./types";
 import { DEFAULT_CONFIG, applyCommand, createNewGame, getBridgeKey, runUntilBlocked } from "./index";
 import { DEFAULT_FACTION_ID, resolveStarterFactionCards } from "./content/starter-decks";
 
@@ -11,6 +11,33 @@ const pickStartingEdges = (capital: HexKey, board: BoardState): EdgeKey[] => {
     throw new Error("capital must have at least two neighbors for test");
   }
   return [getBridgeKey(capital, neighbors[0]), getBridgeKey(capital, neighbors[1])];
+};
+
+const advanceThroughMarket = (state: GameState): GameState => {
+  let nextState = state;
+
+  while (nextState.phase === "round.market") {
+    if (!nextState.blocks) {
+      nextState = runUntilBlocked(nextState);
+      continue;
+    }
+
+    if (nextState.blocks.type !== "market.bidsForCard") {
+      throw new Error(`unexpected block during market: ${nextState.blocks.type}`);
+    }
+
+    for (const playerId of nextState.blocks.waitingFor) {
+      nextState = applyCommand(
+        nextState,
+        { type: "SubmitMarketBid", payload: { kind: "pass", amount: 0 } },
+        playerId
+      );
+    }
+
+    nextState = runUntilBlocked(nextState);
+  }
+
+  return nextState;
 };
 
 describe("setup flow", () => {
@@ -125,6 +152,7 @@ describe("setup flow", () => {
     );
 
     state = runUntilBlocked(state);
+    state = advanceThroughMarket(state);
     expect(state.phase).toBe("round.action");
     expect(state.blocks?.type).toBe("actionStep.declarations");
     expect(state.round).toBe(1);
@@ -136,7 +164,7 @@ describe("setup flow", () => {
     expect(p1AfterReset?.resources.mana).toBe(DEFAULT_CONFIG.MAX_MANA);
     expect(p2AfterReset?.resources.mana).toBe(DEFAULT_CONFIG.MAX_MANA);
     const totalCards = Object.keys(state.cardsByInstanceId).length;
-    expect(totalCards).toBe(24);
+    expect(totalCards).toBe(26);
 
     const finalP1 = state.players.find((player) => player.id === "p1");
     const finalP2 = state.players.find((player) => player.id === "p2");
@@ -148,7 +176,7 @@ describe("setup flow", () => {
     );
     expect(p1DrawDefs).toContain(p1Offer);
     expect(p2DrawDefs).toContain(p2Offer);
-    expect(finalP1?.deck.drawPile.length).toBe(expectedDrawPile + 1);
-    expect(finalP2?.deck.drawPile.length).toBe(expectedDrawPile + 1);
+    expect(finalP1?.deck.drawPile.length).toBe(expectedDrawPile + 2);
+    expect(finalP2?.deck.drawPile.length).toBe(expectedDrawPile + 2);
   });
 });
