@@ -17,6 +17,7 @@ import {
   createStartingBridgesBlock,
   finalizeCapitalDraft
 } from "./setup-flow";
+import { applyRoundReset } from "./round-flow";
 
 const createPlayerState = (player: LobbyPlayer, seatIndex: number, startingGold: number): PlayerState => {
   return {
@@ -114,6 +115,11 @@ export const runUntilBlocked = (state: GameState): GameState => {
   let nextState = state;
 
   while (true) {
+    if (nextState.phase === "round.reset") {
+      nextState = applyRoundReset(nextState);
+      continue;
+    }
+
     if (nextState.phase !== "setup") {
       return nextState;
     }
@@ -153,11 +159,12 @@ export const runUntilBlocked = (state: GameState): GameState => {
     }
 
     if (nextState.blocks.type === "setup.freeStartingCardPick") {
-      return {
+      nextState = {
         ...nextState,
         phase: "round.reset",
         blocks: undefined
       };
+      continue;
     }
 
     return nextState;

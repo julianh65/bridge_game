@@ -17,6 +17,7 @@ export {
   createNewGame,
   runUntilBlocked
 } from "./engine";
+export { applyRoundReset } from "./round-flow";
 export { emit } from "./events";
 export type {
   Age,

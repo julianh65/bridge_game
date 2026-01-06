@@ -7,7 +7,7 @@
 - Added `docs/cards.md` with card data module editing guidelines.
 
 ## Active tasks
-- None currently.
+- agent-2: Fix debug board rendering (currently shows coords, missing visual tile distinctions). Files: apps/web/src/components/DebugBoard.tsx, apps/web/src/styles.css. Status: in progress.
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.
@@ -36,6 +36,9 @@
 - Board generation is now configurable via `DEFAULT_CONFIG` (radius, capital slots, placement rules). Added `docs/configuration.md`.
 - Updated default 4-player capital slots in `DEFAULT_CONFIG`.
 - Added pre-game lobby UI placeholders (ready up/start game, faction/settings stubs) in `apps/web` (local only).
+
+## Milestone 3 progress
+- Implemented round reset phase logic (income, mana reset, draw to 6 with hand-limit overflow) and wired `runUntilBlocked` to auto-advance into `round.market`.
 
 ## Debug UI progress
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.

@@ -125,8 +125,16 @@ describe("setup flow", () => {
     );
 
     state = runUntilBlocked(state);
-    expect(state.phase).toBe("round.reset");
+    expect(state.phase).toBe("round.market");
     expect(state.blocks).toBeUndefined();
+    expect(state.round).toBe(1);
+
+    const p1AfterReset = state.players.find((player) => player.id === "p1");
+    const p2AfterReset = state.players.find((player) => player.id === "p2");
+    expect(p1AfterReset?.resources.gold).toBe(DEFAULT_CONFIG.START_GOLD + DEFAULT_CONFIG.BASE_INCOME);
+    expect(p2AfterReset?.resources.gold).toBe(DEFAULT_CONFIG.START_GOLD + DEFAULT_CONFIG.BASE_INCOME);
+    expect(p1AfterReset?.resources.mana).toBe(DEFAULT_CONFIG.MAX_MANA);
+    expect(p2AfterReset?.resources.mana).toBe(DEFAULT_CONFIG.MAX_MANA);
     const totalCards = Object.keys(state.cardsByInstanceId).length;
     expect(totalCards).toBe(24);
 
