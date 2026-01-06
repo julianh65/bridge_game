@@ -11,7 +11,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- None.
+- [in progress] owner: agent1; scope: setup UI for starting bridges + free starting card pick + auto-setup button in lobby; files: apps/web/src/App.tsx, apps/web/src/components/Lobby.tsx, apps/web/src/components/SetupStartingBridges.tsx, apps/web/src/components/SetupFreeStartingCardPick.tsx, apps/web/src/lib/room-client.ts, apps/web/src/styles.css
+- [in progress] owner: agent3; scope: market deck + preview reveal scaffolding (engine, no UI); files: packages/engine/src/types.ts, packages/engine/src/engine.ts, packages/engine/src/round-flow.ts, packages/engine/src/market.ts (new), packages/engine/src/market.test.ts
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -45,6 +46,9 @@
 
 ## Cleanup/organization TODOs
 - Consider moving view construction into `packages/engine/src/view.ts` if `buildView` grows.
+
+## UI polish TODOs
+- None currently.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
@@ -88,6 +92,7 @@
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.
 - Board inspector now labels special tiles (CAP/FORGE/MINE/CTR) on the hexes.
 - Fixed hex fill styles so tiles render in their intended colors.
+- Added initiative gradient styling to the Cards browser initiative chip.
 
 ## Milestone 4 progress
 - Added a game screen placeholder layout in `apps/web` (board area + sidebar stubs), no server wiring yet.

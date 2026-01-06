@@ -2,6 +2,23 @@ import { useMemo, useState } from "react";
 
 import { CARD_DEFS } from "@bridgefront/engine";
 
+const clamp = (value: number, min: number, max: number) => {
+  return Math.min(Math.max(value, min), max);
+};
+
+const initiativeChipStyle = (initiative: number) => {
+  const clamped = clamp(initiative, 0, 250);
+  const t = clamped / 250;
+  const hue = 140 - 120 * t;
+  const saturation = 72;
+  const lightness = 46 - 10 * t;
+  const backgroundColor = `hsl(${hue} ${saturation}% ${lightness}%)`;
+  const borderColor = `hsl(${hue} ${saturation}% ${Math.max(20, lightness - 14)}%)`;
+  const color = lightness > 55 ? "#1f1300" : "#fff7e6";
+
+  return { backgroundColor, borderColor, color };
+};
+
 const toggleValue = (values: string[], value: string) => {
   if (values.includes(value)) {
     return values.filter((entry) => entry !== value);
@@ -216,7 +233,9 @@ export const CardsBrowser = () => {
                     </div>
                     <div className="card-entry__stats">
                       <span className="card-tag">{card.type}</span>
-                      <span className="card-tag">Init {card.initiative}</span>
+                      <span className="card-tag" style={initiativeChipStyle(card.initiative)}>
+                        Init {card.initiative}
+                      </span>
                       <span className="card-tag">Mana {card.cost.mana}</span>
                       {card.cost.gold ? (
                         <span className="card-tag">Gold {card.cost.gold}</span>
