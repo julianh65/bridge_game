@@ -13,6 +13,8 @@ type ActionPanelProps = {
   onSubmit: (declaration: ActionDeclaration) => void;
 };
 
+type CardTargets = Record<string, unknown> | null;
+
 const getActionHint = (
   phase: GameView["public"]["phase"],
   status: RoomConnectionStatus,
@@ -40,6 +42,8 @@ export const ActionPanel = ({ phase, player, status, onSubmit }: ActionPanelProp
   const [edgeKey, setEdgeKey] = useState("");
   const [marchFrom, setMarchFrom] = useState("");
   const [marchTo, setMarchTo] = useState("");
+  const [cardInstanceId, setCardInstanceId] = useState("");
+  const [cardTargetsRaw, setCardTargetsRaw] = useState("");
   const isActionPhase = phase === "round.action";
   const mana = player?.resources.mana ?? 0;
   const gold = player?.resources.gold ?? 0;
@@ -50,6 +54,24 @@ export const ActionPanel = ({ phase, player, status, onSubmit }: ActionPanelProp
   const canBuildBridge = canSubmitAction && edgeKey.trim().length > 0;
   const canMarch =
     canSubmitAction && marchFrom.trim().length > 0 && marchTo.trim().length > 0;
+  const trimmedCardId = cardInstanceId.trim();
+  const trimmedTargets = cardTargetsRaw.trim();
+  let parsedTargets: CardTargets | undefined;
+  let targetsError: string | null = null;
+  if (trimmedTargets.length > 0) {
+    try {
+      const parsed = JSON.parse(trimmedTargets) as unknown;
+      if (parsed === null || typeof parsed === "object") {
+        parsedTargets = parsed as CardTargets;
+      } else {
+        targetsError = "Targets must be a JSON object or null.";
+      }
+    } catch {
+      targetsError = "Targets JSON could not be parsed.";
+    }
+  }
+  const canPlayCard =
+    canSubmitAction && trimmedCardId.length > 0 && targetsError === null;
   const hint = getActionHint(phase, status, player);
 
   return (
@@ -129,6 +151,50 @@ export const ActionPanel = ({ phase, player, status, onSubmit }: ActionPanelProp
       >
         March (-1 mana)
       </button>
+      <label className="action-field">
+        <span>Play card (instance id)</span>
+        <input
+          type="text"
+          placeholder="ci_12"
+          value={cardInstanceId}
+          onChange={(event) => setCardInstanceId(event.target.value)}
+        />
+      </label>
+      <label className="action-field">
+        <span>Card targets JSON (optional)</span>
+        <input
+          type="text"
+          placeholder='{"edgeKey":"q,r|q,r"}'
+          value={cardTargetsRaw}
+          onChange={(event) => setCardTargetsRaw(event.target.value)}
+        />
+      </label>
+      <button
+        type="button"
+        className="btn btn-secondary"
+        disabled={!canPlayCard}
+        onClick={() => {
+          if (!canPlayCard) {
+            return;
+          }
+          const declaration: ActionDeclaration =
+            parsedTargets !== undefined
+              ? {
+                  kind: "card",
+                  cardInstanceId: trimmedCardId,
+                  targets: parsedTargets
+                }
+              : { kind: "card", cardInstanceId: trimmedCardId };
+          onSubmit(declaration);
+        }}
+      >
+        Play Card (-card cost)
+      </button>
+      {targetsError ? <p className="action-panel__hint">{targetsError}</p> : null}
+      <p className="action-panel__hint">
+        Targets examples:{" "}
+        {"{\"from\":\"0,0\",\"to\":\"1,0\"} | {\"path\":[\"0,0\",\"1,0\"]} | {\"edgeKey\":\"0,0|1,0\"}"}
+      </p>
       <p className="action-panel__hint">{hint}</p>
     </div>
   );

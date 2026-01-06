@@ -111,6 +111,7 @@
 - Added action-step card declarations for no-target cards (gain gold/draw cards) with initiative-ordered resolution before basic actions; cards leave hand on declaration and discard/burn after resolution, plus Supply Cache coverage.
 - Added Prospecting card effect handling (base + mine bonus gold) with action-flow tests.
 - Added moveStack/buildBridge card effect support with target validation and action-flow tests (stack/path moves + temporary bridge).
+- Added debug card-play inputs in the action panel to submit card declarations with optional targets JSON during the action phase.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
