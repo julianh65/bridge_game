@@ -10,6 +10,7 @@
 - owner: agent-2; scope: Milestone 1a deterministic RNG module + tests; files: packages/shared/src/rng.ts, packages/shared/src/index.ts, packages/engine/src/rng.test.ts; status: completed
 - owner: codex; scope: Milestone 1 core types/config + engine skeleton; files: packages/engine/src/types.ts, packages/engine/src/config.ts, packages/engine/src/engine.ts, packages/engine/src/index.ts, packages/engine/src/index.test.ts; status: completed
 - owner: agent-2; scope: Milestone 1c hex utils + edge key helpers + tests; files: packages/shared/src/hex.ts, packages/shared/src/index.ts, packages/engine/src/hex.test.ts, packages/engine/vitest.config.ts; status: completed
+- owner: codex; scope: Milestone 1 board storage helpers + tests (bridges/occupancy); files: packages/engine/src/board.ts, packages/engine/src/board.test.ts, packages/engine/src/index.ts, progress.md; status: completed
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
@@ -19,6 +20,7 @@
 - Added deterministic RNG module in shared with `nextUint32`, `randInt`, `rollDie`, `shuffle`, plus Vitest coverage in engine.
 - Added engine core types/config defaults plus skeleton entry points (`createNewGame`, `runUntilBlocked`, `applyCommand`, `buildView`) and a setup block test.
 - Added shared hex utilities (axial neighbors, distance, radius generation, canonical edge keys) with engine tests and inlined shared for Vitest.
+- Added board helpers for bridges/occupancy (two-player-per-hex checks) with unit tests.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

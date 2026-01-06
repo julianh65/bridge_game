@@ -1,5 +1,16 @@
 export { DEFAULT_CONFIG } from "./config";
 export {
+  countPlayersOnHex,
+  getBridgeKey,
+  getHex,
+  getPlayerIdsOnHex,
+  hasBridge,
+  hasEnemyUnits,
+  isContestedHex,
+  isOccupiedByPlayer,
+  wouldExceedTwoPlayers
+} from "./board";
+export {
   applyCommand,
   buildView,
   createNewGame,
