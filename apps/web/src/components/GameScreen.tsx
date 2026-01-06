@@ -164,7 +164,7 @@ export const GameScreen = ({
             />
           </div>
 
-          <MarketPanel market={view.public.market} />
+          <MarketPanel market={view.public.market} players={view.public.players} />
 
           <div className="sidebar-section">
             <h3>Log</h3>

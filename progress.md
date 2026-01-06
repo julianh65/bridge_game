@@ -141,6 +141,7 @@
 - Added market deck scaffolding per age with shuffle on game creation (Age II/III placeholders for now).
 - Added market row prep using preview mapping + deck draws, plus cleanup resets to clear the row each round.
 - Added market row tests covering preview composition and no-op behavior when a row exists.
+- Market sidebar now shows card names and bid/pass status per player.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
