@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import type { Command, GameView, PlayerID } from "@bridgefront/engine";
+import type { Command, GameState, GameView, PlayerID } from "@bridgefront/engine";
 
 export type RoomConnectionStatus = "idle" | "connecting" | "connected" | "closed" | "error";
 
@@ -31,6 +31,11 @@ export type LobbyCommand =
   | "autoSetup"
   | { command: "pickFaction"; factionId: string };
 
+export type DebugCommand =
+  | { command: "state" }
+  | { command: "advancePhase" }
+  | { command: "resetGame"; seed?: number };
+
 type RoomMessage =
   | {
       type: "welcome";
@@ -50,6 +55,10 @@ type RoomMessage =
       events?: unknown[];
       view: GameView;
     }
+  | {
+      type: "debugState";
+      state: GameState;
+    }
   | { type: "error"; message: string }
   | { type: "connected"; roomId: string }
   | { type: string; [key: string]: unknown };
@@ -64,6 +73,7 @@ type RoomState = {
   host: string | null;
   error: string | null;
   revision: number | null;
+  debugState: GameState | null;
 };
 
 const DEFAULT_STATE: RoomState = {
@@ -75,7 +85,8 @@ const DEFAULT_STATE: RoomState = {
   roomId: null,
   host: null,
   error: null,
-  revision: null
+  revision: null,
+  debugState: null
 };
 
 const storageKeyForRoom = (roomId: string) => `bridgefront:room:${roomId}:rejoinToken`;
@@ -180,6 +191,7 @@ export const useRoom = (options: RoomOptions | null) => {
           view: parsed.view ?? null,
           lobby: parsed.view ? null : prev.lobby,
           revision: parsed.revision ?? prev.revision,
+          debugState: null,
           error: null
         }));
         return;
@@ -201,6 +213,15 @@ export const useRoom = (options: RoomOptions | null) => {
           view: parsed.view,
           lobby: null,
           revision: parsed.revision,
+          error: null
+        }));
+        return;
+      }
+
+      if (parsed.type === "debugState") {
+        setState((prev) => ({
+          ...prev,
+          debugState: parsed.state,
           error: null
         }));
         return;
@@ -282,6 +303,23 @@ export const useRoom = (options: RoomOptions | null) => {
     [state.playerId]
   );
 
+  const sendDebugCommand = useCallback(
+    (command: DebugCommand) => {
+      const socket = socketRef.current;
+      if (!socket || socket.readyState !== WebSocket.OPEN || !state.playerId) {
+        return false;
+      }
+      const payload = {
+        type: "debugCommand",
+        playerId: state.playerId,
+        ...command
+      };
+      socket.send(JSON.stringify(payload));
+      return true;
+    },
+    [state.playerId]
+  );
+
   const disconnect = useCallback(() => {
     if (socketRef.current) {
       socketRef.current.close();
@@ -294,8 +332,11 @@ export const useRoom = (options: RoomOptions | null) => {
       ...state,
       sendCommand,
       sendLobbyCommand,
+      sendDebugCommand,
       disconnect
     }),
-    [state, sendCommand, sendLobbyCommand, disconnect]
+    [state, sendCommand, sendLobbyCommand, sendDebugCommand, disconnect]
   );
 };
+
+export type RoomClient = ReturnType<typeof useRoom>;

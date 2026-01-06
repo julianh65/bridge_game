@@ -5,14 +5,19 @@ import {
   createNewGame,
   DEFAULT_CONFIG,
   emit,
+  getBridgeKey,
   runUntilBlocked
 } from "@bridgefront/engine";
 import type {
+  BlockState,
+  CollectionChoice,
+  CollectionPrompt,
   Command,
   GameEvent,
   GameState,
   LobbyPlayer,
-  PlayerID
+  PlayerID,
+  SetupChoice
 } from "@bridgefront/engine";
 
 type ConnectionState = {
@@ -39,11 +44,18 @@ type CommandMessage = {
 type LobbyCommandMessage = {
   type: "lobbyCommand";
   playerId: PlayerID;
-  command: "rerollMap" | "rollDice" | "startGame" | "pickFaction";
+  command: "rerollMap" | "rollDice" | "startGame" | "autoSetup" | "pickFaction";
   factionId?: string;
 };
 
-type ClientMessage = JoinMessage | CommandMessage | LobbyCommandMessage;
+type DebugCommandMessage = {
+  type: "debugCommand";
+  playerId: PlayerID;
+  command: "state" | "advancePhase" | "resetGame";
+  seed?: number;
+};
+
+type ClientMessage = JoinMessage | CommandMessage | LobbyCommandMessage | DebugCommandMessage;
 
 type LobbyPlayerView = {
   id: PlayerID;
@@ -70,6 +82,302 @@ const FACTION_IDS = new Set([
   "gatewright"
 ]);
 
+type AxialCoord = {
+  q: number;
+  r: number;
+};
+
+const HEX_DIRS: AxialCoord[] = [
+  { q: 1, r: 0 },
+  { q: 1, r: -1 },
+  { q: 0, r: -1 },
+  { q: -1, r: 0 },
+  { q: -1, r: 1 },
+  { q: 0, r: 1 }
+];
+
+const parseHexKey = (key: string): AxialCoord => {
+  const parts = key.split(",");
+  if (parts.length !== 2) {
+    throw new Error("hex key must be in the form q,r");
+  }
+  const q = Number(parts[0]);
+  const r = Number(parts[1]);
+  if (!Number.isInteger(q) || !Number.isInteger(r)) {
+    throw new Error("hex key coordinates must be integers");
+  }
+  return { q, r };
+};
+
+const toHexKey = (coord: AxialCoord): string => `${coord.q},${coord.r}`;
+
+const axialDistance = (a: AxialCoord, b: AxialCoord): number => {
+  const dq = a.q - b.q;
+  const dr = a.r - b.r;
+  return (Math.abs(dq) + Math.abs(dr) + Math.abs(dq + dr)) / 2;
+};
+
+const neighborHexKeys = (key: string): string[] => {
+  const coord = parseHexKey(key);
+  return HEX_DIRS.map((dir) => toHexKey({ q: coord.q + dir.q, r: coord.r + dir.r }));
+};
+
+const pickCapitalSlot = (block: Extract<BlockState, { type: "setup.capitalDraft" }>): string => {
+  const taken = new Set(
+    Object.values(block.payload.choices).filter((hexKey): hexKey is string => Boolean(hexKey))
+  );
+  const available = block.payload.availableSlots.find((hexKey) => !taken.has(hexKey));
+  if (!available) {
+    throw new Error("no available capital slots");
+  }
+  return available;
+};
+
+const getStartingBridgeOptions = (state: GameState, playerId: PlayerID): string[] => {
+  const player = state.players.find((entry) => entry.id === playerId);
+  if (!player?.capitalHex) {
+    throw new Error("player has no capital for starting bridges");
+  }
+  const capitalCoord = parseHexKey(player.capitalHex);
+  const candidates = new Set<string>();
+
+  for (const hexKey of Object.keys(state.board.hexes)) {
+    const coord = parseHexKey(hexKey);
+    if (axialDistance(coord, capitalCoord) > 2) {
+      continue;
+    }
+    for (const neighborKey of neighborHexKeys(hexKey)) {
+      if (!state.board.hexes[neighborKey]) {
+        continue;
+      }
+      candidates.add(getBridgeKey(hexKey, neighborKey));
+    }
+  }
+
+  return Array.from(candidates).sort();
+};
+
+const pickStartingBridge = (
+  state: GameState,
+  block: Extract<BlockState, { type: "setup.startingBridges" }>,
+  playerId: PlayerID
+): string => {
+  const placed = new Set(block.payload.placedEdges[playerId] ?? []);
+  const options = getStartingBridgeOptions(state, playerId);
+  const edgeKey = options.find((candidate) => !placed.has(candidate));
+  if (!edgeKey) {
+    throw new Error("no available starting bridge edges");
+  }
+  return edgeKey;
+};
+
+const pickFreeStartingCard = (
+  block: Extract<BlockState, { type: "setup.freeStartingCardPick" }>,
+  playerId: PlayerID
+): string => {
+  const offers = block.payload.offers[playerId];
+  if (!offers || offers.length === 0) {
+    throw new Error("no free starting card offer available");
+  }
+  return offers[0];
+};
+
+const buildAutoSetupChoice = (
+  state: GameState
+): { playerId: PlayerID; choice: SetupChoice } => {
+  const block = state.blocks;
+  if (!block || block.type === "actionStep.declarations") {
+    throw new Error("no setup block available");
+  }
+  const playerId = block.waitingFor[0];
+  if (!playerId) {
+    throw new Error("no player awaiting setup choice");
+  }
+
+  if (block.type === "setup.capitalDraft") {
+    return {
+      playerId,
+      choice: { kind: "pickCapital", hexKey: pickCapitalSlot(block) }
+    };
+  }
+
+  if (block.type === "setup.startingBridges") {
+    return {
+      playerId,
+      choice: {
+        kind: "placeStartingBridge",
+        edgeKey: pickStartingBridge(state, block, playerId)
+      }
+    };
+  }
+
+  if (block.type === "setup.freeStartingCardPick") {
+    return {
+      playerId,
+      choice: {
+        kind: "pickFreeStartingCard",
+        cardId: pickFreeStartingCard(block, playerId)
+      }
+    };
+  }
+
+  throw new Error("unsupported setup block");
+};
+
+const runAutoSetup = (state: GameState): GameState => {
+  let nextState = runUntilBlocked(state);
+  for (let step = 0; step < 200; step += 1) {
+    if (nextState.phase !== "setup") {
+      return nextState;
+    }
+    if (!nextState.blocks || nextState.blocks.waitingFor.length === 0) {
+      nextState = runUntilBlocked(nextState);
+      continue;
+    }
+
+    const { playerId, choice } = buildAutoSetupChoice(nextState);
+    nextState = applyCommand(
+      nextState,
+      { type: "SubmitSetupChoice", payload: choice },
+      playerId
+    );
+    nextState = runUntilBlocked(nextState);
+  }
+
+  throw new Error("auto-setup exceeded step limit");
+};
+
+const buildDebugCollectionChoices = (
+  state: GameState,
+  playerId: PlayerID,
+  prompts: CollectionPrompt[]
+): CollectionChoice[] | null => {
+  const player = state.players.find((entry) => entry.id === playerId);
+  const hand = player?.deck.hand ?? [];
+
+  const choices = prompts.map((prompt) => {
+    if (prompt.kind === "mine") {
+      return {
+        kind: "mine",
+        hexKey: prompt.hexKey,
+        choice: "gold"
+      };
+    }
+
+    if (prompt.kind === "forge") {
+      if (hand.length > 0) {
+        return {
+          kind: "forge",
+          hexKey: prompt.hexKey,
+          choice: "reforge",
+          scrapCardId: hand[0]
+        };
+      }
+      if (prompt.revealed.length > 0) {
+        return {
+          kind: "forge",
+          hexKey: prompt.hexKey,
+          choice: "draft",
+          cardId: prompt.revealed[0]
+        };
+      }
+      return null;
+    }
+
+    if (prompt.revealed.length > 0) {
+      return {
+        kind: "center",
+        hexKey: prompt.hexKey,
+        cardId: prompt.revealed[0]
+      };
+    }
+
+    return null;
+  });
+
+  if (choices.some((choice) => choice === null)) {
+    return null;
+  }
+
+  return choices as CollectionChoice[];
+};
+
+const resolveDebugBlock = (state: GameState): GameState => {
+  const block = state.blocks;
+  if (!block) {
+    return state;
+  }
+
+  if (block.type.startsWith("setup.")) {
+    return runAutoSetup(state);
+  }
+
+  if (block.type === "actionStep.declarations") {
+    let nextState = state;
+    for (const playerId of block.waitingFor) {
+      nextState = applyCommand(
+        nextState,
+        { type: "SubmitAction", payload: { kind: "done" } },
+        playerId
+      );
+    }
+    return nextState;
+  }
+
+  if (block.type === "market.bidsForCard") {
+    let nextState = state;
+    for (const playerId of block.waitingFor) {
+      nextState = applyCommand(
+        nextState,
+        { type: "SubmitMarketBid", payload: { kind: "pass", amount: 0 } },
+        playerId
+      );
+    }
+    return nextState;
+  }
+
+  if (block.type === "collection.choices") {
+    let nextState = state;
+    for (const playerId of block.waitingFor) {
+      const prompts = block.payload.prompts[playerId] ?? [];
+      const choices = buildDebugCollectionChoices(nextState, playerId, prompts);
+      if (!choices) {
+        continue;
+      }
+      nextState = applyCommand(
+        nextState,
+        { type: "SubmitCollectionChoices", payload: choices },
+        playerId
+      );
+    }
+    return nextState;
+  }
+
+  return state;
+};
+
+const advanceToNextPhaseDebug = (state: GameState): GameState => {
+  const startPhase = state.phase;
+  let nextState = state;
+
+  for (let step = 0; step < 100; step += 1) {
+    nextState = runUntilBlocked(nextState);
+    if (nextState.phase !== startPhase) {
+      return nextState;
+    }
+    if (!nextState.blocks) {
+      return nextState;
+    }
+    const resolved = resolveDebugBlock(nextState);
+    if (resolved === nextState) {
+      return nextState;
+    }
+    nextState = resolved;
+  }
+
+  return nextState;
+};
+
 const safeParseMessage = (message: string): ClientMessage | null => {
   try {
     const parsed = JSON.parse(message);
@@ -79,7 +387,8 @@ const safeParseMessage = (message: string): ClientMessage | null => {
     if (
       parsed.type === "join" ||
       parsed.type === "command" ||
-      parsed.type === "lobbyCommand"
+      parsed.type === "lobbyCommand" ||
+      parsed.type === "debugCommand"
     ) {
       return parsed as ClientMessage;
     }
@@ -156,6 +465,19 @@ export default class Server implements Party.Server {
 
   private createMapSeed(): number {
     return Math.floor(Math.random() * 0xffffffff);
+  }
+
+  private isDebugAllowed(): boolean {
+    const env = this.room.env as Record<string, string> | undefined;
+    const nodeEnv = env?.NODE_ENV ?? process.env.NODE_ENV;
+    return nodeEnv !== "production";
+  }
+
+  private getHostPlayerId(): PlayerID | null {
+    if (this.state) {
+      return this.state.players.find((player) => player.seatIndex === 0)?.id ?? null;
+    }
+    return this.lobbyPlayers[0]?.id ?? null;
   }
 
   private collectEvents(): GameEvent[] {
@@ -472,6 +794,10 @@ export default class Server implements Party.Server {
       this.handleStartGame(message, connection);
       return;
     }
+    if (message.command === "autoSetup") {
+      this.handleAutoSetup(message, connection);
+      return;
+    }
     if (message.command === "pickFaction") {
       this.handlePickFaction(message, connection);
       return;
@@ -482,6 +808,86 @@ export default class Server implements Party.Server {
     }
     if (message.command === "rollDice") {
       this.handleRollDice(message, connection);
+    }
+  }
+
+  private handleDebugCommand(
+    message: DebugCommandMessage,
+    connection: Party.Connection
+  ): void {
+    if (!this.isDebugAllowed()) {
+      this.sendError(connection, "debug commands are disabled");
+      return;
+    }
+    const meta = this.getConnectionState(connection);
+    if (!meta || meta.spectator) {
+      this.sendError(connection, "spectators cannot send debug commands");
+      return;
+    }
+    if (message.playerId !== meta.playerId) {
+      this.sendError(connection, "player id does not match connection");
+      return;
+    }
+    const hostId = this.getHostPlayerId();
+    if (!hostId || hostId !== meta.playerId) {
+      this.sendError(connection, "only the host can use debug commands");
+      return;
+    }
+
+    if (message.command === "state") {
+      if (!this.state) {
+        this.sendError(connection, "game has not started");
+        return;
+      }
+      this.send(connection, { type: "debugState", state: this.state });
+      return;
+    }
+
+    if (message.command === "advancePhase") {
+      if (!this.state) {
+        this.sendError(connection, "game has not started");
+        return;
+      }
+      const nextState = advanceToNextPhaseDebug(this.state);
+      this.state = {
+        ...nextState,
+        revision: this.state.revision + 1
+      };
+      const events = this.collectEvents();
+      this.broadcastUpdate(events);
+      return;
+    }
+
+    if (message.command === "resetGame") {
+      const lobbyPlayers = this.state
+        ? [...this.state.players]
+            .sort((a, b) => a.seatIndex - b.seatIndex)
+            .map((player) => ({ id: player.id, name: player.name, factionId: player.factionId }))
+        : [...this.lobbyPlayers];
+      if (lobbyPlayers.length < MIN_PLAYERS) {
+        this.sendError(connection, `need at least ${MIN_PLAYERS} players to reset`);
+        return;
+      }
+      const seed =
+        typeof message.seed === "number" && Number.isFinite(message.seed)
+          ? message.seed
+          : this.createMapSeed();
+      const config = this.state?.config ?? DEFAULT_CONFIG;
+      let nextState = runUntilBlocked(createNewGame(config, seed, lobbyPlayers));
+      nextState = {
+        ...nextState,
+        players: nextState.players.map((player) => ({
+          ...player,
+          visibility: {
+            connected: (this.playerConnections.get(player.id) ?? 0) > 0
+          }
+        }))
+      };
+      const nextRevision = (this.state?.revision ?? 0) + 1;
+      this.state = { ...nextState, revision: nextRevision };
+      this.lastLogCount = this.state.logs.length;
+      this.broadcastUpdate();
+      return;
     }
   }
 
@@ -559,6 +965,47 @@ export default class Server implements Party.Server {
     }
     player.factionId = normalized;
     this.broadcastLobby();
+  }
+
+  private handleAutoSetup(
+    message: LobbyCommandMessage,
+    connection: Party.Connection
+  ): void {
+    if (!this.state) {
+      this.sendError(connection, "game has not started");
+      return;
+    }
+    if (this.state.phase !== "setup") {
+      this.sendError(connection, "auto-setup is only available during setup");
+      return;
+    }
+    const meta = this.getConnectionState(connection);
+    if (!meta || meta.spectator) {
+      this.sendError(connection, "spectators cannot run auto-setup");
+      return;
+    }
+    if (message.playerId !== meta.playerId) {
+      this.sendError(connection, "player id does not match connection");
+      return;
+    }
+    const hostId = this.state.players.find((player) => player.seatIndex === 0)?.id;
+    if (!hostId || hostId !== meta.playerId) {
+      this.sendError(connection, "only the host can run auto-setup");
+      return;
+    }
+
+    try {
+      const nextState = runAutoSetup(this.state);
+      this.state = {
+        ...nextState,
+        revision: this.state.revision + 1
+      };
+      const events = this.collectEvents();
+      this.broadcastUpdate(events);
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : "auto-setup failed";
+      this.sendError(connection, reason);
+    }
   }
 
   private handleRollDice(
@@ -684,6 +1131,10 @@ export default class Server implements Party.Server {
     }
     if (parsed.type === "lobbyCommand") {
       this.handleLobbyCommand(parsed, sender);
+      return;
+    }
+    if (parsed.type === "debugCommand") {
+      this.handleDebugCommand(parsed, sender);
     }
   }
 

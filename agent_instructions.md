@@ -8,6 +8,8 @@ As we develop I want us to create tests and run them to ensure that things work 
 
 When you create components or things I don't want these single massive files, obviously use your best judgement but if you can try to seperate components into different files and organize code cleanly and well.
 
+By the way sometimes in implementation plan I (the boss) sometimes just add random phases or things I want addressed. You should if you choose to take on that task, expand it out to make it a better spec to the best of what you interpret my intentions to be and then add all the check mark things for it.
+
 ## Parallel agent workflow
 If multiple agents are running at once:
 - Before coding, claim a task in progress.md with: owner, scope, files you plan to touch, and status (this is mandatory).

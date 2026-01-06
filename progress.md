@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
+- [agent3] Commit all outstanding repo changes (tracked edits + new RoomDebugPanel + partykit_docs) and add ignore for `apps/web/dist/`. Files: `progress.md`, `.gitignore`, `agent_instructions.md`, `apps/server/src/server.ts`, `apps/web/src/lib/room-client.ts`, `apps/web/src/components/RoomDebugPanel.tsx`, `packages/engine/src/board-generation.ts`, `packages/engine/src/config.ts`, `rules_draft.md`, `partykit_docs/*`. Status: in progress.
 
 ## Milestone 8.5 progress
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.

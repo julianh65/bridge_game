@@ -7,7 +7,7 @@ export const DEFAULT_CONFIG: GameConfig = {
   HAND_LIMIT: 10,
   CHAMPION_LIMIT: 4,
   ROUNDS_MAX: 10,
-  VP_TO_WIN: 8,
+  VP_TO_WIN: 10,
   boardRadiusByPlayerCount: {
     2: 3,
     3: 4,

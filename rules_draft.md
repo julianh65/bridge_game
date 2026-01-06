@@ -1,5 +1,50 @@
 The Plot / Story / Vibe 🙂
-
+Name:
+The Last Tether
+Setting
+World is called Orodin
+Orodin is an ancient prison made of basalt and aurum that the gods used to bind together a chaotic force called The Roil.
+The energy from the Roil created life and all chaos on the planet.
+For thousands of years the prison held, but as humanity began to (without understanding) mine the aurum out of the earth we began to weaken and cannibalize the prison. Without the aurum the prison structure weakened until it shattered.
+Over the ages the energy from The Roil sparked life on the surface of the basalt prison.
+The world has now shattered and is literally expanding in volume and getting bigger.
+The place where the gods last touched it, the Axis Mundi is the only stationary solid point still left. A massive plate of immutable permanence that holds the planet together.
+Factions are fighting for permanence. As the roil expands it will consume parts of the crust that do not have enough permanence.
+Eventually the roil will consume all and create higher entropy and chaos, it will erase the memories of people and erase matter.
+To survive the great houses are fighting for Permanence, the energy the gods infused to contain The Roil.
+Forges are massive industrial complexes left by the gods.
+Age Names
+Age I: The fracture
+The “Great Groan” is heard. The outer crust begins to flake off into the sky. The Roil seeps up through the cracks.
+The Great Houses realize the prison is failing, they scramble to secure gold and build the first bridges to secure their immediate surroundings.
+Cracks appear, scramble to secure surroundings
+Age II: The Drift
+The gaps widen and the mist rises.
+Age III: The dissolution
+The outer world is gone, knife-fight to the end. Unleash your most powerful relics to ensure your house is the only one left standing on the last solid ground.
+Factions (right now the ones below are just shitty placeholders)
+Bastion ->
+Zealots of gravity, they worship weight.
+Lore: They believe that if they build their walls thick and heavy enough the Roil cannot move them. They sew lead into their skin and make armor of basalt.
+Champion: The Anchorite: A warrior that has chained a massive slab of basalt to his back, dragging it into battle.
+Assassins -> The Virteous Court
+They believe that the world is breaking because there is too much noise and too much life. To save the prison they must kill and silence everyone.
+Mobile Guys -> idk yet
+They inhale The Roil and use it to move faster and energize themselves and fly. At great personal cost.
+Miners -> idk yet
+They believe and know that Aurum is the only material that can resist The Roil. The only way to save themselves is to construct a fortress made of Gold.
+Card MFs ->
+They have realized that Orodin and The Roil are governed by strict mathematical laws. They believe the world is ending because the equation has an error. They accumulate knowledge to calculate the final formulate that will stop The Roil.
+Bridge / Aggros
+They believe that Pain is another form of Permanence. 
+Redfines To Do:
+Victory Points / Permanence
+Center -> Axis Mundi
+Market -> The Archive
+Burn -> Entropy
+Forces -> Cohorts
+Aurum -> Gold
+All VP cards will need to be renamed to something more “permanence” ish
 
 Bridgefront — Complete Ruleset (Stand‑Alone v3)
 A simultaneous‑planning, hex‑board, bridge‑network, deck‑building wargame for 2–6 players.
@@ -58,7 +103,7 @@ All dice are standard d6.
 You win at the end of the Scoring Phase if:
 Your Total VP ≥ NUM_VICTORY_POINTS_REQUIRED, and
 Your Capital contains no enemy units.
-NUM_VICTORY_POINTS_REQUIRED = 10
+NUM_VICTORY_POINTS_REQUIRED = 8?
 3.2 Round Cap
 Maximum 10 rounds. If nobody wins by end of round 10 winner is determined by:
 Highest Total VP
@@ -67,8 +112,8 @@ More Gold
 4) Board, Bridges, and Movement
 4.1 Board Size
 Hexagon-shaped hex grid:
-2 players: radius R = 3 (including center; diameter 5)
-3-6 players: radius R = 4 (diameter 7)
+2–3 players: radius R = 4 (Including Center, that is to say diameter 7)
+4–6 players: radius R = 5 (Diameter 9)
 4.2 Bridges
 A Bridge is an edge connecting two adjacent hexes.
 Movement between adjacent hexes is allowed only if a Bridge exists on that edge, unless a card/Champion says it ignores Bridges.
@@ -76,23 +121,53 @@ Only one Bridge can exist on an edge.
 4.3 Occupied
 A hex is occupied by a player if it contains at least one of that player’s units. That is to say either forces or champion.
 5) Capital Placement / Board Generation
-Using axial coordinates (q,r).
-Capital slots are fixed per player count (config-driven defaults):
-2 players: (3, 0), (-3, 0)
-3 players: (4, 0), (-4, 4), (0, -4)
-4 players: (4, -1), (-1, 4), (-4, 1), (1, -4)
-5 players: (-2, 4), (-4, 1), (1, -4), (2, 2), (4, -2)
-6 players: (4, 0), (0, 4), (-4, 4), (-4, 0), (0, -4), (4, -4)
+Using axial coordinates (q,r) 
+Corner slots for radius R:
+C0 = ( R, 0) 
+C1 = ( 0, R)
+C2 = (-R, R)
+C3 = (-R, 0)
+C4 = ( 0,-R)
+C5 = ( R,-R)
+Use these for:
+2 players: {C0, C3}
+3 players: {C0, C2, C4} 
+4 players: {C0, C1, C3, C4}
+6 players: {C0, C1, C2, C3, C4, C5}
+5 players (R = 5): use these 5 fixed outer-ring slots:
+S1: (-5, 0)
+S2: (-4, 5)
+S3: (2, 2)
+S4: (5, -3)
+S5: (1, -5)
 Players draft Capital slots from the available set during setup.
 6) Special Tiles
 6.1 Tile Counts (recommended)
 Let P = player count.
-Players | Mines | Forges | Center
-2 | 4 | 1 | 1
-3 | 5 | 2 | 1
-4 | 6 | 2 | 1
-5 | 7 | 3 | 1
-6 | 8 | 3 | 1
+Players
+Mines
+Forges
+Center
+2
+3
+1
+1
+3
+4
+2
+1
+4
+5
+2
+1
+5
+6
+3
+1
+6
+7
+3
+1
 
 6.2 Tile Descriptions
 Capital
@@ -110,7 +185,7 @@ Reforge: Scrap 1 card from your hand (remove it from your deck permanently).
 Forge Draft: Reveal 3 Market cards from the current Age, choose 1 to gain, put the other 2 on the bottom in random order.
 At Scoring: each Forge you occupy is worth +1 Control VP.
 Mine
-Each Mine has a Mine Value token: 3, 4, 5, 6, or 7.
+Each Mine has a Mine Value token: 4, 5, or 6.
 At Collection, if you occupy a Mine choose one:
 Gain gold equal to its Mine Value. 
 Reveal 1 Market card from the current age, choose to add it to your deck or not.
@@ -119,11 +194,9 @@ Mine Values can be increased by certain cards.
 Capitals and Center are fixed. All other special tiles are procedural.
 7.1 Mine Values
 Assign Mine Values with probability:
-3: 25%
-4: 35%
-5: 25%
-6: 10%
-7: 5%
+4: 50%
+5: 30%
+6: 20%
 7.2 Eligibility (for any special tile)
 A hex is eligible if:
 Not a Capital
@@ -188,17 +261,16 @@ If hand > 10, discard down to 10 immediately
 Let P = number of players.
 11.0 Soft Age Preview (Market only)
 When revealing the Market row, Ages I and II “preview” the next Age. That is to say that during earlier rounds, some subset of the cards that are bid-able will be from the next age.
-Determine Preview Count N (capped at P):
-Age I (Rounds 1-3):
-Round 1 -> 0 next-Age card
-Round 2 -> 1 next-Age cards
+Determine Preview Count N:
+If Round 1–3 (Age I): N = min(P, Round #)
+Round 1 → 0 next‑Age card
+Round 2 → 1 next‑Age cards
 Round 3 -> 1 next-Age cards
-Age II (Rounds 4-7):
-Round 4 -> 0 next-Age card
-Round 5 -> 1 next-Age cards
-Round 6 -> 2 next-Age cards
-Round 7 -> 2 next-Age cards
-Age III: N = 0
+If Round 4–7 (Age II): N = min(P, Round # − 2)
+Round 4 → 0 next‑Age card
+Round 5 → 1 next‑Age cards
+Round 5 → 2 next‑Age cards
+If Age III: N = 0
 Reveal:
 Reveal N cards from the next Age Market deck (Age II previews in Age I; Age III previews in Age II)
 Reveal (P − N) cards from the current Age Market deck
@@ -683,11 +755,11 @@ HP 6 — 1d hit 1–3 — Bounty 2
 If there is no enemy champion in this hex, roll 2 extra dice (total 3) that hit on 1-3
 Sergeant
 Cost: 1 mana — Gold 1/1/1 — Init: 35 / 105 — Type: Champion
-HP 3 — 1d hit 1–3 — Bounty 0
+HP 3 — 1d hit 1–3 — Bounty 1
 Traitor
-Cost: 2 mana — Gold 1/2/5 — Init: 35 / 105 — Type: Champion
+Cost: 1 mana — Gold 1/2/5 — Init: 35 / 105 — Type: Champion
 HP 5 — 3d hit 1–3 — Bounty 3
-Upon death instantly set the owners mana to 0.
+Upon death instantly set the owner's mana to 0.
 23.2 Age II Market (47 cards)
 Note to self: these should be cool abilities as well as a mix of incremental more powerful versions of the age I market cards
 A) Movement (5)
@@ -711,19 +783,19 @@ Battalion Contract
 Cost: 3 mana + 2 gold — Init: 80 / 155 — Type: Order
 Deploy 10 Forces to your Capital.
 Rally Where You Stand
-Cost: 1 mana + 2 gold — Init: 50 / 120 — Type: Order
+Cost: 1 mana + 3 gold — Init: 50 / 120 — Type: Order
 Deploy 3 Forces to a hex you occupy that contains a Champion.
 Forward Barracks
 Cost: 1 mana + 2 gold — Init: 65 / 135 — Type: Order
 Deploy 4 Forces to a Mine/Forge you occupy or your Capital.
 Conscription Drive
 Cost: 1 mana + 1 gold — Init: 70 / 145 — Type: Order
-Deploy 5 Forces to your Capital, then discard 1 card.
+Deploy 4 Forces to your Capital, then discard 1 cards.
 Miner Army
 Cost: 1 mana + 1 gold— Init: 70 / 145 — Type: Order
 Deploy 2 forces into all mains you currently occupy.
 Command Logistics
-Cost: 2 mana + 1 gold— Init: 70 / 145 — Type: Order
+Cost: 2 mana + 2 gold— Init: 70 / 145 — Type: Order
 Deploy 1 force into your capital for every card in your hand.
 Swam Logistics
 Cost: 2 mana + 1 gold mana— Init: 70 / 145 — Type: Order
@@ -748,7 +820,7 @@ Cost: 1 mana — Init: 25 / 90 — Type: Order
 Draw 3, discard 2.
 Insight (1x)
 Cost: 0 mana — Init: 60 / 130 — Type: Order
-Draw 3. Burn
+Draw 2. Burn
 Clean Cuts
 Cost: 1 mana — Init: 70 / 145 — Type: Order
 Burn 1 card from your hand. Draw 1.
@@ -861,7 +933,7 @@ Cost: 3 mana — Gold 0/0/0 — Init: 65 / 135 — Type: Champion
 HP 15 — 5d hit 1–4 — Bounty 5
 Can only be played while player has 3 champions or more on the board. Destroy all of own players champions.
 Capturer
-Cost: 1 mana — Gold 1/2/5 — Init: 35 / 105 — Type: Champion
+Cost: 2 mana — Gold 1/2/5 — Init: 35 / 105 — Type: Champion
 HP 5 — 2d hit 1–3 — Bounty 0
 Everytime this champion wins a battle, deploy 1 force to the hex the champion occupies
 23.3 Age III Market (47 cards)
@@ -926,8 +998,8 @@ Attrition
 Cost: 1 mana — Init: 65 / 135 — Type: Spell
 Enemy stack within dist 1 of your Champion: destroy up to 3 enemy Forces (random). Champions there take 1 damage.
 Civilizational Hero
-Cost: 2 mana — Init: 65 / 135 — Type: Spell
-If you have only 1 champion on the board, permanently double it’s health and then max heal it. BURN.
+Cost: 2 mana + 1 gold — Init: 65 / 135 — Type: Spell
+If you have only 1 champion on the board, double it’s current health (bumping it’s new max health to it’s new health value if the new health exceeds it’s current max health)
 Complete Encirclement
 Cost: 2 mana — Init: 70 / 145 — Type: Spell
 Choose an enemy‑occupied hex. If you occupy at least four different adjacent hexes to it, destroy all forces in that hex and deal 3 damage to all champions.
@@ -1003,7 +1075,7 @@ Cost: 1 mana — Init: 35 / 105 — Type: Order
 Build 3 Bridges, each touching a hex you occupy. Burn.
 Secret Plans
 Cost: 0 mana — Init: 15 / 85 — Type: Order
-Draw 3. Burn.
+Draw 2. Burn.
 Emergency Pay
 Cost: 1 mana — Init: 50 / 120 — Type: Order
 Gain +5 gold. Burn.
