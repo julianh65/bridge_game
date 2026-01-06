@@ -15,7 +15,18 @@ export const addForcesToHex = (
     throw new Error("hex does not exist");
   }
 
-  let nextIndex = Object.keys(board.units).length + 1;
+  // Scan existing force ids to avoid collisions when units are removed.
+  let maxForceIndex = 0;
+  for (const unitId of Object.keys(board.units)) {
+    if (!unitId.startsWith("u_")) {
+      continue;
+    }
+    const parsed = Number(unitId.slice(2));
+    if (Number.isInteger(parsed) && parsed > maxForceIndex) {
+      maxForceIndex = parsed;
+    }
+  }
+  let nextIndex = maxForceIndex + 1;
   const units = { ...board.units };
   const newUnitIds: UnitID[] = [];
 

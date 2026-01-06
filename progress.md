@@ -13,6 +13,10 @@
 ## Active tasks
 - (none)
 
+## Bug audit progress
+- Logged potential issues from the quick scan in `docs/bugs.md`.
+- Fixed force unit id generation to avoid collisions and added coverage.
+
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.
 
@@ -73,6 +77,7 @@
 - Implemented PartyKit room server with join/command handling, in-memory game state, revision bumping, and rejoin tokens (`apps/server/src/server.ts`).
 - Added a PartyKit web client hook + Home screen for room join; Lobby/GameScreen now render from live `GameView` data with connection state, board, and logs.
 - Added pre-game waiting panel in the web client and pruned disconnected lobby seats so stale entries do not block new joins.
+- Documented PartyKit multi-tab behavior and cleaned up resolved issues; client now guards against null rejoin tokens.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
