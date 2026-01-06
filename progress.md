@@ -6,8 +6,7 @@
 - Card defs in `technical_spec.md` now described as data-first TS modules with stable IDs, targetSpec, and effects/resolve rules.
 
 ## Active tasks
-- owner: agent-2; scope: Milestone 2c procedural placement (forges/mines + mine values); files: packages/engine/src/board-generation.ts, packages/engine/src/board-generation.test.ts, packages/engine/src/index.ts; status: completed
-- owner: agent-1; scope: Milestone 2b setup flow blocks + setup commands (capital draft/starting bridges/free starting card); files: packages/engine/src/engine.ts, packages/engine/src/types.ts, packages/engine/src/index.test.ts; status: completed; dependency: board generation outputs/capital slots, card data for free starting card
+- None currently (all queued tasks complete).
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
@@ -23,6 +22,9 @@
 - Added base board generation (axial hex grid, center tile) and capital slot mapping with tests.
 - Added setup flow blocks and commands for capital draft, starting bridges, and free starting card; setup now advances to `round.reset` with tests. Free starting card uses a placeholder pool in config (to be replaced by real card defs/deck).
 - Added procedural placement for forges/mines (including home mines) and mine values with deterministic tests.
+
+## Debug UI progress
+- Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
