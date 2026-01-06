@@ -250,7 +250,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Move log + player list into a secondary row during market/collection phases.
   - [ ] Expand market/collection focus cards (initiative/effects) for richer phase layouts.
 - [ ] Add collapsible/relocatable panels so not everything lives in the right sidebar.
-- [ ] Make the phase market at the top part much bigger and cooler
+- [x] Make the phase market at the top part much bigger and cooler
 - [ ] the bridge place mechanism still doesn't work
 - [x] During the game we don't need to see all the room id and those little details and top bar, those can be collapsed
 
@@ -419,9 +419,9 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Fix the non-auto setup flow (faction picks + start gating) so manual setup works.
 
 ### Tasks (web - market overlay + cards)
-- [ ] Replace the market focus row with a full-screen overlay that can be shown/hidden.
-- [ ] Redesign market cards to show art placeholder, cost, initiative, type, tags, and rules text.
-- [ ] Shrink the board presence while the market overlay is open so the cards dominate.
+- [x] Replace the market focus row with a full-screen overlay that can be shown/hidden.
+- [x] Redesign market cards to show art placeholder, cost, initiative, type, tags, and rules text.
+- [x] Shrink the board presence while the market overlay is open so the cards dominate.
 
 ### Tasks (web - deck + player status)
 - [ ] Add a deck viewer so players can browse all cards in their current deck.

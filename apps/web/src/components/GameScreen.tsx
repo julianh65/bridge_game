@@ -118,6 +118,7 @@ export const GameScreen = ({
   const [cardTargetsRaw, setCardTargetsRaw] = useState("");
   const [boardPickMode, setBoardPickMode] = useState<BoardPickMode>("none");
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
+  const [isMarketOverlayOpen, setIsMarketOverlayOpen] = useState(false);
   const [selectedHexKey, setSelectedHexKey] = useState<string | null>(null);
   const [pendingEdgeStart, setPendingEdgeStart] = useState<string | null>(null);
   const [pendingStackFrom, setPendingStackFrom] = useState<string | null>(null);
@@ -181,7 +182,7 @@ export const GameScreen = ({
   const isMarketPhase = view.public.phase === "round.market";
   const isCollectionPhase = view.public.phase === "round.collection";
   const isInteractivePhase = isActionPhase || isMarketPhase || isCollectionPhase;
-  const showPhaseFocus = isMarketPhase || isCollectionPhase;
+  const showPhaseFocus = isCollectionPhase;
   const showHandPanel = Boolean(view.private) && isActionPhase;
   const canDeclareAction =
     status === "connected" && Boolean(localPlayer) && isActionPhase && !localPlayer?.doneThisRound;
@@ -216,6 +217,14 @@ export const GameScreen = ({
       setCardTargetsRaw("");
     }
   }, [isActionPhase]);
+
+  useEffect(() => {
+    if (isMarketPhase) {
+      setIsMarketOverlayOpen(true);
+    } else {
+      setIsMarketOverlayOpen(false);
+    }
+  }, [isMarketPhase]);
 
   const setCardTargetsObject = (targets: Record<string, unknown> | null) => {
     setCardTargetsRaw(targets ? JSON.stringify(targets) : "");
@@ -1100,16 +1109,6 @@ export const GameScreen = ({
 
   const phaseFocusPanel = showPhaseFocus ? (
     <div className="game-screen__focus">
-      {isMarketPhase ? (
-        <MarketPanel
-          market={view.public.market}
-          players={view.public.players}
-          phase={view.public.phase}
-          player={localPlayer ?? null}
-          status={status}
-          onSubmitBid={onSubmitMarketBid}
-        />
-      ) : null}
       {isCollectionPhase ? (
         <CollectionPanel
           phase={view.public.phase}
@@ -1123,6 +1122,39 @@ export const GameScreen = ({
         />
       ) : null}
     </div>
+  ) : null;
+
+  const showMarketOverlay = isMarketPhase && isMarketOverlayOpen;
+  const showMarketOverlayToggle = isMarketPhase && !isMarketOverlayOpen;
+  const marketOverlay = isMarketPhase ? (
+    <>
+      {showMarketOverlay ? (
+        <div className="market-overlay" role="dialog" aria-modal="true">
+          <div className="market-overlay__scrim" />
+          <div className="market-overlay__panel">
+            <MarketPanel
+              layout="overlay"
+              market={view.public.market}
+              players={view.public.players}
+              phase={view.public.phase}
+              player={localPlayer ?? null}
+              status={status}
+              onSubmitBid={onSubmitMarketBid}
+              onClose={() => setIsMarketOverlayOpen(false)}
+            />
+          </div>
+        </div>
+      ) : null}
+      {showMarketOverlayToggle ? (
+        <button
+          type="button"
+          className="btn btn-primary market-overlay__toggle"
+          onClick={() => setIsMarketOverlayOpen(true)}
+        >
+          Show Market
+        </button>
+      ) : null}
+    </>
   ) : null;
 
   const logSection = (
@@ -1222,6 +1254,8 @@ export const GameScreen = ({
           </>
         )}
       </header>
+
+      {marketOverlay}
 
       {phaseFocusPanel}
 
