@@ -29,6 +29,7 @@
 - Ran `npm test` (engine Vitest).
 - Added collection-choice resolution tests (mine draft accept/decline, forge reforge, center pick) in `packages/engine/src/round-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
@@ -146,6 +147,7 @@
 - Added Bridge Crew support with edge + optional move path validation and coverage.
 - Added champion-target card support (heal/damage/patch up) with action-flow tests (heal cap, capital bonus, bounty on kill).
 - Added Recruit choice targeting (capital vs occupied hex) with effect handling and tests.
+- Added Scout Report effect (deterministic top-card keep) using top-of-deck extraction + hand overflow handling with action-flow coverage.
 - Added debug card-play inputs in the action panel to submit card declarations with optional targets JSON during the action phase.
 - GameView now surfaces action-step eligible/waiting players, and the action panel lists waiting/submitted names.
 

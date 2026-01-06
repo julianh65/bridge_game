@@ -2,7 +2,7 @@ import { neighborHexKeys, parseEdgeKey } from "@bridgefront/shared";
 import { describe, expect, it } from "vitest";
 
 import type { BoardState, EdgeKey, GameState, HexKey } from "./types";
-import { createCardInstance } from "./cards";
+import { createCardInstance, createCardInstances } from "./cards";
 import { applyCommand, createNewGame, DEFAULT_CONFIG, getBridgeKey, runUntilBlocked } from "./index";
 import { addForcesToHex } from "./units";
 
@@ -440,6 +440,55 @@ describe("action flow", () => {
     expect(p1After.resources.mana).toBe(p1Before.resources.mana - 1);
     expect(p1After.deck.hand.includes(injected.instanceId)).toBe(false);
     expect(p1After.deck.discardPile).toContain(injected.instanceId);
+  });
+
+  it("plays scout report to keep the top card and discard the rest", () => {
+    let { state } = setupToActionPhase();
+    const injected = addCardToHand(state, "p1", "starter.scout_report");
+    state = injected.state;
+
+    const created = createCardInstances(state, [
+      "test.scout.top",
+      "test.scout.middle",
+      "test.scout.bottom"
+    ]);
+    state = created.state;
+
+    state = {
+      ...state,
+      players: state.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              deck: {
+                drawPile: created.instanceIds,
+                discardPile: [],
+                hand: [injected.instanceId],
+                scrapped: []
+              }
+            }
+          : player
+      )
+    };
+
+    state = applyCommand(
+      state,
+      { type: "SubmitAction", payload: { kind: "card", cardInstanceId: injected.instanceId } },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state");
+    }
+
+    expect(p1After.deck.hand).toEqual([created.instanceIds[0]]);
+    expect(p1After.deck.drawPile).toEqual([]);
+    const expectedDiscard = [injected.instanceId, ...created.instanceIds.slice(1)].sort();
+    expect([...p1After.deck.discardPile].sort()).toEqual(expectedDiscard);
   });
 
   it("plays a bridge-building card on an empty edge", () => {

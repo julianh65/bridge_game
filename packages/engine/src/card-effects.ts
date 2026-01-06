@@ -3,13 +3,14 @@ import { areAdjacent, axialDistance, parseEdgeKey, parseHexKey } from "@bridgefr
 
 import type { CardPlayTargets, GameState, PlayerID, TileType } from "./types";
 import { getBridgeKey, hasBridge, hasEnemyUnits, isOccupiedByPlayer, wouldExceedTwoPlayers } from "./board";
-import { drawCards } from "./cards";
+import { addCardToDiscardPile, addCardToHandWithOverflow, drawCards, takeTopCards } from "./cards";
 import { addForcesToHex } from "./units";
 
 const SUPPORTED_TARGET_KINDS = new Set(["none", "edge", "stack", "path", "champion", "choice"]);
 const SUPPORTED_EFFECTS = new Set([
   "gainGold",
   "drawCards",
+  "scoutReport",
   "prospecting",
   "buildBridge",
   "moveStack",
@@ -674,6 +675,24 @@ export const resolveCardEffects = (
       case "drawCards": {
         const count = typeof effect.count === "number" ? effect.count : 0;
         nextState = drawCards(nextState, playerId, count);
+        break;
+      }
+      case "scoutReport": {
+        const lookCount = Math.max(0, Number(effect.lookCount) || 0);
+        const keepCount = Math.max(0, Number(effect.keepCount) || 0);
+        if (lookCount <= 0) {
+          break;
+        }
+        const taken = takeTopCards(nextState, playerId, lookCount);
+        nextState = taken.state;
+        const keep = taken.cards.slice(0, keepCount);
+        const discard = taken.cards.slice(keepCount);
+        for (const cardId of keep) {
+          nextState = addCardToHandWithOverflow(nextState, playerId, cardId);
+        }
+        for (const cardId of discard) {
+          nextState = addCardToDiscardPile(nextState, playerId, cardId);
+        }
         break;
       }
       case "prospecting": {

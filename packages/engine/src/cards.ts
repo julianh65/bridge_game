@@ -60,6 +60,47 @@ export const shuffleCardIds = (
   return { state: { ...state, rngState: next }, cardIds: value };
 };
 
+export const takeTopCards = (
+  state: GameState,
+  playerId: PlayerID,
+  count: number
+): { state: GameState; cards: CardInstanceID[] } => {
+  if (count <= 0) {
+    return { state, cards: [] };
+  }
+
+  let nextState = state;
+  const cards: CardInstanceID[] = [];
+
+  for (let i = 0; i < count; i += 1) {
+    let player = getPlayer(nextState, playerId);
+    let { drawPile, discardPile } = player.deck;
+
+    if (drawPile.length === 0) {
+      if (discardPile.length === 0) {
+        break;
+      }
+      const shuffled = shuffleCardIds(nextState, discardPile);
+      nextState = updatePlayerDeck(shuffled.state, playerId, {
+        drawPile: shuffled.cardIds,
+        discardPile: []
+      });
+      player = getPlayer(nextState, playerId);
+      ({ drawPile } = player.deck);
+    }
+
+    if (drawPile.length === 0) {
+      break;
+    }
+
+    const [top, ...rest] = drawPile;
+    cards.push(top);
+    nextState = updatePlayerDeck(nextState, playerId, { drawPile: rest });
+  }
+
+  return { state: nextState, cards };
+};
+
 export const insertCardIntoDrawPileRandom = (
   state: GameState,
   playerId: PlayerID,
@@ -75,6 +116,23 @@ export const insertCardIntoDrawPileRandom = (
   drawPile.splice(insertIndex, 0, instanceId);
 
   return updatePlayerDeck({ ...state, rngState: next }, playerId, { drawPile });
+};
+
+export const addCardToHandWithOverflow = (
+  state: GameState,
+  playerId: PlayerID,
+  cardInstanceId: CardInstanceID
+): GameState => {
+  const player = getPlayer(state, playerId);
+  if (player.deck.hand.length >= state.config.HAND_LIMIT) {
+    return updatePlayerDeck(state, playerId, {
+      discardPile: [...player.deck.discardPile, cardInstanceId]
+    });
+  }
+
+  return updatePlayerDeck(state, playerId, {
+    hand: [...player.deck.hand, cardInstanceId]
+  });
 };
 
 export const drawCards = (
