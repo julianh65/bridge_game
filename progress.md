@@ -18,10 +18,12 @@
 - Fixed force unit id generation to avoid collisions and added coverage.
 - Guarded combat resolution against no-hit stalemates and added a test.
 - Wired event logs for phase transitions and action resolution so UI logs are populated.
+- Logged setup actions (capital picks, starting bridges, free starting card) so UI logs show setup activity.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
 - Added guidance to `agent_instructions.md` on reconciling other-agent/tooling changes.
+- Updated `agent_instructions.md` to require logging task scope/files in `progress.md` before coding and clearing entries after completion.
 
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.
