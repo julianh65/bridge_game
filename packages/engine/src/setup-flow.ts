@@ -2,14 +2,12 @@ import {
   axialDistance,
   parseEdgeKey,
   parseHexKey,
-  randInt,
   shuffle
 } from "@bridgefront/shared";
 
 import type {
   BlockState,
   CardDefId,
-  CardInstanceID,
   GameState,
   HexKey,
   PlayerID,
@@ -17,29 +15,20 @@ import type {
   SetupChoice
 } from "./types";
 import { getBridgeKey } from "./board";
+import {
+  createCardInstance,
+  createCardInstances,
+  drawToHandSize,
+  insertCardIntoDrawPileRandom,
+  shuffleCardIds
+} from "./cards";
+import { resolveStarterFactionCards } from "./content/starter-decks";
+import { addForcesToHex } from "./units";
 
 const withUpdatedPlayer = (state: GameState, playerId: PlayerID, update: (player: PlayerState) => PlayerState) => {
   return {
     ...state,
     players: state.players.map((player) => (player.id === playerId ? update(player) : player))
-  };
-};
-
-const createCardInstance = (
-  state: GameState,
-  defId: CardDefId
-): { state: GameState; instanceId: CardInstanceID } => {
-  const nextIndex = Object.keys(state.cardsByInstanceId).length + 1;
-  const instanceId = `ci_${nextIndex}`;
-  return {
-    state: {
-      ...state,
-      cardsByInstanceId: {
-        ...state.cardsByInstanceId,
-        [instanceId]: { id: instanceId, defId }
-      }
-    },
-    instanceId
   };
 };
 
@@ -88,6 +77,60 @@ export const createFreeStartingCardBlock = (
       }
     }
   };
+};
+
+export const initializeStartingAssets = (state: GameState): GameState => {
+  let nextState = state;
+  const playerIds = state.players.map((player) => player.id);
+
+  for (const playerId of playerIds) {
+    const player = nextState.players.find((entry) => entry.id === playerId);
+    if (!player) {
+      throw new Error(`player not found: ${playerId}`);
+    }
+    if (!player.capitalHex) {
+      throw new Error("player has no capital to place starting forces");
+    }
+
+    nextState = {
+      ...nextState,
+      board: addForcesToHex(nextState.board, playerId, player.capitalHex, 4)
+    };
+
+    const starter = resolveStarterFactionCards(player.factionId);
+    if (starter.factionId !== player.factionId) {
+      nextState = withUpdatedPlayer(nextState, playerId, (entry) => ({
+        ...entry,
+        factionId: starter.factionId
+      }));
+    }
+
+    const { state: withDeckCards, instanceIds: deckInstances } = createCardInstances(
+      nextState,
+      [...starter.deck, starter.starterSpellId]
+    );
+    const { state: withChampion, instanceIds: championInstances } = createCardInstances(
+      withDeckCards,
+      [starter.championId]
+    );
+    const championInstanceId = championInstances[0];
+
+    const shuffled = shuffleCardIds(withChampion, deckInstances);
+    let updatedState = withUpdatedPlayer(shuffled.state, playerId, (entry) => ({
+      ...entry,
+      deck: {
+        drawPile: shuffled.cardIds,
+        discardPile: [],
+        hand: [championInstanceId],
+        scrapped: []
+      }
+    }));
+
+    updatedState = drawToHandSize(updatedState, playerId, 6);
+    nextState = updatedState;
+  }
+
+  return nextState;
 };
 
 export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId: PlayerID): GameState => {
@@ -256,28 +299,7 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
     }
 
     const { state: stateWithCard, instanceId } = createCardInstance(state, choice.cardId);
-    const player = stateWithCard.players.find((entry) => entry.id === playerId);
-    if (!player) {
-      throw new Error("player not found");
-    }
-
-    const { value: insertIndex, next: nextRng } = randInt(
-      stateWithCard.rngState,
-      0,
-      player.deck.drawPile.length
-    );
-    const newDrawPile = player.deck.drawPile.slice();
-    newDrawPile.splice(insertIndex, 0, instanceId);
-
-    const updatedState = {
-      ...stateWithCard,
-      rngState: nextRng,
-      players: stateWithCard.players.map((entry) =>
-        entry.id === playerId
-          ? { ...entry, deck: { ...entry.deck, drawPile: newDrawPile } }
-          : entry
-      )
-    };
+    const updatedState = insertCardIntoDrawPileRandom(stateWithCard, playerId, instanceId);
 
     return {
       ...updatedState,

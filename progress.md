@@ -10,9 +10,9 @@
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.
+- Added card/deck helpers (`cards.ts`), unit helper (`units.ts`), and starter deck data (`content/starter-decks.ts`).
 
 ## Cleanup/organization TODOs
-- Move card/deck instance helpers into a dedicated module once deck initialization starts.
 - Consider moving view construction into `packages/engine/src/view.ts` if `buildView` grows.
 
 ## Milestone 0 progress
@@ -29,9 +29,11 @@
 ## Milestone 2 progress
 - Added base board generation (axial hex grid, center tile) and capital slot mapping with tests.
 - Added setup flow blocks and commands for capital draft, starting bridges, and free starting card; setup now advances to `round.reset` with tests. Free starting card uses a placeholder pool in config (to be replaced by real card defs/deck).
+- Added starting forces + starter deck initialization after capital draft (defaulting to Bastion if no faction chosen), with champion in hand and draw to 6 before starting bridges.
 - Added procedural placement for forges/mines (including home mines) and mine values with deterministic tests.
 - Board generation is now configurable via `DEFAULT_CONFIG` (radius, capital slots, placement rules). Added `docs/configuration.md`.
 - Updated default 4-player capital slots in `DEFAULT_CONFIG`.
+- Added pre-game lobby UI placeholders (ready up/start game, faction/settings stubs) in `apps/web` (local only).
 
 ## Debug UI progress
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.
