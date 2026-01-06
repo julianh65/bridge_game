@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { createCardInstances, drawCards } from "./cards";
+import { createRngState, randInt } from "@bridgefront/shared";
+
+import { createCardInstances, drawCards, insertCardIntoDrawPileRandom } from "./cards";
 import { DEFAULT_CONFIG } from "./config";
 import { createNewGame } from "./engine";
 
@@ -71,5 +73,79 @@ describe("cards", () => {
 
     expect(player?.deck.discardPile).toEqual([]);
     expect(remaining.sort()).toEqual(instanceIds.slice(0, 2).sort());
+  });
+
+  it("creates sequential card instance ids across calls", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 10, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const first = createCardInstances(base, ["test.card.a", "test.card.b"]);
+    const second = createCardInstances(first.state, ["test.card.c"]);
+
+    expect(first.instanceIds).toEqual(["ci_1", "ci_2"]);
+    expect(second.instanceIds).toEqual(["ci_3"]);
+    expect(Object.keys(second.state.cardsByInstanceId).sort()).toEqual([
+      "ci_1",
+      "ci_2",
+      "ci_3"
+    ]);
+  });
+
+  it("inserts a card into the draw pile using RNG position", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 22, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const created = createCardInstances(base, [
+      "test.card.1",
+      "test.card.2",
+      "test.card.3",
+      "test.card.4"
+    ]);
+    const [first, second, third, inserted] = created.instanceIds;
+
+    const seededState = {
+      ...created.state,
+      rngState: createRngState(55),
+      players: created.state.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              deck: {
+                drawPile: [first, second, third],
+                discardPile: [],
+                hand: [],
+                scrapped: []
+              }
+            }
+          : {
+              ...player,
+              deck: {
+                drawPile: [],
+                discardPile: [],
+                hand: [],
+                scrapped: []
+              }
+            }
+      )
+    };
+
+    const { value: insertIndex, next: expectedRng } = randInt(
+      seededState.rngState,
+      0,
+      3
+    );
+    const expectedDrawPile = [first, second, third];
+    expectedDrawPile.splice(insertIndex, 0, inserted);
+
+    const nextState = insertCardIntoDrawPileRandom(seededState, "p1", inserted);
+    const p1 = nextState.players.find((player) => player.id === "p1");
+    const p2 = nextState.players.find((player) => player.id === "p2");
+
+    expect(p1?.deck.drawPile).toEqual(expectedDrawPile);
+    expect(p2?.deck.drawPile).toEqual([]);
+    expect(nextState.rngState).toEqual(expectedRng);
   });
 });

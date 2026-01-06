@@ -11,7 +11,6 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-None.
 - [in progress] owner: agent1; scope: implement market bid collection block (buy/pass, tie-break roll-offs, pass pot, one-win-per-round) with engine tests; files: packages/engine/src/engine.ts, packages/engine/src/market.ts, packages/engine/src/blocks.ts, packages/engine/src/types.ts, packages/engine/src/market.test.ts
 
 ## Bug audit progress
@@ -26,6 +25,7 @@ None.
 
 ## Testing progress
 - Added card draw tests covering reshuffle behavior and hand-limit overflow in `packages/engine/src/cards.test.ts`.
+- Added tests for card instance id sequencing and random draw-pile insertion in `packages/engine/src/cards.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
