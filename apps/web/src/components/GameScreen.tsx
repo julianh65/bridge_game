@@ -5,12 +5,14 @@ import {
   getBridgeKey,
   type ActionDeclaration,
   type Bid,
+  type CollectionChoice,
   type GameView
 } from "@bridgefront/engine";
 import { areAdjacent, parseHexKey } from "@bridgefront/shared";
 
 import { ActionPanel, type BoardPickMode } from "./ActionPanel";
 import { BoardView } from "./BoardView";
+import { CollectionPanel } from "./CollectionPanel";
 import { MarketPanel } from "./MarketPanel";
 import { buildHexRender } from "../lib/board-preview";
 import { formatGameEvent } from "../lib/event-format";
@@ -64,6 +66,7 @@ type GameScreenProps = {
   status: RoomConnectionStatus;
   onSubmitAction: (declaration: ActionDeclaration) => void;
   onSubmitMarketBid: (bid: Bid) => void;
+  onSubmitCollectionChoices: (choices: CollectionChoice[]) => void;
   onLeave: () => void;
 };
 
@@ -74,6 +77,7 @@ export const GameScreen = ({
   status,
   onSubmitAction,
   onSubmitMarketBid,
+  onSubmitCollectionChoices,
   onLeave
 }: GameScreenProps) => {
   const hexRender = useMemo(() => buildHexRender(view.public.board), [view.public.board]);
@@ -671,6 +675,17 @@ export const GameScreen = ({
             player={localPlayer ?? null}
             status={status}
             onSubmitBid={onSubmitMarketBid}
+          />
+
+          <CollectionPanel
+            phase={view.public.phase}
+            player={localPlayer ?? null}
+            players={view.public.players}
+            status={status}
+            handCards={handCards}
+            collectionPublic={view.public.collection}
+            collectionPrivate={view.private?.collection ?? null}
+            onSubmitChoices={onSubmitCollectionChoices}
           />
 
           <div className="sidebar-section">

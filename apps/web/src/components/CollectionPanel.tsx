@@ -1,0 +1,435 @@
+import { useEffect, useMemo, useState } from "react";
+
+import {
+  CARD_DEFS,
+  type CardInstance,
+  type CollectionChoice,
+  type CollectionPrompt,
+  type GameView
+} from "@bridgefront/engine";
+
+import type { RoomConnectionStatus } from "../lib/room-client";
+
+const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
+
+type CollectionPanelProps = {
+  phase: GameView["public"]["phase"];
+  publicCollection: GameView["public"]["collection"];
+  privateCollection: GameView["private"]["collection"] | null;
+  player: GameView["public"]["players"][number] | null;
+  players: Array<{ id: string; name: string }>;
+  handCards: CardInstance[];
+  status: RoomConnectionStatus;
+  onSubmitChoices: (choices: CollectionChoice[]) => void;
+};
+
+const getPromptKey = (kind: CollectionPrompt["kind"], hexKey: string) => `${kind}:${hexKey}`;
+
+const getChoiceKey = (choice: CollectionChoice) => getPromptKey(choice.kind, choice.hexKey);
+
+const getPromptSignature = (prompt: CollectionPrompt) => {
+  const reveals = prompt.revealed.join(",");
+  const mineValue = prompt.kind === "mine" ? prompt.mineValue : "";
+  return `${prompt.kind}:${prompt.hexKey}:${mineValue}:${reveals}`;
+};
+
+const getCardLabel = (cardId: string) => CARD_DEFS_BY_ID.get(cardId)?.name ?? cardId;
+
+const isChoiceValid = (
+  prompt: CollectionPrompt,
+  choice: CollectionChoice,
+  handCardIds: Set<string>
+) => {
+  if (choice.kind !== prompt.kind || choice.hexKey !== prompt.hexKey) {
+    return false;
+  }
+
+  if (choice.kind === "mine") {
+    if (choice.choice === "gold") {
+      return true;
+    }
+    return prompt.revealed.length > 0 && typeof choice.gainCard === "boolean";
+  }
+
+  if (choice.kind === "forge") {
+    if (choice.choice === "reforge") {
+      return handCardIds.has(choice.scrapCardId);
+    }
+    return prompt.revealed.includes(choice.cardId);
+  }
+
+  if (choice.kind === "center") {
+    return prompt.revealed.includes(choice.cardId);
+  }
+
+  return false;
+};
+
+export const CollectionPanel = ({
+  phase,
+  publicCollection,
+  privateCollection,
+  player,
+  players,
+  handCards,
+  status,
+  onSubmitChoices
+}: CollectionPanelProps) => {
+  const prompts = privateCollection?.prompts ?? [];
+  const existingChoices = privateCollection?.choices ?? null;
+  const promptSignature = useMemo(
+    () => prompts.map(getPromptSignature).join("|"),
+    [prompts]
+  );
+  const [selections, setSelections] = useState<Record<string, CollectionChoice | null>>({});
+  const handCardIds = useMemo(() => new Set(handCards.map((card) => card.id)), [handCards]);
+  const playerNames = useMemo(
+    () => new Map(players.map((entry) => [entry.id, entry.name])),
+    [players]
+  );
+  const waitingFor = publicCollection?.waitingForPlayerIds ?? [];
+
+  useEffect(() => {
+    const next: Record<string, CollectionChoice | null> = {};
+    for (const prompt of prompts) {
+      next[getPromptKey(prompt.kind, prompt.hexKey)] = null;
+    }
+    if (existingChoices) {
+      for (const choice of existingChoices) {
+        next[getChoiceKey(choice)] = choice;
+      }
+    }
+    setSelections(next);
+  }, [promptSignature, existingChoices]);
+
+  const isCollectionPhase = phase === "round.collection";
+  const isSpectator = !player;
+  const hasSubmitted = existingChoices !== null;
+  const canInteract =
+    status === "connected" && isCollectionPhase && !isSpectator && !hasSubmitted;
+
+  const { preparedChoices, allValid } = useMemo(() => {
+    const prepared: CollectionChoice[] = [];
+    let valid = true;
+    for (const prompt of prompts) {
+      const key = getPromptKey(prompt.kind, prompt.hexKey);
+      const choice = selections[key];
+      if (!choice || !isChoiceValid(prompt, choice, handCardIds)) {
+        valid = false;
+        continue;
+      }
+      prepared.push(choice);
+    }
+    if (prepared.length !== prompts.length) {
+      valid = false;
+    }
+    return { preparedChoices: prepared, allValid: valid };
+  }, [prompts, selections, handCardIds]);
+
+  const canSubmit = canInteract && prompts.length > 0 && allValid;
+
+  const handleSubmit = () => {
+    if (!canSubmit) {
+      return;
+    }
+    onSubmitChoices(preparedChoices);
+  };
+
+  const setChoice = (prompt: CollectionPrompt, choice: CollectionChoice) => {
+    const key = getPromptKey(prompt.kind, prompt.hexKey);
+    setSelections((current) => ({
+      ...current,
+      [key]: choice
+    }));
+  };
+
+  let hint = "Select collection rewards for each prompt.";
+  if (status !== "connected") {
+    hint = "Connect to submit collection choices.";
+  } else if (isSpectator) {
+    hint = "Spectators cannot submit collection choices.";
+  } else if (!isCollectionPhase) {
+    hint = "Collection choices are submitted during the collection phase.";
+  } else if (hasSubmitted) {
+    hint = "Choices submitted.";
+  } else if (prompts.length === 0) {
+    hint = "No collection prompts for you this round.";
+  } else if (!allValid) {
+    hint = "Pick an option for each collection prompt.";
+  }
+
+  const waitingLabel =
+    waitingFor.length > 0
+      ? `Waiting for ${waitingFor
+          .map((id) => playerNames.get(id) ?? id)
+          .join(", ")}`
+      : null;
+
+  return (
+    <div className="sidebar-section">
+      <h3>Collection</h3>
+      {isCollectionPhase ? (
+        prompts.length === 0 ? (
+          <div className="hand-empty">No collection prompts for you this round.</div>
+        ) : (
+          <div className="collection-prompts">
+            {prompts.map((prompt) => {
+              const key = getPromptKey(prompt.kind, prompt.hexKey);
+              const selection = selections[key];
+
+              if (prompt.kind === "mine") {
+                const revealedCard = prompt.revealed[0];
+                const selectedGold = selection?.kind === "mine" && selection.choice === "gold";
+                const selectedGain =
+                  selection?.kind === "mine" &&
+                  selection.choice === "draft" &&
+                  selection.gainCard === true;
+                const selectedSkip =
+                  selection?.kind === "mine" &&
+                  selection.choice === "draft" &&
+                  selection.gainCard === false;
+                return (
+                  <div key={key} className="collection-prompt">
+                    <div className="collection-prompt__header">
+                      <span className="collection-prompt__title">Mine</span>
+                      <span className="collection-prompt__meta">
+                        {prompt.hexKey}
+                      </span>
+                    </div>
+                    <div className="collection-prompt__section">
+                      <span className="collection-prompt__label">
+                        Value {prompt.mineValue} gold
+                      </span>
+                      <div className="collection-prompt__options">
+                        <button
+                          type="button"
+                          className={`btn btn-tertiary ${selectedGold ? "is-active" : ""}`}
+                          disabled={!canInteract}
+                          onClick={() =>
+                            setChoice(prompt, {
+                              kind: "mine",
+                              hexKey: prompt.hexKey,
+                              choice: "gold"
+                            })
+                          }
+                        >
+                          Take gold
+                        </button>
+                        {revealedCard ? (
+                          <>
+                            <span className="card-tag">
+                              {getCardLabel(revealedCard)}
+                            </span>
+                            <button
+                              type="button"
+                              className={`btn btn-tertiary ${
+                                selectedGain ? "is-active" : ""
+                              }`}
+                              disabled={!canInteract}
+                              onClick={() =>
+                                setChoice(prompt, {
+                                  kind: "mine",
+                                  hexKey: prompt.hexKey,
+                                  choice: "draft",
+                                  gainCard: true
+                                })
+                              }
+                            >
+                              Gain card
+                            </button>
+                            <button
+                              type="button"
+                              className={`btn btn-tertiary ${
+                                selectedSkip ? "is-active" : ""
+                              }`}
+                              disabled={!canInteract}
+                              onClick={() =>
+                                setChoice(prompt, {
+                                  kind: "mine",
+                                  hexKey: prompt.hexKey,
+                                  choice: "draft",
+                                  gainCard: false
+                                })
+                              }
+                            >
+                              Skip card
+                            </button>
+                          </>
+                        ) : (
+                          <span className="collection-prompt__note">
+                            No card revealed.
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (prompt.kind === "forge") {
+                const selectedReforgeId =
+                  selection?.kind === "forge" && selection.choice === "reforge"
+                    ? selection.scrapCardId
+                    : null;
+                const selectedDraftId =
+                  selection?.kind === "forge" && selection.choice === "draft"
+                    ? selection.cardId
+                    : null;
+                return (
+                  <div key={key} className="collection-prompt">
+                    <div className="collection-prompt__header">
+                      <span className="collection-prompt__title">Forge</span>
+                      <span className="collection-prompt__meta">
+                        {prompt.hexKey}
+                      </span>
+                    </div>
+                    <div className="collection-prompt__section">
+                      <span className="collection-prompt__label">
+                        Reforge (scrap 1 card)
+                      </span>
+                      {handCards.length === 0 ? (
+                        <div className="collection-prompt__note">
+                          No cards in hand.
+                        </div>
+                      ) : (
+                        <ul className="card-list">
+                          {handCards.map((card) => {
+                            const def = CARD_DEFS_BY_ID.get(card.defId);
+                            const label = def?.name ?? card.defId;
+                            const isSelected = selectedReforgeId === card.id;
+                            return (
+                              <li key={card.id}>
+                                <button
+                                  type="button"
+                                  className={`card-tag card-tag--clickable ${
+                                    isSelected ? "is-selected" : ""
+                                  }`}
+                                  disabled={!canInteract}
+                                  onClick={() =>
+                                    setChoice(prompt, {
+                                      kind: "forge",
+                                      hexKey: prompt.hexKey,
+                                      choice: "reforge",
+                                      scrapCardId: card.id
+                                    })
+                                  }
+                                >
+                                  {label} · {card.id}
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
+                    </div>
+                    <div className="collection-prompt__section">
+                      <span className="collection-prompt__label">
+                        Forge draft (choose 1)
+                      </span>
+                      {prompt.revealed.length === 0 ? (
+                        <div className="collection-prompt__note">
+                          No cards revealed.
+                        </div>
+                      ) : (
+                        <ul className="card-list">
+                          {prompt.revealed.map((cardId) => {
+                            const label = getCardLabel(cardId);
+                            const isSelected = selectedDraftId === cardId;
+                            return (
+                              <li key={`${cardId}-${prompt.hexKey}`}>
+                                <button
+                                  type="button"
+                                  className={`card-tag card-tag--clickable ${
+                                    isSelected ? "is-selected" : ""
+                                  }`}
+                                  disabled={!canInteract}
+                                  onClick={() =>
+                                    setChoice(prompt, {
+                                      kind: "forge",
+                                      hexKey: prompt.hexKey,
+                                      choice: "draft",
+                                      cardId
+                                    })
+                                  }
+                                >
+                                  {label}
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                );
+              }
+
+              if (prompt.kind === "center") {
+                const selectedCardId =
+                  selection?.kind === "center" ? selection.cardId : null;
+                return (
+                  <div key={key} className="collection-prompt">
+                    <div className="collection-prompt__header">
+                      <span className="collection-prompt__title">Center</span>
+                      <span className="collection-prompt__meta">
+                        {prompt.hexKey}
+                      </span>
+                    </div>
+                    <div className="collection-prompt__section">
+                      <span className="collection-prompt__label">Pick 1 card</span>
+                      {prompt.revealed.length === 0 ? (
+                        <div className="collection-prompt__note">
+                          No cards revealed.
+                        </div>
+                      ) : (
+                        <ul className="card-list">
+                          {prompt.revealed.map((cardId) => {
+                            const label = getCardLabel(cardId);
+                            const isSelected = selectedCardId === cardId;
+                            return (
+                              <li key={`${cardId}-${prompt.hexKey}`}>
+                                <button
+                                  type="button"
+                                  className={`card-tag card-tag--clickable ${
+                                    isSelected ? "is-selected" : ""
+                                  }`}
+                                  disabled={!canInteract}
+                                  onClick={() =>
+                                    setChoice(prompt, {
+                                      kind: "center",
+                                      hexKey: prompt.hexKey,
+                                      cardId
+                                    })
+                                  }
+                                >
+                                  {label}
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                );
+              }
+
+              return null;
+            })}
+          </div>
+        )
+      ) : (
+        <div className="hand-empty">Collection choices appear during the collection phase.</div>
+      )}
+      <div className="action-panel">
+        <p className="action-panel__hint">{hint}</p>
+        {waitingLabel ? <div className="hand-meta">{waitingLabel}</div> : null}
+        {canSubmit ? (
+          <button type="button" className="btn btn-primary" onClick={handleSubmit}>
+            Submit choices
+          </button>
+        ) : null}
+      </div>
+    </div>
+  );
+};

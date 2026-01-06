@@ -173,6 +173,9 @@ export default function App() {
           onSubmitMarketBid={(bid) =>
             room.sendCommand({ type: "SubmitMarketBid", payload: bid })
           }
+          onSubmitCollectionChoices={(choices) =>
+            room.sendCommand({ type: "SubmitCollectionChoices", payload: choices })
+          }
           onLeave={handleLeave}
         />
       ) : null}

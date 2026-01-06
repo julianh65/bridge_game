@@ -11,7 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- agent-3: add minimal Collection phase UI (owner: agent-3; scope: render collection prompts and submit choices; files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/App.tsx`, `apps/web/src/styles.css`; status: in-progress)
+- none
 - agent-1: collection UI + command wiring (owner: agent-1; scope: add collection prompt panel, submit `SubmitCollectionChoices` from UI, minimal styles; files: `apps/web/src/App.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`; status: in-progress)
 
 ## Bug audit progress
@@ -161,6 +161,7 @@
 - Added market bid controls in the web client and wired `SubmitMarketBid` commands.
 - Implemented market bidding block (buy/pass, tie-break roll-offs, pass pot, one-win-per-round) with command handling + resolution, added market bidding tests, and updated setup/action tests to auto-resolve market.
 - Added collection choice block (mine/forge/center prompts with market-deck reveals), resolution logic, and collection view data; center picks currently use the market deck pending power-deck content.
+- Added a collection sidebar panel that renders mine/forge/center prompts and submits `SubmitCollectionChoices` commands.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

@@ -1023,6 +1023,15 @@ h1 {
   gap: 6px;
 }
 
+.collection-prompts {
+  display: grid;
+  gap: 10px;
+}
+
+.collection-prompt {
+  margin-top: 0;
+}
+
 .card-list--market {
   flex-direction: column;
   align-items: flex-start;
