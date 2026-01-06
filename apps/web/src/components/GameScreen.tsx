@@ -1,12 +1,15 @@
 import { useMemo } from "react";
 
-import type { ActionDeclaration, GameView } from "@bridgefront/engine";
+import { CARD_DEFS, type ActionDeclaration, type GameView } from "@bridgefront/engine";
 
 import { ActionPanel } from "./ActionPanel";
 import { BoardView } from "./BoardView";
 import { MarketPanel } from "./MarketPanel";
 import { buildHexRender } from "../lib/board-preview";
+import { formatGameEvent } from "../lib/event-format";
 import type { RoomConnectionStatus } from "../lib/room-client";
+
+const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 
 type GameScreenProps = {
   view: GameView;
@@ -26,8 +29,13 @@ export const GameScreen = ({
   onLeave
 }: GameScreenProps) => {
   const hexRender = useMemo(() => buildHexRender(view.public.board), [view.public.board]);
+  const playerNames = useMemo(
+    () => new Map(view.public.players.map((player) => [player.id, player.name])),
+    [view.public.players]
+  );
   const localPlayer = view.public.players.find((player) => player.id === playerId);
-  const handCount = view.private?.hand.length ?? 0;
+  const handCards = view.private?.handCards ?? [];
+  const handCount = view.private ? handCards.length : 0;
   const deckCounts = view.private?.deckCounts ?? null;
   const phaseLabel = view.public.phase.replace("round.", "").replace(".", " ");
   const connectionLabel = status === "connected" ? "Live" : "Waiting";
@@ -109,11 +117,15 @@ export const GameScreen = ({
               <>
                 <div className="hand-meta">{handCount} cards in hand</div>
                 <ul className="card-list">
-                  {view.private.hand.map((cardId) => (
-                    <li key={cardId} className="card-tag">
-                      {cardId}
-                    </li>
-                  ))}
+                  {handCards.map((card) => {
+                    const def = CARD_DEFS_BY_ID.get(card.defId);
+                    const label = def?.name ?? card.defId;
+                    return (
+                      <li key={card.id} className="card-tag" title={card.defId}>
+                        {label} · {card.id}
+                      </li>
+                    );
+                  })}
                 </ul>
               </>
             )}
@@ -159,7 +171,7 @@ export const GameScreen = ({
             ) : (
               <ul className="log-list">
                 {view.public.logs.map((entry, index) => (
-                  <li key={`${entry.type}-${index}`}>{entry.type}</li>
+                  <li key={`${entry.type}-${index}`}>{formatGameEvent(entry, playerNames)}</li>
                 ))}
               </ul>
             )}

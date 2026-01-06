@@ -11,7 +11,6 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent1] Add lobby host/seed badges (reroll lock already done). Blocked on agent3 edits to `apps/web/src/components/Lobby.tsx`. Files: `apps/web/src/components/Lobby.tsx`, `progress.md`. Status: blocked.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -98,9 +97,11 @@
 - Documented PartyKit multi-tab behavior and cleaned up resolved issues; client now guards against null rejoin tokens.
 - Added a basic action panel in the game sidebar with command wiring (done, capital reinforce, build bridge edge key, march from/to).
 - Game sidebar now lists hand card IDs, deck counts, and a market row summary.
+- GameView now includes hand card metadata, and the hand list shows card names alongside instance IDs.
 - Game log list now formats key events into readable strings (setup/actions/combat/phase).
 - Lobby now includes a room code copy control with clipboard fallback.
 - Pre-game waiting panel now surfaces a room-code copy control for hosts before the lobby starts.
+- Lobby now includes a shared dice roller (d6) with last-roll display and room-wide broadcast.
 - Lobby map preview now rolls from the game seed and host can reroll the map during setup.
 - Lobby map reroll now locks after the first capital pick (server guard).
 - Added a Cards debug tab with filters (age/deck, mana cost, type, tags) and initiative sorting.
@@ -111,6 +112,7 @@
 - Added action-step card declarations for no-target cards (gain gold/draw cards) with initiative-ordered resolution before basic actions; cards leave hand on declaration and discard/burn after resolution, plus Supply Cache coverage.
 - Added Prospecting card effect handling (base + mine bonus gold) with action-flow tests.
 - Added moveStack/buildBridge card effect support with target validation and action-flow tests (stack/path moves + temporary bridge).
+- Added champion-target card support (heal/damage/patch up) with action-flow tests (heal cap, capital bonus, bounty on kill).
 - Added debug card-play inputs in the action panel to submit card declarations with optional targets JSON during the action phase.
 
 ## Open decisions

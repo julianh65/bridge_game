@@ -286,6 +286,7 @@ export type PlayerPublicView = {
 export type PlayerPrivateView = {
   playerId: PlayerID;
   hand: CardInstanceID[];
+  handCards: CardInstance[];
   deckCounts: {
     drawPile: number;
     discardPile: number;

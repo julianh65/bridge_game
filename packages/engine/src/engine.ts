@@ -288,6 +288,10 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
       ? {
           playerId: viewer.id,
           hand: viewer.deck.hand,
+          handCards: viewer.deck.hand.map(
+            (instanceId) =>
+              state.cardsByInstanceId[instanceId] ?? { id: instanceId, defId: "unknown" }
+          ),
           deckCounts: {
             drawPile: viewer.deck.drawPile.length,
             discardPile: viewer.deck.discardPile.length,
