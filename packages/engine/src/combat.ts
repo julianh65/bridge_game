@@ -2,14 +2,23 @@ import { compareHexKeys, randInt, rollDie } from "@bridgefront/shared";
 
 import type {
   ChampionUnitState,
+  CombatAssignmentContext,
+  CombatContext,
+  CombatEndContext,
+  CombatEndReason,
+  CombatRoundContext,
+  CombatSide,
+  CombatUnitContext,
   GameState,
   HexKey,
+  HitAssignmentPolicy,
   PlayerID,
   UnitID,
   UnitState
 } from "./types";
 import { getPlayerIdsOnHex, isContestedHex } from "./board";
 import { emit } from "./events";
+import { applyModifierQuery, getCombatModifiers, runModifierEvents } from "./modifiers";
 
 const FORCE_HIT_FACES = 2;
 const MAX_STALE_COMBAT_ROUNDS = 20;
@@ -36,11 +45,121 @@ type CombatantSummary = {
   total: number;
 };
 
-type CombatEndReason = "eliminated" | "noHits" | "stale";
+const getForceHitFaces = (
+  state: GameState,
+  modifiers: GameState["modifiers"],
+  context: CombatUnitContext
+): number => {
+  return applyModifierQuery(
+    state,
+    modifiers,
+    (hooks) => hooks.getForceHitFaces,
+    context,
+    FORCE_HIT_FACES
+  );
+};
+
+const getChampionAttackDice = (
+  state: GameState,
+  modifiers: GameState["modifiers"],
+  context: CombatUnitContext,
+  base: number
+): number => {
+  return applyModifierQuery(
+    state,
+    modifiers,
+    (hooks) => hooks.getChampionAttackDice,
+    context,
+    base
+  );
+};
+
+const getChampionHitFaces = (
+  state: GameState,
+  modifiers: GameState["modifiers"],
+  context: CombatUnitContext,
+  base: number
+): number => {
+  return applyModifierQuery(
+    state,
+    modifiers,
+    (hooks) => hooks.getChampionHitFaces,
+    context,
+    base
+  );
+};
+
+const getHitAssignmentPolicy = (
+  state: GameState,
+  modifiers: GameState["modifiers"],
+  context: CombatAssignmentContext
+): HitAssignmentPolicy => {
+  return applyModifierQuery(
+    state,
+    modifiers,
+    (hooks) => hooks.getHitAssignmentPolicy,
+    context,
+    "random"
+  );
+};
+
+const getUnitCombatProfile = (
+  state: GameState,
+  modifiers: GameState["modifiers"],
+  context: CombatContext,
+  side: CombatSide,
+  unitId: UnitID,
+  unit: UnitState
+): { attackDice: number; hitFaces: number } => {
+  const unitContext: CombatUnitContext = {
+    ...context,
+    side,
+    unitId,
+    unit
+  };
+
+  if (unit.kind === "force") {
+    return {
+      attackDice: 1,
+      hitFaces: getForceHitFaces(state, modifiers, unitContext)
+    };
+  }
+
+  return {
+    attackDice: getChampionAttackDice(state, modifiers, unitContext, unit.attackDice),
+    hitFaces: getChampionHitFaces(state, modifiers, unitContext, unit.hitFaces)
+  };
+};
+
+const unitCanHit = (
+  state: GameState,
+  modifiers: GameState["modifiers"],
+  context: CombatContext,
+  side: CombatSide,
+  unitId: UnitID,
+  unit?: UnitState
+): boolean => {
+  if (!unit) {
+    return false;
+  }
+  const { attackDice, hitFaces } = getUnitCombatProfile(
+    state,
+    modifiers,
+    context,
+    side,
+    unitId,
+    unit
+  );
+  return attackDice > 0 && hitFaces > 0;
+};
 
 const rollHitsForUnits = (
   unitIds: UnitID[],
   units: Record<UnitID, UnitState>,
+  state: GameState,
+  modifiers: GameState["modifiers"],
+  context: CombatContext,
+  side: CombatSide,
   rngState: GameState["rngState"]
 ): HitRollResult => {
   let hits = 0;
@@ -52,19 +171,22 @@ const rollHitsForUnits = (
       continue;
     }
 
-    if (unit.kind === "force") {
-      const roll = rollDie(nextState);
-      nextState = roll.next;
-      if (roll.value <= FORCE_HIT_FACES) {
-        hits += 1;
-      }
+    const { attackDice, hitFaces } = getUnitCombatProfile(
+      state,
+      modifiers,
+      context,
+      side,
+      unitId,
+      unit
+    );
+    if (attackDice <= 0 || hitFaces <= 0) {
       continue;
     }
 
-    for (let i = 0; i < unit.attackDice; i += 1) {
+    for (let i = 0; i < attackDice; i += 1) {
       const roll = rollDie(nextState);
       nextState = roll.next;
-      if (roll.value <= unit.hitFaces) {
+      if (roll.value <= hitFaces) {
         hits += 1;
       }
     }
@@ -76,6 +198,8 @@ const rollHitsForUnits = (
 const assignHits = (
   unitIds: UnitID[],
   hits: number,
+  policy: HitAssignmentPolicy,
+  units: Record<UnitID, UnitState>,
   rngState: GameState["rngState"]
 ): HitAssignmentResult => {
   const hitsByUnit: Record<UnitID, number> = {};
@@ -85,10 +209,41 @@ const assignHits = (
     return { hitsByUnit, nextState };
   }
 
-  for (let i = 0; i < hits; i += 1) {
-    const roll = randInt(nextState, 0, unitIds.length - 1);
+  const pickRandomTarget = (candidates: UnitID[]): UnitID | null => {
+    if (candidates.length === 0) {
+      return null;
+    }
+    const roll = randInt(nextState, 0, candidates.length - 1);
     nextState = roll.next;
-    const targetId = unitIds[roll.value];
+    return candidates[roll.value] ?? null;
+  };
+
+  if (policy === "random") {
+    for (let i = 0; i < hits; i += 1) {
+      const targetId = pickRandomTarget(unitIds);
+      if (!targetId) {
+        break;
+      }
+      hitsByUnit[targetId] = (hitsByUnit[targetId] ?? 0) + 1;
+    }
+    return { hitsByUnit, nextState };
+  }
+
+  const isForce = (unitId: UnitID): boolean => units[unitId]?.kind === "force";
+  const preferred =
+    policy === "forcesFirst"
+      ? unitIds.filter((unitId) => isForce(unitId))
+      : unitIds.filter((unitId) => !isForce(unitId));
+  const fallback =
+    policy === "forcesFirst"
+      ? unitIds.filter((unitId) => !isForce(unitId))
+      : unitIds.filter((unitId) => isForce(unitId));
+
+  for (let i = 0; i < hits; i += 1) {
+    const targetId = pickRandomTarget(preferred.length > 0 ? preferred : fallback);
+    if (!targetId) {
+      break;
+    }
     hitsByUnit[targetId] = (hitsByUnit[targetId] ?? 0) + 1;
   }
 
@@ -133,16 +288,6 @@ const resolveHits = (
   }
 
   return { removedUnitIds, updatedChampions, bounty };
-};
-
-const unitCanHit = (unit?: UnitState): boolean => {
-  if (!unit) {
-    return false;
-  }
-  if (unit.kind === "force") {
-    return true;
-  }
-  return unit.attackDice > 0 && unit.hitFaces > 0;
 };
 
 const applyBounty = (state: GameState, playerId: PlayerID, amount: number): GameState => {
@@ -220,6 +365,7 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
   let rngState = nextState.rngState;
   let staleRounds = 0;
   let endReason: CombatEndReason = "eliminated";
+  let battleRound = 0;
 
   while (true) {
     const currentHex = nextBoard.hexes[hexKey];
@@ -227,22 +373,80 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
       return nextState;
     }
 
-    const attackers = currentHex.occupants[participants[0]] ?? [];
-    const defenders = currentHex.occupants[participants[1]] ?? [];
+    let attackers = currentHex.occupants[participants[0]] ?? [];
+    let defenders = currentHex.occupants[participants[1]] ?? [];
     if (attackers.length === 0 || defenders.length === 0) {
       endReason = "eliminated";
       break;
     }
-    const attackersCanHit = attackers.some((unitId) => unitCanHit(nextUnits[unitId]));
-    const defendersCanHit = defenders.some((unitId) => unitCanHit(nextUnits[unitId]));
+
+    battleRound += 1;
+    const contextBase: CombatContext = {
+      hexKey,
+      attackerPlayerId: participants[0],
+      defenderPlayerId: participants[1],
+      round: battleRound
+    };
+    let modifiers = getCombatModifiers(nextState, hexKey);
+
+    const roundContext: CombatRoundContext = {
+      ...contextBase,
+      attackers,
+      defenders
+    };
+    nextState = runModifierEvents(
+      nextState,
+      modifiers,
+      (hooks) => hooks.beforeCombatRound,
+      roundContext
+    );
+    nextBoard = nextState.board;
+    nextUnits = nextState.board.units;
+    rngState = nextState.rngState;
+
+    const afterRoundHex = nextBoard.hexes[hexKey];
+    if (!afterRoundHex) {
+      return nextState;
+    }
+    attackers = afterRoundHex.occupants[participants[0]] ?? [];
+    defenders = afterRoundHex.occupants[participants[1]] ?? [];
+    if (attackers.length === 0 || defenders.length === 0) {
+      endReason = "eliminated";
+      break;
+    }
+
+    modifiers = getCombatModifiers(nextState, hexKey);
+
+    const attackersCanHit = attackers.some((unitId) =>
+      unitCanHit(nextState, modifiers, contextBase, "attackers", unitId, nextUnits[unitId])
+    );
+    const defendersCanHit = defenders.some((unitId) =>
+      unitCanHit(nextState, modifiers, contextBase, "defenders", unitId, nextUnits[unitId])
+    );
     if (!attackersCanHit && !defendersCanHit) {
       endReason = "noHits";
       break;
     }
 
-    const attackerRoll = rollHitsForUnits(attackers, nextUnits, rngState);
+    const attackerRoll = rollHitsForUnits(
+      attackers,
+      nextUnits,
+      nextState,
+      modifiers,
+      contextBase,
+      "attackers",
+      rngState
+    );
     rngState = attackerRoll.nextState;
-    const defenderRoll = rollHitsForUnits(defenders, nextUnits, rngState);
+    const defenderRoll = rollHitsForUnits(
+      defenders,
+      nextUnits,
+      nextState,
+      modifiers,
+      contextBase,
+      "defenders",
+      rngState
+    );
     rngState = defenderRoll.nextState;
 
     if (attackerRoll.hits + defenderRoll.hits === 0) {
@@ -255,9 +459,43 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
     }
     staleRounds = 0;
 
-    const assignedToDefenders = assignHits(defenders, attackerRoll.hits, rngState);
+    const defenderAssignmentContext: CombatAssignmentContext = {
+      ...contextBase,
+      targetSide: "defenders",
+      targetUnitIds: defenders,
+      hits: attackerRoll.hits
+    };
+    const defenderPolicy = getHitAssignmentPolicy(
+      nextState,
+      modifiers,
+      defenderAssignmentContext
+    );
+    const assignedToDefenders = assignHits(
+      defenders,
+      attackerRoll.hits,
+      defenderPolicy,
+      nextUnits,
+      rngState
+    );
     rngState = assignedToDefenders.nextState;
-    const assignedToAttackers = assignHits(attackers, defenderRoll.hits, rngState);
+    const attackerAssignmentContext: CombatAssignmentContext = {
+      ...contextBase,
+      targetSide: "attackers",
+      targetUnitIds: attackers,
+      hits: defenderRoll.hits
+    };
+    const attackerPolicy = getHitAssignmentPolicy(
+      nextState,
+      modifiers,
+      attackerAssignmentContext
+    );
+    const assignedToAttackers = assignHits(
+      attackers,
+      defenderRoll.hits,
+      attackerPolicy,
+      nextUnits,
+      rngState
+    );
     rngState = assignedToAttackers.nextState;
 
     const attackerHits = resolveHits(attackers, assignedToAttackers.hitsByUnit, nextUnits);
@@ -324,6 +562,17 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
         ? participants[1]
         : null;
 
+  const endContext: CombatEndContext = {
+    hexKey,
+    attackerPlayerId: participants[0],
+    defenderPlayerId: participants[1],
+    round: battleRound,
+    reason: endReason,
+    winnerPlayerId,
+    attackers: finalAttackers,
+    defenders: finalDefenders
+  };
+
   nextState = emit(nextState, {
     type: "combat.end",
     payload: {
@@ -341,10 +590,14 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
     }
   });
 
-  return {
-    ...nextState,
-    rngState
-  };
+  nextState = runModifierEvents(
+    nextState,
+    getCombatModifiers(nextState, hexKey),
+    (hooks) => hooks.afterBattle,
+    endContext
+  );
+
+  return nextState;
 };
 
 export const resolveImmediateBattles = (state: GameState): GameState => {

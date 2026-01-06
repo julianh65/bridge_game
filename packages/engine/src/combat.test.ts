@@ -4,7 +4,9 @@ import * as shared from "@bridgefront/shared";
 
 import { createBaseBoard } from "./board-generation";
 import { resolveBattleAtHex, resolveImmediateBattles, resolveSieges } from "./combat";
+import { emit } from "./events";
 import { DEFAULT_CONFIG, createNewGame } from "./index";
+import type { Modifier } from "./types";
 
 const createChampion = (
   id: string,
@@ -238,5 +240,111 @@ describe("combat resolution", () => {
 
     expect(capital.occupants["p2"] ?? []).toHaveLength(0);
     expect(resolved.board.units["c2"]).toBeUndefined();
+  });
+
+  it("applies force hit face modifiers", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        p1: ["f1"],
+        p2: ["f2"]
+      }
+    };
+    board.units = {
+      f1: { id: "f1", ownerPlayerId: "p1", kind: "force", hex: hexKey },
+      f2: { id: "f2", ownerPlayerId: "p2", kind: "force", hex: hexKey }
+    };
+
+    const modifier: Modifier = {
+      id: "m1",
+      source: { type: "card", sourceId: "test" },
+      attachedHex: hexKey,
+      duration: { type: "endOfBattle" },
+      hooks: {
+        getForceHitFaces: () => 0
+      }
+    };
+
+    const state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(11),
+      board,
+      modifiers: [modifier]
+    };
+
+    const resolved = resolveBattleAtHex(state, hexKey);
+    const hex = resolved.board.hexes[hexKey];
+
+    expect(resolved.logs[1]?.payload?.reason).toBe("noHits");
+    expect(hex.occupants["p1"]).toEqual(["f1"]);
+    expect(hex.occupants["p2"]).toEqual(["f2"]);
+  });
+
+  it("dispatches before/after combat hooks", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({
+      value: 1,
+      next: rng
+    }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        p1: ["f1"],
+        p2: ["f2"]
+      }
+    };
+    board.units = {
+      f1: { id: "f1", ownerPlayerId: "p1", kind: "force", hex: hexKey },
+      f2: { id: "f2", ownerPlayerId: "p2", kind: "force", hex: hexKey }
+    };
+
+    const modifier: Modifier = {
+      id: "m2",
+      source: { type: "card", sourceId: "test" },
+      attachedHex: hexKey,
+      duration: { type: "endOfBattle" },
+      hooks: {
+        beforeCombatRound: ({ state }) =>
+          emit(state, { type: "test.beforeCombatRound" }),
+        afterBattle: ({ state }) => emit(state, { type: "test.afterBattle" })
+      }
+    };
+
+    const state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(9),
+      board,
+      modifiers: [modifier]
+    };
+
+    const resolved = resolveBattleAtHex(state, hexKey);
+    const events = resolved.logs.map((entry) => entry.type);
+
+    expect(events).toContain("test.beforeCombatRound");
+    expect(events).toContain("test.afterBattle");
+    expect(events.indexOf("test.beforeCombatRound")).toBeLessThan(
+      events.indexOf("combat.end")
+    );
+    expect(events.indexOf("test.afterBattle")).toBeGreaterThan(
+      events.indexOf("combat.end")
+    );
   });
 });

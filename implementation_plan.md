@@ -295,9 +295,9 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 ### Tasks (engine)
 - [x] Do a quick align on rules_draft to remaining implementation plan
 - Implement `modifiers` with:
-  - duration expiry
-  - query application pipeline
-  - event trigger dispatch
+  - [ ] duration expiry
+  - [x] query application pipeline (combat queries wired)
+  - [x] event trigger dispatch (combat before/after hooks)
 - Implement faction passives as permanent modifiers:
   - Bastion Shield Wall
   - Prospect Ore Cut / Mine Militia

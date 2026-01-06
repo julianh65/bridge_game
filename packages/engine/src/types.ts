@@ -168,7 +168,62 @@ export type Duration =
   | { type: "endOfBattle" }
   | { type: "uses"; remaining: number };
 
-export type HookSpec = Record<string, unknown>;
+export type CombatSide = "attackers" | "defenders";
+
+export type HitAssignmentPolicy = "random" | "forcesFirst" | "championsFirst";
+
+export type CombatEndReason = "eliminated" | "noHits" | "stale";
+
+export type CombatContext = {
+  hexKey: HexKey;
+  attackerPlayerId: PlayerID;
+  defenderPlayerId: PlayerID;
+  round: number;
+};
+
+export type CombatUnitContext = CombatContext & {
+  side: CombatSide;
+  unitId: UnitID;
+  unit: UnitState;
+};
+
+export type CombatAssignmentContext = CombatContext & {
+  targetSide: CombatSide;
+  targetUnitIds: UnitID[];
+  hits: number;
+};
+
+export type CombatRoundContext = CombatContext & {
+  attackers: UnitID[];
+  defenders: UnitID[];
+};
+
+export type CombatEndContext = CombatContext & {
+  reason: CombatEndReason;
+  winnerPlayerId: PlayerID | null;
+  attackers: UnitID[];
+  defenders: UnitID[];
+};
+
+export type ModifierQueryHook<TContext, TValue> = (
+  ctx: TContext & { modifier: Modifier; state: GameState },
+  current: TValue
+) => TValue;
+
+export type ModifierEventHook<TContext> = (
+  ctx: TContext & { modifier: Modifier; state: GameState }
+) => GameState;
+
+export type ModifierHooks = {
+  getForceHitFaces?: ModifierQueryHook<CombatUnitContext, number>;
+  getChampionAttackDice?: ModifierQueryHook<CombatUnitContext, number>;
+  getChampionHitFaces?: ModifierQueryHook<CombatUnitContext, number>;
+  getHitAssignmentPolicy?: ModifierQueryHook<CombatAssignmentContext, HitAssignmentPolicy>;
+  beforeCombatRound?: ModifierEventHook<CombatRoundContext>;
+  afterBattle?: ModifierEventHook<CombatEndContext>;
+};
+
+export type HookSpec = ModifierHooks;
 
 export type Modifier = {
   id: string;

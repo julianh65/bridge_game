@@ -15,7 +15,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent-4; scope: implement modifier query/event hooks for combat (force hit faces + champion stats), plus tests and plumbing; files: packages/engine/src/modifiers.ts, packages/engine/src/types.ts, packages/engine/src/combat.ts, packages/engine/src/combat.test.ts, implementation_plan.md, progress.md; status: in progress
+- [agent-3] Implement modifier duration expiry handling in engine cleanup/phase flow; scope: add expiry helpers + tests. Files: `packages/engine/src/modifiers.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/__tests__/modifiers.test.ts` (status: claimed)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -43,6 +43,7 @@
 - Added regression coverage for invalid card declarations not spending resources or removing cards in `packages/engine/src/action-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (invalid card regression coverage).
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (champion play/cost/limit coverage).
+- Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
@@ -195,6 +196,7 @@ none
 ## Milestone 7 progress
 - Implemented champion card play (hex targeting validation + deployment), champion gold cost scaling, and champion limit checks in engine with tests.
 - Added champion HP details to board stack tooltips in the UI.
+- Added combat modifier query pipeline (force/champion stats + hit assignment policy), before/after combat hook dispatch, and coverage.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
