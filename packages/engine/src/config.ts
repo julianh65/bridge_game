@@ -70,11 +70,11 @@ export const DEFAULT_CONFIG: GameConfig = {
     10: 0
   },
   freeStartingCardPool: [
-    "age1.placeholder.a",
-    "age1.placeholder.b",
-    "age1.placeholder.c",
-    "age1.placeholder.d",
-    "age1.placeholder.e",
-    "age1.placeholder.f"
+    "age1.quick_march",
+    "age1.prospecting",
+    "age1.trade_caravan",
+    "age1.temporary_bridge",
+    "age1.patch_up",
+    "age1.quick_study"
   ]
 };
