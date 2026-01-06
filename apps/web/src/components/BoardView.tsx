@@ -231,6 +231,7 @@ export const BoardView = ({
     }
     const stacks: Array<{
       key: string;
+      hexKey: string;
       x: number;
       y: number;
       ownerPlayerId: string;
@@ -293,6 +294,7 @@ export const BoardView = ({
         });
         stacks.push({
           key: `${hex.key}:${playerId}`,
+          hexKey: hex.key,
           x: center.x,
           y: center.y,
           ownerPlayerId: playerId,
@@ -584,6 +586,13 @@ export const BoardView = ({
     onEdgeClick?.(edgeKey);
   };
 
+  const handleStackClick = (hexKey: string) => {
+    if (didDragRef.current) {
+      return;
+    }
+    onHexClick?.(hexKey);
+  };
+
   return (
     <svg
       ref={svgRef}
@@ -753,7 +762,11 @@ export const BoardView = ({
         }
         const stackTitle = stackTitleLines.join("\n");
         return (
-          <g key={stack.key} className="unit-stack">
+          <g
+            key={stack.key}
+            className="unit-stack"
+            onClick={() => handleStackClick(stack.hexKey)}
+          >
             <title>{stackTitle}</title>
             <circle
               className={
