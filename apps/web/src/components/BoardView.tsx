@@ -198,6 +198,12 @@ export const BoardView = ({
       ownerPlayerId: string;
       forceCount: number;
       championCount: number;
+      championDetails: Array<{
+        id: string;
+        cardDefId: string;
+        hp: number;
+        maxHp: number;
+      }>;
       offsetIndex: number;
       occupantCount: number;
     }> = [];
@@ -215,6 +221,12 @@ export const BoardView = ({
       occupants.forEach(([playerId, unitIds], index) => {
         let forceCount = 0;
         let championCount = 0;
+        const championDetails: Array<{
+          id: string;
+          cardDefId: string;
+          hp: number;
+          maxHp: number;
+        }> = [];
         for (const unitId of unitIds) {
           const unit = board.units[unitId];
           if (!unit) {
@@ -224,11 +236,23 @@ export const BoardView = ({
             forceCount += 1;
           } else {
             championCount += 1;
+            championDetails.push({
+              id: unit.id,
+              cardDefId: unit.cardDefId,
+              hp: unit.hp,
+              maxHp: unit.maxHp
+            });
           }
         }
         if (forceCount + championCount === 0) {
           return;
         }
+        championDetails.sort((a, b) => {
+          if (a.cardDefId !== b.cardDefId) {
+            return a.cardDefId.localeCompare(b.cardDefId);
+          }
+          return a.id.localeCompare(b.id);
+        });
         stacks.push({
           key: `${hex.key}:${playerId}`,
           x: center.x,
@@ -236,6 +260,7 @@ export const BoardView = ({
           ownerPlayerId: playerId,
           forceCount,
           championCount,
+          championDetails,
           offsetIndex: index,
           occupantCount: occupants.length
         });
@@ -548,11 +573,20 @@ export const BoardView = ({
         const offset = offsets[stack.offsetIndex % offsets.length] ?? offsets[0];
         const cx = stack.x + offset.dx;
         const cy = stack.y + offset.dy;
-        const stackTitle = [
+        const stackTitleLines = [
           `Stack ${playerLabel(stack.ownerPlayerId)}`,
           `Forces: ${stack.forceCount}`,
           `Champions: ${stack.championCount}`
-        ].join("\n");
+        ];
+        if (stack.championDetails.length > 0) {
+          stackTitleLines.push("Champion HP:");
+          for (const champion of stack.championDetails) {
+            stackTitleLines.push(
+              `- ${champion.cardDefId} ${champion.hp}/${champion.maxHp}`
+            );
+          }
+        }
+        const stackTitle = stackTitleLines.join("\n");
         return (
           <g key={stack.key} className="unit-stack">
             <title>{stackTitle}</title>

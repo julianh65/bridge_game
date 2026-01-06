@@ -11,7 +11,6 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
 - owner: agent-2; scope: remove axial-coordinate input panels in action/setup UI (bridge/march/starting bridges) and replace with board/suggestion selection; files: apps/web/src/components/ActionPanel.tsx, apps/web/src/components/SetupStartingBridges.tsx, apps/web/src/styles.css; status: in progress
 
 ## Bug audit progress
@@ -185,6 +184,7 @@ none
 
 ## Milestone 7 progress
 - Implemented champion card play (hex targeting validation + deployment), champion gold cost scaling, and champion limit checks in engine with tests.
+- Added champion HP details to board stack tooltips in the UI.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

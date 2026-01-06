@@ -314,8 +314,8 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 
 ### Tasks (web)
 - Champion UI:
-  - display champion hp
-  - show ability usage counters (optional)
+  - [x] display champion hp
+  - [ ] show ability usage counters (optional)
 - Add simple “effect badges” on hexes/edges for attached modifiers (optional)
 
 ### Acceptance criteria
