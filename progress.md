@@ -11,9 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
 - owner: agent-4; scope: champion card play (hex targeting + spawn), champion gold cost scaling + limit checks; files: packages/engine/src/action-flow.ts, packages/engine/src/card-effects.ts, packages/engine/src/units.ts, packages/engine/src/action-flow.test.ts; status: in progress
-- owner: agent-2; scope: rules/technical_spec alignment audit (Milestone 7.6) + add missing follow-up tasks; files: progress.md, implementation_plan.md; status: in progress
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -52,6 +50,7 @@
 - Added Milestone 5.5 UI interaction + polish tasks (hand/board targeting/pan-zoom) to `implementation_plan.md`.
 - Refreshed Milestones 5-6 checkboxes and noted partial UI polish status in `implementation_plan.md`.
 - Marked the Milestone 8 smoke sim task complete in `implementation_plan.md`.
+- Audited `rules_draft.md` alignment and logged follow-ups in `implementation_plan.md`.
 
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.
@@ -114,6 +113,7 @@ none
 - Added starter card data modules and a registry under `packages/engine/src/content/cards`.
 - Added faction starter spells and champions data modules to the card registry.
 - Added initial Age I market card stubs and wired the free starting card pool to real card IDs.
+- Added Age I market cards using existing effects: Flank Step, Scavenger's Market, Supply Ledger, Patrol Record.
 - Added card registry tests for unique IDs and starter/free-start coverage.
 - Added an initial Age I market deck list export under `packages/engine/src/content/market-decks.ts`.
 - Added market deck tests to validate ids are unique, registered, and age-appropriate.

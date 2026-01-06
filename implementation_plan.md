@@ -281,6 +281,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] show reveal + results in log
 - [x] Collection UI:
   - [x] present tile-based choices and resolve prompts
+- [] Remove / replace all the hard to use panels that require users to enter axial coords.
 
 ### Acceptance criteria
 - A full round runs with:
@@ -347,6 +348,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - card def file
   - minimal tests per card
 - Expand Age I market cards first (the ones that touch your most-used primitives).
+  - [x] Added Flank Step, Scavenger's Market, Supply Ledger, Patrol Record (existing effects only).
 - [x] Add “smoke sim” tests:
   - random legal commands for N steps should not crash
 - Add dev-only debug tools:
