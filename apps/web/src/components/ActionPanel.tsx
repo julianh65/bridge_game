@@ -162,6 +162,41 @@ export const ActionPanel = ({
   }
   const canPlayCard =
     canSubmitAction && trimmedCardId.length > 0 && targetsError === null;
+  const cardDeclaration: ActionDeclaration | null = canPlayCard
+    ? parsedTargets !== undefined
+      ? {
+          kind: "card",
+          cardInstanceId: trimmedCardId,
+          targets: parsedTargets
+        }
+      : { kind: "card", cardInstanceId: trimmedCardId }
+    : null;
+  const primaryAction = cardDeclaration
+    ? { label: "Submit: Play Card", declaration: cardDeclaration }
+    : canMarch
+      ? {
+          label: "Submit: March",
+          declaration: {
+            kind: "basic",
+            action: { kind: "march", from: marchFrom.trim(), to: marchTo.trim() }
+          }
+        }
+      : canBuildBridge
+        ? {
+            label: "Submit: Build Bridge",
+            declaration: {
+              kind: "basic",
+              action: { kind: "buildBridge", edgeKey: edgeKey.trim() }
+            }
+          }
+        : canReinforce
+          ? {
+              label: "Submit: Capital Reinforce",
+              declaration: { kind: "basic", action: { kind: "capitalReinforce" } }
+            }
+          : canSubmitDone
+            ? { label: "Submit: Done", declaration: { kind: "done" } }
+            : null;
   const hint = getActionHint(phase, status, player);
   const pickLabel =
     boardPickMode === "marchFrom"
@@ -407,21 +442,27 @@ export const ActionPanel = ({
         className="btn btn-secondary"
         disabled={!canPlayCard}
         onClick={() => {
-          if (!canPlayCard) {
+          if (!cardDeclaration) {
             return;
           }
-          const declaration: ActionDeclaration =
-            parsedTargets !== undefined
-              ? {
-                  kind: "card",
-                  cardInstanceId: trimmedCardId,
-                  targets: parsedTargets
-                }
-              : { kind: "card", cardInstanceId: trimmedCardId };
-          onSubmit(declaration);
+          onSubmit(cardDeclaration);
         }}
       >
         Play Card (-card cost)
+      </button>
+      <button
+        type="button"
+        className="btn btn-primary"
+        style={{ width: "100%", padding: "12px 16px", fontSize: "14px" }}
+        disabled={!primaryAction}
+        onClick={() => {
+          if (!primaryAction) {
+            return;
+          }
+          onSubmit(primaryAction.declaration);
+        }}
+      >
+        {primaryAction?.label ?? "Submit / Lock In"}
       </button>
       {targetsError ? (
         <p className="action-panel__hint action-panel__hint--error">{targetsError}</p>

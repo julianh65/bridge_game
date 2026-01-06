@@ -434,7 +434,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 ### Tasks (web - action flow + layout)
 - [ ] Reduce card targeting clicks so board picks are direct and visible once selected.
-- [ ] Add a large "Submit/Lock In" action button for action declarations.
+- [x] Add a large "Submit/Lock In" action button for action declarations.
 - [ ] Consolidate or rearrange panels so the game screen feels cohesive.
 
 ### Tasks (web - motion + phase clarity)
@@ -442,7 +442,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Add clearer phase transition cues between round phases. Make it flash on screen in big text slowly to everyone simultaneously.
 
 ### Tasks (web - targeting reliability)
-- [ ] Fix hex selection for Bridge Crew and Build Bridge edge picking.
+- [x] Fix hex selection for Bridge Crew and Build Bridge edge picking.
 
 ### Tasks UI
 - [ ] We need to more clearly guide the player what to do. The basic actions thing is too cluttered, we should probably keep that where the cards are and it should fan it when you click basic actions and show their mana cost and everything with a description
@@ -471,6 +471,9 @@ Note: Factions should be mutually exclusive, two people can't pick the same fact
 Add a way for each card to have related card art and a card description that is thematic. This will be done with diffusion models so we need to have a script and some way to query to automatically pull card art for n cards and store them and let me view them. In addition to this we need other ways to style it up and make this look cool. I guess make the hexes look cool, the capitals, the pieces and forces and battles. It needs to have a bit of oomf. We can add some tasks here later when we get to it
 
 The overall cards viewer should also denote which ones are faction specific etc...
+
+## Milestone 9.7 -- Get all cards in
+Go through rules and add all cards in lol
 
 ## Milestone 10 -- Basic AI to play against
 Something that just takes random actions is fine

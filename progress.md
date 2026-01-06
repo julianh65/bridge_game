@@ -16,8 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
-- [agent4] Make action status more obvious in the player list (visual row emphasis + summary). Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `progress.md`, `implementation_plan.md`. Status: in progress.
+- owner: agent2 | scope: make action-step status more obvious in player list (summary + row highlight) and update plan item | files: apps/web/src/components/GameScreen.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md | status: in progress
 
 ## Milestone 8.5 progress
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.
@@ -26,10 +25,12 @@ none
 - Added seat-index player colors for units/bridges and player list swatches, and marked the plan item complete in `implementation_plan.md`.
 - Added pregame faction selection with start gating on all picks, surfaced chosen factions in the setup lobby, and marked the plan item complete in `implementation_plan.md`.
 - Added action status pills (idle/waiting/submitted) to the player list for action phase visibility; plan update deferred until `implementation_plan.md` is free.
+- Added a large Submit/Lock In action button to the action panel and marked the plan item complete in `implementation_plan.md`.
 - Replaced market focus row with a full-screen overlay + toggle, redesigned market cards with art placeholders and metadata, and marked Milestone 8.5 market tasks complete in `implementation_plan.md`.
 - Added an order rail to the market overlay and tightened market card sizing so the overlay reads as a sequenced card run; marked the related checklist items complete in `implementation_plan.md`.
 - Hid market bid details in the status list until all bids are submitted and marked the plan item complete in `implementation_plan.md`.
 - Added a market winner highlight/animation on the overlay cards and marked the plan item complete in `implementation_plan.md`.
+- Fixed edge-pick hex selection by letting unit stack clicks trigger hex targeting (Bridge Crew/build bridge) and marked the plan item complete in `implementation_plan.md`.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
