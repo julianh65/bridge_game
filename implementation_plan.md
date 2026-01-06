@@ -150,7 +150,7 @@ Goal: get the board game “moving pieces and fighting” ASAP.
 - [x] Implement Home + Lobby:
   - [x] create/join room UI
   - [x] seat list
-  - [x] auto-start at 2 connected players (no ready UI)
+  - [x] auto-start at 2 connected players (no ready UI) (to be replaced by host start)
 - [ ] Lobby polish:
   - [x] room code copy to clipboard
   - [ ] board preview panel + reroll control (requires server command)
@@ -163,6 +163,31 @@ Goal: get the board game “moving pieces and fighting” ASAP.
 ### Acceptance criteria
 - Two browser tabs can join the same room and see shared state updates live.
 - Clicking a “debug action” button (server command) changes state and both UIs update.
+
+---
+
+## Milestone 4.5 — Setup UX (playtest unblock)
+
+Goal: allow two browsers to complete setup and reach the action phase quickly.
+
+### Tasks (server)
+- [ ] Replace auto-start with host-controlled start (agent2 work).
+- [ ] Optional dev-only auto-setup command (server-side) for fast testing.
+
+### Tasks (web)
+- [ ] Setup UI for `setup.capitalDraft`:
+  - show available slots
+  - submit pick
+- [ ] Setup UI for `setup.startingBridges`:
+  - allow edge input or click to place bridges
+  - show remaining bridges per player
+- [ ] Setup UI for `setup.freeStartingCardPick`:
+  - show 3 offers
+  - submit pick
+- [ ] Optional “Auto-setup” button (dev/testing) to submit valid choices.
+
+### Acceptance criteria
+- Two browsers can join a room, complete setup (manual or auto), and reach `round.action`.
 
 ---
 

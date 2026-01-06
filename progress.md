@@ -32,6 +32,7 @@
 - Updated `agent_instructions.md` to require logging task scope/files in `progress.md` before coding and clearing entries after completion.
 - Added a Lobby polish item to `implementation_plan.md` for board preview + reroll (future work).
 - Documented the new Cards debug view in `docs/cards.md`.
+- Reprioritized setup UX into a new Milestone 4.5 (playtest unblock) in `implementation_plan.md`.
 
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.
