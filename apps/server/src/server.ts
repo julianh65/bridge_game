@@ -431,6 +431,18 @@ export default class Server implements Party.Server {
       this.sendError(connection, "map reroll is only available during setup");
       return;
     }
+    const block = this.state.blocks;
+    if (!block || block.type !== "setup.capitalDraft") {
+      this.sendError(connection, "map reroll is only available before capital draft starts");
+      return;
+    }
+    if (
+      this.state.players.some((player) => player.capitalHex) ||
+      Object.values(block.payload.choices).some(Boolean)
+    ) {
+      this.sendError(connection, "map reroll is locked after a capital is picked");
+      return;
+    }
     const meta = this.getConnectionState(connection);
     if (!meta || meta.spectator) {
       this.sendError(connection, "spectators cannot reroll the map");

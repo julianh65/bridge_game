@@ -11,9 +11,9 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- (none)
-- [agent3] Improve GameScreen log readability (format key events into readable strings). Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/lib/event-format.ts`, `progress.md`. Status: in progress.
 - [agent2] Add card effect support for moveStack/buildBridge with target validation + tests. Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/action-flow.test.ts`, `progress.md`. Status: in progress.
+- [agent3] Add room-code copy control to the pre-game waiting screen (host can share before lobby starts). Files: `apps/web/src/App.tsx`, `apps/web/src/components/Lobby.tsx`, `apps/web/src/components/RoomCodeCopy.tsx`, `apps/web/src/styles.css`, `progress.md`. Status: in progress.
+- [agent1] Add lobby host/seed badges (reroll lock already done). Blocked on agent3 edits to `apps/web/src/components/Lobby.tsx`. Files: `apps/web/src/components/Lobby.tsx`, `progress.md`. Status: blocked.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -100,8 +100,10 @@
 - Documented PartyKit multi-tab behavior and cleaned up resolved issues; client now guards against null rejoin tokens.
 - Added a basic action panel in the game sidebar with command wiring (done, capital reinforce, build bridge edge key, march from/to).
 - Game sidebar now lists hand card IDs, deck counts, and a market row summary.
+- Game log list now formats key events into readable strings (setup/actions/combat/phase).
 - Lobby now includes a room code copy control with clipboard fallback.
 - Lobby map preview now rolls from the game seed and host can reroll the map during setup.
+- Lobby map reroll now locks after the first capital pick (server guard).
 - Added a Cards debug tab with filters (age/deck, mana cost, type, tags) and initiative sorting.
 - Polished the Cards tab layout for denser grids, deck accents, and compact rule previews.
 - Refined Cards tab tag styling with tighter radius and centered labels.
