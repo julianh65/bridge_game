@@ -5,6 +5,9 @@ Edit that file to adjust rules and regenerate the board in the debug UI.
 
 ## Key config sections
 
+### Victory condition
+- `VP_TO_WIN`: total VP required to win at the end of scoring (default 10).
+
 ### Board size and capitals
 - `boardRadiusByPlayerCount`: radius per player count.
 - `capitalSlotsByPlayerCount`: explicit `HexKey` lists for each player count.

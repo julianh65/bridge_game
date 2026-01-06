@@ -9,12 +9,13 @@
 - Updated board radius defaults (3-player radius 4) in `DEFAULT_CONFIG`, `technical_spec.md`, and `rules_draft.md`.
 - Aligned board sizing/capital slots, tile counts, and mine value distribution across `rules_draft.md` + `technical_spec.md`.
 - Set `VP_TO_WIN` to 10 across `rules_draft.md` + `technical_spec.md` (config already 10).
+- Documented `VP_TO_WIN` default in `docs/configuration.md`.
 - Added a coordination note to `agent_instructions.md` to emphasize planning/logging before coding.
 - Clarified handling of other-agent changes in `agent_instructions.md` to avoid unnecessary escalation.
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent-1; scope: add lightweight UI motion for board target highlights/selection (CSS-only); files: apps/web/src/styles.css, implementation_plan.md, progress.md; status: in progress
+- none
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -85,6 +86,7 @@ none
 - Added touch/pinch support for board pan/zoom in the board view.
 - Removed manual axial-coordinate inputs for action/setup bridge/march picks, added card hex target picking, and surfaced target summaries in the action panel.
 - Added per-player action status tooltips on the player list in the game sidebar.
+- Added lightweight motion for target highlights, preview bridges, selected cards, and card detail reveals.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
