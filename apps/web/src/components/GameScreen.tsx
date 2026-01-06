@@ -18,6 +18,45 @@ import type { RoomConnectionStatus } from "../lib/room-client";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 
+type BoardUnitView = GameView["public"]["board"]["units"][string];
+
+type ChampionTargetOption = {
+  id: string;
+  name: string;
+  ownerId: string;
+  ownerName: string;
+  hex: string;
+  hp: number;
+  maxHp: number;
+};
+
+const parseTargets = (raw: string): Record<string, unknown> | null => {
+  const trimmed = raw.trim();
+  if (trimmed.length === 0) {
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(trimmed) as unknown;
+    if (parsed && typeof parsed === "object") {
+      return parsed as Record<string, unknown>;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+const getTargetString = (
+  record: Record<string, unknown> | null,
+  key: string
+): string | null => {
+  if (!record) {
+    return null;
+  }
+  const value = record[key];
+  return typeof value === "string" && value.length > 0 ? value : null;
+};
+
 type GameScreenProps = {
   view: GameView;
   playerId: string | null;
@@ -65,12 +104,44 @@ export const GameScreen = ({
   const [pendingStackFrom, setPendingStackFrom] = useState<string | null>(null);
   const [pendingPath, setPendingPath] = useState<string[]>([]);
   const [resetViewToken, setResetViewToken] = useState(0);
+  const targetRecord = useMemo(() => parseTargets(cardTargetsRaw), [cardTargetsRaw]);
+  const selectedChampionId =
+    getTargetString(targetRecord, "unitId") ?? getTargetString(targetRecord, "championId");
 
   const selectedCard = handCards.find((card) => card.id === cardInstanceId) ?? null;
   const selectedCardDef = selectedCard
     ? CARD_DEFS_BY_ID.get(selectedCard.defId) ?? null
     : null;
   const cardTargetKind = selectedCardDef?.targetSpec.kind ?? "none";
+  const championUnits = useMemo(() => {
+    return Object.values(view.public.board.units)
+      .map((unit) => {
+        if (unit.kind !== "champion") {
+          return null;
+        }
+        const def = CARD_DEFS_BY_ID.get(unit.cardDefId);
+        const ownerName = playerNames.get(unit.ownerPlayerId) ?? unit.ownerPlayerId;
+        return {
+          id: unit.id,
+          name: def?.name ?? unit.cardDefId,
+          ownerId: unit.ownerPlayerId,
+          ownerName,
+          hex: unit.hex,
+          hp: unit.hp,
+          maxHp: unit.maxHp
+        };
+      })
+      .filter((unit): unit is ChampionTargetOption => Boolean(unit))
+      .sort((a, b) => {
+        if (a.ownerName !== b.ownerName) {
+          return a.ownerName.localeCompare(b.ownerName);
+        }
+        if (a.name !== b.name) {
+          return a.name.localeCompare(b.name);
+        }
+        return a.id.localeCompare(b.id);
+      });
+  }, [view.public.board.units, playerNames]);
   const leadSeatIndex =
     view.public.players.length > 0
       ? (view.public.round - 1 + view.public.players.length) % view.public.players.length
@@ -329,12 +400,77 @@ export const GameScreen = ({
                 </p>
               </div>
             );
-          case "champion":
+          case "champion": {
+            const rawOwner = selectedCardDef.targetSpec.owner;
+            const owner =
+              rawOwner === "self" || rawOwner === "enemy" || rawOwner === "any"
+                ? rawOwner
+                : "self";
+            const ownerLabel =
+              owner === "self" ? "Friendly" : owner === "enemy" ? "Enemy" : "Any";
+            const eligibleChampions =
+              !localPlayer || owner === "any"
+                ? championUnits
+                : owner === "self"
+                  ? championUnits.filter((unit) => unit.ownerId === localPlayer.id)
+                  : championUnits.filter((unit) => unit.ownerId !== localPlayer.id);
+            const maxDistance =
+              typeof selectedCardDef.targetSpec.maxDistance === "number"
+                ? selectedCardDef.targetSpec.maxDistance
+                : null;
+            const requiresFriendlyChampion =
+              selectedCardDef.targetSpec.requiresFriendlyChampion === true;
+            const rangeHint =
+              maxDistance !== null
+                ? `Range: within ${maxDistance} hex${
+                    maxDistance === 1 ? "" : "es"
+                  }${requiresFriendlyChampion ? " of a friendly champion." : "."}`
+                : requiresFriendlyChampion
+                  ? "Requires a friendly champion near the target."
+                  : null;
             return (
-              <p className="card-detail__hint">
-                Enter the champion unit id in targets JSON (unitId).
-              </p>
+              <div className="card-detail__targets">
+                <div className="card-detail__row">
+                  <span>Target {ownerLabel.toLowerCase()} champion</span>
+                  <button
+                    type="button"
+                    className="btn btn-tertiary"
+                    onClick={() => {
+                      setBoardPickModeSafe("none");
+                      setCardTargetsRaw("");
+                    }}
+                  >
+                    Clear
+                  </button>
+                </div>
+                {eligibleChampions.length > 0 ? (
+                  <div className="card-detail__options">
+                    {eligibleChampions.map((unit) => {
+                      const isSelected = selectedChampionId === unit.id;
+                      return (
+                        <button
+                          key={unit.id}
+                          type="button"
+                          className={`btn btn-tertiary ${isSelected ? "is-active" : ""}`}
+                          title={unit.id}
+                          onClick={() => {
+                            setBoardPickModeSafe("none");
+                            setCardTargetsObject({ unitId: unit.id });
+                          }}
+                        >
+                          {unit.name} · {unit.ownerName} · {unit.hex} · {unit.hp}/
+                          {unit.maxHp}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="card-detail__hint">No eligible champions on the board.</p>
+                )}
+                {rangeHint ? <p className="card-detail__hint">{rangeHint}</p> : null}
+              </div>
             );
+          }
           default:
             return (
               <p className="card-detail__hint">

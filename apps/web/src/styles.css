@@ -1111,6 +1111,12 @@ h1 {
   align-items: center;
 }
 
+.card-detail__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
 .card-detail__hint {
   margin: 0;
   font-size: 12px;

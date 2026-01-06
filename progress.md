@@ -12,6 +12,7 @@
 
 ## Active tasks
 - none
+- [in progress] owner: agent3; scope: add collection-choice resolution coverage (mine draft, forge reforge, center pick); files: packages/engine/src/round-flow.test.ts
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -53,10 +54,11 @@
 - Consider moving view construction into `packages/engine/src/view.ts` if `buildView` grows.
 
 ## UI polish TODOs
-- Add champion-target picker for card targets (unit selection).
+- none
 
 ## UI polish progress
 - Added hover tooltips for hexes, bridges, and unit stacks in the board view.
+- Added a champion-target picker in the card detail panel to set unit targets from the board state.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
