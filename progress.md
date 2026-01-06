@@ -6,7 +6,8 @@
 - Card defs in `technical_spec.md` now described as data-first TS modules with stable IDs, targetSpec, and effects/resolve rules.
 
 ## Active tasks
-- owner: agent-2; scope: Milestone 2a base board generation + capital slots; files: packages/engine/src/board-generation.ts, packages/engine/src/board-generation.test.ts, packages/engine/src/index.ts; status: completed
+- owner: agent-2; scope: Milestone 2c procedural placement (forges/mines + mine values); files: packages/engine/src/board-generation.ts, packages/engine/src/board-generation.test.ts, packages/engine/src/index.ts; status: completed
+- owner: agent-1; scope: Milestone 2b setup flow blocks + setup commands (capital draft/starting bridges/free starting card); files: packages/engine/src/engine.ts, packages/engine/src/types.ts, packages/engine/src/index.test.ts; status: in_progress; dependency: board generation outputs/capital slots, card data for free starting card
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
@@ -20,6 +21,7 @@
 
 ## Milestone 2 progress
 - Added base board generation (axial hex grid, center tile) and capital slot mapping with tests.
+- Added procedural placement for forges/mines (including home mines) and mine values with deterministic tests.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
@@ -46,3 +48,8 @@
 - Implement base board generation: axial hex grid for radius, center tile at (0,0), empty occupants/bridges/units.
 - Implement capital slot list per player count (corner slots; 5-player special slots).
 - Tests: radius counts/center placement, slot mapping per player count, invalid counts handled.
+
+## Milestone 2b plan (agent-1)
+- Add setup block types/flow to engine: capital draft -> starting bridges -> free starting card -> advance to `round.reset`.
+- Add setup command payloads for `SubmitSetupChoice` (pick capital, place starting bridge, pick free card), with validation and event logging.
+- Wire `runUntilBlocked` to advance setup once inputs complete; minimal tests that step through setup with fixed seed.
