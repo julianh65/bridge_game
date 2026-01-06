@@ -58,7 +58,7 @@ All dice are standard d6.
 You win at the end of the Scoring Phase if:
 Your Total VP ≥ NUM_VICTORY_POINTS_REQUIRED, and
 Your Capital contains no enemy units.
-NUM_VICTORY_POINTS_REQUIRED = 8?
+NUM_VICTORY_POINTS_REQUIRED = 10
 3.2 Round Cap
 Maximum 10 rounds. If nobody wins by end of round 10 winner is determined by:
 Highest Total VP

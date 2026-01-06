@@ -8,6 +8,7 @@
 - Added `docs/cards.md` with card data module editing guidelines.
 - Updated board radius defaults (3-player radius 4) in `DEFAULT_CONFIG`, `technical_spec.md`, and `rules_draft.md`.
 - Aligned board sizing/capital slots, tile counts, and mine value distribution across `rules_draft.md` + `technical_spec.md`.
+- Set `VP_TO_WIN` to 10 across `rules_draft.md` + `technical_spec.md` (config already 10).
 - Added a coordination note to `agent_instructions.md` to emphasize planning/logging before coding.
 - Clarified handling of other-agent changes in `agent_instructions.md` to avoid unnecessary escalation.
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.

@@ -60,7 +60,7 @@ Values that may change during tuning should live in config:
 - `HAND_LIMIT` (default 10)
 - `CHAMPION_LIMIT` (default 4)
 - `ROUNDS_MAX` (default 10)
-- `VP_TO_WIN` (default 8; tune)
+- `VP_TO_WIN` (default 10; tune)
 - `boardRadiusByPlayerCount`: {2:3, 3:4, 4:4, 5:4, 6:4}
 - `tileCountsByPlayerCount`: {
   2: { mines: 4, forges: 1, center: 1 },
