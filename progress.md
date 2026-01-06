@@ -113,6 +113,7 @@
 
 ## Milestone 4.5 progress
 - Added a capital draft panel in the setup lobby that lists available slots, shows pick order/status, and submits `pickCapital` choices from the client.
+- Capital draft map preview now shows numbered slot labels, and draft UI uses those labels with coord tooltips.
 - Added a dev-only auto-setup command on the server (host-only) to auto-pick setup choices for faster testing.
 - GameView now exposes setup block info (public setup payload + private free-card offers) to support setup UI.
 

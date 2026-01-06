@@ -11,6 +11,7 @@ type BoardViewProps = {
   showCoords?: boolean;
   showTags?: boolean;
   showMineValues?: boolean;
+  labelByHex?: Record<string, string>;
   className?: string;
 };
 
@@ -57,6 +58,7 @@ export const BoardView = ({
   showCoords = true,
   showTags = true,
   showMineValues = true,
+  labelByHex,
   className
 }: BoardViewProps) => {
   const viewBox = useMemo(() => boundsForHexes(hexes), [hexes]);
@@ -173,8 +175,11 @@ export const BoardView = ({
     >
       {hexes.map((hex) => {
         const tag = showTags ? tileTag(hex.tile) : "";
+        const labelText = labelByHex?.[hex.key];
+        const showCoordsText = showCoords && !labelText;
         const coordsY = tag ? hex.y + 8 : hex.y;
-        const valueY = tag ? hex.y + (showCoords ? 20 : 12) : hex.y + 12;
+        const hasLowerText = showCoordsText || Boolean(labelText);
+        const valueY = tag ? hex.y + (hasLowerText ? 20 : 12) : hex.y + 12;
 
         return (
           <g key={hex.key}>
@@ -187,7 +192,12 @@ export const BoardView = ({
                 {tag}
               </text>
             ) : null}
-            {showCoords ? (
+            {labelText ? (
+              <text x={hex.x} y={coordsY} className="hex__slot">
+                {labelText}
+              </text>
+            ) : null}
+            {showCoordsText ? (
               <text
                 x={hex.x}
                 y={coordsY}

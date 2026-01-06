@@ -51,6 +51,11 @@ export const Lobby = ({
   const mapPreview = useMemo(() => {
     return buildBoardPreview(players.length, String(view.public.seed ?? 0));
   }, [players.length, view.public.seed]);
+  const capitalLabels = useMemo(() => {
+    return Object.fromEntries(
+      mapPreview.capitals.map((slot, index) => [slot, String(index + 1)])
+    );
+  }, [mapPreview.capitals]);
 
   return (
     <section className="lobby">
@@ -141,6 +146,7 @@ export const Lobby = ({
             showCoords={false}
             showTags
             showMineValues={false}
+            labelByHex={capitalLabels}
             className="board-svg board-svg--game"
           />
           {isHost ? (

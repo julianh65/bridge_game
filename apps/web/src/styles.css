@@ -1126,6 +1126,7 @@ h1 {
 .hex__label,
 .hex__tag,
 .hex__coords,
+.hex__slot,
 .hex__value {
   text-anchor: middle;
   pointer-events: none;
@@ -1152,6 +1153,13 @@ h1 {
   font-weight: 600;
   fill: rgba(255, 248, 236, 0.85);
   stroke-width: 1.4;
+}
+
+.hex__slot {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #fff7e6;
+  stroke-width: 2;
 }
 
 .hex__value {
