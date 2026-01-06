@@ -277,7 +277,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Market UI:
   - [x] show row cards
   - [x] for current card, show bid controls
-  - [ ] show reveal + results in log
+  - [x] show reveal + results in log
 - [x] Collection UI:
   - [x] present tile-based choices and resolve prompts
 

@@ -33,6 +33,7 @@
 - Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts src/market.test.ts`.
 - Added a smoke sim auto-resolve test in `packages/engine/src/smoke.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/smoke.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/market.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
@@ -168,6 +169,7 @@
 - Added power deck scaffolding + init (currently seeded from market deck lists as a placeholder), and center picks now draw from power decks; updated collection resolution/tests accordingly.
 - Added a collection sidebar panel that renders mine/forge/center prompts and submits `SubmitCollectionChoices` commands.
 - Aligned the collection panel props with `GameScreen` and added collection prompt styles in `apps/web/src/styles.css`.
+- Added market row reveal events and formatted market buy/pass logs in the UI.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

@@ -181,7 +181,7 @@ export const prepareMarketRow = (state: GameState): GameState => {
   ];
   const { value: shuffledRow, next } = shuffle(state.rngState, rowCards);
 
-  return {
+  const nextState: GameState = {
     ...state,
     rngState: next,
     market: {
@@ -198,6 +198,13 @@ export const prepareMarketRow = (state: GameState): GameState => {
       ...(nextAge ? { [nextAge]: nextRemaining } : {})
     }
   };
+
+  return emit(nextState, {
+    type: "market.reveal",
+    payload: {
+      row: shuffledRow.map((card) => ({ cardId: card.cardId, age: card.age }))
+    }
+  });
 };
 
 export const createMarketBidBlock = (state: GameState): BlockState | null => {

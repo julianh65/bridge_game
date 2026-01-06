@@ -21,6 +21,10 @@ const readRecord = (value: unknown): Record<string, unknown> | null => {
   return value as Record<string, unknown>;
 };
 
+const readArray = (value: unknown): unknown[] | null => {
+  return Array.isArray(value) ? value : null;
+};
+
 const formatPlayer = (playerId: string | null, playersById: PlayerNameLookup): string => {
   if (!playerId) {
     return "Unknown player";
@@ -109,6 +113,41 @@ export const formatGameEvent = (
       const reason = readString(payload.reason);
       const winnerLabel = winnerId ? formatPlayer(winnerId, playersById) : "No winner";
       return `Combat ends at ${hexKey}: ${winnerLabel}${reason ? ` (${reason})` : ""}`;
+    }
+    case "market.reveal": {
+      const row = readArray(payload.row);
+      if (!row) {
+        return "Market revealed new row";
+      }
+      const cards = row
+        .map((entry) => {
+          const record = readRecord(entry);
+          const cardId = readString(record?.cardId);
+          if (!cardId) {
+            return null;
+          }
+          const age = readString(record?.age);
+          return age ? `${cardId} (${age})` : cardId;
+        })
+        .filter((value): value is string => Boolean(value));
+      if (cards.length === 0) {
+        return "Market revealed new row";
+      }
+      return `Market revealed: ${cards.join(", ")}`;
+    }
+    case "market.buy": {
+      const cardId = readString(payload.cardId) ?? "unknown";
+      const amount = readNumber(payload.amount);
+      const rollOff = readArray(payload.rollOff);
+      const priceLabel = amount !== null ? ` for ${amount}g` : "";
+      const rollOffLabel = rollOff && rollOff.length > 0 ? " (roll-off)" : "";
+      return `${formatPlayer(playerId, playersById)} bought ${cardId}${priceLabel}${rollOffLabel}`;
+    }
+    case "market.pass": {
+      const cardId = readString(payload.cardId) ?? "unknown";
+      const passPot = readNumber(payload.passPot);
+      const potLabel = passPot && passPot > 0 ? ` and won ${passPot}g` : "";
+      return `${formatPlayer(playerId, playersById)} took ${cardId} on pass${potLabel}`;
     }
     default:
       break;
