@@ -24,6 +24,7 @@ import {
   shuffleCardIds
 } from "./cards";
 import { resolveStarterFactionCards } from "./content/starter-decks";
+import { emit } from "./events";
 import { addForcesToHex } from "./units";
 
 const withUpdatedPlayer = (state: GameState, playerId: PlayerID, update: (player: PlayerState) => PlayerState) => {
@@ -216,7 +217,7 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
       return { ...player, capitalHex: hexKey };
     });
 
-    return {
+    const nextState = {
       ...updatedState,
       board: updatedBoard,
       blocks: {
@@ -228,6 +229,11 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
         }
       }
     };
+
+    return emit(nextState, {
+      type: "setup.capitalPicked",
+      payload: { playerId, hexKey }
+    });
   }
 
   if (block.type === "setup.startingBridges") {
@@ -302,7 +308,7 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
         ? block.waitingFor.filter((id) => id !== playerId)
         : block.waitingFor;
 
-    return {
+    const nextState = {
       ...state,
       board: updatedBoard,
       blocks: {
@@ -314,6 +320,11 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
         }
       }
     };
+
+    return emit(nextState, {
+      type: "setup.startingBridgePlaced",
+      payload: { playerId, edgeKey, alreadyExists: bridgeAlreadyExists }
+    });
   }
 
   if (block.type === "setup.freeStartingCardPick") {
@@ -335,7 +346,7 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
     const { state: stateWithCard, instanceId } = createCardInstance(state, choice.cardId);
     const updatedState = insertCardIntoDrawPileRandom(stateWithCard, playerId, instanceId);
 
-    return {
+    const nextState = {
       ...updatedState,
       blocks: {
         ...block,
@@ -349,6 +360,11 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
         }
       }
     };
+
+    return emit(nextState, {
+      type: "setup.freeStartingCardPicked",
+      payload: { playerId, cardId: choice.cardId }
+    });
   }
 
   return state;
