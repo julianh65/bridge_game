@@ -80,6 +80,7 @@ none
 - Reworked the hand UI into a fan-style card row with hover zoom, selected highlighting, and disabled styling.
 - Added valid-target overlays for board pick modes (hex highlights + edge previews) during action/card targeting.
 - Added hover highlight styling for interactive hexes/edges and clickable preview edges for edge pick modes.
+- Added touch/pinch support for board pan/zoom in the board view.
 - Removed manual axial-coordinate inputs for action/setup bridge/march picks, added card hex target picking, and surfaced target summaries in the action panel.
 
 ## Milestone 0 progress

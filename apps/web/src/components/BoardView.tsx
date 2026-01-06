@@ -116,6 +116,12 @@ export const BoardView = ({
   const dragRef = useRef<{ x: number; y: number } | null>(null);
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
   const didDragRef = useRef(false);
+  const activePointersRef = useRef<Map<number, { clientX: number; clientY: number }>>(
+    new Map()
+  );
+  const pinchRef = useRef<{ distance: number; center: { x: number; y: number } } | null>(
+    null
+  );
   const highlightSet = useMemo(() => new Set(highlightHexKeys), [highlightHexKeys]);
   const validSet = useMemo(() => new Set(validHexKeys), [validHexKeys]);
 
@@ -308,6 +314,29 @@ export const BoardView = ({
     return { x: transformed.x, y: transformed.y };
   };
 
+  const getPinchData = () => {
+    if (activePointersRef.current.size < 2) {
+      return null;
+    }
+    const points = Array.from(activePointersRef.current.values());
+    const first = points[0];
+    const second = points[1];
+    if (!first || !second) {
+      return null;
+    }
+    const centerClientX = (first.clientX + second.clientX) / 2;
+    const centerClientY = (first.clientY + second.clientY) / 2;
+    const center = toSvgPoint(centerClientX, centerClientY);
+    if (!center) {
+      return null;
+    }
+    const distance = Math.hypot(
+      first.clientX - second.clientX,
+      first.clientY - second.clientY
+    );
+    return { distance, center };
+  };
+
   const handleWheel: WheelEventHandler<SVGSVGElement> = (event) => {
     if (!enablePanZoom) {
       return;
@@ -344,14 +373,27 @@ export const BoardView = ({
   };
 
   const handlePointerDown: PointerEventHandler<SVGSVGElement> = (event) => {
-    if (!enablePanZoom || event.button !== 0) {
+    if (!enablePanZoom || (event.pointerType === "mouse" && event.button !== 0)) {
       return;
     }
     const point = toSvgPoint(event.clientX, event.clientY);
+    event.currentTarget.setPointerCapture(event.pointerId);
+    activePointersRef.current.set(event.pointerId, {
+      clientX: event.clientX,
+      clientY: event.clientY
+    });
+    const pinchData = getPinchData();
+    if (pinchData) {
+      pinchRef.current = pinchData;
+      didDragRef.current = true;
+      dragRef.current = null;
+      dragStartRef.current = null;
+      setIsPanning(true);
+      return;
+    }
     if (!point) {
       return;
     }
-    event.currentTarget.setPointerCapture(event.pointerId);
     dragRef.current = point;
     dragStartRef.current = { x: event.clientX, y: event.clientY };
     didDragRef.current = false;
@@ -359,7 +401,53 @@ export const BoardView = ({
   };
 
   const handlePointerMove: PointerEventHandler<SVGSVGElement> = (event) => {
-    if (!enablePanZoom || !dragRef.current || !dragStartRef.current) {
+    if (!enablePanZoom) {
+      return;
+    }
+    if (activePointersRef.current.has(event.pointerId)) {
+      activePointersRef.current.set(event.pointerId, {
+        clientX: event.clientX,
+        clientY: event.clientY
+      });
+    }
+    const pinchData = getPinchData();
+    if (pinchData) {
+      if (!pinchRef.current) {
+        pinchRef.current = pinchData;
+        didDragRef.current = true;
+        setIsPanning(true);
+        return;
+      }
+      const scale =
+        pinchData.distance > 0 ? pinchRef.current.distance / pinchData.distance : 1;
+      pinchRef.current = pinchData;
+      setViewBox((current) => {
+        const nextWidth = clamp(
+          current.width * scale,
+          baseViewBox.width * 0.4,
+          baseViewBox.width * 2.5
+        );
+        const nextHeight = clamp(
+          current.height * scale,
+          baseViewBox.height * 0.4,
+          baseViewBox.height * 2.5
+        );
+        const widthRatio = nextWidth / current.width;
+        const heightRatio = nextHeight / current.height;
+        return clampViewBox(
+          {
+            minX: pinchData.center.x - (pinchData.center.x - current.minX) * widthRatio,
+            minY: pinchData.center.y - (pinchData.center.y - current.minY) * heightRatio,
+            width: nextWidth,
+            height: nextHeight
+          },
+          baseViewBox
+        );
+      });
+      didDragRef.current = true;
+      return;
+    }
+    if (!dragRef.current || !dragStartRef.current) {
       return;
     }
     const point = toSvgPoint(event.clientX, event.clientY);
@@ -397,6 +485,24 @@ export const BoardView = ({
       return;
     }
     event.currentTarget.releasePointerCapture(event.pointerId);
+    activePointersRef.current.delete(event.pointerId);
+    if (activePointersRef.current.size < 2) {
+      pinchRef.current = null;
+    }
+    dragRef.current = null;
+    dragStartRef.current = null;
+    setIsPanning(false);
+  };
+
+  const handlePointerCancel: PointerEventHandler<SVGSVGElement> = (event) => {
+    if (!enablePanZoom) {
+      return;
+    }
+    event.currentTarget.releasePointerCapture(event.pointerId);
+    activePointersRef.current.delete(event.pointerId);
+    if (activePointersRef.current.size < 2) {
+      pinchRef.current = null;
+    }
     dragRef.current = null;
     dragStartRef.current = null;
     setIsPanning(false);
@@ -405,6 +511,8 @@ export const BoardView = ({
   const handlePointerLeave = () => {
     dragRef.current = null;
     dragStartRef.current = null;
+    activePointersRef.current.clear();
+    pinchRef.current = null;
     setIsPanning(false);
   };
 
@@ -430,10 +538,12 @@ export const BoardView = ({
       ref={svgRef}
       className={svgClasses.join(" ")}
       viewBox={`${viewBox.minX} ${viewBox.minY} ${viewBox.width} ${viewBox.height}`}
+      style={enablePanZoom ? { touchAction: "none" } : undefined}
       onWheel={handleWheel}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
       onPointerLeave={handlePointerLeave}
     >
       {hexes.map((hex) => {

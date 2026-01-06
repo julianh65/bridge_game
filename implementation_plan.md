@@ -248,7 +248,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 ### Tasks (web - pan/zoom)
 - [x] Fix world-to-screen coordinate transforms so picks stay accurate under zoom.
 - [x] Make wheel zoom anchor to cursor; clamp zoom levels; keep board in view with soft bounds.
-- [ ] Improve drag panning (ignore clicks after drag threshold); add touch/pinch support if feasible (drag threshold done; touch/pinch pending).
+- [x] Improve drag panning (ignore clicks after drag threshold) and add touch/pinch support.
 - [x] Add "fit board" view reset that works across screen sizes and on resize.
 
 ### Acceptance criteria
