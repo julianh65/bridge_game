@@ -1,5 +1,6 @@
 import { createRngState } from "@bridgefront/shared";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import * as shared from "@bridgefront/shared";
 
 import { createBaseBoard } from "./board-generation";
 import { resolveBattleAtHex, resolveImmediateBattles, resolveSieges } from "./combat";
@@ -27,6 +28,10 @@ const createChampion = (
 });
 
 describe("combat resolution", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("skips capital battles during immediate resolution", () => {
     const base = createNewGame(DEFAULT_CONFIG, 1, [
       { id: "p1", name: "Player 1" },
@@ -112,6 +117,48 @@ describe("combat resolution", () => {
 
     expect(hex.occupants["p1"]).toEqual(["c1"]);
     expect(hex.occupants["p2"]).toEqual(["c2"]);
+  });
+
+  it("stops after repeated no-hit rounds", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({
+      value: 6,
+      next: rng
+    }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        p1: ["f1"],
+        p2: ["f2"]
+      }
+    };
+
+    board.units = {
+      f1: { id: "f1", ownerPlayerId: "p1", kind: "force", hex: hexKey },
+      f2: { id: "f2", ownerPlayerId: "p2", kind: "force", hex: hexKey }
+    };
+
+    const state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(7),
+      board
+    };
+
+    const resolved = resolveBattleAtHex(state, hexKey);
+    const hex = resolved.board.hexes[hexKey];
+
+    expect(hex.occupants["p1"]).toEqual(["f1"]);
+    expect(hex.occupants["p2"]).toEqual(["f2"]);
   });
 
   it("resolves sieges on contested capitals", () => {

@@ -11,6 +11,7 @@ import type {
 import { getPlayerIdsOnHex, isContestedHex } from "./board";
 
 const FORCE_HIT_FACES = 2;
+const MAX_STALE_COMBAT_ROUNDS = 20;
 
 type HitRollResult = {
   hits: number;
@@ -171,6 +172,7 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
   let nextBoard = state.board;
   let nextUnits = state.board.units;
   let rngState = state.rngState;
+  let staleRounds = 0;
 
   while (true) {
     const currentHex = nextBoard.hexes[hexKey];
@@ -193,6 +195,15 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
     rngState = attackerRoll.nextState;
     const defenderRoll = rollHitsForUnits(defenders, nextUnits, rngState);
     rngState = defenderRoll.nextState;
+
+    if (attackerRoll.hits + defenderRoll.hits === 0) {
+      staleRounds += 1;
+      if (staleRounds >= MAX_STALE_COMBAT_ROUNDS) {
+        break;
+      }
+      continue;
+    }
+    staleRounds = 0;
 
     const assignedToDefenders = assignHits(defenders, attackerRoll.hits, rngState);
     rngState = assignedToDefenders.nextState;
