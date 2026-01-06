@@ -102,6 +102,21 @@ const boundsForHexes = (hexes: HexRender[]) => {
   };
 };
 
+const tileTag = (tile: string) => {
+  switch (tile) {
+    case "capital":
+      return "CAP";
+    case "forge":
+      return "FORGE";
+    case "mine":
+      return "MINE";
+    case "center":
+      return "CTR";
+    default:
+      return "";
+  }
+};
+
 export const DebugBoard = () => {
   const [playerCount, setPlayerCount] = useState(2);
   const [seedInput, setSeedInput] = useState("42");
@@ -238,22 +253,37 @@ export const DebugBoard = () => {
             </div>
 
             <svg viewBox={`${viewBox?.minX ?? 0} ${viewBox?.minY ?? 0} ${viewBox?.width ?? 0} ${viewBox?.height ?? 0}`}>
-              {debug.hexRender.map((hex) => (
-                <g key={hex.key}>
-                  <polygon
-                    className={`hex hex--${hex.tile}`}
-                    points={hexPoints(hex.x, hex.y, HEX_SIZE)}
-                  />
-                  <text x={hex.x} y={hex.y} className="hex__label">
-                    {hex.key}
-                  </text>
-                  {hex.tile === "mine" && hex.mineValue ? (
-                    <text x={hex.x} y={hex.y + 12} className="hex__value">
-                      {hex.mineValue}
+              {debug.hexRender.map((hex) => {
+                const tag = tileTag(hex.tile);
+                const coordsY = tag ? hex.y + 8 : hex.y;
+                const valueY = tag ? hex.y + 20 : hex.y + 12;
+
+                return (
+                  <g key={hex.key}>
+                    <polygon
+                      className={`hex hex--${hex.tile}`}
+                      points={hexPoints(hex.x, hex.y, HEX_SIZE)}
+                    />
+                    {tag ? (
+                      <text x={hex.x} y={hex.y - 6} className="hex__tag">
+                        {tag}
+                      </text>
+                    ) : null}
+                    <text
+                      x={hex.x}
+                      y={coordsY}
+                      className={tag ? "hex__coords" : "hex__label"}
+                    >
+                      {hex.key}
                     </text>
-                  ) : null}
-                </g>
-              ))}
+                    {hex.tile === "mine" && hex.mineValue ? (
+                      <text x={hex.x} y={valueY} className="hex__value">
+                        {hex.mineValue}
+                      </text>
+                    ) : null}
+                  </g>
+                );
+              })}
             </svg>
           </section>
         </div>
