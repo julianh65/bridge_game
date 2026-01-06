@@ -61,3 +61,10 @@ Targeting must live in `targetSpec`, not buried in code. Example shapes:
 ## Effects vs resolve
 Prefer `effects` arrays for anything expressible via engine primitives.
 Only use `resolve` for truly odd cards that do not fit the effect system yet.
+
+## Debug Card Browser
+Use the web client to browse all registered cards without digging through files:
+- Run the app and select the `Cards` tab in the top nav.
+- Filter by age/deck, mana cost, type, and tags, and sort by initiative.
+- This view reads from the engine registry (`CARD_DEFS`), so any edits in
+  `packages/engine/src/content/cards/` appear immediately on reload.

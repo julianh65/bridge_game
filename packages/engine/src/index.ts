@@ -1,5 +1,7 @@
 export { DEFAULT_CONFIG } from "./config";
 export { createBaseBoard, getCapitalSlots, placeSpecialTiles } from "./board-generation";
+export { CARD_DEFS } from "./content/cards";
+export type { CardDef, CardDeck, CardType } from "./content/cards";
 export {
   countPlayersOnHex,
   getBridgeKey,

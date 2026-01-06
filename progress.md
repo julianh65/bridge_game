@@ -11,7 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent3] Add Cards debug view with filters (age/deck, cost, type, tags) and initiative sort; document card editing location + new browser. Files: `apps/web/src/App.tsx`, `apps/web/src/components/CardsBrowser.tsx`, `apps/web/src/styles.css`, `packages/engine/src/index.ts`, `docs/cards.md`, `progress.md`. Status: in progress.
+- (none)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -29,6 +29,7 @@
 - Added guidance to `agent_instructions.md` on reconciling other-agent/tooling changes.
 - Updated `agent_instructions.md` to require logging task scope/files in `progress.md` before coding and clearing entries after completion.
 - Added a Lobby polish item to `implementation_plan.md` for board preview + reroll (future work).
+- Documented the new Cards debug view in `docs/cards.md`.
 
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.
@@ -96,6 +97,7 @@
 - Added a basic action panel in the game sidebar with command wiring (done, capital reinforce, build bridge edge key, march from/to).
 - Game sidebar now lists hand card IDs, deck counts, and a market row summary.
 - Lobby now includes a room code copy control with clipboard fallback.
+- Added a Cards debug tab with filters (age/deck, mana cost, type, tags) and initiative sorting.
 
 ## Milestone 5 progress
 - Added action-step card declarations for no-target cards (gain gold/draw cards) with initiative-ordered resolution before basic actions; cards leave hand on declaration and discard/burn after resolution, plus Supply Cache coverage.

@@ -544,6 +544,142 @@ h1 {
   flex-wrap: wrap;
 }
 
+.cards-browser {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cards-browser__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cards-browser__summary {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cards-browser__layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.cards-browser__filters {
+  display: grid;
+  gap: 16px;
+}
+
+.cards-browser__filters h2 {
+  margin: 0;
+}
+
+.filter-group {
+  display: grid;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.filter-group select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filter-pill {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #f6f0e4;
+  color: var(--muted);
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.filter-pill.is-active {
+  background: #fff1d6;
+  border-color: #f59e0b;
+  color: #7c2d12;
+}
+
+.cards-browser__list h2 {
+  margin-top: 0;
+}
+
+.cards-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.card-entry {
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: #fffdf6;
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.card-entry__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.card-entry__header h3 {
+  margin: 4px 0 0;
+}
+
+.card-entry__eyebrow {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.card-entry__id {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.card-entry__stats,
+.card-entry__tags,
+.card-entry__champion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.card-entry__text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink);
+}
+
 .game-screen {
   display: flex;
   flex-direction: column;
@@ -1006,6 +1142,10 @@ h1 {
   .app__nav {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .cards-browser__layout {
+    grid-template-columns: 1fr;
   }
 
   .game-screen__layout {

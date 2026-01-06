@@ -1,12 +1,13 @@
 import { useMemo, useState } from "react";
 
+import { CardsBrowser } from "./components/CardsBrowser";
 import { DebugBoard } from "./components/DebugBoard";
 import { GameScreen } from "./components/GameScreen";
 import { Home, type RoomJoinParams } from "./components/Home";
 import { Lobby } from "./components/Lobby";
 import { useRoom } from "./lib/room-client";
 
-type AppView = "play" | "debug";
+type AppView = "play" | "debug" | "cards";
 
 const statusLabels: Record<string, string> = {
   idle: "Idle",
@@ -67,10 +68,18 @@ export default function App() {
           >
             Board Debug
           </button>
+          <button
+            type="button"
+            className={view === "cards" ? "is-active" : ""}
+            onClick={() => setView("cards")}
+          >
+            Cards
+          </button>
         </div>
       </nav>
 
       {view === "debug" ? <DebugBoard /> : null}
+      {view === "cards" ? <CardsBrowser /> : null}
 
       {view === "play" && !roomConfig ? <Home onJoin={setRoomConfig} /> : null}
 
