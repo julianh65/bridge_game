@@ -11,7 +11,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- agent-2: add valid target previews for board pick modes (hex/edge highlights) (owner: agent-2; scope: target preview logic + board overlays; files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`; status: in-progress)
+- agent-1: extract `buildView` and setup view helpers into `packages/engine/src/view.ts` (owner: agent-1; scope: move view construction out of `engine.ts` and update exports; files: `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/index.ts`; status: in-progress)
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -36,6 +37,7 @@
 - Ran `npm run -w @bridgefront/engine test -- src/market.test.ts`.
 - Added a randomized smoke sim test that picks legal commands in `packages/engine/src/smoke.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/smoke.test.ts`.
+- Added regression coverage for invalid card declarations not spending resources or removing cards in `packages/engine/src/action-flow.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.

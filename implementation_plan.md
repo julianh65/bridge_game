@@ -334,6 +334,7 @@ I want to have a script that lets me select a subset of n cards and hits some so
 - Expand Age I market cards first (the ones that touch your most-used primitives).
 - [x] Add “smoke sim” tests:
   - random legal commands for N steps should not crash
+- [x] Add regression coverage for invalid action/card declarations not spending resources.
 - Add dev-only debug tools:
   - show full state JSON
   - force advance to next phase

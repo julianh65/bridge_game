@@ -307,6 +307,45 @@ describe("action flow", () => {
     expect(state.blocks?.waitingFor).toContain("p1");
   });
 
+  it("does not spend resources or remove cards on invalid card declarations", () => {
+    let { state, p1Capital } = setupToActionPhase();
+    const injected = addCardToHand(state, "p1", "starter.quick_move");
+    state = injected.state;
+
+    const openEdge = pickOpenBridgeEdge(p1Capital, state.board);
+    const [a, b] = parseEdgeKey(openEdge);
+    const to = a === p1Capital ? b : a;
+
+    const p1Before = state.players.find((player) => player.id === "p1");
+    if (!p1Before) {
+      throw new Error("missing p1 state");
+    }
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { from: p1Capital, to }
+        }
+      },
+      "p1"
+    );
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state");
+    }
+
+    expect(p1After.resources.gold).toBe(p1Before.resources.gold);
+    expect(p1After.resources.mana).toBe(p1Before.resources.mana);
+    expect(p1After.deck.hand).toEqual(p1Before.deck.hand);
+    expect(state.blocks?.payload.declarations["p1"]).toBeNull();
+    expect(state.blocks?.waitingFor).toContain("p1");
+  });
+
   it("moves a stack one hex along a bridge", () => {
     let { state, p1Capital, p1Edges } = setupToActionPhase();
     const [edge] = p1Edges;
