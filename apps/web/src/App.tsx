@@ -155,6 +155,7 @@ export default function App() {
             onSubmitSetupChoice={(choice) =>
               room.sendCommand({ type: "SubmitSetupChoice", payload: choice })
             }
+            onAutoSetup={() => room.sendLobbyCommand("autoSetup")}
             onLeave={handleLeave}
           />
         </>

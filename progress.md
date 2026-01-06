@@ -11,7 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [in progress] owner: agent1; scope: setup UI for starting bridges + free starting card pick + auto-setup button in lobby; files: apps/web/src/App.tsx, apps/web/src/components/Lobby.tsx, apps/web/src/components/SetupStartingBridges.tsx, apps/web/src/components/SetupFreeStartingCardPick.tsx, apps/web/src/lib/room-client.ts, apps/web/src/styles.css
+- None.
 - [in progress] owner: agent3; scope: market deck + preview reveal scaffolding (engine, no UI); files: packages/engine/src/types.ts, packages/engine/src/engine.ts, packages/engine/src/round-flow.ts, packages/engine/src/market.ts (new), packages/engine/src/market.test.ts
 
 ## Bug audit progress
@@ -122,6 +122,9 @@
 - Capital draft map preview now shows numbered slot labels, and draft UI uses those labels with coord tooltips.
 - Added a dev-only auto-setup command on the server (host-only) to auto-pick setup choices for faster testing.
 - GameView now exposes setup block info (public setup payload + private free-card offers) to support setup UI.
+- Added setup lobby UI for starting bridges (edge input + suggested edges + per-player status).
+- Added setup lobby UI for free starting card picks (private offers + pick status).
+- Added a host-only auto-setup button in the setup lobby.
 
 ## Milestone 5 progress
 - Added action-step card declarations for no-target cards (gain gold/draw cards) with initiative-ordered resolution before basic actions; cards leave hand on declaration and discard/burn after resolution, plus Supply Cache coverage.

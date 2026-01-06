@@ -5,6 +5,8 @@ import type { GameView, SetupChoice } from "@bridgefront/engine";
 import { BoardView } from "./BoardView";
 import { RoomCodeCopy } from "./RoomCodeCopy";
 import { SetupCapitalDraft } from "./SetupCapitalDraft";
+import { SetupFreeStartingCardPick } from "./SetupFreeStartingCardPick";
+import { SetupStartingBridges } from "./SetupStartingBridges";
 import { buildBoardPreview } from "../lib/board-preview";
 import type { RoomConnectionStatus } from "../lib/room-client";
 
@@ -24,6 +26,7 @@ type LobbyProps = {
   status: RoomConnectionStatus;
   onRerollMap: () => void;
   onSubmitSetupChoice: (choice: SetupChoice) => void;
+  onAutoSetup: () => void;
   onLeave: () => void;
 };
 
@@ -34,6 +37,7 @@ export const Lobby = ({
   status,
   onRerollMap,
   onSubmitSetupChoice,
+  onAutoSetup,
   onLeave
 }: LobbyProps) => {
   const players = view.public.players;
@@ -48,6 +52,16 @@ export const Lobby = ({
   const hostId = players.find((player) => player.seatIndex === 0)?.id ?? null;
   const isHost = Boolean(playerId && hostId === playerId);
   const canReroll = isHost && status === "connected";
+  const canAutoSetup = isHost && status === "connected";
+  const autoSetupHint = (() => {
+    if (status !== "connected") {
+      return "Connect to use auto-setup.";
+    }
+    if (!isHost) {
+      return "Only the host can run auto-setup.";
+    }
+    return "Auto-setup is a dev shortcut for playtesting.";
+  })();
   const mapPreview = useMemo(() => {
     return buildBoardPreview(players.length, String(view.public.seed ?? 0));
   }, [players.length, view.public.seed]);
@@ -163,7 +177,35 @@ export const Lobby = ({
           ) : null}
         </section>
 
+        <section className="panel setup-tools">
+          <h2>Setup Tools</h2>
+          <p className="muted">Host-only shortcuts for testing setup.</p>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={onAutoSetup}
+            disabled={!canAutoSetup}
+          >
+            Auto-setup
+          </button>
+          <p className="muted">{autoSetupHint}</p>
+        </section>
+
         <SetupCapitalDraft
+          view={view}
+          playerId={playerId}
+          status={status}
+          onSubmitChoice={onSubmitSetupChoice}
+        />
+
+        <SetupStartingBridges
+          view={view}
+          playerId={playerId}
+          status={status}
+          onSubmitChoice={onSubmitSetupChoice}
+        />
+
+        <SetupFreeStartingCardPick
           view={view}
           playerId={playerId}
           status={status}

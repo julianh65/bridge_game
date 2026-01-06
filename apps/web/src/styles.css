@@ -472,6 +472,129 @@ h1 {
   background: #fff3e0;
 }
 
+.setup-bridges,
+.setup-card-pick,
+.setup-tools {
+  display: grid;
+  gap: 12px;
+}
+
+.setup-bridges__summary,
+.setup-card-pick__summary {
+  display: grid;
+  gap: 6px;
+}
+
+.setup-bridges__inputs {
+  display: grid;
+  gap: 8px;
+}
+
+.setup-bridges__suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.setup-bridges__suggestion {
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #f5ece0;
+  font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.setup-bridges__suggestion:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.setup-bridges__players,
+.setup-card-pick__players {
+  display: grid;
+  gap: 8px;
+}
+
+.setup-bridges__player-row,
+.setup-card-pick__player-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #f7f1e6;
+  font-size: 13px;
+}
+
+.setup-bridges__player-row--active,
+.setup-card-pick__player-row--active {
+  border: 1px solid rgba(180, 83, 9, 0.35);
+  background: #fff3e0;
+}
+
+.setup-bridges__player-info {
+  display: grid;
+  gap: 4px;
+}
+
+.setup-bridges__player-name {
+  font-weight: 600;
+}
+
+.setup-card-pick__offers {
+  display: grid;
+  gap: 8px;
+}
+
+.setup-card-pick__offer {
+  text-align: left;
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fffdf6;
+  cursor: pointer;
+}
+
+.setup-card-pick__offer.is-selected {
+  border-color: #f59e0b;
+  background: #fff7d6;
+}
+
+.setup-card-pick__offer:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.setup-card-pick__offer-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.setup-card-pick__offer-id {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.setup-card-pick__offer-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.setup-card-pick__offer-text {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink);
+}
+
 .lobby-dice {
   display: grid;
   gap: 12px;

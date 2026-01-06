@@ -23,7 +23,7 @@ export type LobbyView = {
   maxPlayers: number;
 };
 
-export type LobbyCommand = "rerollMap" | "rollDice" | "startGame";
+export type LobbyCommand = "rerollMap" | "rollDice" | "startGame" | "autoSetup";
 
 type RoomMessage =
   | {
