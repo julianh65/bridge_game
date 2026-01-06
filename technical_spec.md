@@ -333,7 +333,7 @@ Setup steps:
 3. Procedural placement:
    - place forges (count by P)
    - place mines (count by P), including “home mines”
-   - assign mine values with probability (4/5/6 = 50/30/20)
+   - assign mine values with probability (3/4/5/6 = 25/40/25/10)
    - sanity check distances to mines; reroll if too unfair
 4. Starting units:
    - each player begins with 4 forces in their capital

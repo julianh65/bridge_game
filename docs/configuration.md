@@ -45,9 +45,10 @@ boardGenerationRules: {
   maxAttempts: 50,
   topK: 5,
   mineValueWeights: [
-    { value: 4, weight: 50 },
-    { value: 5, weight: 30 },
-    { value: 6, weight: 20 }
+    { value: 3, weight: 25 },
+    { value: 4, weight: 40 },
+    { value: 5, weight: 25 },
+    { value: 6, weight: 10 }
   ]
 }
 ```

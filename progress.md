@@ -39,6 +39,7 @@
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.
 - Added a capital-balance penalty to special-tile scoring to spread forges/mines more evenly across capitals.
 - Added a global-spread score so mines/forges avoid clustering and reduce empty regions (notably 3-5 players).
+- Increased mine counts by 1 per player count and updated mine value weights to make yield 3 more common.
 
 ## Cleanup/organization progress
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.

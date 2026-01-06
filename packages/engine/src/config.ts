@@ -16,17 +16,17 @@ export const DEFAULT_CONFIG: GameConfig = {
     6: 4
   },
   tileCountsByPlayerCount: {
-    2: { mines: 3, forges: 1, center: 1 },
-    3: { mines: 4, forges: 2, center: 1 },
-    4: { mines: 5, forges: 2, center: 1 },
-    5: { mines: 6, forges: 3, center: 1 },
-    6: { mines: 7, forges: 3, center: 1 }
+    2: { mines: 4, forges: 1, center: 1 },
+    3: { mines: 5, forges: 2, center: 1 },
+    4: { mines: 6, forges: 2, center: 1 },
+    5: { mines: 7, forges: 3, center: 1 },
+    6: { mines: 8, forges: 3, center: 1 }
   },
   capitalSlotsByPlayerCount: {
     2: ["3,0", "-3,0"],
     3: ["4,0", "-4,4", "0,-4"],
     4: ["4,-1", "-1,4", "-4,1", "1,-4"],
-    5: ["4,0", "0,4", "-4,4", "-4,0", "0,-4"],
+    5: ["-2,4", "-4,1", "1,-4", "2,2", "4,-2"],
     6: ["4,0", "0,4", "-4,4", "-4,0", "0,-4", "4,-4"]
   },
   boardGenerationRules: {
@@ -40,9 +40,10 @@ export const DEFAULT_CONFIG: GameConfig = {
     maxAttempts: 50,
     topK: 5,
     mineValueWeights: [
-      { value: 4, weight: 50 },
-      { value: 5, weight: 30 },
-      { value: 6, weight: 20 }
+      { value: 3, weight: 25 },
+      { value: 4, weight: 40 },
+      { value: 5, weight: 25 },
+      { value: 6, weight: 10 }
     ]
   },
   ageByRound: {
