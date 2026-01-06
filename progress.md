@@ -16,7 +16,6 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
 - [agent-1] Champion ability hooks: implement Bodyguard redirect, Flight movement override, and Assassin’s Edge pre-combat damage with tests. Files: `packages/engine/src/modifiers.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/commands.ts`, `packages/engine/src/modifiers.test.ts` (status: claimed; implementation_plan update deferred until agent-4 frees `implementation_plan.md`)
 
 ## Bug audit progress
@@ -60,6 +59,7 @@
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
+- Converted Milestone 6.5 notes into checklist tasks and marked the market quick-bid UX item complete in `implementation_plan.md`.
 - Added guidance to `agent_instructions.md` on reconciling other-agent/tooling changes.
 - Updated `agent_instructions.md` to require logging task scope/files in `progress.md` before coding and clearing entries after completion.
 - Added git hygiene guidance in `agent_instructions.md` to minimize user interruptions and preserve work.
@@ -207,7 +207,7 @@ none
 - Added market row tests covering preview composition and no-op behavior when a row exists.
 - Market sidebar now shows card names and bid/pass status per player.
 - Added market bid controls in the web client and wired `SubmitMarketBid` commands.
-- Added quick bid buttons (1-4) in the Market panel to set common bid amounts faster (plan update deferred until `implementation_plan.md` is free).
+- Added quick bid buttons (1-4) in the Market panel to set common bid amounts faster.
 - Implemented market bidding block (buy/pass, tie-break roll-offs, pass pot, one-win-per-round) with command handling + resolution, added market bidding tests, and updated setup/action tests to auto-resolve market.
 - Added power deck scaffolding + init (currently seeded from market deck lists as a placeholder), and center picks now draw from power decks; updated collection resolution/tests accordingly.
 - Added a collection sidebar panel that renders mine/forge/center prompts and submits `SubmitCollectionChoices` commands.

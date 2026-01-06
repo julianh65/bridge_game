@@ -298,12 +298,13 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 ---
 
 ## Milestone 6.5 -- Code Cleanup + Misc Things I'm just adding (the boss is adding)
-Some of the code is getting long, would it make sense to do a small bit of refactoring to clean things up for the longer files?
-The viewing of the board looks a bit weird, like the pan isn't correct there's this weird "cutoff" area.
-The market bidding needs to have be more intuitive, like there should be a few default buttons like 1, 2, 3, 4 or something and then they can also enter how much
-We need to more cleanly seperate out the basic actions from the cards and that whole UI. The flow should be like Okay you pick a basic action or card, then you pick from the board which hex or where you're targetting etc.
-And the panel on the right and hand panel still aren't optimal, the cards maybe should just like float there and it should look much better you know.
-right now the clicking on the board doesn't really work consistently, and there's too many clicks overall we need to make this more intuitive and easy to use and declutter it up a bit
+### Tasks
+- [ ] Refactor longer files for readability and maintainability.
+- [ ] Fix board pan cutoff/weird view issues.
+- [x] Market bidding UX: add quick bid buttons (1-4) while keeping manual entry.
+- [ ] Separate basic actions vs card flow so action selection happens before board targeting.
+- [ ] Improve right sidebar + hand panel layout (consider floating cards).
+- [ ] Reduce board click friction; declutter and improve target picking reliability.
 
 ## Milestone 7 — Factions + champions + modifiers (core “exceptions” framework)
 
@@ -374,7 +375,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [x] Added Flank Step, Scavenger's Market, Supply Ledger, Patrol Record (existing effects only).
 - [x] Add “smoke sim” tests:
   - random legal commands for N steps should not crash
-- Add dev-only debug tools:
+- [x] Add dev-only debug tools:
   - show full state JSON
   - force advance to next phase
   - seed controls
