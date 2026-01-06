@@ -265,6 +265,13 @@ export const runUntilBlocked = (state: GameState): GameState => {
 
 export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): GameView => {
   const viewer = state.players.find((player) => player.id === viewerPlayerId) ?? null;
+  const actionStep =
+    state.blocks?.type === "actionStep.declarations"
+      ? {
+          eligiblePlayerIds: Object.keys(state.blocks.payload.declarations),
+          waitingForPlayerIds: state.blocks.waitingFor
+        }
+      : null;
 
   return {
     public: {
@@ -282,6 +289,7 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
         doneThisRound: player.doneThisRound,
         connected: player.visibility.connected
       })),
+      actionStep,
       winnerPlayerId: state.winnerPlayerId
     },
     private: viewer

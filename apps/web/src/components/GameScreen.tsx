@@ -157,6 +157,8 @@ export const GameScreen = ({
             <ActionPanel
               phase={view.public.phase}
               player={localPlayer ?? null}
+              players={view.public.players}
+              actionStep={view.public.actionStep}
               status={status}
               onSubmit={onSubmitAction}
             />

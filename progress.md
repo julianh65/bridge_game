@@ -11,6 +11,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
+- owner: agent2; scope: replace auto-start with host-controlled start, add pre-game lobby updates, and allow up to 6 players before start; files: `apps/server/src/server.ts`, `apps/web/src/lib/room-client.ts`, `apps/web/src/App.tsx`, `apps/web/src/components/Lobby.tsx` or new lobby component, `apps/web/src/styles.css` (if needed), `progress.md`; status: in progress.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -112,8 +113,11 @@
 - Added action-step card declarations for no-target cards (gain gold/draw cards) with initiative-ordered resolution before basic actions; cards leave hand on declaration and discard/burn after resolution, plus Supply Cache coverage.
 - Added Prospecting card effect handling (base + mine bonus gold) with action-flow tests.
 - Added moveStack/buildBridge card effect support with target validation and action-flow tests (stack/path moves + temporary bridge).
+- Added Bridge Crew support with edge + optional move path validation and coverage.
 - Added champion-target card support (heal/damage/patch up) with action-flow tests (heal cap, capital bonus, bounty on kill).
+- Added Recruit choice targeting (capital vs occupied hex) with effect handling and tests.
 - Added debug card-play inputs in the action panel to submit card declarations with optional targets JSON during the action phase.
+- GameView now surfaces action-step eligible/waiting players, and the action panel lists waiting/submitted names.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

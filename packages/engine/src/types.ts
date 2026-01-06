@@ -295,6 +295,11 @@ export type PlayerPrivateView = {
   vp: { permanent: number; control: number; total: number };
 };
 
+export type ActionStepPublicView = {
+  eligiblePlayerIds: PlayerID[];
+  waitingForPlayerIds: PlayerID[];
+};
+
 export type GameView = {
   public: {
     seed: GameState["seed"];
@@ -304,6 +309,7 @@ export type GameView = {
     market: MarketState;
     logs: GameEvent[];
     players: PlayerPublicView[];
+    actionStep: ActionStepPublicView | null;
     winnerPlayerId: PlayerID | null;
   };
   private: PlayerPrivateView | null;

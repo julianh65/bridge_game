@@ -9,6 +9,8 @@ type PlayerView = GameView["public"]["players"][number];
 type ActionPanelProps = {
   phase: GameView["public"]["phase"];
   player: PlayerView | null;
+  players: PlayerView[];
+  actionStep: GameView["public"]["actionStep"];
   status: RoomConnectionStatus;
   onSubmit: (declaration: ActionDeclaration) => void;
 };
@@ -38,7 +40,14 @@ const getActionHint = (
   return "Declare one action or choose done.";
 };
 
-export const ActionPanel = ({ phase, player, status, onSubmit }: ActionPanelProps) => {
+export const ActionPanel = ({
+  phase,
+  player,
+  players,
+  actionStep,
+  status,
+  onSubmit
+}: ActionPanelProps) => {
   const [edgeKey, setEdgeKey] = useState("");
   const [marchFrom, setMarchFrom] = useState("");
   const [marchTo, setMarchTo] = useState("");
@@ -73,6 +82,18 @@ export const ActionPanel = ({ phase, player, status, onSubmit }: ActionPanelProp
   const canPlayCard =
     canSubmitAction && trimmedCardId.length > 0 && targetsError === null;
   const hint = getActionHint(phase, status, player);
+  const actionStepStatus = actionStep
+    ? (() => {
+        const eligible = new Set(actionStep.eligiblePlayerIds);
+        const waiting = new Set(actionStep.waitingForPlayerIds);
+        return {
+          waiting: players.filter((entry) => waiting.has(entry.id)).map((entry) => entry.name),
+          submitted: players
+            .filter((entry) => eligible.has(entry.id) && !waiting.has(entry.id))
+            .map((entry) => entry.name)
+        };
+      })()
+    : null;
 
   return (
     <div className="action-panel">
@@ -196,6 +217,22 @@ export const ActionPanel = ({ phase, player, status, onSubmit }: ActionPanelProp
         {"{\"from\":\"0,0\",\"to\":\"1,0\"} | {\"path\":[\"0,0\",\"1,0\"]} | {\"edgeKey\":\"0,0|1,0\"}"}
       </p>
       <p className="action-panel__hint">{hint}</p>
+      {actionStepStatus ? (
+        <>
+          <p className="action-panel__hint">
+            Waiting on:{" "}
+            {actionStepStatus.waiting.length > 0
+              ? actionStepStatus.waiting.join(", ")
+              : "none"}
+          </p>
+          <p className="action-panel__hint">
+            Submitted:{" "}
+            {actionStepStatus.submitted.length > 0
+              ? actionStepStatus.submitted.join(", ")
+              : "none"}
+          </p>
+        </>
+      ) : null}
     </div>
   );
 };
