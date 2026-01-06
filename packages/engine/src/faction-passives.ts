@@ -27,10 +27,52 @@ const createBastionShieldWallModifier = (playerId: PlayerID): Modifier => ({
   }
 });
 
+const createProspectOreCutModifier = (playerId: PlayerID): Modifier => ({
+  id: buildModifierId("prospect", playerId, "ore_cut"),
+  source: { type: "faction", sourceId: "prospect" },
+  ownerPlayerId: playerId,
+  duration: { type: "permanent" },
+  hooks: {
+    getMineGoldValue: ({ modifier, playerId: collectingPlayerId, mineValue }, current) => {
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== collectingPlayerId) {
+        return current;
+      }
+      return current + 1;
+    }
+  }
+});
+
+const createProspectMineMilitiaModifier = (playerId: PlayerID): Modifier => ({
+  id: buildModifierId("prospect", playerId, "mine_militia"),
+  source: { type: "faction", sourceId: "prospect" },
+  ownerPlayerId: playerId,
+  duration: { type: "permanent" },
+  hooks: {
+    getForceHitFaces: ({ modifier, unit, defenderPlayerId, hexKey, state }, current) => {
+      if (unit.kind !== "force") {
+        return current;
+      }
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== unit.ownerPlayerId) {
+        return current;
+      }
+      if (defenderPlayerId !== unit.ownerPlayerId) {
+        return current;
+      }
+      const hex = state.board.hexes[hexKey];
+      if (!hex || hex.tile !== "mine") {
+        return current;
+      }
+      return Math.max(current, 3);
+    }
+  }
+});
+
 export const createFactionModifiers = (factionId: string, playerId: PlayerID): Modifier[] => {
   switch (factionId) {
     case "bastion":
       return [createBastionShieldWallModifier(playerId)];
+    case "prospect":
+      return [createProspectOreCutModifier(playerId), createProspectMineMilitiaModifier(playerId)];
     default:
       return [];
   }

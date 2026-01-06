@@ -205,6 +205,12 @@ export type CombatEndContext = CombatContext & {
   defenders: UnitID[];
 };
 
+export type MineGoldContext = {
+  playerId: PlayerID;
+  hexKey: HexKey;
+  mineValue: number;
+};
+
 export type ModifierQueryHook<TContext, TValue> = (
   ctx: TContext & { modifier: Modifier; state: GameState },
   current: TValue
@@ -219,6 +225,7 @@ export type ModifierHooks = {
   getChampionAttackDice?: ModifierQueryHook<CombatUnitContext, number>;
   getChampionHitFaces?: ModifierQueryHook<CombatUnitContext, number>;
   getHitAssignmentPolicy?: ModifierQueryHook<CombatAssignmentContext, HitAssignmentPolicy>;
+  getMineGoldValue?: ModifierQueryHook<MineGoldContext, number>;
   beforeCombatRound?: ModifierEventHook<CombatRoundContext>;
   afterBattle?: ModifierEventHook<CombatEndContext>;
 };

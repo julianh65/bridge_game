@@ -50,6 +50,7 @@
 - Ran `npm run -w @bridgefront/engine test -- src/cards.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts src/setup-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts src/round-flow.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
@@ -209,6 +210,7 @@ none
 - Implemented champion card play (hex targeting validation + deployment), champion gold cost scaling, and champion limit checks in engine with tests.
 - Added champion HP details to board stack tooltips in the UI.
 - Added Bastion Shield Wall passive as a permanent faction modifier, wired during setup, with setup/combat coverage.
+- Added Prospect Ore Cut (mine gold +1) and Mine Militia (defender forces hit on 1-3 in mines) passives with combat/collection coverage.
 - Added combat modifier query pipeline (force/champion stats + hit assignment policy), before/after combat hook dispatch, and coverage.
 - Implemented modifier duration expiry (end-of-battle/end-of-round + uses consumption) with tests.
 - Added `deployForces` and `increaseMineValue` card effect support for faction starter spells (Air Drop, Rich Veins) with action-flow coverage.

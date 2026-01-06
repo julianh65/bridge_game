@@ -307,7 +307,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] event trigger dispatch (combat before/after hooks)
 - [ ] Implement faction passives as permanent modifiers:
   - [x] Bastion Shield Wall
-  - [ ] Prospect Ore Cut / Mine Militia
+  - [x] Prospect Ore Cut / Mine Militia
   - [ ] etc. (start with 1–2 factions but first double check the rules from rules_draft)
 - [x] Support faction starter spell effects with existing primitives (Air Drop deployForces, Rich Veins increaseMineValue).
 - Implement champions:

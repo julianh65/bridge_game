@@ -6,6 +6,7 @@ import type {
   CollectionChoice,
   CollectionPrompt,
   GameState,
+  HexKey,
   PlayerID,
   PlayerState
 } from "./types";
@@ -16,7 +17,7 @@ import {
   insertCardIntoDrawPileRandom,
   scrapCardFromHand
 } from "./cards";
-import { expireEndOfRoundModifiers } from "./modifiers";
+import { applyModifierQuery, expireEndOfRoundModifiers } from "./modifiers";
 
 export const applyRoundReset = (state: GameState): GameState => {
   const nextRound = state.round + 1;
@@ -92,6 +93,21 @@ const addGold = (state: GameState, playerId: PlayerID, amount: number): GameStat
         : player
     )
   };
+};
+
+const getMineGoldValue = (
+  state: GameState,
+  playerId: PlayerID,
+  hexKey: HexKey,
+  mineValue: number
+): number => {
+  return applyModifierQuery(
+    state,
+    state.modifiers,
+    (hooks) => hooks.getMineGoldValue,
+    { playerId, hexKey, mineValue },
+    mineValue
+  );
 };
 
 const returnToBottomRandom = (
@@ -383,7 +399,13 @@ export const resolveCollectionChoices = (state: GameState): GameState => {
       if (choice.kind === "mine") {
         const revealed = prompt.revealed[0];
         if (choice.choice === "gold") {
-          nextState = addGold(nextState, player.id, prompt.mineValue);
+          const mineGold = getMineGoldValue(
+            nextState,
+            player.id,
+            prompt.hexKey,
+            prompt.mineValue
+          );
+          nextState = addGold(nextState, player.id, mineGold);
           if (revealed) {
             marketDeck = [...marketDeck, revealed];
           }

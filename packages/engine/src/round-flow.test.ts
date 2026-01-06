@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { createCardInstances } from "./cards";
 import { createBaseBoard } from "./board-generation";
+import { createFactionModifiers } from "./faction-passives";
 import { DEFAULT_CONFIG, createNewGame } from "./index";
 import {
   applyAgeUpdate,
@@ -174,6 +175,71 @@ describe("collection", () => {
     const gainedCard = player?.deck.drawPile[0];
     expect(resolved.cardsByInstanceId[gainedCard ?? ""]?.defId).toBe(deck[1]);
     expect([...resolved.marketDecks.I].sort()).toEqual([deck[0], deck[2], deck[3]].sort());
+  });
+
+  it("applies prospect ore cut bonus to mine gold collection", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    board.hexes["0,1"] = {
+      ...board.hexes["0,1"],
+      tile: "mine",
+      mineValue: 2,
+      occupants: {
+        p1: ["u1"]
+      }
+    };
+    board.units = {
+      u1: {
+        id: "u1",
+        ownerPlayerId: "p1",
+        kind: "force",
+        hex: "0,1"
+      }
+    };
+
+    const state = {
+      ...base,
+      phase: "round.collection" as const,
+      board,
+      market: {
+        ...base.market,
+        age: "I"
+      },
+      marketDecks: {
+        I: [],
+        II: [],
+        III: []
+      },
+      players: base.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              factionId: "prospect",
+              resources: { ...player.resources, gold: 0 }
+            }
+          : player
+      ),
+      modifiers: createFactionModifiers("prospect", "p1")
+    };
+
+    const created = createCollectionBlock(state);
+    expect(created.block).not.toBeNull();
+    const block = created.block!;
+
+    let nextState = { ...created.state, blocks: block };
+    nextState = applyCollectionChoice(
+      nextState,
+      [{ kind: "mine", hexKey: "0,1", choice: "gold" }],
+      "p1"
+    );
+
+    const resolved = resolveCollectionChoices(nextState);
+    const player = resolved.players.find((entry) => entry.id === "p1");
+    expect(player?.resources.gold).toBe(3);
   });
 
   it("returns mine draft cards to the market deck when declined", () => {
