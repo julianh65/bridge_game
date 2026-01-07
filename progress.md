@@ -17,6 +17,7 @@
 
 ## Active tasks
 - owner: agent3 | scope: fix BoardView import error by exporting card defs map from engine index | files: `packages/engine/src/index.ts` | status: in progress
+- owner: agent4 | scope: build reusable card component and refactor card displays (hand detail/market/cards/deck) for cohesive UI | files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/components/CardsBrowser.tsx`, `apps/web/src/components/DeckViewer.tsx`, `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md` | status: in progress
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -61,6 +62,7 @@
 - Slowed the action card reveal overlay timing for a less abrupt reveal.
 - Added an age/start-of-game transition cue overlay and marked the plan item complete in `implementation_plan.md`.
 - Shortened bridge render segments so they no longer draw center-to-center; marked the plan item complete in `implementation_plan.md`.
+- Added a1-style hex labels to the game board with top-to-bottom row letters and left-to-right numbers via BoardView label variants; marked the plan item complete in `implementation_plan.md` (overlap: `implementation_plan.md`, `progress.md` with agent4).
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.

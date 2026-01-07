@@ -28,6 +28,7 @@ type BoardViewProps = {
   showTags?: boolean;
   showMineValues?: boolean;
   labelByHex?: Record<string, string>;
+  labelVariant?: "slot" | "coords" | "label";
   className?: string;
   enablePanZoom?: boolean;
   resetViewToken?: number;
@@ -173,6 +174,7 @@ export const BoardView = ({
   showTags = true,
   showMineValues = true,
   labelByHex,
+  labelVariant = "slot",
   className,
   enablePanZoom = false,
   resetViewToken,
@@ -696,6 +698,12 @@ export const BoardView = ({
       {hexes.map((hex) => {
         const tag = showTags ? tileTag(hex.tile) : "";
         const labelText = labelByHex?.[hex.key];
+        const labelClassName =
+          labelVariant === "coords"
+            ? "hex__coords"
+            : labelVariant === "label"
+              ? "hex__label"
+              : "hex__slot";
         const showCoordsText = showCoords && !labelText;
         const coordsY = tag ? hex.y + 8 : hex.y;
         const hasLowerText = showCoordsText || Boolean(labelText);
@@ -752,7 +760,7 @@ export const BoardView = ({
               </text>
             ) : null}
             {labelText ? (
-              <text x={hex.x} y={coordsY} className="hex__slot">
+              <text x={hex.x} y={coordsY} className={labelClassName}>
                 {labelText}
               </text>
             ) : null}

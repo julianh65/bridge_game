@@ -87,6 +87,30 @@ const parseTargets = (raw: string): Record<string, unknown> | null => {
   }
 };
 
+const buildHexLabels = (hexKeys: string[]): Record<string, string> => {
+  const rows = new Map<number, Array<{ key: string; q: number }>>();
+  for (const key of hexKeys) {
+    try {
+      const { q, r } = parseHexKey(key);
+      const row = rows.get(r) ?? [];
+      row.push({ key, q });
+      rows.set(r, row);
+    } catch {
+      continue;
+    }
+  }
+  const sortedRows = Array.from(rows.entries()).sort(([a], [b]) => a - b);
+  const labels: Record<string, string> = {};
+  sortedRows.forEach(([, rowHexes], rowIndex) => {
+    const rowLabel = rowIndex < 26 ? String.fromCharCode(97 + rowIndex) : `r${rowIndex + 1}`;
+    rowHexes.sort((a, b) => a.q - b.q);
+    rowHexes.forEach((entry, colIndex) => {
+      labels[entry.key] = `${rowLabel}${colIndex + 1}`;
+    });
+  });
+  return labels;
+};
+
 const getTargetString = (
   record: Record<string, unknown> | null,
   key: string
@@ -257,6 +281,10 @@ export const GameScreen = ({
   onLeave
 }: GameScreenProps) => {
   const hexRender = useMemo(() => buildHexRender(view.public.board), [view.public.board]);
+  const hexLabels = useMemo(
+    () => buildHexLabels(Object.keys(view.public.board.hexes)),
+    [view.public.board.hexes]
+  );
   const playerNames = useMemo(
     () => new Map(view.public.players.map((player) => [player.id, player.name])),
     [view.public.players]
@@ -1870,6 +1898,8 @@ export const GameScreen = ({
               showCoords={false}
               showTags
               showMineValues={false}
+              labelByHex={hexLabels}
+              labelVariant="coords"
               className="board-svg board-svg--game"
               enablePanZoom
               resetViewToken={resetViewToken}
