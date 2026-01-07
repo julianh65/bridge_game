@@ -284,6 +284,7 @@ export type ModifierHooks = {
   getControlValue?: ModifierQueryHook<ControlValueContext, number>;
   getChampionKillBonusGold?: ModifierQueryHook<ChampionKillContext, number>;
   onCardDraw?: ModifierEventHook<CardDrawContext>;
+  onMove?: ModifierEventHook<MoveContext>;
   beforeCombatRound?: ModifierEventHook<CombatRoundContext>;
   afterBattle?: ModifierEventHook<CombatEndContext>;
   onRoundEnd?: ModifierEventHook<RoundEndContext>;

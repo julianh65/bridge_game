@@ -244,6 +244,10 @@ export const runModifierEvents = <TContext>(
   return nextState;
 };
 
+export const runMoveEvents = (state: GameState, context: MoveContext): GameState => {
+  return runModifierEvents(state, state.modifiers, (hooks) => hooks.onMove, context);
+};
+
 export type {
   CardChoiceContext,
   CardDrawContext,

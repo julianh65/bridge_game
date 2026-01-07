@@ -28,7 +28,8 @@ import {
   getDeployForcesCount,
   getMoveAdjacency,
   getMoveMaxDistance,
-  getMoveRequiresBridge
+  getMoveRequiresBridge,
+  runMoveEvents
 } from "./modifiers";
 import { resolveCapitalDeployHex } from "./deploy-utils";
 import { markPlayerMovedThisRound } from "./player-flags";
@@ -53,6 +54,7 @@ const SUPPORTED_EFFECTS = new Set([
   "ward",
   "immunityField",
   "lockBridge",
+  "trapBridge",
   "destroyBridge"
 ]);
 
@@ -647,6 +649,64 @@ const moveUnits = (
   };
 };
 
+const removeForcesFromHex = (
+  state: GameState,
+  playerId: PlayerID,
+  hexKey: string,
+  unitIds: string[],
+  count: number
+): GameState => {
+  if (!Number.isFinite(count) || count <= 0) {
+    return state;
+  }
+  const hex = state.board.hexes[hexKey];
+  if (!hex) {
+    return state;
+  }
+  const occupants = hex.occupants[playerId] ?? [];
+  if (occupants.length === 0) {
+    return state;
+  }
+
+  const occupantSet = new Set(occupants);
+  const eligible = unitIds.filter((unitId) => {
+    if (!occupantSet.has(unitId)) {
+      return false;
+    }
+    const unit = state.board.units[unitId];
+    return unit?.kind === "force" && unit.ownerPlayerId === playerId;
+  });
+  if (eligible.length === 0) {
+    return state;
+  }
+
+  const removeCount = Math.min(Math.floor(count), eligible.length);
+  const removeIds = new Set(eligible.slice(0, removeCount));
+  const nextUnits = { ...state.board.units };
+  for (const unitId of removeIds) {
+    delete nextUnits[unitId];
+  }
+  const nextOccupants = occupants.filter((unitId) => !removeIds.has(unitId));
+
+  return {
+    ...state,
+    board: {
+      ...state.board,
+      units: nextUnits,
+      hexes: {
+        ...state.board.hexes,
+        [hexKey]: {
+          ...hex,
+          occupants: {
+            ...hex.occupants,
+            [playerId]: nextOccupants
+          }
+        }
+      }
+    }
+  };
+};
+
 const moveUnitsAlongPath = (
   state: GameState,
   playerId: PlayerID,
@@ -663,6 +723,7 @@ const moveUnitsAlongPath = (
     const from = path[index];
     const to = path[index + 1];
     nextState = moveUnits(nextState, playerId, movingUnitIds, from, to);
+    nextState = runMoveEvents(nextState, { playerId, from, to, path, movingUnitIds });
   }
 
   return nextState;
@@ -734,7 +795,10 @@ export const isCardPlayable = (
     const hasBuildBridge = card.effects?.some((effect) => effect.kind === "buildBridge") ?? false;
     const hasExistingBridgeEffect =
       card.effects?.some(
-        (effect) => effect.kind === "lockBridge" || effect.kind === "destroyBridge"
+        (effect) =>
+          effect.kind === "lockBridge" ||
+          effect.kind === "trapBridge" ||
+          effect.kind === "destroyBridge"
       ) ?? false;
     const plan = hasBuildBridge
       ? getBuildBridgePlan(state, playerId, card.targetSpec as TargetRecord, targets ?? null)
@@ -1339,6 +1403,68 @@ export const resolveCardEffects = (
                     return current;
                   }
                   return getBridgeKey(from, to) === modifier.attachedEdge ? false : current;
+                }
+              }
+            }
+          ]
+        };
+        break;
+      }
+      case "trapBridge": {
+        const plan = getExistingBridgePlan(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null
+        );
+        if (!plan) {
+          break;
+        }
+        const lossValue =
+          typeof effect.forceLoss === "number"
+            ? effect.forceLoss
+            : typeof effect.loss === "number"
+              ? effect.loss
+              : 1;
+        const loss = Number.isFinite(lossValue) ? Math.max(1, Math.floor(lossValue)) : 1;
+        const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.${plan.key}.trap`;
+        nextState = {
+          ...nextState,
+          modifiers: [
+            ...nextState.modifiers,
+            {
+              id: modifierId,
+              source: { type: "card", sourceId: card.id },
+              ownerPlayerId: playerId,
+              attachedEdge: plan.key,
+              duration: { type: "endOfRound" },
+              hooks: {
+                onMove: ({ state, modifier, playerId: movingPlayerId, from, to, movingUnitIds }) => {
+                  if (!modifier.attachedEdge) {
+                    return state;
+                  }
+                  if (modifier.ownerPlayerId && modifier.ownerPlayerId === movingPlayerId) {
+                    return state;
+                  }
+                  if (getBridgeKey(from, to) !== modifier.attachedEdge) {
+                    return state;
+                  }
+                  const nextState = removeForcesFromHex(
+                    state,
+                    movingPlayerId,
+                    to,
+                    movingUnitIds,
+                    loss
+                  );
+                  if (nextState === state) {
+                    return state;
+                  }
+                  const nextModifiers = nextState.modifiers.filter(
+                    (entry) => entry.id !== modifier.id
+                  );
+                  return nextModifiers.length === nextState.modifiers.length
+                    ? nextState
+                    : { ...nextState, modifiers: nextModifiers };
                 }
               }
             }

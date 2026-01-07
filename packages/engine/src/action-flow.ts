@@ -17,9 +17,9 @@ import type { CardDef } from "./content/cards";
 import { getCardDef } from "./content/cards";
 import { resolveCapitalDeployHex } from "./deploy-utils";
 import { emit } from "./events";
-import { getDeployForcesCount } from "./modifiers";
+import { getDeployForcesCount, runMoveEvents } from "./modifiers";
 import { incrementCardsPlayedThisRound, markPlayerMovedThisRound } from "./player-flags";
-import { addForcesToHex, countPlayerChampions, moveStack } from "./units";
+import { addForcesToHex, countPlayerChampions, moveStack, selectMovingUnits } from "./units";
 
 const BASIC_ACTION_MANA_COST = 1;
 const REINFORCE_GOLD_COST = 1;
@@ -487,11 +487,17 @@ const resolveMarch = (
     return state;
   }
 
-  const movedState = {
+  const movingUnitIds = selectMovingUnits(state.board, playerId, from, forceCount);
+  if (movingUnitIds.length === 0) {
+    return state;
+  }
+
+  let nextState: GameState = {
     ...state,
     board: moveStack(state.board, playerId, from, to, forceCount)
   };
-  return markPlayerMovedThisRound(movedState, playerId);
+  nextState = runMoveEvents(nextState, { playerId, from, to, path: [from, to], movingUnitIds });
+  return markPlayerMovedThisRound(nextState, playerId);
 };
 
 const resolveCapitalReinforce = (

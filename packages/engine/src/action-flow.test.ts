@@ -538,6 +538,76 @@ describe("action flow", () => {
     expect(path).toBeNull();
   });
 
+  it("triggers a bridge trap on the first enemy crossing", () => {
+    let { state, p1Capital, p1Edges } = setupToActionPhase();
+    const [edge] = p1Edges;
+    const [a, b] = parseEdgeKey(edge);
+    const neighbor = a === p1Capital ? b : a;
+
+    const capitalHex = state.board.hexes[p1Capital];
+    if (!capitalHex) {
+      throw new Error("missing capital hex");
+    }
+    const removedUnits = capitalHex.occupants["p1"] ?? [];
+    const nextUnits = { ...state.board.units };
+    for (const unitId of removedUnits) {
+      delete nextUnits[unitId];
+    }
+    state = {
+      ...state,
+      board: {
+        ...state.board,
+        units: nextUnits,
+        hexes: {
+          ...state.board.hexes,
+          [p1Capital]: {
+            ...capitalHex,
+            occupants: {
+              ...capitalHex.occupants,
+              p1: []
+            }
+          }
+        }
+      }
+    };
+
+    state = {
+      ...state,
+      board: addForcesToHex(state.board, "p2", neighbor, 2)
+    };
+
+    const trapBridgeCard: CardDef = {
+      id: "test.trap_bridge",
+      name: "Trap Bridge",
+      rulesText: "Trap a bridge; the first enemy crossing loses 1 Force.",
+      type: "Order",
+      deck: "starter",
+      tags: [],
+      cost: { mana: 0 },
+      initiative: 1,
+      burn: false,
+      targetSpec: { kind: "edge", anywhere: true },
+      effects: [{ kind: "trapBridge", loss: 1 }]
+    };
+
+    state = resolveCardEffects(state, "p1", trapBridgeCard, { edgeKey: edge });
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: { kind: "basic", action: { kind: "march", from: neighbor, to: p1Capital } }
+      },
+      "p2"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p1");
+
+    state = runUntilBlocked(state);
+
+    const targetHex = state.board.hexes[p1Capital];
+    expect(targetHex.occupants["p2"]?.length ?? 0).toBe(1);
+  });
+
   it("destroys a bridge with a destroy-bridge effect", () => {
     let { state, p1Edges } = setupToActionPhase();
     const [edge] = p1Edges;
