@@ -118,7 +118,7 @@ export const QUICK_MOVE: CardDef = {
     maxDistance: 1,
     requiresBridge: true
   },
-  effects: [{ kind: "moveStack", maxDistance: 1 }]
+  effects: [{ kind: "moveStack", maxDistance: 1, forceCount: 1 }]
 };
 
 export const ZAP: CardDef = {

@@ -1,5 +1,57 @@
 import type { BoardState, CardDefId, HexKey, PlayerID, UnitID } from "./types";
 
+const normalizeForceCount = (forceCount?: number): number | null => {
+  if (typeof forceCount !== "number" || !Number.isFinite(forceCount)) {
+    return null;
+  }
+  const normalized = Math.floor(forceCount);
+  return normalized > 0 ? normalized : null;
+};
+
+const getForceUnitsAtHex = (
+  board: BoardState,
+  playerId: PlayerID,
+  hexKey: HexKey
+): UnitID[] => {
+  const hex = board.hexes[hexKey];
+  if (!hex) {
+    return [];
+  }
+  const occupants = hex.occupants[playerId] ?? [];
+  const forceUnits: UnitID[] = [];
+  for (const unitId of occupants) {
+    if (board.units[unitId]?.kind === "force") {
+      forceUnits.push(unitId);
+    }
+  }
+  return forceUnits;
+};
+
+export const selectMovingUnits = (
+  board: BoardState,
+  playerId: PlayerID,
+  from: HexKey,
+  forceCount?: number
+): UnitID[] => {
+  const fromHex = board.hexes[from];
+  if (!fromHex) {
+    return [];
+  }
+  const occupants = fromHex.occupants[playerId] ?? [];
+  if (forceCount === undefined || forceCount === null) {
+    return occupants;
+  }
+  const normalized = normalizeForceCount(forceCount);
+  if (normalized === null) {
+    return [];
+  }
+  const forceUnits = getForceUnitsAtHex(board, playerId, from);
+  if (forceUnits.length < normalized) {
+    return [];
+  }
+  return forceUnits.slice(0, normalized);
+};
+
 type ChampionDeployment = {
   cardDefId: CardDefId;
   hp: number;
@@ -133,7 +185,8 @@ export const moveStack = (
   board: BoardState,
   playerId: PlayerID,
   from: HexKey,
-  to: HexKey
+  to: HexKey,
+  forceCount?: number
 ): BoardState => {
   if (from === to) {
     return board;
@@ -145,10 +198,15 @@ export const moveStack = (
     return board;
   }
 
-  const movingUnits = fromHex.occupants[playerId] ?? [];
+  const movingUnits = selectMovingUnits(board, playerId, from, forceCount);
   if (movingUnits.length === 0) {
     return board;
   }
+
+  const movingSet = new Set(movingUnits);
+  const fromUnits = fromHex.occupants[playerId] ?? [];
+  const remainingUnits = fromUnits.filter((unitId) => !movingSet.has(unitId));
+  const toUnits = [...(toHex.occupants[playerId] ?? []), ...movingUnits];
 
   const units = { ...board.units };
   for (const unitId of movingUnits) {
@@ -171,14 +229,14 @@ export const moveStack = (
         ...fromHex,
         occupants: {
           ...fromHex.occupants,
-          [playerId]: []
+          [playerId]: remainingUnits
         }
       },
       [to]: {
         ...toHex,
         occupants: {
           ...toHex.occupants,
-          [playerId]: [...(toHex.occupants[playerId] ?? []), ...movingUnits]
+          [playerId]: toUnits
         }
       }
     }

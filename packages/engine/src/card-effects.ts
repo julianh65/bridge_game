@@ -18,7 +18,12 @@ import {
   topdeckCardFromHand
 } from "./cards";
 import { applyChampionDeployment, dealChampionDamage, healChampion } from "./champions";
-import { addChampionToHex, addForcesToHex, countPlayerChampions } from "./units";
+import {
+  addChampionToHex,
+  addForcesToHex,
+  countPlayerChampions,
+  selectMovingUnits
+} from "./units";
 import {
   getDeployForcesCount,
   getMoveAdjacency,
@@ -59,6 +64,7 @@ type MoveValidation = {
   maxDistance?: number;
   requiresBridge: boolean;
   requireStartOccupied: boolean;
+  forceCount?: number;
 };
 
 const getTargetRecord = (targets: CardPlayTargets): TargetRecord | null => {
@@ -66,6 +72,32 @@ const getTargetRecord = (targets: CardPlayTargets): TargetRecord | null => {
     return null;
   }
   return targets as TargetRecord;
+};
+
+const getForceCountTarget = (targets: CardPlayTargets): number | null => {
+  const record = getTargetRecord(targets);
+  const forceCount = record?.forceCount;
+  return typeof forceCount === "number" && Number.isFinite(forceCount) ? forceCount : null;
+};
+
+const getMoveStackForceCount = (
+  card: CardDef,
+  effect?: TargetRecord,
+  targets?: CardPlayTargets
+): number | undefined => {
+  const targetCount = getForceCountTarget(targets ?? null);
+  if (targetCount !== null) {
+    return targetCount;
+  }
+  const effectCount = effect?.forceCount;
+  if (typeof effectCount === "number") {
+    return effectCount;
+  }
+  const specCount = (card.targetSpec as TargetRecord | undefined)?.forceCount;
+  if (typeof specCount === "number") {
+    return specCount;
+  }
+  return undefined;
 };
 
 const getEdgeKeyTarget = (targets: CardPlayTargets): string | null => {
@@ -348,12 +380,10 @@ export const validateMovePath = (
     }
   }
 
-  const startHex = state.board.hexes[path[0]];
-  if (options.requireStartOccupied && !isOccupiedByPlayer(startHex, playerId)) {
+  const movingUnitIds = selectMovingUnits(state.board, playerId, path[0], options.forceCount);
+  if (options.requireStartOccupied && movingUnitIds.length === 0) {
     return null;
   }
-
-  const movingUnitIds = startHex.occupants[playerId] ?? [];
   let maxDistance = options.maxDistance;
   if (typeof maxDistance === "number") {
     maxDistance = getMoveMaxDistance(
@@ -487,13 +517,10 @@ const moveUnits = (
 const moveUnitsAlongPath = (
   state: GameState,
   playerId: PlayerID,
-  path: string[]
+  path: string[],
+  forceCount?: number
 ): GameState => {
-  const startHex = state.board.hexes[path[0]];
-  if (!startHex) {
-    return state;
-  }
-  const movingUnitIds = startHex.occupants[playerId] ?? [];
+  const movingUnitIds = selectMovingUnits(state.board, playerId, path[0], forceCount);
   if (movingUnitIds.length === 0) {
     return state;
   }
@@ -601,6 +628,7 @@ export const isCardPlayable = (
           : undefined;
     const requiresBridge =
       moveEffect.requiresBridge === false ? false : card.targetSpec.requiresBridge !== false;
+    const forceCount = getMoveStackForceCount(card, moveEffect, targets ?? null);
 
     let moveState = state;
     if (card.effects?.some((effect) => effect.kind === "buildBridge")) {
@@ -624,7 +652,8 @@ export const isCardPlayable = (
       validateMovePath(moveState, playerId, movePath, {
         maxDistance,
         requiresBridge,
-        requireStartOccupied: true
+        requireStartOccupied: true,
+        forceCount
       })
     );
   }
@@ -641,11 +670,16 @@ export const isCardPlayable = (
     const maxDistance =
       typeof card.targetSpec.maxDistance === "number" ? card.targetSpec.maxDistance : undefined;
     const requiresBridge = card.targetSpec.requiresBridge !== false;
+    const moveEffect = card.effects?.find(
+      (effect) => effect.kind === "moveStack"
+    ) as TargetRecord | undefined;
+    const forceCount = getMoveStackForceCount(card, moveEffect, targets ?? null);
     return Boolean(
       validateMovePath(state, playerId, movePath, {
         maxDistance,
         requiresBridge,
-        requireStartOccupied: true
+        requireStartOccupied: true,
+        forceCount
       })
     );
   }
@@ -1088,15 +1122,17 @@ export const resolveCardEffects = (
               : undefined;
         const requiresBridge =
           effect.requiresBridge === false ? false : card.targetSpec.requiresBridge !== false;
+        const forceCount = getMoveStackForceCount(card, effect, targets ?? null);
         const validPath = validateMovePath(nextState, playerId, movePath, {
           maxDistance,
           requiresBridge,
-          requireStartOccupied: true
+          requireStartOccupied: true,
+          forceCount
         });
         if (!validPath) {
           break;
         }
-        nextState = moveUnitsAlongPath(nextState, playerId, validPath);
+        nextState = moveUnitsAlongPath(nextState, playerId, validPath, forceCount);
         nextState = markPlayerMovedThisRound(nextState, playerId);
         break;
       }

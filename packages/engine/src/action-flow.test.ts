@@ -450,6 +450,33 @@ describe("action flow", () => {
     expect(toHex.occupants["p1"]?.length ?? 0).toBe(4);
   });
 
+  it("moves part of a stack when forceCount is set", () => {
+    let { state, p1Capital, p1Edges } = setupToActionPhase();
+    const [edge] = p1Edges;
+    const [a, b] = parseEdgeKey(edge);
+    const to = a === p1Capital ? b : a;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "basic",
+          action: { kind: "march", from: p1Capital, to, forceCount: 2 }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const fromHex = state.board.hexes[p1Capital];
+    const toHex = state.board.hexes[to];
+    expect(fromHex.occupants["p1"]?.length ?? 0).toBe(2);
+    expect(toHex.occupants["p1"]?.length ?? 0).toBe(2);
+  });
+
   it("allows Aerial tailwind to march an extra hex", () => {
     let { state, p1Capital, p1Edges } = setupToActionPhase({ p1: "aerial" });
     const [edge] = p1Edges;
@@ -692,8 +719,8 @@ describe("action flow", () => {
 
     const fromHex = state.board.hexes[p1Capital];
     const toHex = state.board.hexes[to];
-    expect(fromHex.occupants["p1"]?.length ?? 0).toBe(0);
-    expect(toHex.occupants["p1"]?.length ?? 0).toBe(4);
+    expect(fromHex.occupants["p1"]?.length ?? 0).toBe(3);
+    expect(toHex.occupants["p1"]?.length ?? 0).toBe(1);
   });
 
   it("plays a path-move card along a bridge", () => {
@@ -1119,8 +1146,8 @@ describe("action flow", () => {
 
     const fromHex = state.board.hexes[p1Capital];
     const toHex = state.board.hexes[to];
-    expect(fromHex.occupants["p1"]?.length ?? 0).toBe(0);
-    expect(toHex.occupants["p1"]?.length ?? 0).toBe(4);
+    expect(fromHex.occupants["p1"]?.length ?? 0).toBe(3);
+    expect(toHex.occupants["p1"]?.length ?? 0).toBe(1);
   });
 
   it("plays scout report to keep the top card and discard the rest", () => {

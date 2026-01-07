@@ -123,7 +123,13 @@ const getBuildBridgePlan = (
   return { from: rawA, to: rawB, key: canonicalKey };
 };
 
-const canMarch = (state: GameState, playerId: PlayerID, from: string, to: string): boolean => {
+const canMarch = (
+  state: GameState,
+  playerId: PlayerID,
+  from: string,
+  to: string,
+  forceCount?: number
+): boolean => {
   const fromHex = state.board.hexes[from];
   const toHex = state.board.hexes[to];
   if (!fromHex || !toHex) {
@@ -136,7 +142,7 @@ const canMarch = (state: GameState, playerId: PlayerID, from: string, to: string
 
   const options = { maxDistance: 1, requiresBridge: true, requireStartOccupied: true };
 
-  if (validateMovePath(state, playerId, [from, to], options)) {
+  if (validateMovePath(state, playerId, [from, to], { ...options, forceCount })) {
     return true;
   }
 
@@ -158,7 +164,7 @@ const canMarch = (state: GameState, playerId: PlayerID, from: string, to: string
     } catch {
       continue;
     }
-    if (validateMovePath(state, playerId, [from, mid, to], options)) {
+    if (validateMovePath(state, playerId, [from, mid, to], { ...options, forceCount })) {
       return true;
     }
   }
@@ -177,7 +183,7 @@ const isBasicActionValid = (state: GameState, playerId: PlayerID, action: BasicA
     case "buildBridge":
       return Boolean(getBuildBridgePlan(state, playerId, action.edgeKey));
     case "march":
-      return canMarch(state, playerId, action.from, action.to);
+      return canMarch(state, playerId, action.from, action.to, action.forceCount);
     case "capitalReinforce":
       return Boolean(getCapitalReinforceHex(state, playerId, action.hexKey));
     default: {
@@ -436,7 +442,7 @@ const resolveBasicAction = (state: GameState, playerId: PlayerID, action: BasicA
     case "buildBridge":
       return resolveBuildBridge(state, playerId, action.edgeKey);
     case "march":
-      return resolveMarch(state, playerId, action.from, action.to);
+      return resolveMarch(state, playerId, action.from, action.to, action.forceCount);
     case "capitalReinforce":
       return resolveCapitalReinforce(state, playerId, action.hexKey);
     default: {
@@ -469,14 +475,20 @@ const resolveBuildBridge = (state: GameState, playerId: PlayerID, edgeKey: strin
   };
 };
 
-const resolveMarch = (state: GameState, playerId: PlayerID, from: string, to: string): GameState => {
-  if (!canMarch(state, playerId, from, to)) {
+const resolveMarch = (
+  state: GameState,
+  playerId: PlayerID,
+  from: string,
+  to: string,
+  forceCount?: number
+): GameState => {
+  if (!canMarch(state, playerId, from, to, forceCount)) {
     return state;
   }
 
   const movedState = {
     ...state,
-    board: moveStack(state.board, playerId, from, to)
+    board: moveStack(state.board, playerId, from, to, forceCount)
   };
   return markPlayerMovedThisRound(movedState, playerId);
 };

@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [owner: agent2] [status: in-progress] Scope: add engine support for partial force moves (split stacks) for march + card moveStack effects, with validation/tests. Files: packages/engine/src/types.ts, packages/engine/src/action-flow.ts, packages/engine/src/units.ts, packages/engine/src/card-effects.ts, packages/engine/src/action-flow.test.ts, implementation_plan.md, progress.md.
+- none
 - [owner: agent1] [status: in-progress] Scope: add market roll-off dice UI with suspenseful rolling number display in the market overlay. Files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/MarketPanel.tsx, apps/web/src/components/NumberRoll.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md.
 
 ## Milestone 8.5 progress
@@ -122,6 +122,7 @@
 - Added a host-only debug state patch tool in the room debug panel + server command, and marked the plan item complete in `implementation_plan.md`.
 - Added a champion crest marker on unit stacks to make champion presence easier to spot on the board.
 - Added faction badges on unit stacks to help differentiate ownership at a glance.
+- Added engine support for partial force moves (optional `forceCount`), updated Quick Move/Banner Claim to move 1 force, and refreshed action-flow coverage; `implementation_plan.md` split UI vs engine subtasks.
 - Overlap note: commit included pre-staged battle UX files `apps/web/src/components/CombatOverlay.tsx` and `apps/web/src/lib/combat-log.ts` from another agent's scope.
 - Added combat round logging with dice/hit assignment payloads and a battle overlay that supports click-to-roll dice with hit assignment display; marked the Milestone 9 battle UX item complete in `implementation_plan.md`.
 - Rendered bridges as plank/rail SVG assets in the board view and marked the plan item complete in `implementation_plan.md`.

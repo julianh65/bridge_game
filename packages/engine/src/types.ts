@@ -375,7 +375,7 @@ export type SetupChoice =
 
 export type BasicAction =
   | { kind: "buildBridge"; edgeKey: EdgeKey }
-  | { kind: "march"; from: HexKey; to: HexKey }
+  | { kind: "march"; from: HexKey; to: HexKey; forceCount?: number }
   | { kind: "capitalReinforce"; hexKey?: HexKey };
 
 export type CardPlayTargets = Record<string, unknown> | null;
