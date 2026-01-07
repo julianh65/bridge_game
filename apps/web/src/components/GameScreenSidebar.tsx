@@ -17,6 +17,7 @@ type GameScreenSidebarProps = {
   lastLogLabel: string | null;
   isInfoDockOpen: boolean;
   onToggleDock: () => void;
+  onCollapse: () => void;
 };
 
 export const GameScreenSidebar = ({
@@ -33,7 +34,8 @@ export const GameScreenSidebar = ({
   logCount,
   lastLogLabel,
   isInfoDockOpen,
-  onToggleDock
+  onToggleDock,
+  onCollapse
 }: GameScreenSidebarProps) => {
   type SectionKey = "status" | "table" | "intel";
   const [openSections, setOpenSections] = useState<Record<SectionKey, boolean>>({
@@ -81,7 +83,12 @@ export const GameScreenSidebar = ({
 
   return (
     <aside className="panel game-sidebar">
-      <h2>Command Center</h2>
+      <div className="game-sidebar__header">
+        <h2>Command Center</h2>
+        <button type="button" className="btn btn-tertiary" onClick={onCollapse}>
+          Hide
+        </button>
+      </div>
       <div className="sidebar-section sidebar-section--status">
         <div className="sidebar-section__header">
           <h3>Status</h3>

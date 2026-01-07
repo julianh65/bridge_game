@@ -249,7 +249,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Add a focus row for market/collection panels above the board.
   - [x] Move log + player list into a secondary row during market/collection phases.
   - [x] Expand market/collection focus cards (initiative/effects) for richer phase layouts.
-- [ ] Add collapsible/relocatable panels so not everything lives in the right sidebar.
+- [x] Add collapsible/relocatable panels so not everything lives in the right sidebar.
   - [x] Add collapsible sections for sidebar panels (status/table/intel).
   - [ ] Consider optional panel relocation (dockable panels).
 - [x] Make the phase market at the top part much bigger and cooler
@@ -379,7 +379,7 @@ Start going through the rules_draft and adding the logic for the different types
 - [x] Add targeting immunities and marked/contract flags (Ward, Immunity Field, Marked for Coin).
 - [ ] Add movement/adjacency modifiers (bridge lockdown/trap, wormhole links, tunnel network).
   - [x] Bridge lockdown effect (lock a bridge until end of round).
-  - [ ] Bridge trap (first enemy crossing loses a force).
+  - [x] Bridge trap (first enemy crossing loses a force).
   - [ ] Wormhole links (treat two hexes as adjacent for a round).
   - [ ] Tunnel network adjacency (non-passive card effects).
 - [ ] Add hit-assignment control + battle retreat effects (Focus Fire, Tactical Hand, Set to Skirmish).

@@ -455,6 +455,7 @@ export const GameScreen = ({
   const [quietStudySelectedIds, setQuietStudySelectedIds] = useState<string[]>([]);
   const [boardPickMode, setBoardPickMode] = useState<BoardPickMode>("none");
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMarketOverlayOpen, setIsMarketOverlayOpen] = useState(false);
   const [marketOutroHold, setMarketOutroHold] = useState(false);
   const [marketWinner, setMarketWinner] = useState<MarketWinnerHighlight | null>(null);
@@ -838,6 +839,12 @@ export const GameScreen = ({
   };
   const toggleDock = () => {
     setIsInfoDockOpen((open) => !open);
+  };
+  const collapseSidebar = () => {
+    setIsSidebarCollapsed(true);
+  };
+  const expandSidebar = () => {
+    setIsSidebarCollapsed(false);
   };
   const handleCombatClose = () => {
     setCombatQueue((queue) => queue.slice(1));
@@ -2159,6 +2166,15 @@ export const GameScreen = ({
       <div className="game-dock__body">{logContent}</div>
     </section>
   ) : null;
+  const sidebarToggle = isSidebarCollapsed ? (
+    <button
+      type="button"
+      className="btn btn-tertiary game-screen__sidebar-toggle"
+      onClick={expandSidebar}
+    >
+      Show Command Center
+    </button>
+  ) : null;
 
   return (
     <section className="game-screen">
@@ -2254,8 +2270,11 @@ export const GameScreen = ({
 
       {phaseFocusPanel}
 
+      {sidebarToggle}
       <div
-        className={`game-screen__layout ${showPhaseFocus ? "game-screen__layout--focus" : ""}`}
+        className={`game-screen__layout ${showPhaseFocus ? "game-screen__layout--focus" : ""} ${
+          isSidebarCollapsed ? "game-screen__layout--sidebar-collapsed" : ""
+        }`}
       >
         <section className="panel game-board">
           <div className="game-board__placeholder">
@@ -2308,22 +2327,25 @@ export const GameScreen = ({
           </div>
         </section>
 
-        <GameScreenSidebar
-          connectionLabel={connectionLabel}
-          connectionClass={connectionClass}
-          phaseLabel={phaseLabel}
-          round={view.public.round}
-          leadPlayerName={leadPlayer?.name ?? null}
-          players={view.public.players}
-          actionStep={actionStep}
-          actionEligible={actionEligible}
-          actionWaiting={actionWaiting}
-          isInteractivePhase={isInteractivePhase}
-          logCount={logCount}
-          lastLogLabel={lastLogLabel}
-          isInfoDockOpen={isInfoDockOpen}
-          onToggleDock={toggleDock}
-        />
+        {!isSidebarCollapsed ? (
+          <GameScreenSidebar
+            connectionLabel={connectionLabel}
+            connectionClass={connectionClass}
+            phaseLabel={phaseLabel}
+            round={view.public.round}
+            leadPlayerName={leadPlayer?.name ?? null}
+            players={view.public.players}
+            actionStep={actionStep}
+            actionEligible={actionEligible}
+            actionWaiting={actionWaiting}
+            isInteractivePhase={isInteractivePhase}
+            logCount={logCount}
+            lastLogLabel={lastLogLabel}
+            isInfoDockOpen={isInfoDockOpen}
+            onToggleDock={toggleDock}
+            onCollapse={collapseSidebar}
+          />
+        ) : null}
       </div>
       {infoDock}
       <GameScreenHandPanel

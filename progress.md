@@ -280,6 +280,7 @@ none
 - Added collapsible toggles for Status/Table/Intel sections in the command-center sidebar.
 - Stabilized BoardView pan/zoom by avoiding viewBox resets when board state updates (plan update deferred: `implementation_plan.md` locked by agent3).
 - Upgraded collection prompts to show full card tiles (initiative/rules/costs) for revealed picks instead of tag buttons.
+- Added a collapsible Command Center sidebar toggle so the board can expand when the right panel is hidden; marked the plan item complete in `implementation_plan.md`.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.

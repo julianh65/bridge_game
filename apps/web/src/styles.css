@@ -1686,6 +1686,17 @@ h1 {
   grid-template-columns: minmax(0, 1.7fr) minmax(260px, 340px);
 }
 
+.game-screen__layout--sidebar-collapsed {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.game-screen__sidebar-toggle {
+  position: fixed;
+  right: 16px;
+  top: 140px;
+  z-index: 56;
+}
+
 .game-screen__focus {
   display: grid;
   gap: 12px;
@@ -1884,6 +1895,17 @@ h1 {
   gap: 16px;
   min-height: 0;
   overflow: auto;
+}
+
+.game-sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.game-sidebar__header h2 {
+  margin: 0;
 }
 
 .game-hand {
