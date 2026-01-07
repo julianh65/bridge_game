@@ -237,4 +237,70 @@ describe("combat card effects", () => {
     const retreatOccupants = state.board.hexes[retreatHex].occupants;
     expect(retreatOccupants["p2"] ?? []).toHaveLength(0);
   });
+
+  it("set to skirmish removes units if no adjacent hex is empty", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 4, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: { p1: ["f1", "c1"], p2: ["f2"] }
+    };
+
+    const blockingUnits: Record<string, ForceUnit> = {};
+    const neighbors = neighborHexKeys(hexKey).filter((key) =>
+      Boolean(board.hexes[key])
+    );
+    neighbors.forEach((neighbor, index) => {
+      const unitId = `b${index}`;
+      blockingUnits[unitId] = createForce(unitId, "p2", neighbor);
+      board.hexes[neighbor] = {
+        ...board.hexes[neighbor],
+        occupants: { p2: [unitId] }
+      };
+    });
+
+    board.units = {
+      f1: createForce("f1", "p1", hexKey),
+      c1: createChampion("c1", "p1", hexKey),
+      f2: createForce("f2", "p2", hexKey),
+      ...blockingUnits
+    };
+
+    let state: GameState = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(21),
+      board
+    };
+
+    const skirmishCard: CardDef = {
+      id: "test.set_to_skirmish.blocked",
+      name: "Set to Skirmish",
+      rulesText: "Retreat from battle in the chosen hex.",
+      type: "Order",
+      deck: "starter",
+      tags: [],
+      cost: { mana: 0 },
+      initiative: 1,
+      burn: false,
+      targetSpec: { kind: "hex" },
+      effects: [{ kind: "setToSkirmish" }]
+    };
+
+    state = resolveCardEffects(state, "p1", skirmishCard, { hexKey });
+    state = resolveBattleAtHex(state, hexKey);
+
+    const finalHex = state.board.hexes[hexKey];
+    expect(finalHex.occupants["p1"] ?? []).toHaveLength(0);
+    expect(finalHex.occupants["p2"] ?? []).toHaveLength(1);
+    expect(state.board.units["f1"]).toBeUndefined();
+    expect(state.board.units["c1"]).toBeUndefined();
+  });
 });

@@ -458,6 +458,7 @@ none
 - Added champion ability tests for Ironclad Warden (Bodyguard) and Shadeblade (Assassin's Edge); updated the plan checklist. (Files: `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.) (owner: agent2)
 - Added Tactical Hand hit-assignment support for Grand Strategist with combat logic + tests; updated `implementation_plan.md`. (Files: `packages/engine/src/combat.ts`, `packages/engine/src/champions.ts`, `packages/engine/src/types.ts`, `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.) (owner: agent2)
 - Added Set to Skirmish retreat-on-battle effect (combat modifier) with targeted test coverage; updated `implementation_plan.md`. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.) (owner: agent3)
+- Added Set to Skirmish edge-case test coverage when no adjacent retreat hex exists. (Files: `packages/engine/src/card-effects.combat-modifiers.test.ts`.) (owner: agent3)
 
 ## Milestone 7.5 progress
 - Added a card-art manifest + helper, GameCard art rendering, and a CLI script to generate diffusion art and update the manifest. (Files: `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`.)
