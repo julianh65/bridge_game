@@ -34,7 +34,8 @@ export type LobbyCommand =
 export type DebugCommand =
   | { command: "state" }
   | { command: "advancePhase" }
-  | { command: "resetGame"; seed?: number };
+  | { command: "resetGame"; seed?: number }
+  | { command: "patchState"; path: string; value: unknown };
 
 type RoomMessage =
   | {

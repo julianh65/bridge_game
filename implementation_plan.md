@@ -432,7 +432,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Add a large "Submit/Lock In" action button for action declarations.
 - [x] Consolidate or rearrange panels so the game screen feels cohesive. Right now like the whole basic action panel is on the side and cards on the bottom, those should kind of be together in the bottom area, the log is a bit not nice etc...
 - [x] Make only valid targets highlightable, like right now to build a bridge it will highlight the possible edges right, you should only be able to click on the edges not the hexes
-- [ ] Wasted space above the board, we don't need this thing Drag to pan · Scroll to zoom and the shared board state and board above it has too much padding
+- [x] Wasted space above the board, we don't need this thing Drag to pan · Scroll to zoom and the shared board state and board above it has too much padding
 
 ### Tasks (web - motion + phase clarity)
 - [ ] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen. This is after everyone locks in their actions. I want it to be like Player 1, show the card they played and flash it up, then show where they did it or something and make it extensible so later we can add animations or sound effects or something here.
@@ -468,7 +468,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Refresh the game flow and UI so action-phase play feels smooth, with a clear “everyone watching” reveal of what each player did.
 - [x] Improve board visuals: nicer bridges and a bit of padding between hexes for a shattered plains look.
 - [ ] Add battle UX: click-to-roll dice with shared roll animations and visible hit assignment.
-- [ ] Add a host-only board state editor/debug panel (JSON view + light patch tools) for test games, only if it stays simple.
+- [x] Add a host-only board state editor/debug panel (JSON view + light patch tools) for test games, only if it stays simple.
 - [x] Add a victory screen (winner, final VP, recap, rematch/exit).
 - [ ] Upgrade on-board visuals for units/champions/factions (distinct tokens, faction badges).
 - [x] Enforce faction uniqueness in setup (no duplicate faction picks).

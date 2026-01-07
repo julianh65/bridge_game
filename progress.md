@@ -16,7 +16,9 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent3; scope: add a simple host-only debug state patch tool (path/value) in the room debug panel and server command handling; files: `apps/web/src/components/RoomDebugPanel.tsx`, `apps/web/src/lib/room-client.ts`, `apps/server/src/server.ts`; status: in progress.
+none
+- owner: agent4; scope: remove board header/hints and tighten board panel padding to reduce wasted space above the board; files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`; status: in progress.
+- owner: agent2; scope: clean up `implementation_plan.md` and `progress.md` (dedupe/completion sync, tighten notes); files: `implementation_plan.md`, `progress.md`; status: in progress.
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats (plan item already checked in `implementation_plan.md`).
@@ -52,6 +54,7 @@
 - Clarified Pass/Done messaging in the action panel so players know it locks them out for the step, and marked the plan item complete in `implementation_plan.md` (overlap note: `implementation_plan.md` already had pending task additions in the action/market sections).
 - Added a deck flow UI in the Deck tab showing draw/hand/discard/scrapped piles with animated arrows; marked the plan item complete in `implementation_plan.md`.
 - Improved board visuals with hex padding, a textured board backdrop, and beefier bridge styling; marked the plan item complete in `implementation_plan.md`.
+- Added a host-only debug state patch tool in the room debug panel + server command, and marked the plan item complete in `implementation_plan.md`.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.

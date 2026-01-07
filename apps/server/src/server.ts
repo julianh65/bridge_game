@@ -51,8 +51,10 @@ type LobbyCommandMessage = {
 type DebugCommandMessage = {
   type: "debugCommand";
   playerId: PlayerID;
-  command: "state" | "advancePhase" | "resetGame";
+  command: "state" | "advancePhase" | "resetGame" | "patchState";
   seed?: number;
+  path?: string;
+  value?: unknown;
 };
 
 type ClientMessage = JoinMessage | CommandMessage | LobbyCommandMessage | DebugCommandMessage;
@@ -376,6 +378,72 @@ const advanceToNextPhaseDebug = (state: GameState): GameState => {
   }
 
   return nextState;
+};
+
+type PatchPathToken = string | number;
+
+const parsePatchPath = (path: string): PatchPathToken[] | null => {
+  const trimmed = path.trim();
+  if (!trimmed) {
+    return null;
+  }
+  const normalized = trimmed.replace(/\[(\d+)\]/g, ".$1").replace(/^\./, "");
+  const parts = normalized.split(".").filter((part) => part.length > 0);
+  if (parts.length === 0) {
+    return null;
+  }
+  return parts.map((part) => (/^\d+$/.test(part) ? Number(part) : part));
+};
+
+const setValueAtPath = (
+  current: unknown,
+  tokens: PatchPathToken[],
+  value: unknown
+): unknown => {
+  if (tokens.length === 0) {
+    return value;
+  }
+  const [head, ...rest] = tokens;
+  const key = String(head);
+  const nextCurrent =
+    current && typeof current === "object" ? (current as Record<string, unknown>)[key] : undefined;
+  const nextValue = setValueAtPath(nextCurrent, rest, value);
+  const shouldUseArray = Array.isArray(current) || (!current && typeof head === "number");
+
+  if (shouldUseArray) {
+    const copy = Array.isArray(current) ? [...current] : [];
+    if (typeof head === "number") {
+      copy[head] = nextValue;
+      return copy;
+    }
+    (copy as unknown as Record<string, unknown>)[key] = nextValue;
+    return copy;
+  }
+
+  const base =
+    current && typeof current === "object" && !Array.isArray(current)
+      ? (current as Record<string, unknown>)
+      : {};
+  return {
+    ...base,
+    [key]: nextValue
+  };
+};
+
+const applyStatePatch = (
+  state: GameState,
+  path: string,
+  value: unknown
+): GameState | null => {
+  const tokens = parsePatchPath(path);
+  if (!tokens) {
+    return null;
+  }
+  const nextState = setValueAtPath(state, tokens, value);
+  if (!nextState || typeof nextState !== "object") {
+    return null;
+  }
+  return nextState as GameState;
 };
 
 const safeParseMessage = (message: string): ClientMessage | null => {
@@ -849,6 +917,30 @@ export default class Server implements Party.Server {
         return;
       }
       const nextState = advanceToNextPhaseDebug(this.state);
+      this.state = {
+        ...nextState,
+        revision: this.state.revision + 1
+      };
+      const events = this.collectEvents();
+      this.broadcastUpdate(events);
+      return;
+    }
+
+    if (message.command === "patchState") {
+      if (!this.state) {
+        this.sendError(connection, "game has not started");
+        return;
+      }
+      const path = typeof message.path === "string" ? message.path.trim() : "";
+      if (!path) {
+        this.sendError(connection, "patchState requires a non-empty path");
+        return;
+      }
+      const nextState = applyStatePatch(this.state, path, message.value);
+      if (!nextState) {
+        this.sendError(connection, "patchState could not apply path");
+        return;
+      }
       this.state = {
         ...nextState,
         revision: this.state.revision + 1
