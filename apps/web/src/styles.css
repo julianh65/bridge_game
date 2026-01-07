@@ -1114,7 +1114,7 @@ h1 {
 }
 
 .game-card__art {
-  height: 110px;
+  height: 120px;
   border-radius: 12px;
   border: 1px dashed rgba(111, 90, 70, 0.35);
   background: linear-gradient(135deg, #f7e4cc, #f2d6b3);
@@ -1816,7 +1816,7 @@ h1 {
 
 .game-hand__layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(200px, 300px);
+  grid-template-columns: minmax(0, 1.7fr) minmax(180px, 240px);
   gap: 12px;
   align-items: start;
 }
@@ -1834,6 +1834,7 @@ h1 {
   border-radius: 12px;
   border: 1px solid var(--border);
   background: #fdf4e4;
+  max-width: 240px;
 }
 
 .game-hand__actions-header {
@@ -2017,7 +2018,7 @@ h1 {
   background: transparent;
   padding: 0;
   cursor: pointer;
-  width: clamp(120px, 28vw, 170px);
+  width: clamp(130px, 30vw, 190px);
   transform: translateY(var(--hand-lift, 0px)) rotate(var(--hand-rotate, 0deg));
   transform-origin: bottom center;
   transition: transform 0.2s ease;
@@ -2025,7 +2026,7 @@ h1 {
 }
 
 .hand-card + .hand-card {
-  margin-left: -36px;
+  margin-left: -42px;
 }
 
 .hand-card__face {
@@ -2048,10 +2049,11 @@ h1 {
   padding: 10px;
   gap: 6px;
   text-align: center;
+  aspect-ratio: 5 / 8;
 }
 
 .game-card--hand .game-card__art {
-  height: 64px;
+  height: 72px;
   font-size: 9px;
   letter-spacing: 0.18em;
 }
@@ -2336,16 +2338,16 @@ h1 {
 
 .market-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 250px));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 270px));
+  gap: 20px;
   justify-content: start;
 }
 
 .game-card--market {
   width: 100%;
-  max-width: 250px;
-  min-height: 330px;
-  aspect-ratio: 2 / 3;
+  max-width: 270px;
+  min-height: 370px;
+  aspect-ratio: 2 / 3.2;
   padding: 16px;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -2376,7 +2378,7 @@ h1 {
 
 .market-card__art,
 .game-card--market .game-card__art {
-  height: 124px;
+  height: 140px;
   border-radius: 12px;
   border: 1px dashed rgba(111, 90, 70, 0.35);
   background: linear-gradient(135deg, #f7e4cc, #f2d6b3);

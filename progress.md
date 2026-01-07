@@ -26,6 +26,7 @@
 - Consolidated the GameScreen layout: moved the action panel into the hand row, added an intel dock for players/log, and tightened the sidebar into status/resources/intel summaries (styles updated).
 - Added a reusable `GameCard` component with art/cost/initiative details, refactored card displays (hand, market, deck, cards browser, free starting offers), and marked the plan item complete in `implementation_plan.md`.
 - Refined `GameCard` layouts: centered titles, italicized type line, initiative circles, age labels above art, cost line with emoji, larger hand/market sizing, and power/champion borders (overlap: `apps/web/src/styles.css` with agent1).
+- Increased card height/sizing in the hand + market views, stretched art areas, and slimmed the hand action column to give cards more space.
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.
 - Added a Deck tab that shows hand/draw/discard/scrapped piles for the local player, backed by new private `deckCards` data in `GameView`, and marked the plan item complete in `implementation_plan.md`.
 - Refreshed the Home landing page layout/typography and marked the plan item complete in `implementation_plan.md`.
