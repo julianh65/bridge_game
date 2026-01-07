@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent3 | scope: add implementation plan TODO for reusable hand-card picker/topdeck UI | files: `implementation_plan.md`, `progress.md` | status: in progress
+- owner: agent3 | scope: add a reusable hand-card picker modal for topdeck-from-hand targets (Perfect Recall) | files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md` | status: in progress
 
 
 ## Milestone 8.5 progress
@@ -74,6 +74,7 @@
 - Shrunk the board overlay controls and switched the selection label to use the board's A1-style tile labels instead of axial coords.
 - Updated the game board SVG to stretch to available height so it reaches the legend without extra empty space.
 - Set the main board layout to flex-fill and raised the hand panel z-index so it stays above the board when open.
+- Positioned the hand panel as an absolute overlay so opening/closing it no longer resizes the board.
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.
