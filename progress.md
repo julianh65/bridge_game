@@ -157,7 +157,7 @@
 - Nudged GameCard art heights a touch taller across variants. (Files: `apps/web/src/styles.css`.)
 - Added Victory card VP badges in `GameCard`, wired configurable `victoryPoints` in card defs/engine VP gain, and added coverage in engine card tests.
 - Enabled champion stat blocks on market/hand GameCard views with compact hand styling; marked the plan item complete in `implementation_plan.md`. (Overlap note: `implementation_plan.md` touched alongside agent2 scope.)
-- Enlarged market roll-off dice UI and added clearer player labels; added a plan subtask for the remaining click-to-roll wiring. (Overlap note: `implementation_plan.md` touched alongside agent2 scope.)
+- Enlarged market roll-off dice UI and added clearer player labels; added a plan subtask for the remaining click-to-roll wiring. (Overlap note: `implementation_plan.md` touched alongside agent2 scope; commit also picked up pre-staged `packages/engine/src/content/cards/age2.ts` + `packages/engine/src/content/cards/index.ts` changes from agent2.)
 - Added a unit stack arrival pulse animation in the board view to make movement clearer during action reveals; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.)
 - Added faction labels (symbol + name) on CardsBrowser card tiles to denote faction-specific cards; marked the plan item complete in `implementation_plan.md`. (owner: agent1)
 - Added softer click sfx tags to main menu view toggles and Home create/join buttons for more audio coverage.
