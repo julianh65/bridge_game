@@ -1,7 +1,14 @@
 import { randInt, shuffle } from "@bridgefront/shared";
 
-import type { CardDefId, CardInstanceID, GameState, PlayerID } from "./types";
+import type {
+  CardDefId,
+  CardDrawContext,
+  CardInstanceID,
+  GameState,
+  PlayerID
+} from "./types";
 import { getCardDef } from "./content/cards";
+import { runModifierEvents } from "./modifiers";
 import { incrementCardsDiscardedThisRound } from "./player-flags";
 
 const getPlayer = (state: GameState, playerId: PlayerID) => {
@@ -44,6 +51,27 @@ const addPermanentVp = (state: GameState, playerId: PlayerID, amount: number): G
         : player
     )
   };
+};
+
+const applyCardDrawTriggers = (
+  state: GameState,
+  playerId: PlayerID,
+  cardInstanceId: CardInstanceID,
+  destination: CardDrawContext["destination"]
+): GameState => {
+  const instance = state.cardsByInstanceId[cardInstanceId];
+  if (!instance) {
+    return state;
+  }
+
+  const context: CardDrawContext = {
+    playerId,
+    cardInstanceId,
+    cardDefId: instance.defId,
+    destination
+  };
+
+  return runModifierEvents(state, state.modifiers, (hooks) => hooks.onCardDraw, context);
 };
 
 type DiscardOptions = {
@@ -158,12 +186,16 @@ export const addCardToHandWithOverflow = (
 ): GameState => {
   const player = getPlayer(state, playerId);
   if (player.deck.hand.length >= state.config.HAND_LIMIT) {
-    return addCardToDiscardPile(state, playerId, cardInstanceId, { countAsDiscard: true });
+    const nextState = addCardToDiscardPile(state, playerId, cardInstanceId, {
+      countAsDiscard: true
+    });
+    return applyCardDrawTriggers(nextState, playerId, cardInstanceId, "discard");
   }
 
-  return updatePlayerDeck(state, playerId, {
+  const nextState = updatePlayerDeck(state, playerId, {
     hand: [...player.deck.hand, cardInstanceId]
   });
+  return applyCardDrawTriggers(nextState, playerId, cardInstanceId, "hand");
 };
 
 export const drawCards = (
@@ -205,6 +237,7 @@ export const drawCards = (
         hand
       });
       nextState = addCardToDiscardPile(nextState, playerId, top, { countAsDiscard: true });
+      nextState = applyCardDrawTriggers(nextState, playerId, top, "discard");
       player = getPlayer(nextState, playerId);
       ({ drawPile, discardPile, hand } = player.deck);
       continue;
@@ -217,6 +250,7 @@ export const drawCards = (
       discardPile,
       hand
     });
+    nextState = applyCardDrawTriggers(nextState, playerId, top, "hand");
   }
 
   return nextState;

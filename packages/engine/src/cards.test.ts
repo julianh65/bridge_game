@@ -10,6 +10,8 @@ import {
 } from "./cards";
 import { DEFAULT_CONFIG } from "./config";
 import { createNewGame } from "./engine";
+import { emit } from "./events";
+import type { Modifier } from "./types";
 
 const createStateWithDeck = (handLimit = DEFAULT_CONFIG.HAND_LIMIT) => {
   let state = createNewGame(
@@ -78,6 +80,60 @@ describe("cards", () => {
 
     expect(player?.deck.discardPile).toEqual([]);
     expect(remaining.sort()).toEqual(instanceIds.slice(0, 2).sort());
+  });
+
+  it("fires onCardDraw hooks for hand draws", () => {
+    const { state } = createStateWithDeck();
+    const modifiers: Modifier[] = [
+      {
+        id: "m1",
+        source: { type: "card", sourceId: "test" },
+        duration: { type: "permanent" },
+        hooks: {
+          onCardDraw: ({ state: nextState, playerId, cardDefId, destination }) =>
+            emit(nextState, {
+              type: "test.onDraw",
+              payload: { playerId, cardDefId, destination }
+            })
+        }
+      }
+    ];
+
+    const next = drawCards({ ...state, modifiers }, "p1", 1);
+    const entry = next.logs.find((log) => log.type === "test.onDraw");
+
+    expect(entry?.payload).toEqual({
+      playerId: "p1",
+      cardDefId: "test.card.1",
+      destination: "hand"
+    });
+  });
+
+  it("fires onCardDraw hooks when draws overflow to discard", () => {
+    const { state } = createStateWithDeck(0);
+    const modifiers: Modifier[] = [
+      {
+        id: "m1",
+        source: { type: "card", sourceId: "test" },
+        duration: { type: "permanent" },
+        hooks: {
+          onCardDraw: ({ state: nextState, playerId, cardDefId, destination }) =>
+            emit(nextState, {
+              type: "test.onDraw",
+              payload: { playerId, cardDefId, destination }
+            })
+        }
+      }
+    ];
+
+    const next = drawCards({ ...state, modifiers }, "p1", 1);
+    const entry = next.logs.find((log) => log.type === "test.onDraw");
+
+    expect(entry?.payload).toEqual({
+      playerId: "p1",
+      cardDefId: "test.card.1",
+      destination: "discard"
+    });
   });
 
   it("creates sequential card instance ids across calls", () => {

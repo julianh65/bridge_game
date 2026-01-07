@@ -243,11 +243,22 @@ export type CardChoiceContext = {
   baseCount: number;
 };
 
+export type CardDrawContext = {
+  playerId: PlayerID;
+  cardInstanceId: CardInstanceID;
+  cardDefId: CardDefId;
+  destination: "hand" | "discard";
+};
+
 export type ControlValueContext = {
   playerId: PlayerID;
   hexKey: HexKey;
   tile: TileType;
   baseValue: number;
+};
+
+export type RoundEndContext = {
+  round: number;
 };
 
 export type ModifierQueryHook<TContext, TValue> = (
@@ -272,8 +283,10 @@ export type ModifierHooks = {
   getCardChoiceCount?: ModifierQueryHook<CardChoiceContext, number>;
   getControlValue?: ModifierQueryHook<ControlValueContext, number>;
   getChampionKillBonusGold?: ModifierQueryHook<ChampionKillContext, number>;
+  onCardDraw?: ModifierEventHook<CardDrawContext>;
   beforeCombatRound?: ModifierEventHook<CombatRoundContext>;
   afterBattle?: ModifierEventHook<CombatEndContext>;
+  onRoundEnd?: ModifierEventHook<RoundEndContext>;
 };
 
 export type HookSpec = ModifierHooks;

@@ -9,7 +9,8 @@ import type {
   GameState,
   HexKey,
   PlayerID,
-  PlayerState
+  PlayerState,
+  RoundEndContext
 } from "./types";
 import { getPlayerIdsOnHex, hasEnemyUnits } from "./board";
 import {
@@ -25,7 +26,8 @@ import {
   applyModifierQuery,
   expireEndOfRoundModifiers,
   getCardChoiceCount,
-  getControlValue
+  getControlValue,
+  runModifierEvents
 } from "./modifiers";
 import {
   CARDS_DISCARDED_THIS_ROUND_FLAG,
@@ -772,27 +774,39 @@ export const applyCleanup = (state: GameState): GameState => {
     doneThisRound: false
   }));
 
-  const bridges = Object.fromEntries(
-    Object.entries(state.board.bridges).filter(([, bridge]) => !bridge.temporary)
+  let nextState: GameState = {
+    ...state,
+    players
+  };
+
+  const roundEndContext: RoundEndContext = { round: state.round };
+  nextState = runModifierEvents(
+    nextState,
+    nextState.modifiers,
+    (hooks) => hooks.onRoundEnd,
+    roundEndContext
   );
 
-  const modifiers = expireEndOfRoundModifiers(state).modifiers;
+  const bridges = Object.fromEntries(
+    Object.entries(nextState.board.bridges).filter(([, bridge]) => !bridge.temporary)
+  );
+
+  const modifiers = expireEndOfRoundModifiers(nextState).modifiers;
 
   return {
-    ...state,
-    players,
+    ...nextState,
     board: {
-      ...state.board,
+      ...nextState.board,
       bridges
     },
     modifiers,
     market: {
-      ...state.market,
+      ...nextState.market,
       currentRow: [],
       rowIndexResolving: 0,
       passPot: 0,
-      bids: Object.fromEntries(players.map((player) => [player.id, null])),
-      playersOut: Object.fromEntries(players.map((player) => [player.id, false]))
+      bids: Object.fromEntries(nextState.players.map((player) => [player.id, null])),
+      playersOut: Object.fromEntries(nextState.players.map((player) => [player.id, false]))
     }
   };
 };

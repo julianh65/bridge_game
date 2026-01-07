@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { DEFAULT_CONFIG, createNewGame } from "./index";
 import { emit } from "./events";
 import { runModifierEvents } from "./modifiers";
+import { applyCleanup } from "./round-flow";
 import type { CombatEndContext, Modifier } from "./types";
 
 describe("modifier durations", () => {
@@ -58,5 +59,31 @@ describe("modifier durations", () => {
     expect(next.modifiers).toHaveLength(1);
     expect(next.modifiers[0]?.id).toBe("m1");
     expect(next.modifiers[0]?.duration).toEqual({ type: "uses", remaining: 1 });
+  });
+
+  it("runs onRoundEnd hooks before expiring end-of-round modifiers", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const state: typeof base = {
+      ...base,
+      modifiers: [
+        {
+          id: "m1",
+          source: { type: "card", sourceId: "test" },
+          duration: { type: "endOfRound" },
+          hooks: {
+            onRoundEnd: ({ state: nextState }) =>
+              emit(nextState, { type: "test.roundEnd" })
+          }
+        }
+      ]
+    };
+
+    const next = applyCleanup(state);
+
+    expect(next.logs.map((entry) => entry.type)).toContain("test.roundEnd");
+    expect(next.modifiers).toHaveLength(0);
   });
 });

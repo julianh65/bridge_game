@@ -1,4 +1,5 @@
 import type {
+  CardDrawContext,
   CardChoiceContext,
   ChampionKillContext,
   CombatAssignmentContext,
@@ -13,7 +14,8 @@ import type {
   MoveContext,
   ModifierEventHook,
   ModifierHooks,
-  ModifierQueryHook
+  ModifierQueryHook,
+  RoundEndContext
 } from "./types";
 
 const getHooks = (modifier: Modifier): ModifierHooks | null => {
@@ -244,11 +246,13 @@ export const runModifierEvents = <TContext>(
 
 export type {
   CardChoiceContext,
+  CardDrawContext,
   CombatAssignmentContext,
   CombatEndContext,
   CombatRoundContext,
   CombatUnitContext,
   ControlValueContext,
   DeployForcesContext,
-  MoveContext
+  MoveContext,
+  RoundEndContext
 };
