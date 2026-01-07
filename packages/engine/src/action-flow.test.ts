@@ -1392,6 +1392,80 @@ describe("action flow", () => {
     expect(p1After.deck.discardPile).toContain(playCard.instanceId);
   });
 
+  it("plays make a play to gain mana and burn", () => {
+    let { state } = setupToActionPhase();
+    const injected = addCardToHand(state, "p1", "age1.make_a_play");
+    state = injected.state;
+
+    const p1Before = state.players.find((player) => player.id === "p1");
+    if (!p1Before) {
+      throw new Error("missing p1 state");
+    }
+
+    state = applyCommand(
+      state,
+      { type: "SubmitAction", payload: { kind: "card", cardInstanceId: injected.instanceId } },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state");
+    }
+
+    expect(p1After.resources.mana).toBe(p1Before.resources.mana + 1);
+    expect(p1After.deck.hand).not.toContain(injected.instanceId);
+    expect(p1After.burned).toContain(injected.instanceId);
+  });
+
+  it("plays paid logistics to gain mana for gold and burn", () => {
+    let { state } = setupToActionPhase();
+    const injected = addCardToHand(state, "p1", "age1.paid_logistics");
+    state = injected.state;
+
+    state = {
+      ...state,
+      players: state.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              resources: {
+                ...player.resources,
+                gold: 6
+              }
+            }
+          : player
+      )
+    };
+
+    const p1Before = state.players.find((player) => player.id === "p1");
+    if (!p1Before) {
+      throw new Error("missing p1 state");
+    }
+
+    state = applyCommand(
+      state,
+      { type: "SubmitAction", payload: { kind: "card", cardInstanceId: injected.instanceId } },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state");
+    }
+
+    expect(p1After.resources.gold).toBe(p1Before.resources.gold - 6);
+    expect(p1After.resources.mana).toBe(p1Before.resources.mana + 1);
+    expect(p1After.deck.hand).not.toContain(injected.instanceId);
+    expect(p1After.burned).toContain(injected.instanceId);
+  });
+
   it("plays banner claim to move along a bridge", () => {
     let { state, p1Capital, p1Edges } = setupToActionPhase();
     const [edge] = p1Edges;

@@ -16,13 +16,14 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent2; scope: add gain-mana card effect plus Age I deckcraft cards (Make a Play, Paid Logistics) and action-flow coverage; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`; status: in-progress.
+- owner: agent1; scope: add Emergency Evac (Age I) champion recall-to-capital effect + tests; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/units.ts`, `packages/engine/src/card-effects.emergency-evac.test.ts`, `implementation_plan.md`; status: in-progress. (Overlap: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` if other agents are editing.)
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
 - Added explicit victoryPoints values to Age I Victory cards and marked the plan item complete in `implementation_plan.md`.
 - Added Age I Field Surgeon champion with per-round Stitchwork heal after battles, plus tests and plan update. (Files: `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/champions.ts`, `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.)
 - Added Battle Cry + Smoke Screen (Age I) with first-battle combat modifiers and targeted tests; updated the plan checklist. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside agent2 scope.)
+- Added gain-mana card effect support plus Age I Make a Play/Paid Logistics cards with action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
