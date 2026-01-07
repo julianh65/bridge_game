@@ -3,6 +3,7 @@ import { shuffle } from "@bridgefront/shared";
 import type {
   BlockState,
   CardDefId,
+  CardInstanceID,
   CollectionChoice,
   CollectionPrompt,
   GameState,
@@ -13,11 +14,13 @@ import type {
 import { getPlayerIdsOnHex, hasEnemyUnits } from "./board";
 import {
   createCardInstance,
+  discardCardFromHand,
   drawToHandSize,
   insertCardIntoDrawPileRandom,
   scrapCardFromHand
 } from "./cards";
 import { refreshChampionAbilityUsesForRound } from "./champions";
+import { hasCipherQuietStudy } from "./faction-passives";
 import {
   applyModifierQuery,
   expireEndOfRoundModifiers,
@@ -31,6 +34,7 @@ import {
 } from "./player-flags";
 
 const MINE_OVERSEER_CHAMPION_ID = "champion.prospect.mine_overseer";
+const QUIET_STUDY_MAX_DISCARD = 2;
 
 export const applyRoundReset = (state: GameState): GameState => {
   const nextRound = state.round + 1;
@@ -62,10 +66,121 @@ export const applyRoundReset = (state: GameState): GameState => {
     nextState = drawToHandSize(nextState, player.id, 6);
   }
 
+  const needsQuietStudy = nextState.players.some((player) =>
+    hasCipherQuietStudy(nextState, player.id)
+  );
+
   return {
     ...nextState,
-    phase: "round.market"
+    phase: needsQuietStudy ? "round.study" : "round.market"
   };
+};
+
+export const createQuietStudyBlock = (state: GameState): BlockState | null => {
+  const quietStudyPlayers = state.players
+    .filter((player) => hasCipherQuietStudy(state, player.id))
+    .map((player) => player.id);
+
+  if (quietStudyPlayers.length === 0) {
+    return null;
+  }
+
+  return {
+    type: "round.quietStudy",
+    waitingFor: quietStudyPlayers,
+    payload: {
+      maxDiscard: QUIET_STUDY_MAX_DISCARD,
+      choices: Object.fromEntries(quietStudyPlayers.map((playerId) => [playerId, null]))
+    }
+  };
+};
+
+const isQuietStudyChoiceValid = (
+  state: GameState,
+  playerId: PlayerID,
+  cardInstanceIds: CardInstanceID[],
+  maxDiscard: number
+): boolean => {
+  if (cardInstanceIds.length > maxDiscard) {
+    return false;
+  }
+
+  const uniqueIds = new Set(cardInstanceIds);
+  if (uniqueIds.size !== cardInstanceIds.length) {
+    return false;
+  }
+
+  const player = state.players.find((entry) => entry.id === playerId);
+  if (!player) {
+    return false;
+  }
+
+  return cardInstanceIds.every((id) => player.deck.hand.includes(id));
+};
+
+export const applyQuietStudyChoice = (
+  state: GameState,
+  cardInstanceIds: CardInstanceID[],
+  playerId: PlayerID
+): GameState => {
+  if (state.phase !== "round.study") {
+    return state;
+  }
+
+  const block = state.blocks;
+  if (!block || block.type !== "round.quietStudy") {
+    return state;
+  }
+
+  if (!block.waitingFor.includes(playerId)) {
+    return state;
+  }
+
+  if (block.payload.choices[playerId]) {
+    return state;
+  }
+
+  if (!isQuietStudyChoiceValid(state, playerId, cardInstanceIds, block.payload.maxDiscard)) {
+    return state;
+  }
+
+  return {
+    ...state,
+    blocks: {
+      ...block,
+      waitingFor: block.waitingFor.filter((id) => id !== playerId),
+      payload: {
+        ...block.payload,
+        choices: {
+          ...block.payload.choices,
+          [playerId]: cardInstanceIds
+        }
+      }
+    }
+  };
+};
+
+export const resolveQuietStudyChoices = (state: GameState): GameState => {
+  const block = state.blocks;
+  if (!block || block.type !== "round.quietStudy") {
+    return state;
+  }
+
+  let nextState = state;
+  for (const player of state.players) {
+    const selected = block.payload.choices[player.id] ?? [];
+    if (selected.length === 0) {
+      continue;
+    }
+    for (const cardInstanceId of selected) {
+      nextState = discardCardFromHand(nextState, player.id, cardInstanceId, {
+        countAsDiscard: true
+      });
+    }
+    nextState = drawToHandSize(nextState, player.id, 6);
+  }
+
+  return nextState;
 };
 
 type DeckDraw = {

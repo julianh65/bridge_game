@@ -246,6 +246,22 @@ export const removeCardFromHand = (
   return updatePlayerDeck(state, playerId, { hand });
 };
 
+export const discardCardFromHand = (
+  state: GameState,
+  playerId: PlayerID,
+  cardInstanceId: CardInstanceID,
+  options: DiscardOptions = { countAsDiscard: true }
+): GameState => {
+  const player = getPlayer(state, playerId);
+  if (!player.deck.hand.includes(cardInstanceId)) {
+    return state;
+  }
+
+  let nextState = removeCardFromHand(state, playerId, cardInstanceId);
+  nextState = addCardToDiscardPile(nextState, playerId, cardInstanceId, options);
+  return nextState;
+};
+
 export const topdeckCardFromHand = (
   state: GameState,
   playerId: PlayerID,

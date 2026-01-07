@@ -377,6 +377,7 @@ type GameScreenProps = {
   onSubmitAction: (declaration: ActionDeclaration) => void;
   onSubmitMarketBid: (bid: Bid) => void;
   onSubmitCollectionChoices: (choices: CollectionChoice[]) => void;
+  onSubmitQuietStudy: (cardInstanceIds: string[]) => void;
   onResetGame?: () => void;
   onLeave: () => void;
 };
@@ -389,6 +390,7 @@ export const GameScreen = ({
   onSubmitAction,
   onSubmitMarketBid,
   onSubmitCollectionChoices,
+  onSubmitQuietStudy,
   onResetGame,
   onLeave
 }: GameScreenProps) => {
@@ -427,6 +429,7 @@ export const GameScreen = ({
   const localPlayerId = localPlayer?.id ?? null;
   const handCards = view.private?.handCards ?? [];
   const deckCounts = view.private?.deckCounts ?? null;
+  const quietStudy = view.private?.quietStudy ?? null;
   const phaseLabel = formatPhaseLabel(view.public.phase);
   const connectionLabel = status === "connected" ? "Live" : "Waiting";
   const connectionClass =
@@ -448,6 +451,7 @@ export const GameScreen = ({
   const [cardInstanceId, setCardInstanceId] = useState("");
   const [cardTargetsRaw, setCardTargetsRaw] = useState("");
   const [isHandPickerOpen, setIsHandPickerOpen] = useState(false);
+  const [quietStudySelectedIds, setQuietStudySelectedIds] = useState<string[]>([]);
   const [boardPickMode, setBoardPickMode] = useState<BoardPickMode>("none");
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
   const [isMarketOverlayOpen, setIsMarketOverlayOpen] = useState(false);
@@ -645,6 +649,20 @@ export const GameScreen = ({
       (cardId) => cardId !== cardInstanceId && handIds.has(cardId)
     );
   }, [cardInstanceId, handCards, targetRecord]);
+  const quietStudyMaxDiscard = quietStudy?.maxDiscard ?? 0;
+  const isQuietStudyActive = Boolean(quietStudy?.isWaiting);
+
+  useEffect(() => {
+    if (!isQuietStudyActive) {
+      setQuietStudySelectedIds([]);
+      return;
+    }
+    const available = new Set(handCards.map((card) => card.id));
+    setQuietStudySelectedIds((current) => {
+      const base = quietStudy?.selected ?? current;
+      return base.filter((id) => available.has(id)).slice(0, quietStudyMaxDiscard);
+    });
+  }, [handCards, isQuietStudyActive, quietStudy?.selected, quietStudyMaxDiscard]);
   const championUnits = useMemo(() => {
     return Object.values(view.public.board.units)
       .map((unit) => {
@@ -687,9 +705,11 @@ export const GameScreen = ({
   const activeCombat = combatQueue[0] ?? null;
   const actionRevealDurationMs = view.public.config.ACTION_REVEAL_DURATION_MS;
   const isActionPhase = view.public.phase === "round.action";
+  const isStudyPhase = view.public.phase === "round.study";
   const isMarketPhase = view.public.phase === "round.market";
   const isCollectionPhase = view.public.phase === "round.collection";
-  const isInteractivePhase = isActionPhase || isMarketPhase || isCollectionPhase;
+  const isInteractivePhase =
+    isActionPhase || isStudyPhase || isMarketPhase || isCollectionPhase;
   const showPhaseFocus = isCollectionPhase;
   const shouldHoldMarketOverlay = !isMarketPhase && Boolean(marketWinner);
   const showMarketOverlay =
@@ -1972,6 +1992,20 @@ export const GameScreen = ({
     topdeckCount > 0
       ? `Pick up to ${topdeckLimitLabel} to place on top of your draw pile.`
       : null;
+  const showQuietStudyModal = isQuietStudyActive && quietStudyMaxDiscard > 0;
+  const quietStudyTitle = "Quiet Study";
+  const quietStudyDescription =
+    quietStudyMaxDiscard > 0
+      ? `Discard up to ${quietStudyMaxDiscard} card${
+          quietStudyMaxDiscard === 1 ? "" : "s"
+        }, then draw that many.`
+      : null;
+  const handleSubmitQuietStudy = () => {
+    if (!quietStudy?.isWaiting) {
+      return;
+    }
+    onSubmitQuietStudy(quietStudySelectedIds);
+  };
 
   const phaseFocusPanel = showPhaseFocus ? (
     <div className="game-screen__focus">
@@ -2110,6 +2144,17 @@ export const GameScreen = ({
           onClose={handleVictoryClose}
         />
       ) : null}
+      <HandCardPickerModal
+        isOpen={showQuietStudyModal}
+        title={quietStudyTitle}
+        description={quietStudyDescription}
+        cards={handCards}
+        cardDefsById={CARD_DEFS_BY_ID}
+        selectedIds={quietStudySelectedIds}
+        maxSelect={Math.max(quietStudyMaxDiscard, 1)}
+        onSelectionChange={setQuietStudySelectedIds}
+        onClose={handleSubmitQuietStudy}
+      />
       <HandCardPickerModal
         isOpen={showHandPicker}
         title={handPickerTitle}

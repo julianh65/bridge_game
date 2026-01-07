@@ -19,10 +19,13 @@ import {
 import {
   applyAgeUpdate,
   applyCleanup,
+  applyQuietStudyChoice,
   applyRoundReset,
   applyScoring,
   applyCollectionChoice,
+  createQuietStudyBlock,
   createCollectionBlock,
+  resolveQuietStudyChoices,
   resolveCollectionChoices
 } from "./round-flow";
 import { applyActionDeclaration, createActionStepBlock, resolveActionStep } from "./action-flow";
@@ -138,6 +141,10 @@ export const applyCommand = (
     return applySetupChoice(state, _command.payload, _playerId);
   }
 
+  if (_command.type === "SubmitQuietStudy") {
+    return applyQuietStudyChoice(state, _command.payload.cardInstanceIds, _playerId);
+  }
+
   if (_command.type === "SubmitAction") {
     return applyActionDeclaration(state, _command.payload, _playerId);
   }
@@ -168,6 +175,38 @@ export const runUntilBlocked = (state: GameState): GameState => {
           ? enterPhase(resetState, resetState.phase)
           : resetState;
       continue;
+    }
+
+    if (nextState.phase === "round.study") {
+      if (!nextState.blocks) {
+        const block = createQuietStudyBlock(nextState);
+        if (!block) {
+          nextState = enterPhase(nextState, "round.market");
+          continue;
+        }
+        nextState = {
+          ...nextState,
+          blocks: block
+        };
+        if (block.waitingFor.length > 0) {
+          return nextState;
+        }
+      }
+
+      if (nextState.blocks.type === "round.quietStudy") {
+        if (nextState.blocks.waitingFor.length > 0) {
+          return nextState;
+        }
+        nextState = resolveQuietStudyChoices(nextState);
+        nextState = {
+          ...nextState,
+          blocks: undefined
+        };
+        nextState = enterPhase(nextState, "round.market");
+        continue;
+      }
+
+      return nextState;
     }
 
     if (nextState.phase === "round.market") {

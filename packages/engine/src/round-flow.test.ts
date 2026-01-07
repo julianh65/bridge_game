@@ -7,10 +7,13 @@ import { DEFAULT_CONFIG, createNewGame } from "./index";
 import {
   applyAgeUpdate,
   applyCleanup,
+  applyQuietStudyChoice,
   applyRoundReset,
   applyScoring,
   applyCollectionChoice,
   createCollectionBlock,
+  createQuietStudyBlock,
+  resolveQuietStudyChoices,
   resolveCollectionChoices
 } from "./round-flow";
 
@@ -81,6 +84,77 @@ describe("round reset", () => {
 
     expect(next.round).toBe(2);
     expect(next.leadSeatIndex).toBe(1);
+  });
+});
+
+describe("quiet study", () => {
+  it("allows discarding up to two cards and redrawing that many", () => {
+    let state = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const created = createCardInstances(state, [
+      "test.card.a",
+      "test.card.b",
+      "test.card.c",
+      "test.card.d",
+      "test.card.e",
+      "test.card.f",
+      "test.card.g",
+      "test.card.h"
+    ]);
+    const [
+      handA,
+      handB,
+      handC,
+      handD,
+      drawA,
+      drawB,
+      drawC,
+      drawD
+    ] = created.instanceIds;
+
+    state = {
+      ...created.state,
+      phase: "round.reset",
+      modifiers: createFactionModifiers("cipher", "p1"),
+      players: created.state.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              factionId: "cipher",
+              deck: {
+                drawPile: [drawA, drawB, drawC, drawD],
+                discardPile: [],
+                hand: [handA, handB, handC, handD],
+                scrapped: []
+              }
+            }
+          : player
+      )
+    };
+
+    state = applyRoundReset(state);
+    expect(state.phase).toBe("round.study");
+
+    const block = createQuietStudyBlock(state);
+    if (!block || block.type !== "round.quietStudy") {
+      throw new Error("expected quiet study block");
+    }
+    state = { ...state, blocks: block };
+
+    state = applyQuietStudyChoice(state, [handB, drawA], "p1");
+    state = resolveQuietStudyChoices(state);
+
+    const player = state.players.find((entry) => entry.id === "p1");
+    if (!player) {
+      throw new Error("missing p1 state after quiet study");
+    }
+
+    expect(player.deck.discardPile).toEqual([handB, drawA]);
+    expect(player.deck.hand).toHaveLength(6);
+    expect(player.deck.hand).toEqual([handA, handC, handD, drawB, drawC, drawD]);
+    expect(player.deck.drawPile).toHaveLength(0);
   });
 });
 

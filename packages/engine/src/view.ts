@@ -90,6 +90,18 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
           choices: state.blocks.payload.choices[viewer.id] ?? null
         }
       : null;
+  const quietStudyPublic =
+    state.phase === "round.study" && state.blocks?.type === "round.quietStudy"
+      ? { waitingForPlayerIds: state.blocks.waitingFor }
+      : null;
+  const quietStudyPrivate =
+    viewer && state.phase === "round.study" && state.blocks?.type === "round.quietStudy"
+      ? {
+          maxDiscard: state.blocks.payload.maxDiscard,
+          selected: state.blocks.payload.choices[viewer.id] ?? null,
+          isWaiting: state.blocks.waitingFor.includes(viewer.id)
+        }
+      : null;
 
   return {
     public: {
@@ -114,6 +126,7 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
       actionStep,
       setup: setupPublic,
       collection: collectionPublic,
+      quietStudy: quietStudyPublic,
       winnerPlayerId: state.winnerPlayerId
     },
     private: viewer
@@ -133,7 +146,8 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
           },
           vp: viewer.vp,
           setup: setupPrivate,
-          collection: collectionPrivate
+          collection: collectionPrivate,
+          quietStudy: quietStudyPrivate
         }
       : null
   };

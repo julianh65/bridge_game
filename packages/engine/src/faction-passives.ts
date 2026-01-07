@@ -169,6 +169,13 @@ const createCipherExpandedChoiceModifier = (playerId: PlayerID): Modifier => ({
   }
 });
 
+const createCipherQuietStudyModifier = (playerId: PlayerID): Modifier => ({
+  id: buildModifierId("cipher", playerId, "quiet_study"),
+  source: { type: "faction", sourceId: "cipher" },
+  ownerPlayerId: playerId,
+  duration: { type: "permanent" }
+});
+
 const createVeilCleanExitModifier = (playerId: PlayerID): Modifier => ({
   id: buildModifierId("veil", playerId, "clean_exit"),
   source: { type: "faction", sourceId: "veil" },
@@ -359,7 +366,10 @@ export const createFactionModifiers = (factionId: string, playerId: PlayerID): M
     case "aerial":
       return [createAerialTailwindModifier(playerId), createAerialWingsModifier(playerId)];
     case "cipher":
-      return [createCipherExpandedChoiceModifier(playerId)];
+      return [
+        createCipherExpandedChoiceModifier(playerId),
+        createCipherQuietStudyModifier(playerId)
+      ];
     case "gatewright":
       return [
         createGatewrightCapitalAssaultModifier(playerId),
@@ -373,6 +383,11 @@ export const createFactionModifiers = (factionId: string, playerId: PlayerID): M
 
 export const hasAerialWings = (state: GameState, playerId: PlayerID): boolean => {
   const targetId = buildModifierId("aerial", playerId, "wings");
+  return state.modifiers.some((modifier) => modifier.id === targetId);
+};
+
+export const hasCipherQuietStudy = (state: GameState, playerId: PlayerID): boolean => {
+  const targetId = buildModifierId("cipher", playerId, "quiet_study");
   return state.modifiers.some((modifier) => modifier.id === targetId);
 };
 

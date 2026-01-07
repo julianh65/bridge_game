@@ -669,6 +669,40 @@ const resolveCollectionBlockRandom = (state: GameState, picker: DecisionPicker):
   return nextState;
 };
 
+const resolveQuietStudyBlockRandom = (state: GameState, picker: DecisionPicker): GameState => {
+  let nextState = state;
+  const block = nextState.blocks;
+  if (!block || block.type !== "round.quietStudy") {
+    return nextState;
+  }
+
+  for (const playerId of block.waitingFor) {
+    const player = nextState.players.find((entry) => entry.id === playerId);
+    if (!player) {
+      continue;
+    }
+    const hand = [...player.deck.hand];
+    const maxDiscard = Math.min(block.payload.maxDiscard, hand.length);
+    const discardCount = maxDiscard > 0 ? picker.pickInt(0, maxDiscard) : 0;
+    const selected: string[] = [];
+    for (let i = 0; i < discardCount; i += 1) {
+      const index = picker.pickInt(0, hand.length - 1);
+      const [picked] = hand.splice(index, 1);
+      if (picked) {
+        selected.push(picked);
+      }
+    }
+    nextState = applyCommandOrThrow(
+      nextState,
+      { type: "SubmitQuietStudy", payload: { cardInstanceIds: selected } },
+      playerId,
+      "quiet study"
+    );
+  }
+
+  return nextState;
+};
+
 const resolveBlockRandom = (state: GameState, picker: DecisionPicker): GameState => {
   const block = state.blocks;
   if (!block) {
@@ -686,6 +720,8 @@ const resolveBlockRandom = (state: GameState, picker: DecisionPicker): GameState
       return resolveMarketBidBlockRandom(state, picker);
     case "actionStep.declarations":
       return resolveActionStepBlockRandom(state, picker);
+    case "round.quietStudy":
+      return resolveQuietStudyBlockRandom(state, picker);
     case "collection.choices":
       return resolveCollectionBlockRandom(state, picker);
     default: {

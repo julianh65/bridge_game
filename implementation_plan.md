@@ -326,7 +326,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Aerial Tailwind (first stack move per round gets +1 hex)
   - [x] Aerial Wings (deploy to center as if capital when occupied)
   - [x] Miners Deep Tunnels (occupied mines count adjacent/connected)
-  - [ ] Cipher Quiet Study (round-start discard then redraw)
+  - [x] Cipher Quiet Study (round-start discard then redraw)
   - [x] Cipher Expanded Choice (pick from N+1 when choosing cards)
   - [x] Capital occupation VP bonus (+2 temp VP instead of +1)
   - [ ] etc. (start with 1–2 factions but first double check the rules from rules_draft)

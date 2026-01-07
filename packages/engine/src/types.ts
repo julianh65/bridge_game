@@ -10,6 +10,7 @@ export type EdgeKey = string;
 export type Phase =
   | "setup"
   | "round.reset"
+  | "round.study"
   | "round.market"
   | "round.action"
   | "round.sieges"
@@ -311,6 +312,13 @@ export type BlockState = {
     remainingDeck: CardDefId[];
   };
 } | {
+  type: "round.quietStudy";
+  waitingFor: PlayerID[];
+  payload: {
+    maxDiscard: number;
+    choices: Record<PlayerID, CardInstanceID[] | null>;
+  };
+} | {
   type: "market.bidsForCard";
   waitingFor: PlayerID[];
   payload: {
@@ -396,6 +404,9 @@ export type Command = {
   type: "SubmitSetupChoice";
   payload: SetupChoice;
 } | {
+  type: "SubmitQuietStudy";
+  payload: { cardInstanceIds: CardInstanceID[] };
+} | {
   type: "SubmitAction";
   payload: ActionDeclaration;
 } | {
@@ -430,11 +441,12 @@ export type PlayerPrivateView = {
   deckCards: {
     drawPile: CardInstance[];
     discardPile: CardInstance[];
-    scrapped: CardInstance[];
+  scrapped: CardInstance[];
   };
   vp: { permanent: number; control: number; total: number };
   setup: SetupPrivateView | null;
   collection: CollectionPrivateView | null;
+  quietStudy: QuietStudyPrivateView | null;
 };
 
 export type ActionStepPublicView = {
@@ -495,6 +507,16 @@ export type CollectionPrivateView = {
   choices: CollectionChoice[] | null;
 };
 
+export type QuietStudyPublicView = {
+  waitingForPlayerIds: PlayerID[];
+};
+
+export type QuietStudyPrivateView = {
+  maxDiscard: number;
+  selected: CardInstanceID[] | null;
+  isWaiting: boolean;
+};
+
 export type SetupPublicView =
   | {
       type: "setup.capitalDraft";
@@ -536,6 +558,7 @@ export type GameView = {
     actionStep: ActionStepPublicView | null;
     setup: SetupPublicView | null;
     collection: CollectionPublicView | null;
+    quietStudy: QuietStudyPublicView | null;
     winnerPlayerId: PlayerID | null;
   };
   private: PlayerPrivateView | null;
