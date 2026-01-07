@@ -26,6 +26,7 @@ import {
 import { resolveStarterFactionCards } from "./content/starter-decks";
 import { emit } from "./events";
 import { addFactionModifiers } from "./faction-passives";
+import { getCardChoiceCount } from "./modifiers";
 import { addForcesToHex } from "./units";
 
 const withUpdatedPlayer = (state: GameState, playerId: PlayerID, update: (player: PlayerState) => PlayerState) => {
@@ -57,13 +58,30 @@ export const createFreeStartingCardBlock = (
   state: GameState
 ): { state: GameState; block: BlockState } => {
   const pool = state.config.freeStartingCardPool;
-  if (pool.length < 3) {
-    throw new Error("freeStartingCardPool must contain at least 3 cards");
+  const baseOfferCount = 3;
+  const offerCounts = state.players.map((player) => {
+    const rawCount = getCardChoiceCount(
+      state,
+      { playerId: player.id, kind: "freeStartingCard", baseCount: baseOfferCount },
+      baseOfferCount
+    );
+    const normalized = Number.isFinite(rawCount) ? Math.floor(rawCount) : baseOfferCount;
+    return {
+      playerId: player.id,
+      count: Math.max(baseOfferCount, normalized)
+    };
+  });
+  const maxOfferCount = offerCounts.reduce(
+    (max, entry) => Math.max(max, entry.count),
+    baseOfferCount
+  );
+  if (pool.length < maxOfferCount) {
+    throw new Error(`freeStartingCardPool must contain at least ${maxOfferCount} cards`);
   }
 
   let rngState = state.rngState;
   const deck: CardDefId[] = [];
-  const minCards = state.players.length * 3;
+  const minCards = offerCounts.reduce((total, entry) => total + entry.count, 0);
   while (deck.length < minCards) {
     deck.push(...pool);
   }
@@ -72,13 +90,13 @@ export const createFreeStartingCardBlock = (
 
   const offers: Record<PlayerID, CardDefId[]> = {};
   let remainingDeck = shuffledDeck.slice();
-  for (const player of state.players) {
-    const offer = remainingDeck.slice(0, 3);
-    if (offer.length < 3) {
+  for (const entry of offerCounts) {
+    const offer = remainingDeck.slice(0, entry.count);
+    if (offer.length < entry.count) {
       throw new Error("freeStartingCardPool must have enough cards for all players");
     }
-    offers[player.id] = offer;
-    remainingDeck = remainingDeck.slice(3);
+    offers[entry.playerId] = offer;
+    remainingDeck = remainingDeck.slice(entry.count);
   }
 
   return {

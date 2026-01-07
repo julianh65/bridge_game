@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent3 | scope: implement Cipher Expanded Choice passive (N+1 card offers) for free-start + collection prompts with tests and helper copy update | files: `packages/engine/src/types.ts`, `packages/engine/src/modifiers.ts`, `packages/engine/src/faction-passives.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/round-flow.test.ts`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `apps/web/src/components/CollectionPanel.tsx`, `implementation_plan.md` | status: in progress
+none
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.

@@ -18,7 +18,7 @@ import {
   scrapCardFromHand
 } from "./cards";
 import { refreshChampionAbilityUsesForRound } from "./champions";
-import { applyModifierQuery, expireEndOfRoundModifiers } from "./modifiers";
+import { applyModifierQuery, expireEndOfRoundModifiers, getCardChoiceCount } from "./modifiers";
 import { MOVED_THIS_ROUND_FLAG } from "./player-flags";
 
 const MINE_OVERSEER_CHAMPION_ID = "champion.prospect.mine_overseer";
@@ -133,6 +133,21 @@ const getMineGoldValue = (
   );
 };
 
+const getChoiceCount = (
+  state: GameState,
+  playerId: PlayerID,
+  kind: "freeStartingCard" | "mineDraft" | "forgeDraft" | "centerPick",
+  baseCount: number
+): number => {
+  const rawCount = getCardChoiceCount(
+    state,
+    { playerId, kind, baseCount },
+    baseCount
+  );
+  const normalized = Number.isFinite(rawCount) ? Math.floor(rawCount) : baseCount;
+  return Math.max(baseCount, normalized);
+};
+
 const returnToBottomRandom = (
   state: GameState,
   deck: CardDefId[],
@@ -211,15 +226,18 @@ export const createCollectionBlock = (
     for (const prompt of prompts) {
       let drawn: CardDefId[] = [];
       if (prompt.kind === "mine") {
-        const draw = takeFromDeck(marketDeck, 1);
+        const drawCount = getChoiceCount(state, player.id, "mineDraft", 1);
+        const draw = takeFromDeck(marketDeck, drawCount);
         drawn = draw.drawn;
         marketDeck = draw.remaining;
       } else if (prompt.kind === "forge") {
-        const draw = takeFromDeck(marketDeck, 3);
+        const drawCount = getChoiceCount(state, player.id, "forgeDraft", 3);
+        const draw = takeFromDeck(marketDeck, drawCount);
         drawn = draw.drawn;
         marketDeck = draw.remaining;
       } else if (prompt.kind === "center") {
-        const draw = takeFromDeck(powerDeck, 2);
+        const drawCount = getChoiceCount(state, player.id, "centerPick", 2);
+        const draw = takeFromDeck(powerDeck, drawCount);
         drawn = draw.drawn;
         powerDeck = draw.remaining;
       }
@@ -293,7 +311,16 @@ const isCollectionChoiceValid = (
     if (choice.choice === "gold") {
       return true;
     }
-    return prompt.revealed.length > 0 && typeof choice.gainCard === "boolean";
+    if (prompt.revealed.length === 0 || typeof choice.gainCard !== "boolean") {
+      return false;
+    }
+    if (!choice.gainCard) {
+      return true;
+    }
+    if (choice.cardId) {
+      return prompt.revealed.includes(choice.cardId);
+    }
+    return prompt.revealed.length === 1;
   }
 
   if (choice.kind === "forge") {
@@ -420,7 +447,7 @@ export const resolveCollectionChoices = (state: GameState): GameState => {
       }
 
       if (choice.kind === "mine") {
-        const revealed = prompt.revealed[0];
+        const revealed = prompt.revealed;
         if (choice.choice === "gold") {
           const mineGold = getMineGoldValue(
             nextState,
@@ -429,19 +456,33 @@ export const resolveCollectionChoices = (state: GameState): GameState => {
             prompt.mineValue
           );
           nextState = addGold(nextState, player.id, mineGold);
-          if (revealed) {
-            marketDeck = [...marketDeck, revealed];
-          }
-        } else if (revealed) {
+          const returned = returnToBottomRandom(nextState, marketDeck, revealed);
+          nextState = returned.state;
+          marketDeck = returned.deck;
+        } else if (revealed.length > 0) {
           if (choice.gainCard) {
-            const created = createCardInstance(nextState, revealed);
-            nextState = insertCardIntoDrawPileRandom(
-              created.state,
-              player.id,
-              created.instanceId
-            );
+            const chosen =
+              choice.cardId ?? (revealed.length === 1 ? revealed[0] : null);
+            if (chosen && revealed.includes(chosen)) {
+              const leftovers = revealed.filter((cardId) => cardId !== chosen);
+              const returned = returnToBottomRandom(nextState, marketDeck, leftovers);
+              nextState = returned.state;
+              marketDeck = returned.deck;
+              const created = createCardInstance(nextState, chosen);
+              nextState = insertCardIntoDrawPileRandom(
+                created.state,
+                player.id,
+                created.instanceId
+              );
+            } else {
+              const returned = returnToBottomRandom(nextState, marketDeck, revealed);
+              nextState = returned.state;
+              marketDeck = returned.deck;
+            }
           } else {
-            marketDeck = [...marketDeck, revealed];
+            const returned = returnToBottomRandom(nextState, marketDeck, revealed);
+            nextState = returned.state;
+            marketDeck = returned.deck;
           }
         }
       } else if (choice.kind === "forge") {

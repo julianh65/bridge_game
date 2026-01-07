@@ -64,7 +64,7 @@ export const SetupFreeStartingCardPick = ({
     if (!isWaiting) {
       return "Waiting for other players to pick.";
     }
-    return "Choose one of your three offers.";
+    return "Choose one of your offers.";
   })();
 
   if (!cardPickSetup) {

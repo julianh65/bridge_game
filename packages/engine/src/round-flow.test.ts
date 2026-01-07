@@ -177,6 +177,74 @@ describe("collection", () => {
     expect([...resolved.marketDecks.I].sort()).toEqual([deck[0], deck[2], deck[3]].sort());
   });
 
+  it("expands collection reveal counts for cipher expanded choice", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 2, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const marketDeck = [
+      "age1.quick_march",
+      "age1.trade_caravan",
+      "age1.patch_up",
+      "age1.temporary_bridge",
+      "age1.quick_study",
+      "age1.prospecting"
+    ];
+    const powerDeck = ["age1.supply_ledger", "age1.patrol_record", "age1.banner_claim"];
+
+    const board = createBaseBoard(1);
+    board.hexes["0,1"] = {
+      ...board.hexes["0,1"],
+      tile: "mine",
+      mineValue: 2,
+      occupants: {
+        p1: ["u1"]
+      }
+    };
+    board.hexes["1,0"] = {
+      ...board.hexes["1,0"],
+      tile: "forge",
+      occupants: {
+        p1: ["u2"]
+      }
+    };
+    board.hexes["0,-1"] = {
+      ...board.hexes["0,-1"],
+      tile: "center",
+      occupants: {
+        p1: ["u3"]
+      }
+    };
+    board.units = {
+      u1: { id: "u1", ownerPlayerId: "p1", kind: "force", hex: "0,1" },
+      u2: { id: "u2", ownerPlayerId: "p1", kind: "force", hex: "1,0" },
+      u3: { id: "u3", ownerPlayerId: "p1", kind: "force", hex: "0,-1" }
+    };
+
+    const state = {
+      ...base,
+      phase: "round.collection" as const,
+      board,
+      market: { ...base.market, age: "I" as const },
+      marketDecks: { I: marketDeck, II: [], III: [] },
+      powerDecks: { I: powerDeck, II: [], III: [] },
+      modifiers: createFactionModifiers("cipher", "p1"),
+      players: base.players.map((player) =>
+        player.id === "p1" ? { ...player, factionId: "cipher" } : player
+      )
+    };
+
+    const created = createCollectionBlock(state);
+    const prompts = created.block?.payload.prompts.p1 ?? [];
+    const promptMap = new Map(
+      prompts.map((prompt) => [`${prompt.kind}:${prompt.hexKey}`, prompt])
+    );
+
+    expect(promptMap.get("mine:0,1")?.revealed).toHaveLength(2);
+    expect(promptMap.get("forge:1,0")?.revealed).toHaveLength(4);
+    expect(promptMap.get("center:0,-1")?.revealed).toHaveLength(3);
+  });
+
   it("applies prospect ore cut bonus to mine gold collection", () => {
     const base = createNewGame(DEFAULT_CONFIG, 1, [
       { id: "p1", name: "Player 1" },

@@ -48,7 +48,16 @@ const isChoiceValid = (
     if (choice.choice === "gold") {
       return true;
     }
-    return prompt.revealed.length > 0 && typeof choice.gainCard === "boolean";
+    if (prompt.revealed.length === 0 || typeof choice.gainCard !== "boolean") {
+      return false;
+    }
+    if (!choice.gainCard) {
+      return true;
+    }
+    if (choice.cardId) {
+      return prompt.revealed.includes(choice.cardId);
+    }
+    return prompt.revealed.length === 1;
   }
 
   if (choice.kind === "forge") {
@@ -178,12 +187,13 @@ export const CollectionPanel = ({
               const selection = selections[key];
 
               if (prompt.kind === "mine") {
-                const revealedCard = prompt.revealed[0];
                 const selectedGold = selection?.kind === "mine" && selection.choice === "gold";
-                const selectedGain =
+                const selectedDraftId =
                   selection?.kind === "mine" &&
                   selection.choice === "draft" &&
-                  selection.gainCard === true;
+                  selection.gainCard === true
+                    ? selection.cardId ?? (prompt.revealed.length === 1 ? prompt.revealed[0] : null)
+                    : null;
                 const selectedSkip =
                   selection?.kind === "mine" &&
                   selection.choice === "draft" &&
@@ -215,52 +225,65 @@ export const CollectionPanel = ({
                         >
                           Take gold
                         </button>
-                        {revealedCard ? (
-                          <>
-                            <span className="card-tag">
-                              {getCardLabel(revealedCard)}
-                            </span>
-                            <button
-                              type="button"
-                              className={`btn btn-tertiary ${
-                                selectedGain ? "is-active" : ""
-                              }`}
-                              disabled={!canInteract}
-                              onClick={() =>
-                                setChoice(prompt, {
-                                  kind: "mine",
-                                  hexKey: prompt.hexKey,
-                                  choice: "draft",
-                                  gainCard: true
-                                })
-                              }
-                            >
-                              Gain card
-                            </button>
-                            <button
-                              type="button"
-                              className={`btn btn-tertiary ${
-                                selectedSkip ? "is-active" : ""
-                              }`}
-                              disabled={!canInteract}
-                              onClick={() =>
-                                setChoice(prompt, {
-                                  kind: "mine",
-                                  hexKey: prompt.hexKey,
-                                  choice: "draft",
-                                  gainCard: false
-                                })
-                              }
-                            >
-                              Skip card
-                            </button>
-                          </>
-                        ) : (
-                          <span className="collection-prompt__note">
-                            No card revealed.
-                          </span>
-                        )}
                       </div>
+                    </div>
+                    <div className="collection-prompt__section">
+                      <span className="collection-prompt__label">
+                        Mine draft (choose 1)
+                      </span>
+                      {prompt.revealed.length === 0 ? (
+                        <div className="collection-prompt__note">
+                          No card revealed.
+                        </div>
+                      ) : (
+                        <>
+                          <ul className="card-list">
+                            {prompt.revealed.map((cardId) => {
+                              const label = getCardLabel(cardId);
+                              const isSelected = selectedDraftId === cardId;
+                              return (
+                                <li key={`${cardId}-${prompt.hexKey}`}>
+                                  <button
+                                    type="button"
+                                    className={`card-tag card-tag--clickable ${
+                                      isSelected ? "is-selected" : ""
+                                    }`}
+                                    disabled={!canInteract}
+                                    onClick={() =>
+                                      setChoice(prompt, {
+                                        kind: "mine",
+                                        hexKey: prompt.hexKey,
+                                        choice: "draft",
+                                        gainCard: true,
+                                        cardId
+                                      })
+                                    }
+                                  >
+                                    {label}
+                                  </button>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                          <button
+                            type="button"
+                            className={`btn btn-tertiary ${
+                              selectedSkip ? "is-active" : ""
+                            }`}
+                            disabled={!canInteract}
+                            onClick={() =>
+                              setChoice(prompt, {
+                                kind: "mine",
+                                hexKey: prompt.hexKey,
+                                choice: "draft",
+                                gainCard: false
+                              })
+                            }
+                          >
+                            Skip cards
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 );

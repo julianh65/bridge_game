@@ -596,11 +596,13 @@ const buildRandomCollectionChoices = (
   return prompts.map((prompt) => {
     if (prompt.kind === "mine") {
       if (prompt.revealed.length > 0 && picker.pickBool()) {
+        const gainCard = picker.pickBool();
         return {
           kind: "mine",
           hexKey: prompt.hexKey,
           choice: "draft",
-          gainCard: picker.pickBool()
+          gainCard,
+          cardId: gainCard ? picker.pick(prompt.revealed, `mine draft for ${playerId}`) : undefined
         };
       }
       return {

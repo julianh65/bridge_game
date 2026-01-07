@@ -327,7 +327,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [ ] Aerial Wings (deploy to center as if capital when occupied)
   - [ ] Miners Deep Tunnels (occupied mines count adjacent/connected)
   - [ ] Cipher Quiet Study (round-start discard then redraw)
-  - [ ] Cipher Expanded Choice (pick from N+1 when choosing cards)
+  - [x] Cipher Expanded Choice (pick from N+1 when choosing cards)
   - [ ] Capital occupation VP bonus (+2 temp VP instead of +1)
   - [ ] etc. (start with 1–2 factions but first double check the rules from rules_draft)
 - [x] Support faction starter spell effects with existing primitives (Air Drop deployForces, Rich Veins increaseMineValue).
@@ -470,6 +470,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Add a host-only board state editor/debug panel (JSON view + light patch tools) for test games, only if it stays simple.
 - [x] Add a victory screen (winner, final VP, recap, rematch/exit).
 - [ ] Upgrade on-board visuals for units/champions/factions (distinct tokens, faction badges).
+  - [x] Add champion crest markers on unit stacks.
 - [x] Enforce faction uniqueness in setup (no duplicate faction picks).
 - [x] Add deck UI with draw/discard piles, counts, direction arrows, and draw/discard animations.
 - [ ] Low priority: add at least one targeted test for each card effect/card.
