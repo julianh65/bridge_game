@@ -67,6 +67,7 @@ const SUPPORTED_EFFECTS = new Set([
   "deployForces",
   "increaseMineValue",
   "healChampion",
+  "healChampions",
   "dealChampionDamage",
   "patchUp",
   "recruit",
@@ -1604,6 +1605,24 @@ export const resolveCardEffects = (
         }
         const amount = typeof effect.amount === "number" ? effect.amount : 0;
         nextState = healChampion(nextState, target.unitId, amount);
+        break;
+      }
+      case "healChampions": {
+        const amount = typeof effect.amount === "number" ? effect.amount : 0;
+        if (amount <= 0) {
+          break;
+        }
+        const unitIds = Object.keys(nextState.board.units);
+        for (const unitId of unitIds) {
+          const unit = nextState.board.units[unitId];
+          if (!unit || unit.kind !== "champion") {
+            continue;
+          }
+          if (unit.ownerPlayerId !== playerId) {
+            continue;
+          }
+          nextState = healChampion(nextState, unitId, amount);
+        }
         break;
       }
       case "dealChampionDamage": {

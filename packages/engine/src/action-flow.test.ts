@@ -2266,6 +2266,61 @@ describe("action flow", () => {
     expect(healed.hp).toBe(5);
   });
 
+  it("plays repair orders to heal all friendly champions", () => {
+    let { state, p1Capital } = setupToActionPhase();
+    const p2Capital = state.players.find((player) => player.id === "p2")?.capitalHex;
+    if (!p2Capital) {
+      throw new Error("missing p2 capital");
+    }
+    const neighbor = neighborHexKeys(p1Capital).find((key) => Boolean(state.board.hexes[key]));
+    if (!neighbor) {
+      throw new Error("missing neighbor for repair orders");
+    }
+
+    const first = addChampionToHex(state, "p1", p1Capital, { hp: 1, maxHp: 3 });
+    state = first.state;
+    const second = addChampionToHex(state, "p1", neighbor, { hp: 2, maxHp: 4 });
+    state = second.state;
+    const enemy = addChampionToHex(state, "p2", p2Capital, { hp: 1, maxHp: 4 });
+    state = enemy.state;
+
+    const injected = addCardToHand(state, "p1", "age2.repair_orders");
+    state = injected.state;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const firstHealed = state.board.units[first.unitId];
+    if (!firstHealed || firstHealed.kind !== "champion") {
+      throw new Error("missing first healed champion");
+    }
+    expect(firstHealed.hp).toBe(2);
+
+    const secondHealed = state.board.units[second.unitId];
+    if (!secondHealed || secondHealed.kind !== "champion") {
+      throw new Error("missing second healed champion");
+    }
+    expect(secondHealed.hp).toBe(3);
+
+    const enemyHealed = state.board.units[enemy.unitId];
+    if (!enemyHealed || enemyHealed.kind !== "champion") {
+      throw new Error("missing enemy champion");
+    }
+    expect(enemyHealed.hp).toBe(1);
+  });
+
   it("plays zap to damage a champion, remove it, and award bounty", () => {
     let { state } = setupToActionPhase();
     const p2Capital = state.players.find((player) => player.id === "p2")?.capitalHex;

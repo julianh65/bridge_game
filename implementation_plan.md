@@ -438,7 +438,11 @@ Pause and read through the rules of the game. Make sure that what we've done ali
       - [x] Focus Fire.
       - [x] Ward.
       - [x] Frenzy.
-      - [ ] Remaining combat/tactics cards (Slow, Repair Orders, Gold Plated Armor, Mortar Shot, Champion Recall).
+      - [ ] Slow.
+      - [x] Repair Orders.
+      - [ ] Gold Plated Armor.
+      - [ ] Mortar Shot.
+      - [ ] Champion Recall.
     - [ ] Age II Bridges/Terrain card defs (4).
     - [ ] Age II Synergy/Gambits card defs (4).
     - [ ] Age II Victory card defs (4).

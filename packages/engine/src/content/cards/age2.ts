@@ -49,6 +49,20 @@ export const FRENZY: CardDef = {
   effects: [{ kind: "frenzy", diceBonus: 2, damage: 2 }]
 };
 
+export const REPAIR_ORDERS: CardDef = {
+  id: "age2.repair_orders",
+  name: "Repair Orders",
+  rulesText: "All your champions heal 1.",
+  type: "Spell",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 35,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "healChampions", amount: 1 }]
+};
+
 export const JET_STRIKER: CardDef = {
   id: "champion.age2.jet_striker",
   name: "Jet Striker",
@@ -249,6 +263,7 @@ export const AGE2_CARDS: CardDef[] = [
   FOCUS_FIRE,
   WARD,
   FRENZY,
+  REPAIR_ORDERS,
   JET_STRIKER,
   GUERILLA_NATIVE_MERCENARY,
   TAX_REAVER,

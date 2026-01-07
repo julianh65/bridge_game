@@ -17,6 +17,7 @@
 
 ## Active tasks
 - none
+- owner: agent2; scope: improve card readability (larger fonts, clearer mana/gold cost corners) + slightly taller hand cards; files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in progress
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -37,6 +38,7 @@
 - Expanded power deck tasks in `implementation_plan.md` (Age I/II/III power card defs, power deck list wiring, tests, and rules audit). (Overlap note: commit also picked up pre-staged agent2 changes in `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.guerilla-native-mercenary.test.ts`, `apps/web/src/components/GameScreen.tsx`.)
 - Adjusted power deck plan counts to follow `rules_draft.md` (not fixed 12 each) in `implementation_plan.md`.
 - Added Age III market card defs using existing effects (Grand Maneuver, Ghost Step, Deep Reserves, Forward Legion, Royal Mint, Tome of Orders, Last Lecture, Execution Order) and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (Overlap note: commit also picked up pre-staged changes in `apps/web/src/components/GameCard.tsx`.)
+- Added Age II Repair Orders with a heal-all-champions effect and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.)
 
 ## Milestone 9 progress
 - Shifted GameCard art cropping upward (~10%) with a slight zoom across variants; updated the plan checklist. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
