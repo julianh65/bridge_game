@@ -16,14 +16,14 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [owner: agent4] [status: in-progress] Scope: reduce hand panel height perception and move mana orb to bottom-right outside the action panel. Files: apps/web/src/components/GameScreenHandPanel.tsx, apps/web/src/styles.css, progress.md. (Possible overlap: apps/web/src/styles.css.)
+- [owner: agent2] [status: in-progress] Scope: add UI force-count picker for march actions and pass `forceCount` in submit payload; update layout/styles. Files: apps/web/src/components/ActionPanel.tsx, apps/web/src/components/GameScreen.tsx, apps/web/src/components/GameScreenHandPanel.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md.
 
 ## Milestone 8.5 progress
 - Improved hand card selection UX: added a selected-card summary with target hints + clear button, enabled click-to-deselect, and cleared card selection when switching to basic actions; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
 - Moved local resource display to the header (gold/VP) and added a bottom-left mana orb near the hand panel; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent3.)
 - Added a market roll-off tie-break panel with suspenseful rolling dice numbers using a reusable `NumberRoll` component; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
 - Removed the Live connection pill from the header and enlarged gold/VP chips with clearer labels. (Overlap note: `apps/web/src/styles.css` touched alongside agent1.)
-- Repositioned the mana orb under the actions column (bottom-right) to reduce the hand panel empty space perception.
+- Repositioned the mana orb to the hand panel bottom-right (outside the actions panel) to reduce the perceived empty space above the cards.
 - Fixed hand-card hover popout stacking/spacing so hovered cards render above the actions column without clipping; marked the plan item complete in `implementation_plan.md`.
 - Raised hand-panel z-index and reordered hover/pass layering so hovered cards sit above most UI while pass/submit stays on top.
 - Let the hand cards column span under the actions column with padding so hovered cards can overlap the actions area without clipping.

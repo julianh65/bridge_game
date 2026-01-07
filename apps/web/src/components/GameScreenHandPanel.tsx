@@ -274,13 +274,13 @@ export const GameScreenHandPanel = ({
                 onReinforceHexChange={onReinforceHexChange}
                 onBoardPickModeChange={onBoardPickModeChange}
               />
-              <div className="game-hand__mana">
-                <div className="mana-orb" aria-label={`Mana ${manaLabel}`}>
-                  <span className="mana-orb__label">Mana</span>
-                  <strong className="mana-orb__value">{manaLabel}</strong>
-                </div>
-              </div>
             </aside>
+          </div>
+          <div className="game-hand__mana">
+            <div className="mana-orb" aria-label={`Mana ${manaLabel}`}>
+              <span className="mana-orb__label">Mana</span>
+              <strong className="mana-orb__value">{manaLabel}</strong>
+            </div>
           </div>
           <div className="game-hand__footer">
             <div className="hand-submit">
