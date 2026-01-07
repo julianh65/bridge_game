@@ -39,16 +39,6 @@ export const GameScreenSidebar = ({
   isInfoDockOpen,
   onToggleDock
 }: GameScreenSidebarProps) => {
-  const actionStatusSummary = actionStep
-    ? (() => {
-        const eligibleCount = actionEligible.size;
-        const waitingCount = actionWaiting.size;
-        const submittedCount = Math.max(0, eligibleCount - waitingCount);
-        const idleCount = Math.max(0, players.length - eligibleCount);
-        return { eligibleCount, waitingCount, submittedCount, idleCount };
-      })()
-    : null;
-
   const getActionStatusTooltip = (playerId: string): string => {
     if (!actionStep) {
       return `Action: not active (${phaseLabel}).`;
@@ -103,21 +93,6 @@ export const GameScreenSidebar = ({
           <span>Lead</span>
           <strong>{leadPlayerName ?? "—"}</strong>
         </div>
-        {actionStatusSummary ? (
-          <div className="status-summary">
-            <span className="status-pill status-pill--waiting">
-              Waiting {actionStatusSummary.waitingCount}
-            </span>
-            <span className="status-pill status-pill--ready">
-              Submitted {actionStatusSummary.submittedCount}
-            </span>
-            {actionStatusSummary.idleCount > 0 ? (
-              <span className="status-pill status-pill--idle">
-                Idle {actionStatusSummary.idleCount}
-              </span>
-            ) : null}
-          </div>
-        ) : null}
         {!isInteractivePhase ? (
           <p className="status-note">Resolving {phaseLabel}. Waiting on the server.</p>
         ) : null}

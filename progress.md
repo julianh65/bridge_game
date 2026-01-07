@@ -18,7 +18,6 @@
 ## Active tasks
 - owner: agent2 | scope: implement Aerial Tailwind passive (+1 move on first stack move per round) with engine tests | files: `packages/engine/src/faction-passives.ts`, `packages/engine/src/modifiers.ts`, `packages/engine/src/types.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/action-flow.test.ts` | status: in progress
 - owner: agent3 | scope: implement Cipher Expanded Choice passive (N+1 card offers) for free-start + collection prompts with tests and helper copy update | files: `packages/engine/src/types.ts`, `packages/engine/src/modifiers.ts`, `packages/engine/src/faction-passives.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/round-flow.test.ts`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `implementation_plan.md` | status: in progress (overlap: `packages/engine/src/types.ts`, `packages/engine/src/modifiers.ts`, `packages/engine/src/faction-passives.ts`, `packages/engine/src/round-flow.ts` with agent2)
-- owner: agent4 | scope: reduce duplicate status pills in game sidebar (action summary vs table/connection) | files: `apps/web/src/components/GameScreenSidebar.tsx`, `implementation_plan.md` | status: in progress
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -34,6 +33,7 @@
 - Added action status pills (idle/waiting/submitted) to the player list for action phase visibility; plan update deferred until `implementation_plan.md` is free.
 - Added a phase transition cue overlay that flashes round phase changes in big text and marked the plan item complete in `implementation_plan.md`.
 - Made action status more obvious with a player-list summary and row highlighting, and marked the plan item complete in `implementation_plan.md`.
+- Reduced duplicate status pills in the command center by removing the summary chips (status still shown per player).
 - Added a large Submit/Lock In action button to the action panel and marked the plan item complete in `implementation_plan.md`.
 - Added action-panel helper copy clarifying Done/Reinforce/Bridge/March/Play actions and marked the plan item complete in `implementation_plan.md`.
 - Submit button now reflects the selected action (Play Card/Build Bridge/etc.) to remove the play-vs-submit confusion; marked the plan item complete in `implementation_plan.md`.
