@@ -618,7 +618,11 @@ export const GameScreen = ({
   const isCollectionPhase = view.public.phase === "round.collection";
   const isInteractivePhase = isActionPhase || isMarketPhase || isCollectionPhase;
   const showPhaseFocus = isCollectionPhase;
-  const canShowHandPanel = Boolean(view.private) && isActionPhase;
+  const shouldHoldMarketOverlay = !isMarketPhase && Boolean(marketWinner);
+  const showMarketOverlay =
+    (isMarketPhase && isMarketOverlayOpen) || shouldHoldMarketOverlay;
+  const canShowHandPanel =
+    Boolean(view.private) && isActionPhase && !showMarketOverlay;
   const showVictoryScreen = Boolean(view.public.winnerPlayerId && isVictoryVisible);
   const canDeclareAction =
     status === "connected" &&
@@ -1887,8 +1891,6 @@ export const GameScreen = ({
     </div>
   ) : null;
 
-  const shouldHoldMarketOverlay = !isMarketPhase && Boolean(marketWinner);
-  const showMarketOverlay = (isMarketPhase && isMarketOverlayOpen) || shouldHoldMarketOverlay;
   const showMarketOverlayToggle = isMarketPhase && !isMarketOverlayOpen;
   const marketOverlay = isMarketPhase || shouldHoldMarketOverlay ? (
     <>
