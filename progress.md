@@ -380,6 +380,7 @@ none
 - Implemented Hold the Line + Marked for Coin + Perfect Recall effects (modifier/topdeck handling) and added action-flow coverage.
 - Overlap note: included pre-existing `packages/engine/src/index.ts` export update for `CARD_DEFS_BY_ID`.
 - Added Archivist Prime dice scaling (cards played this round) + Wormhole Artificer solo-move bonus, plus card-play counter reset/increment logic and action-flow tests.
+- Verified engine coverage with `npm run -w @bridgefront/engine test`.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
