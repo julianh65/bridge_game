@@ -1061,6 +1061,94 @@ const addGold = (state: GameState, playerId: PlayerID, amount: number): GameStat
   return changed ? { ...state, players } : state;
 };
 
+const spendGold = (state: GameState, playerId: PlayerID, amount: number): GameState => {
+  if (amount <= 0) {
+    return state;
+  }
+  let changed = false;
+  const players = state.players.map((player) => {
+    if (player.id !== playerId) {
+      return player;
+    }
+    const nextGold = Math.max(0, player.resources.gold - amount);
+    if (nextGold === player.resources.gold) {
+      return player;
+    }
+    changed = true;
+    return {
+      ...player,
+      resources: {
+        ...player.resources,
+        gold: nextGold
+      }
+    };
+  });
+  return changed ? { ...state, players } : state;
+};
+
+const isModifierActive = (modifier: Modifier): boolean => {
+  if (modifier.duration.type === "uses") {
+    return modifier.duration.remaining > 0;
+  }
+  return true;
+};
+
+export const applyGoldArmorToDamage = (
+  state: GameState,
+  unitId: UnitID,
+  damage: number
+): { state: GameState; remainingDamage: number } => {
+  if (!Number.isFinite(damage) || damage <= 0) {
+    return { state, remainingDamage: damage };
+  }
+
+  const unit = state.board.units[unitId];
+  if (!unit || unit.kind !== "champion") {
+    return { state, remainingDamage: damage };
+  }
+
+  let costPerDamage: number | null = null;
+  for (const modifier of state.modifiers) {
+    if (!isModifierActive(modifier)) {
+      continue;
+    }
+    if (modifier.attachedUnitId !== unitId) {
+      continue;
+    }
+    const raw = modifier.data?.goldArmor;
+    if (!raw || typeof raw !== "object") {
+      continue;
+    }
+    const record = raw as Record<string, unknown>;
+    const cost =
+      typeof record.costPerDamage === "number" ? record.costPerDamage : 2;
+    if (!Number.isFinite(cost) || cost <= 0) {
+      continue;
+    }
+    costPerDamage = cost;
+    break;
+  }
+
+  if (costPerDamage === null) {
+    return { state, remainingDamage: damage };
+  }
+
+  const player = state.players.find((entry) => entry.id === unit.ownerPlayerId);
+  if (!player) {
+    return { state, remainingDamage: damage };
+  }
+
+  const maxPrevent = Math.floor(player.resources.gold / costPerDamage);
+  if (maxPrevent <= 0) {
+    return { state, remainingDamage: damage };
+  }
+  const prevented = Math.min(damage, maxPrevent);
+  const remainingDamage = damage - prevented;
+
+  const nextState = spendGold(state, unit.ownerPlayerId, prevented * costPerDamage);
+  return { state: nextState, remainingDamage };
+};
+
 export const applyChampionDeathEffects = (
   state: GameState,
   killedChampions: ChampionUnitState[]
@@ -1144,19 +1232,29 @@ export const dealChampionDamage = (
     return state;
   }
 
-  const unit = state.board.units[unitId];
-  if (!unit || unit.kind !== "champion") {
+  const initialUnit = state.board.units[unitId];
+  if (!initialUnit || initialUnit.kind !== "champion") {
     return state;
   }
 
-  const nextHp = unit.hp - amount;
+  const armored = applyGoldArmorToDamage(state, unitId, amount);
+  if (armored.remainingDamage <= 0) {
+    return armored.state;
+  }
+
+  const unit = armored.state.board.units[unitId];
+  if (!unit || unit.kind !== "champion") {
+    return armored.state;
+  }
+
+  const nextHp = unit.hp - armored.remainingDamage;
   if (nextHp > 0) {
     return {
-      ...state,
+      ...armored.state,
       board: {
-        ...state.board,
+        ...armored.state.board,
         units: {
-          ...state.board.units,
+          ...armored.state.board.units,
           [unitId]: {
             ...unit,
             hp: nextHp
@@ -1166,18 +1264,18 @@ export const dealChampionDamage = (
     };
   }
 
-  const units = { ...state.board.units };
+  const units = { ...armored.state.board.units };
   delete units[unitId];
 
   let nextState: GameState = {
-    ...state,
+    ...armored.state,
     board: {
-      ...state.board,
+      ...armored.state.board,
       units
     }
   };
 
-  const hex = state.board.hexes[unit.hex];
+  const hex = armored.state.board.hexes[unit.hex];
   if (hex) {
     const updatedHex = {
       ...hex,

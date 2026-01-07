@@ -80,6 +80,24 @@ export const REPAIR_ORDERS: CardDef = {
   effects: [{ kind: "healChampions", amount: 1 }]
 };
 
+export const GOLD_PLATED_ARMOR: CardDef = {
+  id: "age2.gold_plated_armor",
+  name: "Gold Plated Armor",
+  rulesText:
+    "Choose a friendly Champion. This round, each time it would take 1 damage, lose 2 gold and prevent that damage.",
+  type: "Spell",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 2 },
+  initiative: 35,
+  burn: false,
+  targetSpec: {
+    kind: "champion",
+    owner: "self"
+  },
+  effects: [{ kind: "goldPlatedArmor", costPerDamage: 2 }]
+};
+
 export const JET_STRIKER: CardDef = {
   id: "champion.age2.jet_striker",
   name: "Jet Striker",
@@ -282,6 +300,7 @@ export const AGE2_CARDS: CardDef[] = [
   WARD,
   FRENZY,
   REPAIR_ORDERS,
+  GOLD_PLATED_ARMOR,
   JET_STRIKER,
   GUERILLA_NATIVE_MERCENARY,
   TAX_REAVER,

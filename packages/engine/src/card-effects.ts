@@ -25,7 +25,12 @@ import {
   takeTopCards,
   topdeckCardFromHand
 } from "./cards";
-import { applyChampionDeployment, dealChampionDamage, healChampion } from "./champions";
+import {
+  applyChampionDeployment,
+  dealChampionDamage,
+  healChampion,
+  removeChampionModifiers
+} from "./champions";
 import {
   addChampionToHex,
   addForcesToHex,
@@ -69,6 +74,7 @@ const SUPPORTED_EFFECTS = new Set([
   "healChampion",
   "healChampions",
   "dealChampionDamage",
+  "goldPlatedArmor",
   "patchUp",
   "recruit",
   "holdTheLine",
@@ -87,7 +93,8 @@ const SUPPORTED_EFFECTS = new Set([
   "shockDrill",
   "focusFire",
   "setToSkirmish",
-  "evacuateChampion"
+  "evacuateChampion",
+  "recallChampion"
 ]);
 
 type TargetRecord = Record<string, unknown>;
@@ -919,6 +926,55 @@ const removeForcesFromHex = (
       }
     }
   };
+};
+
+const removeChampionFromBoard = (state: GameState, unitId: string): GameState => {
+  const unit = state.board.units[unitId];
+  if (!unit || unit.kind !== "champion") {
+    return state;
+  }
+
+  const hex = state.board.hexes[unit.hex];
+  const nextUnits = { ...state.board.units };
+  delete nextUnits[unitId];
+
+  let nextState: GameState = {
+    ...state,
+    board: {
+      ...state.board,
+      units: nextUnits
+    }
+  };
+
+  if (hex) {
+    const occupants = (hex.occupants[unit.ownerPlayerId] ?? []).filter(
+      (entry) => entry !== unitId
+    );
+    nextState = {
+      ...nextState,
+      board: {
+        ...nextState.board,
+        hexes: {
+          ...nextState.board.hexes,
+          [unit.hex]: {
+            ...hex,
+            occupants: {
+              ...hex.occupants,
+              [unit.ownerPlayerId]: occupants
+            }
+          }
+        }
+      }
+    };
+  }
+
+  nextState = removeChampionModifiers(nextState, [unitId]);
+  const nextModifiers = nextState.modifiers.filter(
+    (modifier) => modifier.attachedUnitId !== unitId
+  );
+  return nextModifiers.length === nextState.modifiers.length
+    ? nextState
+    : { ...nextState, modifiers: nextModifiers };
 };
 
 const moveUnitsAlongPath = (
@@ -1781,6 +1837,43 @@ export const resolveCardEffects = (
                 targeting: {
                   blockEnemySpells: true,
                   scope: "ownerChampions"
+                }
+              }
+            }
+          ]
+        };
+        break;
+      }
+      case "goldPlatedArmor": {
+        const target = getChampionTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null,
+          card
+        );
+        if (!target) {
+          break;
+        }
+        const costPerDamage =
+          typeof effect.costPerDamage === "number" ? effect.costPerDamage : 2;
+        if (!Number.isFinite(costPerDamage) || costPerDamage <= 0) {
+          break;
+        }
+        const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.${target.unitId}.gold_armor`;
+        nextState = {
+          ...nextState,
+          modifiers: [
+            ...nextState.modifiers,
+            {
+              id: modifierId,
+              source: { type: "card", sourceId: card.id },
+              ownerPlayerId: playerId,
+              attachedUnitId: target.unitId,
+              duration: { type: "endOfRound" },
+              data: {
+                goldArmor: {
+                  costPerDamage
                 }
               }
             }

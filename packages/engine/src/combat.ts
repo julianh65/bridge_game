@@ -28,6 +28,7 @@ import {
   consumeChampionAbilityUse,
   GRAND_STRATEGIST_CHAMPION_ID,
   TACTICAL_HAND_KEY,
+  applyGoldArmorToDamage,
   applyChampionDeathEffects,
   removeChampionModifiers
 } from "./champions";
@@ -489,6 +490,31 @@ const resolveHits = (
   return { removedUnitIds, updatedChampions, bounty, killedChampions };
 };
 
+const applyGoldArmorToHits = (
+  state: GameState,
+  hitsByUnit: Record<UnitID, number>
+): { state: GameState; hitsByUnit: Record<UnitID, number> } => {
+  let nextState = state;
+  const nextHits: Record<UnitID, number> = { ...hitsByUnit };
+
+  for (const [unitId, hits] of Object.entries(hitsByUnit)) {
+    if (hits <= 0) {
+      continue;
+    }
+    const unit = nextState.board.units[unitId];
+    if (!unit || unit.kind !== "champion") {
+      continue;
+    }
+    const result = applyGoldArmorToDamage(nextState, unitId, hits);
+    nextState = result.state;
+    if (result.remainingDamage !== hits) {
+      nextHits[unitId] = result.remainingDamage;
+    }
+  }
+
+  return { state: nextState, hitsByUnit: nextHits };
+};
+
 const summarizeUnits = (
   unitIds: UnitID[],
   units: Record<UnitID, UnitState>
@@ -781,23 +807,30 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
       nextUnits = nextState.board.units;
     }
 
+    const defenderArmor = applyGoldArmorToHits(nextState, assignedToDefenders.hitsByUnit);
+    nextState = defenderArmor.state;
+    const defenderHitsByUnit = defenderArmor.hitsByUnit;
+    const attackerArmor = applyGoldArmorToHits(nextState, assignedToAttackers.hitsByUnit);
+    nextState = attackerArmor.state;
+    const attackerHitsByUnit = attackerArmor.hitsByUnit;
+
     nextState = emit(nextState, {
       type: "combat.round",
       payload: {
         ...roundPayloadBase,
         hitsToDefenders: summarizeHitAssignments(
-          assignedToDefenders.hitsByUnit,
+          defenderHitsByUnit,
           nextUnits
         ),
         hitsToAttackers: summarizeHitAssignments(
-          assignedToAttackers.hitsByUnit,
+          attackerHitsByUnit,
           nextUnits
         )
       }
     });
 
-    const attackerHits = resolveHits(attackers, assignedToAttackers.hitsByUnit, nextUnits);
-    const defenderHits = resolveHits(defenders, assignedToDefenders.hitsByUnit, nextUnits);
+    const attackerHits = resolveHits(attackers, attackerHitsByUnit, nextUnits);
+    const defenderHits = resolveHits(defenders, defenderHitsByUnit, nextUnits);
 
     const removedSet = new Set<UnitID>([
       ...attackerHits.removedUnitIds,
