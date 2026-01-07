@@ -16,6 +16,7 @@ import {
 import { areAdjacent, axialDistance, neighborHexKeys, parseHexKey } from "@bridgefront/shared";
 
 import { type BasicActionIntent, type BoardPickMode } from "./ActionPanel";
+import { ActionRevealOverlay, type ActionRevealOverlayData } from "./ActionRevealOverlay";
 import { BoardView } from "./BoardView";
 import { CollectionPanel } from "./CollectionPanel";
 import { CombatOverlay } from "./CombatOverlay";
@@ -50,6 +51,18 @@ type MarketWinnerHighlight = {
   kind: "buy" | "pass";
   amount: number | null;
   passPot: number | null;
+};
+
+type CardRevealTargetInfo = {
+  targetLines: string[];
+  targetHexKeys: string[];
+  targetEdgeKeys: string[];
+};
+
+type ActionCardReveal = ActionRevealOverlayData & {
+  key: string;
+  targetHexKeys: string[];
+  targetEdgeKeys: string[];
 };
 
 type AgeCue = {
@@ -89,6 +102,113 @@ const formatPhaseLabel = (phase: string) => {
   const trimmed = phase.replace("round.", "");
   const spaced = trimmed.replace(/([a-z])([A-Z])/g, "$1 $2").replace(".", " ");
   return spaced.replace(/^\w/, (value) => value.toUpperCase());
+};
+
+const CARD_REVEAL_DURATION_MS = 2400;
+
+const buildCardCostLabel = (cardDef: CardDef | null): string | null => {
+  if (!cardDef) {
+    return null;
+  }
+  const parts = [`${cardDef.cost.mana} mana`];
+  if (cardDef.cost.gold) {
+    parts.push(`${cardDef.cost.gold} gold`);
+  }
+  return parts.join(", ");
+};
+
+const describeRevealTargets = (
+  targets: Record<string, unknown> | null,
+  board: GameView["public"]["board"]
+): CardRevealTargetInfo => {
+  if (!targets) {
+    return { targetLines: [], targetHexKeys: [], targetEdgeKeys: [] };
+  }
+
+  const lines: string[] = [];
+  const lineSet = new Set<string>();
+  const hexKeys = new Set<string>();
+  const edgeKeys = new Set<string>();
+
+  const pushLine = (line: string) => {
+    if (lineSet.has(line)) {
+      return;
+    }
+    lineSet.add(line);
+    lines.push(line);
+  };
+  const addHex = (hexKey: string | null) => {
+    if (hexKey) {
+      hexKeys.add(hexKey);
+    }
+  };
+  const addEdge = (edgeKey: string | null) => {
+    if (edgeKey) {
+      edgeKeys.add(edgeKey);
+    }
+  };
+
+  const edgeKey = getTargetString(targets, "edgeKey");
+  if (edgeKey) {
+    addEdge(edgeKey);
+    pushLine(`Edge ${edgeKey}`);
+  }
+
+  const hexKey = getTargetString(targets, "hexKey");
+  if (hexKey) {
+    addHex(hexKey);
+    pushLine(`Hex ${hexKey}`);
+  }
+
+  const path = targets.path;
+  if (Array.isArray(path)) {
+    const filtered = path.filter(
+      (entry): entry is string => typeof entry === "string" && entry.length > 0
+    );
+    if (filtered.length > 0) {
+      filtered.forEach(addHex);
+      pushLine(`Path ${filtered.join(" → ")}`);
+    }
+  }
+
+  const from = getTargetString(targets, "from");
+  const to = getTargetString(targets, "to");
+  if (from && to) {
+    addHex(from);
+    addHex(to);
+    pushLine(`Move ${from} → ${to}`);
+  }
+
+  const choice = getTargetString(targets, "choice") ?? getTargetString(targets, "kind");
+  if (choice === "capital") {
+    pushLine("Choice: Capital");
+  } else if (choice === "occupiedHex") {
+    const occupiedHex = getTargetString(targets, "hexKey");
+    addHex(occupiedHex);
+    pushLine(occupiedHex ? `Choice: Occupied ${occupiedHex}` : "Choice: Occupied hex");
+  }
+
+  const unitId = getTargetString(targets, "unitId") ?? getTargetString(targets, "championId");
+  if (unitId) {
+    const unit = board.units[unitId];
+    const unitName = unit
+      ? CARD_DEFS_BY_ID.get(unit.cardDefId)?.name ?? unit.cardDefId
+      : null;
+    if (unit?.hex) {
+      addHex(unit.hex);
+    }
+    pushLine(
+      unit?.hex
+        ? `Champion ${unitName ?? unitId} @ ${unit.hex}`
+        : `Champion ${unitName ?? unitId}`
+    );
+  }
+
+  return {
+    targetLines: lines,
+    targetHexKeys: Array.from(hexKeys),
+    targetEdgeKeys: Array.from(edgeKeys)
+  };
 };
 
 const formatAgeCueLabel = (age: string) => `Age ${age} Begins`;
@@ -187,6 +307,9 @@ export const GameScreen = ({
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
   const [isMarketOverlayOpen, setIsMarketOverlayOpen] = useState(false);
   const [marketWinner, setMarketWinner] = useState<MarketWinnerHighlight | null>(null);
+  const [cardRevealQueue, setCardRevealQueue] = useState<ActionCardReveal[]>([]);
+  const [activeCardReveal, setActiveCardReveal] = useState<ActionCardReveal | null>(null);
+  const [cardRevealKey, setCardRevealKey] = useState(0);
   const [combatQueue, setCombatQueue] = useState<CombatSequence[]>([]);
   const [phaseCue, setPhaseCue] = useState<{ label: string; round: number } | null>(null);
   const [phaseCueKey, setPhaseCueKey] = useState(0);
@@ -204,8 +327,10 @@ export const GameScreen = ({
   const [isHandPanelOpen, setIsHandPanelOpen] = useState(true);
   const [basicActionIntent, setBasicActionIntent] = useState<BasicActionIntent>("none");
   const lastMarketEventIndex = useRef(-1);
+  const lastCardRevealIndex = useRef(-1);
   const lastCombatEndIndex = useRef(-1);
   const hasMarketLogBaseline = useRef(false);
+  const hasCardRevealBaseline = useRef(false);
   const hasPhaseCueBaseline = useRef(false);
   const hasAgeIntroShown = useRef(false);
   const lastPhaseRef = useRef(view.public.phase);
@@ -506,6 +631,63 @@ export const GameScreen = ({
 
   useEffect(() => {
     const logs = view.public.logs;
+    if (!hasCardRevealBaseline.current) {
+      hasCardRevealBaseline.current = true;
+      lastCardRevealIndex.current = logs.length - 1;
+      return;
+    }
+    if (logs.length === 0) {
+      lastCardRevealIndex.current = -1;
+      setCardRevealQueue([]);
+      setActiveCardReveal(null);
+      return;
+    }
+    if (logs.length - 1 < lastCardRevealIndex.current) {
+      lastCardRevealIndex.current = logs.length - 1;
+      setCardRevealQueue([]);
+      setActiveCardReveal(null);
+      return;
+    }
+    const newReveals: ActionCardReveal[] = [];
+    for (let i = lastCardRevealIndex.current + 1; i < logs.length; i += 1) {
+      const event = logs[i];
+      if (!event.type.startsWith("action.card.")) {
+        continue;
+      }
+      const payload = event.payload ?? {};
+      const playerId = typeof payload.playerId === "string" ? payload.playerId : null;
+      const cardId =
+        typeof payload.cardId === "string"
+          ? payload.cardId
+          : event.type.slice("action.card.".length);
+      const cardDef = CARD_DEFS_BY_ID.get(cardId) ?? null;
+      const rawTargets = payload.targets;
+      const targetRecord =
+        rawTargets && typeof rawTargets === "object" && !Array.isArray(rawTargets)
+          ? (rawTargets as Record<string, unknown>)
+          : null;
+      const targetInfo = describeRevealTargets(targetRecord, view.public.board);
+      newReveals.push({
+        key: `${i}-${cardId}`,
+        playerName: playerId ? playerNames.get(playerId) ?? playerId : "Unknown player",
+        cardName: cardDef?.name ?? cardId,
+        cardId,
+        cardType: cardDef?.type ?? null,
+        initiative: cardDef?.initiative ?? null,
+        costLabel: buildCardCostLabel(cardDef),
+        targetLines: targetInfo.targetLines,
+        targetHexKeys: targetInfo.targetHexKeys,
+        targetEdgeKeys: targetInfo.targetEdgeKeys
+      });
+    }
+    lastCardRevealIndex.current = logs.length - 1;
+    if (newReveals.length > 0) {
+      setCardRevealQueue((queue) => [...queue, ...newReveals]);
+    }
+  }, [view.public.logs, view.public.board, playerNames]);
+
+  useEffect(() => {
+    const logs = view.public.logs;
     if (logs.length === 0) {
       lastCombatEndIndex.current = -1;
       setCombatQueue([]);
@@ -537,6 +719,28 @@ export const GameScreen = ({
       window.clearTimeout(timeout);
     };
   }, [marketWinner]);
+
+  useEffect(() => {
+    if (activeCardReveal || cardRevealQueue.length === 0) {
+      return;
+    }
+    const [next, ...rest] = cardRevealQueue;
+    setActiveCardReveal(next ?? null);
+    setCardRevealQueue(rest);
+    setCardRevealKey((value) => value + 1);
+  }, [activeCardReveal, cardRevealQueue]);
+
+  useEffect(() => {
+    if (!activeCardReveal) {
+      return;
+    }
+    const timeout = window.setTimeout(() => {
+      setActiveCardReveal(null);
+    }, CARD_REVEAL_DURATION_MS);
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [activeCardReveal, cardRevealKey]);
 
   const setCardTargetsObject = (targets: Record<string, unknown> | null) => {
     setCardTargetsRaw(targets ? JSON.stringify(targets) : "");
@@ -647,7 +851,7 @@ export const GameScreen = ({
     }
   };
 
-  const highlightHexKeys = useMemo(() => {
+  const targetHighlightHexKeys = useMemo(() => {
     const keys = new Set<string>();
     if (pendingEdgeStart) {
       keys.add(pendingEdgeStart);
@@ -661,7 +865,7 @@ export const GameScreen = ({
     return Array.from(keys);
   }, [pendingEdgeStart, pendingStackFrom, pendingPath]);
 
-  const { validHexKeys, previewEdgeKeys, startHexKeys } = useMemo(() => {
+  const { validHexKeys, previewEdgeKeys: targetPreviewEdgeKeys, startHexKeys } = useMemo(() => {
     if (!localPlayerId) {
       return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
     }
@@ -1036,6 +1240,29 @@ export const GameScreen = ({
     selectedCardDef,
     cardTargetKind
   ]);
+
+  const revealHexKeys = activeCardReveal?.targetHexKeys ?? [];
+  const revealEdgeKeys = activeCardReveal?.targetEdgeKeys ?? [];
+  const highlightHexKeys = useMemo(() => {
+    if (revealHexKeys.length === 0) {
+      return targetHighlightHexKeys;
+    }
+    const merged = new Set(targetHighlightHexKeys);
+    for (const key of revealHexKeys) {
+      merged.add(key);
+    }
+    return Array.from(merged);
+  }, [targetHighlightHexKeys, revealHexKeys]);
+  const previewEdgeKeys = useMemo(() => {
+    if (revealEdgeKeys.length === 0) {
+      return targetPreviewEdgeKeys;
+    }
+    const merged = new Set(targetPreviewEdgeKeys);
+    for (const key of revealEdgeKeys) {
+      merged.add(key);
+    }
+    return Array.from(merged);
+  }, [targetPreviewEdgeKeys, revealEdgeKeys]);
 
   const cardCostLabel = selectedCardDef
     ? `${selectedCardDef.cost.mana} mana${
@@ -1443,6 +1670,9 @@ export const GameScreen = ({
             <span className="phase-cue__round">Round {ageCue.round}</span>
           </div>
         </div>
+      ) : null}
+      {activeCardReveal ? (
+        <ActionRevealOverlay key={activeCardReveal.key} reveal={activeCardReveal} />
       ) : null}
       {activeCombat ? (
         <CombatOverlay

@@ -387,7 +387,8 @@ export const resolveActionStep = (
       type: `action.card.${cardId}`,
       payload: {
         playerId: entry.player.id,
-        cardId
+        cardId,
+        targets: entry.declaration.targets ?? null
       }
     });
     if (entry.card) {

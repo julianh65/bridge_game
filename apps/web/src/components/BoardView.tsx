@@ -810,8 +810,8 @@ export const BoardView = ({
               ]
             : [{ dx: 0, dy: 12 }];
         const offset = offsets[stack.offsetIndex % offsets.length] ?? offsets[0];
-        const cx = stack.x + offset.dx;
-        const cy = stack.y + offset.dy;
+        const stackX = stack.x + offset.dx;
+        const stackY = stack.y + offset.dy;
         const championBadges = (() => {
           if (stack.championDetails.length === 0) {
             return [];
@@ -837,7 +837,7 @@ export const BoardView = ({
         })();
         const badgeHeight = 12;
         const badgeGap = 4;
-        const badgeY = cy - 28;
+        const badgeY = -28;
         const badgeWidths = championBadges.map((badge) => estimateBadgeWidth(badge.label));
         const totalBadgeWidth =
           badgeWidths.reduce((sum, width) => sum + width, 0) +
@@ -853,7 +853,7 @@ export const BoardView = ({
             width: number;
             x: number;
           }> = [];
-          let cursorX = cx - totalBadgeWidth / 2;
+          let cursorX = -totalBadgeWidth / 2;
           championBadges.forEach((badge, index) => {
             const width = badgeWidths[index] ?? estimateBadgeWidth(badge.label);
             layout.push({
@@ -887,25 +887,27 @@ export const BoardView = ({
         const stackTitle = stackTitleLines.join("\n");
         const championLabel = "C";
         const crestSize = 8;
-        const crestX = cx + 10;
-        const crestY = cy - 10;
+        const crestX = 10;
+        const crestY = -10;
         const factionBadge = getFactionBadge(factionId);
         const factionBadgeWidth = 14;
         const factionBadgeHeight = 10;
-        const factionBadgeX = cx - factionBadgeWidth / 2;
-        const factionBadgeY = cy + 12;
+        const factionBadgeX = -factionBadgeWidth / 2;
+        const factionBadgeY = 12;
         return (
           <g
             key={stack.key}
             className="unit-stack"
+            transform={`translate(${stackX} ${stackY})`}
+            style={{ transition: "transform 320ms ease" }}
             onClick={() => handleStackClick(stack.hexKey)}
           >
             <title>{stackTitle}</title>
             {stack.championCount > 0 ? (
               <circle
                 className="unit__champion-halo"
-                cx={cx}
-                cy={cy}
+                cx={0}
+                cy={0}
                 r={13}
               />
             ) : null}
@@ -913,16 +915,16 @@ export const BoardView = ({
               className={
                 colorIndex !== undefined ? `unit unit--p${colorIndex}` : "unit"
               }
-              cx={cx}
-              cy={cy}
+              cx={0}
+              cy={0}
               r={10}
             />
             {stack.forceCount > 0 ? (
-              <text x={cx} y={cy + 3} className="unit__count">
+              <text x={0} y={3} className="unit__count">
                 {stack.forceCount}
               </text>
             ) : stack.championCount > 0 ? (
-              <text x={cx} y={cy + 3} className="unit__champion">
+              <text x={0} y={3} className="unit__champion">
                 {championLabel}
               </text>
             ) : null}
@@ -962,7 +964,7 @@ export const BoardView = ({
                   className={`unit__faction-badge-text${
                     colorIndex !== undefined ? ` unit__faction-badge-text--p${colorIndex}` : ""
                   }`}
-                  x={cx}
+                  x={0}
                   y={factionBadgeY + factionBadgeHeight / 2}
                 >
                   {factionBadge}
