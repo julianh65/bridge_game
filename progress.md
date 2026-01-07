@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- [agent2] In progress: add pass confirmation when a player still has mana during action steps (scope: action submit UX; files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`).
 
 ## Milestone 8.5 progress
 - Improved hand card selection UX: added a selected-card summary with target hints + clear button, enabled click-to-deselect, and cleared card selection when switching to basic actions; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
@@ -25,6 +25,7 @@
 - Added champion hover tooltips on board tokens with HP/attack/damage and a rules snippet; marked the plan item complete in `implementation_plan.md`.
 - Tightened champion tooltip width, expanded rules text lines to reduce truncation, and switched champion token labels to current HP.
 - Removed the unit ring + faction badge chip, restored champion glyph labels, and added a small HP pip on each champion token.
+- Overlap note: commit also picked up pre-staged changes in `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, and `implementation_plan.md`.
 - Increased bridge preview hitbox width to make edge selection easier. (Overlap note: touched `apps/web/src/styles.css` alongside agent3/agent4.)
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
 - Slimmed the action strip: moved Pass/Submit + deck counts into the hand footer, simplified basic actions, and added a command-center table with per-player gold/mana/hand counts.
