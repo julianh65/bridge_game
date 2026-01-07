@@ -405,7 +405,7 @@ Start going through the rules_draft and adding the logic for the different types
 - [x] Update `GameCard` to render art images when a manifest entry exists.
 - [x] Add a CLI script to select cards, build prompts, call a diffusion provider, and write images + update the manifest.
 - [x] Decide on the default diffusion provider + credentials workflow (OpenAI image API via `OPENAI_API_KEY`).
-- [ ] Document how to run the art script and tune prompts/negative prompts.
+- [x] Document how to run the art script and tune prompts/negative prompts.
 
 ---
 
