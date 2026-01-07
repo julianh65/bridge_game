@@ -209,6 +209,7 @@ export const CardsBrowser = () => {
                   variant="grid"
                   card={card}
                   cardId={card.id}
+                  showId
                   showChampionStats
                 />
               ))}

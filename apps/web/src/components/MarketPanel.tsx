@@ -237,7 +237,6 @@ export const MarketPanel = ({
                       card={entry.def ?? null}
                       cardId={entry.card.cardId}
                       displayName={entry.label}
-                      eyebrow={`Card ${entry.index + 1}`}
                       isHidden={entry.isHidden}
                       isActive={entry.isActive}
                       isWinner={entry.isWinner}

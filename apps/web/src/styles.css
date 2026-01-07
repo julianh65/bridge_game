@@ -1095,25 +1095,26 @@ h1 {
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
 }
 
 .game-card {
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  border-left-width: 4px;
-  background: linear-gradient(180deg, #fffdf6 0%, #fdf4e8 100%);
-  padding: 10px;
-  display: grid;
+  border-radius: 18px;
+  border: 1px solid transparent;
+  background: linear-gradient(180deg, #fffdf8 0%, #f4e6d2 100%);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
   gap: 8px;
   position: relative;
-  text-align: left;
+  text-align: center;
   color: var(--ink);
+  box-shadow: 0 14px 28px rgba(35, 28, 19, 0.14);
 }
 
 .game-card__art {
-  height: 88px;
+  height: 110px;
   border-radius: 12px;
   border: 1px dashed rgba(111, 90, 70, 0.35);
   background: linear-gradient(135deg, #f7e4cc, #f2d6b3);
@@ -1126,39 +1127,64 @@ h1 {
   color: #8b6f57;
 }
 
+.game-card__initiative {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(124, 45, 18, 0.25);
+  background: #fff1d6;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #7c2d12;
+}
+
+.game-card__count {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(124, 45, 18, 0.2);
+  background: #f8eede;
+  font-size: 10px;
+  font-weight: 600;
+  color: #7c2d12;
+}
+
 .game-card__header {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
   gap: 8px;
-  flex-wrap: wrap;
+  justify-items: center;
 }
 
 .game-card__name {
-  margin: 2px 0 0;
-  font-size: 16px;
+  margin: 0;
+  font-size: 18px;
 }
 
-.game-card__eyebrow {
-  margin: 0;
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+.game-card__type {
+  margin: -4px 0 0;
+  font-size: 12px;
+  font-style: italic;
   color: var(--muted);
 }
 
 .game-card__id {
-  margin: 2px 0 0;
+  margin: 0;
   font-size: 11px;
   color: var(--muted);
 }
 
-.game-card__stats,
-.game-card__tags,
-.game-card__champion {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  align-items: center;
+.game-card__age {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 .game-card__rules {
@@ -1166,8 +1192,9 @@ h1 {
   font-size: 13px;
   color: var(--ink);
   line-height: 1.4;
+  text-align: left;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1177,32 +1204,77 @@ h1 {
   font-style: italic;
 }
 
+.game-card__champion {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  text-align: center;
+}
+
+.game-card__champion-stat {
+  display: grid;
+  gap: 2px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(124, 45, 18, 0.12);
+  background: #f7efe3;
+  font-size: 11px;
+  color: #6b4a2a;
+}
+
+.game-card__champion-stat strong {
+  font-size: 12px;
+  color: #3f2d1a;
+}
+
+.game-card__cost {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: #4b2e1a;
+}
+
+.game-card__cost-icon {
+  font-size: 12px;
+}
+
+.game-card__cost-number {
+  font-weight: 600;
+}
+
+.game-card__cost-plus {
+  color: var(--muted);
+}
+
+.game-card__cost-suffix {
+  font-size: 11px;
+  color: var(--muted);
+  margin-left: 4px;
+}
+
+.game-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
 .game-card--detail .game-card__rules {
   -webkit-line-clamp: 6;
 }
 
-.game-card--market .game-card__rules {
-  -webkit-line-clamp: 4;
+.game-card--power {
+  border-color: rgba(168, 85, 247, 0.6);
+  box-shadow: 0 18px 36px rgba(168, 85, 247, 0.18);
 }
 
-.game-card[data-deck="starter"] {
-  border-left-color: #b45309;
-}
-
-.game-card[data-deck="age1"] {
-  border-left-color: #15803d;
-}
-
-.game-card[data-deck="age2"] {
-  border-left-color: #0f766e;
-}
-
-.game-card[data-deck="age3"] {
-  border-left-color: #1d4ed8;
-}
-
-.game-card[data-deck="power"] {
-  border-left-color: #7c2d12;
+.game-card--champion {
+  border-color: rgba(239, 68, 68, 0.55);
+  box-shadow: 0 18px 36px rgba(239, 68, 68, 0.18);
 }
 
 .card-entry {
@@ -1674,6 +1746,16 @@ h1 {
   flex: 1;
 }
 
+.game-board__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.game-board__footer .board-tools {
+  margin-bottom: 0;
+}
+
 .game-board__legend {
   justify-content: center;
   width: 100%;
@@ -1935,7 +2017,7 @@ h1 {
   background: transparent;
   padding: 0;
   cursor: pointer;
-  width: clamp(100px, 26vw, 140px);
+  width: clamp(120px, 28vw, 170px);
   transform: translateY(var(--hand-lift, 0px)) rotate(var(--hand-rotate, 0deg));
   transform-origin: bottom center;
   transition: transform 0.2s ease;
@@ -1943,20 +2025,16 @@ h1 {
 }
 
 .hand-card + .hand-card {
-  margin-left: -32px;
+  margin-left: -36px;
 }
 
-.hand-card__face,
-.game-card--hand {
+.hand-card__face {
   width: 100%;
   aspect-ratio: 5 / 7;
   border-radius: 14px;
   border: 1px solid var(--border);
   background: linear-gradient(145deg, #fff7e8, #efe3d2);
   box-shadow: 0 10px 18px rgba(35, 28, 19, 0.16);
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  gap: 5px;
   padding: 8px;
   text-align: left;
   color: var(--ink);
@@ -1964,17 +2042,26 @@ h1 {
 }
 
 .game-card--hand {
-  border-left-width: 1px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #fff7e8, #efe3d2);
+  box-shadow: 0 12px 20px rgba(35, 28, 19, 0.18);
+  padding: 10px;
+  gap: 6px;
+  text-align: center;
 }
 
 .game-card--hand .game-card__art {
-  height: 52px;
+  height: 64px;
   font-size: 9px;
   letter-spacing: 0.18em;
 }
 
 .game-card--hand .game-card__name {
-  font-size: 12px;
+  font-size: 13px;
+}
+
+.game-card--hand .game-card__type {
+  font-size: 10px;
 }
 
 .game-card--hand .game-card__rules {
@@ -1983,17 +2070,40 @@ h1 {
   -webkit-line-clamp: 2;
 }
 
-.game-card--hand .card-tag {
+.game-card--hand .game-card__age {
   font-size: 9px;
-  padding: 2px 6px;
+  letter-spacing: 0.16em;
 }
 
-.game-card--hand .game-card__stats {
-  gap: 3px;
+.game-card--hand .game-card__initiative {
+  width: 22px;
+  height: 22px;
+  font-size: 10px;
 }
 
-.game-card--hand .game-card__eyebrow {
+.game-card--hand .game-card__count {
+  padding: 1px 6px;
   font-size: 9px;
+}
+
+.game-card--hand .game-card__cost {
+  font-size: 10px;
+}
+
+.game-card--market .game-card__age {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+}
+
+.game-card--market .game-card__initiative {
+  width: 30px;
+  height: 30px;
+  font-size: 12px;
+}
+
+.game-card--market .game-card__count {
+  font-size: 10px;
+  padding: 2px 8px;
 }
 
 .hand-card__top {
@@ -2226,26 +2336,17 @@ h1 {
 
 .market-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 220px));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 250px));
+  gap: 18px;
   justify-content: start;
 }
 
-.market-card,
 .game-card--market {
-  position: relative;
-  display: grid;
-  gap: 8px;
   width: 100%;
-  max-width: 220px;
-  min-height: 280px;
+  max-width: 250px;
+  min-height: 330px;
   aspect-ratio: 2 / 3;
-  padding: 14px;
-  border-radius: 18px;
-  border: 1px solid var(--border);
-  border-left-width: 1px;
-  background: #fffdf6;
-  box-shadow: 0 14px 28px rgba(35, 28, 19, 0.12);
+  padding: 16px;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
@@ -2275,7 +2376,7 @@ h1 {
 
 .market-card__art,
 .game-card--market .game-card__art {
-  height: 88px;
+  height: 124px;
   border-radius: 12px;
   border: 1px dashed rgba(111, 90, 70, 0.35);
   background: linear-gradient(135deg, #f7e4cc, #f2d6b3);
@@ -2297,15 +2398,7 @@ h1 {
 .market-card__header h4,
 .game-card--market .game-card__name {
   margin: 0;
-  font-size: 16px;
-}
-
-.market-card__eyebrow,
-.game-card--market .game-card__eyebrow {
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
+  font-size: 19px;
 }
 
 .market-card__meta,
@@ -2328,8 +2421,9 @@ h1 {
 .market-card__rules,
 .game-card--market .game-card__rules {
   margin: 0;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--ink);
+  -webkit-line-clamp: 5;
 }
 
 .market-card__rules--hidden,

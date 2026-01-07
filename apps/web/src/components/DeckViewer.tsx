@@ -191,7 +191,7 @@ export const DeckViewer = ({ view, playerId, roomId, status }: DeckViewerProps) 
                         card={card}
                         cardId={group.defId}
                         count={group.count}
-                        eyebrow={card?.deck ?? "unknown"}
+                        showId
                         rulesFallback="Unknown card data."
                       />
                     );

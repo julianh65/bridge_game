@@ -17,7 +17,6 @@
 
 ## Active tasks
 - owner: agent3 | scope: implement missing faction starter spell effects (Hold the Line, Marked for Coin, Perfect Recall) + tests | files: `packages/engine/src/card-effects.ts`, `packages/engine/src/cards.ts`, `packages/engine/src/rewards.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md` | status: in progress
-- owner: agent4 | scope: refine GameCard layout (centered title/type, initiative circle, cost line, age label, borders, sizing) per feedback | files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `progress.md` | status: in progress
 - owner: agent1 | scope: relocate board-tools chip (selected hex + reset view) below the board and align with legend | files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css` | status: in progress (overlap: `apps/web/src/styles.css` with agent4)
 
 ## Milestone 8.5 progress
@@ -27,6 +26,7 @@
 - Removed the duplicate action panel, tightened the game view to fit the viewport, and reduced the board height while keeping the intel dock as a fixed overlay.
 - Consolidated the GameScreen layout: moved the action panel into the hand row, added an intel dock for players/log, and tightened the sidebar into status/resources/intel summaries (styles updated).
 - Added a reusable `GameCard` component with art/cost/initiative details, refactored card displays (hand, market, deck, cards browser, free starting offers), and marked the plan item complete in `implementation_plan.md`.
+- Refined `GameCard` layouts: centered titles, italicized type line, initiative circles, age labels above art, cost line with emoji, larger hand/market sizing, and power/champion borders (overlap: `apps/web/src/styles.css` with agent1).
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.
 - Added a Deck tab that shows hand/draw/discard/scrapped piles for the local player, backed by new private `deckCards` data in `GameView`, and marked the plan item complete in `implementation_plan.md`.
 - Refreshed the Home landing page layout/typography and marked the plan item complete in `implementation_plan.md`.
