@@ -2108,6 +2108,7 @@ export const GameScreen = ({
         <button
           type="button"
           className="btn btn-primary market-overlay__toggle"
+          data-sfx="soft"
           onClick={() => setIsMarketOverlayOpen(true)}
         >
           Show Market

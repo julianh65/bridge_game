@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
 
 import { CardsBrowser } from "./components/CardsBrowser";
 import { DeckViewer } from "./components/DeckViewer";
@@ -11,6 +12,7 @@ import { PreGameLobby } from "./components/PreGameLobby";
 import { RoomDebugPanel } from "./components/RoomDebugPanel";
 import { RoomCodeCopy } from "./components/RoomCodeCopy";
 import { useRoom } from "./lib/room-client";
+import { armSfx, getSfxForTarget, playSfx } from "./lib/sfx";
 
 type AppView = "play" | "debug" | "cards" | "deck";
 
@@ -26,6 +28,7 @@ export default function App() {
   const [view, setView] = useState<AppView>("play");
   const [roomConfig, setRoomConfig] = useState<RoomJoinParams | null>(null);
   const room = useRoom(roomConfig);
+  const lastStatusRef = useRef(room.status);
 
   const statusLabel = statusLabels[room.status] ?? "Unknown";
   const statusClass = useMemo(() => {
@@ -43,13 +46,34 @@ export default function App() {
     setRoomConfig(null);
   };
 
+  useEffect(() => {
+    if (room.status === "error" && lastStatusRef.current !== "error") {
+      playSfx("error");
+    }
+    lastStatusRef.current = room.status;
+  }, [room.status]);
+
+  const handlePointerDownCapture = (event: ReactPointerEvent<HTMLElement>) => {
+    if (event.button !== 0) {
+      return;
+    }
+    armSfx();
+    const sfx = getSfxForTarget(event.target);
+    if (sfx) {
+      playSfx(sfx);
+    }
+  };
+
   const showLobby = room.view?.public.phase === "setup";
   const showGame = Boolean(room.view && room.view.public.phase !== "setup");
   const isGameLayout = view === "play" && showGame;
   const showPreGameLobby = Boolean(room.lobby && !room.view);
 
   return (
-    <main className={`app ${isGameLayout ? "app--game" : ""}`}>
+    <main
+      className={`app ${isGameLayout ? "app--game" : ""}`}
+      onPointerDownCapture={handlePointerDownCapture}
+    >
       <nav className="app__nav">
         <div className="app__nav-left">
           <span className="app__nav-label">Bridgefront</span>

@@ -487,7 +487,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [x] UI: add force-count controls for card-driven stack moves.
 - [x] Any text on the board shouldn't be highlightable
 - [ ] Add some animations for units moving during the action reveal phase
-- [ ] I added some random sound effects I downloaded to sound_fx, assign each of them a name / meaning (bell should be for rounds) and add the sound effects to different clicks and stuff, also if you need to feel free to move the sound effects folder and stuff to the appropriate place
+- [x] I added some random sound effects I downloaded to sound_fx, assign each of them a name / meaning (bell should be for rounds) and add the sound effects to different clicks and stuff, also if you need to feel free to move the sound effects folder and stuff to the appropriate place
 
 ## Milestone 9.5 -- Card Art + Description
 

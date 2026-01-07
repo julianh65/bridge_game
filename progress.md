@@ -17,7 +17,6 @@
 
 ## Active tasks
 - none
-- owner: agent4 — scope: add UI sound effects mapping + hook click/bell/error cues — files: `apps/web/src/lib/sfx.ts`, `apps/web/src/App.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/assets/sfx/*`, `implementation_plan.md` — status: in progress
 
 ## Milestone 8.5 progress
 - Simplified the basic actions UI: removed pick/clear buttons, made march/bridge targets clickable fields, and auto-clear march destination when the start changes; marked the plan item complete in `implementation_plan.md`. (Overlap note: touched `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`.)
@@ -129,6 +128,7 @@
 - Added action reveal overlays for basic actions (build bridge/march/reinforce) with A1-style target labels; marked the plan item complete in `implementation_plan.md`. (owner: agent3)
 
 ## Milestone 9 progress
+- Added UI sound effects (click/error/bell) with a global click handler, round bell cue, and moved audio files into web assets; marked the plan item complete in `implementation_plan.md`.
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.
 - Added a victory screen overlay with winner + final VP recap, wired rematch/exit controls, and exposed public VP in `GameView` only after a winner is declared; marked the plan item complete in `implementation_plan.md` (overlap note: touched `apps/web/src/styles.css` alongside agent2 scope).
 - Clarified Pass/Done messaging in the action panel so players know it locks them out for the step, and marked the plan item complete in `implementation_plan.md` (overlap note: `implementation_plan.md` already had pending task additions in the action/market sections).
