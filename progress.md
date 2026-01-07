@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent4] Add Age I bridge/terrain cards (Sabotage Bridge, Bridge Trap, Tunnel Network) to card data and update plan tracking; touch `packages/engine/src/content/cards/age1.ts`, `implementation_plan.md`, `progress.md`. (status: in progress; overlap: `implementation_plan.md` with agent2)
+- none
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
@@ -320,6 +320,7 @@ none
 - Added initial Age I market card stubs and wired the free starting card pool to real card IDs.
 - Added Age I market cards using existing effects: Flank Step, Scavenger's Market, Supply Ledger, Patrol Record.
 - Added Banner Claim (Victory: move 1 stack 1 hex along a Bridge) to the Age I market card list.
+- Added Age I bridge/terrain cards (Sabotage Bridge, Bridge Trap, Tunnel Network) using existing bridge effect primitives.
 - Added card registry tests for unique IDs and starter/free-start coverage.
 - Added an initial Age I market deck list export under `packages/engine/src/content/market-decks.ts`.
 - Added market deck tests to validate ids are unique, registered, and age-appropriate.

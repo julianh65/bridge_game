@@ -101,6 +101,54 @@ export const TEMPORARY_BRIDGE: CardDef = {
   effects: [{ kind: "buildBridge", temporary: true }]
 };
 
+export const SABOTAGE_BRIDGE: CardDef = {
+  id: "age1.sabotage_bridge",
+  name: "Sabotage Bridge",
+  rulesText: "Destroy a Bridge adjacent to a hex you occupy.",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 2 },
+  initiative: 65,
+  burn: false,
+  targetSpec: {
+    kind: "edge"
+  },
+  effects: [{ kind: "destroyBridge" }]
+};
+
+export const BRIDGE_TRAP: CardDef = {
+  id: "age1.bridge_trap",
+  name: "Bridge Trap",
+  rulesText:
+    "Choose a Bridge adjacent to a hex you occupy. The first enemy stack to cross it this round loses 1 Force (random).",
+  type: "Spell",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1 },
+  initiative: 55,
+  burn: false,
+  targetSpec: {
+    kind: "edge"
+  },
+  effects: [{ kind: "trapBridge" }]
+};
+
+export const TUNNEL_NETWORK: CardDef = {
+  id: "age1.tunnel_network",
+  name: "Tunnel Network",
+  rulesText:
+    "Your Capital is considered connected to the center by a Bridge until end of round. Burn.",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1 },
+  initiative: 80,
+  burn: true,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "linkCapitalToCenter" }]
+};
+
 export const PATCH_UP: CardDef = {
   id: "age1.patch_up",
   name: "Patch Up",
@@ -284,6 +332,9 @@ export const AGE1_CARDS: CardDef[] = [
   TRADE_CARAVAN,
   SCAVENGERS_MARKET,
   TEMPORARY_BRIDGE,
+  SABOTAGE_BRIDGE,
+  BRIDGE_TRAP,
+  TUNNEL_NETWORK,
   PATCH_UP,
   QUICK_STUDY,
   SUPPLY_LEDGER,
