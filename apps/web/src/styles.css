@@ -882,6 +882,14 @@ h1 {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  overflow: hidden;
+}
+
+.faction-symbol__icon {
+  width: 70%;
+  height: 70%;
+  display: block;
+  object-fit: contain;
 }
 
 .faction-symbol--small {
@@ -1242,11 +1250,11 @@ h1 {
 
 .game-card__vp {
   margin: 0;
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 999px;
   border: 1px solid rgba(22, 101, 52, 0.2);
   background: rgba(34, 197, 94, 0.15);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: #166534;
 }
@@ -4341,6 +4349,10 @@ h1 {
   stroke: rgba(25, 20, 14, 0.6);
   stroke-width: 0.8;
   letter-spacing: 0.2px;
+}
+
+.unit-faction__icon {
+  filter: brightness(0) invert(0.9);
 }
 
 @keyframes unit-stack-arrive {
