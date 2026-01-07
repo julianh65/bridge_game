@@ -66,6 +66,7 @@ none
 - Added a host-only debug state patch tool in the room debug panel + server command, and marked the plan item complete in `implementation_plan.md`.
 - Added a champion crest marker on unit stacks to make champion presence easier to spot on the board.
 - Added faction badges on unit stacks to help differentiate ownership at a glance.
+- Overlap note: commit included pre-staged battle UX files `apps/web/src/components/CombatOverlay.tsx` and `apps/web/src/lib/combat-log.ts` from another agent's scope.
 - Added combat round logging with dice/hit assignment payloads and a battle overlay that supports click-to-roll dice with hit assignment display; marked the Milestone 9 battle UX item complete in `implementation_plan.md`.
 
 ## Bug audit progress
