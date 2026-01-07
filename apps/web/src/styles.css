@@ -3413,6 +3413,10 @@ body.is-game .status-pill--idle {
   background: #fff7e6;
 }
 
+body.is-game .collection-prompt {
+  background: rgba(28, 20, 15, 0.9);
+}
+
 .collection-prompt__header {
   display: flex;
   align-items: center;
@@ -3433,9 +3437,33 @@ body.is-game .status-pill--idle {
   background: #f6f0e4;
 }
 
+body.is-game .collection-prompt__meta {
+  background: #2a1e16;
+}
+
 .collection-prompt__section {
   display: grid;
   gap: 6px;
+}
+
+.collection-roll {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px dashed var(--border);
+  background: #fff1d6;
+}
+
+body.is-game .collection-roll {
+  background: rgba(44, 31, 22, 0.6);
+  border-color: #4a3627;
+}
+
+.collection-roll__label {
+  font-size: 12px;
+  color: var(--muted);
 }
 
 .collection-card-grid {

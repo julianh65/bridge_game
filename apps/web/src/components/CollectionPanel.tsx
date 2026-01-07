@@ -10,8 +10,12 @@ import {
 
 import type { RoomConnectionStatus } from "../lib/room-client";
 import { GameCard } from "./GameCard";
+import { NumberRoll } from "./NumberRoll";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
+
+const COLLECTION_ROLL_SIDES = 6;
+const COLLECTION_ROLL_DURATION_MS = 900;
 
 type CollectionPanelProps = {
   phase: GameView["public"]["phase"];
@@ -123,12 +127,48 @@ export const CollectionPanel = ({
     [prompts]
   );
   const [selections, setSelections] = useState<Record<string, CollectionChoice | null>>({});
+  const [promptRolls, setPromptRolls] = useState<
+    Record<string, { revealed: boolean; roll: number; rollKey: string }>
+  >({});
   const handCardIds = useMemo(() => new Set(handCards.map((card) => card.id)), [handCards]);
   const playerNames = useMemo(
     () => new Map(players.map((entry) => [entry.id, entry.name])),
     [players]
   );
   const waitingFor = collectionPublic?.waitingForPlayerIds ?? [];
+
+  useEffect(() => {
+    const next: Record<string, { revealed: boolean; roll: number; rollKey: string }> = {};
+    prompts.forEach((prompt, index) => {
+      const key = getPromptKey(prompt.kind, prompt.hexKey);
+      const hasReveal = prompt.revealed.length > 0;
+      const roll = Math.floor(Math.random() * COLLECTION_ROLL_SIDES) + 1;
+      next[key] = {
+        revealed: !hasReveal,
+        roll,
+        rollKey: `${promptSignature}-${index}-${roll}`
+      };
+    });
+    setPromptRolls(next);
+  }, [promptSignature, prompts]);
+
+  useEffect(() => {
+    if (prompts.length === 0) {
+      return;
+    }
+    const timeout = window.setTimeout(() => {
+      setPromptRolls((current) => {
+        const next = { ...current };
+        for (const key of Object.keys(next)) {
+          next[key] = { ...next[key], revealed: true };
+        }
+        return next;
+      });
+    }, COLLECTION_ROLL_DURATION_MS + 150);
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [promptSignature, prompts.length]);
 
   useEffect(() => {
     const next: Record<string, CollectionChoice | null> = {};
@@ -217,6 +257,10 @@ export const CollectionPanel = ({
             {prompts.map((prompt) => {
               const key = getPromptKey(prompt.kind, prompt.hexKey);
               const selection = selections[key];
+              const rollState = promptRolls[key];
+              const isRevealPending = Boolean(
+                rollState && !rollState.revealed && prompt.revealed.length > 0
+              );
 
               if (prompt.kind === "mine") {
                 const selectedGold = selection?.kind === "mine" && selection.choice === "gold";
@@ -266,6 +310,20 @@ export const CollectionPanel = ({
                       {prompt.revealed.length === 0 ? (
                         <div className="collection-prompt__note">
                           No card revealed.
+                        </div>
+                      ) : isRevealPending ? (
+                        <div className="collection-roll">
+                          <NumberRoll
+                            value={rollState?.roll ?? 1}
+                            sides={COLLECTION_ROLL_SIDES}
+                            durationMs={COLLECTION_ROLL_DURATION_MS}
+                            rollKey={rollState?.rollKey}
+                            className="number-roll--lg"
+                            label="Mine draw roll"
+                          />
+                          <span className="collection-roll__label">
+                            Revealing mine draw...
+                          </span>
                         </div>
                       ) : (
                         <>
@@ -379,6 +437,20 @@ export const CollectionPanel = ({
                         <div className="collection-prompt__note">
                           No cards revealed.
                         </div>
+                      ) : isRevealPending ? (
+                        <div className="collection-roll">
+                          <NumberRoll
+                            value={rollState?.roll ?? 1}
+                            sides={COLLECTION_ROLL_SIDES}
+                            durationMs={COLLECTION_ROLL_DURATION_MS}
+                            rollKey={rollState?.rollKey}
+                            className="number-roll--lg"
+                            label="Forge draw roll"
+                          />
+                          <span className="collection-roll__label">
+                            Revealing forge draw...
+                          </span>
+                        </div>
                       ) : (
                         <div className="collection-card-grid">
                           {prompt.revealed.map((cardId) => {
@@ -423,6 +495,20 @@ export const CollectionPanel = ({
                       {prompt.revealed.length === 0 ? (
                         <div className="collection-prompt__note">
                           No cards revealed.
+                        </div>
+                      ) : isRevealPending ? (
+                        <div className="collection-roll">
+                          <NumberRoll
+                            value={rollState?.roll ?? 1}
+                            sides={COLLECTION_ROLL_SIDES}
+                            durationMs={COLLECTION_ROLL_DURATION_MS}
+                            rollKey={rollState?.rollKey}
+                            className="number-roll--lg"
+                            label="Center draw roll"
+                          />
+                          <span className="collection-roll__label">
+                            Revealing center draw...
+                          </span>
                         </div>
                       ) : (
                         <div className="collection-card-grid">
