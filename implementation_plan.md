@@ -420,7 +420,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 ### Tasks (web - action flow + layout)
 - [x] Make only valid targets highlightable, like right now to build a bridge it will highlight the possible edges right, you should only be able to click on the edges not the hexes
-- [ ] (harder and urgent) Right now the basic bridge building action is not smooth, you need to click the bridge, then click pick, then click from the potential options, and it still doesn't pick them correctly even after you click them. This needs to be fixed
+- [x] (harder and urgent) Right now the basic bridge building action is not smooth, you need to click the bridge, then click pick, then click from the potential options, and it still doesn't pick them correctly even after you click them. This needs to be fixed
 
 ### Tasks (web - motion + phase clarity)
 - [x] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen. This is after everyone locks in their actions. I want it to be like Player 1, show the card they played and flash it up, then show where they did it or something and make it extensible so later we can add animations or sound effects or something here. Pieces also need to animate move around the board.
@@ -444,7 +444,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] The basic actions in the card hand panel below needs to be reworked, it's taking up too much horizontal space, The bridge march reinforce buttons should be stacked and be thinner and we can probably streamline the whole UI of each when they're expanded
 - [x] The draw, Discard and Scrapped can be pills at the top of the container and are taking up too much space
 - [x] The Pass and Submit actions should be floating in the middle bottom of the container and be larger
-- [ ] Mousing over a champion chit on the board should give a small pop up showing more info on the champion, the health, the card itself maybe, the damage and modifiers on it etc...
+- [x] Mousing over a champion chit on the board should give a small pop up showing more info on the champion, the health, the card itself maybe, the damage and modifiers on it etc...
 - [x] The reveal length for each action should be configurable from settings
 - [x] The reveal modal that pops up shouldn't have the card ID on it
 - [ ] When hovering over a card in your hand and it pops out, it should be higher z index than anything else and not be contained if that's possible, right now it pops out but is contained by both its parent containers
@@ -490,6 +490,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] At the end of the market phase we don't see the nice animation and transition for the last player who auto gets it
 - [x] It needs to be much more clear that Done is like "Pass" and won't let you go again
 - [ ] Do a targetted review and cleanup of the codebase, try to find things that aren't being used anymore, are wrong etc... and clean it up, without breaking behavior.
+- [ ] Small, the board that displays in the re-roll container on setup spills outside its parent
+- [ ] Add a confirm if they click pass and they still have mana
 
 ## Milestone 9.5 -- Card Art + Description
 

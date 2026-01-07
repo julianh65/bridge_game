@@ -661,6 +661,21 @@ export const GameScreen = ({
     }
   };
 
+  const handleBasicActionIntentChange = (intent: BasicActionIntent) => {
+    if (intent === "bridge") {
+      setBoardPickModeSafe("bridgeEdge");
+      return;
+    }
+    if (intent === "march") {
+      setBoardPickModeSafe("marchFrom");
+      return;
+    }
+    setBasicActionIntent(intent);
+    if (boardPickMode !== "none") {
+      setBoardPickModeSafe("none");
+    }
+  };
+
   useEffect(() => {
     if (!isActionPhase) {
       setBoardPickMode("none");
@@ -1072,7 +1087,7 @@ export const GameScreen = ({
   const handleBoardEdgeClick = (edgeKey: string) => {
     if (boardPickMode === "bridgeEdge") {
       setEdgeKey(edgeKey);
-      setPendingEdgeStart(null);
+      setBoardPickModeSafe("none");
       return;
     }
     if (boardPickMode === "cardEdge") {
@@ -1837,7 +1852,7 @@ export const GameScreen = ({
         reinforceOptions={reinforceOptions}
         boardPickMode={boardPickMode}
         basicActionIntent={basicActionIntent}
-        onBasicActionIntentChange={setBasicActionIntent}
+        onBasicActionIntentChange={handleBasicActionIntentChange}
         onEdgeKeyChange={setEdgeKey}
         onMarchFromChange={setMarchFrom}
         onMarchToChange={setMarchTo}

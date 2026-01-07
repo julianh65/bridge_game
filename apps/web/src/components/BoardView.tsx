@@ -5,7 +5,7 @@ import type {
   WheelEventHandler
 } from "react";
 
-import { CARD_DEFS_BY_ID, type BoardState } from "@bridgefront/engine";
+import { CARD_DEFS_BY_ID, type BoardState, type UseCounter } from "@bridgefront/engine";
 import { parseEdgeKey } from "@bridgefront/shared";
 
 import { HEX_SIZE, hexPoints } from "../lib/hex-geometry";
@@ -41,6 +41,40 @@ type BoardViewProps = {
   isTargeting?: boolean;
 };
 
+type TooltipTone = "title" | "label" | "body";
+
+type TooltipLine = {
+  text: string;
+  tone: TooltipTone;
+};
+
+type ChampionDetail = {
+  id: string;
+  cardDefId: string;
+  name: string;
+  hp: number;
+  maxHp: number;
+  attackDice: number;
+  hitFaces: number;
+  bounty: number;
+  abilityUses: Record<string, UseCounter>;
+};
+
+type ChampionToken = {
+  label: string;
+  isExtra: boolean;
+  champion?: ChampionDetail;
+  extraCount?: number;
+};
+
+type ChampionTooltip = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  lines: TooltipLine[];
+};
+
 const HEX_DRAW_SCALE = 0.94;
 const HEX_DRAW_SIZE = HEX_SIZE * HEX_DRAW_SCALE;
 const BRIDGE_INSET = HEX_DRAW_SIZE * 0.4;
@@ -49,6 +83,14 @@ const BRIDGE_RAIL_OFFSET = BRIDGE_WIDTH * 0.38;
 const BRIDGE_PLANK_EDGE_PAD = BRIDGE_WIDTH * 0.6;
 const BRIDGE_PLANK_SPACING = HEX_DRAW_SIZE * 0.28;
 const BRIDGE_PLANK_LENGTH = BRIDGE_WIDTH * 0.85;
+const TOOLTIP_MIN_WIDTH = 132;
+const TOOLTIP_MAX_WIDTH = 240;
+const TOOLTIP_CHAR_WIDTH = 6.2;
+const TOOLTIP_LINE_HEIGHT = 12;
+const TOOLTIP_PADDING_X = 8;
+const TOOLTIP_PADDING_Y = 6;
+const TOOLTIP_OFFSET_X = 14;
+const TOOLTIP_OFFSET_Y = 16;
 
 const shortenSegment = (
   from: { x: number; y: number },
@@ -141,6 +183,81 @@ const getFactionBadge = (factionId?: string | null): string | null => {
   return symbol.toUpperCase();
 };
 
+const formatAbilityName = (abilityId: string) =>
+  abilityId.replace(/_/g, " ").replace(/([a-z0-9])([A-Z])/g, "$1 $2");
+
+const formatAbilityUses = (uses: Record<string, UseCounter>): string | null => {
+  const entries = Object.entries(uses);
+  if (entries.length === 0) {
+    return null;
+  }
+  return entries
+    .map(([abilityId, counter]) => `${formatAbilityName(abilityId)} ${counter.remaining}`)
+    .join(", ");
+};
+
+const wrapText = (text: string, maxLength: number): string[] => {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) {
+    return [];
+  }
+  const lines: string[] = [];
+  let current = "";
+  for (const word of words) {
+    const next = current ? `${current} ${word}` : word;
+    if (next.length > maxLength && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = next;
+    }
+  }
+  if (current) {
+    lines.push(current);
+  }
+  return lines;
+};
+
+const limitTextLines = (lines: string[], maxLines: number): string[] => {
+  if (lines.length <= maxLines) {
+    return lines;
+  }
+  const trimmed = lines.slice(0, maxLines);
+  const lastIndex = trimmed.length - 1;
+  trimmed[lastIndex] = trimmed[lastIndex].replace(/\.*$/, "") + "...";
+  return trimmed;
+};
+
+const buildChampionTooltipLines = (champion: ChampionDetail): TooltipLine[] => {
+  const damage = Math.max(0, champion.maxHp - champion.hp);
+  const lines: TooltipLine[] = [
+    { text: champion.name, tone: "title" },
+    { text: `HP ${champion.hp}/${champion.maxHp} (damage ${damage})`, tone: "body" },
+    { text: `Attack ${champion.attackDice}d${champion.hitFaces}`, tone: "body" },
+    { text: `Bounty ${champion.bounty}`, tone: "body" }
+  ];
+  const uses = formatAbilityUses(champion.abilityUses);
+  if (uses) {
+    lines.push({ text: `Uses: ${uses}`, tone: "body" });
+  }
+  const rulesText = CARD_DEFS_BY_ID[champion.cardDefId]?.rulesText?.trim();
+  if (rulesText) {
+    lines.push({ text: "Rules:", tone: "label" });
+    const wrapped = limitTextLines(wrapText(rulesText, 34), 2);
+    wrapped.forEach((line) => {
+      lines.push({ text: line, tone: "body" });
+    });
+  }
+  return lines;
+};
+
+const buildExtraChampionTooltipLines = (extraCount: number): TooltipLine[] => [
+  {
+    text: `${extraCount} more champion${extraCount === 1 ? "" : "s"}`,
+    tone: "body"
+  }
+];
+
 const viewBoxEquals = (a: ViewBox, b: ViewBox): boolean => {
   const epsilon = 0.01;
   return (
@@ -195,6 +312,7 @@ export const BoardView = ({
   const baseViewBox = useMemo(() => boundsForHexes(hexes), [hexes]);
   const [viewBox, setViewBox] = useState(baseViewBox);
   const [isPanning, setIsPanning] = useState(false);
+  const [championTooltip, setChampionTooltip] = useState<ChampionTooltip | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const lastBaseViewBoxRef = useRef<ViewBox | null>(null);
   const lastResetTokenRef = useRef<number | null>(resetViewToken ?? null);
@@ -223,6 +341,18 @@ export const BoardView = ({
       lastResetTokenRef.current = resetToken;
     }
   }, [baseViewBox, resetViewToken]);
+
+  useEffect(() => {
+    if (isPanning) {
+      setChampionTooltip(null);
+    }
+  }, [isPanning]);
+
+  useEffect(() => {
+    if (!board) {
+      setChampionTooltip(null);
+    }
+  }, [board]);
   const hexCenters = useMemo(() => {
     const map = new Map<string, { x: number; y: number }>();
     for (const hex of hexes) {
@@ -315,13 +445,7 @@ export const BoardView = ({
       ownerPlayerId: string;
       forceCount: number;
       championCount: number;
-      championDetails: Array<{
-        id: string;
-        cardDefId: string;
-        name: string;
-        hp: number;
-        maxHp: number;
-      }>;
+      championDetails: ChampionDetail[];
       offsetIndex: number;
       occupantCount: number;
     }> = [];
@@ -339,12 +463,7 @@ export const BoardView = ({
       occupants.forEach(([playerId, unitIds], index) => {
         let forceCount = 0;
         let championCount = 0;
-        const championDetails: Array<{
-          id: string;
-          cardDefId: string;
-          hp: number;
-          maxHp: number;
-        }> = [];
+        const championDetails: ChampionDetail[] = [];
         for (const unitId of unitIds) {
           const unit = board.units[unitId];
           if (!unit) {
@@ -360,7 +479,11 @@ export const BoardView = ({
               cardDefId: unit.cardDefId,
               name,
               hp: unit.hp,
-              maxHp: unit.maxHp
+              maxHp: unit.maxHp,
+              attackDice: unit.attackDice,
+              hitFaces: unit.hitFaces,
+              bounty: unit.bounty,
+              abilityUses: unit.abilityUses ?? {}
             });
           }
         }
@@ -461,6 +584,33 @@ export const BoardView = ({
       first.clientY - second.clientY
     );
     return { distance, center };
+  };
+
+  const buildTooltip = (
+    lines: TooltipLine[],
+    anchorX: number,
+    anchorY: number
+  ): ChampionTooltip | null => {
+    if (lines.length === 0) {
+      return null;
+    }
+    const longestLine = Math.max(...lines.map((line) => line.text.length));
+    const estimatedWidth = longestLine * TOOLTIP_CHAR_WIDTH + TOOLTIP_PADDING_X * 2;
+    const width = clamp(estimatedWidth, TOOLTIP_MIN_WIDTH, TOOLTIP_MAX_WIDTH);
+    const height = lines.length * TOOLTIP_LINE_HEIGHT + TOOLTIP_PADDING_Y * 2;
+    const rawX = anchorX + TOOLTIP_OFFSET_X;
+    const rawY = anchorY - height - TOOLTIP_OFFSET_Y;
+    const minX = viewBox.minX + 4;
+    const maxX = viewBox.minX + viewBox.width - width - 4;
+    const minY = viewBox.minY + 4;
+    const maxY = viewBox.minY + viewBox.height - height - 4;
+    return {
+      x: clamp(rawX, minX, maxX),
+      y: clamp(rawY, minY, maxY),
+      width,
+      height,
+      lines
+    };
   };
 
   const handleWheel: WheelEventHandler<SVGSVGElement> = (event) => {
@@ -654,6 +804,7 @@ export const BoardView = ({
     dragStartRef.current = null;
     setIsPanning(false);
     didDragRef.current = false;
+    setChampionTooltip(null);
   };
 
   const handlePointerLeave: PointerEventHandler<SVGSVGElement> = (event) => {
@@ -667,6 +818,7 @@ export const BoardView = ({
     pinchRef.current = null;
     setIsPanning(false);
     didDragRef.current = false;
+    setChampionTooltip(null);
   };
 
   const clickable = Boolean(onHexClick);
@@ -918,22 +1070,22 @@ export const BoardView = ({
         const offset = offsets[stack.offsetIndex % offsets.length] ?? offsets[0];
         const stackX = stack.x + offset.dx;
         const stackY = stack.y + offset.dy;
-        const championTokens = (() => {
+        const championTokens: ChampionToken[] = (() => {
           if (stack.championDetails.length === 0) {
             return [];
           }
           const maxTokens = 3;
           const tokens = stack.championDetails.slice(0, maxTokens).map((champion) => ({
             label: getChampionGlyph(champion.name),
-            title: `${champion.name} ${champion.hp}/${champion.maxHp}`,
-            isExtra: false
+            isExtra: false,
+            champion
           }));
           const extraCount = stack.championDetails.length - maxTokens;
           if (extraCount > 0) {
             tokens.push({
               label: `+${extraCount}`,
-              title: `${extraCount} more champion${extraCount === 1 ? "" : "s"}`,
-              isExtra: true
+              isExtra: true,
+              extraCount
             });
           }
           return tokens;
@@ -946,9 +1098,7 @@ export const BoardView = ({
           championTokens.length * tokenDiameter +
           Math.max(0, championTokens.length - 1) * tokenGap;
         const tokenLayout = championTokens.map((token, index) => ({
-          label: token.label,
-          title: token.title,
-          isExtra: token.isExtra,
+          ...token,
           cx: -totalTokenWidth / 2 + tokenRadius + index * (tokenDiameter + tokenGap),
           cy: tokenCenterY
         }));
@@ -1065,9 +1215,26 @@ export const BoardView = ({
               ]
                 .filter(Boolean)
                 .join(" ");
+              const anchorX = stackX + token.cx;
+              const anchorY = stackY + token.cy;
+              const handleTokenEnter = () => {
+                if (isPanning || didDragRef.current) {
+                  return;
+                }
+                const lines = token.champion
+                  ? buildChampionTooltipLines(token.champion)
+                  : buildExtraChampionTooltipLines(token.extraCount ?? 0);
+                const tooltip = buildTooltip(lines, anchorX, anchorY);
+                if (tooltip) {
+                  setChampionTooltip(tooltip);
+                }
+              };
               return (
-                <g key={`${stack.key}-champion-${index}`}>
-                  <title>{token.title}</title>
+                <g
+                  key={`${stack.key}-champion-${index}`}
+                  onMouseEnter={handleTokenEnter}
+                  onMouseLeave={() => setChampionTooltip(null)}
+                >
                   <circle className={ringClass} cx={token.cx} cy={token.cy} r={tokenRadius} />
                   <text className={textClass} x={token.cx} y={token.cy + 0.5}>
                     {token.label}
@@ -1078,6 +1245,46 @@ export const BoardView = ({
           </g>
         );
       })}
+      {championTooltip ? (
+        <g
+          className="champion-tooltip"
+          transform={`translate(${championTooltip.x} ${championTooltip.y})`}
+        >
+          <rect
+            className="champion-tooltip__box"
+            x={0}
+            y={0}
+            width={championTooltip.width}
+            height={championTooltip.height}
+            rx={6}
+            ry={6}
+          />
+          <text
+            className="champion-tooltip__text"
+            x={TOOLTIP_PADDING_X}
+            y={TOOLTIP_PADDING_Y + TOOLTIP_LINE_HEIGHT - 2}
+          >
+            {championTooltip.lines.map((line, index) => {
+              const lineClass =
+                line.tone === "title"
+                  ? "champion-tooltip__title"
+                  : line.tone === "label"
+                    ? "champion-tooltip__label"
+                    : "champion-tooltip__line";
+              return (
+                <tspan
+                  key={`champion-tooltip-line-${index}`}
+                  className={lineClass}
+                  x={TOOLTIP_PADDING_X}
+                  y={TOOLTIP_PADDING_Y + TOOLTIP_LINE_HEIGHT * (index + 1) - 2}
+                >
+                  {line.text}
+                </tspan>
+              );
+            })}
+          </text>
+        </g>
+      ) : null}
     </svg>
   );
 };
