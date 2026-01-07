@@ -16,10 +16,11 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- [agent4] Add Age I bridge/terrain cards (Sabotage Bridge, Bridge Trap, Tunnel Network) to card data and update plan tracking; touch `packages/engine/src/content/cards/age1.ts`, `implementation_plan.md`, `progress.md`. (status: in progress; overlap: `implementation_plan.md` with agent2)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
+- Thickened power/champion GameCard borders for clearer differentiation and marked the plan item complete. (Overlap note: `apps/web/src/styles.css` touched.)
 - Simplified the basic actions UI: removed pick/clear buttons, made march/bridge targets clickable fields, and auto-clear march destination when the start changes; marked the plan item complete in `implementation_plan.md`. (Overlap note: touched `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`.)
 - Extended the market overlay outro hold so the hand panel stays hidden briefly after market phase ends if the overlay was open; marked the plan item complete in `implementation_plan.md`. (Overlap note: `implementation_plan.md` had pre-existing edits; touched `apps/web/src/components/GameScreen.tsx`.)
 - Restored basic action auto-pick mode on selection (bridge/march) per feedback; updated the plan item to match. (Overlap note: `apps/web/src/components/GameScreen.tsx` touched alongside agent1 scope.)

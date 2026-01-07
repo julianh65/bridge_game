@@ -430,6 +430,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [x] Added Flank Step, Scavenger's Market, Supply Ledger, Patrol Record (existing effects only).
   - [x] Added Banner Claim (Victory: move 1 stack 1 hex along a Bridge).
 - [ ] Add remaining Age I market cards + Age I market champions per rules_draft (movement/recruit/economy/deckcraft/combat/bridges/synergy/victory).
+  - [x] Added Sabotage Bridge, Bridge Trap, and Tunnel Network (bridge/terrain effects).
 - Expand Age II/III market + power deck lists to match the latest rules_draft (including power champions and burn-heavy cards).
   - [ ] Age II market cards + champions (47 cards + 8 champions).
   - [ ] Age III market cards + champions (47 cards + 8 champions).
@@ -494,7 +495,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] After the market phase while we're showing the last card, the hand modal instantly pops up
 - [x] The basic actions require too many clicks and that UI is cluttered, cut it down like reinforce is only in the capital we don't need to show that, or march doesn't need all of that jazz
 - [x] add some text to the gold and VP chits at the top that says gold or VP
-- [ ] small / medium, make the borders on the cards for power cards vs champions slightly thicker and better looking
+- [x] small / medium, make the borders on the cards for power cards vs champions slightly thicker and better looking
 ## Milestone 9 — Add Polish
 
 ### Tasks
