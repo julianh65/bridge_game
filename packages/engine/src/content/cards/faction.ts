@@ -221,7 +221,7 @@ export const MINE_OVERSEER: CardDef = {
 export const ARCHIVIST_PRIME: CardDef = {
   id: "champion.cipher.archivist_prime",
   name: "Archivist Prime",
-  rulesText: "Ability: TODO.",
+  rulesText: "Gain +1 attack die for each card you have played this round.",
   type: "Champion",
   deck: "starter",
   tags: ["starter", "faction"],
@@ -246,7 +246,7 @@ export const ARCHIVIST_PRIME: CardDef = {
 export const WORMHOLE_ARTIFICER: CardDef = {
   id: "champion.gatewright.wormhole_artificer",
   name: "Wormhole Artificer",
-  rulesText: "Ability: TODO.",
+  rulesText: "If moving alone, may move +1 hex.",
   type: "Champion",
   deck: "starter",
   tags: ["starter", "faction"],

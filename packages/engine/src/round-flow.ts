@@ -24,7 +24,7 @@ import {
   getCardChoiceCount,
   getControlValue
 } from "./modifiers";
-import { MOVED_THIS_ROUND_FLAG } from "./player-flags";
+import { CARDS_PLAYED_THIS_ROUND_FLAG, MOVED_THIS_ROUND_FLAG } from "./player-flags";
 
 const MINE_OVERSEER_CHAMPION_ID = "champion.prospect.mine_overseer";
 
@@ -45,7 +45,8 @@ export const applyRoundReset = (state: GameState): GameState => {
       doneThisRound: false,
       flags: {
         ...player.flags,
-        [MOVED_THIS_ROUND_FLAG]: false
+        [MOVED_THIS_ROUND_FLAG]: false,
+        [CARDS_PLAYED_THIS_ROUND_FLAG]: 0
       }
     }))
   };

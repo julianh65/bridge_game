@@ -18,7 +18,7 @@ import { getCardDef } from "./content/cards";
 import { resolveCapitalDeployHex } from "./deploy-utils";
 import { emit } from "./events";
 import { getDeployForcesCount } from "./modifiers";
-import { markPlayerMovedThisRound } from "./player-flags";
+import { incrementCardsPlayedThisRound, markPlayerMovedThisRound } from "./player-flags";
 import { addForcesToHex, countPlayerChampions, moveStack } from "./units";
 
 const BASIC_ACTION_MANA_COST = 1;
@@ -335,6 +335,7 @@ export const applyActionDeclaration = (
 
   if (declaration.kind === "card") {
     nextState = removeCardFromHand(nextState, playerId, declaration.cardInstanceId);
+    nextState = incrementCardsPlayedThisRound(nextState, playerId);
   }
 
   return nextState;

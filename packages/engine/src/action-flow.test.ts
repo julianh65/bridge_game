@@ -2,7 +2,9 @@ import { areAdjacent, neighborHexKeys, parseEdgeKey, parseHexKey } from "@bridge
 import { describe, expect, it } from "vitest";
 
 import type { BoardState, EdgeKey, GameState, HexKey } from "./types";
+import { createBaseBoard } from "./board-generation";
 import { createCardInstance, createCardInstances } from "./cards";
+import { validateMovePath } from "./card-effects";
 import { getCardDef } from "./content/cards";
 import {
   applyCommand,
@@ -14,6 +16,7 @@ import {
 } from "./index";
 import { applyChampionDeployment } from "./champions";
 import { applyModifierQuery, getCombatModifiers } from "./modifiers";
+import { getCardsPlayedThisRound, incrementCardsPlayedThisRound } from "./player-flags";
 import { addForcesToHex } from "./units";
 
 const pickStartingEdges = (capital: HexKey, board: BoardState): EdgeKey[] => {
@@ -74,6 +77,34 @@ const pickNonAdjacentMinePair = (board: BoardState): [HexKey, HexKey] => {
     }
   }
   throw new Error("no non-adjacent mine pair found");
+};
+
+const buildLinearPath = (start: HexKey, steps: number, board: BoardState): HexKey[] => {
+  const neighbors = neighborHexKeys(start).filter((key) => Boolean(board.hexes[key]));
+  const first = neighbors[0];
+  if (!first) {
+    throw new Error("missing neighbor for path");
+  }
+  const startCoord = parseHexKey(start);
+  const nextCoord = parseHexKey(first);
+  const dq = nextCoord.q - startCoord.q;
+  const dr = nextCoord.r - startCoord.r;
+
+  const path: HexKey[] = [start];
+  let q = startCoord.q;
+  let r = startCoord.r;
+
+  for (let step = 0; step < steps; step += 1) {
+    q += dq;
+    r += dr;
+    const key = `${q},${r}`;
+    if (!board.hexes[key]) {
+      throw new Error(`missing path hex: ${key}`);
+    }
+    path.push(key);
+  }
+
+  return path;
 };
 
 const advanceThroughMarket = (state: GameState): GameState => {
@@ -334,6 +365,27 @@ describe("action flow", () => {
     expect(state.phase).toBe("round.action");
     expect(state.blocks?.type).toBe("actionStep.declarations");
     expect(state.blocks?.waitingFor.length).toBe(2);
+  });
+
+  it("tracks cards played this round when declaring a card", () => {
+    let { state } = setupToActionPhase();
+    const injected = addCardToHand(state, "p1", "starter.supply_cache");
+    state = injected.state;
+
+    const before = getCardsPlayedThisRound(state, "p1");
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId
+        }
+      },
+      "p1"
+    );
+
+    expect(getCardsPlayedThisRound(state, "p1")).toBe(before + 1);
   });
 
   it("resolves build bridge actions and spends mana", () => {
@@ -1534,6 +1586,125 @@ describe("action flow", () => {
     expect(p1After.resources).toEqual(p1Before.resources);
     expect(p1After.deck.hand).toContain(championCard.instanceId);
     expect(state.blocks?.waitingFor ?? []).toContain("p1");
+  });
+
+  it("boosts Archivist Prime attack dice for cards played this round", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    const unitId = "c_archivist";
+
+    board.units = {
+      [unitId]: {
+        id: unitId,
+        ownerPlayerId: "p1",
+        kind: "champion",
+        hex: hexKey,
+        cardDefId: "champion.cipher.archivist_prime",
+        hp: 5,
+        maxHp: 5,
+        attackDice: 1,
+        hitFaces: 2,
+        bounty: 3,
+        abilityUses: {}
+      }
+    };
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        ...board.hexes[hexKey]?.occupants,
+        p1: [unitId]
+      }
+    };
+
+    let state: GameState = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      board
+    };
+    state = applyChampionDeployment(state, unitId, "champion.cipher.archivist_prime", "p1");
+    state = incrementCardsPlayedThisRound(state, "p1", 2);
+
+    const unit = state.board.units[unitId];
+    if (!unit || unit.kind !== "champion") {
+      throw new Error("missing archivist prime unit");
+    }
+    const modifiers = getCombatModifiers(state, hexKey);
+    const attackDice = applyModifierQuery(
+      state,
+      modifiers,
+      (hooks) => hooks.getChampionAttackDice,
+      {
+        hexKey,
+        attackerPlayerId: "p1",
+        defenderPlayerId: "p2",
+        round: 1,
+        side: "attackers",
+        unitId,
+        unit
+      },
+      unit.attackDice
+    );
+
+    expect(attackDice).toBe(unit.attackDice + 2);
+  });
+
+  it("lets Wormhole Artificer move an extra hex when alone", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(3);
+    const hexKey = "0,0";
+    const unitId = "c_wormhole";
+
+    board.units = {
+      [unitId]: {
+        id: unitId,
+        ownerPlayerId: "p1",
+        kind: "champion",
+        hex: hexKey,
+        cardDefId: "champion.gatewright.wormhole_artificer",
+        hp: 5,
+        maxHp: 5,
+        attackDice: 2,
+        hitFaces: 3,
+        bounty: 3,
+        abilityUses: {}
+      }
+    };
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        ...board.hexes[hexKey]?.occupants,
+        p1: [unitId]
+      }
+    };
+
+    let state: GameState = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      board
+    };
+    state = applyChampionDeployment(
+      state,
+      unitId,
+      "champion.gatewright.wormhole_artificer",
+      "p1"
+    );
+
+    const path = buildLinearPath(hexKey, 3, board);
+    const validated = validateMovePath(state, "p1", path, {
+      maxDistance: 2,
+      requiresBridge: false,
+      requireStartOccupied: true
+    });
+    expect(validated).toEqual(path);
   });
 
   it("plays field medic to heal a champion and caps at max HP", () => {

@@ -343,6 +343,8 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] “before combat round 1” damage effect (Assassin’s Edge)
   - [x] Mine Overseer Extraction (+1 mine gold while occupying a mine)
   - [ ] Expand champion hooks for on-deploy/on-death/on-battle-win, movement exceptions, and conditional dice mods (Archivist Prime, Brute, Traitor, Siege Engineer, Capturer, Bannerman, etc.)
+    - [x] Archivist Prime: +attack dice per card played this round
+    - [x] Wormhole Artificer: +1 move distance when moving alone
 - [ ] Quick check in, the rules in rules_draft are kind of living and breathing as I update things or change balance so make sure that everything is still correct, and add a few more champions and their abilities and everything in to test
 
 ### Tasks (web)
@@ -360,7 +362,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 Start going through the rules_draft and adding the logic for the different types of cards, keep track of which have been implemented or not and try to make it as extensible and smart as possible.
 
 ### Tasks
-- [ ] Add per-round counters for cards played/discarded (Archivist Prime, Propaganda Recruitment, Future Investment).
+- [ ] Add per-round counters for cards played/discarded (cards played now tracked for Archivist Prime; discard tracking + other cards pending).
 - [ ] Add draw/round-end triggers (on-draw penalties, end-of-round VP awards, marked champion payouts).
 - [ ] Add targeting immunities and marked/contract flags (Ward, Immunity Field, Marked for Coin).
 - [ ] Add movement/adjacency modifiers (bridge lockdown/trap, wormhole links, tunnel network).

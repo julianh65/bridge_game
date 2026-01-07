@@ -2,10 +2,13 @@ import { randInt } from "@bridgefront/shared";
 
 import type { CardDefId, GameState, Modifier, PlayerID, UnitID } from "./types";
 import { applyChampionKillRewards } from "./rewards";
+import { getCardsPlayedThisRound } from "./player-flags";
 
 const BODYGUARD_CHAMPION_ID = "champion.bastion.ironclad_warden";
 const ASSASSINS_EDGE_CHAMPION_ID = "champion.veil.shadeblade";
 const FLIGHT_CHAMPION_ID = "champion.aerial.skystriker_ace";
+const ARCHIVIST_PRIME_CHAMPION_ID = "champion.cipher.archivist_prime";
+const WORMHOLE_ARTIFICER_CHAMPION_ID = "champion.gatewright.wormhole_artificer";
 
 const ASSASSINS_EDGE_KEY = "assassins_edge";
 
@@ -218,6 +221,47 @@ const createFlightModifier = (unitId: UnitID, ownerPlayerId: PlayerID): Modifier
   }
 });
 
+const createArchivistPrimeModifier = (unitId: UnitID, ownerPlayerId: PlayerID): Modifier => ({
+  id: buildChampionModifierId(unitId, "archivist_prime"),
+  source: { type: "champion", sourceId: ARCHIVIST_PRIME_CHAMPION_ID },
+  ownerPlayerId,
+  duration: { type: "permanent" },
+  data: { unitId },
+  hooks: {
+    getChampionAttackDice: ({ modifier, unitId: contextUnitId, unit, state }, current) => {
+      const sourceUnitId = getModifierUnitId(modifier);
+      if (!sourceUnitId || sourceUnitId !== contextUnitId) {
+        return current;
+      }
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== unit.ownerPlayerId) {
+        return current;
+      }
+      const bonus = getCardsPlayedThisRound(state, unit.ownerPlayerId);
+      return bonus > 0 ? current + bonus : current;
+    }
+  }
+});
+
+const createWormholeArtificerModifier = (unitId: UnitID, ownerPlayerId: PlayerID): Modifier => ({
+  id: buildChampionModifierId(unitId, "wormhole_artificer"),
+  source: { type: "champion", sourceId: WORMHOLE_ARTIFICER_CHAMPION_ID },
+  ownerPlayerId,
+  duration: { type: "permanent" },
+  data: { unitId },
+  hooks: {
+    getMoveMaxDistance: ({ modifier, movingUnitIds }, current) => {
+      const sourceUnitId = getModifierUnitId(modifier);
+      if (!sourceUnitId) {
+        return current;
+      }
+      if (movingUnitIds.length !== 1 || movingUnitIds[0] !== sourceUnitId) {
+        return current;
+      }
+      return current + 1;
+    }
+  }
+});
+
 const createChampionModifiers = (
   unitId: UnitID,
   cardDefId: CardDefId,
@@ -230,6 +274,10 @@ const createChampionModifiers = (
       return [createAssassinsEdgeModifier(unitId, ownerPlayerId)];
     case FLIGHT_CHAMPION_ID:
       return [createFlightModifier(unitId, ownerPlayerId)];
+    case ARCHIVIST_PRIME_CHAMPION_ID:
+      return [createArchivistPrimeModifier(unitId, ownerPlayerId)];
+    case WORMHOLE_ARTIFICER_CHAMPION_ID:
+      return [createWormholeArtificerModifier(unitId, ownerPlayerId)];
     default:
       return [];
   }
