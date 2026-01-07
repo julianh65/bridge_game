@@ -3229,6 +3229,46 @@ h1 {
   stroke-width: 0.9;
 }
 
+.unit__faction-badge-shape {
+  fill: #f7f0e5;
+  stroke: rgba(25, 20, 14, 0.5);
+  stroke-width: 0.8;
+}
+
+.unit__faction-badge-text {
+  font-size: 6px;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.7);
+  stroke-width: 1;
+}
+
+.unit__faction-badge-text--p0 {
+  fill: var(--player-color-0);
+}
+
+.unit__faction-badge-text--p1 {
+  fill: var(--player-color-1);
+}
+
+.unit__faction-badge-text--p2 {
+  fill: var(--player-color-2);
+}
+
+.unit__faction-badge-text--p3 {
+  fill: var(--player-color-3);
+}
+
+.unit__faction-badge-text--p4 {
+  fill: var(--player-color-4);
+}
+
+.unit__faction-badge-text--p5 {
+  fill: var(--player-color-5);
+}
+
 .champion-badge {
   fill: #f7e2a6;
   stroke: rgba(120, 86, 20, 0.9);

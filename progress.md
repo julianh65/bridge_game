@@ -65,6 +65,7 @@ none
 - Improved board visuals with hex padding, a textured board backdrop, and beefier bridge styling; marked the plan item complete in `implementation_plan.md`.
 - Added a host-only debug state patch tool in the room debug panel + server command, and marked the plan item complete in `implementation_plan.md`.
 - Added a champion crest marker on unit stacks to make champion presence easier to spot on the board.
+- Added faction badges on unit stacks to help differentiate ownership at a glance.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.

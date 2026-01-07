@@ -138,6 +138,13 @@ export const GameScreen = ({
     }
     return mapping;
   }, [view.public.players]);
+  const playerFactionById = useMemo(() => {
+    const mapping: Record<string, string> = {};
+    for (const player of view.public.players) {
+      mapping[player.id] = player.factionId;
+    }
+    return mapping;
+  }, [view.public.players]);
   const hostPlayerId = useMemo(() => {
     const host =
       view.public.players.find((player) => player.seatIndex === 0) ??
@@ -1403,6 +1410,7 @@ export const GameScreen = ({
               hexes={hexRender}
               board={view.public.board}
               playerIndexById={playerColorIndexById}
+              playerFactionById={playerFactionById}
               showCoords={false}
               showTags
               showMineValues={false}

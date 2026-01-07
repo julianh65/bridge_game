@@ -10,6 +10,7 @@ import { parseEdgeKey } from "@bridgefront/shared";
 
 import { HEX_SIZE, hexPoints } from "../lib/hex-geometry";
 import type { HexRender } from "../lib/board-preview";
+import { getFactionName } from "../lib/factions";
 
 type ViewBox = {
   minX: number;
@@ -22,6 +23,7 @@ type BoardViewProps = {
   hexes: HexRender[];
   board?: BoardState;
   playerIndexById?: Record<string, number>;
+  playerFactionById?: Record<string, string>;
   showCoords?: boolean;
   showTags?: boolean;
   showMineValues?: boolean;
@@ -101,6 +103,16 @@ const truncateChampionName = (name: string) => {
 };
 
 const estimateBadgeWidth = (label: string) => Math.max(28, label.length * 6 + 12);
+const getFactionBadge = (factionId?: string | null): string | null => {
+  if (!factionId || factionId === "unassigned") {
+    return null;
+  }
+  const name = getFactionName(factionId);
+  if (!name) {
+    return null;
+  }
+  return name.slice(0, 1).toUpperCase();
+};
 
 const viewBoxEquals = (a: ViewBox, b: ViewBox): boolean => {
   const epsilon = 0.01;
@@ -136,6 +148,7 @@ export const BoardView = ({
   hexes,
   board,
   playerIndexById,
+  playerFactionById,
   showCoords = true,
   showTags = true,
   showMineValues = true,
@@ -859,6 +872,10 @@ export const BoardView = ({
           `Forces: ${stack.forceCount}`,
           `Champions: ${stack.championCount}`
         ];
+        const factionId = playerFactionById?.[stack.ownerPlayerId];
+        if (factionId && factionId !== "unassigned") {
+          stackTitleLines.splice(1, 0, `Faction: ${getFactionName(factionId)}`);
+        }
         if (stack.championDetails.length > 0) {
           stackTitleLines.push("Champion HP:");
           for (const champion of stack.championDetails) {
@@ -872,6 +889,11 @@ export const BoardView = ({
         const crestSize = 8;
         const crestX = cx + 10;
         const crestY = cy - 10;
+        const factionBadge = getFactionBadge(factionId);
+        const factionBadgeWidth = 14;
+        const factionBadgeHeight = 10;
+        const factionBadgeX = cx - factionBadgeWidth / 2;
+        const factionBadgeY = cy + 12;
         return (
           <g
             key={stack.key}
@@ -922,6 +944,28 @@ export const BoardView = ({
                   y={crestY + 1}
                 >
                   {championLabel}
+                </text>
+              </g>
+            ) : null}
+            {factionBadge ? (
+              <g className="unit__faction-badge">
+                <rect
+                  className="unit__faction-badge-shape"
+                  x={factionBadgeX}
+                  y={factionBadgeY}
+                  width={factionBadgeWidth}
+                  height={factionBadgeHeight}
+                  rx={4}
+                  ry={4}
+                />
+                <text
+                  className={`unit__faction-badge-text${
+                    colorIndex !== undefined ? ` unit__faction-badge-text--p${colorIndex}` : ""
+                  }`}
+                  x={cx}
+                  y={factionBadgeY + factionBadgeHeight / 2}
+                >
+                  {factionBadge}
                 </text>
               </g>
             ) : null}

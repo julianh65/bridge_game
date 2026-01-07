@@ -471,6 +471,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Add a victory screen (winner, final VP, recap, rematch/exit).
 - [ ] Upgrade on-board visuals for units/champions/factions (distinct tokens, faction badges).
   - [x] Add champion crest markers on unit stacks.
+  - [x] Add faction badge chips on unit stacks.
 - [x] Enforce faction uniqueness in setup (no duplicate faction picks).
 - [x] Add deck UI with draw/discard piles, counts, direction arrows, and draw/discard animations.
 - [ ] Low priority: add at least one targeted test for each card effect/card.
