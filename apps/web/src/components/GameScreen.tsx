@@ -8,6 +8,7 @@ import {
   isOccupiedByPlayer,
   type ActionDeclaration,
   type Bid,
+  type CardDef,
   type CollectionChoice,
   type GameView,
   wouldExceedTwoPlayers
@@ -80,6 +81,26 @@ const formatPhaseLabel = (phase: string) => {
   const trimmed = phase.replace("round.", "");
   const spaced = trimmed.replace(/([a-z])([A-Z])/g, "$1 $2").replace(".", " ");
   return spaced.replace(/^\w/, (value) => value.toUpperCase());
+};
+
+const getDefaultCardPickMode = (cardDef: CardDef | null): BoardPickMode => {
+  if (!cardDef) {
+    return "none";
+  }
+  switch (cardDef.targetSpec.kind) {
+    case "edge":
+      return "cardEdge";
+    case "stack":
+      return "cardStack";
+    case "path":
+      return "cardPath";
+    case "hex":
+      return "cardHex";
+    case "choice":
+      return "cardChoice";
+    default:
+      return "none";
+  }
 };
 
 type GameScreenProps = {
@@ -296,6 +317,10 @@ export const GameScreen = ({
     if (cardInstanceId && !handCards.some((card) => card.id === cardInstanceId)) {
       setCardInstanceId("");
       setCardTargetsRaw("");
+      setBoardPickMode("none");
+      setPendingEdgeStart(null);
+      setPendingStackFrom(null);
+      setPendingPath([]);
     }
   }, [cardInstanceId, handCards]);
 
@@ -957,7 +982,7 @@ export const GameScreen = ({
                       )
                     }
                   >
-                    Pick on board
+                    {boardPickMode === "cardEdge" ? "Picking" : "Pick on board"}
                   </button>
                 </div>
                 <p className="card-detail__hint">
@@ -981,7 +1006,7 @@ export const GameScreen = ({
                       )
                     }
                   >
-                    Pick on board
+                    {boardPickMode === "cardStack" ? "Picking" : "Pick on board"}
                   </button>
                 </div>
                 <p className="card-detail__hint">
@@ -1008,7 +1033,7 @@ export const GameScreen = ({
                         )
                       }
                     >
-                      Pick on board
+                      {boardPickMode === "cardPath" ? "Picking" : "Pick on board"}
                     </button>
                     <button
                       type="button"
@@ -1056,7 +1081,7 @@ export const GameScreen = ({
                         )
                       }
                     >
-                      Occupied hex
+                      {boardPickMode === "cardChoice" ? "Picking hex" : "Occupied hex"}
                     </button>
                   </div>
                 </div>
@@ -1115,7 +1140,7 @@ export const GameScreen = ({
                         )
                       }
                     >
-                      Pick on board
+                      {boardPickMode === "cardHex" ? "Picking" : "Pick on board"}
                     </button>
                     <button
                       type="button"
@@ -1217,9 +1242,11 @@ export const GameScreen = ({
       })()
     : null;
   const handleSelectCard = (cardId: string) => {
+    const card = handCards.find((entry) => entry.id === cardId) ?? null;
+    const cardDef = card ? CARD_DEFS_BY_ID.get(card.defId) ?? null : null;
     setCardInstanceId(cardId);
     setCardTargetsRaw("");
-    setBoardPickModeSafe("none");
+    setBoardPickModeSafe(getDefaultCardPickMode(cardDef));
   };
   const localResources = {
     gold: availableGold,

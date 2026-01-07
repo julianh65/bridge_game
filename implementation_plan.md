@@ -427,7 +427,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Make action status more obvious (who still needs to act, who is done).
 
 ### Tasks (web - action flow + layout)
-- [ ] Reduce card targeting clicks so board picks are direct and visible once selected. That is to say I don't want to have 2 clicks to do things, like some cards are like deploy forces, then you need to click into capital or hex, and then you click the hex on the board, like it's too many, it should just be click the card and then click where / what you want to do it on and it just does the correct one
+- [x] Reduce card targeting clicks so board picks are direct and visible once selected. That is to say I don't want to have 2 clicks to do things, like some cards are like deploy forces, then you need to click into capital or hex, and then you click the hex on the board, like it's too many, it should just be click the card and then click where / what you want to do it on and it just does the correct one
   - [x] Allow direct edge clicks for bridge/card edge picks via preview edges.
 - [x] Add a large "Submit/Lock In" action button for action declarations.
 - [x] Consolidate or rearrange panels so the game screen feels cohesive. Right now like the whole basic action panel is on the side and cards on the bottom, those should kind of be together in the bottom area, the log is a bit not nice etc...
@@ -446,6 +446,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 ### Other
 - [ ] The champion needs to be more obvious, like a seperate thing with its health and name and stuff, and they can hover over it to see the stats
+- [ ] A lot of duplicative information everywhere, like multiple live pills or whatever
 
 ### Tasks (web - targeting reliability)
 - [x] Fix hex selection for Bridge Crew and Build Bridge edge picking.
@@ -458,6 +459,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] The standard setup still doesn't work, only auto setup works.
 - [x] The done button is a bit confusing, we need little helpers over the different buttons
 - [x] What is the play card vs submit thing below, it's confusing
+- [ ] Current player resources (mana, gold etc) is taking up too much space on the right side and should probably be moved to the top somewhere for gold and VP, mana should probably be a big blue ball in the bottom left with a number showing current and max like 3/6 near the cards
 
 ## Milestone 9 — Add Polish
 

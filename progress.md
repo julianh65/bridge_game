@@ -17,6 +17,8 @@
 
 ## Active tasks
 none
+- owner: agent4 | scope: add board-based starting bridge placement UI in setup lobby (edge click overlays + instructions) | files: `apps/web/src/components/SetupStartingBridges.tsx`, `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css` | status: in progress
+- owner: agent1 | scope: fix Table row overflow/padding so status pills stay inside and layout feels tighter | files: `apps/web/src/styles.css`, `apps/web/src/components/GameScreenSidebar.tsx` | status: in progress (overlap: `apps/web/src/styles.css` with agent4)
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -47,6 +49,7 @@ none
 - Removed the board header/hints and tightened board panel padding to reduce wasted space above the board; marked the plan item complete in `implementation_plan.md`.
 - Improved champion visibility on the board with a halo + brighter label and marked the plan item complete in `implementation_plan.md` (overlap: `apps/web/src/styles.css` touched alongside layout tweaks).
 - Made the sidebar Table view more compact with a column header, aligned stats, and compact status pills; marked the plan item complete in `implementation_plan.md`.
+- Auto-enabled card board targeting on card select (edge/stack/path/hex/choice) and updated card target buttons to show when board picking is active; marked the plan item complete in `implementation_plan.md`.
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.
