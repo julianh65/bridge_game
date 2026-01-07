@@ -88,6 +88,7 @@ export default function App() {
           <button
             type="button"
             className={view === "play" ? "is-active" : ""}
+            data-sfx="soft"
             onClick={() => setView("play")}
           >
             Play
@@ -95,6 +96,7 @@ export default function App() {
           <button
             type="button"
             className={view === "debug" ? "is-active" : ""}
+            data-sfx="soft"
             onClick={() => setView("debug")}
           >
             Board Debug
@@ -102,6 +104,7 @@ export default function App() {
           <button
             type="button"
             className={view === "cards" ? "is-active" : ""}
+            data-sfx="soft"
             onClick={() => setView("cards")}
           >
             Cards
@@ -109,6 +112,7 @@ export default function App() {
           <button
             type="button"
             className={view === "deck" ? "is-active" : ""}
+            data-sfx="soft"
             onClick={() => setView("deck")}
           >
             Deck

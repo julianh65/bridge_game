@@ -130,10 +130,20 @@ export const Home = ({ onJoin }: HomeProps) => {
           </div>
 
           <div className="home__actions">
-            <button type="button" className="btn btn-secondary" onClick={handleCreate}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              data-sfx="soft"
+              onClick={handleCreate}
+            >
               Create Room
             </button>
-            <button type="button" className="btn btn-primary" onClick={() => submit()}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              data-sfx="click"
+              onClick={() => submit()}
+            >
               Join Room
             </button>
           </div>
