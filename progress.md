@@ -19,6 +19,7 @@
 - none
 
 ## Milestone 8.5 progress
+- Extended the market overlay outro hold so the hand panel stays hidden briefly after market phase ends if the overlay was open; marked the plan item complete in `implementation_plan.md`. (Overlap note: `implementation_plan.md` had pre-existing edits; touched `apps/web/src/components/GameScreen.tsx`.)
 - Restored basic action auto-pick mode on selection (bridge/march) per feedback; updated the plan item to match. (Overlap note: `apps/web/src/components/GameScreen.tsx` touched alongside agent1 scope.)
 - Prevented the hand panel from appearing while the market overlay holds after market phase end; marked the plan item complete in `implementation_plan.md`.
 - Made the hand/action panel semi-transparent with a subtle blur so the board reads through; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched.)

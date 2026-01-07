@@ -310,7 +310,6 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 
 ## Milestone 7 — Factions + champions + modifiers (core “exceptions” framework)
 
-<!-- NOTE TO AGENTS, IF YOU CAN PICK A TASK FROM ANOTHER MILESTONE DO THOSE FIRST, EVEN LATER MILESTONES -->
 
 ### Tasks (engine)
 - [x] Do a quick align on rules_draft to remaining implementation plan
@@ -386,8 +385,6 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Resolve board sizing + capital slot mapping across `rules_draft.md`, `technical_spec.md`, and `DEFAULT_CONFIG` (radius + slots per player count).
 - [x] Align special tile counts across rules/spec/config (mines/forges/center per player count).
 - [x] Align mine value distribution across rules/spec/config (values + weights, including current 3/7 entries).
-- [x] Decide `VP_TO_WIN` target and update rules/spec/config (currently 8? vs 10).
-- [x] Clarify setup TODOs: seating order randomization, faction-specific starter deck vs shared, champion in opening hand.
 - [x] Fix market preview round mapping typo in rules (Age II Round 6 preview count).
 
 
@@ -422,14 +419,12 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 ### Tasks (web - action flow + layout)
 - [x] Make only valid targets highlightable, like right now to build a bridge it will highlight the possible edges right, you should only be able to click on the edges not the hexes
-- [x] (harder and urgent) Right now the basic bridge building action is not smooth, you need to click the bridge, then click pick, then click from the potential options, and it still doesn't pick them correctly even after you click them. This needs to be fixed
 
 ### Tasks (web - motion + phase clarity)
 - [x] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen. This is after everyone locks in their actions. I want it to be like Player 1, show the card they played and flash it up, then show where they did it or something and make it extensible so later we can add animations or sound effects or something here. Pieces also need to animate move around the board.
 - [x] Add clearer phase transition cues between round phases. Make it flash on screen in big text slowly to everyone simultaneously.
 - [ ] we need a few UI's still, like dice rolling for draws and cards and other stuff
 - [x] Add market roll-off dice display with suspenseful rolling numbers.
-- [x] We need a better more clear UI with symbols (just do emojis for now) to represent gold, mana VP
 - [x] The placing starting bridge UI needs to be on the board not picking a bunch of axial coords.
 - [x] We should have nice transitions between ages and at the start of the game
 - [x] The bottom hand modal part is still a tiny bit clunky in that it can block stuff, maybe try to clean it up a bit and make it shorter and a bit more compact?
@@ -448,31 +443,18 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] The draw, Discard and Scrapped can be pills at the top of the container and are taking up too much space
 - [x] The Pass and Submit actions should be floating in the middle bottom of the container and be larger
 - [x] Mousing over a champion chit on the board should give a small pop up showing more info on the champion, the health, the card itself maybe, the damage and modifiers on it etc...
-- [x] The reveal length for each action should be configurable from settings
-- [x] The reveal modal that pops up shouldn't have the card ID on it
-- [x] When hovering over a card in your hand and it pops out, it should be higher z index than anything else and not be contained if that's possible, right now it pops out but is contained by both its parent containers
-- [x] The Log is taking up too much screen real estate, make that a seperate area or modal or something
-- [x] Urgent: Card targets are still not be selected properly when you click on the board. For example the bridge crew still doesn't work. I see the edge flash but it doesn't select it properly still. (Delayed BoardView pointer capture so clicks register.)
 - [x] Also can you double check, does it only work for 2 players right now?
 - [x] The standard setup still doesn't work, only auto setup works.
-- [x] The done button is a bit confusing, we need little helpers over the different buttons
-- [x] What is the play card vs submit thing below, it's confusing
 - [x] Add a reusable hand-card picker modal for effects like Perfect Recall (topdeck/select cards).
-- [x] Current player resources (mana, gold etc) is taking up too much space on the right side and should probably be moved to the top somewhere for gold and VP, mana should probably be a big blue ball in the bottom left with a number showing current and max like 3/6 near the cards
-- [x] We need a single nice reuseable component for the cards and to use it across the board, it should have the art, the description, the initiative, mana and gold cost and other information, right now it doesn't look cohesive, and in the card playing slot you need to individually click each card to show the card info
 - [x] Each hex should have a small label in it that is interpretable, not axial coords but like a1, b2 etc, maybe make it be from the top to bottom we have a and then left to right we have the number, then we should use that label in the log or other parts of the board
-- [x] The champions still don't look nice on the board, it's like a long pill, they should probably just be another circle and each champion should have their own little image / logo (placeholder for now)
 - [x] Each of the factions should have their own unique small like symbol, this can be placeholder for now but i want it to be like a small circle symbol that shows up in faction selection, next to their name, on their unit stacks etc...
-- [x] The text of Mine Capital or whatever is a bit goofy looking and too big, it should just show that text on hover and the colored hexes are fine for now, eventually we will replace those with nice looking tiles to demarcate
-- [x] Move the map legend to the bottom under the map
 - [x] Small / medium task: the log should not use axial coords but our coordinate system of a1, a2 etc...
 - [x] Small / medium task: can we allow for a bit more "freedom" in the moving of the board? Like allow to move off screen more up down left right when we drag around
 - [x] Can we experiment with making the container that holds the cards and the actions see through
 - [x] (harder and urgent) We need a better ui/ux flow for the cards where you click cards and then change your mind, right now it feels clunky and not obvious what I've selected or if I've changed my state of what im about to submit / play
 - [x] There's no pop up in the action phase to show what each player has done for basic actions
-- [ ] After the market phase while we're showing the last card, the hand modal instantly pops up
+- [x] After the market phase while we're showing the last card, the hand modal instantly pops up
 - [ ] The basic actions require too many clicks and that UI is cluttered, cut it down like reinforce is only in the capital we don't need to show that, or march doesn't need all of that jazz
-- [x] Add some basic hotkeys for the very common actions like submit
 - [ ] tiny, add some text to the gold and VP chits at the top
 ## Milestone 9 — Add Polish
 
@@ -504,6 +486,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [x] UI: add a smooth force-count picker (move all vs split) in the action panel.
   - [x] UI: add force-count controls for card-driven stack moves.
 - [x] Any text on the board shouldn't be highlightable
+- [ ] Add some animations for units moving during the action reveal phase
+- [ ] I added some random sound effects I downloaded to sound_fx, assign each of them a name / meaning (bell should be for rounds) and add the sound effects to different clicks and stuff, also if you need to feel free to move the sound effects folder and stuff to the appropriate place
 
 ## Milestone 9.5 -- Card Art + Description
 

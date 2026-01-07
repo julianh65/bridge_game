@@ -455,6 +455,7 @@ export const GameScreen = ({
   const [boardPickMode, setBoardPickMode] = useState<BoardPickMode>("none");
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
   const [isMarketOverlayOpen, setIsMarketOverlayOpen] = useState(false);
+  const [marketOutroHold, setMarketOutroHold] = useState(false);
   const [marketWinner, setMarketWinner] = useState<MarketWinnerHighlight | null>(null);
   const [cardRevealQueue, setCardRevealQueue] = useState<ActionCardReveal[]>([]);
   const [activeCardReveal, setActiveCardReveal] = useState<ActionCardReveal | null>(null);
@@ -477,6 +478,8 @@ export const GameScreen = ({
   const [basicActionIntent, setBasicActionIntent] = useState<BasicActionIntent>("none");
   const lastMarketEventIndex = useRef(-1);
   const lastCardRevealIndex = useRef(-1);
+  const marketOverlayHoldTimeout = useRef<number | null>(null);
+  const wasMarketPhaseRef = useRef(view.public.phase === "round.market");
 
   const localCapitalHexKey = useMemo(() => {
     if (!localPlayerId) {
@@ -711,7 +714,12 @@ export const GameScreen = ({
   const isInteractivePhase =
     isActionPhase || isStudyPhase || isMarketPhase || isCollectionPhase;
   const showPhaseFocus = isCollectionPhase;
-  const shouldHoldMarketOverlay = !isMarketPhase && Boolean(marketWinner);
+  const marketOutroHoldMs = Math.max(
+    1200,
+    view.public.config.MARKET_ROLLOFF_DURATION_MS + 400
+  );
+  const shouldHoldMarketOverlay =
+    !isMarketPhase && (Boolean(marketWinner) || marketOutroHold);
   const showMarketOverlay =
     (isMarketPhase && isMarketOverlayOpen) || shouldHoldMarketOverlay;
   const canShowHandPanel =
@@ -938,11 +946,52 @@ export const GameScreen = ({
 
   useEffect(() => {
     if (isMarketPhase) {
-      setIsMarketOverlayOpen(true);
-    } else {
-      setIsMarketOverlayOpen(false);
+      if (!wasMarketPhaseRef.current) {
+        if (marketOverlayHoldTimeout.current) {
+          window.clearTimeout(marketOverlayHoldTimeout.current);
+          marketOverlayHoldTimeout.current = null;
+        }
+        setMarketOutroHold(false);
+        setIsMarketOverlayOpen(true);
+      }
+      wasMarketPhaseRef.current = true;
+      return;
     }
-  }, [isMarketPhase]);
+
+    if (wasMarketPhaseRef.current) {
+      wasMarketPhaseRef.current = false;
+      if (!isMarketOverlayOpen) {
+        if (marketOverlayHoldTimeout.current) {
+          window.clearTimeout(marketOverlayHoldTimeout.current);
+          marketOverlayHoldTimeout.current = null;
+        }
+        setMarketOutroHold(false);
+        return;
+      }
+
+      setMarketOutroHold(true);
+      if (marketOverlayHoldTimeout.current) {
+        window.clearTimeout(marketOverlayHoldTimeout.current);
+      }
+      marketOverlayHoldTimeout.current = window.setTimeout(() => {
+        setMarketOutroHold(false);
+        setIsMarketOverlayOpen(false);
+        marketOverlayHoldTimeout.current = null;
+      }, marketOutroHoldMs);
+      return () => {
+        if (marketOverlayHoldTimeout.current) {
+          window.clearTimeout(marketOverlayHoldTimeout.current);
+          marketOverlayHoldTimeout.current = null;
+        }
+      };
+    }
+
+    if (marketOverlayHoldTimeout.current) {
+      window.clearTimeout(marketOverlayHoldTimeout.current);
+      marketOverlayHoldTimeout.current = null;
+    }
+    setMarketOutroHold(false);
+  }, [isMarketPhase, isMarketOverlayOpen, marketOutroHoldMs]);
 
   useEffect(() => {
     if (view.public.winnerPlayerId) {
