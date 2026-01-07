@@ -141,8 +141,6 @@ const formatPhaseLabel = (phase: string) => {
   return spaced.replace(/^\w/, (value) => value.toUpperCase());
 };
 
-const CARD_REVEAL_DURATION_MS = 2800;
-
 const buildCardCostLabel = (cardDef: CardDef | null): string | null => {
   if (!cardDef) {
     return null;
@@ -517,6 +515,7 @@ export const GameScreen = ({
     ? formatGameEvent(lastLogEntry, playerNames, hexLabels, CARD_DEFS_BY_ID)
     : null;
   const activeCombat = combatQueue[0] ?? null;
+  const actionRevealDurationMs = view.public.config.ACTION_REVEAL_DURATION_MS;
   const isActionPhase = view.public.phase === "round.action";
   const isMarketPhase = view.public.phase === "round.market";
   const isCollectionPhase = view.public.phase === "round.collection";
@@ -912,11 +911,11 @@ export const GameScreen = ({
     }
     const timeout = window.setTimeout(() => {
       setActiveCardReveal(null);
-    }, CARD_REVEAL_DURATION_MS);
+    }, actionRevealDurationMs);
     return () => {
       window.clearTimeout(timeout);
     };
-  }, [activeCardReveal, cardRevealKey]);
+  }, [activeCardReveal, actionRevealDurationMs, cardRevealKey]);
 
   const setCardTargetsObject = (targets: Record<string, unknown> | null) => {
     setCardTargetsRaw(targets ? JSON.stringify(targets) : "");
@@ -1689,7 +1688,11 @@ export const GameScreen = ({
         </div>
       ) : null}
       {activeCardReveal ? (
-        <ActionRevealOverlay key={activeCardReveal.key} reveal={activeCardReveal} />
+        <ActionRevealOverlay
+          key={activeCardReveal.key}
+          reveal={activeCardReveal}
+          durationMs={actionRevealDurationMs}
+        />
       ) : null}
       {activeCombat ? (
         <CombatOverlay

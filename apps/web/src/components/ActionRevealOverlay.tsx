@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 export type ActionRevealOverlayData = {
   playerName: string;
   cardName: string;
@@ -10,9 +12,10 @@ export type ActionRevealOverlayData = {
 
 type ActionRevealOverlayProps = {
   reveal: ActionRevealOverlayData;
+  durationMs: number;
 };
 
-export const ActionRevealOverlay = ({ reveal }: ActionRevealOverlayProps) => {
+export const ActionRevealOverlay = ({ reveal, durationMs }: ActionRevealOverlayProps) => {
   const metaParts: string[] = [];
   if (reveal.cardType) {
     metaParts.push(reveal.cardType);
@@ -24,16 +27,18 @@ export const ActionRevealOverlay = ({ reveal }: ActionRevealOverlayProps) => {
     metaParts.push(reveal.costLabel);
   }
   const metaLine = metaParts.join(" · ");
+  const revealStyle = {
+    ["--action-reveal-duration" as string]: `${durationMs}ms`
+  } as CSSProperties;
 
   return (
-    <div className="action-reveal" role="status" aria-live="polite">
+    <div className="action-reveal" role="status" aria-live="polite" style={revealStyle}>
       <div className="action-reveal__panel">
         <span className="action-reveal__eyebrow">Action revealed</span>
         <div className="action-reveal__player">{reveal.playerName}</div>
         <div className="action-reveal__card">
           <div className="action-reveal__card-header">
             <strong>{reveal.cardName}</strong>
-            <span className="action-reveal__card-id">{reveal.cardId}</span>
           </div>
           {metaLine ? <div className="action-reveal__meta">{metaLine}</div> : null}
           {reveal.targetLines.length > 0 ? (

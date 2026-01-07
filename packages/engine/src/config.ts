@@ -8,6 +8,7 @@ export const DEFAULT_CONFIG: GameConfig = {
   CHAMPION_LIMIT: 4,
   ROUNDS_MAX: 10,
   VP_TO_WIN: 10,
+  ACTION_REVEAL_DURATION_MS: 2800,
   boardRadiusByPlayerCount: {
     2: 3,
     3: 4,

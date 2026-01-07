@@ -93,6 +93,7 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
 
   return {
     public: {
+      config: state.config,
       seed: state.seed,
       round: state.round,
       phase: state.phase,

@@ -54,6 +54,7 @@ export type GameConfig = {
   CHAMPION_LIMIT: number;
   ROUNDS_MAX: number;
   VP_TO_WIN: number;
+  ACTION_REVEAL_DURATION_MS: number;
   boardRadiusByPlayerCount: Record<number, number>;
   tileCountsByPlayerCount: Record<number, TileCounts>;
   capitalSlotsByPlayerCount: Record<number, HexKey[]>;
@@ -523,6 +524,7 @@ export type SetupPrivateView =
 
 export type GameView = {
   public: {
+    config: GameConfig;
     seed: GameState["seed"];
     round: number;
     phase: PhaseState;

@@ -1492,6 +1492,7 @@ h1 {
 }
 
 .action-reveal {
+  --action-reveal-duration: 2800ms;
   position: fixed;
   inset: 0;
   display: grid;
@@ -1503,7 +1504,7 @@ h1 {
     rgba(245, 158, 11, 0.22),
     rgba(245, 158, 11, 0) 60%
   );
-  animation: actionRevealFade 2.8s ease-in-out forwards;
+  animation: actionRevealFade var(--action-reveal-duration, 2800ms) ease-in-out forwards;
 }
 
 .action-reveal__panel {
@@ -1516,7 +1517,7 @@ h1 {
   display: grid;
   gap: 10px;
   text-align: left;
-  animation: actionRevealPop 2.8s ease-in-out forwards;
+  animation: actionRevealPop var(--action-reveal-duration, 2800ms) ease-in-out forwards;
 }
 
 .action-reveal__eyebrow {
@@ -1549,13 +1550,6 @@ h1 {
   justify-content: space-between;
   gap: 12px;
   font-weight: 700;
-}
-
-.action-reveal__card-id {
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
 }
 
 .action-reveal__meta {
@@ -1832,6 +1826,7 @@ h1 {
   flex-direction: column;
   gap: 10px;
   padding: 14px;
+  padding-bottom: 72px;
   position: absolute;
   left: 16px;
   right: 16px;
@@ -1861,6 +1856,28 @@ h1 {
 .hand-controls .btn {
   padding: 4px 8px;
   font-size: 11px;
+}
+
+.deck-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.deck-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #f7f1e6;
+  font-size: 11px;
+  color: var(--ink);
+}
+
+.deck-pill strong {
+  font-weight: 600;
 }
 
 .game-hand__layout {
@@ -1946,9 +1963,18 @@ h1 {
 .game-hand__footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 8px;
   flex-wrap: wrap;
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 253, 246, 0.95);
+  box-shadow: 0 12px 20px rgba(39, 29, 12, 0.18);
 }
 
 .hand-submit {
@@ -1958,7 +1984,8 @@ h1 {
 }
 
 .hand-submit .btn {
-  padding: 8px 14px;
+  padding: 10px 18px;
+  font-size: 13px;
 }
 
 .deck-counts--compact .resource-row {
@@ -3041,19 +3068,20 @@ h1 {
 }
 
 .action-panel__basic {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: grid;
+  gap: 6px;
 }
 
 .action-chip {
-  padding: 6px 12px;
+  width: 100%;
+  padding: 4px 10px;
   border-radius: 999px;
   border: 1px solid var(--border);
   background: #f7f1e7;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--ink);
+  text-align: left;
   cursor: pointer;
   transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease,
     box-shadow 0.2s ease;

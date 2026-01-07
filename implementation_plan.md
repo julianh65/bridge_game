@@ -419,12 +419,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Add a deck viewer so players can browse all cards in their current deck.
 
 ### Tasks (web - action flow + layout)
-- [x] Reduce card targeting clicks so board picks are direct and visible once selected. That is to say I don't want to have 2 clicks to do things, like some cards are like deploy forces, then you need to click into capital or hex, and then you click the hex on the board, like it's too many, it should just be click the card and then click where / what you want to do it on and it just does the correct one
-  - [x] Allow direct edge clicks for bridge/card edge picks via preview edges.
-- [x] Add a large "Submit/Lock In" action button for action declarations.
-- [x] Consolidate or rearrange panels so the game screen feels cohesive. Right now like the whole basic action panel is on the side and cards on the bottom, those should kind of be together in the bottom area, the log is a bit not nice etc...
 - [x] Make only valid targets highlightable, like right now to build a bridge it will highlight the possible edges right, you should only be able to click on the edges not the hexes
-- [x] Wasted space above the board, we don't need this thing Drag to pan · Scroll to zoom and the shared board state and board above it has too much padding
+- [ ] (harder and urgent) Right now the basic bridge building action is not smooth, you need to click the bridge, then click pick, then click from the potential options, and it still doesn't pick them correctly even after you click them. This needs to be fixed
 
 ### Tasks (web - motion + phase clarity)
 - [x] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen. This is after everyone locks in their actions. I want it to be like Player 1, show the card they played and flash it up, then show where they did it or something and make it extensible so later we can add animations or sound effects or something here. Pieces also need to animate move around the board.
@@ -445,12 +441,12 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Fix hex selection for Bridge Crew and Build Bridge edge picking.
 
 ### Tasks UI
-- [ ] The basic actions in the card hand panel below needs to be reworked, it's taking up too much horizontal space, The bridge march reinforce buttons should be stacked and be thinner and we can probably streamline the whole UI of each when they're expanded
-- [ ] The draw, Discard and Scrapped can be pills at the top of the container and are taking up too much space
-- [ ] The Pass and Submit actions should be floating in the middle bottom of the container and be larger
+- [x] The basic actions in the card hand panel below needs to be reworked, it's taking up too much horizontal space, The bridge march reinforce buttons should be stacked and be thinner and we can probably streamline the whole UI of each when they're expanded
+- [x] The draw, Discard and Scrapped can be pills at the top of the container and are taking up too much space
+- [x] The Pass and Submit actions should be floating in the middle bottom of the container and be larger
 - [ ] Mousing over a champion chit on the board should give a small pop up showing more info on the champion, the health, the card itself maybe, the damage and modifiers on it etc...
-- [ ] The reveal length for each action should be configurable from settings
-- [ ] The reveal modal that pops up shouldn't have the card ID on it
+- [x] The reveal length for each action should be configurable from settings
+- [x] The reveal modal that pops up shouldn't have the card ID on it
 - [ ] When hovering over a card in your hand and it pops out, it should be higher z index than anything else and not be contained if that's possible, right now it pops out but is contained by both its parent containers
 - [x] The Log is taking up too much screen real estate, make that a seperate area or modal or something
 - [x] Urgent: Card targets are still not be selected properly when you click on the board. For example the bridge crew still doesn't work. I see the edge flash but it doesn't select it properly still. (Delayed BoardView pointer capture so clicks register.)
@@ -469,6 +465,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Small / medium task: the log should not use axial coords but our coordinate system of a1, a2 etc...
 - [x] Small / medium task: can we allow for a bit more "freedom" in the moving of the board? Like allow to move off screen more up down left right when we drag around
 - [ ] Can we experiment with making the container that holds the cards and the actions see through
+- [ ] (harder and urgent) We need a better ui/ux flow for the cards where you click cards and then change your mind, right now it feels clunky and not obvious what I've selected or if I've changed my state of what im about to submit / play
 
 ## Milestone 9 — Add Polish
 

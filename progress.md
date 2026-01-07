@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [owner: agent3] [status: in-progress] Scope: make action reveal duration configurable and hide card IDs in the reveal overlay. Files: packages/engine/src/types.ts, packages/engine/src/config.ts, packages/engine/src/view.ts, apps/web/src/components/GameScreen.tsx, apps/web/src/components/ActionRevealOverlay.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md.
+none
 
 ## Milestone 8.5 progress
 - Added unique faction symbols (small circle badges) across faction selection, lobby labels, unit stacks, and victory screen; marked the plan item complete in `implementation_plan.md`.
@@ -68,6 +68,7 @@
 - Compressed the bottom hand panel spacing, card sizing, and detail typography to reduce its vertical footprint; marked the plan item complete in `implementation_plan.md`.
 - Added an action card reveal overlay that sequences resolved card plays with target summaries + board highlights, and animated unit stack movement transitions during board updates.
 - Slowed the action card reveal overlay timing for a less abrupt reveal.
+- Reworked the hand panel layout: stacked basic action buttons, moved deck counts to header pills, and floated Pass/Submit controls; marked the plan items complete in `implementation_plan.md`.
 - Added an age/start-of-game transition cue overlay and marked the plan item complete in `implementation_plan.md`.
 - Shortened bridge render segments so they no longer draw center-to-center; marked the plan item complete in `implementation_plan.md`.
 - Shortened bridge render segments a bit further by increasing the inset.
@@ -86,6 +87,7 @@
 - Set the main board layout to flex-fill and raised the hand panel z-index so it stays above the board when open.
 - Positioned the hand panel as an absolute overlay so opening/closing it no longer resizes the board.
 - Verified multi-player (3-4 player) engine flow via expanded smoke coverage and marked the plan item complete in `implementation_plan.md`.
+- Made action reveal duration configurable via game config (propagated to the overlay) and removed card IDs from the reveal modal; marked the plan items complete in `implementation_plan.md`.
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.
