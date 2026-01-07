@@ -3125,6 +3125,64 @@ h1 {
   gap: 6px;
 }
 
+.collection-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.collection-card-option {
+  border: none;
+  padding: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.collection-card-option:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.collection-card-option:focus-visible .collection-card {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.collection-card-option.is-selected .collection-card {
+  border-color: #f59e0b;
+  box-shadow: 0 14px 26px rgba(245, 158, 11, 0.22);
+}
+
+.collection-card {
+  width: 100%;
+  min-height: 260px;
+  padding: 12px;
+}
+
+.collection-card .game-card__art {
+  height: 90px;
+}
+
+.collection-card .game-card__name {
+  font-size: 16px;
+}
+
+.collection-card .game-card__rules {
+  font-size: 12px;
+  -webkit-line-clamp: 3;
+}
+
+.collection-card .game-card__initiative {
+  width: 24px;
+  height: 24px;
+  font-size: 11px;
+}
+
+.collection-card .game-card__cost {
+  font-size: 11px;
+}
+
 .collection-prompt__label {
   font-size: 12px;
   color: var(--muted);

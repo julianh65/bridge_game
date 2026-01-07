@@ -9,6 +9,7 @@ import {
 } from "@bridgefront/engine";
 
 import type { RoomConnectionStatus } from "../lib/room-client";
+import { GameCard } from "./GameCard";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 
@@ -32,8 +33,6 @@ const getPromptSignature = (prompt: CollectionPrompt) => {
   const mineValue = prompt.kind === "mine" ? prompt.mineValue : "";
   return `${prompt.kind}:${prompt.hexKey}:${mineValue}:${reveals}`;
 };
-
-const getCardLabel = (cardId: string) => CARD_DEFS_BY_ID.get(cardId)?.name ?? cardId;
 
 const isChoiceValid = (
   prompt: CollectionPrompt,
@@ -72,6 +71,39 @@ const isChoiceValid = (
   }
 
   return false;
+};
+
+type CollectionCardOptionProps = {
+  cardId: string;
+  isSelected: boolean;
+  disabled: boolean;
+  onSelect: () => void;
+};
+
+const CollectionCardOption = ({
+  cardId,
+  isSelected,
+  disabled,
+  onSelect
+}: CollectionCardOptionProps) => {
+  const cardDef = CARD_DEFS_BY_ID.get(cardId) ?? null;
+  return (
+    <button
+      type="button"
+      className={`collection-card-option${isSelected ? " is-selected" : ""}`}
+      disabled={disabled}
+      aria-pressed={isSelected}
+      onClick={onSelect}
+    >
+      <GameCard
+        card={cardDef}
+        cardId={cardId}
+        variant="grid"
+        className="collection-card"
+        showId={false}
+      />
+    </button>
+  );
 };
 
 export const CollectionPanel = ({
@@ -237,34 +269,28 @@ export const CollectionPanel = ({
                         </div>
                       ) : (
                         <>
-                          <ul className="card-list">
+                          <div className="collection-card-grid">
                             {prompt.revealed.map((cardId) => {
-                              const label = getCardLabel(cardId);
                               const isSelected = selectedDraftId === cardId;
                               return (
-                                <li key={`${cardId}-${prompt.hexKey}`}>
-                                  <button
-                                    type="button"
-                                    className={`card-tag card-tag--clickable ${
-                                      isSelected ? "is-selected" : ""
-                                    }`}
-                                    disabled={!canInteract}
-                                    onClick={() =>
-                                      setChoice(prompt, {
-                                        kind: "mine",
-                                        hexKey: prompt.hexKey,
-                                        choice: "draft",
-                                        gainCard: true,
-                                        cardId
-                                      })
-                                    }
-                                  >
-                                    {label}
-                                  </button>
-                                </li>
+                                <CollectionCardOption
+                                  key={`${cardId}-${prompt.hexKey}`}
+                                  cardId={cardId}
+                                  isSelected={isSelected}
+                                  disabled={!canInteract}
+                                  onSelect={() =>
+                                    setChoice(prompt, {
+                                      kind: "mine",
+                                      hexKey: prompt.hexKey,
+                                      choice: "draft",
+                                      gainCard: true,
+                                      cardId
+                                    })
+                                  }
+                                />
                               );
                             })}
-                          </ul>
+                          </div>
                           <button
                             type="button"
                             className={`btn btn-tertiary ${
@@ -354,33 +380,27 @@ export const CollectionPanel = ({
                           No cards revealed.
                         </div>
                       ) : (
-                        <ul className="card-list">
+                        <div className="collection-card-grid">
                           {prompt.revealed.map((cardId) => {
-                            const label = getCardLabel(cardId);
                             const isSelected = selectedDraftId === cardId;
                             return (
-                              <li key={`${cardId}-${prompt.hexKey}`}>
-                                <button
-                                  type="button"
-                                  className={`card-tag card-tag--clickable ${
-                                    isSelected ? "is-selected" : ""
-                                  }`}
-                                  disabled={!canInteract}
-                                  onClick={() =>
-                                    setChoice(prompt, {
-                                      kind: "forge",
-                                      hexKey: prompt.hexKey,
-                                      choice: "draft",
-                                      cardId
-                                    })
-                                  }
-                                >
-                                  {label}
-                                </button>
-                              </li>
+                              <CollectionCardOption
+                                key={`${cardId}-${prompt.hexKey}`}
+                                cardId={cardId}
+                                isSelected={isSelected}
+                                disabled={!canInteract}
+                                onSelect={() =>
+                                  setChoice(prompt, {
+                                    kind: "forge",
+                                    hexKey: prompt.hexKey,
+                                    choice: "draft",
+                                    cardId
+                                  })
+                                }
+                              />
                             );
                           })}
-                        </ul>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -405,32 +425,26 @@ export const CollectionPanel = ({
                           No cards revealed.
                         </div>
                       ) : (
-                        <ul className="card-list">
+                        <div className="collection-card-grid">
                           {prompt.revealed.map((cardId) => {
-                            const label = getCardLabel(cardId);
                             const isSelected = selectedCardId === cardId;
                             return (
-                              <li key={`${cardId}-${prompt.hexKey}`}>
-                                <button
-                                  type="button"
-                                  className={`card-tag card-tag--clickable ${
-                                    isSelected ? "is-selected" : ""
-                                  }`}
-                                  disabled={!canInteract}
-                                  onClick={() =>
-                                    setChoice(prompt, {
-                                      kind: "center",
-                                      hexKey: prompt.hexKey,
-                                      cardId
-                                    })
-                                  }
-                                >
-                                  {label}
-                                </button>
-                              </li>
+                              <CollectionCardOption
+                                key={`${cardId}-${prompt.hexKey}`}
+                                cardId={cardId}
+                                isSelected={isSelected}
+                                disabled={!canInteract}
+                                onSelect={() =>
+                                  setChoice(prompt, {
+                                    kind: "center",
+                                    hexKey: prompt.hexKey,
+                                    cardId
+                                  })
+                                }
+                              />
                             );
                           })}
-                        </ul>
+                        </div>
                       )}
                     </div>
                   </div>

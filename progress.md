@@ -17,7 +17,6 @@
 
 ## Active tasks
 - owner: agent3 | scope: add modifier hooks for card draw + round-end triggers with engine coverage | files: packages/engine/src/types.ts, packages/engine/src/modifiers.ts, packages/engine/src/cards.ts, packages/engine/src/round-flow.ts, packages/engine/src/modifiers.test.ts, implementation_plan.md, progress.md | status: in progress
-- owner: agent2 | scope: expand collection focus cards with GameCard UI for revealed collection picks | files: apps/web/src/components/CollectionPanel.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md | status: in progress
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
@@ -279,6 +278,7 @@ none
 - Reduced board target click friction by ignoring invalid hex clicks while targeting and allowing start reselects for multi-step picks.
 - Enabled scrolling in the command-center sidebar so 5-6 player tables stay readable without clipping.
 - Stabilized BoardView pan/zoom by avoiding viewBox resets when board state updates (plan update deferred: `implementation_plan.md` locked by agent3).
+- Upgraded collection prompts to show full card tiles (initiative/rules/costs) for revealed picks instead of tag buttons.
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.

@@ -248,7 +248,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Add phase-focused layouts (market/collection focus + log/player repositioning).
   - [x] Add a focus row for market/collection panels above the board.
   - [x] Move log + player list into a secondary row during market/collection phases.
-  - [ ] Expand market/collection focus cards (initiative/effects) for richer phase layouts.
+  - [x] Expand market/collection focus cards (initiative/effects) for richer phase layouts.
 - [ ] Add collapsible/relocatable panels so not everything lives in the right sidebar.
 - [x] Make the phase market at the top part much bigger and cooler
 - [ ] the bridge place mechanism still doesn't work
@@ -370,6 +370,7 @@ Start going through the rules_draft and adding the logic for the different types
 ### Tasks
 - [x] Add per-round counters for cards played/discarded (cards played now tracked for Archivist Prime; discard tracking + other cards pending).
 - [ ] Add draw/round-end triggers (on-draw penalties, end-of-round VP awards, marked champion payouts).
+  - [x] Engine hooks for on-card-draw + end-of-round modifier events (cards/cleanup integration).
 - [x] Add targeting immunities and marked/contract flags (Ward, Immunity Field, Marked for Coin).
 - [ ] Add movement/adjacency modifiers (bridge lockdown/trap, wormhole links, tunnel network).
   - [x] Bridge lockdown effect (lock a bridge until end of round).
