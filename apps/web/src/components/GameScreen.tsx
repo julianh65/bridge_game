@@ -1864,32 +1864,36 @@ export const GameScreen = ({
       >
         <section className="panel game-board">
           <div className="game-board__placeholder">
-            <BoardView
-              hexes={hexRender}
-              board={view.public.board}
-              playerIndexById={playerColorIndexById}
-              playerFactionById={playerFactionById}
-              showCoords={false}
-              showTags
-              showMineValues={false}
-              labelByHex={hexLabels}
-              labelVariant="coords"
-              className="board-svg board-svg--game"
-              enablePanZoom
-              resetViewToken={resetViewToken}
-              selectedHexKey={selectedHexKey}
-              highlightHexKeys={highlightHexKeys}
-              validHexKeys={isEdgePickMode ? [] : validHexKeys}
-              previewEdgeKeys={previewEdgeKeys}
-              isTargeting={isBoardTargeting}
-              onHexClick={isEdgePickMode ? undefined : handleBoardHexClick}
-              onEdgeClick={handleBoardEdgeClick}
-              showTags={false}
-            />
-            <div className="game-board__footer">
-              <div className={`board-tools ${isBoardTargeting ? "is-targeting" : ""}`}>
+            <div className="game-board__viewport">
+              <BoardView
+                hexes={hexRender}
+                board={view.public.board}
+                playerIndexById={playerColorIndexById}
+                playerFactionById={playerFactionById}
+                showCoords={false}
+                showTags
+                showMineValues={false}
+                labelByHex={hexLabels}
+                labelVariant="coords"
+                className="board-svg board-svg--game"
+                enablePanZoom
+                resetViewToken={resetViewToken}
+                selectedHexKey={selectedHexKey}
+                highlightHexKeys={highlightHexKeys}
+                validHexKeys={isEdgePickMode ? [] : validHexKeys}
+                previewEdgeKeys={previewEdgeKeys}
+                isTargeting={isBoardTargeting}
+                onHexClick={isEdgePickMode ? undefined : handleBoardHexClick}
+                onEdgeClick={handleBoardEdgeClick}
+                showTags={false}
+              />
+              <div
+                className={`board-tools board-tools--overlay ${
+                  isBoardTargeting ? "is-targeting" : ""
+                }`}
+              >
                 <div className="board-tools__meta">
-                  <span className="chip">
+                  <span className="chip board-tools__chip">
                     {selectedHexKey ? `Selected ${selectedHexKey}` : "No hex selected"}
                   </span>
                   <button
@@ -1901,12 +1905,12 @@ export const GameScreen = ({
                   </button>
                 </div>
               </div>
-              <div className="legend legend--compact game-board__legend">
-                <div className="legend__item legend__item--capital">Capital</div>
-                <div className="legend__item legend__item--forge">Forge</div>
-                <div className="legend__item legend__item--mine">Mine</div>
-                <div className="legend__item legend__item--center">Center</div>
-              </div>
+            </div>
+            <div className="legend legend--compact game-board__legend">
+              <div className="legend__item legend__item--capital">Capital</div>
+              <div className="legend__item legend__item--forge">Forge</div>
+              <div className="legend__item legend__item--mine">Mine</div>
+              <div className="legend__item legend__item--center">Center</div>
             </div>
           </div>
         </section>
