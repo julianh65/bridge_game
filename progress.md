@@ -70,6 +70,7 @@
 - Moved the map legend below the board and hid special-tile tags on the game board (hover tooltip still shows tile info); marked the plan items complete in `implementation_plan.md`.
 - Moved the board tools bar (selected hex + reset view) into the footer under the board to reduce top clutter.
 - Floated the selected-hex chip and reset view button over the board (top-left) with matched heights to save vertical space.
+- Shrunk the board overlay controls and switched the selection label to use the board's A1-style tile labels instead of axial coords.
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.

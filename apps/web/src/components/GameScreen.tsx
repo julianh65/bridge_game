@@ -1711,6 +1711,12 @@ export const GameScreen = ({
     mana: availableMana
   };
   const localVpTotal = view.private?.vp ? view.private.vp.total : null;
+  const selectedHexLabel = selectedHexKey ? hexLabels[selectedHexKey] ?? null : null;
+  const selectedLabelText = selectedHexKey
+    ? selectedHexLabel
+      ? `Selected ${selectedHexLabel}`
+      : "Selected tile"
+    : "No tile selected";
 
   const phaseFocusPanel = showPhaseFocus ? (
     <div className="game-screen__focus">
@@ -1893,9 +1899,7 @@ export const GameScreen = ({
                 }`}
               >
                 <div className="board-tools__meta">
-                  <span className="chip board-tools__chip">
-                    {selectedHexKey ? `Selected ${selectedHexKey}` : "No hex selected"}
-                  </span>
+                  <span className="chip board-tools__chip">{selectedLabelText}</span>
                   <button
                     type="button"
                     className="btn btn-tertiary"

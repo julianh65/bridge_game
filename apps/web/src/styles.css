@@ -3294,26 +3294,31 @@ h1 {
   left: 12px;
   z-index: 3;
   margin-bottom: 0;
+  padding: 4px 6px;
+  border-radius: 8px;
   box-shadow: 0 12px 24px rgba(35, 28, 19, 0.14);
 }
 
 .board-tools--overlay .board-tools__meta {
-  gap: 6px;
+  gap: 4px;
 }
 
 .board-tools__chip {
   margin-left: 0;
-  padding: 6px 10px;
-  min-height: 30px;
+  padding: 4px 8px;
+  min-height: 26px;
   display: inline-flex;
   align-items: center;
+  font-size: 11px;
 }
 
 .board-tools--overlay .btn-tertiary {
-  padding: 6px 10px;
-  min-height: 30px;
+  padding: 4px 8px;
+  min-height: 26px;
   display: inline-flex;
   align-items: center;
+  font-size: 11px;
+  border-radius: 8px;
 }
 
 .board-tools.is-targeting {
@@ -3487,23 +3492,43 @@ h1 {
 }
 
 .bridge {
-  stroke: var(--bridge-neutral);
-  stroke-width: 5;
+  color: var(--bridge-neutral);
+  filter: drop-shadow(0 1px 2px rgba(34, 26, 18, 0.4));
+  opacity: 0.92;
+  transition: opacity 0.18s ease, filter 0.18s ease;
+}
+
+.bridge__body {
+  stroke: currentColor;
+  stroke-width: 8;
   stroke-linecap: round;
   stroke-linejoin: round;
-  filter: drop-shadow(0 1px 2px rgba(34, 26, 18, 0.4));
-  opacity: 0.9;
-  transition: stroke 0.18s ease, stroke-width 0.18s ease, opacity 0.18s ease,
-    filter 0.18s ease;
+}
+
+.bridge__rail {
+  stroke: rgba(255, 248, 236, 0.6);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+
+.bridge__plank {
+  stroke: rgba(255, 248, 236, 0.7);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  opacity: 0.85;
 }
 
 .board-svg--interactive .bridge:hover {
   opacity: 1;
-  stroke-width: 5;
+  filter: drop-shadow(0 1px 3px rgba(34, 26, 18, 0.55));
+}
+
+.board-svg--interactive .bridge:hover .bridge__body {
+  stroke-width: 9;
 }
 
 .board-svg--interactive .bridge--clickable:active {
-  stroke-width: 5;
   stroke: #1d4ed8;
 }
 
@@ -3544,27 +3569,27 @@ h1 {
 }
 
 .bridge--p0 {
-  stroke: var(--player-color-0);
+  color: var(--player-color-0);
 }
 
 .bridge--p1 {
-  stroke: var(--player-color-1);
+  color: var(--player-color-1);
 }
 
 .bridge--p2 {
-  stroke: var(--player-color-2);
+  color: var(--player-color-2);
 }
 
 .bridge--p3 {
-  stroke: var(--player-color-3);
+  color: var(--player-color-3);
 }
 
 .bridge--p4 {
-  stroke: var(--player-color-4);
+  color: var(--player-color-4);
 }
 
 .bridge--p5 {
-  stroke: var(--player-color-5);
+  color: var(--player-color-5);
 }
 
 .unit {
