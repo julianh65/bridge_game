@@ -1710,6 +1710,39 @@ describe("action flow", () => {
     expect(after).toBe(before + 3);
   });
 
+  it("plays escort detail to deploy forces onto a friendly champion", () => {
+    let { state, p1Capital } = setupToActionPhase({ p1: "aerial" });
+    const champion = addChampionToHex(state, "p1", p1Capital);
+    state = champion.state;
+    const injected = addCardToHand(state, "p1", "age1.escort_detail");
+    state = injected.state;
+
+    const occupants = state.board.hexes[p1Capital].occupants["p1"] ?? [];
+    const before = occupants.filter((unitId) => state.board.units[unitId]?.kind === "force")
+      .length;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { unitId: champion.unitId }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const afterOccupants = state.board.hexes[p1Capital].occupants["p1"] ?? [];
+    const after = afterOccupants.filter((unitId) => state.board.units[unitId]?.kind === "force")
+      .length;
+    expect(after).toBe(before + 2);
+  });
+
   it("plays rich veins to increase a mine value", () => {
     let { state } = setupToActionPhase();
     const mineHex = findMineHex(state);

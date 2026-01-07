@@ -1218,16 +1218,39 @@ export const resolveCardEffects = (
         break;
       }
       case "deployForces": {
-        const target = getHexTarget(
-          nextState,
-          playerId,
-          card.targetSpec as TargetRecord,
-          targets ?? null
-        );
-        if (!target) {
+        let targetHexKey: string | null = null;
+        if (card.targetSpec.kind === "champion") {
+          const target = getChampionTarget(
+            nextState,
+            playerId,
+            card.targetSpec as TargetRecord,
+            targets ?? null,
+            card
+          );
+          if (!target) {
+            break;
+          }
+          targetHexKey = target.unit.hex;
+        } else {
+          const target = getHexTarget(
+            nextState,
+            playerId,
+            card.targetSpec as TargetRecord,
+            targets ?? null
+          );
+          if (!target) {
+            break;
+          }
+          targetHexKey = target.hexKey;
+        }
+        if (!targetHexKey) {
           break;
         }
-        if (wouldExceedTwoPlayers(target.hex, playerId)) {
+        const targetHex = nextState.board.hexes[targetHexKey];
+        if (!targetHex) {
+          break;
+        }
+        if (wouldExceedTwoPlayers(targetHex, playerId)) {
           break;
         }
         const baseCount = typeof effect.count === "number" ? effect.count : 0;
@@ -1236,7 +1259,7 @@ export const resolveCardEffects = (
         }
         const count = getDeployForcesCount(
           nextState,
-          { playerId, hexKey: target.hexKey, baseCount },
+          { playerId, hexKey: targetHexKey, baseCount },
           baseCount
         );
         if (count <= 0) {
@@ -1244,7 +1267,7 @@ export const resolveCardEffects = (
         }
         nextState = {
           ...nextState,
-          board: addForcesToHex(nextState.board, playerId, target.hexKey, count)
+          board: addForcesToHex(nextState.board, playerId, targetHexKey, count)
         };
         break;
       }

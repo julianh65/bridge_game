@@ -436,6 +436,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [ ] Age I champion: Field Surgeon (active heal ability).
   - [x] Added Sabotage Bridge, Bridge Trap, and Tunnel Network (bridge/terrain effects).
   - [x] Added Recruit Detachment, Paid Volunteers, and National Service (recruit variants).
+  - [x] Added Escort Detail with champion-targeted deploy support.
 - Expand Age II/III market + power deck lists to match the latest rules_draft (including power champions and burn-heavy cards).
   - [ ] Age II market cards + champions (47 cards + 8 champions).
   - [ ] Age III market cards + champions (47 cards + 8 champions).

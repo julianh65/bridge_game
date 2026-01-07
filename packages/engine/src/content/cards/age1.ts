@@ -103,6 +103,23 @@ export const PAID_VOLUNTEERS: CardDef = {
   effects: [{ kind: "recruit", capitalCount: 4 }]
 };
 
+export const ESCORT_DETAIL: CardDef = {
+  id: "age1.escort_detail",
+  name: "Escort Detail",
+  rulesText: "Deploy 2 Forces to a friendly Champion's hex.",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1, gold: 1 },
+  initiative: 35,
+  burn: false,
+  targetSpec: {
+    kind: "champion",
+    owner: "self"
+  },
+  effects: [{ kind: "deployForces", count: 2 }]
+};
+
 export const NATIONAL_SERVICE: CardDef = {
   id: "age1.national_service",
   name: "National Service",
@@ -459,6 +476,7 @@ export const AGE1_CARDS: CardDef[] = [
   TRADE_CARAVAN,
   RECRUIT_DETACHMENT,
   PAID_VOLUNTEERS,
+  ESCORT_DETAIL,
   NATIONAL_SERVICE,
   SCAVENGERS_MARKET,
   TEMPORARY_BRIDGE,

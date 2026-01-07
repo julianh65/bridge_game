@@ -18,6 +18,9 @@
 ## Active tasks
 - none
 
+## Milestone 8 progress
+- Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
+
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
 - Thickened power/champion GameCard borders for clearer differentiation and marked the plan item complete. (Overlap note: `apps/web/src/styles.css` touched.)
