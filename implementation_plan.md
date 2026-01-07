@@ -303,11 +303,9 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 
 ## Milestone 6.5 -- Code Cleanup + Misc Things I'm just adding (the boss is adding)
 ### Tasks
-- [ ] Refactor longer files for readability and maintainability.
-- [ ] Fix board pan cutoff/weird view issues.
+- [x] Refactor longer files for readability and maintainability.
 - [x] Market bidding UX: add quick bid buttons (1-4) while keeping manual entry.
 - [ ] Separate basic actions vs card flow so action selection happens before board targeting.
-- [ ] Improve right sidebar + hand panel layout (consider floating cards).
 - [x] Reduce board click friction; declutter and improve target picking reliability.
 
 ## Milestone 7 — Factions + champions + modifiers (core “exceptions” framework)
@@ -358,8 +356,6 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 
 ## Milestone 7.2 — Factions + champions + modifiers (core “exceptions” framework)
 
-<!-- NOTE TO AGENTS, IF YOU CAN PICK A TASK FROM ANOTHER MILESTONE DO THOSE FIRST, EVEN LATER MILESTONES -->
-
 Start going through the rules_draft and adding the logic for the different types of cards, keep track of which have been implemented or not and try to make it as extensible and smart as possible.
 
 ### Tasks
@@ -375,9 +371,7 @@ Start going through the rules_draft and adding the logic for the different types
 
 ## Milestone 7.5 — Script to Generate Art for Cards
 
-<!-- NOTE TO AGENTS, IF YOU CAN PICK A TASK FROM ANOTHER MILESTONE DO THOSE FIRST, EVEN LATER MILESTONES -->
-
-I want to have a script that lets me select a subset of n cards and hits some sort of API to generate epic card art for them, saves it locally and then makes the card reference that image so it gets rendered somehow. Very TBD on this so we'll have to figure it out together, which services to use and how it works etc...
+I want to have a script that lets me select a subset of n cards and hits some sort of diffusion model API to generate epic card art for them, saves it locally and then makes the card reference that image so it gets rendered somehow. Very TBD on this so we'll have to figure it out together, which services to use and how it works etc...
 
 ---
 
@@ -444,6 +438,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Add clearer phase transition cues between round phases. Make it flash on screen in big text slowly to everyone simultaneously.
 - [ ] Make the hexes look nicer slightly, more in theme and more clear who and which forces are on what and who's capital is who's etc...
 - [ ] The basic actions are too cluttered, like in general I want things folded in and out and you only expose buttons and thigns when you need to. So build bridge is the button and then you pick the edge and you don't need all this extra UI on the side, simplify it
+- [ ] we need a few UI's still, like dice rolling for draws and cards and other stuff
+- [ ] We need a better more clear UI with symbols (just do emojis for now) to represent gold, mana VP
 
 
 ### Tasks (web - targeting reliability)
@@ -466,14 +462,14 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Improve board visuals: nicer bridges and a bit of padding between hexes for a shattered plains look.
 - [ ] Add battle UX: click-to-roll dice with shared roll animations and visible hit assignment.
 - [ ] Add a host-only board state editor/debug panel (JSON view + light patch tools) for test games, only if it stays simple.
-- [ ] Add a victory screen (winner, final VP, recap, rematch/exit).
+- [x] Add a victory screen (winner, final VP, recap, rematch/exit).
 - [ ] Upgrade on-board visuals for units/champions/factions (distinct tokens, faction badges).
 - [x] Enforce faction uniqueness in setup (no duplicate faction picks).
-- [ ] Add deck UI with draw/discard piles, counts, direction arrows, and draw/discard animations.
+- [x] Add deck UI with draw/discard piles, counts, direction arrows, and draw/discard animations.
 - [ ] Low priority: add at least one targeted test for each card effect/card.
   - [x] Age I market: Flank Step movement without bridges.
   - [x] Age I market: Scavenger's Market gold + draw.
-  - [x] Age I market: Supply Ledger / Patrol Record / Banner Claim coverage.
+  - [ ] Age I market: Supply Ledger / Patrol Record / Banner Claim coverage.
   - [ ] Age I market: remaining orders (Quick March, Trade Caravan, Temporary Bridge, Patch Up, Quick Study).
   - [ ] Age II/III market + power deck card tests (as content lands).
 - [ ] At the end of the market phase we don't see the nice animation and transition for the last player who auto gets it

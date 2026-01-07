@@ -136,6 +136,7 @@ none
 - Extracted setup flow helpers into `packages/engine/src/setup-flow.ts` so `engine.ts` stays orchestration-focused.
 - Added card/deck helpers (`cards.ts`), unit helper (`units.ts`), and starter deck data (`content/starter-decks.ts`).
 - Moved view construction (`buildView` + setup view helpers) into `packages/engine/src/view.ts` and updated exports.
+- Refactored `apps/web/src/components/GameScreen.tsx` into `apps/web/src/components/GameScreenHeader.tsx`, `apps/web/src/components/GameScreenSidebar.tsx`, and `apps/web/src/components/GameScreenHandPanel.tsx` for readability; marked the Milestone 6.5 refactor task complete in `implementation_plan.md`.
 
 ## Cleanup/organization TODOs
 none

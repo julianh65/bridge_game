@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useRef, type CSSProperties } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 
 import {
   CARD_DEFS,
@@ -14,9 +14,12 @@ import {
 } from "@bridgefront/engine";
 import { areAdjacent, axialDistance, neighborHexKeys, parseHexKey } from "@bridgefront/shared";
 
-import { ActionPanel, type BasicActionIntent, type BoardPickMode } from "./ActionPanel";
+import { type BasicActionIntent, type BoardPickMode } from "./ActionPanel";
 import { BoardView } from "./BoardView";
 import { CollectionPanel } from "./CollectionPanel";
+import { GameScreenHandPanel } from "./GameScreenHandPanel";
+import { GameScreenHeader } from "./GameScreenHeader";
+import { GameScreenSidebar } from "./GameScreenSidebar";
 import { MarketPanel } from "./MarketPanel";
 import { VictoryScreen } from "./VictoryScreen";
 import { buildHexRender } from "../lib/board-preview";
@@ -125,7 +128,6 @@ export const GameScreen = ({
   const localPlayer = view.public.players.find((player) => player.id === playerId);
   const localPlayerId = localPlayer?.id ?? null;
   const handCards = view.private?.handCards ?? [];
-  const handCount = view.private ? handCards.length : 0;
   const deckCounts = view.private?.deckCounts ?? null;
   const phaseLabel = formatPhaseLabel(view.public.phase);
   const connectionLabel = status === "connected" ? "Live" : "Waiting";
@@ -208,50 +210,15 @@ export const GameScreen = ({
       ? (view.public.round - 1 + view.public.players.length) % view.public.players.length
       : 0;
   const leadPlayer = view.public.players.find((player) => player.seatIndex === leadSeatIndex) ?? null;
-  const actionStatusSummary = actionStep
-    ? (() => {
-        const eligibleCount = actionEligible.size;
-        const waitingCount = actionWaiting.size;
-        const submittedCount = Math.max(0, eligibleCount - waitingCount);
-        const idleCount = Math.max(0, view.public.players.length - eligibleCount);
-        return { eligibleCount, waitingCount, submittedCount, idleCount };
-      })()
-    : null;
   const logCount = view.public.logs.length;
   const lastLogEntry = logCount > 0 ? view.public.logs[logCount - 1] : null;
   const lastLogLabel = lastLogEntry ? formatGameEvent(lastLogEntry, playerNames) : null;
-  const getActionStatusTooltip = (playerId: string): string => {
-    if (!actionStep) {
-      return `Action: not active (${phaseLabel}).`;
-    }
-    if (!actionEligible.has(playerId)) {
-      return "Action: not eligible this step.";
-    }
-    return actionWaiting.has(playerId)
-      ? "Action: waiting for declaration."
-      : "Action: declaration submitted.";
-  };
-  const getActionStatusBadge = (
-    playerId: string
-  ): { label: string; className: string } | null => {
-    if (!actionStep) {
-      return null;
-    }
-    if (!actionEligible.has(playerId)) {
-      return { label: "Idle", className: "status-pill--idle" };
-    }
-    if (actionWaiting.has(playerId)) {
-      return { label: "Waiting", className: "status-pill--waiting" };
-    }
-    return { label: "Submitted", className: "status-pill--ready" };
-  };
   const isActionPhase = view.public.phase === "round.action";
   const isMarketPhase = view.public.phase === "round.market";
   const isCollectionPhase = view.public.phase === "round.collection";
   const isInteractivePhase = isActionPhase || isMarketPhase || isCollectionPhase;
   const showPhaseFocus = isCollectionPhase;
   const canShowHandPanel = Boolean(view.private) && isActionPhase;
-  const showHandPanel = canShowHandPanel && isHandPanelOpen;
   const showVictoryScreen = Boolean(view.public.winnerPlayerId && isVictoryVisible);
   const canDeclareAction =
     status === "connected" && Boolean(localPlayer) && isActionPhase && !localPlayer?.doneThisRound;
@@ -320,12 +287,6 @@ export const GameScreen = ({
   };
   const handleVictoryClose = () => {
     setIsVictoryVisible(false);
-  };
-  const playerSwatchStyle = (seatIndex: number): CSSProperties => {
-    const index = Math.max(0, Math.min(5, Math.floor(seatIndex)));
-    return {
-      "--player-color": `var(--player-color-${index})`
-    } as CSSProperties;
   };
   const toggleDock = () => {
     setIsInfoDockOpen((open) => !open);
@@ -1255,186 +1216,16 @@ export const GameScreen = ({
         }
       })()
     : null;
-
-  const handPanel = showHandPanel ? (
-    <section className="panel game-hand">
-      <div className="game-hand__header">
-        <div>
-          <h2>Hand</h2>
-          <span className="hand-meta">{handCount} cards</span>
-        </div>
-        <div className="hand-controls">
-          <button
-            type="button"
-            className="btn btn-tertiary"
-            onClick={() => setIsHandPanelOpen(false)}
-          >
-            Hide
-          </button>
-        </div>
-      </div>
-      <div className="game-hand__layout">
-        <div className="game-hand__cards">
-          {handCount === 0 ? (
-            <div className="hand-empty">No cards yet.</div>
-          ) : (
-            <>
-              <div className="hand-row">
-                {handCards.map((card, index) => {
-                  const def = CARD_DEFS_BY_ID.get(card.defId);
-                  const label = def?.name ?? card.defId;
-                  const isSelected = card.id === cardInstanceId;
-                  const manaCost = def?.cost.mana ?? 0;
-                  const goldCost = def?.cost.gold ?? 0;
-                  const canAfford = availableMana >= manaCost && availableGold >= goldCost;
-                  const isPlayable = canDeclareAction && canAfford;
-                  const totalCards = handCards.length;
-                  const centerIndex = (totalCards - 1) / 2;
-                  const offset = index - centerIndex;
-                  const fanRotation = totalCards > 1 ? offset * 4 : 0;
-                  const fanLift = Math.abs(offset) * 4;
-                  const depth = totalCards - Math.abs(offset);
-                  const costLabel = def
-                    ? `M${manaCost}${goldCost ? ` G${goldCost}` : ""}`
-                    : "M-";
-                  const typeLabel = def?.type ?? "Card";
-                  const initiativeLabel = def ? `Init ${def.initiative}` : "Init -";
-                  const handStyle = {
-                    zIndex: 10 + depth,
-                    "--hand-rotate": `${fanRotation}deg`,
-                    "--hand-lift": `${fanLift}px`
-                  } as CSSProperties;
-                  return (
-                    <button
-                      key={card.id}
-                      type="button"
-                      className={`hand-card ${isSelected ? "is-selected" : ""} ${
-                        isPlayable ? "" : "is-disabled"
-                      }`}
-                      style={handStyle}
-                      aria-pressed={isSelected}
-                      aria-disabled={!isPlayable}
-                      title={`${label} (${card.id})`}
-                      onClick={() => {
-                        setCardInstanceId(card.id);
-                        setCardTargetsRaw("");
-                        setBoardPickModeSafe("none");
-                      }}
-                    >
-                      <div className="hand-card__face">
-                        <div className="hand-card__top">
-                          <span className="hand-card__name">{label}</span>
-                          <span className="hand-card__cost">{costLabel}</span>
-                        </div>
-                        <div className="hand-card__body">
-                          <span className="hand-card__type">{typeLabel}</span>
-                          <span className="hand-card__meta">{initiativeLabel}</span>
-                        </div>
-                        <div className="hand-card__footer">
-                          <span className="hand-card__id">{card.id}</span>
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-              {selectedCardDef ? (
-                <div className="card-detail">
-                  <div className="card-detail__header">
-                    <strong>{selectedCardDef.name}</strong>
-                    {cardCostLabel ? (
-                      <span className="card-detail__meta">Cost {cardCostLabel}</span>
-                    ) : null}
-                    <span className="card-detail__meta">Init {selectedCardDef.initiative}</span>
-                  </div>
-                  <p className="card-detail__rules">{selectedCardDef.rulesText}</p>
-                  {cardTargetPanel}
-                </div>
-              ) : null}
-            </>
-          )}
-        </div>
-        <aside className="game-hand__actions">
-          <div className="game-hand__actions-header">
-            <h3>Actions</h3>
-            <span className="hand-meta">Basic actions</span>
-          </div>
-          <ActionPanel
-            phase={view.public.phase}
-            player={localPlayer ?? null}
-            status={status}
-            edgeKey={edgeKey}
-            marchFrom={marchFrom}
-            marchTo={marchTo}
-            boardPickMode={boardPickMode}
-            basicActionIntent={basicActionIntent}
-            onBasicActionIntentChange={setBasicActionIntent}
-            onEdgeKeyChange={setEdgeKey}
-            onMarchFromChange={setMarchFrom}
-            onMarchToChange={setMarchTo}
-            onBoardPickModeChange={setBoardPickModeSafe}
-          />
-        </aside>
-      </div>
-      <div className="game-hand__footer">
-        {deckCounts ? (
-          <div className="deck-counts deck-counts--compact">
-            <div className="resource-row">
-              <span>Draw</span>
-              <strong>{deckCounts.drawPile}</strong>
-            </div>
-            <div className="resource-row">
-              <span>Discard</span>
-              <strong>{deckCounts.discardPile}</strong>
-            </div>
-            <div className="resource-row">
-              <span>Scrapped</span>
-              <strong>{deckCounts.scrapped}</strong>
-            </div>
-          </div>
-        ) : (
-          <div />
-        )}
-        <div className="hand-submit">
-          <button
-            type="button"
-            className="btn btn-secondary"
-            disabled={!canSubmitDone}
-            onClick={() => onSubmitAction({ kind: "done" })}
-          >
-            Pass
-          </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            disabled={!primaryAction}
-            title={primaryAction ? primaryActionLabel : "Select an action to submit"}
-            onClick={() => {
-              if (!primaryAction) {
-                return;
-              }
-              onSubmitAction(primaryAction);
-            }}
-          >
-            Submit
-          </button>
-        </div>
-      </div>
-    </section>
-  ) : null;
-
-  const handToggle =
-    canShowHandPanel && !isHandPanelOpen ? (
-      <div className="hand-toggle">
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={() => setIsHandPanelOpen(true)}
-        >
-          Show Hand
-        </button>
-      </div>
-    ) : null;
+  const handleSelectCard = (cardId: string) => {
+    setCardInstanceId(cardId);
+    setCardTargetsRaw("");
+    setBoardPickModeSafe("none");
+  };
+  const localResources = {
+    gold: availableGold,
+    mana: availableMana
+  };
+  const localVpTotal = view.private?.vp ? view.private.vp.total : null;
 
   const phaseFocusPanel = showPhaseFocus ? (
     <div className="game-screen__focus">
@@ -1517,150 +1308,6 @@ export const GameScreen = ({
     </section>
   ) : null;
 
-  const statusSection = (
-    <div className="sidebar-section sidebar-section--status">
-      <div className="sidebar-section__header">
-        <h3>Status</h3>
-        <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
-      </div>
-      <div className="resource-row">
-        <span>Round</span>
-        <strong>{view.public.round}</strong>
-      </div>
-      <div className="resource-row">
-        <span>Phase</span>
-        <strong>{phaseLabel}</strong>
-      </div>
-      <div className="resource-row">
-        <span>Lead</span>
-        <strong>{leadPlayer ? leadPlayer.name : "—"}</strong>
-      </div>
-      {actionStatusSummary ? (
-        <div className="status-summary">
-          <span className="status-pill status-pill--waiting">
-            Waiting {actionStatusSummary.waitingCount}
-          </span>
-          <span className="status-pill status-pill--ready">
-            Submitted {actionStatusSummary.submittedCount}
-          </span>
-          {actionStatusSummary.idleCount > 0 ? (
-            <span className="status-pill status-pill--idle">
-              Idle {actionStatusSummary.idleCount}
-            </span>
-          ) : null}
-        </div>
-      ) : null}
-      {!isInteractivePhase ? (
-        <p className="status-note">Resolving {phaseLabel}. Waiting on the server.</p>
-      ) : null}
-    </div>
-  );
-
-  const resourcesSection = (
-    <div className="sidebar-section">
-      <h3>Resources</h3>
-      <div className="resource-row">
-        <span>Gold</span>
-        <strong>{localPlayer?.resources.gold ?? 0}</strong>
-      </div>
-      <div className="resource-row">
-        <span>Mana</span>
-        <strong>{localPlayer?.resources.mana ?? 0}</strong>
-      </div>
-      {view.private?.vp ? (
-        <div className="resource-row">
-          <span>VP</span>
-          <strong>{view.private.vp.total}</strong>
-        </div>
-      ) : null}
-    </div>
-  );
-
-  const tableSection = (
-    <div className="sidebar-section sidebar-section--table">
-      <div className="sidebar-section__header">
-        <h3>Table</h3>
-      </div>
-      <div className="table-list">
-        {view.public.players.map((player) => {
-          const actionStatus = getActionStatusBadge(player.id);
-          const actionStatusClass = actionStatus
-            ? ["status-pill", actionStatus.className].filter(Boolean).join(" ")
-            : "";
-          const rowClassName = [
-            "table-row",
-            actionStep
-              ? actionEligible.has(player.id)
-                ? actionWaiting.has(player.id)
-                  ? "table-row--waiting"
-                  : "table-row--submitted"
-                : "table-row--idle"
-              : ""
-          ]
-            .filter(Boolean)
-            .join(" ");
-          return (
-            <div
-              key={player.id}
-              className={rowClassName}
-              title={getActionStatusTooltip(player.id)}
-            >
-              <div className="table-row__main">
-                <span className="player-swatch" style={playerSwatchStyle(player.seatIndex)} />
-                <div>
-                  <span className="player-name">{player.name}</span>
-                  <span className="player-meta">Seat {player.seatIndex}</span>
-                </div>
-              </div>
-              <div className="table-row__stats">
-                <span className="table-stat">G {player.resources.gold}</span>
-                <span className="table-stat">M {player.resources.mana}</span>
-                <span className="table-stat">H {player.handCount}</span>
-              </div>
-              <div className="table-row__status">
-                <span
-                  className={`status-pill ${
-                    player.connected ? "status-pill--ready" : "status-pill--waiting"
-                  }`}
-                >
-                  {player.connected ? "On" : "Off"}
-                </span>
-                {actionStatus ? (
-                  <span className={actionStatusClass}>{actionStatus.label}</span>
-                ) : null}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-
-  const intelSection = (
-    <div className="sidebar-section sidebar-section--intel">
-      <div className="sidebar-section__header">
-        <h3>Intel</h3>
-        <div className="dock-buttons">
-          <button
-            type="button"
-            className={`btn btn-tertiary ${isInfoDockOpen ? "is-active" : ""}`}
-            onClick={toggleDock}
-          >
-            Log <span className="dock-count">{logCount}</span>
-          </button>
-        </div>
-      </div>
-      <div className="intel-grid">
-        <div className="intel-card intel-card--log">
-          <span className="intel-label">Latest</span>
-          <span className="intel-value intel-snippet">
-            {lastLogLabel ?? "No events yet."}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <section className="game-screen">
       {phaseCue ? (
@@ -1684,52 +1331,18 @@ export const GameScreen = ({
           onClose={handleVictoryClose}
         />
       ) : null}
-      <header className={`game-screen__header ${isHeaderCollapsed ? "is-collapsed" : ""}`}>
-        {isHeaderCollapsed ? (
-          <div className="game-screen__collapsed-bar">
-            <div className="game-screen__collapsed-meta">
-              <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
-              <span className="status-pill status-pill--phase">Phase: {phaseLabel}</span>
-              <span className="status-pill">Round {view.public.round}</span>
-            </div>
-            <div className="game-screen__collapsed-actions">
-              <button type="button" className="btn btn-tertiary" onClick={toggleHeaderCollapsed}>
-                Show HUD
-              </button>
-              <button type="button" className="btn btn-secondary" onClick={onLeave}>
-                Leave Room
-              </button>
-            </div>
-          </div>
-        ) : (
-          <>
-            <div>
-              <p className="eyebrow">Bridgefront</p>
-              <h1>Room {roomId}</h1>
-              <p className="subhead">
-                Round {view.public.round} · Phase {phaseLabel}
-              </p>
-            </div>
-            <div className="game-screen__meta">
-              <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
-              <span className="status-pill status-pill--phase">Phase: {phaseLabel}</span>
-              <span className="status-pill">Round {view.public.round}</span>
-              <span className="status-pill">Players: {view.public.players.length}</span>
-              {view.public.winnerPlayerId ? (
-                <span className="status-pill status-pill--winner">
-                  Winner: {view.public.winnerPlayerId}
-                </span>
-              ) : null}
-              <button type="button" className="btn btn-tertiary" onClick={toggleHeaderCollapsed}>
-                Hide HUD
-              </button>
-              <button type="button" className="btn btn-secondary" onClick={onLeave}>
-                Leave Room
-              </button>
-            </div>
-          </>
-        )}
-      </header>
+      <GameScreenHeader
+        isCollapsed={isHeaderCollapsed}
+        connectionLabel={connectionLabel}
+        connectionClass={connectionClass}
+        phaseLabel={phaseLabel}
+        round={view.public.round}
+        roomId={roomId}
+        playerCount={view.public.players.length}
+        winnerPlayerId={view.public.winnerPlayerId ?? null}
+        onToggle={toggleHeaderCollapsed}
+        onLeave={onLeave}
+      />
 
       {marketOverlay}
 
@@ -1784,17 +1397,59 @@ export const GameScreen = ({
           </div>
         </section>
 
-        <aside className="panel game-sidebar">
-          <h2>Command Center</h2>
-          {statusSection}
-          {resourcesSection}
-          {tableSection}
-          {intelSection}
-        </aside>
+        <GameScreenSidebar
+          connectionLabel={connectionLabel}
+          connectionClass={connectionClass}
+          phaseLabel={phaseLabel}
+          round={view.public.round}
+          leadPlayerName={leadPlayer?.name ?? null}
+          players={view.public.players}
+          actionStep={actionStep}
+          actionEligible={actionEligible}
+          actionWaiting={actionWaiting}
+          isInteractivePhase={isInteractivePhase}
+          localResources={localResources}
+          localVpTotal={localVpTotal}
+          logCount={logCount}
+          lastLogLabel={lastLogLabel}
+          isInfoDockOpen={isInfoDockOpen}
+          onToggleDock={toggleDock}
+        />
       </div>
       {infoDock}
-      {handPanel}
-      {handToggle}
+      <GameScreenHandPanel
+        canShowHandPanel={canShowHandPanel}
+        isHandPanelOpen={isHandPanelOpen}
+        onShowHandPanel={() => setIsHandPanelOpen(true)}
+        onHideHandPanel={() => setIsHandPanelOpen(false)}
+        handCards={handCards}
+        deckCounts={deckCounts}
+        availableMana={availableMana}
+        availableGold={availableGold}
+        canDeclareAction={canDeclareAction}
+        selectedCardId={cardInstanceId}
+        selectedCardDef={selectedCardDef}
+        cardCostLabel={cardCostLabel}
+        cardTargetPanel={cardTargetPanel}
+        phase={view.public.phase}
+        player={localPlayer ?? null}
+        status={status}
+        edgeKey={edgeKey}
+        marchFrom={marchFrom}
+        marchTo={marchTo}
+        boardPickMode={boardPickMode}
+        basicActionIntent={basicActionIntent}
+        onBasicActionIntentChange={setBasicActionIntent}
+        onEdgeKeyChange={setEdgeKey}
+        onMarchFromChange={setMarchFrom}
+        onMarchToChange={setMarchTo}
+        onBoardPickModeChange={setBoardPickModeSafe}
+        onSelectCard={handleSelectCard}
+        onSubmitAction={onSubmitAction}
+        primaryAction={primaryAction}
+        primaryActionLabel={primaryActionLabel}
+        canSubmitDone={canSubmitDone}
+      />
     </section>
   );
 };
