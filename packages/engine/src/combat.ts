@@ -25,6 +25,7 @@ import {
   runModifierEvents
 } from "./modifiers";
 import { removeChampionModifiers } from "./champions";
+import { applyChampionKillRewards } from "./rewards";
 
 const FORCE_HIT_FACES = 2;
 const MAX_STALE_COMBAT_ROUNDS = 20;
@@ -44,6 +45,7 @@ type HitResolution = {
   removedUnitIds: UnitID[];
   updatedChampions: Record<UnitID, ChampionUnitState>;
   bounty: number;
+  killedChampions: ChampionUnitState[];
 };
 
 type CombatantSummary = {
@@ -288,6 +290,7 @@ const resolveHits = (
   const removedUnitIds: UnitID[] = [];
   const updatedChampions: Record<UnitID, ChampionUnitState> = {};
   let bounty = 0;
+  const killedChampions: ChampionUnitState[] = [];
 
   for (const unitId of unitIds) {
     const hits = hitsByUnit[unitId] ?? 0;
@@ -308,6 +311,7 @@ const resolveHits = (
     if (nextHp <= 0) {
       removedUnitIds.push(unitId);
       bounty += unit.bounty;
+      killedChampions.push(unit);
       continue;
     }
 
@@ -317,28 +321,7 @@ const resolveHits = (
     };
   }
 
-  return { removedUnitIds, updatedChampions, bounty };
-};
-
-const applyBounty = (state: GameState, playerId: PlayerID, amount: number): GameState => {
-  if (amount <= 0) {
-    return state;
-  }
-
-  return {
-    ...state,
-    players: state.players.map((player) =>
-      player.id === playerId
-        ? {
-            ...player,
-            resources: {
-              ...player.resources,
-              gold: player.resources.gold + amount
-            }
-          }
-        : player
-    )
-  };
+  return { removedUnitIds, updatedChampions, bounty, killedChampions };
 };
 
 const summarizeUnits = (
@@ -545,9 +528,11 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
       ...attackerHits.removedUnitIds,
       ...defenderHits.removedUnitIds
     ]);
-    const removedChampionIds = [...removedSet].filter(
-      (unitId) => nextUnits[unitId]?.kind === "champion"
-    );
+    const removedChampionIds = [
+      ...attackerHits.killedChampions.map((unit) => unit.id),
+      ...defenderHits.killedChampions.map((unit) => unit.id)
+    ];
+    const uniqueChampionIds = [...new Set(removedChampionIds)];
 
     const updatedUnits: Record<UnitID, UnitState> = { ...nextUnits };
     for (const unitId of removedSet) {
@@ -583,15 +568,29 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
       board: nextBoard,
       rngState
     };
-    if (removedChampionIds.length > 0) {
-      nextState = removeChampionModifiers(nextState, removedChampionIds);
+    if (uniqueChampionIds.length > 0) {
+      nextState = removeChampionModifiers(nextState, uniqueChampionIds);
     }
 
-    if (defenderHits.bounty > 0) {
-      nextState = applyBounty(nextState, participants[0], defenderHits.bounty);
+    if (defenderHits.killedChampions.length > 0) {
+      nextState = applyChampionKillRewards(nextState, {
+        killerPlayerId: participants[0],
+        victimPlayerId: participants[1],
+        killedChampions: defenderHits.killedChampions,
+        bounty: defenderHits.bounty,
+        hexKey,
+        source: "battle"
+      });
     }
-    if (attackerHits.bounty > 0) {
-      nextState = applyBounty(nextState, participants[1], attackerHits.bounty);
+    if (attackerHits.killedChampions.length > 0) {
+      nextState = applyChampionKillRewards(nextState, {
+        killerPlayerId: participants[1],
+        victimPlayerId: participants[0],
+        killedChampions: attackerHits.killedChampions,
+        bounty: attackerHits.bounty,
+        hexKey,
+        source: "battle"
+      });
     }
 
     nextBoard = nextState.board;

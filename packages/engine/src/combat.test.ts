@@ -603,6 +603,64 @@ describe("combat resolution", () => {
     expect(p2?.resources.gold).toBe(1);
   });
 
+  it("awards veil contracts gold on champion kills", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({
+      value: 1,
+      next: rng
+    }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        p1: ["f1"],
+        p2: ["c2"]
+      }
+    };
+    board.units = {
+      f1: { id: "f1", ownerPlayerId: "p1", kind: "force", hex: hexKey },
+      c2: {
+        id: "c2",
+        ownerPlayerId: "p2",
+        kind: "champion",
+        hex: hexKey,
+        cardDefId: "test.c2",
+        hp: 1,
+        maxHp: 1,
+        attackDice: 0,
+        hitFaces: 0,
+        bounty: 3,
+        abilityUses: {}
+      }
+    };
+
+    const state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(24),
+      board,
+      modifiers: createFactionModifiers("veil", "p1"),
+      players: base.players.map((player) => ({
+        ...player,
+        resources: { ...player.resources, gold: 0 }
+      }))
+    };
+
+    const resolved = resolveBattleAtHex(state, hexKey);
+    const p1 = resolved.players.find((player) => player.id === "p1");
+    const p2 = resolved.players.find((player) => player.id === "p2");
+
+    expect(p1?.resources.gold).toBe(5);
+    expect(p2?.resources.gold).toBe(0);
+  });
+
   it("heals veil champions after battle", () => {
     vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({
       value: 1,

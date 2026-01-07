@@ -324,7 +324,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Bastion Shield Wall
   - [x] Prospect Ore Cut / Mine Militia
   - [x] Bastion Home Guard (extra force on capital deploy)
-  - [ ] Assassins Contracts (bonus gold on champion kill)
+  - [x] Assassins Contracts (bonus gold on champion kill)
   - [ ] Aerial Tailwind (first stack move per round gets +1 hex)
   - [ ] Aerial Wings (deploy to center as if capital when occupied)
   - [ ] Miners Deep Tunnels (occupied mines count adjacent/connected)
@@ -469,6 +469,11 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Enforce faction uniqueness in setup (no duplicate faction picks).
 - [ ] Add deck UI with draw/discard piles, counts, direction arrows, and draw/discard animations.
 - [ ] Low priority: add at least one targeted test for each card effect/card.
+  - [x] Age I market: Flank Step movement without bridges.
+  - [x] Age I market: Scavenger's Market gold + draw.
+  - [ ] Age I market: Supply Ledger / Patrol Record / Banner Claim coverage.
+  - [ ] Age I market: remaining orders (Quick March, Trade Caravan, Temporary Bridge, Patch Up, Quick Study).
+  - [ ] Age II/III market + power deck card tests (as content lands).
 - [ ] At the end of the market phase we don't see the nice animation and transition for the last player who auto gets it
 - [x] It needs to be much more clear that Done is like "Pass" and won't let you go again
 

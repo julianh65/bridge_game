@@ -1,4 +1,5 @@
 import type {
+  ChampionKillContext,
   CombatAssignmentContext,
   CombatEndContext,
   CombatRoundContext,
@@ -139,6 +140,20 @@ export const getDeployForcesCount = (
     state,
     state.modifiers,
     (hooks) => hooks.getDeployForcesCount,
+    context,
+    base
+  );
+};
+
+export const getChampionKillBonusGold = (
+  state: GameState,
+  context: ChampionKillContext,
+  base: number
+): number => {
+  return applyModifierQuery(
+    state,
+    state.modifiers,
+    (hooks) => hooks.getChampionKillBonusGold,
     context,
     base
   );

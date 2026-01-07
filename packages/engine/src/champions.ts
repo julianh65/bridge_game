@@ -1,6 +1,7 @@
 import { randInt } from "@bridgefront/shared";
 
 import type { CardDefId, GameState, Modifier, PlayerID, UnitID } from "./types";
+import { applyChampionKillRewards } from "./rewards";
 
 const BODYGUARD_CHAMPION_ID = "champion.bastion.ironclad_warden";
 const ASSASSINS_EDGE_CHAMPION_ID = "champion.veil.shadeblade";
@@ -33,27 +34,6 @@ const buildAbilityUses = (cardDefId: CardDefId): Record<string, { remaining: num
   return Object.fromEntries(
     Object.entries(perRound).map(([key, count]) => [key, { remaining: count }])
   );
-};
-
-const addGold = (state: GameState, playerId: PlayerID, amount: number): GameState => {
-  if (amount <= 0) {
-    return state;
-  }
-
-  return {
-    ...state,
-    players: state.players.map((player) =>
-      player.id === playerId
-        ? {
-            ...player,
-            resources: {
-              ...player.resources,
-              gold: player.resources.gold + amount
-            }
-          }
-        : player
-    )
-  };
 };
 
 const setChampionAbilityUses = (
@@ -438,8 +418,15 @@ export const dealChampionDamage = (
 
   nextState = removeChampionModifiers(nextState, [unitId]);
 
-  if (unit.ownerPlayerId !== sourcePlayerId && unit.bounty > 0) {
-    nextState = addGold(nextState, sourcePlayerId, unit.bounty);
+  if (unit.ownerPlayerId !== sourcePlayerId) {
+    nextState = applyChampionKillRewards(nextState, {
+      killerPlayerId: sourcePlayerId,
+      victimPlayerId: unit.ownerPlayerId,
+      killedChampions: [unit],
+      bounty: unit.bounty,
+      hexKey: unit.hex,
+      source: "effect"
+    });
   }
 
   return nextState;

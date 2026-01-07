@@ -143,6 +143,24 @@ const createVeilCleanExitModifier = (playerId: PlayerID): Modifier => ({
   }
 });
 
+const createVeilContractsModifier = (playerId: PlayerID): Modifier => ({
+  id: buildModifierId("veil", playerId, "contracts"),
+  source: { type: "faction", sourceId: "veil" },
+  ownerPlayerId: playerId,
+  duration: { type: "permanent" },
+  hooks: {
+    getChampionKillBonusGold: ({ modifier, killerPlayerId, killedChampions }, current) => {
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== killerPlayerId) {
+        return current;
+      }
+      if (killedChampions.length === 0) {
+        return current;
+      }
+      return current + killedChampions.length * 2;
+    }
+  }
+});
+
 const createGatewrightCapitalAssaultModifier = (playerId: PlayerID): Modifier => ({
   id: buildModifierId("gatewright", playerId, "capital_assault"),
   source: { type: "faction", sourceId: "gatewright" },
@@ -229,7 +247,7 @@ export const createFactionModifiers = (factionId: string, playerId: PlayerID): M
         createBastionHomeGuardModifier(playerId)
       ];
     case "veil":
-      return [createVeilCleanExitModifier(playerId)];
+      return [createVeilCleanExitModifier(playerId), createVeilContractsModifier(playerId)];
     case "prospect":
       return [createProspectOreCutModifier(playerId), createProspectMineMilitiaModifier(playerId)];
     case "gatewright":

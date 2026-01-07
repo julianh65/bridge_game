@@ -205,6 +205,15 @@ export type CombatEndContext = CombatContext & {
   defenders: UnitID[];
 };
 
+export type ChampionKillContext = {
+  killerPlayerId: PlayerID;
+  victimPlayerId: PlayerID;
+  killedChampions: ChampionUnitState[];
+  bounty: number;
+  hexKey: HexKey;
+  source: "battle" | "effect";
+};
+
 export type MoveContext = {
   playerId: PlayerID;
   from: HexKey;
@@ -242,6 +251,7 @@ export type ModifierHooks = {
   getMoveRequiresBridge?: ModifierQueryHook<MoveContext, boolean>;
   getDeployForcesCount?: ModifierQueryHook<DeployForcesContext, number>;
   getMineGoldValue?: ModifierQueryHook<MineGoldContext, number>;
+  getChampionKillBonusGold?: ModifierQueryHook<ChampionKillContext, number>;
   beforeCombatRound?: ModifierEventHook<CombatRoundContext>;
   afterBattle?: ModifierEventHook<CombatEndContext>;
 };

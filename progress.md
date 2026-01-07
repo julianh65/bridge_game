@@ -17,6 +17,7 @@
 
 ## Active tasks
 none
+- owner: agent2 | scope: add targeted tests for age1 market card effects (Flank Step, Scavenger's Market) (no overlap with Veil Contracts files) | files: packages/engine/src/action-flow.test.ts, progress.md, implementation_plan.md | status: in progress
 
 ## Milestone 8.5 progress
 - Consolidated the GameScreen layout: moved the action panel into the hand row, added an intel dock for players/log, and tightened the sidebar into status/resources/intel summaries (styles updated).
@@ -59,6 +60,7 @@ none
 ## Faction passives progress
 - Added Gatewright passives (capital assault + extortionists) and Veil clean-exit heal modifier with combat coverage; implementation plan update deferred until `implementation_plan.md` is free.
 - Implemented Bastion Home Guard (+1 force on capital deploy) via deploy-count hook; updated action flow/card effects tests.
+- Implemented Veil Contracts (+2 gold per champion kill) via a champion-kill reward hook and added combat coverage; updated `implementation_plan.md`.
 
 ## Testing progress
 - Added card draw tests covering reshuffle behavior and hand-limit overflow in `packages/engine/src/cards.test.ts`.
@@ -87,6 +89,7 @@ none
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts src/action-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts`.
 
 ## Docs maintenance
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
