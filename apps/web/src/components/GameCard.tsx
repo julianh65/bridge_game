@@ -133,9 +133,6 @@ export const GameCard = ({
       <div className="game-card__header">
         <h3 className="game-card__name">{name}</h3>
         {typeLabel ? <p className="game-card__type">{typeLabel}</p> : null}
-        {victoryPoints !== null ? (
-          <p className="game-card__vp">+{victoryPoints} VP</p>
-        ) : null}
         {showId && !isHidden ? <p className="game-card__id">{cardId}</p> : null}
       </div>
       {deckLabel ? <div className="game-card__age">{deckLabel}</div> : null}
@@ -166,12 +163,17 @@ export const GameCard = ({
         </div>
       ) : null}
       {showRules ? (
-        <p
-          className={`game-card__rules${isHidden ? " game-card__rules--hidden" : ""}`}
-          title={!isHidden ? rulesText : undefined}
-        >
-          {rulesText}
-        </p>
+        <div className="game-card__rules-block">
+          <p
+            className={`game-card__rules${isHidden ? " game-card__rules--hidden" : ""}`}
+            title={!isHidden ? rulesText : undefined}
+          >
+            {rulesText}
+          </p>
+          {victoryPoints !== null ? (
+            <p className="game-card__vp game-card__vp--inline">+{victoryPoints} VP</p>
+          ) : null}
+        </div>
       ) : null}
       {showChampionStats && !isHidden && card?.champion ? (
         <div className="game-card__champion">
