@@ -43,7 +43,7 @@ type BoardViewProps = {
 
 const HEX_DRAW_SCALE = 0.94;
 const HEX_DRAW_SIZE = HEX_SIZE * HEX_DRAW_SCALE;
-const BRIDGE_INSET = HEX_DRAW_SIZE * 0.35;
+const BRIDGE_INSET = HEX_DRAW_SIZE * 0.4;
 
 const shortenSegment = (
   from: { x: number; y: number },
