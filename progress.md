@@ -71,6 +71,7 @@
 - Slowed the action card reveal overlay timing for a less abrupt reveal.
 - Reworked the hand panel layout: stacked basic action buttons, moved deck counts to header pills, and floated Pass/Submit controls; marked the plan items complete in `implementation_plan.md`.
 - Adjusted the hand panel overlay to stop reserving vertical space and slimmed the actions column width.
+- Hid scrollbars on the hand card row while keeping horizontal scroll.
 - Added an age/start-of-game transition cue overlay and marked the plan item complete in `implementation_plan.md`.
 - Shortened bridge render segments so they no longer draw center-to-center; marked the plan item complete in `implementation_plan.md`.
 - Shortened bridge render segments a bit further by increasing the inset.

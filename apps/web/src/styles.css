@@ -2115,6 +2115,13 @@ h1 {
   overflow-x: auto;
   overflow-y: visible;
   scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hand-row::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 @keyframes cardGlow {
