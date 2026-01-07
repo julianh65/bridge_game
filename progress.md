@@ -20,6 +20,7 @@
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats (plan item already checked in `implementation_plan.md`).
+- Swapped resource emojis to distinct colors for easier scanning (yellow/blue/green).
 - Slimmed the action strip: moved Pass/Submit + deck counts into the hand footer, simplified basic actions, and added a command-center table with per-player gold/mana/hand counts.
 - Added show/hide controls for the hand panel, made the actions column collapsible, and removed internal scrolling from the bottom hand area.
 - Removed the duplicate action panel, tightened the game view to fit the viewport, and reduced the board height while keeping the intel dock as a fixed overlay.

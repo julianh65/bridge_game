@@ -126,16 +126,16 @@ export const GameScreenSidebar = ({
       <div className="sidebar-section">
         <h3>Resources</h3>
         <div className="resource-row">
-          <span>🪙 Gold</span>
+          <span>🟡 Gold</span>
           <strong>{localResources.gold}</strong>
         </div>
         <div className="resource-row">
-          <span>✨ Mana</span>
+          <span>🔵 Mana</span>
           <strong>{localResources.mana}</strong>
         </div>
         {localVpTotal !== null ? (
           <div className="resource-row">
-            <span>⭐ VP</span>
+            <span>🟢 VP</span>
             <strong>{localVpTotal}</strong>
           </div>
         ) : null}
@@ -178,10 +178,10 @@ export const GameScreenSidebar = ({
                 </div>
                 <div className="table-row__stats">
                   <span className="table-stat" title="Gold">
-                    🪙 {player.resources.gold}
+                    🟡 {player.resources.gold}
                   </span>
                   <span className="table-stat" title="Mana">
-                    ✨ {player.resources.mana}
+                    🔵 {player.resources.mana}
                   </span>
                   <span className="table-stat">H {player.handCount}</span>
                 </div>
