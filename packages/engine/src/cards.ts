@@ -174,7 +174,10 @@ export const insertCardIntoDrawPileRandom = (
   const defId = state.cardsByInstanceId[instanceId]?.defId;
   const cardDef = defId ? getCardDef(defId) : undefined;
   if (cardDef?.type === "Victory") {
-    nextState = addPermanentVp(nextState, playerId, 1);
+    const victoryPoints = cardDef.victoryPoints ?? 1;
+    if (victoryPoints !== 0) {
+      nextState = addPermanentVp(nextState, playerId, victoryPoints);
+    }
   }
   return nextState;
 };

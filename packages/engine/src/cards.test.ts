@@ -8,6 +8,7 @@ import {
   drawCards,
   insertCardIntoDrawPileRandom
 } from "./cards";
+import { CARD_DEFS_BY_ID, getCardDef } from "./content/cards";
 import { DEFAULT_CONFIG } from "./config";
 import { createNewGame } from "./engine";
 import { emit } from "./events";
@@ -210,16 +211,27 @@ describe("cards", () => {
     expect(nextState.rngState).toEqual(expectedRng);
   });
 
-  it("awards permanent VP when gaining a Victory card", () => {
+  it("awards configured victory points when gaining a Victory card", () => {
     const base = createNewGame(DEFAULT_CONFIG, 91, [
       { id: "p1", name: "Player 1" },
       { id: "p2", name: "Player 2" }
     ]);
 
-    const created = createCardInstance(base, "age1.supply_ledger");
-    const nextState = insertCardIntoDrawPileRandom(created.state, "p1", created.instanceId);
-    const p1 = nextState.players.find((player) => player.id === "p1");
+    const cardDef = getCardDef("age1.supply_ledger");
+    expect(cardDef).toBeTruthy();
+    if (cardDef) {
+      CARD_DEFS_BY_ID[cardDef.id] = { ...cardDef, victoryPoints: 2 };
+    }
+    try {
+      const created = createCardInstance(base, "age1.supply_ledger");
+      const nextState = insertCardIntoDrawPileRandom(created.state, "p1", created.instanceId);
+      const p1 = nextState.players.find((player) => player.id === "p1");
 
-    expect(p1?.vp.permanent).toBe(1);
+      expect(p1?.vp.permanent).toBe(2);
+    } finally {
+      if (cardDef) {
+        CARD_DEFS_BY_ID[cardDef.id] = cardDef;
+      }
+    }
   });
 });

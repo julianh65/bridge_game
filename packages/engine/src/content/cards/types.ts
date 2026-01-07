@@ -40,5 +40,6 @@ export type CardDef = {
   effects?: EffectSpec[];
   resolve?: (ctx: unknown, state: unknown, card: unknown, targets: unknown) => unknown;
   champion?: ChampionSpec;
+  victoryPoints?: number;
   factionId?: string;
 };

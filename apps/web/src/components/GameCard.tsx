@@ -103,6 +103,8 @@ export const GameCard = ({
   const showFactionLabel = showFaction && !isHidden && Boolean(card?.factionId);
   const factionName = showFactionLabel ? getFactionName(card?.factionId) : null;
   const factionSymbol = showFactionLabel ? getFactionSymbol(card?.factionId) : null;
+  const victoryPoints =
+    !isHidden && card?.type === "Victory" ? card.victoryPoints ?? 1 : null;
 
   const classes = [
     "game-card",
@@ -131,6 +133,9 @@ export const GameCard = ({
       <div className="game-card__header">
         <h3 className="game-card__name">{name}</h3>
         {typeLabel ? <p className="game-card__type">{typeLabel}</p> : null}
+        {victoryPoints !== null ? (
+          <p className="game-card__vp">+{victoryPoints} VP</p>
+        ) : null}
         {showId && !isHidden ? <p className="game-card__id">{cardId}</p> : null}
       </div>
       {deckLabel ? <div className="game-card__age">{deckLabel}</div> : null}

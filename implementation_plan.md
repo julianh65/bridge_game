@@ -536,6 +536,9 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Any text on the board shouldn't be highlightable
 - [x] Add some animations for units moving during the action reveal phase
 - [x] I added some random sound effects I downloaded to sound_fx, assign each of them a name / meaning (bell should be for rounds) and add the sound effects to different clicks and stuff, also if you need to feel free to move the sound effects folder and stuff to the appropriate place
+- [ ] Card styling, can we make the art slightly taller, and add a border around the images that looks nice?
+- [ ] Large and hard -- make the entire UI look a bit more dark fantasy and cooler
+- [x] For cards with victory points we need to denote how many VP's they're worth on the card
 
 ## Milestone 9.5 -- Card Art + Description
 

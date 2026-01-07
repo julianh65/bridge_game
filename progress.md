@@ -136,6 +136,7 @@
 
 ## Milestone 9 progress
 - Forced the market overlay to surface the winner animation for the last card even if the overlay was closed, so the end-of-market win reveal always shows. (Overlap note: `apps/web/src/components/GameScreen.tsx`.)
+- Added Victory card VP badges in `GameCard`, wired configurable `victoryPoints` in card defs/engine VP gain, and added coverage in engine card tests.
 - Added a unit stack arrival pulse animation in the board view to make movement clearer during action reveals; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.)
 - Added faction labels (symbol + name) on CardsBrowser card tiles to denote faction-specific cards; marked the plan item complete in `implementation_plan.md`. (owner: agent1)
 - Added softer click sfx tags to main menu view toggles and Home create/join buttons for more audio coverage.
