@@ -805,6 +805,14 @@ h1 {
   color: var(--muted);
 }
 
+.faction-card__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #3b2a12;
+}
+
 .faction-card:disabled {
   cursor: not-allowed;
   opacity: 0.6;
@@ -828,6 +836,40 @@ h1 {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
+}
+
+.faction-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.faction-symbol {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(111, 90, 70, 0.35);
+  background: #f7f1e6;
+  color: #4b2f18;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.faction-symbol--small {
+  width: 16px;
+  height: 16px;
+  font-size: 8px;
+}
+
+.faction-symbol--mini {
+  width: 14px;
+  height: 14px;
+  font-size: 7px;
 }
 
 .settings-grid {
@@ -3682,13 +3724,15 @@ h1 {
 }
 
 .unit__faction-badge-text {
-  font-size: 6px;
+  font-size: 5.5px;
   font-weight: 700;
   text-anchor: middle;
   dominant-baseline: middle;
   paint-order: stroke;
   stroke: rgba(255, 255, 255, 0.7);
   stroke-width: 1;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
 }
 
 .unit__faction-badge-text--p0 {
@@ -4001,6 +4045,23 @@ h1 {
   font-size: 24px;
   font-weight: 600;
   color: #5a3310;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.victory-screen__winner-faction {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(111, 90, 70, 0.2);
+  background: #f4e3cc;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
 }
 
 .victory-screen__meta {
@@ -4054,6 +4115,9 @@ h1 {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: #6c4a2f;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .victory-score__you {

@@ -1,7 +1,7 @@
 import type { PlayerID } from "@bridgefront/engine";
 
 import { RoomCodeCopy } from "./RoomCodeCopy";
-import { FACTIONS, getFactionName } from "../lib/factions";
+import { FACTIONS, getFactionName, getFactionSymbol } from "../lib/factions";
 import type { LobbyView, RoomConnectionStatus } from "../lib/room-client";
 
 type PreGameLobbyProps = {
@@ -74,32 +74,44 @@ export const PreGameLobby = ({
         <section className="panel">
           <h2>Seats</h2>
           <ul className="seat-list">
-            {lobby.players.map((player) => (
-              <li key={player.id} className={`seat ${player.connected ? "is-ready" : ""}`}>
-                <div className="seat__info">
-                  <span className="seat__name">
-                    {player.name}
-                    {player.seatIndex === 0 ? (
-                      <span className="chip chip--host">Host</span>
-                    ) : null}
-                    {player.id === playerId ? <span className="chip chip--local">You</span> : null}
-                  </span>
-                  <span className="seat__meta">Seat {player.seatIndex}</span>
-                  <span className="seat__meta">
-                    Faction {getFactionName(player.factionId)}
-                  </span>
-                </div>
-                <div className="seat__status">
-                  <span
-                    className={`status-pill ${
-                      player.connected ? "status-pill--ready" : "status-pill--waiting"
-                    }`}
-                  >
-                    {player.connected ? "Connected" : "Offline"}
-                  </span>
-                </div>
-              </li>
-            ))}
+            {lobby.players.map((player) => {
+              const factionSymbol = getFactionSymbol(player.factionId);
+              return (
+                <li key={player.id} className={`seat ${player.connected ? "is-ready" : ""}`}>
+                  <div className="seat__info">
+                    <span className="seat__name">
+                      {player.name}
+                      {player.seatIndex === 0 ? (
+                        <span className="chip chip--host">Host</span>
+                      ) : null}
+                      {player.id === playerId ? (
+                        <span className="chip chip--local">You</span>
+                      ) : null}
+                    </span>
+                    <span className="seat__meta">Seat {player.seatIndex}</span>
+                    <span className="seat__meta">
+                      <span className="faction-inline">
+                        {factionSymbol ? (
+                          <span className="faction-symbol faction-symbol--small" aria-hidden="true">
+                            {factionSymbol}
+                          </span>
+                        ) : null}
+                        Faction {getFactionName(player.factionId)}
+                      </span>
+                    </span>
+                  </div>
+                  <div className="seat__status">
+                    <span
+                      className={`status-pill ${
+                        player.connected ? "status-pill--ready" : "status-pill--waiting"
+                      }`}
+                    >
+                      {player.connected ? "Connected" : "Offline"}
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </section>
 
@@ -125,7 +137,12 @@ export const PreGameLobby = ({
                   title={isTaken && takenBy ? `Taken by ${takenBy.name}` : undefined}
                   onClick={() => onPickFaction(faction.id)}
                 >
-                  <span>{faction.name}</span>
+                  <span className="faction-card__label">
+                    <span className="faction-symbol" aria-hidden="true">
+                      {faction.symbol}
+                    </span>
+                    <span>{faction.name}</span>
+                  </span>
                   {isSelected ? (
                     <span className="chip chip--local">Selected</span>
                   ) : (

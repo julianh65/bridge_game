@@ -10,7 +10,7 @@ import { parseEdgeKey } from "@bridgefront/shared";
 
 import { HEX_SIZE, hexPoints } from "../lib/hex-geometry";
 import type { HexRender } from "../lib/board-preview";
-import { getFactionName } from "../lib/factions";
+import { getFactionName, getFactionSymbol } from "../lib/factions";
 
 type ViewBox = {
   minX: number;
@@ -133,11 +133,11 @@ const getFactionBadge = (factionId?: string | null): string | null => {
   if (!factionId || factionId === "unassigned") {
     return null;
   }
-  const name = getFactionName(factionId);
-  if (!name) {
+  const symbol = getFactionSymbol(factionId);
+  if (!symbol) {
     return null;
   }
-  return name.slice(0, 1).toUpperCase();
+  return symbol.toUpperCase();
 };
 
 const viewBoxEquals = (a: ViewBox, b: ViewBox): boolean => {
@@ -995,10 +995,8 @@ export const BoardView = ({
         const crestX = 10;
         const crestY = -10;
         const factionBadge = getFactionBadge(factionId);
-        const factionBadgeWidth = 14;
-        const factionBadgeHeight = 10;
-        const factionBadgeX = -factionBadgeWidth / 2;
-        const factionBadgeY = 12;
+        const factionBadgeRadius = 8;
+        const factionBadgeCenterY = 18;
         return (
           <g
             key={stack.key}
@@ -1056,21 +1054,18 @@ export const BoardView = ({
             ) : null}
             {factionBadge ? (
               <g className="unit__faction-badge">
-                <rect
+                <circle
                   className="unit__faction-badge-shape"
-                  x={factionBadgeX}
-                  y={factionBadgeY}
-                  width={factionBadgeWidth}
-                  height={factionBadgeHeight}
-                  rx={4}
-                  ry={4}
+                  cx={0}
+                  cy={factionBadgeCenterY}
+                  r={factionBadgeRadius}
                 />
                 <text
                   className={`unit__faction-badge-text${
                     colorIndex !== undefined ? ` unit__faction-badge-text--p${colorIndex}` : ""
                   }`}
                   x={0}
-                  y={factionBadgeY + factionBadgeHeight / 2}
+                  y={factionBadgeCenterY + 0.5}
                 >
                   {factionBadge}
                 </text>

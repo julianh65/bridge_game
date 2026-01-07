@@ -8,7 +8,7 @@ import { SetupCapitalDraft } from "./SetupCapitalDraft";
 import { SetupFreeStartingCardPick } from "./SetupFreeStartingCardPick";
 import { SetupStartingBridges } from "./SetupStartingBridges";
 import { buildBoardPreview } from "../lib/board-preview";
-import { getFactionName } from "../lib/factions";
+import { getFactionName, getFactionSymbol } from "../lib/factions";
 import type { RoomConnectionStatus } from "../lib/room-client";
 
 type LobbyProps = {
@@ -113,12 +113,24 @@ export const Lobby = ({
           <h2>Factions</h2>
           <p className="muted">Chosen in the pre-game lobby.</p>
           <div className="settings-grid">
-            {players.map((player) => (
-              <div key={player.id} className="settings-row">
-                <span className="settings-label">{player.name}</span>
-                <span className="settings-value">{getFactionName(player.factionId)}</span>
-              </div>
-            ))}
+            {players.map((player) => {
+              const factionSymbol = getFactionSymbol(player.factionId);
+              return (
+                <div key={player.id} className="settings-row">
+                  <span className="settings-label">{player.name}</span>
+                  <span className="settings-value">
+                    <span className="faction-inline">
+                      {factionSymbol ? (
+                        <span className="faction-symbol faction-symbol--small" aria-hidden="true">
+                          {factionSymbol}
+                        </span>
+                      ) : null}
+                      {getFactionName(player.factionId)}
+                    </span>
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </section>
 

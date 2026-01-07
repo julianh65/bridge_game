@@ -17,10 +17,11 @@
 
 ## Active tasks
 - owner: agent3 | scope: add a reusable hand-card picker modal for topdeck-from-hand targets (Perfect Recall) | files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md` | status: in progress
-- owner: agent2 | scope: add unique faction symbols + display them in lobby/selection/board badges | files: `apps/web/src/lib/factions.ts`, `apps/web/src/components/PreGameLobby.tsx`, `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/Lobby.tsx`, `apps/web/src/components/VictoryScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md` | status: in progress
+- owner: agent1 | scope: verify multi-player (3-4 player) engine flow to confirm it's not 2-player only; extend smoke coverage | files: `packages/engine/src/smoke.test.ts`, `implementation_plan.md`, `progress.md` | status: in progress
 
 
 ## Milestone 8.5 progress
+- Added unique faction symbols (small circle badges) across faction selection, lobby labels, unit stacks, and victory screen; marked the plan item complete in `implementation_plan.md`.
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
 - Slimmed the action strip: moved Pass/Submit + deck counts into the hand footer, simplified basic actions, and added a command-center table with per-player gold/mana/hand counts.
 - Added show/hide controls for the hand panel, made the actions column collapsible, and removed internal scrolling from the bottom hand area.

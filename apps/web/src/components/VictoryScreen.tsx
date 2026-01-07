@@ -1,5 +1,7 @@
 import type { GameView } from "@bridgefront/engine";
 
+import { getFactionName, getFactionSymbol } from "../lib/factions";
+
 type VictoryScreenProps = {
   winnerId: string;
   players: GameView["public"]["players"];
@@ -9,17 +11,6 @@ type VictoryScreenProps = {
   onRematch?: () => void;
   onLeave: () => void;
   onClose?: () => void;
-};
-
-const formatLabel = (value: string) => {
-  if (!value) {
-    return "Unassigned";
-  }
-  return value
-    .split(/[_-]/)
-    .filter((part) => part.length > 0)
-    .map((part) => part[0]?.toUpperCase() + part.slice(1))
-    .join(" ");
 };
 
 export const VictoryScreen = ({
@@ -34,7 +25,8 @@ export const VictoryScreen = ({
 }: VictoryScreenProps) => {
   const winner = players.find((player) => player.id === winnerId) ?? null;
   const winnerName = winner?.name ?? winnerId;
-  const winnerFaction = winner ? formatLabel(winner.factionId) : null;
+  const winnerFaction = winner ? getFactionName(winner.factionId) : null;
+  const winnerFactionSymbol = winner ? getFactionSymbol(winner.factionId) : null;
   const sortedPlayers = [...players].sort(
     (a, b) => (b.vp?.total ?? 0) - (a.vp?.total ?? 0)
   );
@@ -49,7 +41,16 @@ export const VictoryScreen = ({
           <h2>Victory</h2>
           <p className="victory-screen__winner">
             {winnerName}
-            {winnerFaction ? ` · ${winnerFaction}` : ""}
+            {winnerFaction ? (
+              <span className="victory-screen__winner-faction">
+                {winnerFactionSymbol ? (
+                  <span className="faction-symbol faction-symbol--small" aria-hidden="true">
+                    {winnerFactionSymbol}
+                  </span>
+                ) : null}
+                {winnerFaction}
+              </span>
+            ) : null}
           </p>
           <p className="victory-screen__meta">Round {round} · Final VP standings</p>
         </header>
@@ -59,12 +60,19 @@ export const VictoryScreen = ({
             const isWinner = player.id === winnerId;
             const isViewer = player.id === viewerId;
             const vp = player.vp ?? { permanent: 0, control: 0, total: 0 };
+            const factionName = getFactionName(player.factionId);
+            const factionSymbol = getFactionSymbol(player.factionId);
             return (
               <li key={player.id} className={`victory-score ${isWinner ? "is-winner" : ""}`}>
                 <div className="victory-score__identity">
                   <span className="victory-score__name">{player.name}</span>
                   <span className="victory-score__faction">
-                    {formatLabel(player.factionId)}
+                    {factionSymbol ? (
+                      <span className="faction-symbol faction-symbol--mini" aria-hidden="true">
+                        {factionSymbol}
+                      </span>
+                    ) : null}
+                    {factionName}
                   </span>
                   {isViewer ? <span className="victory-score__you">You</span> : null}
                 </div>
