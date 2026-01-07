@@ -17,7 +17,6 @@
 
 ## Active tasks
 - none
-- owner: agent2; scope: add Small Hands (Age I) with hand-empty conditional draw effect + action-flow coverage; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`; status: in-progress. (Overlap: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` with agent1.)
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -26,6 +25,7 @@
 - Added Battle Cry + Smoke Screen (Age I) with first-battle combat modifiers and targeted tests; updated the plan checklist. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside agent2 scope.)
 - Added gain-mana card effect support plus Age I Make a Play/Paid Logistics cards with action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
 - Added Emergency Evac (Age I) with champion recall-to-capital effect + unit move helper and targeted tests; updated the plan checklist. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside any in-flight edits.)
+- Added Small Hands (Age I) with hand-empty draw effect and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.

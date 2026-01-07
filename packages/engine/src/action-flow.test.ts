@@ -1466,6 +1466,58 @@ describe("action flow", () => {
     expect(p1After.burned).toContain(injected.instanceId);
   });
 
+  it("plays small hands to draw when the hand is empty", () => {
+    let { state } = setupToActionPhase();
+    const playCard = createCardInstance(state, "age1.small_hands");
+    const drawCards = createCardInstances(playCard.state, [
+      "test.small_hands.first",
+      "test.small_hands.second",
+      "test.small_hands.third"
+    ]);
+    state = drawCards.state;
+
+    state = {
+      ...state,
+      players: state.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              deck: {
+                hand: [playCard.instanceId],
+                drawPile: drawCards.instanceIds,
+                discardPile: [],
+                scrapped: []
+              }
+            }
+          : player
+      )
+    };
+
+    const p1Before = state.players.find((player) => player.id === "p1");
+    if (!p1Before) {
+      throw new Error("missing p1 state");
+    }
+
+    state = applyCommand(
+      state,
+      { type: "SubmitAction", payload: { kind: "card", cardInstanceId: playCard.instanceId } },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state");
+    }
+
+    expect(p1After.resources.mana).toBe(p1Before.resources.mana - 1);
+    expect(p1After.deck.hand).toEqual(drawCards.instanceIds);
+    expect(p1After.deck.hand).not.toContain(playCard.instanceId);
+    expect(p1After.deck.discardPile).toContain(playCard.instanceId);
+  });
+
   it("plays banner claim to move along a bridge", () => {
     let { state, p1Capital, p1Edges } = setupToActionPhase();
     const [edge] = p1Edges;
