@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [owner: agent2] [status: in-progress] Scope: smooth basic bridge build picking (auto-enter pick mode, auto-exit on edge selection). Files: apps/web/src/components/GameScreen.tsx, progress.md, implementation_plan.md.
+- none
 
 ## Milestone 8.5 progress
 - Added unique faction symbols (small circle badges) across faction selection, lobby labels, unit stacks, and victory screen; marked the plan item complete in `implementation_plan.md`.
