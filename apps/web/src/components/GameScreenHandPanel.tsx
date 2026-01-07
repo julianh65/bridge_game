@@ -271,6 +271,7 @@ export const GameScreenHandPanel = ({
                             eyebrow={null}
                             showId={false}
                             showTags={false}
+                            showChampionStats
                             rulesFallback="Unknown card data."
                           />
                         </button>

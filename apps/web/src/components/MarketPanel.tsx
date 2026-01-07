@@ -405,6 +405,7 @@ export const MarketPanel = ({
                       isActive={entry.isActive}
                       isWinner={entry.isWinner}
                       showId={false}
+                      showChampionStats
                       overlay={winnerOverlay}
                     />
                   );

@@ -16,8 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
-- owner: agent4 | scope: show champion stats on market/hand GameCard views | files: `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `progress.md`, `implementation_plan.md` | status: in_progress
+- [agent1] Implement Focus Fire hit assignment (modifier + combat policy) with tests; update plan. Files: `packages/engine/src/types.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/champions.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`, `progress.md`. Status: in progress.
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -155,6 +154,7 @@
 - Tweaked GameCard art heights and strengthened the art frame border for more visual punch. (Files: `apps/web/src/styles.css`.)
 - Nudged GameCard art heights a touch taller across variants. (Files: `apps/web/src/styles.css`.)
 - Added Victory card VP badges in `GameCard`, wired configurable `victoryPoints` in card defs/engine VP gain, and added coverage in engine card tests.
+- Enabled champion stat blocks on market/hand GameCard views with compact hand styling; marked the plan item complete in `implementation_plan.md`. (Overlap note: `implementation_plan.md` touched alongside agent2 scope.)
 - Added a unit stack arrival pulse animation in the board view to make movement clearer during action reveals; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.)
 - Added faction labels (symbol + name) on CardsBrowser card tiles to denote faction-specific cards; marked the plan item complete in `implementation_plan.md`. (owner: agent1)
 - Added softer click sfx tags to main menu view toggles and Home create/join buttons for more audio coverage.

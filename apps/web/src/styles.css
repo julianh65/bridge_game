@@ -2524,6 +2524,19 @@ h1 {
   -webkit-line-clamp: 2;
 }
 
+.game-card--hand .game-card__champion {
+  gap: 4px;
+}
+
+.game-card--hand .game-card__champion-stat {
+  padding: 4px 6px;
+  font-size: 9px;
+}
+
+.game-card--hand .game-card__champion-stat strong {
+  font-size: 10px;
+}
+
 .game-card--hand .game-card__age {
   font-size: 9px;
   letter-spacing: 0.16em;
