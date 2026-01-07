@@ -28,6 +28,7 @@
 - Repositioned the mana orb to the hand panel bottom-right (outside the actions panel) to reduce the perceived empty space above the cards.
 - Tightened the hand layout spacing and aligned the action panel to the bottom of the hand row to reduce empty vertical gaps.
 - Switched the hand layout to a bottom-aligned flex row so actions and cards sit on the same baseline, reducing the empty quadrants in the hand panel.
+- Centered the hand column content, let it stretch full width, and top-aligned the action panel to remove the remaining empty quadrants.
 - Fixed hand-card hover popout stacking/spacing so hovered cards render above the actions column without clipping; marked the plan item complete in `implementation_plan.md`.
 - Raised hand-panel z-index and reordered hover/pass layering so hovered cards sit above most UI while pass/submit stays on top.
 - Let the hand cards column span under the actions column with padding so hovered cards can overlap the actions area without clipping.

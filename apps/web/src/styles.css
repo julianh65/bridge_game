@@ -1978,18 +1978,21 @@ h1 {
 
 .game-hand__layout {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 8px;
 }
 
 .game-hand__cards {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 8px;
   position: relative;
   z-index: 2;
   overflow: visible;
-  padding-right: 220px;
+  padding-right: 0;
+  width: 100%;
+  align-self: center;
   flex: 1;
   min-width: 0;
 }
@@ -2011,7 +2014,7 @@ h1 {
   z-index: 1;
   flex: 0 0 clamp(160px, 18vw, 200px);
   max-width: 200px;
-  align-self: flex-end;
+  align-self: flex-start;
 }
 
 .game-hand__mana {
@@ -2278,6 +2281,7 @@ h1 {
 .hand-row {
   display: flex;
   align-items: flex-end;
+  justify-content: center;
   gap: 0;
   padding: 10px 18px 8px 18px;
   overflow-x: auto;
