@@ -16,6 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
+- owner: agent2 | scope: add Guerilla Native Mercenary champion (deploy to any empty hex) + UI empty-hex targeting highlight; update plan | files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/index.ts`, `apps/web/src/components/GameScreen.tsx`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md` | status: in_progress
 - owner: agent1 | scope: add Shock Drill next-battle force-hit modifier effect + tests; update plan | files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.shock-drill.test.ts`, `implementation_plan.md`, `progress.md` | status: in_progress | overlap: `packages/engine/src/card-effects.ts` (agent3), `implementation_plan.md` (agent2/agent3)
 
 ## Milestone 8 progress
@@ -32,6 +33,7 @@
 - Added Frontier Claim (Age I) with capital-distance empty-hex targeting and tests. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside any in-flight edits.)
 - Added Age III champion card defs (Logistics Officer, Titan Vanguard, Center Bannerman, Blood Banker, Stormcaller, Grand Strategist, Capital Breaker) and wired them into the card registry. (Files: `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/content/cards/index.ts`.) (owner: agent2)
 - Added Age II champion card defs for implemented abilities (Jet Striker, Tax Reaver, Siege Engineer, Duelist Exemplar, Lone Wolf, Reliable Veteran, Capturer) and wired them into the card registry; Guerilla Native Mercenary + Exodia still pending targeting/condition support. (Files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/index.ts`.) (owner: agent2)
+- Added Age II combat/tactics card defs for Focus Fire, Ward, and Frenzy. (Files: `packages/engine/src/content/cards/age2.ts`.) (Overlap note: touched `packages/engine/src/content/cards/age2.ts` while agent2 active.)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.

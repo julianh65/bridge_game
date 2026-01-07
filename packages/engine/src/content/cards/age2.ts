@@ -1,5 +1,54 @@
 import type { CardDef } from "./types";
 
+export const FOCUS_FIRE: CardDef = {
+  id: "age2.focus_fire",
+  name: "Focus Fire",
+  rulesText:
+    "In your next battle this round, you assign hits you deal instead of random.",
+  type: "Spell",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 30,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "focusFire" }]
+};
+
+export const WARD: CardDef = {
+  id: "age2.ward",
+  name: "Ward",
+  rulesText: "Choose a friendly Champion. It can't be targeted by enemy cards this round.",
+  type: "Spell",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 55,
+  burn: false,
+  targetSpec: {
+    kind: "champion",
+    owner: "self"
+  },
+  effects: [{ kind: "ward" }]
+};
+
+export const FRENZY: CardDef = {
+  id: "age2.frenzy",
+  name: "Frenzy",
+  rulesText: "Friendly Champion rolls +2 dice this round; it takes 2 damage immediately.",
+  type: "Spell",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 35,
+  burn: false,
+  targetSpec: {
+    kind: "champion",
+    owner: "self"
+  },
+  effects: [{ kind: "frenzy", diceBonus: 2, damage: 2 }]
+};
+
 export const JET_STRIKER: CardDef = {
   id: "champion.age2.jet_striker",
   name: "Jet Striker",
@@ -172,6 +221,9 @@ export const CAPTURER: CardDef = {
 };
 
 export const AGE2_CARDS: CardDef[] = [
+  FOCUS_FIRE,
+  WARD,
+  FRENZY,
   JET_STRIKER,
   TAX_REAVER,
   SIEGE_ENGINEER,
