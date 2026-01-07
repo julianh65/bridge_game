@@ -2,22 +2,7 @@ import { useMemo, useState } from "react";
 
 import { CARD_DEFS } from "@bridgefront/engine";
 
-const clamp = (value: number, min: number, max: number) => {
-  return Math.min(Math.max(value, min), max);
-};
-
-const initiativeChipStyle = (initiative: number) => {
-  const clamped = clamp(initiative, 0, 250);
-  const t = clamped / 250;
-  const hue = 140 - 120 * t;
-  const saturation = 72;
-  const lightness = 46 - 10 * t;
-  const backgroundColor = `hsl(${hue} ${saturation}% ${lightness}%)`;
-  const borderColor = `hsl(${hue} ${saturation}% ${Math.max(20, lightness - 14)}%)`;
-  const color = lightness > 55 ? "#1f1300" : "#fff7e6";
-
-  return { backgroundColor, borderColor, color };
-};
+import { GameCard } from "./GameCard";
 
 const toggleValue = (values: string[], value: string) => {
   if (values.includes(value)) {
@@ -219,51 +204,13 @@ export const CardsBrowser = () => {
           ) : (
             <div className="cards-grid">
               {filteredCards.map((card) => (
-                <article
+                <GameCard
                   key={card.id}
-                  className="card-entry"
-                  data-deck={card.deck}
-                  data-type={card.type}
-                >
-                  <div className="card-entry__header">
-                    <div>
-                      <p className="card-entry__eyebrow">{card.deck}</p>
-                      <h3>{card.name}</h3>
-                      <p className="card-entry__id">{card.id}</p>
-                    </div>
-                    <div className="card-entry__stats">
-                      <span className="card-tag">{card.type}</span>
-                      <span className="card-tag" style={initiativeChipStyle(card.initiative)}>
-                        Init {card.initiative}
-                      </span>
-                      <span className="card-tag">Mana {card.cost.mana}</span>
-                      {card.cost.gold ? (
-                        <span className="card-tag">Gold {card.cost.gold}</span>
-                      ) : null}
-                      {card.burn ? <span className="card-tag">Burn</span> : null}
-                    </div>
-                  </div>
-                  <p className="card-entry__text" title={card.rulesText}>
-                    {card.rulesText}
-                  </p>
-                  {card.tags.length > 0 ? (
-                    <div className="card-entry__tags">
-                      {card.tags.map((tag) => (
-                        <span key={`${card.id}-${tag}`} className="card-tag">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  ) : null}
-                  {card.champion ? (
-                    <div className="card-entry__champion">
-                      <span className="card-tag">HP {card.champion.hp}</span>
-                      <span className="card-tag">Dice {card.champion.attackDice}</span>
-                      <span className="card-tag">Hits {card.champion.hitFaces}</span>
-                      <span className="card-tag">Bounty {card.champion.bounty}</span>
-                    </div>
-                  ) : null}
-                </article>
+                  variant="grid"
+                  card={card}
+                  cardId={card.id}
+                  showChampionStats
+                />
               ))}
             </div>
           )}

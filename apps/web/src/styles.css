@@ -698,46 +698,24 @@ h1 {
   text-align: left;
   display: grid;
   gap: 6px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: #fffdf6;
+  padding: 0;
+  border: none;
+  background: transparent;
   cursor: pointer;
 }
 
-.setup-card-pick__offer.is-selected {
+.setup-card-pick__offer .game-card {
+  width: 100%;
+}
+
+.setup-card-pick__offer.is-selected .game-card {
   border-color: #f59e0b;
-  background: #fff7d6;
+  box-shadow: 0 12px 24px rgba(245, 158, 11, 0.22);
 }
 
 .setup-card-pick__offer:disabled {
   cursor: not-allowed;
   opacity: 0.7;
-}
-
-.setup-card-pick__offer-title {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  align-items: baseline;
-}
-
-.setup-card-pick__offer-id {
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.setup-card-pick__offer-meta {
-  display: flex;
-  gap: 12px;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.setup-card-pick__offer-text {
-  margin: 0;
-  font-size: 12px;
-  color: var(--ink);
 }
 
 .lobby-dice {
@@ -1119,6 +1097,112 @@ h1 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 10px;
+}
+
+.game-card {
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  background: linear-gradient(180deg, #fffdf6 0%, #fdf4e8 100%);
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+  position: relative;
+  text-align: left;
+  color: var(--ink);
+}
+
+.game-card__art {
+  height: 88px;
+  border-radius: 12px;
+  border: 1px dashed rgba(111, 90, 70, 0.35);
+  background: linear-gradient(135deg, #f7e4cc, #f2d6b3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #8b6f57;
+}
+
+.game-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.game-card__name {
+  margin: 2px 0 0;
+  font-size: 16px;
+}
+
+.game-card__eyebrow {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.game-card__id {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.game-card__stats,
+.game-card__tags,
+.game-card__champion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.game-card__rules {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.game-card__rules--hidden {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.game-card--detail .game-card__rules {
+  -webkit-line-clamp: 6;
+}
+
+.game-card--market .game-card__rules {
+  -webkit-line-clamp: 4;
+}
+
+.game-card[data-deck="starter"] {
+  border-left-color: #b45309;
+}
+
+.game-card[data-deck="age1"] {
+  border-left-color: #15803d;
+}
+
+.game-card[data-deck="age2"] {
+  border-left-color: #0f766e;
+}
+
+.game-card[data-deck="age3"] {
+  border-left-color: #1d4ed8;
+}
+
+.game-card[data-deck="power"] {
+  border-left-color: #7c2d12;
 }
 
 .card-entry {
@@ -1857,7 +1941,8 @@ h1 {
   margin-left: -32px;
 }
 
-.hand-card__face {
+.hand-card__face,
+.game-card--hand {
   width: 100%;
   aspect-ratio: 5 / 7;
   border-radius: 14px;
@@ -1865,12 +1950,45 @@ h1 {
   background: linear-gradient(145deg, #fff7e8, #efe3d2);
   box-shadow: 0 10px 18px rgba(35, 28, 19, 0.16);
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto auto 1fr auto;
   gap: 5px;
   padding: 8px;
   text-align: left;
   color: var(--ink);
   transition: box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.game-card--hand {
+  border-left-width: 1px;
+}
+
+.game-card--hand .game-card__art {
+  height: 52px;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+}
+
+.game-card--hand .game-card__name {
+  font-size: 12px;
+}
+
+.game-card--hand .game-card__rules {
+  font-size: 10px;
+  color: var(--muted);
+  -webkit-line-clamp: 2;
+}
+
+.game-card--hand .card-tag {
+  font-size: 9px;
+  padding: 2px 6px;
+}
+
+.game-card--hand .game-card__stats {
+  gap: 3px;
+}
+
+.game-card--hand .game-card__eyebrow {
+  font-size: 9px;
 }
 
 .hand-card__top {
@@ -1934,18 +2052,21 @@ h1 {
   outline: none;
 }
 
-.hand-card:focus-visible .hand-card__face {
+.hand-card:focus-visible .hand-card__face,
+.hand-card:focus-visible .game-card--hand {
   border-color: var(--accent);
   box-shadow: 0 12px 22px rgba(35, 28, 19, 0.24);
 }
 
-.hand-card.is-selected .hand-card__face {
+.hand-card.is-selected .hand-card__face,
+.hand-card.is-selected .game-card--hand {
   border-color: #f59e0b;
   box-shadow: 0 12px 24px rgba(245, 158, 11, 0.22);
   animation: cardGlow 1.6s ease-in-out infinite;
 }
 
-.hand-card.is-disabled .hand-card__face {
+.hand-card.is-disabled .hand-card__face,
+.hand-card.is-disabled .game-card--hand {
   opacity: 0.6;
   filter: saturate(0.75);
 }
@@ -2105,7 +2226,8 @@ h1 {
   justify-content: start;
 }
 
-.market-card {
+.market-card,
+.game-card--market {
   position: relative;
   display: grid;
   gap: 8px;
@@ -2116,6 +2238,7 @@ h1 {
   padding: 14px;
   border-radius: 18px;
   border: 1px solid var(--border);
+  border-left-width: 1px;
   background: #fffdf6;
   box-shadow: 0 14px 28px rgba(35, 28, 19, 0.12);
   overflow: hidden;
@@ -2145,7 +2268,8 @@ h1 {
   }
 }
 
-.market-card__art {
+.market-card__art,
+.game-card--market .game-card__art {
   height: 88px;
   border-radius: 12px;
   border: 1px dashed rgba(111, 90, 70, 0.35);
@@ -2159,30 +2283,35 @@ h1 {
   color: #8b6f57;
 }
 
-.market-card__header {
+.market-card__header,
+.game-card--market .game-card__header {
   display: grid;
   gap: 4px;
 }
 
-.market-card__header h4 {
+.market-card__header h4,
+.game-card--market .game-card__name {
   margin: 0;
   font-size: 16px;
 }
 
-.market-card__eyebrow {
+.market-card__eyebrow,
+.game-card--market .game-card__eyebrow {
   font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-.market-card__meta {
+.market-card__meta,
+.game-card--market .game-card__stats {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
-.market-chip {
+.market-chip,
+.game-card--market .card-tag {
   padding: 4px 8px;
   border-radius: 999px;
   border: 1px solid rgba(111, 90, 70, 0.2);
@@ -2191,41 +2320,48 @@ h1 {
   color: #6c4a2f;
 }
 
-.market-card__rules {
+.market-card__rules,
+.game-card--market .game-card__rules {
   margin: 0;
   font-size: 12px;
   color: var(--ink);
 }
 
-.market-card__rules--hidden {
+.market-card__rules--hidden,
+.game-card--market .game-card__rules--hidden {
   color: var(--muted);
   font-style: italic;
 }
 
-.market-card__tags {
+.market-card__tags,
+.game-card--market .game-card__tags {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
-.market-card.is-hidden {
+.market-card.is-hidden,
+.game-card--market.is-hidden {
   opacity: 0.68;
   filter: saturate(0.6);
 }
 
-.market-card.is-active {
+.market-card.is-active,
+.game-card--market.is-active {
   border-color: #f59e0b;
   box-shadow: 0 16px 32px rgba(245, 158, 11, 0.28);
   transform: translateY(-2px);
 }
 
-.market-card.is-winner {
+.market-card.is-winner,
+.game-card--market.is-winner {
   border-color: #22c55e;
   box-shadow: 0 18px 32px rgba(34, 197, 94, 0.25);
   animation: marketWinPulse 1.4s ease;
 }
 
-.market-card__winner {
+.market-card__winner,
+.game-card__winner {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -2242,14 +2378,16 @@ h1 {
   animation: marketWinBanner 0.4s ease-out;
 }
 
-.market-card__winner-title {
+.market-card__winner-title,
+.game-card__winner-title {
   font-size: 10px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   font-weight: 700;
 }
 
-.market-card__winner-detail {
+.market-card__winner-detail,
+.game-card__winner-detail {
   font-size: 10px;
   font-weight: 600;
 }

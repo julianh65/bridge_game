@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { CARD_DEFS, type CardInstance, type GameView } from "@bridgefront/engine";
 
 import type { RoomConnectionStatus } from "../lib/room-client";
+import { GameCard } from "./GameCard";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 
@@ -19,23 +20,6 @@ type CardGroup = {
   defId: string;
   count: number;
   card: CardDef | null;
-};
-
-const clamp = (value: number, min: number, max: number) => {
-  return Math.min(Math.max(value, min), max);
-};
-
-const initiativeChipStyle = (initiative: number) => {
-  const clamped = clamp(initiative, 0, 250);
-  const t = clamped / 250;
-  const hue = 140 - 120 * t;
-  const saturation = 72;
-  const lightness = 46 - 10 * t;
-  const backgroundColor = `hsl(${hue} ${saturation}% ${lightness}%)`;
-  const borderColor = `hsl(${hue} ${saturation}% ${Math.max(20, lightness - 14)}%)`;
-  const color = lightness > 55 ? "#1f1300" : "#fff7e6";
-
-  return { backgroundColor, borderColor, color };
 };
 
 const groupCards = (cards: CardInstance[]): CardGroup[] => {
@@ -201,57 +185,15 @@ export const DeckViewer = ({ view, playerId, roomId, status }: DeckViewerProps) 
                   {grouped.map((group) => {
                     const card = group.card;
                     return (
-                      <article
+                      <GameCard
                         key={`${pile.id}-${group.defId}`}
-                        className="card-entry"
-                        data-deck={card?.deck ?? "unknown"}
-                        data-type={card?.type ?? "unknown"}
-                      >
-                        <div className="card-entry__header">
-                          <div>
-                            <p className="card-entry__eyebrow">
-                              {card?.deck ?? "unknown"}
-                            </p>
-                            <h3>{card?.name ?? group.defId}</h3>
-                            <p className="card-entry__id">{group.defId}</p>
-                          </div>
-                          <div className="card-entry__stats">
-                            <span className="card-tag">x{group.count}</span>
-                            {card ? (
-                              <>
-                                <span className="card-tag">{card.type}</span>
-                                <span
-                                  className="card-tag"
-                                  style={initiativeChipStyle(card.initiative)}
-                                >
-                                  Init {card.initiative}
-                                </span>
-                                <span className="card-tag">Mana {card.cost.mana}</span>
-                                {card.cost.gold ? (
-                                  <span className="card-tag">Gold {card.cost.gold}</span>
-                                ) : null}
-                                {card.burn ? <span className="card-tag">Burn</span> : null}
-                              </>
-                            ) : null}
-                          </div>
-                        </div>
-                        {card ? (
-                          <p className="card-entry__text" title={card.rulesText}>
-                            {card.rulesText}
-                          </p>
-                        ) : (
-                          <p className="card-entry__text">Unknown card data.</p>
-                        )}
-                        {card && card.tags.length > 0 ? (
-                          <div className="card-entry__tags">
-                            {card.tags.map((tag) => (
-                              <span key={`${group.defId}-${tag}`} className="card-tag">
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        ) : null}
-                      </article>
+                        variant="grid"
+                        card={card}
+                        cardId={group.defId}
+                        count={group.count}
+                        eyebrow={card?.deck ?? "unknown"}
+                        rulesFallback="Unknown card data."
+                      />
                     );
                   })}
                 </div>

@@ -3,6 +3,7 @@ import { useEffect, useState, type ChangeEvent } from "react";
 import { CARD_DEFS, type Bid, type GameView, type MarketState } from "@bridgefront/engine";
 
 import type { RoomConnectionStatus } from "../lib/room-client";
+import { GameCard } from "./GameCard";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 
@@ -217,72 +218,32 @@ export const MarketPanel = ({
               ) : null}
               <div className="market-card-grid">
                 {cardOrder.map((entry) => {
-                  const manaCost = entry.def?.cost.mana ?? null;
-                  const goldCost = entry.def?.cost.gold ?? 0;
-                  const initiative = entry.def?.initiative ?? null;
-                  const tags = entry.def?.tags ?? [];
+                  const winnerOverlay =
+                    entry.isWinner && winnerAnnouncement ? (
+                      <div className="game-card__winner" role="status" aria-live="polite">
+                        <span className="game-card__winner-title">
+                          {winnerAnnouncement.title}
+                        </span>
+                        <span className="game-card__winner-detail">
+                          {winnerAnnouncement.detail}
+                        </span>
+                      </div>
+                    ) : null;
+
                   return (
-                    <article
+                    <GameCard
                       key={`${entry.card.cardId}-${entry.index}`}
-                      className={`market-card${entry.isHidden ? " is-hidden" : ""}${
-                        entry.isActive ? " is-active" : ""
-                      }${entry.isWinner ? " is-winner" : ""}`}
-                    >
-                      {entry.isWinner && winnerAnnouncement ? (
-                        <div className="market-card__winner" role="status" aria-live="polite">
-                          <span className="market-card__winner-title">
-                            {winnerAnnouncement.title}
-                          </span>
-                          <span className="market-card__winner-detail">
-                            {winnerAnnouncement.detail}
-                          </span>
-                        </div>
-                      ) : null}
-                      <div className="market-card__art">
-                        <span>{entry.isHidden ? "Face down" : "Art"}</span>
-                      </div>
-                      <div className="market-card__header">
-                        <span className="market-card__eyebrow">
-                          Card {entry.index + 1}
-                        </span>
-                        <h4>{entry.label}</h4>
-                      </div>
-                      <div className="market-card__meta">
-                        <span className="market-chip">
-                          Init {initiative ?? "?"}
-                        </span>
-                        <span className="market-chip">
-                          Mana {manaCost ?? "?"}
-                        </span>
-                        {goldCost > 0 ? (
-                          <span className="market-chip">Gold {goldCost}</span>
-                        ) : null}
-                        <span className="market-chip">
-                          {entry.def?.type ?? "Card"}
-                        </span>
-                      </div>
-                      {entry.isHidden ? (
-                        <p className="market-card__rules market-card__rules--hidden">
-                          Unrevealed market card.
-                        </p>
-                      ) : (
-                        <p className="market-card__rules">
-                          {entry.def?.rulesText ?? "Rules pending."}
-                        </p>
-                      )}
-                      {!entry.isHidden && tags.length > 0 ? (
-                        <div className="market-card__tags">
-                          {tags.map((tag) => (
-                            <span
-                              key={`${entry.card.cardId}-${tag}`}
-                              className="card-tag"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      ) : null}
-                    </article>
+                      variant="market"
+                      card={entry.def ?? null}
+                      cardId={entry.card.cardId}
+                      displayName={entry.label}
+                      eyebrow={`Card ${entry.index + 1}`}
+                      isHidden={entry.isHidden}
+                      isActive={entry.isActive}
+                      isWinner={entry.isWinner}
+                      showId={false}
+                      overlay={winnerOverlay}
+                    />
                   );
                 })}
               </div>

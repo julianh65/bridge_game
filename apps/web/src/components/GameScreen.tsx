@@ -1364,12 +1364,6 @@ export const GameScreen = ({
     return Array.from(merged);
   }, [targetPreviewEdgeKeys, revealEdgeKeys]);
 
-  const cardCostLabel = selectedCardDef
-    ? `${selectedCardDef.cost.mana} mana${
-        selectedCardDef.cost.gold ? `, ${selectedCardDef.cost.gold} gold` : ""
-      }`
-    : null;
-
   const cardTargetPanel = selectedCardDef
     ? (() => {
         switch (cardTargetKind) {
@@ -1946,7 +1940,6 @@ export const GameScreen = ({
         canDeclareAction={canDeclareAction}
         selectedCardId={cardInstanceId}
         selectedCardDef={selectedCardDef}
-        cardCostLabel={cardCostLabel}
         cardTargetPanel={cardTargetPanel}
         phase={view.public.phase}
         player={localPlayer ?? null}

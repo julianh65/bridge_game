@@ -8,6 +8,7 @@ import {
 } from "@bridgefront/engine";
 
 import { ActionPanel, type BasicActionIntent, type BoardPickMode } from "./ActionPanel";
+import { GameCard } from "./GameCard";
 import type { RoomConnectionStatus } from "../lib/room-client";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
@@ -24,7 +25,6 @@ type GameScreenHandPanelProps = {
   canDeclareAction: boolean;
   selectedCardId: string;
   selectedCardDef: CardDef | null;
-  cardCostLabel: string | null;
   cardTargetPanel: ReactNode;
   phase: GameView["public"]["phase"];
   player: GameView["public"]["players"][number] | null;
@@ -61,7 +61,6 @@ export const GameScreenHandPanel = ({
   canDeclareAction,
   selectedCardId,
   selectedCardDef,
-  cardCostLabel,
   cardTargetPanel,
   phase,
   player,
@@ -124,11 +123,6 @@ export const GameScreenHandPanel = ({
                       const fanRotation = totalCards > 1 ? offset * 4 : 0;
                       const fanLift = Math.abs(offset) * 4;
                       const depth = totalCards - Math.abs(offset);
-                      const costLabel = def
-                        ? `M${manaCost}${goldCost ? ` G${goldCost}` : ""}`
-                        : "M-";
-                      const typeLabel = def?.type ?? "Card";
-                      const initiativeLabel = def ? `Init ${def.initiative}` : "Init -";
                       const handStyle = {
                         zIndex: 10 + depth,
                         "--hand-rotate": `${fanRotation}deg`,
@@ -147,35 +141,30 @@ export const GameScreenHandPanel = ({
                           title={`${label} (${card.id})`}
                           onClick={() => onSelectCard(card.id)}
                         >
-                          <div className="hand-card__face">
-                            <div className="hand-card__top">
-                              <span className="hand-card__name">{label}</span>
-                              <span className="hand-card__cost">{costLabel}</span>
-                            </div>
-                            <div className="hand-card__body">
-                              <span className="hand-card__type">{typeLabel}</span>
-                              <span className="hand-card__meta">{initiativeLabel}</span>
-                            </div>
-                            <div className="hand-card__footer">
-                              <span className="hand-card__id">{card.id}</span>
-                            </div>
-                          </div>
+                          <GameCard
+                            as="div"
+                            variant="hand"
+                            card={def ?? null}
+                            cardId={card.id}
+                            displayName={label}
+                            eyebrow={null}
+                            showId={false}
+                            showTags={false}
+                            rulesFallback="Unknown card data."
+                          />
                         </button>
                       );
                     })}
                   </div>
                   {selectedCardDef ? (
                     <div className="card-detail">
-                      <div className="card-detail__header">
-                        <strong>{selectedCardDef.name}</strong>
-                        {cardCostLabel ? (
-                          <span className="card-detail__meta">Cost {cardCostLabel}</span>
-                        ) : null}
-                        <span className="card-detail__meta">
-                          Init {selectedCardDef.initiative}
-                        </span>
-                      </div>
-                      <p className="card-detail__rules">{selectedCardDef.rulesText}</p>
+                      <GameCard
+                        variant="detail"
+                        card={selectedCardDef}
+                        cardId={selectedCardId}
+                        showId={false}
+                        showChampionStats
+                      />
                       {cardTargetPanel}
                     </div>
                   ) : null}

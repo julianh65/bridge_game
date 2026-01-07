@@ -17,7 +17,6 @@
 
 ## Active tasks
 - owner: agent3 | scope: fix BoardView import error by exporting card defs map from engine index | files: `packages/engine/src/index.ts` | status: in progress
-- owner: agent4 | scope: build reusable card component and refactor card displays (hand detail/market/cards/deck) for cohesive UI | files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/components/CardsBrowser.tsx`, `apps/web/src/components/DeckViewer.tsx`, `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md` | status: in progress
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -25,6 +24,7 @@
 - Added show/hide controls for the hand panel, made the actions column collapsible, and removed internal scrolling from the bottom hand area.
 - Removed the duplicate action panel, tightened the game view to fit the viewport, and reduced the board height while keeping the intel dock as a fixed overlay.
 - Consolidated the GameScreen layout: moved the action panel into the hand row, added an intel dock for players/log, and tightened the sidebar into status/resources/intel summaries (styles updated).
+- Added a reusable `GameCard` component with art/cost/initiative details, refactored card displays (hand, market, deck, cards browser, free starting offers), and marked the plan item complete in `implementation_plan.md`.
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.
 - Added a Deck tab that shows hand/draw/discard/scrapped piles for the local player, backed by new private `deckCards` data in `GameView`, and marked the plan item complete in `implementation_plan.md`.
 - Refreshed the Home landing page layout/typography and marked the plan item complete in `implementation_plan.md`.

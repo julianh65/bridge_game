@@ -8,6 +8,7 @@ import {
 } from "@bridgefront/engine";
 
 import type { RoomConnectionStatus } from "../lib/room-client";
+import { GameCard } from "./GameCard";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 
@@ -109,18 +110,14 @@ export const SetupFreeStartingCardPick = ({
                   onClick={() => onSubmitChoice({ kind: "pickFreeStartingCard", cardId })}
                   disabled={!canPick || Boolean(chosenCard)}
                 >
-                  <div className="setup-card-pick__offer-title">
-                    <strong>{def?.name ?? cardId}</strong>
-                    <span className="setup-card-pick__offer-id">{cardId}</span>
-                  </div>
-                  <div className="setup-card-pick__offer-meta">
-                    <span>{def?.type ?? "Card"}</span>
-                    <span>Mana {def?.cost.mana ?? "?"}</span>
-                    <span>Init {def?.initiative ?? "?"}</span>
-                  </div>
-                  {def?.rulesText ? (
-                    <p className="setup-card-pick__offer-text">{def.rulesText}</p>
-                  ) : null}
+                  <GameCard
+                    variant="offer"
+                    card={def ?? null}
+                    cardId={cardId}
+                    displayName={def?.name ?? cardId}
+                    showChampionStats
+                    rulesFallback="Unknown card data."
+                  />
                 </button>
               );
             })}
