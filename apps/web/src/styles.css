@@ -2503,7 +2503,27 @@ h1 {
 }
 
 .game-card--hand .game-card__cost {
+  font-size: 13px;
+  font-weight: 600;
+  color: #3f2a16;
+}
+
+.game-card--hand .game-card__cost-icon {
+  font-size: 14px;
+}
+
+.game-card--hand .game-card__cost-number {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.game-card--hand .game-card__cost-plus {
+  font-size: 12px;
+}
+
+.game-card--hand .game-card__cost-suffix {
   font-size: 10px;
+  letter-spacing: 0.02em;
 }
 
 .game-card--market .game-card__age {

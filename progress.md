@@ -16,8 +16,9 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- owner: agent4 | scope: make market roll-off rounds animate sequentially (no overlap) | files: `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`, `progress.md` | status: in-progress
 - owner: agent3 | scope: implement Set to Skirmish retreat-on-battle effect + tests | files: `packages/engine/src/card-effects.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md`
+- owner: agent2 | scope: add Tactical Hand (Grand Strategist) hit-assignment logic + tests | files: `packages/engine/src/combat.ts`, `packages/engine/src/champions.ts`, `packages/engine/src/types.ts`, `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`, `progress.md` | status: in_progress
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -308,6 +309,7 @@ none
 - Added a collapsible Command Center sidebar toggle so the board can expand when the right panel is hidden; marked the plan item complete in `implementation_plan.md`.
 - Added a champion-target card pick mode with valid-target highlights so Emergency Evac (and other champion cards) can be selected from the board; updated `implementation_plan.md`. (Files: `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Fixed hand/hand-picker card art lookups by using defIds for GameCard art and marked the plan item complete. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `implementation_plan.md`.)
+- Enlarged hand card mana/gold cost display for better readability; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.

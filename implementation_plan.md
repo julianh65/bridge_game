@@ -490,10 +490,11 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] The bottom hand modal part is still a tiny bit clunky in that it can block stuff, maybe try to clean it up a bit and make it shorter and a bit more compact?
 - [x] The table view has to be a bit more easy to read, idk where it can go, on the right where it is, on the top, but we need to at a glance be able to just briefly see everyone's status, you can make it smaller as well
 - [x] Can the bridges look a bit nicer? They right now just come from the center of each but they should be a bit shorter
-- [ ] The mana and gold costs on the cards in hand needs to be much larger and easier to see
+- [x] The mana and gold costs on the cards in hand needs to be much larger and easier to see
 - [ ] When moving between hexes we need to also be able to determine if we want to move just troops, champion, champion plus split of troops etc
 - [ ] The market transition can happen to fast while we're still waiting to see what all the actions were.
 - [ ] Dice roll in the market and in general needs to be a bit bigger and clearly mark who is who, also each player should click to "roll" their respective die.
+- [ ] In general I want the phase transitions to be slower, players need to have time to soak in what just happened.
 
 ### Other
 - [x] The champion needs to be more obvious, like a seperate thing with its health and name and stuff, and they can hover over it to see the stats
