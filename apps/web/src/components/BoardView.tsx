@@ -38,6 +38,9 @@ type BoardViewProps = {
   isTargeting?: boolean;
 };
 
+const HEX_DRAW_SCALE = 0.94;
+const HEX_DRAW_SIZE = HEX_SIZE * HEX_DRAW_SCALE;
+
 const tileTag = (tile: string) => {
   switch (tile) {
     case "capital":
@@ -683,7 +686,7 @@ export const BoardView = ({
             <title>{hexTitle}</title>
             <polygon
               className={polygonClasses}
-              points={hexPoints(hex.x, hex.y, HEX_SIZE)}
+              points={hexPoints(hex.x, hex.y, HEX_DRAW_SIZE)}
               onClick={() => {
                 if (didDragRef.current) {
                   return;

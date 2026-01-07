@@ -16,10 +16,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent4; scope: Milestone 9 board visuals (hex padding + bridge styling); files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/lib/hex-geometry.ts`, `apps/web/src/styles.css`; status: in progress.
-- Owner: agent2
-- Scope: add action-flow tests for Age I market orders (Quick March, Trade Caravan, Quick Study) and sync plan checkboxes.
-- Files: packages/engine/src/action-flow.test.ts, implementation_plan.md, progress.md
+none
+- owner: agent1; scope: add emoji resource symbols (gold/mana/VP) to main sidebar + table stats; files: `apps/web/src/components/GameScreenSidebar.tsx`, `progress.md`, `implementation_plan.md`; status: in progress.
 
 ## Milestone 8.5 progress
 - Slimmed the action strip: moved Pass/Submit + deck counts into the hand footer, simplified basic actions, and added a command-center table with per-player gold/mana/hand counts.
@@ -52,6 +50,7 @@
 - Added a victory screen overlay with winner + final VP recap, wired rematch/exit controls, and exposed public VP in `GameView` only after a winner is declared; marked the plan item complete in `implementation_plan.md` (overlap note: touched `apps/web/src/styles.css` alongside agent2 scope).
 - Clarified Pass/Done messaging in the action panel so players know it locks them out for the step, and marked the plan item complete in `implementation_plan.md` (overlap note: `implementation_plan.md` already had pending task additions in the action/market sections).
 - Added a deck flow UI in the Deck tab showing draw/hand/discard/scrapped piles with animated arrows; marked the plan item complete in `implementation_plan.md`.
+- Improved board visuals with hex padding, a textured board backdrop, and beefier bridge styling; marked the plan item complete in `implementation_plan.md`.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -71,6 +70,7 @@
 ## Testing progress
 - Added action-flow coverage for Flank Step (bridge-less move) + Scavenger's Market (gold + draw).
 - Added action-flow coverage for Supply Ledger, Patrol Record, and Banner Claim.
+- Added action-flow coverage for Quick March, Trade Caravan, and Quick Study.
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (Supply Ledger/Patrol Record/Banner Claim coverage).
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (Flank Step/Scavenger's Market coverage).
 - Added card draw tests covering reshuffle behavior and hand-limit overflow in `packages/engine/src/cards.test.ts`.
@@ -100,10 +100,12 @@
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts src/action-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (Quick March/Trade Caravan/Quick Study coverage).
 
 ## Docs maintenance
 - Expanded the Milestone 9 card-test checklist with Age I market sub-items in `implementation_plan.md`.
 - Marked the Milestone 9 Age I market card-test item (Supply Ledger/Patrol Record/Banner Claim) complete in `implementation_plan.md`.
+- Checked off the remaining Age I market card-test checklist item (Quick March/Trade Caravan/Temporary Bridge/Patch Up/Quick Study) in `implementation_plan.md`.
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
 - Rewrote Milestone 9 notes into a coherent checklist in `implementation_plan.md`.
 - Marked the Milestone 7 champion ability hook tasks complete in `implementation_plan.md`.

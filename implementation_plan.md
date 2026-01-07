@@ -432,6 +432,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Add a large "Submit/Lock In" action button for action declarations.
 - [x] Consolidate or rearrange panels so the game screen feels cohesive. Right now like the whole basic action panel is on the side and cards on the bottom, those should kind of be together in the bottom area, the log is a bit not nice etc...
 - [x] Make only valid targets highlightable, like right now to build a bridge it will highlight the possible edges right, you should only be able to click on the edges not the hexes
+- [ ] Wasted space above the board, we don't need this thing Drag to pan · Scroll to zoom and the shared board state and board above it has too much padding
 
 ### Tasks (web - motion + phase clarity)
 - [ ] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen. This is after everyone locks in their actions. I want it to be like Player 1, show the card they played and flash it up, then show where they did it or something and make it extensible so later we can add animations or sound effects or something here.
@@ -439,7 +440,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Make the hexes look nicer slightly, more in theme and more clear who and which forces are on what and who's capital is who's etc...
 - [ ] The basic actions are too cluttered, like in general I want things folded in and out and you only expose buttons and thigns when you need to. So build bridge is the button and then you pick the edge and you don't need all this extra UI on the side, simplify it
 - [ ] we need a few UI's still, like dice rolling for draws and cards and other stuff
-- [ ] We need a better more clear UI with symbols (just do emojis for now) to represent gold, mana VP
+- [x] We need a better more clear UI with symbols (just do emojis for now) to represent gold, mana VP
 - [ ] The placing starting bridge UI needs to be on the board not picking a bunch of axial coords.
 - [ ] We should have nice transitions between ages and at the start of the game
 
@@ -465,7 +466,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 ### Tasks
 - [ ] Refresh the game flow and UI so action-phase play feels smooth, with a clear “everyone watching” reveal of what each player did.
-- [ ] Improve board visuals: nicer bridges and a bit of padding between hexes for a shattered plains look.
+- [x] Improve board visuals: nicer bridges and a bit of padding between hexes for a shattered plains look.
 - [ ] Add battle UX: click-to-roll dice with shared roll animations and visible hit assignment.
 - [ ] Add a host-only board state editor/debug panel (JSON view + light patch tools) for test games, only if it stays simple.
 - [x] Add a victory screen (winner, final VP, recap, rematch/exit).
@@ -475,8 +476,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Low priority: add at least one targeted test for each card effect/card.
   - [x] Age I market: Flank Step movement without bridges.
   - [x] Age I market: Scavenger's Market gold + draw.
-  - [ ] Age I market: Supply Ledger / Patrol Record / Banner Claim coverage.
-  - [ ] Age I market: remaining orders (Quick March, Trade Caravan, Temporary Bridge, Patch Up, Quick Study).
+  - [x] Age I market: Supply Ledger / Patrol Record / Banner Claim coverage.
+  - [x] Age I market: remaining orders (Quick March, Trade Caravan, Temporary Bridge, Patch Up, Quick Study).
   - [ ] Age II/III market + power deck card tests (as content lands).
 - [ ] At the end of the market phase we don't see the nice animation and transition for the last player who auto gets it
 - [x] It needs to be much more clear that Done is like "Pass" and won't let you go again
