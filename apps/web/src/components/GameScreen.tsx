@@ -18,6 +18,7 @@ import { ActionPanel, type BoardPickMode } from "./ActionPanel";
 import { BoardView } from "./BoardView";
 import { CollectionPanel } from "./CollectionPanel";
 import { MarketPanel } from "./MarketPanel";
+import { VictoryScreen } from "./VictoryScreen";
 import { buildHexRender } from "../lib/board-preview";
 import { formatGameEvent } from "../lib/event-format";
 import type { RoomConnectionStatus } from "../lib/room-client";
@@ -86,6 +87,7 @@ type GameScreenProps = {
   onSubmitAction: (declaration: ActionDeclaration) => void;
   onSubmitMarketBid: (bid: Bid) => void;
   onSubmitCollectionChoices: (choices: CollectionChoice[]) => void;
+  onResetGame?: () => void;
   onLeave: () => void;
 };
 
@@ -97,6 +99,7 @@ export const GameScreen = ({
   onSubmitAction,
   onSubmitMarketBid,
   onSubmitCollectionChoices,
+  onResetGame,
   onLeave
 }: GameScreenProps) => {
   const hexRender = useMemo(() => buildHexRender(view.public.board), [view.public.board]);
@@ -111,6 +114,14 @@ export const GameScreen = ({
     }
     return mapping;
   }, [view.public.players]);
+  const hostPlayerId = useMemo(() => {
+    const host =
+      view.public.players.find((player) => player.seatIndex === 0) ??
+      view.public.players[0] ??
+      null;
+    return host?.id ?? null;
+  }, [view.public.players]);
+  const isHost = Boolean(playerId && hostPlayerId === playerId);
   const localPlayer = view.public.players.find((player) => player.id === playerId);
   const localPlayerId = localPlayer?.id ?? null;
   const handCards = view.private?.handCards ?? [];
@@ -138,6 +149,9 @@ export const GameScreen = ({
   const [marketWinner, setMarketWinner] = useState<MarketWinnerHighlight | null>(null);
   const [phaseCue, setPhaseCue] = useState<{ label: string; round: number } | null>(null);
   const [phaseCueKey, setPhaseCueKey] = useState(0);
+  const [isVictoryVisible, setIsVictoryVisible] = useState(() =>
+    Boolean(view.public.winnerPlayerId)
+  );
   const [selectedHexKey, setSelectedHexKey] = useState<string | null>(null);
   const [pendingEdgeStart, setPendingEdgeStart] = useState<string | null>(null);
   const [pendingStackFrom, setPendingStackFrom] = useState<string | null>(null);
@@ -191,6 +205,15 @@ export const GameScreen = ({
       ? (view.public.round - 1 + view.public.players.length) % view.public.players.length
       : 0;
   const leadPlayer = view.public.players.find((player) => player.seatIndex === leadSeatIndex) ?? null;
+  const actionStatusSummary = actionStep
+    ? (() => {
+        const eligibleCount = actionEligible.size;
+        const waitingCount = actionWaiting.size;
+        const submittedCount = Math.max(0, eligibleCount - waitingCount);
+        const idleCount = Math.max(0, view.public.players.length - eligibleCount);
+        return { eligibleCount, waitingCount, submittedCount, idleCount };
+      })()
+    : null;
   const getActionStatusTooltip = (playerId: string): string => {
     if (!actionStep) {
       return `Action: not active (${phaseLabel}).`;
@@ -209,7 +232,7 @@ export const GameScreen = ({
       return null;
     }
     if (!actionEligible.has(playerId)) {
-      return { label: "Idle", className: "" };
+      return { label: "Idle", className: "status-pill--idle" };
     }
     if (actionWaiting.has(playerId)) {
       return { label: "Waiting", className: "status-pill--waiting" };
@@ -222,6 +245,7 @@ export const GameScreen = ({
   const isInteractivePhase = isActionPhase || isMarketPhase || isCollectionPhase;
   const showPhaseFocus = isCollectionPhase;
   const showHandPanel = Boolean(view.private) && isActionPhase;
+  const showVictoryScreen = Boolean(view.public.winnerPlayerId && isVictoryVisible);
   const canDeclareAction =
     status === "connected" && Boolean(localPlayer) && isActionPhase && !localPlayer?.doneThisRound;
   const isBoardTargeting = boardPickMode !== "none";
@@ -229,6 +253,9 @@ export const GameScreen = ({
   const availableGold = localPlayer?.resources.gold ?? 0;
   const toggleHeaderCollapsed = () => {
     setIsHeaderCollapsed((value) => !value);
+  };
+  const handleVictoryClose = () => {
+    setIsVictoryVisible(false);
   };
   const playerSwatchStyle = (seatIndex: number): CSSProperties => {
     const index = Math.max(0, Math.min(5, Math.floor(seatIndex)));
@@ -269,6 +296,14 @@ export const GameScreen = ({
       setIsMarketOverlayOpen(false);
     }
   }, [isMarketPhase]);
+
+  useEffect(() => {
+    if (view.public.winnerPlayerId) {
+      setIsVictoryVisible(true);
+    } else {
+      setIsVictoryVisible(false);
+    }
+  }, [view.public.winnerPlayerId]);
 
   useEffect(() => {
     const phase = view.public.phase;
@@ -1319,16 +1354,43 @@ export const GameScreen = ({
   const playersSection = (
     <div className="sidebar-section">
       <h3>Players</h3>
+      {actionStatusSummary ? (
+        <div className="player-list__summary">
+          <span className="status-pill status-pill--waiting">
+            Waiting {actionStatusSummary.waitingCount}
+          </span>
+          <span className="status-pill status-pill--ready">
+            Submitted {actionStatusSummary.submittedCount}
+          </span>
+          {actionStatusSummary.idleCount > 0 ? (
+            <span className="status-pill status-pill--idle">
+              Idle {actionStatusSummary.idleCount}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
       <ul className="player-list">
         {view.public.players.map((player) => {
           const actionStatus = getActionStatusBadge(player.id);
           const actionStatusClass = actionStatus
             ? ["status-pill", actionStatus.className].filter(Boolean).join(" ")
             : "";
+          const actionRowClassName = [
+            "player-row",
+            actionStep
+              ? actionEligible.has(player.id)
+                ? actionWaiting.has(player.id)
+                  ? "player-row--waiting"
+                  : "player-row--submitted"
+                : "player-row--idle"
+              : ""
+          ]
+            .filter(Boolean)
+            .join(" ");
           return (
             <li
               key={player.id}
-              className="player-row"
+              className={actionRowClassName}
               title={getActionStatusTooltip(player.id)}
             >
               <div className="player-row__info">
@@ -1377,6 +1439,18 @@ export const GameScreen = ({
             <span className="phase-cue__round">Round {phaseCue.round}</span>
           </div>
         </div>
+      ) : null}
+      {showVictoryScreen && view.public.winnerPlayerId ? (
+        <VictoryScreen
+          winnerId={view.public.winnerPlayerId}
+          players={view.public.players}
+          round={view.public.round}
+          viewerId={playerId}
+          isHost={isHost}
+          onRematch={onResetGame}
+          onLeave={onLeave}
+          onClose={handleVictoryClose}
+        />
       ) : null}
       <header className={`game-screen__header ${isHeaderCollapsed ? "is-collapsed" : ""}`}>
         {isHeaderCollapsed ? (

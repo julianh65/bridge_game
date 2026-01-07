@@ -437,6 +437,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [x] Allow direct edge clicks for bridge/card edge picks via preview edges.
 - [x] Add a large "Submit/Lock In" action button for action declarations.
 - [ ] Consolidate or rearrange panels so the game screen feels cohesive.
+- [ ] Make only valid targets highlightable, like right now to build a bridge it will highlight the possible edges right, you should only be able to click on the edges not the hexes
 
 ### Tasks (web - motion + phase clarity)
 - [ ] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen.
@@ -466,6 +467,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Enforce faction uniqueness in setup (no duplicate faction picks).
 - [ ] Add deck UI with draw/discard piles, counts, direction arrows, and draw/discard animations.
 - [ ] Low priority: add at least one targeted test for each card effect/card.
+- [ ] At the end of the market phase we don't see the nice animation and transition for the last player who auto gets it
+- [x] It needs to be much more clear that Done is like "Pass" and won't let you go again
 
 ## Milestone 9.5 -- Card Art + Description
 

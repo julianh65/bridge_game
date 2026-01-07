@@ -201,6 +201,7 @@ export default function App() {
           onSubmitCollectionChoices={(choices) =>
             room.sendCommand({ type: "SubmitCollectionChoices", payload: choices })
           }
+          onResetGame={() => room.sendDebugCommand({ command: "resetGame" })}
           onLeave={handleLeave}
         />
       ) : null}
