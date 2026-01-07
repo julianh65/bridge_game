@@ -4349,6 +4349,7 @@ h1 {
   display: grid;
   gap: 14px;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: stretch;
 }
 
 .hand-picker__card {
@@ -4357,6 +4358,13 @@ h1 {
   background: none;
   text-align: left;
   cursor: pointer;
+  height: 100%;
+  display: flex;
+}
+
+.hand-picker__card .game-card {
+  width: 100%;
+  height: 100%;
 }
 
 .hand-picker__card.is-selected .game-card {

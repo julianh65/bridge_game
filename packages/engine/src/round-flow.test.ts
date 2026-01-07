@@ -135,8 +135,9 @@ describe("quiet study", () => {
     };
 
     state = applyRoundReset(state);
-    expect(state.phase).toBe("round.study");
+    expect(state.phase).toBe("round.market");
 
+    state = { ...state, phase: "round.study" };
     const block = createQuietStudyBlock(state);
     if (!block || block.type !== "round.quietStudy") {
       throw new Error("expected quiet study block");

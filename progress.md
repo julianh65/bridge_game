@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent1] Move Cipher Quiet Study prompt to after market resolution and normalize hand picker card heights. Files: `packages/engine/src/round-flow.ts`, `packages/engine/src/engine.ts`, `apps/web/src/styles.css`, `apps/web/src/components/GameScreen.tsx`, `packages/engine/src/round-flow.test.ts`. Status: in progress.
+- none
 
 ## Milestone 8.5 progress
 - Restored basic action auto-pick mode on selection (bridge/march) per feedback; updated the plan item to match. (Overlap note: `apps/web/src/components/GameScreen.tsx` touched alongside agent1 scope.)
@@ -389,6 +389,7 @@ none
 - Implemented champion abilities: Bodyguard hit redirect, Assassin's Edge pre-combat damage (per-round uses), and Flight movement override; added combat + action-flow coverage.
 - Implemented Hold the Line + Marked for Coin + Perfect Recall effects (modifier/topdeck handling) and added action-flow coverage.
 - Implemented Cipher Quiet Study (round-start discard up to 2 then redraw) with a new `round.study` block, UI modal, and engine smoke/round-flow coverage.
+- Moved Quiet Study to trigger after market resolution and normalized hand picker card heights.
 - Overlap note: included pre-existing `packages/engine/src/index.ts` export update for `CARD_DEFS_BY_ID`.
 - Added Archivist Prime dice scaling (cards played this round) + Wormhole Artificer solo-move bonus, plus card-play counter reset/increment logic and action-flow tests.
 - Added per-round discard tracking in player flags (counts Scout Report discards and hand-limit overflow), reset each round, with action-flow coverage.

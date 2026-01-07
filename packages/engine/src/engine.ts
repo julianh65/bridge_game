@@ -181,7 +181,7 @@ export const runUntilBlocked = (state: GameState): GameState => {
       if (!nextState.blocks) {
         const block = createQuietStudyBlock(nextState);
         if (!block) {
-          nextState = enterPhase(nextState, "round.market");
+          nextState = enterPhase(nextState, "round.action");
           continue;
         }
         nextState = {
@@ -214,6 +214,11 @@ export const runUntilBlocked = (state: GameState): GameState => {
       if (!nextState.blocks) {
         const block = createMarketBidBlock(nextState);
         if (!block) {
+          const quietStudyBlock = createQuietStudyBlock(nextState);
+          if (quietStudyBlock) {
+            nextState = enterPhase(nextState, "round.study");
+            continue;
+          }
           nextState = enterPhase(nextState, "round.action");
           continue;
         }

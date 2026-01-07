@@ -66,13 +66,9 @@ export const applyRoundReset = (state: GameState): GameState => {
     nextState = drawToHandSize(nextState, player.id, 6);
   }
 
-  const needsQuietStudy = nextState.players.some((player) =>
-    hasCipherQuietStudy(nextState, player.id)
-  );
-
   return {
     ...nextState,
-    phase: needsQuietStudy ? "round.study" : "round.market"
+    phase: "round.market"
   };
 };
 
