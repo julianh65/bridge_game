@@ -16,10 +16,10 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent4; scope: Milestone 9 board visuals (hex padding + bridge styling); files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/lib/hex-geometry.ts`, `apps/web/src/styles.css`; status: in progress.
+none
 
 ## Milestone 8.5 progress
-- Added emoji resource symbols (gold/mana/VP) in the command center + table stats and marked the plan item complete in `implementation_plan.md`.
+- Added emoji resource symbols (gold/mana/VP) in the command center + table stats (plan item already checked in `implementation_plan.md`).
 - Slimmed the action strip: moved Pass/Submit + deck counts into the hand footer, simplified basic actions, and added a command-center table with per-player gold/mana/hand counts.
 - Added show/hide controls for the hand panel, made the actions column collapsible, and removed internal scrolling from the bottom hand area.
 - Removed the duplicate action panel, tightened the game view to fit the viewport, and reduced the board height while keeping the intel dock as a fixed overlay.
