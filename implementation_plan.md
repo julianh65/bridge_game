@@ -458,6 +458,9 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [ ] Age III market cards + champions (47 cards + 8 champions).
   - [ ] Age I/II/III power deck cards (12 each), including power champions and power-victory cards.
   - [ ] Update deck list exports to match rules counts and add tests for deck composition/uniqueness.
+  - [ ] Define Age II card defs by category (movement/recruit/economy/deckcraft/combat/bridges/victory/champions).
+  - [ ] Define Age III card defs by category (movement/recruit/economy/deckcraft/combat/bridges/victory/champions).
+  - [ ] Add Age I/II/III power deck card defs and wire into power deck exports/tests.
   - [x] Add card metadata tags for Burn/Power/Victory/Champion and ensure filters use them.
 - [x] Add “smoke sim” tests:
   - random legal commands for N steps should not crash
@@ -498,6 +501,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] When moving between hexes we need to also be able to determine if we want to move just troops, champion, champion plus split of troops etc
 - [ ] The market transition can happen to fast while we're still waiting to see what all the actions were.
 - [ ] Dice roll in the market and in general needs to be a bit bigger and clearly mark who is who, also each player should click to "roll" their respective die.
+- [ ] In the market or on the card I don't see the nice champion stats that we created
 
 ### Other
 - [x] The champion needs to be more obvious, like a seperate thing with its health and name and stuff, and they can hover over it to see the stats

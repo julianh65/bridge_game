@@ -1,10 +1,12 @@
 import type { CardDef, CardDefId } from "./types";
 import { AGE1_CARDS } from "./age1";
+import { AGE3_CARDS } from "./age3";
 import { FACTION_CARDS } from "./faction";
 import { STARTER_CARDS } from "./starter";
 
 export * from "./types";
 export * from "./age1";
+export * from "./age3";
 export * from "./faction";
 export * from "./starter";
 
@@ -26,9 +28,12 @@ const addDerivedTags = (card: CardDef): CardDef => {
   return { ...card, tags };
 };
 
-export const CARD_DEFS: CardDef[] = [...STARTER_CARDS, ...FACTION_CARDS, ...AGE1_CARDS].map(
-  addDerivedTags
-);
+export const CARD_DEFS: CardDef[] = [
+  ...STARTER_CARDS,
+  ...FACTION_CARDS,
+  ...AGE1_CARDS,
+  ...AGE3_CARDS
+].map(addDerivedTags);
 
 export const CARD_DEFS_BY_ID: Record<CardDefId, CardDef> = CARD_DEFS.reduce(
   (acc, card) => {

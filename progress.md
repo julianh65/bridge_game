@@ -17,6 +17,7 @@
 
 ## Active tasks
 - none
+- owner: agent4 | scope: show champion stats on market/hand GameCard views | files: `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `progress.md`, `implementation_plan.md` | status: in_progress
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -30,6 +31,7 @@
 - Added Roll Out (Age I) with multi-stack move targeting/effect support and tests. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside any in-flight edits.)
 - Added Column Advance (Age I) with stop-on-occupied path validation and tests. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside any in-flight edits.)
 - Added Frontier Claim (Age I) with capital-distance empty-hex targeting and tests. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside any in-flight edits.)
+- Added Age III champion card defs (Logistics Officer, Titan Vanguard, Center Bannerman, Blood Banker, Stormcaller, Grand Strategist, Capital Breaker) and wired them into the card registry. (Files: `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/content/cards/index.ts`.) (owner: agent2)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
