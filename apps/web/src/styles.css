@@ -1899,9 +1899,7 @@ h1 {
 }
 
 .mana-orb {
-  position: absolute;
-  left: 12px;
-  bottom: 12px;
+  position: relative;
   width: 74px;
   height: 74px;
   border-radius: 50%;
@@ -1916,7 +1914,7 @@ h1 {
   color: #eff6ff;
   text-align: center;
   pointer-events: none;
-  z-index: 55;
+  z-index: 1;
 }
 
 .mana-orb__label {
@@ -2003,7 +2001,8 @@ h1 {
 }
 
 .game-hand__actions {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 8px;
   padding: 8px;
   border-radius: 12px;
@@ -2015,6 +2014,12 @@ h1 {
   grid-column: 2;
   grid-row: 1;
   justify-self: end;
+}
+
+.game-hand__mana {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .game-hand__actions-header {
