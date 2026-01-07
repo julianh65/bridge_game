@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- owner: agent2 | status: in progress | scope: add per-round discard counter tracking in engine (cards discarded this round) + coverage | files: packages/engine/src/player-flags.ts, packages/engine/src/cards.ts, packages/engine/src/card-effects.ts, packages/engine/src/round-flow.ts, packages/engine/src/action-flow.test.ts, implementation_plan.md, progress.md
 
 ## Milestone 8.5 progress
 - Prevented the hand panel from appearing while the market overlay holds after market phase end; marked the plan item complete in `implementation_plan.md`.
@@ -120,7 +120,7 @@
 - Positioned the hand panel as an absolute overlay so opening/closing it no longer resizes the board.
 - Verified multi-player (3-4 player) engine flow via expanded smoke coverage and marked the plan item complete in `implementation_plan.md`.
 - Made action reveal duration configurable via game config (propagated to the overlay) and removed card IDs from the reveal modal; marked the plan items complete in `implementation_plan.md`.
-- Added action reveal overlays for basic actions (build bridge/march/reinforce) with A1-style target labels; marked the plan item complete in `implementation_plan.md`.
+- Added action reveal overlays for basic actions (build bridge/march/reinforce) with A1-style target labels; marked the plan item complete in `implementation_plan.md`. (owner: agent3)
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.

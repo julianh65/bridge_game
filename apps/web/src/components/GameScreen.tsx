@@ -6,6 +6,7 @@ import {
   hasBridge,
   hasEnemyUnits,
   isOccupiedByPlayer,
+  type BasicAction,
   type ActionDeclaration,
   type Bid,
   type CardDef,
@@ -13,7 +14,13 @@ import {
   type GameView,
   wouldExceedTwoPlayers
 } from "@bridgefront/engine";
-import { areAdjacent, axialDistance, neighborHexKeys, parseHexKey } from "@bridgefront/shared";
+import {
+  areAdjacent,
+  axialDistance,
+  neighborHexKeys,
+  parseEdgeKey,
+  parseHexKey
+} from "@bridgefront/shared";
 
 import { type BasicActionIntent, type BoardPickMode } from "./ActionPanel";
 import { ActionRevealOverlay, type ActionRevealOverlayData } from "./ActionRevealOverlay";
@@ -113,6 +120,10 @@ const buildHexLabels = (hexKeys: string[]): Record<string, string> => {
     });
   });
   return labels;
+};
+
+const formatHexLabel = (hexKey: string, labels: Record<string, string>): string => {
+  return labels[hexKey] ?? hexKey;
 };
 
 const getTargetString = (
@@ -272,6 +283,68 @@ const describeRevealTargets = (
     targetHexKeys: Array.from(hexKeys),
     targetEdgeKeys: Array.from(edgeKeys)
   };
+};
+
+const describeBasicAction = (
+  action: BasicAction,
+  labels: Record<string, string>
+): { label: string; targets: CardRevealTargetInfo } => {
+  switch (action.kind) {
+    case "buildBridge": {
+      let edgeLabel = action.edgeKey;
+      const targetHexKeys: string[] = [];
+      try {
+        const [a, b] = parseEdgeKey(action.edgeKey);
+        targetHexKeys.push(a, b);
+        edgeLabel = `${formatHexLabel(a, labels)}-${formatHexLabel(b, labels)}`;
+      } catch {
+        // Fall back to raw edge key if parsing fails.
+      }
+      return {
+        label: "Build Bridge",
+        targets: {
+          targetLines: [`Edge ${edgeLabel}`],
+          targetHexKeys,
+          targetEdgeKeys: [action.edgeKey]
+        }
+      };
+    }
+    case "march": {
+      const fromLabel = formatHexLabel(action.from, labels);
+      const toLabel = formatHexLabel(action.to, labels);
+      const lines = [`From ${fromLabel} to ${toLabel}`];
+      if (typeof action.forceCount === "number") {
+        lines.push(`Forces: ${action.forceCount}`);
+      }
+      return {
+        label: "March",
+        targets: {
+          targetLines: lines,
+          targetHexKeys: [action.from, action.to],
+          targetEdgeKeys: []
+        }
+      };
+    }
+    case "capitalReinforce": {
+      const hexKey = action.hexKey;
+      const label = hexKey ? formatHexLabel(hexKey, labels) : "Capital";
+      return {
+        label: "Reinforce",
+        targets: {
+          targetLines: [hexKey ? `Reinforce ${label}` : "Reinforce capital"],
+          targetHexKeys: hexKey ? [hexKey] : [],
+          targetEdgeKeys: []
+        }
+      };
+    }
+    default: {
+      const _exhaustive: never = action;
+      return {
+        label: "Action",
+        targets: { targetLines: [], targetHexKeys: [], targetEdgeKeys: [] }
+      };
+    }
+  }
 };
 
 const formatAgeCueLabel = (age: string) => `Age ${age} Begins`;
@@ -1009,40 +1082,66 @@ export const GameScreen = ({
     const newReveals: ActionCardReveal[] = [];
     for (let i = lastCardRevealIndex.current + 1; i < logs.length; i += 1) {
       const event = logs[i];
-      if (!event.type.startsWith("action.card.")) {
+      if (event.type.startsWith("action.card.")) {
+        const payload = event.payload ?? {};
+        const playerId = typeof payload.playerId === "string" ? payload.playerId : null;
+        const cardId =
+          typeof payload.cardId === "string"
+            ? payload.cardId
+            : event.type.slice("action.card.".length);
+        const cardDef = CARD_DEFS_BY_ID.get(cardId) ?? null;
+        const rawTargets = payload.targets;
+        const targetRecord =
+          rawTargets && typeof rawTargets === "object" && !Array.isArray(rawTargets)
+            ? (rawTargets as Record<string, unknown>)
+            : null;
+        const targetInfo = describeRevealTargets(targetRecord, view.public.board);
+        newReveals.push({
+          key: `${i}-${cardId}`,
+          playerName: playerId ? playerNames.get(playerId) ?? playerId : "Unknown player",
+          cardName: cardDef?.name ?? cardId,
+          cardId,
+          cardType: cardDef?.type ?? null,
+          initiative: cardDef?.initiative ?? null,
+          costLabel: buildCardCostLabel(cardDef),
+          targetLines: targetInfo.targetLines,
+          targetHexKeys: targetInfo.targetHexKeys,
+          targetEdgeKeys: targetInfo.targetEdgeKeys
+        });
         continue;
       }
-      const payload = event.payload ?? {};
-      const playerId = typeof payload.playerId === "string" ? payload.playerId : null;
-      const cardId =
-        typeof payload.cardId === "string"
-          ? payload.cardId
-          : event.type.slice("action.card.".length);
-      const cardDef = CARD_DEFS_BY_ID.get(cardId) ?? null;
-      const rawTargets = payload.targets;
-      const targetRecord =
-        rawTargets && typeof rawTargets === "object" && !Array.isArray(rawTargets)
-          ? (rawTargets as Record<string, unknown>)
-          : null;
-      const targetInfo = describeRevealTargets(targetRecord, view.public.board);
-      newReveals.push({
-        key: `${i}-${cardId}`,
-        playerName: playerId ? playerNames.get(playerId) ?? playerId : "Unknown player",
-        cardName: cardDef?.name ?? cardId,
-        cardId,
-        cardType: cardDef?.type ?? null,
-        initiative: cardDef?.initiative ?? null,
-        costLabel: buildCardCostLabel(cardDef),
-        targetLines: targetInfo.targetLines,
-        targetHexKeys: targetInfo.targetHexKeys,
-        targetEdgeKeys: targetInfo.targetEdgeKeys
-      });
+      if (event.type.startsWith("action.basic.")) {
+        const payload = event.payload ?? {};
+        const playerId = typeof payload.playerId === "string" ? payload.playerId : null;
+        const actionRaw = payload.action;
+        if (!actionRaw || typeof actionRaw !== "object" || Array.isArray(actionRaw)) {
+          continue;
+        }
+        const kind = (actionRaw as { kind?: unknown }).kind;
+        if (kind !== "buildBridge" && kind !== "march" && kind !== "capitalReinforce") {
+          continue;
+        }
+        const action = actionRaw as BasicAction;
+        const basicReveal = describeBasicAction(action, hexLabels);
+        newReveals.push({
+          key: `${i}-${event.type}`,
+          playerName: playerId ? playerNames.get(playerId) ?? playerId : "Unknown player",
+          cardName: basicReveal.label,
+          cardId: event.type,
+          cardType: "Basic action",
+          initiative: null,
+          costLabel: null,
+          targetLines: basicReveal.targets.targetLines,
+          targetHexKeys: basicReveal.targets.targetHexKeys,
+          targetEdgeKeys: basicReveal.targets.targetEdgeKeys
+        });
+      }
     }
     lastCardRevealIndex.current = logs.length - 1;
     if (newReveals.length > 0) {
       setCardRevealQueue((queue) => [...queue, ...newReveals]);
     }
-  }, [view.public.logs, view.public.board, playerNames]);
+  }, [hexLabels, playerNames, view.public.board, view.public.logs]);
 
   useEffect(() => {
     const logs = view.public.logs;
