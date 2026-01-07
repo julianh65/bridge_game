@@ -1,4 +1,10 @@
-import { areAdjacent, neighborHexKeys, parseEdgeKey, parseHexKey } from "@bridgefront/shared";
+import {
+  areAdjacent,
+  axialDistance,
+  neighborHexKeys,
+  parseEdgeKey,
+  parseHexKey
+} from "@bridgefront/shared";
 import { describe, expect, it } from "vitest";
 
 import type { BoardState, EdgeKey, GameState, HexKey } from "./types";
@@ -339,6 +345,22 @@ const findCenterHex = (state: GameState): HexKey => {
   return centerHex.key;
 };
 
+const findDistantHex = (state: GameState, from: HexKey, minDistance = 2): HexKey => {
+  for (const hex of Object.values(state.board.hexes)) {
+    if (hex.key === from) {
+      continue;
+    }
+    try {
+      if (axialDistance(parseHexKey(from), parseHexKey(hex.key)) >= minDistance) {
+        return hex.key;
+      }
+    } catch {
+      continue;
+    }
+  }
+  throw new Error("no distant hex found");
+};
+
 const findEmptyEdge = (state: GameState): EdgeKey => {
   const hexes = Object.values(state.board.hexes);
   const isEmpty = (hex: BoardState["hexes"][string]) =>
@@ -505,6 +527,76 @@ describe("action flow", () => {
     const toHex = state.board.hexes[to];
     expect(fromHex.occupants["p1"]?.length ?? 0).toBe(0);
     expect(toHex.occupants["p1"]?.length ?? 0).toBe(4);
+  });
+
+  it("treats linked hexes as adjacent for movement", () => {
+    let { state, p1Capital } = setupToActionPhase();
+    const targetHex = findDistantHex(state, p1Capital);
+
+    const before = validateMovePath(state, "p1", [p1Capital, targetHex], {
+      maxDistance: 1,
+      requiresBridge: true,
+      requireStartOccupied: true
+    });
+    expect(before).toBeNull();
+
+    const linkCard: CardDef = {
+      id: "test.wormhole_link",
+      name: "Wormhole Link",
+      rulesText: "Choose 2 hexes; treat them as adjacent this round.",
+      type: "Spell",
+      deck: "starter",
+      tags: [],
+      cost: { mana: 0 },
+      initiative: 1,
+      burn: true,
+      targetSpec: { kind: "hexPair" },
+      effects: [{ kind: "linkHexes" }]
+    };
+
+    state = resolveCardEffects(state, "p1", linkCard, { hexKeys: [p1Capital, targetHex] });
+
+    const after = validateMovePath(state, "p1", [p1Capital, targetHex], {
+      maxDistance: 1,
+      requiresBridge: true,
+      requireStartOccupied: true
+    });
+    expect(after).toEqual([p1Capital, targetHex]);
+  });
+
+  it("links capital to center for the round via tunnel network", () => {
+    let { state, p1Capital } = setupToActionPhase();
+    const centerHex = findCenterHex(state);
+
+    const before = validateMovePath(state, "p1", [p1Capital, centerHex], {
+      maxDistance: 1,
+      requiresBridge: true,
+      requireStartOccupied: true
+    });
+    expect(before).toBeNull();
+
+    const tunnelCard: CardDef = {
+      id: "test.tunnel_network",
+      name: "Tunnel Network",
+      rulesText: "Your capital is connected to the center by a bridge this round.",
+      type: "Order",
+      deck: "starter",
+      tags: [],
+      cost: { mana: 0 },
+      initiative: 1,
+      burn: true,
+      targetSpec: { kind: "none" },
+      effects: [{ kind: "linkCapitalToCenter" }]
+    };
+
+    state = resolveCardEffects(state, "p1", tunnelCard);
+
+    const after = validateMovePath(state, "p1", [p1Capital, centerHex], {
+      maxDistance: 1,
+      requiresBridge: true,
+      requireStartOccupied: true
+    });
+    expect(after).toEqual([p1Capital, centerHex]);
   });
 
   it("blocks movement across a locked bridge", () => {

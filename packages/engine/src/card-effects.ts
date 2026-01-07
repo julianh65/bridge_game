@@ -4,6 +4,7 @@ import { areAdjacent, axialDistance, parseEdgeKey, parseHexKey } from "@bridgefr
 import type { CardPlayTargets, GameState, Modifier, PlayerID, TileType } from "./types";
 import {
   countPlayersOnHex,
+  getCenterHexKey,
   getBridgeKey,
   hasBridge,
   hasEnemyUnits,
@@ -34,7 +35,16 @@ import {
 import { resolveCapitalDeployHex } from "./deploy-utils";
 import { markPlayerMovedThisRound } from "./player-flags";
 
-const SUPPORTED_TARGET_KINDS = new Set(["none", "edge", "stack", "path", "champion", "choice", "hex"]);
+const SUPPORTED_TARGET_KINDS = new Set([
+  "none",
+  "edge",
+  "stack",
+  "path",
+  "champion",
+  "choice",
+  "hex",
+  "hexPair"
+]);
 const SUPPORTED_EFFECTS = new Set([
   "gainGold",
   "drawCards",
@@ -55,7 +65,9 @@ const SUPPORTED_EFFECTS = new Set([
   "immunityField",
   "lockBridge",
   "trapBridge",
-  "destroyBridge"
+  "destroyBridge",
+  "linkHexes",
+  "linkCapitalToCenter"
 ]);
 
 type TargetRecord = Record<string, unknown>;
@@ -341,17 +353,12 @@ const getChampionTarget = (
   return { unitId, unit };
 };
 
-const getHexTarget = (
+const resolveHexTarget = (
   state: GameState,
   playerId: PlayerID,
   targetSpec: TargetRecord,
-  targets: CardPlayTargets
+  hexKey: string
 ): { hexKey: string; hex: GameState["board"]["hexes"][string] } | null => {
-  const hexKey = getHexKeyTarget(targets);
-  if (!hexKey) {
-    return null;
-  }
-
   const hex = state.board.hexes[hexKey];
   if (!hex) {
     return null;
@@ -395,6 +402,105 @@ const getHexTarget = (
   }
 
   return { hexKey, hex };
+};
+
+const getHexTarget = (
+  state: GameState,
+  playerId: PlayerID,
+  targetSpec: TargetRecord,
+  targets: CardPlayTargets
+): { hexKey: string; hex: GameState["board"]["hexes"][string] } | null => {
+  const hexKey = getHexKeyTarget(targets);
+  if (!hexKey) {
+    return null;
+  }
+  return resolveHexTarget(state, playerId, targetSpec, hexKey);
+};
+
+const getHexPairTarget = (
+  state: GameState,
+  playerId: PlayerID,
+  targetSpec: TargetRecord,
+  targets: CardPlayTargets
+): { from: string; to: string } | null => {
+  const record = getTargetRecord(targets);
+  const explicitKeys = Array.isArray(record?.hexKeys) ? record?.hexKeys : null;
+  const rawKeys =
+    explicitKeys && explicitKeys.length > 0
+      ? explicitKeys
+      : typeof record?.from === "string" && typeof record?.to === "string"
+        ? [record.from, record.to]
+        : null;
+  if (!rawKeys || rawKeys.length !== 2) {
+    return null;
+  }
+  const [rawFrom, rawTo] = rawKeys;
+  if (typeof rawFrom !== "string" || typeof rawTo !== "string") {
+    return null;
+  }
+  if (rawFrom.length === 0 || rawTo.length === 0) {
+    return null;
+  }
+  const allowSame = targetSpec.allowSame === true;
+  if (!allowSame && rawFrom === rawTo) {
+    return null;
+  }
+  const fromTarget = resolveHexTarget(state, playerId, targetSpec, rawFrom);
+  if (!fromTarget) {
+    return null;
+  }
+  const toTarget = resolveHexTarget(state, playerId, targetSpec, rawTo);
+  if (!toTarget) {
+    return null;
+  }
+  return { from: fromTarget.hexKey, to: toTarget.hexKey };
+};
+
+const addHexLinkModifier = (
+  state: GameState,
+  playerId: PlayerID,
+  cardId: string,
+  from: string,
+  to: string
+): GameState => {
+  if (from === to) {
+    return state;
+  }
+  const modifierId = `card.${cardId}.${playerId}.${state.revision}.${from}.${to}.link`;
+  return {
+    ...state,
+    modifiers: [
+      ...state.modifiers,
+      {
+        id: modifierId,
+        source: { type: "card", sourceId: cardId },
+        ownerPlayerId: playerId,
+        duration: { type: "endOfRound" },
+        data: { link: { from, to } },
+        hooks: {
+          getMoveAdjacency: ({ modifier, playerId: movingPlayerId, from, to }, current) => {
+            if (current) {
+              return true;
+            }
+            if (modifier.ownerPlayerId && modifier.ownerPlayerId !== movingPlayerId) {
+              return current;
+            }
+            const link = modifier.data?.link as { from?: string; to?: string } | undefined;
+            if (!link?.from || !link?.to) {
+              return current;
+            }
+            if (link.from === from && link.to === to) {
+              return true;
+            }
+            if (link.from === to && link.to === from) {
+              return true;
+            }
+            return current;
+          }
+        }
+      }
+    ]
+  };
 };
 
 const getBuildBridgePlan = (
@@ -789,6 +895,12 @@ export const isCardPlayable = (
       return !wouldExceedTwoPlayers(target.hex, playerId);
     }
     return true;
+  }
+
+  if (card.targetSpec.kind === "hexPair") {
+    return Boolean(
+      getHexPairTarget(state, playerId, card.targetSpec as TargetRecord, targets ?? null)
+    );
   }
 
   if (card.targetSpec.kind === "edge") {
@@ -1490,6 +1602,37 @@ export const resolveCardEffects = (
             bridges
           }
         };
+        break;
+      }
+      case "linkHexes": {
+        const link = getHexPairTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null
+        );
+        if (!link) {
+          break;
+        }
+        nextState = addHexLinkModifier(nextState, playerId, card.id, link.from, link.to);
+        break;
+      }
+      case "linkCapitalToCenter": {
+        const player = nextState.players.find((entry) => entry.id === playerId);
+        if (!player?.capitalHex) {
+          break;
+        }
+        const centerHexKey = getCenterHexKey(nextState.board);
+        if (!centerHexKey) {
+          break;
+        }
+        nextState = addHexLinkModifier(
+          nextState,
+          playerId,
+          card.id,
+          player.capitalHex,
+          centerHexKey
+        );
         break;
       }
       case "moveStack": {

@@ -378,8 +378,8 @@ Start going through the rules_draft and adding the logic for the different types
 - [ ] Add movement/adjacency modifiers (bridge lockdown/trap, wormhole links, tunnel network).
   - [x] Bridge lockdown effect (lock a bridge until end of round).
   - [x] Bridge trap (first enemy crossing loses a force).
-  - [ ] Wormhole links (treat two hexes as adjacent for a round).
-  - [ ] Tunnel network adjacency (non-passive card effects).
+  - [x] Wormhole links (treat two hexes as adjacent for a round).
+  - [x] Tunnel network adjacency (non-passive card effects).
 - [ ] Add hit-assignment control + battle retreat effects (Focus Fire, Tactical Hand, Set to Skirmish).
 - [ ] Add multi-target/multi-stack actions (move two stacks, build multiple bridges, deploy to multiple mines).
 - [ ] Add variable VP sources (Victory +2, center-based VP, timer VP).
@@ -400,7 +400,12 @@ Start going through the rules_draft and adding the logic for the different types
 
 ## Milestone 7.5 — Script to Generate Art for Cards
 
-I want to have a script that lets me select a subset of n cards and hits some sort of diffusion model API to generate epic card art for them, saves it locally and then makes the card reference that image so it gets rendered somehow. Very TBD on this so we'll have to figure it out together, which services to use and how it works etc...
+### Tasks
+- [x] Add a card-art manifest in the web client that maps card ids to image paths.
+- [x] Update `GameCard` to render art images when a manifest entry exists.
+- [x] Add a CLI script to select cards, build prompts, call a diffusion provider, and write images + update the manifest.
+- [ ] Decide on the default diffusion provider + credentials workflow (Cloudflare AI vs Stability/OpenAI).
+- [ ] Document how to run the art script and tune prompts/negative prompts.
 
 ---
 
@@ -488,11 +493,10 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] There's no pop up in the action phase to show what each player has done for basic actions
 - [x] After the market phase while we're showing the last card, the hand modal instantly pops up
 - [x] The basic actions require too many clicks and that UI is cluttered, cut it down like reinforce is only in the capital we don't need to show that, or march doesn't need all of that jazz
-- [ ] tiny, add some text to the gold and VP chits at the top
+- [ ] add some text to the gold and VP chits at the top that says gold or VP
 ## Milestone 9 — Add Polish
 
 ### Tasks
-- [ ] Refresh the game flow and UI so action-phase play feels smooth, with a clear “everyone watching” reveal of what each player did.
 - [x] Improve board visuals: nicer bridges and a bit of padding between hexes for a shattered plains look.
 - [x] Add battle UX: click-to-roll dice with shared roll animations and visible hit assignment.
 - [x] Add a host-only board state editor/debug panel (JSON view + light patch tools) for test games, only if it stays simple.
@@ -516,7 +520,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Do a targetted review and cleanup of the codebase, try to find things that aren't being used anymore, are wrong etc... and clean it up, without breaking behavior.
 - [x] Small, the board that displays in the re-roll container on setup spills outside its parent
 - [x] Add a confirm if they click pass and they still have mana
-- [ ] We need a way for players to choose how many forces to move (split stacks vs move all).
+- [x] We need a way for players to choose how many forces to move (split stacks vs move all).
   - [x] Engine support: optional `forceCount` for march/moveStack actions and card effects.
   - [x] UI: add a smooth force-count picker (move all vs split) in the action panel.
   - [x] UI: add force-count controls for card-driven stack moves.
@@ -543,7 +547,6 @@ What do I need to do to host this?
 Can I somehow add analytics to this? see players where, etc etc...
 
 ## Milestone 13 -- Future stuff / not urgent now
-- [ ] a chat would be cool
 - [ ] time how long every one takes to do their turns and have that be accessible somewhere
 - [ ] a turn timer that at the end picks a random valid card or something
 
