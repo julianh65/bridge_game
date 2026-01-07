@@ -424,6 +424,10 @@ Pause and read through the rules of the game. Make sure that what we've done ali
     - [ ] Age II Economy card defs (5).
     - [ ] Age II Deckcraft card defs (5).
     - [ ] Age II Combat/Tactics card defs (5).
+      - [x] Focus Fire.
+      - [x] Ward.
+      - [x] Frenzy.
+      - [ ] Remaining combat/tactics cards (Slow, Repair Orders, Gold Plated Armor, Mortar Shot, Champion Recall).
     - [ ] Age II Bridges/Terrain card defs (4).
     - [ ] Age II Synergy/Gambits card defs (4).
     - [ ] Age II Victory card defs (4).
@@ -539,6 +543,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] We need to add logic and look for escalating champion costs as per the rules
 - [ ] Slightly make the images a bit bigger and for all images it will crop, but I want it to crop like 10% higher than it is now, that is to say i want it centered 10% higher than it is now for all cards
 - [ ] Make the cards slightly more readable, try to maximize space usage, make the font slightly larger, and it should be way more obvious the mana and gold cost, you can even put them in the bottom left and right corner like in hearthstone, to that end the entire hand area on the bottom can be made like 10% taller to accomodate
+- [ ] Confirm that champion targetting cards have a UI and work such that you can target a specific champion if there are two in the same hex
+- [ ] Hard: What I'd really like is for the actions to happen on the board as they're revealed with the reveal thing. So after the card is revaled that player one built a bridge here then the bridge builds on the board, and after a player moves something it moves on the boards, and it should animate between the hexes
 
 ## Milestone 9.5 -- Card Art + Description
 

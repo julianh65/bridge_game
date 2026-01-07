@@ -17,7 +17,6 @@
 
 ## Active tasks
 - owner: agent2 | scope: add Guerilla Native Mercenary champion (deploy to any empty hex) + UI empty-hex targeting highlight; update plan | files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/index.ts`, `apps/web/src/components/GameScreen.tsx`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md` | status: in_progress
-- owner: agent1 | scope: add Shock Drill next-battle force-hit modifier effect + tests; update plan | files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.shock-drill.test.ts`, `implementation_plan.md`, `progress.md` | status: in_progress | overlap: `packages/engine/src/card-effects.ts` (agent3), `implementation_plan.md` (agent2/agent3)
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -33,7 +32,7 @@
 - Added Frontier Claim (Age I) with capital-distance empty-hex targeting and tests. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside any in-flight edits.)
 - Added Age III champion card defs (Logistics Officer, Titan Vanguard, Center Bannerman, Blood Banker, Stormcaller, Grand Strategist, Capital Breaker) and wired them into the card registry. (Files: `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/content/cards/index.ts`.) (owner: agent2)
 - Added Age II champion card defs for implemented abilities (Jet Striker, Tax Reaver, Siege Engineer, Duelist Exemplar, Lone Wolf, Reliable Veteran, Capturer) and wired them into the card registry; Guerilla Native Mercenary + Exodia still pending targeting/condition support. (Files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/index.ts`.) (owner: agent2)
-- Added Age II combat/tactics card defs for Focus Fire, Ward, and Frenzy. (Files: `packages/engine/src/content/cards/age2.ts`.) (Overlap note: touched `packages/engine/src/content/cards/age2.ts` while agent2 active.)
+- Added Age II combat/tactics card defs for Focus Fire, Ward, and Frenzy; updated the plan checklist. (Files: `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.) (Overlap note: touched `packages/engine/src/content/cards/age2.ts` + `implementation_plan.md` while agent2 active.)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
@@ -467,6 +466,7 @@ none
 - Added Set to Skirmish retreat-on-battle effect (combat modifier) with targeted test coverage; updated `implementation_plan.md`. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.) (owner: agent3)
 - Added Set to Skirmish edge-case test coverage when no adjacent retreat hex exists. (Files: `packages/engine/src/card-effects.combat-modifiers.test.ts`.) (owner: agent3)
 - Added Focus Fire hit-assignment support (next-battle modifier + combat policy) with bodyguard-aware targeting and tests; updated `implementation_plan.md`. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/champions.ts`, `packages/engine/src/types.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.)
+- Added Shock Drill first-battle force hit-face boost with tests; updated `implementation_plan.md`. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.shock-drill.test.ts`, `implementation_plan.md`.)
 - Added Frenzy combat modifier effect (dice bonus + self-damage) with tests; updated `implementation_plan.md`. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.) (Overlap note: `implementation_plan.md` also had pre-existing edits.)
 
 ## Milestone 7.5 progress
