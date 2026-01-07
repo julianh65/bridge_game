@@ -16,10 +16,10 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
-- [agent2] Separate basic action selection from board targeting (no auto-enter pick mode). Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`. Status: in progress. Overlap: `apps/web/src/components/GameScreen.tsx` currently touched by agent1; avoid same lines where possible.
+- [agent1] Implement Cipher Quiet Study round-start discard/redraw prompt (engine block + UI modal + tests). Files: `packages/engine/src/types.ts`, `packages/engine/src/faction-passives.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/cards.ts`, `packages/engine/src/view.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `apps/web/src/App.tsx`, `apps/web/src/components/GameScreen.tsx`. Status: in progress.
 
 ## Milestone 8.5 progress
+- Separated basic action selection from board targeting (no auto-enter pick mode); marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/components/GameScreen.tsx` touched alongside agent1 scope.)
 - Prevented the hand panel from appearing while the market overlay holds after market phase end; marked the plan item complete in `implementation_plan.md`.
 - Made the hand/action panel semi-transparent with a subtle blur so the board reads through; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched.)
 - Added hand-panel hotkeys for action submission (Enter) and pass (P) and marked the plan item complete in `implementation_plan.md`. (Overlap note: `implementation_plan.md` also picked up pre-existing checklist edits.)

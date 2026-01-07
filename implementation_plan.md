@@ -305,7 +305,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 ### Tasks
 - [x] Refactor longer files for readability and maintainability.
 - [x] Market bidding UX: add quick bid buttons (1-4) while keeping manual entry.
-- [ ] Separate basic actions vs card flow so action selection happens before board targeting.
+- [x] Separate basic actions vs card flow so action selection happens before board targeting.
 - [x] Reduce board click friction; declutter and improve target picking reliability.
 
 ## Milestone 7 — Factions + champions + modifiers (core “exceptions” framework)

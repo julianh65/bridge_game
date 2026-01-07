@@ -877,16 +877,12 @@ export const GameScreen = ({
     if (intent !== "none" && cardInstanceId) {
       clearCardSelection();
     }
-    if (intent === "bridge") {
-      setBoardPickModeSafe("bridgeEdge");
-      return;
-    }
-    if (intent === "march") {
-      setBoardPickModeSafe("marchFrom");
-      return;
-    }
     setBasicActionIntent(intent);
-    if (boardPickMode !== "none") {
+    if (
+      boardPickMode === "bridgeEdge" ||
+      boardPickMode === "marchFrom" ||
+      boardPickMode === "marchTo"
+    ) {
       setBoardPickModeSafe("none");
     }
   };
