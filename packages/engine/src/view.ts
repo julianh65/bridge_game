@@ -105,6 +105,7 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
         seatIndex: player.seatIndex,
         factionId: player.factionId,
         resources: player.resources,
+        handCount: player.deck.hand.length,
         vp: state.winnerPlayerId ? player.vp : null,
         doneThisRound: player.doneThisRound,
         connected: player.visibility.connected

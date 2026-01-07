@@ -1500,25 +1500,30 @@ h1 {
   gap: 8px;
 }
 
-.game-hand__actions.is-collapsed {
-  background: #f7efe2;
-}
-
-.actions-collapsed {
-  display: grid;
-  gap: 8px;
-  padding: 8px;
-  border-radius: 10px;
-  border: 1px dashed rgba(180, 83, 9, 0.35);
-  background: #fff7e4;
-}
-
 .hand-toggle {
   position: fixed;
   left: 50%;
   bottom: 16px;
   transform: translateX(-50%);
   z-index: 45;
+}
+
+.game-hand__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hand-submit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hand-submit .btn {
+  padding: 10px 16px;
 }
 
 .deck-counts--compact .resource-row {
@@ -1580,7 +1585,7 @@ h1 {
 
 .intel-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 8px;
 }
 
@@ -2399,6 +2404,57 @@ h1 {
   font-size: 12px;
   color: var(--muted);
 }
+
+.table-list {
+  display: grid;
+  gap: 8px;
+}
+
+.table-row {
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fffdf6;
+}
+
+.table-row--waiting {
+  border-color: rgba(220, 38, 38, 0.4);
+  box-shadow: inset 4px 0 0 rgba(220, 38, 38, 0.35);
+}
+
+.table-row--submitted {
+  border-color: rgba(22, 163, 74, 0.4);
+  box-shadow: inset 4px 0 0 rgba(22, 163, 74, 0.35);
+}
+
+.table-row__main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.table-row__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.table-stat {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f1e6d3;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6c4a2f;
+}
+
+.table-row__status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
 .log-list {
   margin: 0;
   padding-left: 18px;
@@ -2413,6 +2469,42 @@ h1 {
   gap: 10px;
 }
 
+.action-panel--compact {
+  gap: 8px;
+}
+
+.action-panel__basic {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.action-chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #f7f1e7;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.action-chip:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+}
+
+.action-chip.is-active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: #fff2d6;
+  box-shadow: 0 6px 14px rgba(180, 83, 9, 0.18);
+}
+
 .action-panel__buttons {
   display: grid;
   gap: 8px;
@@ -2421,6 +2513,29 @@ h1 {
 .action-panel__march {
   display: grid;
   gap: 8px;
+}
+
+.action-panel--compact .action-panel__march {
+  gap: 6px;
+}
+
+.action-field--compact {
+  font-size: 11px;
+}
+
+.action-field--compact .action-field__controls {
+  gap: 6px;
+}
+
+.action-field--compact .action-field__value {
+  min-height: 32px;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.action-panel--compact .btn-tertiary {
+  padding: 6px 8px;
+  font-size: 11px;
 }
 
 .action-field {

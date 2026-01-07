@@ -393,6 +393,7 @@ export type PlayerPublicView = {
   seatIndex: number;
   factionId: string;
   resources: ResourceState;
+  handCount: number;
   vp: PlayerState["vp"] | null;
   doneThisRound: boolean;
   connected: boolean;

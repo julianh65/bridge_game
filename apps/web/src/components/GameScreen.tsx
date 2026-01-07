@@ -14,7 +14,7 @@ import {
 } from "@bridgefront/engine";
 import { areAdjacent, axialDistance, neighborHexKeys, parseHexKey } from "@bridgefront/shared";
 
-import { ActionPanel, type BoardPickMode } from "./ActionPanel";
+import { ActionPanel, type BasicActionIntent, type BoardPickMode } from "./ActionPanel";
 import { BoardView } from "./BoardView";
 import { CollectionPanel } from "./CollectionPanel";
 import { MarketPanel } from "./MarketPanel";
@@ -45,8 +45,6 @@ type MarketWinnerHighlight = {
   amount: number | null;
   passPot: number | null;
 };
-
-type InfoDockTab = "players" | "log";
 
 const parseTargets = (raw: string): Record<string, unknown> | null => {
   const trimmed = raw.trim();
@@ -160,9 +158,8 @@ export const GameScreen = ({
   const [pendingPath, setPendingPath] = useState<string[]>([]);
   const [resetViewToken, setResetViewToken] = useState(0);
   const [isInfoDockOpen, setIsInfoDockOpen] = useState(false);
-  const [infoDockTab, setInfoDockTab] = useState<InfoDockTab>("players");
   const [isHandPanelOpen, setIsHandPanelOpen] = useState(true);
-  const [isActionsCollapsed, setIsActionsCollapsed] = useState(false);
+  const [basicActionIntent, setBasicActionIntent] = useState<BasicActionIntent>("none");
   const lastMarketEventIndex = useRef(-1);
   const hasMarketLogBaseline = useRef(false);
   const hasPhaseCueBaseline = useRef(false);
@@ -220,7 +217,6 @@ export const GameScreen = ({
         return { eligibleCount, waitingCount, submittedCount, idleCount };
       })()
     : null;
-  const connectedCount = view.public.players.filter((player) => player.connected).length;
   const logCount = view.public.logs.length;
   const lastLogEntry = logCount > 0 ? view.public.logs[logCount - 1] : null;
   const lastLogLabel = lastLogEntry ? formatGameEvent(lastLogEntry, playerNames) : null;
@@ -263,6 +259,62 @@ export const GameScreen = ({
   const isEdgePickMode = boardPickMode === "bridgeEdge" || boardPickMode === "cardEdge";
   const availableMana = localPlayer?.resources.mana ?? 0;
   const availableGold = localPlayer?.resources.gold ?? 0;
+  const trimmedCardId = cardInstanceId.trim();
+  const trimmedTargets = cardTargetsRaw.trim();
+  let parsedTargets: Record<string, unknown> | null | undefined;
+  let targetsError: string | null = null;
+  if (trimmedTargets.length > 0) {
+    try {
+      const parsed = JSON.parse(trimmedTargets) as unknown;
+      if (parsed === null || typeof parsed === "object") {
+        parsedTargets = parsed as Record<string, unknown> | null;
+      } else {
+        targetsError = "Targets must be a JSON object or null.";
+      }
+    } catch {
+      targetsError = "Targets JSON could not be parsed.";
+    }
+  }
+  const canSubmitDone = canDeclareAction;
+  const canSubmitAction = canSubmitDone && availableMana >= 1;
+  const canReinforce = canSubmitAction && availableGold >= 1;
+  const canBuildBridge = canSubmitAction && edgeKey.trim().length > 0;
+  const canMarch =
+    canSubmitAction && marchFrom.trim().length > 0 && marchTo.trim().length > 0;
+  const canPlayCard = canSubmitAction && trimmedCardId.length > 0 && targetsError === null;
+  const cardDeclaration: ActionDeclaration | null = canPlayCard
+    ? parsedTargets !== undefined
+      ? {
+          kind: "card",
+          cardInstanceId: trimmedCardId,
+          targets: parsedTargets
+        }
+      : { kind: "card", cardInstanceId: trimmedCardId }
+    : null;
+  let primaryAction: ActionDeclaration | null = null;
+  let primaryActionLabel = "Submit";
+  if (cardDeclaration) {
+    primaryAction = cardDeclaration;
+    primaryActionLabel = "Play Card";
+  } else if (basicActionIntent === "bridge" && canBuildBridge) {
+    primaryAction = {
+      kind: "basic",
+      action: { kind: "buildBridge", edgeKey: edgeKey.trim() }
+    };
+    primaryActionLabel = "Build Bridge";
+  } else if (basicActionIntent === "march" && canMarch) {
+    primaryAction = {
+      kind: "basic",
+      action: { kind: "march", from: marchFrom.trim(), to: marchTo.trim() }
+    };
+    primaryActionLabel = "March";
+  } else if (basicActionIntent === "reinforce" && canReinforce) {
+    primaryAction = {
+      kind: "basic",
+      action: { kind: "capitalReinforce" }
+    };
+    primaryActionLabel = "Reinforce";
+  }
   const toggleHeaderCollapsed = () => {
     setIsHeaderCollapsed((value) => !value);
   };
@@ -275,13 +327,8 @@ export const GameScreen = ({
       "--player-color": `var(--player-color-${index})`
     } as CSSProperties;
   };
-  const openDockTab = (tab: InfoDockTab) => {
-    setInfoDockTab(tab);
-    setIsInfoDockOpen(true);
-  };
-  const toggleDockTab = (tab: InfoDockTab) => {
-    setInfoDockTab(tab);
-    setIsInfoDockOpen((open) => !(open && infoDockTab === tab));
+  const toggleDock = () => {
+    setIsInfoDockOpen((open) => !open);
   };
 
   useEffect(() => {
@@ -296,6 +343,11 @@ export const GameScreen = ({
     setPendingEdgeStart(null);
     setPendingStackFrom(null);
     setPendingPath([]);
+    if (mode === "bridgeEdge") {
+      setBasicActionIntent("bridge");
+    } else if (mode === "marchFrom" || mode === "marchTo") {
+      setBasicActionIntent("march");
+    }
   };
 
   useEffect(() => {
@@ -307,7 +359,7 @@ export const GameScreen = ({
       setCardInstanceId("");
       setCardTargetsRaw("");
       setIsHandPanelOpen(true);
-      setIsActionsCollapsed(false);
+      setBasicActionIntent("none");
     }
   }, [isActionPhase]);
 
@@ -1302,70 +1354,71 @@ export const GameScreen = ({
             </>
           )}
         </div>
-        <aside className={`game-hand__actions ${isActionsCollapsed ? "is-collapsed" : ""}`}>
+        <aside className="game-hand__actions">
           <div className="game-hand__actions-header">
             <h3>Actions</h3>
-            <div className="hand-controls">
-              <span className="hand-meta">Declare then submit</span>
-              <button
-                type="button"
-                className="btn btn-tertiary"
-                onClick={() => setIsActionsCollapsed((value) => !value)}
-              >
-                {isActionsCollapsed ? "Expand" : "Collapse"}
-              </button>
+            <span className="hand-meta">Basic actions</span>
+          </div>
+          <ActionPanel
+            phase={view.public.phase}
+            player={localPlayer ?? null}
+            status={status}
+            edgeKey={edgeKey}
+            marchFrom={marchFrom}
+            marchTo={marchTo}
+            boardPickMode={boardPickMode}
+            basicActionIntent={basicActionIntent}
+            onBasicActionIntentChange={setBasicActionIntent}
+            onEdgeKeyChange={setEdgeKey}
+            onMarchFromChange={setMarchFrom}
+            onMarchToChange={setMarchTo}
+            onBoardPickModeChange={setBoardPickModeSafe}
+          />
+        </aside>
+      </div>
+      <div className="game-hand__footer">
+        {deckCounts ? (
+          <div className="deck-counts deck-counts--compact">
+            <div className="resource-row">
+              <span>Draw</span>
+              <strong>{deckCounts.drawPile}</strong>
+            </div>
+            <div className="resource-row">
+              <span>Discard</span>
+              <strong>{deckCounts.discardPile}</strong>
+            </div>
+            <div className="resource-row">
+              <span>Scrapped</span>
+              <strong>{deckCounts.scrapped}</strong>
             </div>
           </div>
-          {isActionsCollapsed ? (
-            <div className="actions-collapsed">
-              <p className="muted">Actions folded.</p>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => setIsActionsCollapsed(false)}
-              >
-                Expand actions
-              </button>
-            </div>
-          ) : (
-            <ActionPanel
-              phase={view.public.phase}
-              player={localPlayer ?? null}
-              players={view.public.players}
-              actionStep={view.public.actionStep}
-              status={status}
-              edgeKey={edgeKey}
-              marchFrom={marchFrom}
-              marchTo={marchTo}
-              cardInstanceId={cardInstanceId}
-              cardTargetsRaw={cardTargetsRaw}
-              boardPickMode={boardPickMode}
-              onSubmit={onSubmitAction}
-              onEdgeKeyChange={setEdgeKey}
-              onMarchFromChange={setMarchFrom}
-              onMarchToChange={setMarchTo}
-              onCardInstanceIdChange={setCardInstanceId}
-              onCardTargetsRawChange={setCardTargetsRaw}
-              onBoardPickModeChange={setBoardPickModeSafe}
-            />
-          )}
-          {deckCounts ? (
-            <div className="deck-counts deck-counts--compact">
-              <div className="resource-row">
-                <span>Draw</span>
-                <strong>{deckCounts.drawPile}</strong>
-              </div>
-              <div className="resource-row">
-                <span>Discard</span>
-                <strong>{deckCounts.discardPile}</strong>
-              </div>
-              <div className="resource-row">
-                <span>Scrapped</span>
-                <strong>{deckCounts.scrapped}</strong>
-              </div>
-            </div>
-          ) : null}
-        </aside>
+        ) : (
+          <div />
+        )}
+        <div className="hand-submit">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            disabled={!canSubmitDone}
+            onClick={() => onSubmitAction({ kind: "done" })}
+          >
+            Pass
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={!primaryAction}
+            title={primaryAction ? primaryActionLabel : "Select an action to submit"}
+            onClick={() => {
+              if (!primaryAction) {
+                return;
+              }
+              onSubmitAction(primaryAction);
+            }}
+          >
+            Submit
+          </button>
+        </div>
       </div>
     </section>
   ) : null;
@@ -1445,106 +1498,12 @@ export const GameScreen = ({
       </ul>
     );
 
-  const playersContent = (
-    <>
-      {actionStatusSummary ? (
-        <div className="player-list__summary">
-          <span className="status-pill status-pill--waiting">
-            Waiting {actionStatusSummary.waitingCount}
-          </span>
-          <span className="status-pill status-pill--ready">
-            Submitted {actionStatusSummary.submittedCount}
-          </span>
-          {actionStatusSummary.idleCount > 0 ? (
-            <span className="status-pill status-pill--idle">
-              Idle {actionStatusSummary.idleCount}
-            </span>
-          ) : null}
-        </div>
-      ) : null}
-      <ul className="player-list">
-        {view.public.players.map((player) => {
-          const actionStatus = getActionStatusBadge(player.id);
-          const actionStatusClass = actionStatus
-            ? ["status-pill", actionStatus.className].filter(Boolean).join(" ")
-            : "";
-          const actionRowClassName = [
-            "player-row",
-            actionStep
-              ? actionEligible.has(player.id)
-                ? actionWaiting.has(player.id)
-                  ? "player-row--waiting"
-                  : "player-row--submitted"
-                : "player-row--idle"
-              : ""
-          ]
-            .filter(Boolean)
-            .join(" ");
-          return (
-            <li
-              key={player.id}
-              className={actionRowClassName}
-              title={getActionStatusTooltip(player.id)}
-            >
-              <div className="player-row__info">
-                <span
-                  className="player-swatch"
-                  style={playerSwatchStyle(player.seatIndex)}
-                />
-                <div>
-                  <span className="player-name">{player.name}</span>
-                  <span className="player-meta">Seat {player.seatIndex}</span>
-                </div>
-              </div>
-              <div className="seat__status">
-                <span
-                  className={`status-pill ${
-                    player.connected ? "status-pill--ready" : "status-pill--waiting"
-                  }`}
-                >
-                  {player.connected ? "On" : "Off"}
-                </span>
-                {actionStatus ? (
-                  <span className={actionStatusClass}>{actionStatus.label}</span>
-                ) : null}
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-    </>
-  );
-
   const infoDock = isInfoDockOpen ? (
     <section className="panel game-dock" aria-live="polite">
       <div className="game-dock__header">
         <div className="game-dock__title">
           <span className="game-dock__eyebrow">Table intel</span>
-          <strong className="game-dock__label">
-            {infoDockTab === "players" ? "Players" : "Log"}
-          </strong>
-        </div>
-        <div className="game-dock__tabs" role="tablist" aria-label="Game info">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={infoDockTab === "players"}
-            className={`btn btn-tertiary ${
-              infoDockTab === "players" ? "is-active" : ""
-            }`}
-            onClick={() => openDockTab("players")}
-          >
-            Players
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={infoDockTab === "log"}
-            className={`btn btn-tertiary ${infoDockTab === "log" ? "is-active" : ""}`}
-            onClick={() => openDockTab("log")}
-          >
-            Log
-          </button>
+          <strong className="game-dock__label">Log</strong>
         </div>
         <button
           type="button"
@@ -1554,9 +1513,7 @@ export const GameScreen = ({
           Close
         </button>
       </div>
-      <div className="game-dock__body">
-        {infoDockTab === "players" ? playersContent : logContent}
-      </div>
+      <div className="game-dock__body">{logContent}</div>
     </section>
   ) : null;
 
@@ -1619,6 +1576,66 @@ export const GameScreen = ({
     </div>
   );
 
+  const tableSection = (
+    <div className="sidebar-section sidebar-section--table">
+      <div className="sidebar-section__header">
+        <h3>Table</h3>
+      </div>
+      <div className="table-list">
+        {view.public.players.map((player) => {
+          const actionStatus = getActionStatusBadge(player.id);
+          const actionStatusClass = actionStatus
+            ? ["status-pill", actionStatus.className].filter(Boolean).join(" ")
+            : "";
+          const rowClassName = [
+            "table-row",
+            actionStep
+              ? actionEligible.has(player.id)
+                ? actionWaiting.has(player.id)
+                  ? "table-row--waiting"
+                  : "table-row--submitted"
+                : "table-row--idle"
+              : ""
+          ]
+            .filter(Boolean)
+            .join(" ");
+          return (
+            <div
+              key={player.id}
+              className={rowClassName}
+              title={getActionStatusTooltip(player.id)}
+            >
+              <div className="table-row__main">
+                <span className="player-swatch" style={playerSwatchStyle(player.seatIndex)} />
+                <div>
+                  <span className="player-name">{player.name}</span>
+                  <span className="player-meta">Seat {player.seatIndex}</span>
+                </div>
+              </div>
+              <div className="table-row__stats">
+                <span className="table-stat">G {player.resources.gold}</span>
+                <span className="table-stat">M {player.resources.mana}</span>
+                <span className="table-stat">H {player.handCount}</span>
+              </div>
+              <div className="table-row__status">
+                <span
+                  className={`status-pill ${
+                    player.connected ? "status-pill--ready" : "status-pill--waiting"
+                  }`}
+                >
+                  {player.connected ? "On" : "Off"}
+                </span>
+                {actionStatus ? (
+                  <span className={actionStatusClass}>{actionStatus.label}</span>
+                ) : null}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
   const intelSection = (
     <div className="sidebar-section sidebar-section--intel">
       <div className="sidebar-section__header">
@@ -1626,31 +1643,14 @@ export const GameScreen = ({
         <div className="dock-buttons">
           <button
             type="button"
-            className={`btn btn-tertiary ${
-              isInfoDockOpen && infoDockTab === "players" ? "is-active" : ""
-            }`}
-            onClick={() => toggleDockTab("players")}
-          >
-            Players <span className="dock-count">{view.public.players.length}</span>
-          </button>
-          <button
-            type="button"
-            className={`btn btn-tertiary ${
-              isInfoDockOpen && infoDockTab === "log" ? "is-active" : ""
-            }`}
-            onClick={() => toggleDockTab("log")}
+            className={`btn btn-tertiary ${isInfoDockOpen ? "is-active" : ""}`}
+            onClick={toggleDock}
           >
             Log <span className="dock-count">{logCount}</span>
           </button>
         </div>
       </div>
       <div className="intel-grid">
-        <div className="intel-card">
-          <span className="intel-label">Players online</span>
-          <strong className="intel-value">
-            {connectedCount}/{view.public.players.length}
-          </strong>
-        </div>
         <div className="intel-card intel-card--log">
           <span className="intel-label">Latest</span>
           <span className="intel-value intel-snippet">
@@ -1788,7 +1788,7 @@ export const GameScreen = ({
           <h2>Command Center</h2>
           {statusSection}
           {resourcesSection}
-
+          {tableSection}
           {intelSection}
         </aside>
       </div>
