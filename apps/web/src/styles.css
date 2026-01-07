@@ -1973,6 +1973,7 @@ h1 {
   border: none;
   background: transparent;
   box-shadow: none;
+  z-index: 60;
 }
 
 .hand-submit {

@@ -16,7 +16,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- [owner: agent4] [status: in-progress] Scope: refine champion tooltip sizing/wrapping and show HP on champion tokens. Files: apps/web/src/components/BoardView.tsx, apps/web/src/styles.css, progress.md.
+- [owner: agent3] [status: in-progress] Scope: improve card selection clarity/deselect flow in hand panel and ensure basic actions clear card selection. Files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/GameScreenHandPanel.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md. (Overlap note: touches `apps/web/src/styles.css` alongside agent4.)
 
 ## Milestone 8.5 progress
 - Added unique faction symbols (small circle badges) across faction selection, lobby labels, unit stacks, and victory screen; marked the plan item complete in `implementation_plan.md`.
@@ -75,6 +76,7 @@
 - Hid scrollbars on the hand card row while keeping horizontal scroll.
 - Refined Pass/Submit placement: removed the visible container, widened buttons evenly, and nudged the bar lower.
 - Nudged the Pass/Submit bar further down to sit closer to the screen edge.
+- Raised the Pass/Submit bar z-index above idle cards while keeping hovered cards on top.
 - Added an age/start-of-game transition cue overlay and marked the plan item complete in `implementation_plan.md`.
 - Shortened bridge render segments so they no longer draw center-to-center; marked the plan item complete in `implementation_plan.md`.
 - Shortened bridge render segments a bit further by increasing the inset.
