@@ -16,7 +16,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
+- owner: agent3 | scope: add implementation plan TODO for reusable hand-card picker/topdeck UI | files: `implementation_plan.md`, `progress.md` | status: in progress
+- owner: agent2 | scope: render bridges as styled SVG planks/rails (bridge art assets) | files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md` | status: in progress (overlap: `apps/web/src/styles.css` with agent4)
 
 
 ## Milestone 8.5 progress
