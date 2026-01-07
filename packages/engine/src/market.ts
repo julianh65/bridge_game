@@ -1,4 +1,4 @@
-import { randInt, rollDie, shuffle } from "@bridgefront/shared";
+import { rollDie, shuffle } from "@bridgefront/shared";
 
 import { MARKET_DECKS_BY_AGE } from "./content/market-decks";
 import { POWER_DECKS_BY_AGE } from "./content/power-decks";
@@ -388,10 +388,12 @@ export const resolveMarketBids = (state: GameState): GameState => {
 
   let rngState = state.rngState;
   let winnerId = eligibleWinners[0];
+  let rollOffRounds: RollOffRound[] = [];
   if (eligibleWinners.length > 1) {
-    const roll = randInt(rngState, 0, eligibleWinners.length - 1);
-    rngState = roll.next;
-    winnerId = eligibleWinners[roll.value];
+    const rollOff = resolveRollOff(state, eligibleWinners);
+    winnerId = rollOff.winnerId;
+    rngState = rollOff.rngState;
+    rollOffRounds = rollOff.rounds;
   }
 
   const passPot = Object.values(passBidByPlayer).reduce((total, amount) => total + amount, 0);
@@ -434,7 +436,8 @@ export const resolveMarketBids = (state: GameState): GameState => {
       playerId: winnerId,
       cardId: currentCard.cardId,
       passPot,
-      cardIndex
+      cardIndex,
+      rollOff: rollOffRounds.length > 0 ? rollOffRounds : undefined
     }
   });
 

@@ -191,8 +191,10 @@ export const formatGameEvent = (
       const cardId = readString(payload.cardId) ?? "unknown";
       const passPot = readNumber(payload.passPot);
       const potLabel = passPot && passPot > 0 ? ` and won ${passPot}g` : "";
+      const rollOff = readArray(payload.rollOff);
+      const rollOffLabel = rollOff && rollOff.length > 0 ? " (roll-off)" : "";
       const cardLabel = formatCardId(cardId, cardDefsById);
-      return `${formatPlayer(playerId, playersById)} took ${cardLabel} on pass${potLabel}`;
+      return `${formatPlayer(playerId, playersById)} took ${cardLabel} on pass${potLabel}${rollOffLabel}`;
     }
     default:
       break;

@@ -388,7 +388,7 @@ export const MarketPanel = ({
                     <div className="market-rolloff__rolls">
                       {round.rolls.map((roll, index) => {
                         const isWinner = roll.playerId === winnerHighlight?.playerId;
-                        const delayMs = round.roundIndex * 480 + index * 120;
+                        const delayMs = 160 + round.roundIndex * 520 + index * 140;
                         return (
                           <div
                             key={`roll-${roll.playerId}-${round.roundIndex}`}
@@ -398,7 +398,7 @@ export const MarketPanel = ({
                             <NumberRoll
                               value={roll.value}
                               sides={6}
-                              durationMs={820}
+                              durationMs={1100}
                               delayMs={delayMs}
                               rollKey={`${winnerHighlight?.rollOffKey ?? 0}-${round.roundIndex}-${roll.playerId}`}
                             />

@@ -55,6 +55,7 @@ export const NumberRoll = ({
     }
 
     setIsRolling(true);
+    setDisplayValue(1 + Math.floor(Math.random() * sides));
     delayRef.current = window.setTimeout(() => {
       intervalRef.current = window.setInterval(() => {
         setDisplayValue(1 + Math.floor(Math.random() * sides));

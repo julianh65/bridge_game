@@ -196,6 +196,32 @@ describe("market bidding", () => {
     expect(state.cardsByInstanceId[p1Card]?.defId).toBe("age1.card.a");
   });
 
+  it("breaks pass-bid ties with a roll-off", () => {
+    vi.spyOn(shared, "rollDie")
+      .mockImplementationOnce((rng) => ({ value: 6, next: rng }))
+      .mockImplementationOnce((rng) => ({ value: 2, next: rng }));
+
+    let state = createMarketState();
+
+    state = runUntilBlocked(state);
+    state = applyCommand(
+      state,
+      { type: "SubmitMarketBid", payload: { kind: "pass", amount: 1 } },
+      "p1"
+    );
+    state = applyCommand(
+      state,
+      { type: "SubmitMarketBid", payload: { kind: "pass", amount: 1 } },
+      "p2"
+    );
+    state = runUntilBlocked(state);
+
+    expect(state.market.playersOut.p2).toBe(true);
+    const passEvent = [...state.logs].reverse().find((entry) => entry.type === "market.pass");
+    const rollOff = passEvent?.payload?.rollOff;
+    expect(Array.isArray(rollOff)).toBe(true);
+  });
+
   it("breaks buy-bid ties with a roll-off", () => {
     vi.spyOn(shared, "rollDie")
       .mockImplementationOnce((rng) => ({ value: 3, next: rng }))

@@ -17,12 +17,12 @@
 
 ## Active tasks
 - none
-- [owner: agent1] [status: in-progress] Scope: make market roll-off animation reliably visible (include pass-tie roll-offs + lengthen roll suspense). Files: packages/engine/src/market.ts, packages/engine/src/market.test.ts, apps/web/src/components/MarketPanel.tsx, apps/web/src/components/NumberRoll.tsx, apps/web/src/styles.css, progress.md.
 
 ## Milestone 8.5 progress
 - Improved hand card selection UX: added a selected-card summary with target hints + clear button, enabled click-to-deselect, and cleared card selection when switching to basic actions; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
 - Moved local resource display to the header (gold/VP) and added a bottom-left mana orb near the hand panel; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent3.)
 - Added a market roll-off tie-break panel with suspenseful rolling dice numbers using a reusable `NumberRoll` component; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
+- Extended market roll-off to include pass-tie roll-offs, increased roll suspense timing, and labeled roll-offs in the log (engine market tests updated).
 - Removed the Live connection pill from the header and enlarged gold/VP chips with clearer labels. (Overlap note: `apps/web/src/styles.css` touched alongside agent1.)
 - Repositioned the mana orb to the hand panel bottom-right (outside the actions panel) to reduce the perceived empty space above the cards.
 - Tightened the hand layout spacing and aligned the action panel to the bottom of the hand row to reduce empty vertical gaps.
