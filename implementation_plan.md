@@ -490,7 +490,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] At the end of the market phase we don't see the nice animation and transition for the last player who auto gets it
 - [x] It needs to be much more clear that Done is like "Pass" and won't let you go again
 - [ ] Do a targetted review and cleanup of the codebase, try to find things that aren't being used anymore, are wrong etc... and clean it up, without breaking behavior.
-- [ ] Small, the board that displays in the re-roll container on setup spills outside its parent
+- [x] Small, the board that displays in the re-roll container on setup spills outside its parent
 - [x] Add a confirm if they click pass and they still have mana
 - [ ] We need to have a way such the players can determine how many forces in a stack they are moving, like they may not want to move all 10 units but rather do 5/5, but it needs to be very intuitive and not clunky, I think maybe it should be like a move all button vs a split button and when you hit split it lets you pick how many to move, it needs to be very smooth though
 - [x] Any text on the board shouldn't be highlightable

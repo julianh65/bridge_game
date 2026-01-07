@@ -156,15 +156,17 @@ export const Lobby = ({
         <section className="panel">
           <h2>Map Preview</h2>
           <p className="muted">Current map layout for this room.</p>
-          <BoardView
-            hexes={mapPreview.hexRender}
-            board={mapPreview.board}
-            showCoords={false}
-            showTags
-            showMineValues={false}
-            labelByHex={capitalLabels}
-            className="board-svg board-svg--game"
-          />
+          <div className="lobby__map-preview">
+            <BoardView
+              hexes={mapPreview.hexRender}
+              board={mapPreview.board}
+              showCoords={false}
+              showTags
+              showMineValues={false}
+              labelByHex={capitalLabels}
+              className="board-svg"
+            />
+          </div>
           {isHost ? (
             <div className="lobby__actions">
               <button

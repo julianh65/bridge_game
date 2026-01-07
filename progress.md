@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [owner: agent2] [status: in-progress] Scope: fix lobby setup reroll map preview board overflow in its panel. Files: apps/web/src/components/Lobby.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md.
+- none
 - [owner: agent4] [status: in-progress] Scope: move local resources (gold/VP) to header and add bottom-left mana orb in the hand panel. Files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/GameScreenHeader.tsx, apps/web/src/components/GameScreenSidebar.tsx, apps/web/src/components/GameScreenHandPanel.tsx, apps/web/src/styles.css (overlap with agent2), implementation_plan.md, progress.md.
 
 ## Milestone 8.5 progress
@@ -120,6 +120,7 @@
 - Added combat round logging with dice/hit assignment payloads and a battle overlay that supports click-to-roll dice with hit assignment display; marked the Milestone 9 battle UX item complete in `implementation_plan.md`.
 - Rendered bridges as plank/rail SVG assets in the board view and marked the plan item complete in `implementation_plan.md`.
 - Standardized bridge rendering to a neutral color (no owner tint) and confirmed engine movement ignores bridge ownership.
+- Fixed lobby map preview overflow in the setup reroll panel by clamping preview height; marked the plan item complete in `implementation_plan.md`.
 - Kept the market overlay visible briefly after market ends so the final winner highlight/animation shows; marked the plan item complete in `implementation_plan.md`.
 - Disabled board SVG text selection to prevent accidental highlights; marked the plan item complete in `implementation_plan.md`.
 - Added a pass confirmation step when mana remains before ending the action step; marked the plan item complete in `implementation_plan.md`.

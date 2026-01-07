@@ -571,6 +571,14 @@ h1 {
   gap: 20px;
 }
 
+.lobby__map-preview {
+  display: grid;
+}
+
+.lobby__map-preview .board-svg {
+  height: clamp(220px, 32vh, 360px);
+}
+
 .setup-draft {
   display: grid;
   gap: 12px;
