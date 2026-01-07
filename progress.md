@@ -16,9 +16,10 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent4 | scope: consolidate GameScreen panels (move log/players into a compact drawer + tighten sidebar/board layout) (overlap note: styles.css also in agent2 scope) | files: apps/web/src/components/GameScreen.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md | status: in progress
+none
 
 ## Milestone 8.5 progress
+- Consolidated the GameScreen layout: moved the action panel into the hand row, added an intel dock for players/log, and tightened the sidebar into status/resources/intel summaries (styles updated).
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.
 - Added a Deck tab that shows hand/draw/discard/scrapped piles for the local player, backed by new private `deckCards` data in `GameView`, and marked the plan item complete in `implementation_plan.md`.
 - Refreshed the Home landing page layout/typography and marked the plan item complete in `implementation_plan.md`.

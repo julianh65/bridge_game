@@ -436,7 +436,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Reduce card targeting clicks so board picks are direct and visible once selected. That is to say I don't want to have 2 clicks to do things, like some cards are like deploy forces, then you need to click into capital or hex, and then you click the hex on the board, like it's too many, it should just be click the card and then click where / what you want to do it on and it just does the correct one
   - [x] Allow direct edge clicks for bridge/card edge picks via preview edges.
 - [x] Add a large "Submit/Lock In" action button for action declarations.
-- [ ] Consolidate or rearrange panels so the game screen feels cohesive. Right now like the whole basic action panel is on the side and cards on the bottom, those should kind of be together in the bottom area, the log is a bit not nice etc...
+- [x] Consolidate or rearrange panels so the game screen feels cohesive. Right now like the whole basic action panel is on the side and cards on the bottom, those should kind of be together in the bottom area, the log is a bit not nice etc...
 - [x] Make only valid targets highlightable, like right now to build a bridge it will highlight the possible edges right, you should only be able to click on the edges not the hexes
 
 ### Tasks (web - motion + phase clarity)
@@ -449,7 +449,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 ### Tasks UI
 - [ ] We need to more clearly guide the player what to do. The basic actions thing is too cluttered, we should probably keep that where the cards are and it should fan it when you click basic actions and show their mana cost and everything with a description
-- [ ] The Log is taking up too much screen real estate, make that a seperate area or modal or something
+- [x] The Log is taking up too much screen real estate, make that a seperate area or modal or something
 - [x] Urgent: Card targets are still not be selected properly when you click on the board. For example the bridge crew still doesn't work. I see the edge flash but it doesn't select it properly still. (Delayed BoardView pointer capture so clicks register.)
 - [ ] We need to reduce the amount of clicks, to play a card you shouldn't have to click then specify capital or something else then click where, it should just know.
 - [ ] Also can you double check, does it only work for 2 players right now?
