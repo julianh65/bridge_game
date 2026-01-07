@@ -17,7 +17,6 @@
 
 ## Active tasks
 - owner: agent3 | scope: add implementation plan TODO for reusable hand-card picker/topdeck UI | files: `implementation_plan.md`, `progress.md` | status: in progress
-- owner: agent2 | scope: unify bridge color (no ownership) + confirm engine allows crossing any bridge | files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `packages/engine/src/action-flow.ts`, `packages/engine/src/board.ts`, `progress.md` | status: in progress
 
 
 ## Milestone 8.5 progress
@@ -87,6 +86,7 @@
 - Overlap note: commit included pre-staged battle UX files `apps/web/src/components/CombatOverlay.tsx` and `apps/web/src/lib/combat-log.ts` from another agent's scope.
 - Added combat round logging with dice/hit assignment payloads and a battle overlay that supports click-to-roll dice with hit assignment display; marked the Milestone 9 battle UX item complete in `implementation_plan.md`.
 - Rendered bridges as plank/rail SVG assets in the board view and marked the plan item complete in `implementation_plan.md`.
+- Standardized bridge rendering to a neutral color (no owner tint) and confirmed engine movement ignores bridge ownership.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.

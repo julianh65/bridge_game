@@ -238,7 +238,6 @@ export const BoardView = ({
       key: string;
       from: { x: number; y: number };
       to: { x: number; y: number };
-      ownerPlayerId?: string;
       length: number;
       ux: number;
       uy: number;
@@ -261,7 +260,6 @@ export const BoardView = ({
         key: bridge.key,
         from: shortened.from,
         to: shortened.to,
-        ownerPlayerId: bridge.ownerPlayerId,
         length,
         ux,
         uy,
@@ -397,14 +395,9 @@ export const BoardView = ({
     for (const stack of unitStacks) {
       ids.add(stack.ownerPlayerId);
     }
-    for (const bridge of bridgeSegments) {
-      if (bridge.ownerPlayerId) {
-        ids.add(bridge.ownerPlayerId);
-      }
-    }
     const sorted = Array.from(ids).sort();
     return new Map(sorted.map((id, index) => [id, index]));
-  }, [unitStacks, bridgeSegments]);
+  }, [unitStacks]);
 
   const playerIndex = useMemo(() => {
     if (!playerIndexById) {
@@ -831,14 +824,7 @@ export const BoardView = ({
         if (bridge.length <= 0.01) {
           return null;
         }
-        const colorIndex = normalizeColorIndex(
-          bridge.ownerPlayerId ? playerIndex.get(bridge.ownerPlayerId) : undefined
-        );
-        const className =
-          colorIndex !== undefined ? `bridge bridge--p${colorIndex}` : "bridge";
-        const bridgeTitle = bridge.ownerPlayerId
-          ? `Bridge ${bridge.key}\nOwner: ${playerLabel(bridge.ownerPlayerId)}`
-          : `Bridge ${bridge.key}`;
+        const bridgeTitle = `Bridge ${bridge.key}`;
         const railOffset = BRIDGE_RAIL_OFFSET;
         const plankSpan = bridge.length - BRIDGE_PLANK_EDGE_PAD * 2;
         const plankCount =
@@ -882,7 +868,7 @@ export const BoardView = ({
           y: bridge.to.y - bridge.py * railOffset
         };
         return (
-          <g key={bridge.key} className={className}>
+          <g key={bridge.key} className="bridge">
             <title>{bridgeTitle}</title>
             <line
               className="bridge__body"
