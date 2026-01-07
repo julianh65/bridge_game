@@ -345,6 +345,7 @@ export const GameScreen = ({
   const [edgeKey, setEdgeKey] = useState("");
   const [marchFrom, setMarchFrom] = useState("");
   const [marchTo, setMarchTo] = useState("");
+  const [marchForceCount, setMarchForceCount] = useState<number | null>(null);
   const [reinforceHex, setReinforceHex] = useState("");
   const [cardInstanceId, setCardInstanceId] = useState("");
   const [cardTargetsRaw, setCardTargetsRaw] = useState("");
@@ -432,6 +433,24 @@ export const GameScreen = ({
     localPlayerId,
     view.public.board.hexes
   ]);
+
+  const marchForceMax = useMemo(() => {
+    if (!localPlayerId || !marchFrom) {
+      return 0;
+    }
+    const hex = view.public.board.hexes[marchFrom];
+    if (!hex) {
+      return 0;
+    }
+    const unitIds = hex.occupants[localPlayerId] ?? [];
+    let count = 0;
+    for (const unitId of unitIds) {
+      if (view.public.board.units[unitId]?.kind === "force") {
+        count += 1;
+      }
+    }
+    return count;
+  }, [localPlayerId, marchFrom, view.public.board.hexes, view.public.board.units]);
 
   const selectedReinforce =
     reinforceOptions.find((option) => option.key === reinforceHex) ?? reinforceOptions[0] ?? null;
@@ -604,7 +623,15 @@ export const GameScreen = ({
   } else if (basicActionIntent === "march" && canMarch) {
     primaryAction = {
       kind: "basic",
-      action: { kind: "march", from: marchFrom.trim(), to: marchTo.trim() }
+      action:
+        marchForceCount !== null
+          ? {
+              kind: "march",
+              from: marchFrom.trim(),
+              to: marchTo.trim(),
+              forceCount: marchForceCount
+            }
+          : { kind: "march", from: marchFrom.trim(), to: marchTo.trim() }
     };
     primaryActionLabel = "March";
   } else if (basicActionIntent === "reinforce" && canReinforce && selectedReinforce) {
@@ -634,6 +661,11 @@ export const GameScreen = ({
     setPendingEdgeStart(null);
     setPendingStackFrom(null);
     setPendingPath([]);
+  };
+
+  const handleMarchFromChange = (value: string) => {
+    setMarchFrom(value);
+    setMarchForceCount(null);
   };
 
   useEffect(() => {
@@ -699,8 +731,21 @@ export const GameScreen = ({
       setIsHandPickerOpen(false);
       setIsHandPanelOpen(true);
       setBasicActionIntent("none");
+      setMarchForceCount(null);
     }
   }, [isActionPhase]);
+
+  useEffect(() => {
+    if (!marchFrom || marchForceMax <= 1) {
+      if (marchForceCount !== null) {
+        setMarchForceCount(null);
+      }
+      return;
+    }
+    if (marchForceCount !== null && marchForceCount > marchForceMax) {
+      setMarchForceCount(marchForceMax);
+    }
+  }, [marchForceCount, marchForceMax, marchFrom]);
 
   useEffect(() => {
     if (isMarketPhase) {
@@ -1018,7 +1063,7 @@ export const GameScreen = ({
     }
 
     if (boardPickMode === "marchFrom") {
-      setMarchFrom(hexKey);
+      handleMarchFromChange(hexKey);
       setBoardPickMode("marchTo");
       return;
     }
@@ -1879,14 +1924,17 @@ export const GameScreen = ({
         edgeKey={edgeKey}
         marchFrom={marchFrom}
         marchTo={marchTo}
+        marchForceCount={marchForceCount}
+        marchForceMax={marchForceMax}
         reinforceHex={reinforceHex}
         reinforceOptions={reinforceOptions}
         boardPickMode={boardPickMode}
         basicActionIntent={basicActionIntent}
         onBasicActionIntentChange={handleBasicActionIntentChange}
         onEdgeKeyChange={setEdgeKey}
-        onMarchFromChange={setMarchFrom}
+        onMarchFromChange={handleMarchFromChange}
         onMarchToChange={setMarchTo}
+        onMarchForceCountChange={setMarchForceCount}
         onReinforceHexChange={setReinforceHex}
         onBoardPickModeChange={setBoardPickModeSafe}
         onSelectCard={handleSelectCard}

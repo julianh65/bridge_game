@@ -55,6 +55,8 @@ type GameScreenHandPanelProps = {
   edgeKey: string;
   marchFrom: string;
   marchTo: string;
+  marchForceCount: number | null;
+  marchForceMax: number;
   reinforceHex: string;
   reinforceOptions: { key: string; label: string }[];
   boardPickMode: BoardPickMode;
@@ -63,6 +65,7 @@ type GameScreenHandPanelProps = {
   onEdgeKeyChange: (edgeKey: string) => void;
   onMarchFromChange: (hexKey: string) => void;
   onMarchToChange: (hexKey: string) => void;
+  onMarchForceCountChange: (value: number | null) => void;
   onReinforceHexChange: (hexKey: string) => void;
   onBoardPickModeChange: (mode: BoardPickMode) => void;
   onSelectCard: (cardId: string) => void;
@@ -91,6 +94,8 @@ export const GameScreenHandPanel = ({
   edgeKey,
   marchFrom,
   marchTo,
+  marchForceCount,
+  marchForceMax,
   reinforceHex,
   reinforceOptions,
   boardPickMode,
@@ -99,6 +104,7 @@ export const GameScreenHandPanel = ({
   onEdgeKeyChange,
   onMarchFromChange,
   onMarchToChange,
+  onMarchForceCountChange,
   onReinforceHexChange,
   onBoardPickModeChange,
   onSelectCard,
@@ -263,6 +269,8 @@ export const GameScreenHandPanel = ({
                 edgeKey={edgeKey}
                 marchFrom={marchFrom}
                 marchTo={marchTo}
+                marchForceCount={marchForceCount}
+                marchForceMax={marchForceMax}
                 reinforceHex={reinforceHex}
                 reinforceOptions={reinforceOptions}
                 boardPickMode={boardPickMode}
@@ -271,6 +279,7 @@ export const GameScreenHandPanel = ({
                 onEdgeKeyChange={onEdgeKeyChange}
                 onMarchFromChange={onMarchFromChange}
                 onMarchToChange={onMarchToChange}
+                onMarchForceCountChange={onMarchForceCountChange}
                 onReinforceHexChange={onReinforceHexChange}
                 onBoardPickModeChange={onBoardPickModeChange}
               />

@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- [owner: agent3] [status: in-progress] Scope: implement Archivist Prime + Wormhole Artificer champion abilities (cards-played counter, movement bonus) with engine tests + card text updates. Files: packages/engine/src/champions.ts, packages/engine/src/player-flags.ts, packages/engine/src/action-flow.ts, packages/engine/src/round-flow.ts, packages/engine/src/content/cards/faction.ts, packages/engine/src/action-flow.test.ts, implementation_plan.md, progress.md.
 
 ## Milestone 8.5 progress
 - Improved hand card selection UX: added a selected-card summary with target hints + clear button, enabled click-to-deselect, and cleared card selection when switching to basic actions; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)

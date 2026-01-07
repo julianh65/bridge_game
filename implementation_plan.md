@@ -497,7 +497,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Add a confirm if they click pass and they still have mana
 - [ ] We need a way for players to choose how many forces to move (split stacks vs move all).
   - [x] Engine support: optional `forceCount` for march/moveStack actions and card effects.
-  - [ ] UI: add a smooth force-count picker (move all vs split) in the action panel + card move flow.
+  - [x] UI: add a smooth force-count picker (move all vs split) in the action panel.
+  - [ ] UI: add force-count controls for card-driven stack moves.
 - [x] Any text on the board shouldn't be highlightable
 
 ## Milestone 9.5 -- Card Art + Description
