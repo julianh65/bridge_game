@@ -34,7 +34,8 @@ export const GameScreenHeader = ({
             <span className="resource-chip__icon" aria-hidden="true">
               🟡
             </span>
-            <span className="resource-chip__label">Gold</span>
+            <span className="resource-chip__label resource-chip__label--full">Gold</span>
+            <span className="resource-chip__label resource-chip__label--short">Gold</span>
             <strong className="resource-chip__value">{localGold}</strong>
           </div>
         ) : null}
@@ -43,7 +44,10 @@ export const GameScreenHeader = ({
             <span className="resource-chip__icon" aria-hidden="true">
               🟢
             </span>
-            <span className="resource-chip__label">Victory Points</span>
+            <span className="resource-chip__label resource-chip__label--full">
+              Victory Points
+            </span>
+            <span className="resource-chip__label resource-chip__label--short">VP</span>
             <strong className="resource-chip__value">{localVpTotal}</strong>
           </div>
         ) : null}

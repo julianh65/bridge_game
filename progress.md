@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent3] Build card-art generation script + web manifest wiring for GameCard art rendering; touch `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`, `implementation_plan.md`, `progress.md`. (status: in progress)
+- none
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
@@ -34,6 +34,7 @@
 - Delayed the market winner highlight until after the roll-off animation completes and moved the roll-off panel to the center of the market layout. (Overlap note: `apps/web/src/styles.css` touched alongside agent1.)
 - Made the market roll-off animation duration configurable via `MARKET_ROLLOFF_DURATION_MS` in `DEFAULT_CONFIG` and documented it.
 - Removed the Live connection pill from the header and enlarged gold/VP chips with clearer labels. (Overlap note: `apps/web/src/styles.css` touched alongside agent1.)
+- Added compact gold/VP labels in the collapsed header chips so the HUD always shows text; marked the plan item complete in `implementation_plan.md`.
 - Repositioned the mana orb to the hand panel bottom-right (outside the actions panel) to reduce the perceived empty space above the cards.
 - Tightened the hand layout spacing and aligned the action panel to the bottom of the hand row to reduce empty vertical gaps.
 - Switched the hand layout to a bottom-aligned flex row so actions and cards sit on the same baseline, reducing the empty quadrants in the hand panel.
@@ -415,6 +416,9 @@ none
 - Added bridge trap modifiers (first enemy crossing loses a force) via move hooks with action-flow coverage.
 - Added hex-link movement modifiers for wormhole/tunnel network effects (linkHexes + linkCapitalToCenter) with action-flow coverage; marked the plan items complete.
 - Added board effect badges for attached edge/hex modifiers using public modifier views; marked the optional plan item complete. (Overlap note: touched `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.)
+
+## Milestone 7.5 progress
+- Added a card-art manifest + helper, GameCard art rendering, and a CLI script to generate diffusion art and update the manifest. (Files: `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`.)
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

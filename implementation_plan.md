@@ -493,7 +493,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] There's no pop up in the action phase to show what each player has done for basic actions
 - [x] After the market phase while we're showing the last card, the hand modal instantly pops up
 - [x] The basic actions require too many clicks and that UI is cluttered, cut it down like reinforce is only in the capital we don't need to show that, or march doesn't need all of that jazz
-- [ ] add some text to the gold and VP chits at the top that says gold or VP
+- [x] add some text to the gold and VP chits at the top that says gold or VP
+- [ ] small / medium, make the borders on the cards for power cards vs champions slightly thicker and better looking
 ## Milestone 9 — Add Polish
 
 ### Tasks

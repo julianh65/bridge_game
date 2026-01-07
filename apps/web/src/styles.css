@@ -1625,6 +1625,13 @@ h1 {
   color: rgba(107, 75, 42, 0.7);
 }
 
+.resource-chip__label--short {
+  display: none;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .resource-chip__value {
   font-size: 16px;
   color: #2f261b;
@@ -1647,8 +1654,12 @@ h1 {
   font-size: 12px;
 }
 
-.game-screen__collapsed-meta .resource-chip__label {
+.game-screen__collapsed-meta .resource-chip__label--full {
   display: none;
+}
+
+.game-screen__collapsed-meta .resource-chip__label--short {
+  display: inline;
 }
 
 .game-screen__header.is-collapsed {
