@@ -1,0 +1,174 @@
+import { createRngState } from "@bridgefront/shared";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import * as shared from "@bridgefront/shared";
+
+import { resolveBattleAtHex } from "./combat";
+import { resolveCardEffects } from "./card-effects";
+import { createBaseBoard } from "./board-generation";
+import { BATTLE_CRY, SMOKE_SCREEN } from "./content/cards/age1";
+import { createNewGame, DEFAULT_CONFIG } from "./index";
+import type { GameEvent, GameState } from "./types";
+
+type CombatRoundPayload = Extract<GameEvent, { type: "combat.round" }>["payload"];
+
+type ChampionUnit = GameState["board"]["units"][string] & { kind: "champion" };
+
+type ForceUnit = GameState["board"]["units"][string] & { kind: "force" };
+
+const createChampion = (id: string, ownerPlayerId: string, hex: string): ChampionUnit => ({
+  id,
+  ownerPlayerId,
+  kind: "champion",
+  hex,
+  cardDefId: `test.${id}`,
+  hp: 2,
+  maxHp: 2,
+  attackDice: 1,
+  hitFaces: 3,
+  bounty: 1,
+  abilityUses: {}
+});
+
+const createForce = (id: string, ownerPlayerId: string, hex: string): ForceUnit => ({
+  id,
+  ownerPlayerId,
+  kind: "force",
+  hex
+});
+
+const getFirstCombatRound = (state: GameState, hexKey: string): CombatRoundPayload => {
+  const entry = state.logs.find(
+    (event) => event.type === "combat.round" && event.payload.hexKey === hexKey
+  );
+  if (!entry || entry.type !== "combat.round") {
+    throw new Error(`missing combat round log for ${hexKey}`);
+  }
+  return entry.payload;
+};
+
+const getDiceCount = (payload: CombatRoundPayload, playerId: string): number => {
+  if (payload.attackers.playerId === playerId) {
+    return payload.attackers.dice.length;
+  }
+  if (payload.defenders.playerId === playerId) {
+    return payload.defenders.dice.length;
+  }
+  throw new Error(`missing dice for ${playerId}`);
+};
+
+const getHits = (payload: CombatRoundPayload, playerId: string): number => {
+  if (payload.attackers.playerId === playerId) {
+    return payload.attackers.hits;
+  }
+  if (payload.defenders.playerId === playerId) {
+    return payload.defenders.hits;
+  }
+  throw new Error(`missing hits for ${playerId}`);
+};
+
+describe("combat card effects", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("battle cry boosts champion dice for the first battle only", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({ value: 1, next: rng }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(2);
+    const hexA = "0,0";
+    const hexB = "1,0";
+
+    board.hexes[hexA] = {
+      ...board.hexes[hexA],
+      occupants: { p1: ["c1"], p2: ["c2"] }
+    };
+    board.hexes[hexB] = {
+      ...board.hexes[hexB],
+      occupants: { p1: ["c3"], p2: ["c4"] }
+    };
+
+    board.units = {
+      c1: createChampion("c1", "p1", hexA),
+      c2: createChampion("c2", "p2", hexA),
+      c3: createChampion("c3", "p1", hexB),
+      c4: createChampion("c4", "p2", hexB)
+    };
+
+    let state: GameState = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(9),
+      board
+    };
+
+    state = resolveCardEffects(state, "p1", BATTLE_CRY);
+    state = resolveBattleAtHex(state, hexA);
+
+    const firstRound = getFirstCombatRound(state, hexA);
+    expect(getDiceCount(firstRound, "p1")).toBe(2);
+    expect(getDiceCount(firstRound, "p2")).toBe(1);
+
+    state = resolveBattleAtHex(state, hexB);
+    const secondRound = getFirstCombatRound(state, hexB);
+    expect(getDiceCount(secondRound, "p1")).toBe(1);
+    expect(getDiceCount(secondRound, "p2")).toBe(1);
+
+    const hasBattleCryModifier = state.modifiers.some(
+      (modifier) => modifier.source.sourceId === BATTLE_CRY.id
+    );
+    expect(hasBattleCryModifier).toBe(false);
+  });
+
+  it("smoke screen suppresses enemy force hits for the first battle only", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({ value: 2, next: rng }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 2, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(2);
+    const hexA = "0,0";
+    const hexB = "1,0";
+
+    board.hexes[hexA] = {
+      ...board.hexes[hexA],
+      occupants: { p1: ["f1"], p2: ["f2"] }
+    };
+    board.hexes[hexB] = {
+      ...board.hexes[hexB],
+      occupants: { p1: ["f3"], p2: ["f4"] }
+    };
+
+    board.units = {
+      f1: createForce("f1", "p1", hexA),
+      f2: createForce("f2", "p2", hexA),
+      f3: createForce("f3", "p1", hexB),
+      f4: createForce("f4", "p2", hexB)
+    };
+
+    let state: GameState = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(5),
+      board
+    };
+
+    state = resolveCardEffects(state, "p1", SMOKE_SCREEN);
+    state = resolveBattleAtHex(state, hexA);
+
+    const firstRound = getFirstCombatRound(state, hexA);
+    expect(getHits(firstRound, "p2")).toBe(0);
+
+    state = resolveBattleAtHex(state, hexB);
+    const secondRound = getFirstCombatRound(state, hexB);
+    expect(getHits(secondRound, "p2")).toBe(1);
+  });
+});

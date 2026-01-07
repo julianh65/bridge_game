@@ -47,6 +47,7 @@ const SUPPORTED_TARGET_KINDS = new Set([
 ]);
 const SUPPORTED_EFFECTS = new Set([
   "gainGold",
+  "gainMana",
   "drawCards",
   "scoutReport",
   "prospecting",
@@ -67,7 +68,9 @@ const SUPPORTED_EFFECTS = new Set([
   "trapBridge",
   "destroyBridge",
   "linkHexes",
-  "linkCapitalToCenter"
+  "linkCapitalToCenter",
+  "battleCry",
+  "smokeScreen"
 ]);
 
 type TargetRecord = Record<string, unknown>;
@@ -244,6 +247,13 @@ const isModifierActive = (modifier: Modifier): boolean => {
     return modifier.duration.remaining > 0;
   }
   return true;
+};
+
+const removeModifierById = (state: GameState, modifierId: string): GameState => {
+  const nextModifiers = state.modifiers.filter((modifier) => modifier.id !== modifierId);
+  return nextModifiers.length === state.modifiers.length
+    ? state
+    : { ...state, modifiers: nextModifiers };
 };
 
 const getTargetingGuard = (modifier: Modifier): TargetingGuard | null => {
@@ -1059,6 +1069,27 @@ const addGold = (state: GameState, playerId: PlayerID, amount: number): GameStat
   };
 };
 
+const addMana = (state: GameState, playerId: PlayerID, amount: number): GameState => {
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return state;
+  }
+
+  return {
+    ...state,
+    players: state.players.map((player) =>
+      player.id === playerId
+        ? {
+            ...player,
+            resources: {
+              ...player.resources,
+              mana: player.resources.mana + amount
+            }
+          }
+        : player
+    )
+  };
+};
+
 const playerOccupiesTile = (
   state: GameState,
   playerId: PlayerID,
@@ -1105,6 +1136,11 @@ export const resolveCardEffects = (
       case "gainGold": {
         const amount = typeof effect.amount === "number" ? effect.amount : 0;
         nextState = addGold(nextState, playerId, amount);
+        break;
+      }
+      case "gainMana": {
+        const amount = typeof effect.amount === "number" ? effect.amount : 0;
+        nextState = addMana(nextState, playerId, amount);
         break;
       }
       case "drawCards": {
@@ -1481,6 +1517,120 @@ export const resolveCardEffects = (
                 targeting: {
                   blockEnemySpells: true,
                   scope: "ownerChampions"
+                }
+              }
+            }
+          ]
+        };
+        break;
+      }
+      case "battleCry": {
+        const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.battle_cry`;
+        nextState = {
+          ...nextState,
+          modifiers: [
+            ...nextState.modifiers,
+            {
+              id: modifierId,
+              source: { type: "card", sourceId: card.id },
+              ownerPlayerId: playerId,
+              duration: { type: "endOfRound" },
+              hooks: {
+                beforeCombatRound: ({
+                  state,
+                  modifier,
+                  hexKey,
+                  round,
+                  attackerPlayerId,
+                  defenderPlayerId
+                }) => {
+                  if (round !== 1) {
+                    return state;
+                  }
+                  const ownerId = modifier.ownerPlayerId;
+                  if (!ownerId) {
+                    return state;
+                  }
+                  if (ownerId !== attackerPlayerId && ownerId !== defenderPlayerId) {
+                    return state;
+                  }
+                  const tempModifier: Modifier = {
+                    id: `${modifier.id}.battle`,
+                    source: { type: "card", sourceId: card.id },
+                    ownerPlayerId: ownerId,
+                    attachedHex: hexKey,
+                    duration: { type: "endOfBattle" },
+                    hooks: {
+                      getChampionAttackDice: ({ unit, round }, current) => {
+                        if (round !== 1 || unit.kind !== "champion") {
+                          return current;
+                        }
+                        if (unit.ownerPlayerId !== ownerId) {
+                          return current;
+                        }
+                        return current + 1;
+                      }
+                    }
+                  };
+                  const cleaned = removeModifierById(state, modifier.id);
+                  return { ...cleaned, modifiers: [...cleaned.modifiers, tempModifier] };
+                }
+              }
+            }
+          ]
+        };
+        break;
+      }
+      case "smokeScreen": {
+        const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.smoke_screen`;
+        nextState = {
+          ...nextState,
+          modifiers: [
+            ...nextState.modifiers,
+            {
+              id: modifierId,
+              source: { type: "card", sourceId: card.id },
+              ownerPlayerId: playerId,
+              duration: { type: "endOfRound" },
+              hooks: {
+                beforeCombatRound: ({
+                  state,
+                  modifier,
+                  hexKey,
+                  round,
+                  attackerPlayerId,
+                  defenderPlayerId
+                }) => {
+                  if (round !== 1) {
+                    return state;
+                  }
+                  const ownerId = modifier.ownerPlayerId;
+                  if (!ownerId) {
+                    return state;
+                  }
+                  if (ownerId !== attackerPlayerId && ownerId !== defenderPlayerId) {
+                    return state;
+                  }
+                  const tempModifier: Modifier = {
+                    id: `${modifier.id}.battle`,
+                    source: { type: "card", sourceId: card.id },
+                    ownerPlayerId: ownerId,
+                    attachedHex: hexKey,
+                    duration: { type: "endOfBattle" },
+                    hooks: {
+                      getForceHitFaces: ({ unit, round }, current) => {
+                        if (round !== 1 || unit.kind !== "force") {
+                          return current;
+                        }
+                        if (unit.ownerPlayerId === ownerId) {
+                          return current;
+                        }
+                        return Math.min(current, 1);
+                      }
+                    }
+                  };
+                  const cleaned = removeModifierById(state, modifier.id);
+                  return { ...cleaned, modifiers: [...cleaned.modifiers, tempModifier] };
                 }
               }
             }

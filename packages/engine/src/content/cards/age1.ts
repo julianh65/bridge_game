@@ -238,6 +238,36 @@ export const PATCH_UP: CardDef = {
   effects: [{ kind: "patchUp", baseHeal: 2, capitalBonus: 2 }]
 };
 
+export const BATTLE_CRY: CardDef = {
+  id: "age1.battle_cry",
+  name: "Battle Cry",
+  rulesText:
+    "Until end of round, the first battle you fight: each of your Champions in that battle rolls +1 die in combat round 1.",
+  type: "Spell",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1 },
+  initiative: 35,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "battleCry" }]
+};
+
+export const SMOKE_SCREEN: CardDef = {
+  id: "age1.smoke_screen",
+  name: "Smoke Screen",
+  rulesText:
+    "Until end of round, the first battle you fight: enemy Forces hit on 1 only in combat round 1.",
+  type: "Spell",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 2 },
+  initiative: 30,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "smokeScreen" }]
+};
+
 export const QUICK_STUDY: CardDef = {
   id: "age1.quick_study",
   name: "Quick Study",
@@ -250,6 +280,34 @@ export const QUICK_STUDY: CardDef = {
   burn: false,
   targetSpec: { kind: "none" },
   effects: [{ kind: "drawCards", count: 2 }]
+};
+
+export const MAKE_A_PLAY: CardDef = {
+  id: "age1.make_a_play",
+  name: "Make a Play",
+  rulesText: "Gain 1 mana. Burn.",
+  type: "Spell",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 0 },
+  initiative: 70,
+  burn: true,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "gainMana", amount: 1 }]
+};
+
+export const PAID_LOGISTICS: CardDef = {
+  id: "age1.paid_logistics",
+  name: "Paid Logistics",
+  rulesText: "Gain 1 mana. Burn.",
+  type: "Spell",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 0, gold: 6 },
+  initiative: 70,
+  burn: true,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "gainMana", amount: 1 }]
 };
 
 export const SUPPLY_LEDGER: CardDef = {
@@ -511,7 +569,11 @@ export const AGE1_CARDS: CardDef[] = [
   BRIDGE_TRAP,
   TUNNEL_NETWORK,
   PATCH_UP,
+  BATTLE_CRY,
+  SMOKE_SCREEN,
   QUICK_STUDY,
+  MAKE_A_PLAY,
+  PAID_LOGISTICS,
   SUPPLY_LEDGER,
   PATROL_RECORD,
   BANNER_CLAIM,
