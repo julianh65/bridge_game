@@ -1,4 +1,4 @@
-import { neighborHexKeys, parseEdgeKey } from "@bridgefront/shared";
+import { areAdjacent, neighborHexKeys, parseEdgeKey, parseHexKey } from "@bridgefront/shared";
 import { describe, expect, it } from "vitest";
 
 import type { BoardState, EdgeKey, GameState, HexKey } from "./types";
@@ -53,6 +53,26 @@ const pickTwoStepMarchTarget = (
     return { mid, to: neighbor };
   }
   throw new Error("no open two-step march target");
+};
+
+const pickNonAdjacentMinePair = (board: BoardState): [HexKey, HexKey] => {
+  const mines = Object.values(board.hexes).filter((hex) => hex.tile === "mine");
+  for (let i = 0; i < mines.length; i += 1) {
+    const from = mines[i];
+    if (!from) {
+      continue;
+    }
+    for (let j = i + 1; j < mines.length; j += 1) {
+      const to = mines[j];
+      if (!to) {
+        continue;
+      }
+      if (!areAdjacent(parseHexKey(from.key), parseHexKey(to.key))) {
+        return [from.key, to.key];
+      }
+    }
+  }
+  throw new Error("no non-adjacent mine pair found");
 };
 
 const advanceThroughMarket = (state: GameState): GameState => {
@@ -513,6 +533,37 @@ describe("action flow", () => {
     );
 
     expect(state.blocks?.payload.declarations["p1"]).toBeNull();
+  });
+
+  it("allows Prospect deep tunnels to march between occupied mines", () => {
+    let { state } = setupToActionPhase({ p1: "prospect" });
+    const [fromMine, toMine] = pickNonAdjacentMinePair(state.board);
+
+    state = {
+      ...state,
+      board: addForcesToHex(state.board, "p1", fromMine, 1)
+    };
+    state = {
+      ...state,
+      board: addForcesToHex(state.board, "p1", toMine, 1)
+    };
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: { kind: "basic", action: { kind: "march", from: fromMine, to: toMine } }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const fromHex = state.board.hexes[fromMine];
+    const toHex = state.board.hexes[toMine];
+    expect(fromHex.occupants["p1"]?.length ?? 0).toBe(0);
+    expect(toHex.occupants["p1"]?.length ?? 0).toBe(2);
   });
 
   it("allows flight champions to march without bridges", () => {

@@ -133,6 +133,20 @@ export const getMoveRequiresBridge = (
   );
 };
 
+export const getMoveAdjacency = (
+  state: GameState,
+  context: MoveContext,
+  base: boolean
+): boolean => {
+  return applyModifierQuery(
+    state,
+    state.modifiers,
+    (hooks) => hooks.getMoveAdjacency,
+    context,
+    base
+  );
+};
+
 export const getMoveMaxDistance = (
   state: GameState,
   context: MoveContext,

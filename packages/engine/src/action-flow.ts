@@ -135,12 +135,8 @@ const canMarch = (state: GameState, playerId: PlayerID, from: string, to: string
 
   const options = { maxDistance: 1, requiresBridge: true, requireStartOccupied: true };
 
-  try {
-    if (areAdjacent(parseHexKey(from), parseHexKey(to))) {
-      return Boolean(validateMovePath(state, playerId, [from, to], options));
-    }
-  } catch {
-    return false;
+  if (validateMovePath(state, playerId, [from, to], options)) {
+    return true;
   }
 
   let neighbors: string[];

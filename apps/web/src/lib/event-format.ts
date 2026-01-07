@@ -107,6 +107,12 @@ export const formatGameEvent = (
         playersById
       )} vs ${formatCombatSide(defenders, playersById)}`;
     }
+    case "combat.round": {
+      const hexKey = readString(payload.hexKey) ?? "unknown";
+      const round = readNumber(payload.round);
+      const roundLabel = round !== null ? `Round ${round}` : "Combat round";
+      return `${roundLabel} at ${hexKey}`;
+    }
     case "combat.end": {
       const hexKey = readString(payload.hexKey) ?? "unknown";
       const winnerId = readString(payload.winnerPlayerId);

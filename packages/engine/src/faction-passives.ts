@@ -1,4 +1,5 @@
 import type { GameState, Modifier, PlayerID } from "./types";
+import { isOccupiedByPlayer } from "./board";
 import { hasPlayerMovedThisRound } from "./player-flags";
 
 const buildModifierId = (factionId: string, playerId: PlayerID, key: string) =>
@@ -86,6 +87,38 @@ const createProspectMineMilitiaModifier = (playerId: PlayerID): Modifier => ({
         return current;
       }
       return Math.max(current, 3);
+    }
+  }
+});
+
+const createProspectDeepTunnelsModifier = (playerId: PlayerID): Modifier => ({
+  id: buildModifierId("prospect", playerId, "deep_tunnels"),
+  source: { type: "faction", sourceId: "prospect" },
+  ownerPlayerId: playerId,
+  duration: { type: "permanent" },
+  hooks: {
+    getMoveAdjacency: ({ modifier, playerId: movingPlayerId, from, to, state }, current) => {
+      if (current) {
+        return current;
+      }
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== movingPlayerId) {
+        return current;
+      }
+      const fromHex = state.board.hexes[from];
+      const toHex = state.board.hexes[to];
+      if (!fromHex || !toHex) {
+        return current;
+      }
+      if (fromHex.tile !== "mine" || toHex.tile !== "mine") {
+        return current;
+      }
+      if (!isOccupiedByPlayer(fromHex, movingPlayerId)) {
+        return current;
+      }
+      if (!isOccupiedByPlayer(toHex, movingPlayerId)) {
+        return current;
+      }
+      return true;
     }
   }
 });
@@ -311,7 +344,11 @@ export const createFactionModifiers = (factionId: string, playerId: PlayerID): M
     case "veil":
       return [createVeilCleanExitModifier(playerId), createVeilContractsModifier(playerId)];
     case "prospect":
-      return [createProspectOreCutModifier(playerId), createProspectMineMilitiaModifier(playerId)];
+      return [
+        createProspectOreCutModifier(playerId),
+        createProspectMineMilitiaModifier(playerId),
+        createProspectDeepTunnelsModifier(playerId)
+      ];
     case "aerial":
       return [createAerialTailwindModifier(playerId)];
     case "cipher":

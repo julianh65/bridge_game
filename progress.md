@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent1; scope: add combat round event logging + battle dice UI overlay (click-to-roll, hit assignment) for Milestone 9 battle UX; files: `packages/engine/src/combat.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/lib/event-format.ts`, `apps/web/src/styles.css`; status: in-progress
+none
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -66,6 +66,7 @@
 - Added a host-only debug state patch tool in the room debug panel + server command, and marked the plan item complete in `implementation_plan.md`.
 - Added a champion crest marker on unit stacks to make champion presence easier to spot on the board.
 - Added faction badges on unit stacks to help differentiate ownership at a glance.
+- Added combat round logging with dice/hit assignment payloads and a battle overlay that supports click-to-roll dice with hit assignment display; marked the Milestone 9 battle UX item complete in `implementation_plan.md`.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -83,6 +84,7 @@
 - Implemented Veil Contracts (+2 gold per champion kill) via a champion-kill reward hook and added combat coverage; updated `implementation_plan.md`.
 - Implemented Cipher Expanded Choice (extra card offers on free-start + collection prompts), plus mine-draft multi-reveal selection support; marked plan item complete.
 - Implemented Aerial Tailwind (+1 max move distance on first stack move per round) via a moved-this-round flag + move validation hook, with action-flow coverage.
+- Implemented Prospect Deep Tunnels (occupied mines treated as adjacent for movement) via a move-adjacency modifier hook, updated march validation, and added action-flow coverage; marked `implementation_plan.md`.
 - Implemented Gatewright capital occupation VP bonus (+2 control VP on enemy capitals) via a scoring hook + coverage; marked plan item complete.
 
 ## Testing progress
@@ -105,6 +107,7 @@
 - Ran `npm run -w @bridgefront/engine test -- src/cards.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/modifiers.test.ts src/combat.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts src/setup-flow.test.ts src/smoke.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts`.
 
 ## Docs maintenance

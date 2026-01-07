@@ -33,12 +33,29 @@ const MAX_STALE_COMBAT_ROUNDS = 20;
 type HitRollResult = {
   hits: number;
   nextState: GameState["rngState"];
+  rolls: DiceRoll[];
 };
 
 type HitAssignmentResult = {
   hitsByUnit: Record<UnitID, number>;
   nextState: GameState["rngState"];
   bodyguardUsed?: boolean;
+};
+
+type DiceRoll = {
+  value: number;
+  isHit: boolean;
+};
+
+type HitAssignmentSummary = {
+  forces: number;
+  champions: Array<{
+    unitId: UnitID;
+    cardDefId: string;
+    hits: number;
+    hp: number;
+    maxHp: number;
+  }>;
 };
 
 type HitResolution = {
@@ -173,6 +190,7 @@ const rollHitsForUnits = (
 ): HitRollResult => {
   let hits = 0;
   let nextState = rngState;
+  const rolls: DiceRoll[] = [];
 
   for (const unitId of unitIds) {
     const unit = units[unitId];
@@ -195,13 +213,15 @@ const rollHitsForUnits = (
     for (let i = 0; i < attackDice; i += 1) {
       const roll = rollDie(nextState);
       nextState = roll.next;
-      if (roll.value <= hitFaces) {
+      const isHit = roll.value <= hitFaces;
+      rolls.push({ value: roll.value, isHit });
+      if (isHit) {
         hits += 1;
       }
     }
   }
 
-  return { hits, nextState };
+  return { hits, nextState, rolls };
 };
 
 const assignHits = (
@@ -346,6 +366,42 @@ const summarizeUnits = (
   return { forces, champions, total: forces + champions };
 };
 
+const createEmptyHitSummary = (): HitAssignmentSummary => ({
+  forces: 0,
+  champions: []
+});
+
+const summarizeHitAssignments = (
+  hitsByUnit: Record<UnitID, number>,
+  units: Record<UnitID, UnitState>
+): HitAssignmentSummary => {
+  let forces = 0;
+  const champions: HitAssignmentSummary["champions"] = [];
+
+  for (const [unitId, hits] of Object.entries(hitsByUnit)) {
+    if (hits <= 0) {
+      continue;
+    }
+    const unit = units[unitId];
+    if (!unit) {
+      continue;
+    }
+    if (unit.kind === "force") {
+      forces += hits;
+      continue;
+    }
+    champions.push({
+      unitId,
+      cardDefId: unit.cardDefId,
+      hits,
+      hp: unit.hp,
+      maxHp: unit.maxHp
+    });
+  }
+
+  return { forces, champions };
+};
+
 export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState => {
   const hex = state.board.hexes[hexKey];
   if (!hex) {
@@ -466,8 +522,31 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
     );
     rngState = defenderRoll.nextState;
 
+    const roundPayloadBase = {
+      hexKey,
+      round: battleRound,
+      attackers: {
+        playerId: participants[0],
+        dice: attackerRoll.rolls,
+        hits: attackerRoll.hits
+      },
+      defenders: {
+        playerId: participants[1],
+        dice: defenderRoll.rolls,
+        hits: defenderRoll.hits
+      }
+    };
+
     if (attackerRoll.hits + defenderRoll.hits === 0) {
       staleRounds += 1;
+      nextState = emit(nextState, {
+        type: "combat.round",
+        payload: {
+          ...roundPayloadBase,
+          hitsToAttackers: createEmptyHitSummary(),
+          hitsToDefenders: createEmptyHitSummary()
+        }
+      });
       if (staleRounds >= MAX_STALE_COMBAT_ROUNDS) {
         endReason = "stale";
         break;
@@ -520,6 +599,21 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
     rngState = assignedToAttackers.nextState;
     bodyguardUsed.attackers =
       assignedToAttackers.bodyguardUsed ?? bodyguardUsed.attackers;
+
+    nextState = emit(nextState, {
+      type: "combat.round",
+      payload: {
+        ...roundPayloadBase,
+        hitsToDefenders: summarizeHitAssignments(
+          assignedToDefenders.hitsByUnit,
+          nextUnits
+        ),
+        hitsToAttackers: summarizeHitAssignments(
+          assignedToAttackers.hitsByUnit,
+          nextUnits
+        )
+      }
+    });
 
     const attackerHits = resolveHits(attackers, assignedToAttackers.hitsByUnit, nextUnits);
     const defenderHits = resolveHits(defenders, assignedToDefenders.hitsByUnit, nextUnits);

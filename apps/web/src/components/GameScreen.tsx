@@ -18,12 +18,14 @@ import { areAdjacent, axialDistance, neighborHexKeys, parseHexKey } from "@bridg
 import { type BasicActionIntent, type BoardPickMode } from "./ActionPanel";
 import { BoardView } from "./BoardView";
 import { CollectionPanel } from "./CollectionPanel";
+import { CombatOverlay } from "./CombatOverlay";
 import { GameScreenHandPanel } from "./GameScreenHandPanel";
 import { GameScreenHeader } from "./GameScreenHeader";
 import { GameScreenSidebar } from "./GameScreenSidebar";
 import { MarketPanel } from "./MarketPanel";
 import { VictoryScreen } from "./VictoryScreen";
 import { buildHexRender } from "../lib/board-preview";
+import { extractCombatSequences, type CombatSequence } from "../lib/combat-log";
 import { formatGameEvent } from "../lib/event-format";
 import type { RoomConnectionStatus } from "../lib/room-client";
 
@@ -177,6 +179,7 @@ export const GameScreen = ({
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
   const [isMarketOverlayOpen, setIsMarketOverlayOpen] = useState(false);
   const [marketWinner, setMarketWinner] = useState<MarketWinnerHighlight | null>(null);
+  const [combatQueue, setCombatQueue] = useState<CombatSequence[]>([]);
   const [phaseCue, setPhaseCue] = useState<{ label: string; round: number } | null>(null);
   const [phaseCueKey, setPhaseCueKey] = useState(0);
   const [isVictoryVisible, setIsVictoryVisible] = useState(() =>
@@ -191,6 +194,7 @@ export const GameScreen = ({
   const [isHandPanelOpen, setIsHandPanelOpen] = useState(true);
   const [basicActionIntent, setBasicActionIntent] = useState<BasicActionIntent>("none");
   const lastMarketEventIndex = useRef(-1);
+  const lastCombatEndIndex = useRef(-1);
   const hasMarketLogBaseline = useRef(false);
   const hasPhaseCueBaseline = useRef(false);
   const lastPhaseRef = useRef(view.public.phase);
@@ -241,6 +245,7 @@ export const GameScreen = ({
   const logCount = view.public.logs.length;
   const lastLogEntry = logCount > 0 ? view.public.logs[logCount - 1] : null;
   const lastLogLabel = lastLogEntry ? formatGameEvent(lastLogEntry, playerNames) : null;
+  const activeCombat = combatQueue[0] ?? null;
   const isActionPhase = view.public.phase === "round.action";
   const isMarketPhase = view.public.phase === "round.market";
   const isCollectionPhase = view.public.phase === "round.collection";
@@ -318,6 +323,9 @@ export const GameScreen = ({
   };
   const toggleDock = () => {
     setIsInfoDockOpen((open) => !open);
+  };
+  const handleCombatClose = () => {
+    setCombatQueue((queue) => queue.slice(1));
   };
 
   useEffect(() => {
@@ -450,6 +458,28 @@ export const GameScreen = ({
       passPot
     });
   }, [view.public.logs, playerNames]);
+
+  useEffect(() => {
+    const logs = view.public.logs;
+    if (logs.length === 0) {
+      lastCombatEndIndex.current = -1;
+      setCombatQueue([]);
+      return;
+    }
+    if (lastCombatEndIndex.current >= logs.length) {
+      lastCombatEndIndex.current = -1;
+      setCombatQueue([]);
+    }
+    const sequences = extractCombatSequences(logs);
+    const newSequences = sequences.filter(
+      (sequence) => sequence.endIndex > lastCombatEndIndex.current
+    );
+    if (newSequences.length === 0) {
+      return;
+    }
+    lastCombatEndIndex.current = newSequences[newSequences.length - 1].endIndex;
+    setCombatQueue((queue) => [...queue, ...newSequences]);
+  }, [view.public.logs]);
 
   useEffect(() => {
     if (!marketWinner) {
@@ -1352,6 +1382,14 @@ export const GameScreen = ({
             <span className="phase-cue__round">Round {phaseCue.round}</span>
           </div>
         </div>
+      ) : null}
+      {activeCombat ? (
+        <CombatOverlay
+          sequence={activeCombat}
+          playersById={playerNames}
+          cardDefsById={CARD_DEFS_BY_ID}
+          onClose={handleCombatClose}
+        />
       ) : null}
       {showVictoryScreen && view.public.winnerPlayerId ? (
         <VictoryScreen

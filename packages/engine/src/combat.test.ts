@@ -124,9 +124,13 @@ describe("combat resolution", () => {
 
     const resolved = resolveBattleAtHex(state, hexKey);
 
-    expect(resolved.logs.map((entry) => entry.type)).toEqual(["combat.start", "combat.end"]);
-    expect(resolved.logs[1]?.payload?.reason).toBe("eliminated");
-    expect(resolved.logs[1]?.payload?.winnerPlayerId ?? null).toBeNull();
+    expect(resolved.logs.map((entry) => entry.type)).toEqual([
+      "combat.start",
+      "combat.round",
+      "combat.end"
+    ]);
+    expect(resolved.logs[2]?.payload?.reason).toBe("eliminated");
+    expect(resolved.logs[2]?.payload?.winnerPlayerId ?? null).toBeNull();
   });
 
   it("halts battles when neither side can hit", () => {

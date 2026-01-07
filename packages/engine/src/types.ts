@@ -261,6 +261,7 @@ export type ModifierHooks = {
   getChampionAttackDice?: ModifierQueryHook<CombatUnitContext, number>;
   getChampionHitFaces?: ModifierQueryHook<CombatUnitContext, number>;
   getHitAssignmentPolicy?: ModifierQueryHook<CombatAssignmentContext, HitAssignmentPolicy>;
+  getMoveAdjacency?: ModifierQueryHook<MoveContext, boolean>;
   getMoveRequiresBridge?: ModifierQueryHook<MoveContext, boolean>;
   getMoveMaxDistance?: ModifierQueryHook<MoveContext, number>;
   getDeployForcesCount?: ModifierQueryHook<DeployForcesContext, number>;

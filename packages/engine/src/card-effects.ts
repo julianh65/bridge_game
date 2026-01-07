@@ -13,7 +13,12 @@ import {
 import { addCardToDiscardPile, addCardToHandWithOverflow, drawCards, takeTopCards } from "./cards";
 import { applyChampionDeployment, dealChampionDamage, healChampion } from "./champions";
 import { addChampionToHex, addForcesToHex, countPlayerChampions } from "./units";
-import { getDeployForcesCount, getMoveMaxDistance, getMoveRequiresBridge } from "./modifiers";
+import {
+  getDeployForcesCount,
+  getMoveAdjacency,
+  getMoveMaxDistance,
+  getMoveRequiresBridge
+} from "./modifiers";
 import { markPlayerMovedThisRound } from "./player-flags";
 
 const SUPPORTED_TARGET_KINDS = new Set(["none", "edge", "stack", "path", "champion", "choice", "hex"]);
@@ -354,14 +359,21 @@ export const validateMovePath = (
   for (let index = 0; index < path.length - 1; index += 1) {
     const from = path[index];
     const to = path[index + 1];
+    let baseAdjacent = false;
     try {
-      if (!areAdjacent(parseHexKey(from), parseHexKey(to))) {
-        return null;
-      }
+      baseAdjacent = areAdjacent(parseHexKey(from), parseHexKey(to));
     } catch {
       return null;
     }
-    if (requiresBridge && !hasBridge(state.board, from, to)) {
+    const isAdjacent = getMoveAdjacency(
+      state,
+      { playerId, from, to, path, movingUnitIds },
+      baseAdjacent
+    );
+    if (!isAdjacent) {
+      return null;
+    }
+    if (requiresBridge && baseAdjacent && !hasBridge(state.board, from, to)) {
       return null;
     }
     if (index < path.length - 2) {
