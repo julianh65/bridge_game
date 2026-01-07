@@ -4,7 +4,6 @@ import { CARD_DEFS, type ActionDeclaration, type GameView } from "@bridgefront/e
 
 import { ActionPanel, type BasicActionIntent, type BoardPickMode } from "./ActionPanel";
 import { GameCard } from "./GameCard";
-import type { RoomConnectionStatus } from "../lib/room-client";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 
@@ -18,11 +17,11 @@ type GameScreenHandPanelProps = {
   availableMana: number;
   availableGold: number;
   canDeclareAction: boolean;
+  canSubmitAction: boolean;
+  actionHint: string | null;
   selectedCardId: string;
   handTargets: ReactNode | null;
-  phase: GameView["public"]["phase"];
   player: GameView["public"]["players"][number] | null;
-  status: RoomConnectionStatus;
   edgeKey: string;
   marchFrom: string;
   marchTo: string;
@@ -53,11 +52,11 @@ export const GameScreenHandPanel = ({
   availableMana,
   availableGold,
   canDeclareAction,
+  canSubmitAction,
+  actionHint,
   selectedCardId,
   handTargets,
-  phase,
   player,
-  status,
   edgeKey,
   marchFrom,
   marchTo,
@@ -158,10 +157,10 @@ export const GameScreenHandPanel = ({
                 <h3>Actions</h3>
                 <span className="hand-meta">Basic actions</span>
               </div>
+              {actionHint ? <p className="action-panel__hint">{actionHint}</p> : null}
               <ActionPanel
-                phase={phase}
                 player={player}
-                status={status}
+                canSubmitAction={canSubmitAction}
                 edgeKey={edgeKey}
                 marchFrom={marchFrom}
                 marchTo={marchTo}

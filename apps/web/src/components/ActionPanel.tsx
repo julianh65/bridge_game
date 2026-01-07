@@ -1,7 +1,5 @@
 import type { GameView } from "@bridgefront/engine";
 
-import type { RoomConnectionStatus } from "../lib/room-client";
-
 type PlayerView = GameView["public"]["players"][number];
 
 export type BasicActionIntent = "none" | "bridge" | "march" | "reinforce";
@@ -18,9 +16,8 @@ export type BoardPickMode =
   | "cardChoice";
 
 type ActionPanelProps = {
-  phase: GameView["public"]["phase"];
   player: PlayerView | null;
-  status: RoomConnectionStatus;
+  canSubmitAction: boolean;
   edgeKey: string;
   marchFrom: string;
   marchTo: string;
@@ -37,9 +34,8 @@ type ActionPanelProps = {
 };
 
 export const ActionPanel = ({
-  phase,
   player,
-  status,
+  canSubmitAction,
   edgeKey,
   marchFrom,
   marchTo,
@@ -54,13 +50,6 @@ export const ActionPanel = ({
   onReinforceHexChange,
   onBoardPickModeChange
 }: ActionPanelProps) => {
-  const isActionPhase = phase === "round.action";
-  const canSubmitAction =
-    status === "connected" &&
-    Boolean(player) &&
-    isActionPhase &&
-    !player?.doneThisRound &&
-    (player?.resources.mana ?? 0) >= 1;
   const canReinforce =
     canSubmitAction && (player?.resources.gold ?? 0) >= 1 && reinforceOptions.length > 0;
   const isPickingBridge = boardPickMode === "bridgeEdge";

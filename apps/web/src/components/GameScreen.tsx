@@ -525,11 +525,36 @@ export const GameScreen = ({
   const canShowHandPanel = Boolean(view.private) && isActionPhase;
   const showVictoryScreen = Boolean(view.public.winnerPlayerId && isVictoryVisible);
   const canDeclareAction =
-    status === "connected" && Boolean(localPlayer) && isActionPhase && !localPlayer?.doneThisRound;
+    status === "connected" &&
+    Boolean(localPlayer) &&
+    isActionPhase &&
+    Boolean(actionStep) &&
+    isLocalWaiting &&
+    !localPlayer?.doneThisRound;
   const isBoardTargeting = boardPickMode !== "none";
   const isEdgePickMode = boardPickMode === "bridgeEdge" || boardPickMode === "cardEdge";
   const availableMana = localPlayer?.resources.mana ?? 0;
   const availableGold = localPlayer?.resources.gold ?? 0;
+  let actionHint: string | null = null;
+  if (status !== "connected") {
+    actionHint = "Connect to submit actions.";
+  } else if (!localPlayer) {
+    actionHint = "Spectators cannot submit actions.";
+  } else if (!isActionPhase) {
+    actionHint = "Actions are available during the action phase.";
+  } else if (!actionStep) {
+    actionHint = "Resolving actions...";
+  } else if (!isLocalEligible) {
+    if (localPlayer.doneThisRound) {
+      actionHint = "You passed this round.";
+    } else if (availableMana < 1) {
+      actionHint = "No mana left to act this round.";
+    } else {
+      actionHint = "Not eligible to act this step.";
+    }
+  } else if (!isLocalWaiting) {
+    actionHint = "Action submitted. Waiting on other players.";
+  }
   const trimmedCardId = cardInstanceId.trim();
   const trimmedTargets = cardTargetsRaw.trim();
   let parsedTargets: Record<string, unknown> | null | undefined;
@@ -1797,11 +1822,11 @@ export const GameScreen = ({
         availableMana={availableMana}
         availableGold={availableGold}
         canDeclareAction={canDeclareAction}
+        canSubmitAction={canSubmitAction}
+        actionHint={actionHint}
         selectedCardId={cardInstanceId}
         handTargets={handTargetsPanel}
-        phase={view.public.phase}
         player={localPlayer ?? null}
-        status={status}
         edgeKey={edgeKey}
         marchFrom={marchFrom}
         marchTo={marchTo}

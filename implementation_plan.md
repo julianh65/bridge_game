@@ -454,7 +454,9 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Fix hex selection for Bridge Crew and Build Bridge edge picking.
 
 ### Tasks UI
-- [ ] We need to more clearly guide the player what to do. The basic actions thing is too cluttered, we should probably keep that where the cards are and it should fan it when you click basic actions and show their mana cost and everything with a description
+- [ ] The basic actions in the card hand panel below needs to be reworked, it's taking up too much horizontal space, The bridge march reinforce buttons should be stacked and be thinner and we can probably streamline the whole UI of each when they're expanded
+- [ ] The draw, Discard and Scrapped can be pills at the top of the container and are taking up too much space
+- [ ] The Pass and Submit actions should be floating in the middle bottom of the container and be larger
 - [x] The Log is taking up too much screen real estate, make that a seperate area or modal or something
 - [x] Urgent: Card targets are still not be selected properly when you click on the board. For example the bridge crew still doesn't work. I see the edge flash but it doesn't select it properly still. (Delayed BoardView pointer capture so clicks register.)
 - [x] Also can you double check, does it only work for 2 players right now?
@@ -470,7 +472,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] The text of Mine Capital or whatever is a bit goofy looking and too big, it should just show that text on hover and the colored hexes are fine for now, eventually we will replace those with nice looking tiles to demarcate
 - [x] Move the map legend to the bottom under the map
 - [x] Small / medium task: the log should not use axial coords but our coordinate system of a1, a2 etc...
-- [ ] Small / medium task: can we allow for a bit more "freedom" in the moving of the board? Like allow to move off screen more up down left right when we drag around
+- [x] Small / medium task: can we allow for a bit more "freedom" in the moving of the board? Like allow to move off screen more up down left right when we drag around
 - [ ] Can we experiment with making the container that holds the cards and the actions see through
 
 ## Milestone 9 — Add Polish
@@ -495,6 +497,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [ ] Age II/III market + power deck card tests (as content lands).
 - [ ] At the end of the market phase we don't see the nice animation and transition for the last player who auto gets it
 - [x] It needs to be much more clear that Done is like "Pass" and won't let you go again
+- [ ] Do a targetted review and cleanup of the codebase, try to find things that aren't being used anymore, are wrong etc... and clean it up, without breaking behavior.
 
 ## Milestone 9.5 -- Card Art + Description
 

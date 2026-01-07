@@ -154,8 +154,8 @@ const viewBoxEquals = (a: ViewBox, b: ViewBox): boolean => {
 const clampViewBox = (viewBox: ViewBox, baseViewBox: ViewBox): ViewBox => {
   const baseMaxX = baseViewBox.minX + baseViewBox.width;
   const baseMaxY = baseViewBox.minY + baseViewBox.height;
-  const marginX = viewBox.width * 0.15;
-  const marginY = viewBox.height * 0.15;
+  const marginX = viewBox.width * 0.3;
+  const marginY = viewBox.height * 0.3;
   const minAllowedX = baseViewBox.minX - marginX;
   const maxAllowedX = baseMaxX + marginX - viewBox.width;
   const minAllowedY = baseViewBox.minY - marginY;

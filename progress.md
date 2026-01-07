@@ -16,7 +16,6 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent4 | scope: investigate/fix action submit + basic action buttons disabled in action phase (UI eligibility gating + hints) | files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `progress.md`, `implementation_plan.md` | status: in progress
 
 
 ## Milestone 8.5 progress
@@ -24,6 +23,7 @@
 - Restyled champion markers above stacks into circular tokens with glyph placeholders; marked the plan item complete in `implementation_plan.md`.
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
 - Slimmed the action strip: moved Pass/Submit + deck counts into the hand footer, simplified basic actions, and added a command-center table with per-player gold/mana/hand counts.
+- Aligned action enablement with action-step waiting eligibility and added action-panel hints for disabled states (no mana/submitted/not action phase).
 - Added show/hide controls for the hand panel, made the actions column collapsible, and removed internal scrolling from the bottom hand area.
 - Removed the duplicate action panel, tightened the game view to fit the viewport, and reduced the board height while keeping the intel dock as a fixed overlay.
 - Consolidated the GameScreen layout: moved the action panel into the hand row, added an intel dock for players/log, and tightened the sidebar into status/resources/intel summaries (styles updated).
@@ -70,6 +70,7 @@
 - Added an age/start-of-game transition cue overlay and marked the plan item complete in `implementation_plan.md`.
 - Shortened bridge render segments so they no longer draw center-to-center; marked the plan item complete in `implementation_plan.md`.
 - Shortened bridge render segments a bit further by increasing the inset.
+- Loosened BoardView pan bounds so the board can be dragged farther off-screen and marked the plan item complete in `implementation_plan.md`.
 - Added a1-style hex labels to the game board with top-to-bottom row letters and left-to-right numbers via BoardView label variants; marked the plan item complete in `implementation_plan.md` (overlap: `implementation_plan.md`, `progress.md` with agent4).
 - Updated event log formatting to use a1-style board labels instead of axial coords (overlap: `apps/web/src/components/GameScreen.tsx` with agent4).
 - Updated event log formatting to use card names instead of card ids (overlap: `apps/web/src/components/GameScreen.tsx` with agent4).
