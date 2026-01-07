@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState, useEffect } from "react";
 import type {
+  CSSProperties,
   PointerEvent as ReactPointerEvent,
   PointerEventHandler,
   WheelEventHandler
@@ -260,8 +261,8 @@ const viewBoxEquals = (a: ViewBox, b: ViewBox): boolean => {
 const clampViewBox = (viewBox: ViewBox, baseViewBox: ViewBox): ViewBox => {
   const baseMaxX = baseViewBox.minX + baseViewBox.width;
   const baseMaxY = baseViewBox.minY + baseViewBox.height;
-  const marginX = viewBox.width * 0.3;
-  const marginY = viewBox.height * 0.3;
+  const marginX = viewBox.width * 0.45;
+  const marginY = viewBox.height * 0.45;
   const minAllowedX = baseViewBox.minX - marginX;
   const maxAllowedX = baseMaxX + marginX - viewBox.width;
   const minAllowedY = baseViewBox.minY - marginY;
@@ -822,6 +823,12 @@ export const BoardView = ({
     svgClasses.push("is-panning");
   }
 
+  const svgStyle: CSSProperties = {
+    userSelect: "none",
+    WebkitUserSelect: "none",
+    ...(enablePanZoom ? { touchAction: "none" } : {})
+  };
+
   const handleEdgeClick = (edgeKey: string) => {
     if (didDragRef.current) {
       return;
@@ -841,7 +848,7 @@ export const BoardView = ({
       ref={svgRef}
       className={svgClasses.join(" ")}
       viewBox={`${viewBox.minX} ${viewBox.minY} ${viewBox.width} ${viewBox.height}`}
-      style={enablePanZoom ? { touchAction: "none" } : undefined}
+      style={svgStyle}
       onWheel={handleWheel}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}

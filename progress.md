@@ -16,7 +16,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- [owner: agent2] [status: in-progress] Scope: fix lobby setup reroll map preview board overflow in its panel. Files: apps/web/src/components/Lobby.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md.
+- [owner: agent4] [status: in-progress] Scope: move local resources (gold/VP) to header and add bottom-left mana orb in the hand panel. Files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/GameScreenHeader.tsx, apps/web/src/components/GameScreenSidebar.tsx, apps/web/src/components/GameScreenHandPanel.tsx, apps/web/src/styles.css (overlap with agent2), implementation_plan.md, progress.md.
 
 ## Milestone 8.5 progress
 - Improved hand card selection UX: added a selected-card summary with target hints + clear button, enabled click-to-deselect, and cleared card selection when switching to basic actions; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
@@ -34,6 +35,7 @@
 - Slimmed the action strip: moved Pass/Submit + deck counts into the hand footer, simplified basic actions, and added a command-center table with per-player gold/mana/hand counts.
 - Aligned action enablement with action-step waiting eligibility and added action-panel hints for disabled states (no mana/submitted/not action phase).
 - Overlap note: commit also captured a BoardView pan/zoom clamp loosen (margin 0.15 → 0.3) + implementation plan task tweaks from agent2.
+- Loosened the BoardView pan clamp further (margin 0.45) to allow more off-screen drag freedom.
 - Added show/hide controls for the hand panel, made the actions column collapsible, and removed internal scrolling from the bottom hand area.
 - Removed the duplicate action panel, tightened the game view to fit the viewport, and reduced the board height while keeping the intel dock as a fixed overlay.
 - Consolidated the GameScreen layout: moved the action panel into the hand row, added an intel dock for players/log, and tightened the sidebar into status/resources/intel summaries (styles updated).
