@@ -528,6 +528,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [x] Age I market: Scavenger's Market gold + draw.
   - [x] Age I market: Supply Ledger / Patrol Record / Banner Claim coverage.
   - [x] Age I market: remaining orders (Quick March, Trade Caravan, Temporary Bridge, Patch Up, Quick Study).
+  - [x] Age I market: Paid Volunteers / National Service recruit coverage.
   - [ ] Age II/III market + power deck card tests (as content lands).
   - [ ] Champion ability tests (on-deploy, on-death, on-battle-win, dice mods, VP aura).
     - [x] Bounty Hunter bonus gold on champion kill in battle.

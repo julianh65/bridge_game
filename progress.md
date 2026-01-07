@@ -16,7 +16,10 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- owner: agent4
+  scope: investigate Emergency Evac card rendering/behavior issue (UI targeting vs engine effect) and fix if needed
+  files: progress.md, packages/engine/src/content/cards/age1.ts, packages/engine/src/card-effects.ts, apps/web/src/components/GameCard.tsx, apps/web/src/components/GameScreenHandPanel.tsx, apps/web/src/components/GameScreen.tsx
+  status: in_progress
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -26,6 +29,7 @@
 - Added gain-mana card effect support plus Age I Make a Play/Paid Logistics cards with action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
 - Added Emergency Evac (Age I) with champion recall-to-capital effect + unit move helper and targeted tests; updated the plan checklist. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside any in-flight edits.)
 - Added Small Hands (Age I) with hand-empty draw effect and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.)
+- Added action-flow tests for Age I Paid Volunteers + National Service recruit cards; updated the plan checklist. (Files: `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (Overlap note: `progress.md` includes agent4 active-task update.)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.

@@ -1803,6 +1803,60 @@ describe("action flow", () => {
     expect(occupiedAfter - occupiedBefore).toBe(2);
   });
 
+  it("plays paid volunteers to deploy forces to the capital", () => {
+    let { state, p1Capital } = setupToActionPhase({ p1: "aerial" });
+    const injected = addCardToHand(state, "p1", "age1.paid_volunteers");
+    state = injected.state;
+
+    const before = state.board.hexes[p1Capital].occupants["p1"]?.length ?? 0;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { choice: "capital" }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const after = state.board.hexes[p1Capital].occupants["p1"]?.length ?? 0;
+    expect(after - before).toBe(4);
+  });
+
+  it("plays national service to deploy a force to the capital", () => {
+    let { state, p1Capital } = setupToActionPhase({ p1: "aerial" });
+    const injected = addCardToHand(state, "p1", "age1.national_service");
+    state = injected.state;
+
+    const before = state.board.hexes[p1Capital].occupants["p1"]?.length ?? 0;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { choice: "capital" }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const after = state.board.hexes[p1Capital].occupants["p1"]?.length ?? 0;
+    expect(after - before).toBe(1);
+  });
+
   it("plays air drop to deploy forces near a friendly champion", () => {
     let { state, p1Capital } = setupToActionPhase();
     const neighbor = neighborHexKeys(p1Capital).find((key) => Boolean(state.board.hexes[key]));
