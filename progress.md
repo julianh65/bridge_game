@@ -17,7 +17,6 @@
 
 ## Active tasks
 - owner: agent2; scope: add gain-mana card effect plus Age I deckcraft cards (Make a Play, Paid Logistics) and action-flow coverage; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`; status: in-progress.
-- owner: agent4; scope: make card art blocks taller + add stronger art borders; files: `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in-progress.
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -143,6 +142,7 @@
 - Moved the Victory VP badge into the card description area so it doesn't push the art down.
 - Slightly enlarged the Victory VP badge for better legibility in the rules area.
 - Made GameCard art areas taller with a framed border treatment across variants and marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
+- Tweaked GameCard art heights and strengthened the art frame border for more visual punch. (Files: `apps/web/src/styles.css`.)
 - Added Victory card VP badges in `GameCard`, wired configurable `victoryPoints` in card defs/engine VP gain, and added coverage in engine card tests.
 - Added a unit stack arrival pulse animation in the board view to make movement clearer during action reveals; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.)
 - Added faction labels (symbol + name) on CardsBrowser card tiles to denote faction-specific cards; marked the plan item complete in `implementation_plan.md`. (owner: agent1)
