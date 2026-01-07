@@ -283,6 +283,7 @@ export const BoardView = ({
   hexes,
   board,
   playerIndexById,
+  playerFactionById,
   showCoords = true,
   showTags = true,
   showMineValues = true,
