@@ -16,10 +16,11 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent3 | status: in progress | scope: keep hand panel hidden while post-market overlay is showing | files: apps/web/src/components/GameScreen.tsx, progress.md, implementation_plan.md
+- none
 
 ## Milestone 8.5 progress
 - Prevented the hand panel from appearing while the market overlay holds after market phase end; marked the plan item complete in `implementation_plan.md`.
+- Added hand-panel hotkeys for action submission (Enter) and pass (P) and marked the plan item complete in `implementation_plan.md`. (Overlap note: `implementation_plan.md` also picked up pre-existing checklist edits.)
 - Improved hand card selection UX: added a selected-card summary with target hints + clear button, enabled click-to-deselect, and cleared card selection when switching to basic actions; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
 - Moved local resource display to the header (gold/VP) and added a bottom-left mana orb near the hand panel; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent3.)
 - Added a market roll-off tie-break panel with suspenseful rolling dice numbers using a reusable `NumberRoll` component; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
@@ -119,6 +120,7 @@
 - Positioned the hand panel as an absolute overlay so opening/closing it no longer resizes the board.
 - Verified multi-player (3-4 player) engine flow via expanded smoke coverage and marked the plan item complete in `implementation_plan.md`.
 - Made action reveal duration configurable via game config (propagated to the overlay) and removed card IDs from the reveal modal; marked the plan items complete in `implementation_plan.md`.
+- Added action reveal overlays for basic actions (build bridge/march/reinforce) with A1-style target labels; marked the plan item complete in `implementation_plan.md`.
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.

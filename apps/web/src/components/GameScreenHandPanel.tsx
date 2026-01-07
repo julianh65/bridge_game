@@ -12,6 +12,17 @@ import { GameCard } from "./GameCard";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 
+const isEditableTarget = (target: EventTarget | null): boolean => {
+  if (!target || !(target instanceof HTMLElement)) {
+    return false;
+  }
+  const tagName = target.tagName;
+  if (tagName === "INPUT" || tagName === "TEXTAREA" || tagName === "SELECT") {
+    return true;
+  }
+  return target.isContentEditable;
+};
+
 const getCardTargetHint = (cardDef: CardDef | null): string | null => {
   if (!cardDef) {
     return null;
@@ -152,6 +163,43 @@ export const GameScreenHandPanel = ({
     setIsPassConfirming(false);
     onSubmitAction({ kind: "done" });
   };
+
+  useEffect(() => {
+    if (!showHandPanel) {
+      return;
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.repeat) {
+        return;
+      }
+      if (event.metaKey || event.ctrlKey || event.altKey) {
+        return;
+      }
+      if (isEditableTarget(event.target)) {
+        return;
+      }
+      if (event.key === "Enter" || event.key === "NumpadEnter") {
+        if (!primaryAction) {
+          return;
+        }
+        event.preventDefault();
+        setIsPassConfirming(false);
+        onSubmitAction(primaryAction);
+        return;
+      }
+      if (event.key.toLowerCase() === "p") {
+        if (!canSubmitDone) {
+          return;
+        }
+        event.preventDefault();
+        handlePassClick();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [showHandPanel, primaryAction, canSubmitDone, handlePassClick, onSubmitAction]);
 
   return (
     <>

@@ -469,9 +469,11 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Small / medium task: can we allow for a bit more "freedom" in the moving of the board? Like allow to move off screen more up down left right when we drag around
 - [ ] Can we experiment with making the container that holds the cards and the actions see through
 - [x] (harder and urgent) We need a better ui/ux flow for the cards where you click cards and then change your mind, right now it feels clunky and not obvious what I've selected or if I've changed my state of what im about to submit / play
-- [ ] There's no pop up in the action phase to show what each player has done for basic actions
-- [x] After the market phase while we're showing the last card, the hand modal instantly pops up
-
+- [x] There's no pop up in the action phase to show what each player has done for basic actions
+- [ ] After the market phase while we're showing the last card, the hand modal instantly pops up
+- [ ] The basic actions require too many clicks and that UI is cluttered, cut it down like reinforce is only in the capital we don't need to show that, or march doesn't need all of that jazz
+- [x] Add some basic hotkeys for the very common actions like submit
+- [ ] tiny, add some text to the gold and VP chits at the top
 ## Milestone 9 — Add Polish
 
 ### Tasks
