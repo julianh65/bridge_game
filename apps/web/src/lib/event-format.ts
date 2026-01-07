@@ -1,6 +1,23 @@
 import type { GameEvent, PlayerID } from "@bridgefront/engine";
+import { parseEdgeKey } from "@bridgefront/shared";
 
 type PlayerNameLookup = Map<PlayerID, string>;
+
+const formatHexKey = (hexKey: string, hexLabels?: Record<string, string>): string => {
+  return hexLabels?.[hexKey] ?? hexKey;
+};
+
+const formatEdgeKey = (edgeKey: string, hexLabels?: Record<string, string>): string => {
+  if (!hexLabels) {
+    return edgeKey;
+  }
+  try {
+    const [from, to] = parseEdgeKey(edgeKey);
+    return `${formatHexKey(from, hexLabels)}-${formatHexKey(to, hexLabels)}`;
+  } catch {
+    return edgeKey;
+  }
+};
 
 const readString = (value: unknown): string | null => {
   return typeof value === "string" ? value : null;
@@ -54,7 +71,8 @@ const formatCombatSide = (
 
 export const formatGameEvent = (
   event: GameEvent,
-  playersById: PlayerNameLookup
+  playersById: PlayerNameLookup,
+  hexLabels?: Record<string, string>
 ): string => {
   const payload = event.payload ?? {};
   const playerId = readString(payload.playerId);
@@ -62,12 +80,14 @@ export const formatGameEvent = (
   switch (event.type) {
     case "setup.capitalPicked": {
       const hexKey = readString(payload.hexKey) ?? "unknown";
-      return `${formatPlayer(playerId, playersById)} picked capital ${hexKey}`;
+      const hexLabel = formatHexKey(hexKey, hexLabels);
+      return `${formatPlayer(playerId, playersById)} picked capital ${hexLabel}`;
     }
     case "setup.startingBridgePlaced": {
       const edgeKey = readString(payload.edgeKey) ?? "unknown";
       const alreadyExists = readBoolean(payload.alreadyExists);
-      return `${formatPlayer(playerId, playersById)} placed starting bridge ${edgeKey}${
+      const edgeLabel = formatEdgeKey(edgeKey, hexLabels);
+      return `${formatPlayer(playerId, playersById)} placed starting bridge ${edgeLabel}${
         alreadyExists ? " (existing)" : ""
       }`;
     }
@@ -84,13 +104,16 @@ export const formatGameEvent = (
     case "action.basic.buildBridge": {
       const action = readRecord(payload.action);
       const edgeKey = readString(action?.edgeKey) ?? "unknown";
-      return `${formatPlayer(playerId, playersById)} built bridge ${edgeKey}`;
+      const edgeLabel = formatEdgeKey(edgeKey, hexLabels);
+      return `${formatPlayer(playerId, playersById)} built bridge ${edgeLabel}`;
     }
     case "action.basic.march": {
       const action = readRecord(payload.action);
       const from = readString(action?.from) ?? "unknown";
       const to = readString(action?.to) ?? "unknown";
-      return `${formatPlayer(playerId, playersById)} marched ${from} -> ${to}`;
+      const fromLabel = formatHexKey(from, hexLabels);
+      const toLabel = formatHexKey(to, hexLabels);
+      return `${formatPlayer(playerId, playersById)} marched ${fromLabel} -> ${toLabel}`;
     }
     case "action.basic.capitalReinforce": {
       return `${formatPlayer(playerId, playersById)} reinforced capital`;
@@ -100,9 +123,10 @@ export const formatGameEvent = (
     }
     case "combat.start": {
       const hexKey = readString(payload.hexKey) ?? "unknown";
+      const hexLabel = formatHexKey(hexKey, hexLabels);
       const attackers = readRecord(payload.attackers);
       const defenders = readRecord(payload.defenders);
-      return `Combat starts at ${hexKey}: ${formatCombatSide(
+      return `Combat starts at ${hexLabel}: ${formatCombatSide(
         attackers,
         playersById
       )} vs ${formatCombatSide(defenders, playersById)}`;
@@ -111,14 +135,16 @@ export const formatGameEvent = (
       const hexKey = readString(payload.hexKey) ?? "unknown";
       const round = readNumber(payload.round);
       const roundLabel = round !== null ? `Round ${round}` : "Combat round";
-      return `${roundLabel} at ${hexKey}`;
+      const hexLabel = formatHexKey(hexKey, hexLabels);
+      return `${roundLabel} at ${hexLabel}`;
     }
     case "combat.end": {
       const hexKey = readString(payload.hexKey) ?? "unknown";
       const winnerId = readString(payload.winnerPlayerId);
       const reason = readString(payload.reason);
       const winnerLabel = winnerId ? formatPlayer(winnerId, playersById) : "No winner";
-      return `Combat ends at ${hexKey}: ${winnerLabel}${reason ? ` (${reason})` : ""}`;
+      const hexLabel = formatHexKey(hexKey, hexLabels);
+      return `Combat ends at ${hexLabel}: ${winnerLabel}${reason ? ` (${reason})` : ""}`;
     }
     case "market.reveal": {
       const row = readArray(payload.row);
@@ -178,10 +204,10 @@ export const formatGameEvent = (
     summaryParts.push(`player=${formatPlayer(playerId, playersById)}`);
   }
   if (hexKey) {
-    summaryParts.push(`hex=${hexKey}`);
+    summaryParts.push(`hex=${formatHexKey(hexKey, hexLabels)}`);
   }
   if (edgeKey) {
-    summaryParts.push(`edge=${edgeKey}`);
+    summaryParts.push(`edge=${formatEdgeKey(edgeKey, hexLabels)}`);
   }
   if (cardId) {
     summaryParts.push(`card=${cardId}`);

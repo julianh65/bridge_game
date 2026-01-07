@@ -511,7 +511,9 @@ export const GameScreen = ({
   const leadPlayer = view.public.players.find((player) => player.seatIndex === leadSeatIndex) ?? null;
   const logCount = view.public.logs.length;
   const lastLogEntry = logCount > 0 ? view.public.logs[logCount - 1] : null;
-  const lastLogLabel = lastLogEntry ? formatGameEvent(lastLogEntry, playerNames) : null;
+  const lastLogLabel = lastLogEntry
+    ? formatGameEvent(lastLogEntry, playerNames, hexLabels)
+    : null;
   const activeCombat = combatQueue[0] ?? null;
   const isActionPhase = view.public.phase === "round.action";
   const isMarketPhase = view.public.phase === "round.market";
@@ -1606,7 +1608,9 @@ export const GameScreen = ({
     ) : (
       <ul className="log-list">
         {view.public.logs.map((entry, index) => (
-          <li key={`${entry.type}-${index}`}>{formatGameEvent(entry, playerNames)}</li>
+          <li key={`${entry.type}-${index}`}>
+            {formatGameEvent(entry, playerNames, hexLabels)}
+          </li>
         ))}
       </ul>
     );
