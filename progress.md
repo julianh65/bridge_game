@@ -17,11 +17,9 @@
 
 ## Active tasks
 - owner: agent2; scope: clean up `implementation_plan.md` and `progress.md` (dedupe/completion sync, tighten notes); files: `implementation_plan.md`, `progress.md`; status: in progress.
-- owner: agent1; scope: make champion markers more visible on the board (halo/label tweak); files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`; status: in progress. (Overlap note: `apps/web/src/styles.css` may overlap with other layout tweaks.)
 
 ## Milestone 8.5 progress
-- Added emoji resource symbols (gold/mana/VP) in the command center + table stats (plan item already checked in `implementation_plan.md`).
-- Swapped resource emojis to distinct colors for easier scanning (yellow/blue/green).
+- Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
 - Slimmed the action strip: moved Pass/Submit + deck counts into the hand footer, simplified basic actions, and added a command-center table with per-player gold/mana/hand counts.
 - Added show/hide controls for the hand panel, made the actions column collapsible, and removed internal scrolling from the bottom hand area.
 - Removed the duplicate action panel, tightened the game view to fit the viewport, and reduced the board height while keeping the intel dock as a fixed overlay.
@@ -47,6 +45,7 @@
 - Delayed BoardView pointer capture until pan/pinch starts so edge/hex clicks register reliably during targeting.
 - Disabled hex clicks/highlights during edge targeting so only edges are selectable; updated card edge hint copy and marked the plan item complete in `implementation_plan.md` (overlap: `apps/web/src/components/GameScreen.tsx` touched alongside agent4 scope).
 - Removed the board header/hints and tightened board panel padding to reduce wasted space above the board; marked the plan item complete in `implementation_plan.md`.
+- Improved champion visibility on the board with a halo + brighter label and marked the plan item complete in `implementation_plan.md` (overlap: `apps/web/src/styles.css` touched alongside layout tweaks).
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.
@@ -74,44 +73,28 @@
 ## Testing progress
 - Added action-flow coverage for Flank Step (bridge-less move) + Scavenger's Market (gold + draw).
 - Added action-flow coverage for Supply Ledger, Patrol Record, and Banner Claim.
-- Overlap note: staged action-flow tests for Quick March, Trade Caravan, and Quick Study were included from another agent's scope.
 - Added action-flow coverage for Quick March, Trade Caravan, and Quick Study.
-- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (Supply Ledger/Patrol Record/Banner Claim coverage).
-- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (Flank Step/Scavenger's Market coverage).
 - Added card draw tests covering reshuffle behavior and hand-limit overflow in `packages/engine/src/cards.test.ts`.
 - Added tests for card instance id sequencing and random draw-pile insertion in `packages/engine/src/cards.test.ts`.
-- Ran `npm test` (engine Vitest).
 - Added Victory card gain VP coverage in `packages/engine/src/cards.test.ts`.
 - Added collection-choice resolution tests (mine draft accept/decline, forge reforge, center pick) in `packages/engine/src/round-flow.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts src/market.test.ts`.
 - Added a smoke sim auto-resolve test in `packages/engine/src/smoke.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/smoke.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/market.test.ts`.
 - Added a randomized smoke sim test that picks legal commands in `packages/engine/src/smoke.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/smoke.test.ts`.
 - Added regression coverage for invalid card declarations not spending resources or removing cards in `packages/engine/src/action-flow.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (invalid card regression coverage).
-- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (champion play/cost/limit coverage).
-- Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/modifiers.test.ts src/combat.test.ts`.
+- Ran `npm test` (engine Vitest).
+- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (card coverage + regressions).
+- Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts` (collection-choice coverage).
+- Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts src/market.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/smoke.test.ts` (auto-resolve + randomized smoke sims).
+- Ran `npm run -w @bridgefront/engine test -- src/market.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/cards.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts src/setup-flow.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts src/round-flow.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts src/action-flow.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts`.
-- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (Quick March/Trade Caravan/Quick Study coverage).
+- Ran `npm run -w @bridgefront/engine test -- src/modifiers.test.ts src/combat.test.ts`.
 
 ## Docs maintenance
 - Expanded the Milestone 9 card-test checklist with Age I market sub-items in `implementation_plan.md`.
 - Marked the Milestone 9 Age I market card-test item (Supply Ledger/Patrol Record/Banner Claim) complete in `implementation_plan.md`.
 - Checked off the remaining Age I market card-test checklist item (Quick March/Trade Caravan/Temporary Bridge/Patch Up/Quick Study) in `implementation_plan.md`.
-- Overlap note: `implementation_plan.md` already included updates for board-visuals polish + new wasted-space task while syncing the card-test checklist.
+- Cleaned `implementation_plan.md` for duplicate UI tasks and marked starting-bridge board picking as complete.
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
 - Rewrote Milestone 9 notes into a coherent checklist in `implementation_plan.md`.
 - Marked the Milestone 7 champion ability hook tasks complete in `implementation_plan.md`.

@@ -803,6 +803,14 @@ export const BoardView = ({
             onClick={() => handleStackClick(stack.hexKey)}
           >
             <title>{stackTitle}</title>
+            {stack.championCount > 0 ? (
+              <circle
+                className="unit__champion-halo"
+                cx={cx}
+                cy={cy}
+                r={13}
+              />
+            ) : null}
             <circle
               className={
                 colorIndex !== undefined ? `unit unit--p${colorIndex}` : "unit"
