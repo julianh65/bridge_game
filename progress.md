@@ -17,6 +17,7 @@
 
 ## Active tasks
 - owner: agent3; scope: implement Age II Slow (champion dice reduction) card effect + tests + plan update; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`, `progress.md`; status: in progress
+- owner: agent2; scope: add champion target selection UI (list + selection indicator) for cards targeting champions; files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in progress
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -38,6 +39,7 @@
 - Adjusted power deck plan counts to follow `rules_draft.md` (not fixed 12 each) in `implementation_plan.md`.
 - Added Age III market card defs using existing effects (Grand Maneuver, Ghost Step, Deep Reserves, Forward Legion, Royal Mint, Tome of Orders, Last Lecture, Execution Order) and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (Overlap note: commit also picked up pre-staged changes in `apps/web/src/components/GameCard.tsx`.)
 - Added Age II Repair Orders with a heal-all-champions effect and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.)
+- Added Age II Slow combat modifier (target champion rolls 1 die next battle) with tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.)
 
 ## Milestone 9 progress
 - Shifted GameCard art cropping upward (~10%) with a slight zoom across variants; updated the plan checklist. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)

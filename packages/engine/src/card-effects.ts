@@ -2007,6 +2007,66 @@ export const resolveCardEffects = (
         };
         break;
       }
+      case "slow": {
+        const target = getChampionTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null,
+          card
+        );
+        if (!target) {
+          break;
+        }
+        const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.${target.unitId}.slow`;
+        nextState = {
+          ...nextState,
+          modifiers: [
+            ...nextState.modifiers,
+            {
+              id: modifierId,
+              source: { type: "card", sourceId: card.id },
+              ownerPlayerId: playerId,
+              attachedUnitId: target.unitId,
+              duration: { type: "endOfRound" },
+              hooks: {
+                beforeCombatRound: ({ state, modifier, hexKey }) => {
+                  const unitId = modifier.attachedUnitId;
+                  if (!unitId) {
+                    return state;
+                  }
+                  const unit = state.board.units[unitId];
+                  if (!unit || unit.kind !== "champion") {
+                    return state;
+                  }
+                  if (unit.hex !== hexKey) {
+                    return state;
+                  }
+                  const tempModifier: Modifier = {
+                    id: `${modifier.id}.battle`,
+                    source: { type: "card", sourceId: card.id },
+                    ownerPlayerId: modifier.ownerPlayerId,
+                    attachedUnitId: unitId,
+                    attachedHex: hexKey,
+                    duration: { type: "endOfBattle" },
+                    hooks: {
+                      getChampionAttackDice: ({ unit }, current) => {
+                        if (unit.kind !== "champion" || unit.id !== unitId) {
+                          return current;
+                        }
+                        return Math.min(current, 1);
+                      }
+                    }
+                  };
+                  const cleaned = removeModifierById(state, modifier.id);
+                  return { ...cleaned, modifiers: [...cleaned.modifiers, tempModifier] };
+                }
+              }
+            }
+          ]
+        };
+        break;
+      }
       case "focusFire": {
         const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.focus_fire`;
         nextState = {

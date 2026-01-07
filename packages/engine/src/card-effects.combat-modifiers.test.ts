@@ -6,6 +6,7 @@ import { resolveBattleAtHex } from "./combat";
 import { resolveCardEffects } from "./card-effects";
 import { createBaseBoard } from "./board-generation";
 import { BATTLE_CRY, SMOKE_SCREEN } from "./content/cards/age1";
+import { SLOW } from "./content/cards/age2";
 import type { CardDef } from "./content/cards";
 import { createNewGame, DEFAULT_CONFIG } from "./index";
 import type { GameEvent, GameState } from "./types";
@@ -20,7 +21,8 @@ const createChampion = (
   id: string,
   ownerPlayerId: string,
   hex: string,
-  hp = 2
+  hp = 2,
+  attackDice = 1
 ): ChampionUnit => ({
   id,
   ownerPlayerId,
@@ -29,7 +31,7 @@ const createChampion = (
   cardDefId: `test.${id}`,
   hp,
   maxHp: hp,
-  attackDice: 1,
+  attackDice,
   hitFaces: 3,
   bounty: 1,
   abilityUses: {}
@@ -236,6 +238,61 @@ describe("combat card effects", () => {
     const round = getFirstCombatRound(state, hexKey);
     expect(getDiceCount(round, "p1")).toBe(3);
     expect(getDiceCount(round, "p2")).toBe(1);
+  });
+
+  it("slow limits a target champion to 1 die in its next battle", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({ value: 1, next: rng }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 5, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(2);
+    const hexA = "0,0";
+    const hexB = "1,0";
+
+    board.hexes[hexA] = {
+      ...board.hexes[hexA],
+      occupants: { p1: ["c1"], p2: ["c2"] }
+    };
+    board.hexes[hexB] = {
+      ...board.hexes[hexB],
+      occupants: { p1: ["c3"], p2: ["c4"] }
+    };
+
+    board.units = {
+      c1: createChampion("c1", "p1", hexA, 3, 3),
+      c2: createChampion("c2", "p2", hexA),
+      c3: createChampion("c3", "p1", hexB),
+      c4: createChampion("c4", "p2", hexB)
+    };
+
+    let state: GameState = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(11),
+      board
+    };
+
+    state = resolveCardEffects(state, "p2", SLOW, { unitId: "c1" });
+    state = resolveBattleAtHex(state, hexB);
+
+    const hasSlowBeforeTargetBattle = state.modifiers.some(
+      (modifier) => modifier.source.sourceId === SLOW.id
+    );
+    expect(hasSlowBeforeTargetBattle).toBe(true);
+
+    state = resolveBattleAtHex(state, hexA);
+
+    const slowedRound = getFirstCombatRound(state, hexA);
+    expect(getDiceCount(slowedRound, "p1")).toBe(1);
+
+    const hasSlowAfterTargetBattle = state.modifiers.some(
+      (modifier) => modifier.source.sourceId === SLOW.id
+    );
+    expect(hasSlowAfterTargetBattle).toBe(false);
   });
 
   it("focus fire assigns hits to champions in the next battle only", () => {

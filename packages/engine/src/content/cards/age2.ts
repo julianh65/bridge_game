@@ -15,6 +15,23 @@ export const FOCUS_FIRE: CardDef = {
   effects: [{ kind: "focusFire" }]
 };
 
+export const SLOW: CardDef = {
+  id: "age2.slow",
+  name: "Slow",
+  rulesText: "Selected champion rolls only 1 die in their next battle.",
+  type: "Spell",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 40,
+  burn: false,
+  targetSpec: {
+    kind: "champion",
+    owner: "enemy"
+  },
+  effects: [{ kind: "slow" }]
+};
+
 export const WARD: CardDef = {
   id: "age2.ward",
   name: "Ward",
@@ -261,6 +278,7 @@ export const CAPTURER: CardDef = {
 
 export const AGE2_CARDS: CardDef[] = [
   FOCUS_FIRE,
+  SLOW,
   WARD,
   FRENZY,
   REPAIR_ORDERS,

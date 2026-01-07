@@ -438,7 +438,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
       - [x] Focus Fire.
       - [x] Ward.
       - [x] Frenzy.
-      - [ ] Slow.
+      - [x] Slow.
       - [x] Repair Orders.
       - [ ] Gold Plated Armor.
       - [ ] Mortar Shot.
