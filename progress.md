@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent3 | scope: add a reusable hand-card picker modal for topdeck-from-hand targets (Perfect Recall) | files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md` | status: in progress
+- owner: agent2 | scope: prune completed basic tasks from implementation plan for readability | files: `implementation_plan.md`, `progress.md` | status: in progress
 
 
 ## Milestone 8.5 progress
@@ -75,6 +75,7 @@
 - Floated the selected-hex chip and reset view button over the board (top-left) with matched heights to save vertical space.
 - Shrunk the board overlay controls and switched the selection label to use the board's A1-style tile labels instead of axial coords.
 - Updated the game board SVG to stretch to available height so it reaches the legend without extra empty space.
+- Added a reusable hand-card picker modal for topdeck-from-hand effects (Perfect Recall), with hand-panel controls to select or clear cards.
 - Set the main board layout to flex-fill and raised the hand panel z-index so it stays above the board when open.
 - Positioned the hand panel as an absolute overlay so opening/closing it no longer resizes the board.
 - Verified multi-player (3-4 player) engine flow via expanded smoke coverage and marked the plan item complete in `implementation_plan.md`.

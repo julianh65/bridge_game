@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 import { CARD_DEFS, type ActionDeclaration, type GameView } from "@bridgefront/engine";
 
@@ -19,6 +19,7 @@ type GameScreenHandPanelProps = {
   availableGold: number;
   canDeclareAction: boolean;
   selectedCardId: string;
+  handTargets: ReactNode | null;
   phase: GameView["public"]["phase"];
   player: GameView["public"]["players"][number] | null;
   status: RoomConnectionStatus;
@@ -53,6 +54,7 @@ export const GameScreenHandPanel = ({
   availableGold,
   canDeclareAction,
   selectedCardId,
+  handTargets,
   phase,
   player,
   status,
@@ -147,6 +149,7 @@ export const GameScreenHandPanel = ({
                       );
                     })}
                   </div>
+                  {handTargets ? <div className="game-hand__targets">{handTargets}</div> : null}
                 </>
               )}
             </div>

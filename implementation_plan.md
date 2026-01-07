@@ -461,7 +461,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] The standard setup still doesn't work, only auto setup works.
 - [x] The done button is a bit confusing, we need little helpers over the different buttons
 - [x] What is the play card vs submit thing below, it's confusing
-- [ ] Add a reusable hand-card picker modal for effects like Perfect Recall (topdeck/select cards).
+- [x] Add a reusable hand-card picker modal for effects like Perfect Recall (topdeck/select cards).
 - [ ] Current player resources (mana, gold etc) is taking up too much space on the right side and should probably be moved to the top somewhere for gold and VP, mana should probably be a big blue ball in the bottom left with a number showing current and max like 3/6 near the cards
 - [x] We need a single nice reuseable component for the cards and to use it across the board, it should have the art, the description, the initiative, mana and gold cost and other information, right now it doesn't look cohesive, and in the card playing slot you need to individually click each card to show the card info
 - [x] Each hex should have a small label in it that is interpretable, not axial coords but like a1, b2 etc, maybe make it be from the top to bottom we have a and then left to right we have the number, then we should use that label in the log or other parts of the board

@@ -1874,6 +1874,12 @@ h1 {
   gap: 8px;
 }
 
+.game-hand__targets {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .game-hand__actions {
   display: grid;
   gap: 8px;
@@ -1889,6 +1895,42 @@ h1 {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
+}
+
+.hand-targets {
+  display: grid;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px dashed rgba(124, 45, 18, 0.2);
+  background: #fff7e8;
+}
+
+.hand-targets__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: #7c2d12;
+}
+
+.hand-targets__meta {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.hand-targets__hint,
+.hand-targets__selected {
+  margin: 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.hand-targets__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .hand-toggle {
@@ -3836,6 +3878,115 @@ h1 {
   padding: 28px;
   display: grid;
   gap: 18px;
+}
+
+.hand-picker {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.hand-picker__scrim {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(44, 28, 16, 0.55), transparent 60%),
+    linear-gradient(135deg, rgba(14, 10, 8, 0.82), rgba(32, 20, 14, 0.9));
+  backdrop-filter: blur(6px);
+}
+
+.hand-picker__panel {
+  position: relative;
+  z-index: 1;
+  width: min(980px, 100%);
+  max-height: min(86vh, 860px);
+  overflow: auto;
+  border-radius: 24px;
+  border: 1px solid rgba(212, 176, 120, 0.5);
+  background: linear-gradient(140deg, #f7efe3, #efe0c6 60%, #e4caa3);
+  box-shadow: 0 24px 60px rgba(12, 8, 6, 0.5);
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+}
+
+.hand-picker__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hand-picker__eyebrow {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(92, 60, 34, 0.7);
+}
+
+.hand-picker__title {
+  margin: 6px 0 0;
+  font-size: 26px;
+  color: #4b2b12;
+}
+
+.hand-picker__subhead {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.hand-picker__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hand-picker__meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.hand-picker__grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.hand-picker__card {
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.hand-picker__card.is-selected .game-card {
+  border-color: #f59e0b;
+  box-shadow: 0 18px 36px rgba(245, 158, 11, 0.2);
+  transform: translateY(-4px);
+}
+
+.hand-picker__card.is-disabled,
+.hand-picker__card:disabled {
+  cursor: not-allowed;
+}
+
+.hand-picker__card.is-disabled .game-card,
+.hand-picker__card:disabled .game-card {
+  opacity: 0.6;
+  filter: grayscale(0.1);
+}
+
+.hand-picker__empty {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
 }
 
 .combat-overlay__header {

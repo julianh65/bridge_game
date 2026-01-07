@@ -23,6 +23,7 @@ import { CombatOverlay } from "./CombatOverlay";
 import { GameScreenHandPanel } from "./GameScreenHandPanel";
 import { GameScreenHeader } from "./GameScreenHeader";
 import { GameScreenSidebar } from "./GameScreenSidebar";
+import { HandCardPickerModal } from "./HandCardPickerModal";
 import { MarketPanel } from "./MarketPanel";
 import { VictoryScreen } from "./VictoryScreen";
 import { buildHexRender } from "../lib/board-preview";
@@ -120,6 +121,18 @@ const getTargetString = (
   }
   const value = record[key];
   return typeof value === "string" && value.length > 0 ? value : null;
+};
+
+const getTargetCardInstanceIds = (record: Record<string, unknown> | null): string[] => {
+  if (!record) {
+    return [];
+  }
+  const ids = record.cardInstanceIds;
+  if (Array.isArray(ids)) {
+    return ids.filter((entry) => typeof entry === "string" && entry.length > 0);
+  }
+  const id = record.cardInstanceId;
+  return typeof id === "string" && id.length > 0 ? [id] : [];
 };
 
 const formatPhaseLabel = (phase: string) => {
@@ -332,6 +345,7 @@ export const GameScreen = ({
   const [reinforceHex, setReinforceHex] = useState("");
   const [cardInstanceId, setCardInstanceId] = useState("");
   const [cardTargetsRaw, setCardTargetsRaw] = useState("");
+  const [isHandPickerOpen, setIsHandPickerOpen] = useState(false);
   const [boardPickMode, setBoardPickMode] = useState<BoardPickMode>("none");
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
   const [isMarketOverlayOpen, setIsMarketOverlayOpen] = useState(false);
@@ -435,6 +449,32 @@ export const GameScreen = ({
     ? CARD_DEFS_BY_ID.get(selectedCard.defId) ?? null
     : null;
   const cardTargetKind = selectedCardDef?.targetSpec.kind ?? "none";
+  const topdeckEffect = selectedCardDef?.effects?.find(
+    (effect) => effect.kind === "topdeckFromHand"
+  );
+  const topdeckCount =
+    typeof topdeckEffect?.count === "number"
+      ? Math.max(0, Math.floor(topdeckEffect.count))
+      : topdeckEffect
+        ? 1
+        : 0;
+  const handCardLabels = useMemo(() => {
+    const mapping = new Map<string, string>();
+    for (const card of handCards) {
+      const def = CARD_DEFS_BY_ID.get(card.defId);
+      mapping.set(card.id, def?.name ?? card.defId);
+    }
+    return mapping;
+  }, [handCards]);
+  const selectedHandCardIds = useMemo(() => {
+    if (!targetRecord) {
+      return [];
+    }
+    const handIds = new Set(handCards.map((card) => card.id));
+    return getTargetCardInstanceIds(targetRecord).filter(
+      (cardId) => cardId !== cardInstanceId && handIds.has(cardId)
+    );
+  }, [cardInstanceId, handCards, targetRecord]);
   const championUnits = useMemo(() => {
     return Object.values(view.public.board.units)
       .map((unit) => {
@@ -567,6 +607,12 @@ export const GameScreen = ({
   }, [cardInstanceId, handCards]);
 
   useEffect(() => {
+    if (topdeckCount === 0) {
+      setIsHandPickerOpen(false);
+    }
+  }, [topdeckCount]);
+
+  useEffect(() => {
     if (reinforceHex.length === 0) {
       return;
     }
@@ -596,6 +642,7 @@ export const GameScreen = ({
       setCardInstanceId("");
       setCardTargetsRaw("");
       setReinforceHex("");
+      setIsHandPickerOpen(false);
       setIsHandPanelOpen(true);
       setBasicActionIntent("none");
     }
@@ -844,6 +891,18 @@ export const GameScreen = ({
 
   const setCardTargetsObject = (targets: Record<string, unknown> | null) => {
     setCardTargetsRaw(targets ? JSON.stringify(targets) : "");
+  };
+
+  const setCardInstanceTargets = (cardIds: string[]) => {
+    const trimmed = cardIds.filter((id) => id.length > 0);
+    const nextTargets = targetRecord ? { ...targetRecord } : {};
+    delete nextTargets.cardInstanceId;
+    delete nextTargets.cardInstanceIds;
+    if (trimmed.length > 0) {
+      nextTargets.cardInstanceIds = trimmed;
+    }
+    const hasTargets = Object.keys(nextTargets).length > 0;
+    setCardTargetsRaw(hasTargets ? JSON.stringify(nextTargets) : "");
   };
 
   const isAdjacent = (from: string, to: string) => {
@@ -1426,6 +1485,7 @@ export const GameScreen = ({
     const cardDef = card ? CARD_DEFS_BY_ID.get(card.defId) ?? null : null;
     setCardInstanceId(cardId);
     setCardTargetsRaw("");
+    setIsHandPickerOpen(false);
     setBoardPickModeSafe(getDefaultCardPickMode(cardDef));
   };
   const localResources = {
@@ -1439,6 +1499,55 @@ export const GameScreen = ({
       ? `Selected ${selectedHexLabel}`
       : "Selected tile"
     : "No tile selected";
+  const handPickerCards = handCards.filter((card) => card.id !== cardInstanceId);
+  const selectedHandLabels = selectedHandCardIds.map(
+    (cardId) => handCardLabels.get(cardId) ?? cardId
+  );
+  const topdeckLimitLabel = topdeckCount === 1 ? "1 card" : `${topdeckCount} cards`;
+  const handTargetsPanel =
+    selectedCardDef && topdeckCount > 0 ? (
+      <div className="hand-targets">
+        <div className="hand-targets__header">
+          <strong>Topdeck from hand</strong>
+          <span className="hand-targets__meta">
+            {selectedHandCardIds.length}/{topdeckCount}
+          </span>
+        </div>
+        <p className="hand-targets__hint">
+          Pick up to {topdeckLimitLabel} to place on top of your draw pile.
+        </p>
+        <div className="hand-targets__actions">
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={handPickerCards.length === 0}
+            onClick={() => setIsHandPickerOpen(true)}
+          >
+            Choose cards
+          </button>
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={selectedHandCardIds.length === 0}
+            onClick={() => setCardInstanceTargets([])}
+          >
+            Clear
+          </button>
+        </div>
+        <p className="hand-targets__selected">
+          {selectedHandCardIds.length > 0
+            ? `Selected: ${selectedHandLabels.join(", ")}`
+            : "No cards selected."}
+        </p>
+      </div>
+    ) : null;
+  const showHandPicker =
+    isActionPhase && isHandPickerOpen && topdeckCount > 0 && Boolean(selectedCardDef);
+  const handPickerTitle = "Topdeck from hand";
+  const handPickerDescription =
+    topdeckCount > 0
+      ? `Pick up to ${topdeckLimitLabel} to place on top of your draw pile.`
+      : null;
 
   const phaseFocusPanel = showPhaseFocus ? (
     <div className="game-screen__focus">
@@ -1571,6 +1680,17 @@ export const GameScreen = ({
           onClose={handleVictoryClose}
         />
       ) : null}
+      <HandCardPickerModal
+        isOpen={showHandPicker}
+        title={handPickerTitle}
+        description={handPickerDescription}
+        cards={handPickerCards}
+        cardDefsById={CARD_DEFS_BY_ID}
+        selectedIds={selectedHandCardIds}
+        maxSelect={Math.max(topdeckCount, 1)}
+        onSelectionChange={setCardInstanceTargets}
+        onClose={() => setIsHandPickerOpen(false)}
+      />
       <GameScreenHeader
         isCollapsed={isHeaderCollapsed}
         connectionLabel={connectionLabel}
@@ -1672,6 +1792,7 @@ export const GameScreen = ({
         availableGold={availableGold}
         canDeclareAction={canDeclareAction}
         selectedCardId={cardInstanceId}
+        handTargets={handTargetsPanel}
         phase={view.public.phase}
         player={localPlayer ?? null}
         status={status}
