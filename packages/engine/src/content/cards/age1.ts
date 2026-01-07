@@ -374,6 +374,30 @@ export const INSPIRING_GEEZER: CardDef = {
   }
 };
 
+export const FIELD_SURGEON: CardDef = {
+  id: "champion.age1.field_surgeon",
+  name: "Field Surgeon",
+  rulesText: "Stitchwork (1/round): Heal a friendly Champion in this hex 2.",
+  type: "Champion",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 2 },
+  initiative: 60,
+  burn: true,
+  targetSpec: {
+    kind: "hex",
+    owner: "self",
+    occupied: true
+  },
+  champion: {
+    hp: 4,
+    attackDice: 2,
+    hitFaces: 2,
+    bounty: 2,
+    goldCostByChampionCount: [1, 3, 5]
+  }
+};
+
 export const BRUTE: CardDef = {
   id: "champion.age1.brute",
   name: "Brute",
@@ -494,6 +518,7 @@ export const AGE1_CARDS: CardDef[] = [
   SKIRMISHER_CAPTAIN,
   BRIDGE_RUNNER,
   INSPIRING_GEEZER,
+  FIELD_SURGEON,
   BRUTE,
   BOUNTY_HUNTER,
   SERGEANT,

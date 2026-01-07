@@ -21,6 +21,7 @@ const WORMHOLE_ARTIFICER_CHAMPION_ID = "champion.gatewright.wormhole_artificer";
 const SKIRMISHER_CAPTAIN_CHAMPION_ID = "champion.age1.skirmisher_captain";
 const BRIDGE_RUNNER_CHAMPION_ID = "champion.age1.bridge_runner";
 const INSPIRING_GEEZER_CHAMPION_ID = "champion.age1.inspiring_geezer";
+const FIELD_SURGEON_CHAMPION_ID = "champion.age1.field_surgeon";
 const BRUTE_CHAMPION_ID = "champion.age1.brute";
 const BOUNTY_HUNTER_CHAMPION_ID = "champion.age1.bounty_hunter";
 const TRAITOR_CHAMPION_ID = "champion.age1.traitor";
@@ -30,12 +31,16 @@ const RELIABLE_VETERAN_CHAMPION_ID = "champion.age2.reliable_veteran";
 const SIEGE_ENGINEER_CHAMPION_ID = "champion.age2.siege_engineer";
 
 const ASSASSINS_EDGE_KEY = "assassins_edge";
+const STITCHWORK_KEY = "stitchwork";
 
 const BRIDGE_BYPASS_CHAMPION_IDS = new Set([FLIGHT_CHAMPION_ID, BRIDGE_RUNNER_CHAMPION_ID]);
 
 const PER_ROUND_ABILITY_USES: Record<CardDefId, Record<string, number>> = {
   [ASSASSINS_EDGE_CHAMPION_ID]: {
     [ASSASSINS_EDGE_KEY]: 1
+  },
+  [FIELD_SURGEON_CHAMPION_ID]: {
+    [STITCHWORK_KEY]: 1
   }
 };
 
@@ -320,6 +325,70 @@ const createInspiringGeezerModifier = (
   }
 });
 
+const createFieldSurgeonModifier = (
+  unitId: UnitID,
+  ownerPlayerId: PlayerID
+): Modifier => ({
+  id: buildChampionModifierId(unitId, "stitchwork"),
+  source: { type: "champion", sourceId: FIELD_SURGEON_CHAMPION_ID },
+  ownerPlayerId,
+  duration: { type: "permanent" },
+  data: { unitId },
+  hooks: {
+    afterBattle: ({ state, modifier, hexKey }) => {
+      const sourceUnitId = getModifierUnitId(modifier);
+      if (!sourceUnitId) {
+        return state;
+      }
+      const sourceUnit = state.board.units[sourceUnitId];
+      if (!sourceUnit || sourceUnit.kind !== "champion") {
+        return state;
+      }
+      if (sourceUnit.hex !== hexKey) {
+        return state;
+      }
+      if (!canChampionUseAbility(sourceUnit, STITCHWORK_KEY)) {
+        return state;
+      }
+      const hex = state.board.hexes[hexKey];
+      if (!hex) {
+        return state;
+      }
+      const candidateIds = (hex.occupants[sourceUnit.ownerPlayerId] ?? [])
+        .map((unitId) => {
+          const unit = state.board.units[unitId];
+          if (!unit || unit.kind !== "champion") {
+            return null;
+          }
+          const missing = unit.maxHp - unit.hp;
+          if (missing <= 0) {
+            return null;
+          }
+          return { unitId, missing };
+        })
+        .filter((entry): entry is { unitId: UnitID; missing: number } => Boolean(entry));
+      if (candidateIds.length === 0) {
+        return state;
+      }
+
+      candidateIds.sort((a, b) => {
+        if (a.missing !== b.missing) {
+          return b.missing - a.missing;
+        }
+        return a.unitId.localeCompare(b.unitId);
+      });
+      const targetId = candidateIds[0]?.unitId;
+      if (!targetId) {
+        return state;
+      }
+
+      let nextState = consumeChampionAbilityUse(state, sourceUnitId, STITCHWORK_KEY);
+      nextState = healChampion(nextState, targetId, 2);
+      return nextState;
+    }
+  }
+});
+
 const createBruteModifier = (unitId: UnitID, ownerPlayerId: PlayerID): Modifier => ({
   id: buildChampionModifierId(unitId, "brute"),
   source: { type: "champion", sourceId: BRUTE_CHAMPION_ID },
@@ -504,6 +573,8 @@ const createChampionModifiers = (
       return [createBridgeBypassModifier(unitId, ownerPlayerId, cardDefId)];
     case INSPIRING_GEEZER_CHAMPION_ID:
       return [createInspiringGeezerModifier(unitId, ownerPlayerId)];
+    case FIELD_SURGEON_CHAMPION_ID:
+      return [createFieldSurgeonModifier(unitId, ownerPlayerId)];
     case BRUTE_CHAMPION_ID:
       return [createBruteModifier(unitId, ownerPlayerId)];
     case DUELIST_EXEMPLAR_CHAMPION_ID:

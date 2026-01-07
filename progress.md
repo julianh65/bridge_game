@@ -21,6 +21,7 @@
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
 - Added explicit victoryPoints values to Age I Victory cards and marked the plan item complete in `implementation_plan.md`.
+- Added Age I Field Surgeon champion with per-round Stitchwork heal after battles, plus tests and plan update. (Files: `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/champions.ts`, `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
@@ -139,6 +140,7 @@
 - Forced the market overlay to surface the winner animation for the last card even if the overlay was closed, so the end-of-market win reveal always shows. (Overlap note: `apps/web/src/components/GameScreen.tsx`.)
 - Moved the Victory VP badge into the card description area so it doesn't push the art down.
 - Slightly enlarged the Victory VP badge for better legibility in the rules area.
+- Made GameCard art areas taller with a framed border treatment across variants and marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Added Victory card VP badges in `GameCard`, wired configurable `victoryPoints` in card defs/engine VP gain, and added coverage in engine card tests.
 - Added a unit stack arrival pulse animation in the board view to make movement clearer during action reveals; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.)
 - Added faction labels (symbol + name) on CardsBrowser card tiles to denote faction-specific cards; marked the plan item complete in `implementation_plan.md`. (owner: agent1)

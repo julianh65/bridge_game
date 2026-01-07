@@ -8,7 +8,7 @@ import { applyChampionDeployment } from "./champions";
 import { validateMovePath } from "./card-effects";
 import { getCardDef } from "./content/cards";
 import { createNewGame } from "./engine";
-import { applyModifierQuery, getCombatModifiers } from "./modifiers";
+import { applyModifierQuery, getCombatModifiers, runModifierEvents } from "./modifiers";
 import { applyChampionKillRewards } from "./rewards";
 import { addChampionToHex, addForcesToHex } from "./units";
 
@@ -178,6 +178,87 @@ describe("champion abilities", () => {
     );
 
     expect(hitFaces).toBe(3);
+  });
+
+  it("heals a friendly champion in-hex once per round for Field Surgeon", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const surgeonCard = getChampionCard("champion.age1.field_surgeon");
+    const targetCard = getChampionCard("champion.age1.sergeant");
+    const hexKey = "0,0";
+    const deployedSurgeon = addChampionToHex(board, "p1", hexKey, {
+      cardDefId: surgeonCard.id,
+      hp: surgeonCard.champion.hp,
+      attackDice: surgeonCard.champion.attackDice,
+      hitFaces: surgeonCard.champion.hitFaces,
+      bounty: surgeonCard.champion.bounty
+    });
+    const deployedTarget = addChampionToHex(deployedSurgeon.board, "p1", hexKey, {
+      cardDefId: targetCard.id,
+      hp: targetCard.champion.hp,
+      attackDice: targetCard.champion.attackDice,
+      hitFaces: targetCard.champion.hitFaces,
+      bounty: targetCard.champion.bounty
+    });
+
+    let state = {
+      ...base,
+      board: deployedTarget.board,
+      phase: "round.action",
+      blocks: undefined
+    };
+
+    state = applyChampionDeployment(state, deployedSurgeon.unitId, surgeonCard.id, "p1");
+
+    const targetUnit = state.board.units[deployedTarget.unitId];
+    if (!targetUnit || targetUnit.kind !== "champion") {
+      throw new Error("missing target champion unit");
+    }
+    state = {
+      ...state,
+      board: {
+        ...state.board,
+        units: {
+          ...state.board.units,
+          [deployedTarget.unitId]: {
+            ...targetUnit,
+            hp: Math.max(1, targetCard.champion.hp - 2),
+            maxHp: targetCard.champion.hp
+          }
+        }
+      }
+    };
+
+    state = runModifierEvents(
+      state,
+      getCombatModifiers(state, hexKey),
+      (hooks) => hooks.afterBattle,
+      {
+        hexKey,
+        attackerPlayerId: "p1",
+        defenderPlayerId: "p2",
+        round: 1,
+        reason: "noHits",
+        winnerPlayerId: null,
+        attackers: [deployedSurgeon.unitId, deployedTarget.unitId],
+        defenders: []
+      }
+    );
+
+    const healedTarget = state.board.units[deployedTarget.unitId];
+    if (!healedTarget || healedTarget.kind !== "champion") {
+      throw new Error("missing healed target");
+    }
+    expect(healedTarget.hp).toBe(targetCard.champion.hp);
+
+    const surgeonUnit = state.board.units[deployedSurgeon.unitId];
+    if (!surgeonUnit || surgeonUnit.kind !== "champion") {
+      throw new Error("missing field surgeon unit");
+    }
+    expect(surgeonUnit.abilityUses["stitchwork"]?.remaining).toBe(0);
   });
 
   it("grants Brute bonus dice only without enemy champions", () => {

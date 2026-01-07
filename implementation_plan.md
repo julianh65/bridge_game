@@ -433,7 +433,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [x] Added Banner Claim (Victory: move 1 stack 1 hex along a Bridge).
 - [ ] Add remaining Age I market cards + Age I market champions per rules_draft (movement/recruit/economy/deckcraft/combat/bridges/synergy/victory).
   - [x] Age I champions: Bounty Hunter, Sergeant, Traitor.
-  - [ ] Age I champion: Field Surgeon (active heal ability).
+  - [x] Age I champion: Field Surgeon (active heal ability).
   - [x] Added Sabotage Bridge, Bridge Trap, and Tunnel Network (bridge/terrain effects).
   - [x] Added Recruit Detachment, Paid Volunteers, and National Service (recruit variants).
   - [x] Added Escort Detail with champion-targeted deploy support.
@@ -538,7 +538,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Any text on the board shouldn't be highlightable
 - [x] Add some animations for units moving during the action reveal phase
 - [x] I added some random sound effects I downloaded to sound_fx, assign each of them a name / meaning (bell should be for rounds) and add the sound effects to different clicks and stuff, also if you need to feel free to move the sound effects folder and stuff to the appropriate place
-- [ ] Card styling, can we make the art slightly taller, and add a border around the images that looks nice?
+- [x] Card styling, can we make the art slightly taller, and add a border around the images that looks nice?
 - [ ] Large and hard -- make the entire UI look a bit more dark fantasy and cooler
 - [x] For cards with victory points we need to denote how many VP's they're worth on the card
 
