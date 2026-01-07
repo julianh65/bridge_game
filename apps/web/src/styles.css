@@ -2027,6 +2027,18 @@ h1 {
   flex: 1;
 }
 
+.hand-pass.is-armed {
+  border-color: #b45309;
+  background: #fff2d7;
+  color: #7c2d12;
+  box-shadow: 0 8px 18px rgba(180, 83, 9, 0.18);
+}
+
+.hand-pass.is-armed:hover:not(:disabled) {
+  border-color: #c2410c;
+  background: #ffe7c0;
+}
+
 .deck-counts--compact .resource-row {
   font-size: 12px;
 }
@@ -3711,7 +3723,8 @@ h1 {
 
 .bridge--hitbox {
   stroke: transparent;
-  stroke-width: 14;
+  stroke-width: 24;
+  stroke-linecap: round;
   pointer-events: stroke;
   cursor: pointer;
 }

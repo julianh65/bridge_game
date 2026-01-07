@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent2] In progress: add pass confirmation when a player still has mana during action steps (scope: action submit UX; files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`).
+- none
 
 ## Milestone 8.5 progress
 - Improved hand card selection UX: added a selected-card summary with target hints + clear button, enabled click-to-deselect, and cleared card selection when switching to basic actions; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
@@ -115,6 +115,7 @@
 - Rendered bridges as plank/rail SVG assets in the board view and marked the plan item complete in `implementation_plan.md`.
 - Standardized bridge rendering to a neutral color (no owner tint) and confirmed engine movement ignores bridge ownership.
 - Kept the market overlay visible briefly after market ends so the final winner highlight/animation shows; marked the plan item complete in `implementation_plan.md`.
+- Added a pass confirmation step when mana remains before ending the action step; marked the plan item complete in `implementation_plan.md`.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.

@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import { type CSSProperties, type ReactNode, useEffect, useState } from "react";
 
 import {
   CARD_DEFS,
@@ -111,6 +111,38 @@ export const GameScreenHandPanel = ({
   const selectedCardDef = selectedCard ? CARD_DEFS_BY_ID.get(selectedCard.defId) ?? null : null;
   const selectedLabel = selectedCardDef?.name ?? selectedCard?.defId ?? null;
   const selectedTargetHint = getCardTargetHint(selectedCardDef);
+  const [isPassConfirming, setIsPassConfirming] = useState(false);
+  const shouldConfirmPass = availableMana > 0;
+
+  useEffect(() => {
+    if (!canSubmitDone || !shouldConfirmPass) {
+      setIsPassConfirming(false);
+    }
+  }, [canSubmitDone, shouldConfirmPass]);
+
+  useEffect(() => {
+    if (primaryAction) {
+      setIsPassConfirming(false);
+    }
+  }, [primaryAction]);
+
+  useEffect(() => {
+    if (!showHandPanel) {
+      setIsPassConfirming(false);
+    }
+  }, [showHandPanel]);
+
+  const handlePassClick = () => {
+    if (!canSubmitDone) {
+      return;
+    }
+    if (shouldConfirmPass && !isPassConfirming) {
+      setIsPassConfirming(true);
+      return;
+    }
+    setIsPassConfirming(false);
+    onSubmitAction({ kind: "done" });
+  };
 
   return (
     <>
@@ -245,11 +277,16 @@ export const GameScreenHandPanel = ({
             <div className="hand-submit">
               <button
                 type="button"
-                className="btn btn-secondary"
+                className={`btn btn-secondary hand-pass ${isPassConfirming ? "is-armed" : ""}`}
                 disabled={!canSubmitDone}
-                onClick={() => onSubmitAction({ kind: "done" })}
+                title={
+                  isPassConfirming
+                    ? "You still have mana. Click again to pass."
+                    : "Pass and end your actions for this step."
+                }
+                onClick={handlePassClick}
               >
-                Pass
+                {isPassConfirming ? "Confirm Pass" : "Pass"}
               </button>
               <button
                 type="button"
@@ -264,6 +301,7 @@ export const GameScreenHandPanel = ({
                   if (!primaryAction) {
                     return;
                   }
+                  setIsPassConfirming(false);
                   onSubmitAction(primaryAction);
                 }}
               >
