@@ -136,6 +136,8 @@ export const GameScreen = ({
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
   const [isMarketOverlayOpen, setIsMarketOverlayOpen] = useState(false);
   const [marketWinner, setMarketWinner] = useState<MarketWinnerHighlight | null>(null);
+  const [phaseCue, setPhaseCue] = useState<{ label: string; round: number } | null>(null);
+  const [phaseCueKey, setPhaseCueKey] = useState(0);
   const [selectedHexKey, setSelectedHexKey] = useState<string | null>(null);
   const [pendingEdgeStart, setPendingEdgeStart] = useState<string | null>(null);
   const [pendingStackFrom, setPendingStackFrom] = useState<string | null>(null);
@@ -143,6 +145,9 @@ export const GameScreen = ({
   const [resetViewToken, setResetViewToken] = useState(0);
   const lastMarketEventIndex = useRef(-1);
   const hasMarketLogBaseline = useRef(false);
+  const hasPhaseCueBaseline = useRef(false);
+  const lastPhaseRef = useRef(view.public.phase);
+  const lastRoundRef = useRef(view.public.round);
   const targetRecord = useMemo(() => parseTargets(cardTargetsRaw), [cardTargetsRaw]);
   const selectedChampionId =
     getTargetString(targetRecord, "unitId") ?? getTargetString(targetRecord, "championId");
@@ -264,6 +269,39 @@ export const GameScreen = ({
       setIsMarketOverlayOpen(false);
     }
   }, [isMarketPhase]);
+
+  useEffect(() => {
+    const phase = view.public.phase;
+    const round = view.public.round;
+    if (!hasPhaseCueBaseline.current) {
+      hasPhaseCueBaseline.current = true;
+      lastPhaseRef.current = phase;
+      lastRoundRef.current = round;
+      return;
+    }
+    if (phase === lastPhaseRef.current && round === lastRoundRef.current) {
+      return;
+    }
+    lastPhaseRef.current = phase;
+    lastRoundRef.current = round;
+    if (!phase.startsWith("round.")) {
+      return;
+    }
+    setPhaseCue({ label: phaseLabel, round });
+    setPhaseCueKey((value) => value + 1);
+  }, [view.public.phase, view.public.round, phaseLabel]);
+
+  useEffect(() => {
+    if (!phaseCue) {
+      return;
+    }
+    const timeout = window.setTimeout(() => {
+      setPhaseCue(null);
+    }, 2600);
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [phaseCue, phaseCueKey]);
 
   useEffect(() => {
     const logs = view.public.logs;
@@ -1331,6 +1369,15 @@ export const GameScreen = ({
 
   return (
     <section className="game-screen">
+      {phaseCue ? (
+        <div key={phaseCueKey} className="phase-cue" role="status" aria-live="polite">
+          <div className="phase-cue__panel">
+            <span className="phase-cue__eyebrow">Phase change</span>
+            <strong className="phase-cue__label">{phaseCue.label}</strong>
+            <span className="phase-cue__round">Round {phaseCue.round}</span>
+          </div>
+        </div>
+      ) : null}
       <header className={`game-screen__header ${isHeaderCollapsed ? "is-collapsed" : ""}`}>
         {isHeaderCollapsed ? (
           <div className="game-screen__collapsed-bar">
