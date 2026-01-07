@@ -2,8 +2,9 @@ import type { ElementType, ReactNode } from "react";
 
 import type { CardDef } from "@bridgefront/engine";
 
+import { FactionSymbol } from "./FactionSymbol";
 import { getCardArtUrl } from "../lib/card-art";
-import { getFactionName, getFactionSymbol } from "../lib/factions";
+import { getFactionName } from "../lib/factions";
 
 export type GameCardVariant = "grid" | "market" | "hand" | "detail" | "offer";
 
@@ -102,7 +103,6 @@ export const GameCard = ({
   const artText = artLabel ?? (isHidden ? "Face down" : "Art");
   const showFactionLabel = showFaction && !isHidden && Boolean(card?.factionId);
   const factionName = showFactionLabel ? getFactionName(card?.factionId) : null;
-  const factionSymbol = showFactionLabel ? getFactionSymbol(card?.factionId) : null;
   const victoryPoints =
     !isHidden && card?.type === "Victory" ? card.victoryPoints ?? 1 : null;
 
@@ -138,11 +138,7 @@ export const GameCard = ({
       {deckLabel ? <div className="game-card__age">{deckLabel}</div> : null}
       {showFactionLabel ? (
         <div className="game-card__faction">
-          {factionSymbol ? (
-            <span className="faction-symbol faction-symbol--mini" aria-hidden="true">
-              {factionSymbol}
-            </span>
-          ) : null}
+          <FactionSymbol factionId={card?.factionId} className="faction-symbol--mini" />
           <span>Faction {factionName}</span>
         </div>
       ) : null}

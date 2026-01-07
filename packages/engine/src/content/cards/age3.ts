@@ -1,5 +1,143 @@
 import type { CardDef } from "./types";
 
+export const GRAND_MANEUVER: CardDef = {
+  id: "age3.grand_maneuver",
+  name: "Grand Maneuver",
+  rulesText: "Move up to 2 different stacks up to 3 hexes along Bridges each.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 3 },
+  initiative: 45,
+  burn: false,
+  targetSpec: {
+    kind: "multiPath",
+    owner: "self",
+    maxDistance: 3,
+    maxPaths: 2,
+    requiresBridge: true
+  },
+  effects: [{ kind: "moveStacks", maxDistance: 3 }]
+};
+
+export const GHOST_STEP: CardDef = {
+  id: "age3.ghost_step",
+  name: "Ghost Step",
+  rulesText: "Move 1 stack up to 2 hexes ignoring Bridges. Burn.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 1 },
+  initiative: 30,
+  burn: true,
+  targetSpec: {
+    kind: "path",
+    owner: "self",
+    maxDistance: 2,
+    requiresBridge: false
+  },
+  effects: [{ kind: "moveStack", maxDistance: 2, requiresBridge: false }]
+};
+
+export const DEEP_RESERVES: CardDef = {
+  id: "age3.deep_reserves",
+  name: "Deep Reserves",
+  rulesText: "Deploy 8 Forces to your Capital.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 2, gold: 2 },
+  initiative: 80,
+  burn: false,
+  targetSpec: {
+    kind: "choice",
+    options: [{ kind: "capital" }]
+  },
+  effects: [{ kind: "recruit", capitalCount: 8 }]
+};
+
+export const FORWARD_LEGION: CardDef = {
+  id: "age3.forward_legion",
+  name: "Forward Legion",
+  rulesText: "Deploy 5 Forces to a hex you occupy.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 1, gold: 3 },
+  initiative: 70,
+  burn: false,
+  targetSpec: {
+    kind: "hex",
+    owner: "self",
+    occupied: true
+  },
+  effects: [{ kind: "deployForces", count: 5 }]
+};
+
+export const ROYAL_MINT: CardDef = {
+  id: "age3.royal_mint",
+  name: "Royal Mint",
+  rulesText: "Gain 5 gold.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 1 },
+  initiative: 65,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "gainGold", amount: 5 }]
+};
+
+export const TOME_OF_ORDERS: CardDef = {
+  id: "age3.tome_of_orders",
+  name: "Tome of Orders",
+  rulesText: "Draw 2 cards. Then you may put 1 card from your hand on top of your draw pile.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 1 },
+  initiative: 60,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [
+    { kind: "drawCards", count: 2 },
+    { kind: "topdeckFromHand", count: 1 }
+  ]
+};
+
+export const LAST_LECTURE: CardDef = {
+  id: "age3.last_lecture",
+  name: "Last Lecture",
+  rulesText: "Draw 5 cards. Burn.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 2 },
+  initiative: 80,
+  burn: true,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "drawCards", count: 5 }]
+};
+
+export const EXECUTION_ORDER: CardDef = {
+  id: "age3.execution_order",
+  name: "Execution Order",
+  rulesText: "Deal 3 damage to an enemy Champion within 2 hexes of your Champion.",
+  type: "Spell",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 2 },
+  initiative: 35,
+  burn: false,
+  targetSpec: {
+    kind: "champion",
+    owner: "enemy",
+    requiresFriendlyChampion: true,
+    maxDistance: 2
+  },
+  effects: [{ kind: "dealChampionDamage", amount: 3 }]
+};
+
 export const LOGISTICS_OFFICER: CardDef = {
   id: "champion.age3.logistics_officer",
   name: "Logistics Officer",
@@ -173,6 +311,14 @@ export const CAPITAL_BREAKER: CardDef = {
 };
 
 export const AGE3_CARDS: CardDef[] = [
+  GRAND_MANEUVER,
+  GHOST_STEP,
+  DEEP_RESERVES,
+  FORWARD_LEGION,
+  ROYAL_MINT,
+  TOME_OF_ORDERS,
+  LAST_LECTURE,
+  EXECUTION_ORDER,
   LOGISTICS_OFFICER,
   TITAN_VANGUARD,
   CENTER_BANNERMAN,

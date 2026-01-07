@@ -445,10 +445,18 @@ Pause and read through the rules of the game. Make sure that what we've done ali
     - [ ] Age II Champion card defs (8).
   - [ ] Define Age III card defs by category (movement/recruit/economy/deckcraft/combat/bridges/victory/champions).
     - [ ] Age III Movement card defs (4).
+      - [x] Grand Maneuver.
+      - [x] Ghost Step.
     - [ ] Age III Recruitment card defs (4).
+      - [x] Deep Reserves.
+      - [x] Forward Legion.
     - [ ] Age III Economy card defs (4).
+      - [x] Royal Mint.
     - [ ] Age III Deckcraft card defs (4).
+      - [x] Tome of Orders.
+      - [x] Last Lecture.
     - [ ] Age III Combat/Tactics card defs (4).
+      - [x] Execution Order.
     - [ ] Age III Bridges/Terrain card defs (2).
     - [ ] Age III Synergy/Gambits card defs (2).
     - [ ] Age III Victory card defs (4+).
