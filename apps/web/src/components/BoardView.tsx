@@ -83,9 +83,9 @@ const BRIDGE_RAIL_OFFSET = BRIDGE_WIDTH * 0.38;
 const BRIDGE_PLANK_EDGE_PAD = BRIDGE_WIDTH * 0.6;
 const BRIDGE_PLANK_SPACING = HEX_DRAW_SIZE * 0.28;
 const BRIDGE_PLANK_LENGTH = BRIDGE_WIDTH * 0.85;
-const TOOLTIP_MIN_WIDTH = 132;
-const TOOLTIP_MAX_WIDTH = 240;
-const TOOLTIP_CHAR_WIDTH = 6.2;
+const TOOLTIP_MIN_WIDTH = 118;
+const TOOLTIP_MAX_WIDTH = 210;
+const TOOLTIP_CHAR_WIDTH = 5.6;
 const TOOLTIP_LINE_HEIGHT = 12;
 const TOOLTIP_PADDING_X = 8;
 const TOOLTIP_PADDING_Y = 6;
@@ -162,16 +162,6 @@ const getCardName = (cardDefId: string) => {
   return CARD_DEFS_BY_ID[cardDefId]?.name ?? cardDefId;
 };
 
-const getChampionGlyph = (name: string) => {
-  const words = name.trim().split(/\s+/).filter(Boolean);
-  const initials = words.map((word) => word[0]?.toUpperCase() ?? "").join("");
-  const glyph = initials.replace(/[^A-Z]/g, "").slice(0, 2);
-  if (glyph) {
-    return glyph;
-  }
-  const fallback = name.replace(/[^A-Za-z0-9]/g, "").slice(0, 2).toUpperCase();
-  return fallback || "C";
-};
 const getFactionBadge = (factionId?: string | null): string | null => {
   if (!factionId || factionId === "unassigned") {
     return null;
@@ -243,7 +233,7 @@ const buildChampionTooltipLines = (champion: ChampionDetail): TooltipLine[] => {
   const rulesText = CARD_DEFS_BY_ID[champion.cardDefId]?.rulesText?.trim();
   if (rulesText) {
     lines.push({ text: "Rules:", tone: "label" });
-    const wrapped = limitTextLines(wrapText(rulesText, 34), 2);
+    const wrapped = limitTextLines(wrapText(rulesText, 28), 7);
     wrapped.forEach((line) => {
       lines.push({ text: line, tone: "body" });
     });
@@ -1076,7 +1066,7 @@ export const BoardView = ({
           }
           const maxTokens = 3;
           const tokens = stack.championDetails.slice(0, maxTokens).map((champion) => ({
-            label: getChampionGlyph(champion.name),
+            label: `${champion.hp}`,
             isExtra: false,
             champion
           }));
