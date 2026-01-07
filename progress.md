@@ -17,6 +17,7 @@
 
 ## Active tasks
 - none
+- owner: agent3 | scope: implement Set to Skirmish retreat-on-battle effect + tests | files: `packages/engine/src/card-effects.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md`
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -306,6 +307,7 @@ none
 - Upgraded collection prompts to show full card tiles (initiative/rules/costs) for revealed picks instead of tag buttons.
 - Added a collapsible Command Center sidebar toggle so the board can expand when the right panel is hidden; marked the plan item complete in `implementation_plan.md`.
 - Added a champion-target card pick mode with valid-target highlights so Emergency Evac (and other champion cards) can be selected from the board; updated `implementation_plan.md`. (Files: `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
+- Fixed hand/hand-picker card art lookups by using defIds for GameCard art and marked the plan item complete. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `implementation_plan.md`.)
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.

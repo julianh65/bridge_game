@@ -94,7 +94,7 @@ export const HandCardPickerModal = ({
                 >
                   <GameCard
                     card={def}
-                    cardId={card.id}
+                    cardId={card.defId}
                     displayName={name}
                     showId={false}
                     showTags={false}
