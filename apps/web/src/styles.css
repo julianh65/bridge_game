@@ -2822,6 +2822,12 @@ body.is-game .status-pill--idle {
   box-shadow: 0 28px 70px rgba(22, 18, 12, 0.45);
 }
 
+body.is-game .market-overlay__panel {
+  border-color: var(--border);
+  background: linear-gradient(135deg, #1b1410, #120d0a 65%, #1d1410);
+  box-shadow: 0 28px 70px rgba(6, 4, 3, 0.55);
+}
+
 .market-overlay__toggle {
   position: fixed;
   right: 24px;
@@ -2874,6 +2880,12 @@ body.is-game .status-pill--idle {
   color: #6c4a2f;
 }
 
+body.is-game .market-pill {
+  background: #2a1e16;
+  border-color: #4a3627;
+  color: var(--muted);
+}
+
 .market-panel__layout {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(240px, 320px);
@@ -2907,6 +2919,11 @@ body.is-game .status-pill--idle {
   min-width: 120px;
 }
 
+body.is-game .market-order__step {
+  background: #231811;
+  border-color: #4a3627;
+}
+
 .market-order__step.is-resolved {
   opacity: 0.6;
 }
@@ -2917,10 +2934,22 @@ body.is-game .status-pill--idle {
   box-shadow: 0 10px 18px rgba(245, 158, 11, 0.22);
 }
 
+body.is-game .market-order__step.is-active {
+  background: #332412;
+  border-color: #d97706;
+  box-shadow: 0 10px 18px rgba(201, 113, 29, 0.25);
+}
+
 .market-order__step.is-winner {
   border-color: #22c55e;
   background: #ecfdf3;
   box-shadow: 0 12px 20px rgba(34, 197, 94, 0.25);
+}
+
+body.is-game .market-order__step.is-winner {
+  background: #1a2a1d;
+  border-color: #22c55e;
+  box-shadow: 0 12px 20px rgba(34, 197, 94, 0.3);
 }
 
 .market-order__index {
@@ -2993,6 +3022,15 @@ body.is-game .status-pill--idle {
   overflow: hidden;
 }
 
+body.is-game .market-card__art,
+body.is-game .game-card--market .game-card__art {
+  border-color: #4a3627;
+  background: linear-gradient(135deg, #2a1e16, #1a120e);
+  color: #bfae97;
+  box-shadow: inset 0 0 0 1px rgba(25, 18, 12, 0.9),
+    inset 0 0 0 3px rgba(74, 54, 39, 0.35), 0 6px 12px rgba(6, 4, 3, 0.4);
+}
+
 .market-card__header,
 .game-card--market .game-card__header {
   display: grid;
@@ -3020,6 +3058,13 @@ body.is-game .status-pill--idle {
   background: #f7efe3;
   font-size: 11px;
   color: #6c4a2f;
+}
+
+body.is-game .market-chip,
+body.is-game .game-card--market .card-tag {
+  background: #241810;
+  border-color: #4a3627;
+  color: var(--muted);
 }
 
 .market-card__rules,
@@ -3109,6 +3154,10 @@ body.is-game .status-pill--idle {
   background: #fffdf6;
 }
 
+body.is-game .market-bid {
+  background: #1b140f;
+}
+
 .market-bid__header {
   display: flex;
   justify-content: space-between;
@@ -3154,6 +3203,11 @@ body.is-game .status-pill--idle {
   color: #6c4a2f;
 }
 
+body.is-game .market-bid__pill {
+  background: #2a1e16;
+  color: #d1bfa8;
+}
+
 .market-rolloff {
   display: grid;
   gap: 10px;
@@ -3171,6 +3225,11 @@ body.is-game .status-pill--idle {
   text-align: center;
 }
 
+body.is-game .market-rolloff-panel {
+  border-color: #4a3627;
+  background: #201610;
+}
+
 .market-rolloff--center {
   width: min(420px, 100%);
 }
@@ -3182,6 +3241,11 @@ body.is-game .status-pill--idle {
   border-radius: 12px;
   border: 1px dashed rgba(111, 90, 70, 0.25);
   background: #f7efe3;
+}
+
+body.is-game .market-rolloff__round {
+  border-color: #4a3627;
+  background: #2a1e16;
 }
 
 .market-rolloff__label {
@@ -3214,6 +3278,10 @@ body.is-game .status-pill--idle {
 .market-rolloff__entry.is-winner .market-rolloff__name {
   color: #166534;
   font-weight: 600;
+}
+
+body.is-game .market-rolloff__entry.is-winner .market-rolloff__name {
+  color: #86efac;
 }
 
 .number-roll {
@@ -3298,6 +3366,11 @@ body.is-game .status-pill--idle {
   color: var(--ink);
 }
 
+body.is-game .card-tag {
+  background: #241810;
+  border-color: #4a3627;
+}
+
 .card-tag--clickable {
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -3318,6 +3391,12 @@ body.is-game .status-pill--idle {
   border-color: #f59e0b;
   background: #fde68a;
   color: #7c2d12;
+}
+
+body.is-game .card-tag--clickable.is-selected {
+  background: #3a2814;
+  border-color: #d97706;
+  color: #fbd38d;
 }
 
 @keyframes detailFade {
@@ -3342,6 +3421,9 @@ body.is-game .status-pill--idle {
   animation: detailFade 0.2s ease;
 }
 
+body.is-game .card-detail {
+  background: #1b140f;
+}
 .card-detail__header {
   display: flex;
   flex-wrap: wrap;
@@ -3560,10 +3642,21 @@ body.is-game .collection-roll {
   background: #efe3d2;
 }
 
+body.is-game .card-tag--hidden {
+  background: #2a1e16;
+  border-color: #4a3627;
+}
+
 .card-tag--active {
   border-color: #f59e0b;
   background: #fde68a;
   color: #7c2d12;
+}
+
+body.is-game .card-tag--active {
+  background: #3a2814;
+  border-color: #d97706;
+  color: #fbd38d;
 }
 
 .player-list {

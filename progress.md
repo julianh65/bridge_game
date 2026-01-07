@@ -49,6 +49,7 @@
 - Improved GameCard readability with larger fonts, cost chips in bottom corners, and taller hand cards; updated the plan checklist. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 - Added champion-target selection UI with an in-hand list and explicit selection indicator to disambiguate multiple champions on one hex; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 - Added dark-fantasy in-game palette overrides (background + palette variables) with nav/panel/button/status restyling; updated the plan subtask. (Files: `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2) (Overlap note: `implementation_plan.md` also has agent3 edits in progress.)
+- Added dark-theme overrides for market overlay surfaces and card tag/detail backgrounds to push the fantasy look; updated the plan subtask. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
