@@ -433,15 +433,16 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Make action status more obvious (who still needs to act, who is done).
 
 ### Tasks (web - action flow + layout)
-- [ ] Reduce card targeting clicks so board picks are direct and visible once selected.
+- [ ] Reduce card targeting clicks so board picks are direct and visible once selected. That is to say I don't want to have 2 clicks to do things, like some cards are like deploy forces, then you need to click into capital or hex, and then you click the hex on the board, like it's too many, it should just be click the card and then click where / what you want to do it on and it just does the correct one
   - [x] Allow direct edge clicks for bridge/card edge picks via preview edges.
 - [x] Add a large "Submit/Lock In" action button for action declarations.
-- [ ] Consolidate or rearrange panels so the game screen feels cohesive.
+- [ ] Consolidate or rearrange panels so the game screen feels cohesive. Right now like the whole basic action panel is on the side and cards on the bottom, those should kind of be together in the bottom area, the log is a bit not nice etc...
 - [ ] Make only valid targets highlightable, like right now to build a bridge it will highlight the possible edges right, you should only be able to click on the edges not the hexes
 
 ### Tasks (web - motion + phase clarity)
 - [ ] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen.
 - [x] Add clearer phase transition cues between round phases. Make it flash on screen in big text slowly to everyone simultaneously.
+- [ ] Make the hexes look nicer slightly, more in theme and more clear who and which forces are on what and who's capital is who's etc...
 
 ### Tasks (web - targeting reliability)
 - [x] Fix hex selection for Bridge Crew and Build Bridge edge picking.
@@ -487,6 +488,11 @@ Something that just takes random actions is fine
 ## Milestone 12 -- Host it
 What do I need to do to host this?
 Can I somehow add analytics to this? see players where, etc etc...
+
+## Milestone 13 -- Future stuff / not urgent now
+- [ ] a chat would be cool
+- [ ] time how long every one takes to do their turns and have that be accessible somewhere
+- [ ] a turn timer that at the end picks a random valid card or something
 
 ### Acceptance criteria
 - 2–4 friends can play a complete game session without needing a restart.

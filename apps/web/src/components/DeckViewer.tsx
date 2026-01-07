@@ -66,6 +66,8 @@ export const DeckViewer = ({ view, playerId, roomId, status }: DeckViewerProps) 
   const playerName =
     view?.public.players.find((player) => player.id === playerId)?.name ?? null;
   const deckCards = privateView?.deckCards ?? null;
+  const deckCounts = privateView?.deckCounts ?? null;
+  const handCount = privateView?.handCards.length ?? 0;
 
   const piles = useMemo(() => {
     if (!privateView || !deckCards) {
@@ -117,6 +119,34 @@ export const DeckViewer = ({ view, playerId, roomId, status }: DeckViewerProps) 
     privateView.handCards.length +
     privateView.deckCounts.drawPile +
     privateView.deckCounts.discardPile;
+  const deckFlow = deckCounts
+    ? [
+        {
+          id: "draw",
+          label: "Draw",
+          count: deckCounts.drawPile,
+          arrow: "draw"
+        },
+        {
+          id: "hand",
+          label: "Hand",
+          count: handCount,
+          arrow: "discard"
+        },
+        {
+          id: "discard",
+          label: "Discard",
+          count: deckCounts.discardPile,
+          arrow: "scrap"
+        },
+        {
+          id: "scrapped",
+          label: "Scrapped",
+          count: deckCounts.scrapped,
+          arrow: null
+        }
+      ]
+    : [];
 
   return (
     <section className="cards-browser">
@@ -134,6 +164,29 @@ export const DeckViewer = ({ view, playerId, roomId, status }: DeckViewerProps) 
           <span className="status-pill">{privateView.deckCounts.scrapped} scrapped</span>
         </div>
       </header>
+
+      {deckFlow.length > 0 ? (
+        <section className="panel deck-flow" aria-label="Deck flow">
+          <div className="deck-flow__track">
+            {deckFlow.map((step) => (
+              <div key={step.id} className="deck-flow__step">
+                <div className="deck-flow__pile" data-pile={step.id}>
+                  <span className="deck-flow__label">{step.label}</span>
+                  <span className="deck-flow__count">{step.count}</span>
+                </div>
+                {step.arrow ? (
+                  <span
+                    className={`deck-flow__arrow deck-flow__arrow--${step.arrow}`}
+                    aria-hidden="true"
+                  >
+                    →
+                  </span>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <div className="cards-browser__layout">
         {piles.map((pile) => {

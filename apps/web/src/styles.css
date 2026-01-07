@@ -870,6 +870,125 @@ h1 {
   flex-wrap: wrap;
 }
 
+.deck-flow {
+  display: grid;
+  gap: 12px;
+  background: linear-gradient(120deg, #fff7e6, #fff1d6);
+}
+
+.deck-flow__track {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.deck-flow__step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.deck-flow__pile {
+  min-width: 110px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: #fffaf2;
+  display: grid;
+  gap: 4px;
+  box-shadow: inset 0 0 0 1px rgba(255, 247, 230, 0.7);
+}
+
+.deck-flow__pile[data-pile="draw"] {
+  border-color: #f59e0b;
+}
+
+.deck-flow__pile[data-pile="hand"] {
+  border-color: #65a30d;
+}
+
+.deck-flow__pile[data-pile="discard"] {
+  border-color: #f97316;
+}
+
+.deck-flow__pile[data-pile="scrapped"] {
+  border-color: #a8a29e;
+}
+
+.deck-flow__label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+}
+
+.deck-flow__count {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.deck-flow__arrow {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 18px;
+  font-size: 18px;
+  color: #c4a484;
+  flex-shrink: 0;
+}
+
+.deck-flow__arrow::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #f59e0b;
+  transform: translateY(-50%);
+  opacity: 0.7;
+  animation: deckFlowMove 1.6s linear infinite;
+}
+
+.deck-flow__arrow--draw::after {
+  animation-duration: 1.4s;
+}
+
+.deck-flow__arrow--discard::after {
+  background: #d97706;
+  animation-duration: 1.9s;
+}
+
+.deck-flow__arrow--scrap::after {
+  background: #7f1d1d;
+  opacity: 0.45;
+  animation-duration: 2.3s;
+}
+
+@keyframes deckFlowMove {
+  0% {
+    transform: translate(0, -50%);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate(18px, -50%);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deck-flow__arrow::after {
+    animation: none;
+  }
+}
+
 .cards-browser__layout {
   display: grid;
   grid-template-columns: 1fr;

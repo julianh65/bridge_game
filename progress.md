@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent2 | scope: add deck flow UI to DeckViewer with pile counts + animated arrows (overlap note: styles.css also in agent4 scope) | files: apps/web/src/components/DeckViewer.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md | status: in progress
+- owner: agent4 | scope: consolidate GameScreen panels (move log/players into a compact drawer + tighten sidebar/board layout) (overlap note: styles.css also in agent2 scope) | files: apps/web/src/components/GameScreen.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md | status: in progress
 
 ## Milestone 8.5 progress
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.
@@ -42,6 +42,7 @@
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.
 - Added a victory screen overlay with winner + final VP recap, wired rematch/exit controls, and exposed public VP in `GameView` only after a winner is declared; marked the plan item complete in `implementation_plan.md` (overlap note: touched `apps/web/src/styles.css` alongside agent2 scope).
 - Clarified Pass/Done messaging in the action panel so players know it locks them out for the step, and marked the plan item complete in `implementation_plan.md` (overlap note: `implementation_plan.md` already had pending task additions in the action/market sections).
+- Added a deck flow UI in the Deck tab showing draw/hand/discard/scrapped piles with animated arrows; marked the plan item complete in `implementation_plan.md`.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
