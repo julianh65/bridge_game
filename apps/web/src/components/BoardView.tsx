@@ -120,15 +120,16 @@ const getCardName = (cardDefId: string) => {
   return CARD_DEFS_BY_ID[cardDefId]?.name ?? cardDefId;
 };
 
-const truncateChampionName = (name: string) => {
-  const maxLength = 9;
-  if (name.length <= maxLength) {
-    return name;
+const getChampionGlyph = (name: string) => {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  const initials = words.map((word) => word[0]?.toUpperCase() ?? "").join("");
+  const glyph = initials.replace(/[^A-Z]/g, "").slice(0, 2);
+  if (glyph) {
+    return glyph;
   }
-  return `${name.slice(0, maxLength - 3)}...`;
+  const fallback = name.replace(/[^A-Za-z0-9]/g, "").slice(0, 2).toUpperCase();
+  return fallback || "C";
 };
-
-const estimateBadgeWidth = (label: string) => Math.max(28, label.length * 6 + 12);
 const getFactionBadge = (factionId?: string | null): string | null => {
   if (!factionId || factionId === "unassigned") {
     return null;
@@ -917,61 +918,40 @@ export const BoardView = ({
         const offset = offsets[stack.offsetIndex % offsets.length] ?? offsets[0];
         const stackX = stack.x + offset.dx;
         const stackY = stack.y + offset.dy;
-        const championBadges = (() => {
+        const championTokens = (() => {
           if (stack.championDetails.length === 0) {
             return [];
           }
-          const maxBadges = 2;
-          const badges = stack.championDetails.slice(0, maxBadges).map((champion) => {
-            const shortName = truncateChampionName(champion.name);
-            return {
-              label: `${shortName} ${champion.hp}/${champion.maxHp}`,
-              title: `${champion.name} ${champion.hp}/${champion.maxHp}`,
-              isExtra: false
-            };
-          });
-          const extraCount = stack.championDetails.length - maxBadges;
+          const maxTokens = 3;
+          const tokens = stack.championDetails.slice(0, maxTokens).map((champion) => ({
+            label: getChampionGlyph(champion.name),
+            title: `${champion.name} ${champion.hp}/${champion.maxHp}`,
+            isExtra: false
+          }));
+          const extraCount = stack.championDetails.length - maxTokens;
           if (extraCount > 0) {
-            badges.push({
+            tokens.push({
               label: `+${extraCount}`,
               title: `${extraCount} more champion${extraCount === 1 ? "" : "s"}`,
               isExtra: true
             });
           }
-          return badges;
+          return tokens;
         })();
-        const badgeHeight = 12;
-        const badgeGap = 4;
-        const badgeY = -28;
-        const badgeWidths = championBadges.map((badge) => estimateBadgeWidth(badge.label));
-        const totalBadgeWidth =
-          badgeWidths.reduce((sum, width) => sum + width, 0) +
-          Math.max(0, badgeWidths.length - 1) * badgeGap;
-        const badgeLayout = (() => {
-          if (championBadges.length === 0) {
-            return [];
-          }
-          const layout: Array<{
-            label: string;
-            title: string;
-            isExtra: boolean;
-            width: number;
-            x: number;
-          }> = [];
-          let cursorX = -totalBadgeWidth / 2;
-          championBadges.forEach((badge, index) => {
-            const width = badgeWidths[index] ?? estimateBadgeWidth(badge.label);
-            layout.push({
-              label: badge.label,
-              title: badge.title,
-              isExtra: badge.isExtra,
-              width,
-              x: cursorX
-            });
-            cursorX += width + badgeGap;
-          });
-          return layout;
-        })();
+        const tokenRadius = 8;
+        const tokenGap = 4;
+        const tokenCenterY = -26;
+        const tokenDiameter = tokenRadius * 2;
+        const totalTokenWidth =
+          championTokens.length * tokenDiameter +
+          Math.max(0, championTokens.length - 1) * tokenGap;
+        const tokenLayout = championTokens.map((token, index) => ({
+          label: token.label,
+          title: token.title,
+          isExtra: token.isExtra,
+          cx: -totalTokenWidth / 2 + tokenRadius + index * (tokenDiameter + tokenGap),
+          cy: tokenCenterY
+        }));
         const stackTitleLines = [
           `Stack ${playerLabel(stack.ownerPlayerId)}`,
           `Forces: ${stack.forceCount}`,
@@ -1071,35 +1051,26 @@ export const BoardView = ({
                 </text>
               </g>
             ) : null}
-            {badgeLayout.map((badge, index) => {
-              const badgeClass = [
-                "champion-badge",
-                colorIndex !== undefined ? `champion-badge--p${colorIndex}` : "",
-                badge.isExtra ? "champion-badge--extra" : ""
+            {tokenLayout.map((token, index) => {
+              const ringClass = [
+                "champion-token__ring",
+                colorIndex !== undefined ? `champion-token__ring--p${colorIndex}` : "",
+                token.isExtra ? "champion-token__ring--extra" : ""
+              ]
+                .filter(Boolean)
+                .join(" ");
+              const textClass = [
+                "champion-token__text",
+                token.isExtra ? "champion-token__text--extra" : ""
               ]
                 .filter(Boolean)
                 .join(" ");
               return (
-                <g
-                  key={`${stack.key}-badge-${index}`}
-                  className="champion-badge__wrap"
-                >
-                  <title>{badge.title}</title>
-                  <rect
-                    className={badgeClass}
-                    x={badge.x}
-                    y={badgeY}
-                    width={badge.width}
-                    height={badgeHeight}
-                    rx={badgeHeight / 2}
-                    ry={badgeHeight / 2}
-                  />
-                  <text
-                    className="champion-badge__text"
-                    x={badge.x + badge.width / 2}
-                    y={badgeY + badgeHeight / 2}
-                  >
-                    {badge.label}
+                <g key={`${stack.key}-champion-${index}`}>
+                  <title>{token.title}</title>
+                  <circle className={ringClass} cx={token.cx} cy={token.cy} r={tokenRadius} />
+                  <text className={textClass} x={token.cx} y={token.cy + 0.5}>
+                    {token.label}
                   </text>
                 </g>
               );

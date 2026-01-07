@@ -17,11 +17,11 @@
 
 ## Active tasks
 - owner: agent4 | scope: investigate/fix action submit + basic action buttons disabled in action phase (UI eligibility gating + hints) | files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `progress.md`, `implementation_plan.md` | status: in progress
-- owner: agent1 | scope: restyle champion token on board into circular badge with icon placeholder | files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `progress.md`, `implementation_plan.md` | status: in progress
 
 
 ## Milestone 8.5 progress
 - Added unique faction symbols (small circle badges) across faction selection, lobby labels, unit stacks, and victory screen; marked the plan item complete in `implementation_plan.md`.
+- Restyled champion markers above stacks into circular tokens with glyph placeholders; marked the plan item complete in `implementation_plan.md`.
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
 - Slimmed the action strip: moved Pass/Submit + deck counts into the hand footer, simplified basic actions, and added a command-center table with per-player gold/mana/hand counts.
 - Added show/hide controls for the hand panel, made the actions column collapsible, and removed internal scrolling from the bottom hand area.

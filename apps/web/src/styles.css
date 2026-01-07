@@ -3803,19 +3803,19 @@ h1 {
   fill: var(--player-color-5);
 }
 
-.champion-badge {
+.champion-token__ring {
   fill: #f7e2a6;
   stroke: rgba(120, 86, 20, 0.9);
-  stroke-width: 0.9;
+  stroke-width: 1;
   filter: drop-shadow(0 1px 2px rgba(40, 26, 12, 0.45));
 }
 
-.champion-badge--extra {
+.champion-token__ring--extra {
   fill: #f1d4a6;
 }
 
-.champion-badge__text {
-  font-size: 7px;
+.champion-token__text {
+  font-size: 6.5px;
   font-weight: 700;
   fill: #3b2a12;
   text-anchor: middle;
@@ -3823,29 +3823,34 @@ h1 {
   paint-order: stroke;
   stroke: rgba(255, 255, 255, 0.6);
   stroke-width: 1;
+  letter-spacing: 0.2px;
 }
 
-.champion-badge--p0 {
+.champion-token__text--extra {
+  font-size: 6px;
+}
+
+.champion-token__ring--p0 {
   stroke: var(--player-color-0);
 }
 
-.champion-badge--p1 {
+.champion-token__ring--p1 {
   stroke: var(--player-color-1);
 }
 
-.champion-badge--p2 {
+.champion-token__ring--p2 {
   stroke: var(--player-color-2);
 }
 
-.champion-badge--p3 {
+.champion-token__ring--p3 {
   stroke: var(--player-color-3);
 }
 
-.champion-badge--p4 {
+.champion-token__ring--p4 {
   stroke: var(--player-color-4);
 }
 
-.champion-badge--p5 {
+.champion-token__ring--p5 {
   stroke: var(--player-color-5);
 }
 
