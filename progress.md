@@ -17,6 +17,7 @@
 
 ## Active tasks
 - [owner: agent3] [status: in-progress] Scope: implement Archivist Prime + Wormhole Artificer champion abilities (cards-played counter, movement bonus) with engine tests + card text updates. Files: packages/engine/src/champions.ts, packages/engine/src/player-flags.ts, packages/engine/src/action-flow.ts, packages/engine/src/round-flow.ts, packages/engine/src/content/cards/faction.ts, packages/engine/src/action-flow.test.ts, implementation_plan.md, progress.md.
+- [owner: agent1] [status: in-progress] Scope: delay market winner highlight until roll-off animation completes. Files: apps/web/src/components/MarketPanel.tsx, apps/web/src/styles.css, progress.md.
 
 ## Milestone 8.5 progress
 - Improved hand card selection UX: added a selected-card summary with target hints + clear button, enabled click-to-deselect, and cleared card selection when switching to basic actions; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
@@ -26,6 +27,7 @@
 - Removed the Live connection pill from the header and enlarged gold/VP chips with clearer labels. (Overlap note: `apps/web/src/styles.css` touched alongside agent1.)
 - Repositioned the mana orb to the hand panel bottom-right (outside the actions panel) to reduce the perceived empty space above the cards.
 - Tightened the hand layout spacing and aligned the action panel to the bottom of the hand row to reduce empty vertical gaps.
+- Switched the hand layout to a bottom-aligned flex row so actions and cards sit on the same baseline, reducing the empty quadrants in the hand panel.
 - Fixed hand-card hover popout stacking/spacing so hovered cards render above the actions column without clipping; marked the plan item complete in `implementation_plan.md`.
 - Raised hand-panel z-index and reordered hover/pass layering so hovered cards sit above most UI while pass/submit stays on top.
 - Let the hand cards column span under the actions column with padding so hovered cards can overlap the actions area without clipping.

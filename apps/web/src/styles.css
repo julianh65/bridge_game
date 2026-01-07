@@ -1977,10 +1977,9 @@ h1 {
 }
 
 .game-hand__layout {
-  display: grid;
-  grid-template-columns: minmax(0, 2.2fr) minmax(140px, 190px);
+  display: flex;
+  align-items: flex-end;
   gap: 8px;
-  align-items: start;
 }
 
 .game-hand__cards {
@@ -1990,8 +1989,9 @@ h1 {
   position: relative;
   z-index: 2;
   overflow: visible;
-  grid-column: 1 / -1;
   padding-right: 220px;
+  flex: 1;
+  min-width: 0;
 }
 
 .game-hand__targets {
@@ -2007,13 +2007,11 @@ h1 {
   border-radius: 12px;
   border: 1px solid var(--border);
   background: #fdf4e4;
-  max-width: 200px;
   position: relative;
   z-index: 1;
-  grid-column: 2;
-  grid-row: 1;
-  justify-self: end;
-  align-self: end;
+  flex: 0 0 clamp(160px, 18vw, 200px);
+  max-width: 200px;
+  align-self: flex-end;
 }
 
 .game-hand__mana {
@@ -4767,18 +4765,18 @@ h1 {
   }
 
   .game-hand__layout {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .game-hand__cards {
-    grid-column: 1;
     padding-right: 0;
   }
 
   .game-hand__actions {
-    grid-column: 1;
-    grid-row: 2;
-    justify-self: stretch;
+    flex: 0 0 auto;
+    max-width: none;
+    width: 100%;
   }
 
   .intel-grid {
