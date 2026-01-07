@@ -227,4 +227,221 @@ describe("champion abilities", () => {
 
     expect(diceWithEnemy).toBe(bruteUnitWithEnemy.attackDice);
   });
+
+  it("grants Duelist Exemplar +1 die when an enemy champion is present", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    const deployed = addChampionToHex(board, "p1", hexKey, {
+      cardDefId: "champion.age2.duelist_exemplar",
+      hp: 5,
+      attackDice: 2,
+      hitFaces: 3,
+      bounty: 3
+    });
+
+    let state = {
+      ...base,
+      board: deployed.board,
+      phase: "round.action",
+      blocks: undefined
+    };
+
+    state = applyChampionDeployment(state, deployed.unitId, "champion.age2.duelist_exemplar", "p1");
+
+    const duelist = state.board.units[deployed.unitId];
+    if (!duelist || duelist.kind !== "champion") {
+      throw new Error("missing duelist exemplar");
+    }
+
+    let modifiers = getCombatModifiers(state, hexKey);
+    const diceWithoutEnemy = applyModifierQuery(
+      state,
+      modifiers,
+      (hooks) => hooks.getChampionAttackDice,
+      {
+        hexKey,
+        attackerPlayerId: "p1",
+        defenderPlayerId: "p2",
+        round: 1,
+        side: "attackers",
+        unitId: deployed.unitId,
+        unit: duelist
+      },
+      duelist.attackDice
+    );
+
+    expect(diceWithoutEnemy).toBe(duelist.attackDice);
+
+    const enemy = addChampionToHex(state.board, "p2", hexKey, {
+      cardDefId: "test.enemy",
+      hp: 1,
+      attackDice: 0,
+      hitFaces: 0,
+      bounty: 1
+    });
+    state = {
+      ...state,
+      board: enemy.board
+    };
+
+    const duelistWithEnemy = state.board.units[deployed.unitId];
+    if (!duelistWithEnemy || duelistWithEnemy.kind !== "champion") {
+      throw new Error("missing duelist exemplar after enemy");
+    }
+
+    modifiers = getCombatModifiers(state, hexKey);
+    const diceWithEnemy = applyModifierQuery(
+      state,
+      modifiers,
+      (hooks) => hooks.getChampionAttackDice,
+      {
+        hexKey,
+        attackerPlayerId: "p1",
+        defenderPlayerId: "p2",
+        round: 1,
+        side: "attackers",
+        unitId: deployed.unitId,
+        unit: duelistWithEnemy
+      },
+      duelistWithEnemy.attackDice
+    );
+
+    expect(diceWithEnemy).toBe(duelistWithEnemy.attackDice + 1);
+  });
+
+  it("grants Lone Wolf bonus dice only when no friendly forces are present", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    const deployed = addChampionToHex(board, "p1", hexKey, {
+      cardDefId: "champion.age2.lone_wolf",
+      hp: 5,
+      attackDice: 1,
+      hitFaces: 2,
+      bounty: 3
+    });
+
+    let state = {
+      ...base,
+      board: deployed.board,
+      phase: "round.action",
+      blocks: undefined
+    };
+
+    state = applyChampionDeployment(state, deployed.unitId, "champion.age2.lone_wolf", "p1");
+
+    const loneWolf = state.board.units[deployed.unitId];
+    if (!loneWolf || loneWolf.kind !== "champion") {
+      throw new Error("missing lone wolf");
+    }
+
+    let modifiers = getCombatModifiers(state, hexKey);
+    const diceWithoutForces = applyModifierQuery(
+      state,
+      modifiers,
+      (hooks) => hooks.getChampionAttackDice,
+      {
+        hexKey,
+        attackerPlayerId: "p1",
+        defenderPlayerId: "p2",
+        round: 1,
+        side: "attackers",
+        unitId: deployed.unitId,
+        unit: loneWolf
+      },
+      loneWolf.attackDice
+    );
+
+    expect(diceWithoutForces).toBe(loneWolf.attackDice + 3);
+
+    state = {
+      ...state,
+      board: addForcesToHex(state.board, "p1", hexKey, 1)
+    };
+
+    const loneWolfWithForce = state.board.units[deployed.unitId];
+    if (!loneWolfWithForce || loneWolfWithForce.kind !== "champion") {
+      throw new Error("missing lone wolf after adding force");
+    }
+
+    modifiers = getCombatModifiers(state, hexKey);
+    const diceWithForce = applyModifierQuery(
+      state,
+      modifiers,
+      (hooks) => hooks.getChampionAttackDice,
+      {
+        hexKey,
+        attackerPlayerId: "p1",
+        defenderPlayerId: "p2",
+        round: 1,
+        side: "attackers",
+        unitId: deployed.unitId,
+        unit: loneWolfWithForce
+      },
+      loneWolfWithForce.attackDice
+    );
+
+    expect(diceWithForce).toBe(loneWolfWithForce.attackDice);
+  });
+
+  it("sets Reliable Veteran hit faces to at least 5", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    const deployed = addChampionToHex(board, "p1", hexKey, {
+      cardDefId: "champion.age2.reliable_veteran",
+      hp: 6,
+      attackDice: 1,
+      hitFaces: 3,
+      bounty: 3
+    });
+
+    let state = {
+      ...base,
+      board: deployed.board,
+      phase: "round.action",
+      blocks: undefined
+    };
+
+    state = applyChampionDeployment(
+      state,
+      deployed.unitId,
+      "champion.age2.reliable_veteran",
+      "p1"
+    );
+
+    const veteran = state.board.units[deployed.unitId];
+    if (!veteran || veteran.kind !== "champion") {
+      throw new Error("missing reliable veteran");
+    }
+
+    const modifiers = getCombatModifiers(state, hexKey);
+    const hitFaces = applyModifierQuery(
+      state,
+      modifiers,
+      (hooks) => hooks.getChampionHitFaces,
+      {
+        hexKey,
+        attackerPlayerId: "p1",
+        defenderPlayerId: "p2",
+        round: 1,
+        side: "attackers",
+        unitId: deployed.unitId,
+        unit: veteran
+      },
+      veteran.hitFaces
+    );
+
+    expect(hitFaces).toBe(5);
+  });
 });

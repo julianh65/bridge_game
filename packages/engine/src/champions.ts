@@ -23,6 +23,9 @@ const INSPIRING_GEEZER_CHAMPION_ID = "champion.age1.inspiring_geezer";
 const BRUTE_CHAMPION_ID = "champion.age1.brute";
 const BOUNTY_HUNTER_CHAMPION_ID = "champion.age1.bounty_hunter";
 const TRAITOR_CHAMPION_ID = "champion.age1.traitor";
+const DUELIST_EXEMPLAR_CHAMPION_ID = "champion.age2.duelist_exemplar";
+const LONE_WOLF_CHAMPION_ID = "champion.age2.lone_wolf";
+const RELIABLE_VETERAN_CHAMPION_ID = "champion.age2.reliable_veteran";
 
 const ASSASSINS_EDGE_KEY = "assassins_edge";
 
@@ -349,6 +352,97 @@ const createBruteModifier = (unitId: UnitID, ownerPlayerId: PlayerID): Modifier 
   }
 });
 
+const createDuelistExemplarModifier = (
+  unitId: UnitID,
+  ownerPlayerId: PlayerID
+): Modifier => ({
+  id: buildChampionModifierId(unitId, "duelist_exemplar"),
+  source: { type: "champion", sourceId: DUELIST_EXEMPLAR_CHAMPION_ID },
+  ownerPlayerId,
+  duration: { type: "permanent" },
+  data: { unitId },
+  hooks: {
+    getChampionAttackDice: ({ modifier, unitId: contextUnitId, unit, hexKey, state }, current) => {
+      const sourceUnitId = getModifierUnitId(modifier);
+      if (!sourceUnitId || sourceUnitId !== contextUnitId) {
+        return current;
+      }
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== unit.ownerPlayerId) {
+        return current;
+      }
+      const hex = state.board.hexes[hexKey];
+      if (!hex) {
+        return current;
+      }
+      for (const [playerId, unitIds] of Object.entries(hex.occupants)) {
+        if (playerId === unit.ownerPlayerId) {
+          continue;
+        }
+        for (const occupantId of unitIds ?? []) {
+          if (state.board.units[occupantId]?.kind === "champion") {
+            return current + 1;
+          }
+        }
+      }
+      return current;
+    }
+  }
+});
+
+const createLoneWolfModifier = (unitId: UnitID, ownerPlayerId: PlayerID): Modifier => ({
+  id: buildChampionModifierId(unitId, "lone_wolf"),
+  source: { type: "champion", sourceId: LONE_WOLF_CHAMPION_ID },
+  ownerPlayerId,
+  duration: { type: "permanent" },
+  data: { unitId },
+  hooks: {
+    getChampionAttackDice: ({ modifier, unitId: contextUnitId, unit, hexKey, state }, current) => {
+      const sourceUnitId = getModifierUnitId(modifier);
+      if (!sourceUnitId || sourceUnitId !== contextUnitId) {
+        return current;
+      }
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== unit.ownerPlayerId) {
+        return current;
+      }
+      const hex = state.board.hexes[hexKey];
+      if (!hex) {
+        return current;
+      }
+      const friendly = hex.occupants[unit.ownerPlayerId] ?? [];
+      const hasFriendlyForces = friendly.some(
+        (unitId) => state.board.units[unitId]?.kind === "force"
+      );
+      if (hasFriendlyForces) {
+        return current;
+      }
+      return current + 3;
+    }
+  }
+});
+
+const createReliableVeteranModifier = (
+  unitId: UnitID,
+  ownerPlayerId: PlayerID
+): Modifier => ({
+  id: buildChampionModifierId(unitId, "reliable_veteran"),
+  source: { type: "champion", sourceId: RELIABLE_VETERAN_CHAMPION_ID },
+  ownerPlayerId,
+  duration: { type: "permanent" },
+  data: { unitId },
+  hooks: {
+    getChampionHitFaces: ({ modifier, unitId: contextUnitId, unit }, current) => {
+      const sourceUnitId = getModifierUnitId(modifier);
+      if (!sourceUnitId || sourceUnitId !== contextUnitId) {
+        return current;
+      }
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== unit.ownerPlayerId) {
+        return current;
+      }
+      return Math.max(current, 5);
+    }
+  }
+});
+
 const createBountyHunterModifier = (
   unitId: UnitID,
   ownerPlayerId: PlayerID
@@ -410,6 +504,12 @@ const createChampionModifiers = (
       return [createInspiringGeezerModifier(unitId, ownerPlayerId)];
     case BRUTE_CHAMPION_ID:
       return [createBruteModifier(unitId, ownerPlayerId)];
+    case DUELIST_EXEMPLAR_CHAMPION_ID:
+      return [createDuelistExemplarModifier(unitId, ownerPlayerId)];
+    case LONE_WOLF_CHAMPION_ID:
+      return [createLoneWolfModifier(unitId, ownerPlayerId)];
+    case RELIABLE_VETERAN_CHAMPION_ID:
+      return [createReliableVeteranModifier(unitId, ownerPlayerId)];
     case BOUNTY_HUNTER_CHAMPION_ID:
       return [createBountyHunterModifier(unitId, ownerPlayerId)];
     default:

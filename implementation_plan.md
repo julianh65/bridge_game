@@ -353,7 +353,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
     - [x] Movement exceptions: Bridge Runner pathfinder (adjacent moves ignore bridges).
     - [ ] Movement/deploy exceptions: Guerilla Native Mercenary (deploy to any unoccupied hex), Logistics Officer (deploy as capital)
     - [x] Dice mods/thresholds: Inspiring Geezer (forces hit 1-3), Brute (extra dice if no enemy champion).
-    - [ ] Dice mods/thresholds: Duelist Exemplar (if enemy champion +1 die/round), Lone Wolf (if no friendly forces +3 dice), Reliable Veteran (hits on 1-5)
+    - [x] Dice mods/thresholds: Duelist Exemplar (if enemy champion +1 die/round), Lone Wolf (if no friendly forces +3 dice), Reliable Veteran (hits on 1-5)
     - [ ] Siege/VP modifiers: Capital Breaker (siege hit buff), Bannerman/Center Bannerman (VP while on board/center)
     - [ ] Active abilities: Field Surgeon (heal champion in hex 1/round), Stormcaller (Tempest AoE), Grand Strategist (Tactical Hand hit assignment)
 - [ ] Quick check in, the rules in rules_draft are kind of living and breathing as I update things or change balance so make sure that everything is still correct, and add a few more champions and their abilities and everything in to test
@@ -432,6 +432,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [x] Added Flank Step, Scavenger's Market, Supply Ledger, Patrol Record (existing effects only).
   - [x] Added Banner Claim (Victory: move 1 stack 1 hex along a Bridge).
 - [ ] Add remaining Age I market cards + Age I market champions per rules_draft (movement/recruit/economy/deckcraft/combat/bridges/synergy/victory).
+  - [x] Age I champions: Bounty Hunter, Sergeant, Traitor.
+  - [ ] Age I champion: Field Surgeon (active heal ability).
   - [x] Added Sabotage Bridge, Bridge Trap, and Tunnel Network (bridge/terrain effects).
   - [x] Added Recruit Detachment, Paid Volunteers, and National Service (recruit variants).
 - Expand Age II/III market + power deck lists to match the latest rules_draft (including power champions and burn-heavy cards).
