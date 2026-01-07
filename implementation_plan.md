@@ -416,15 +416,15 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - Expand Age II/III market + power deck lists to match the latest rules_draft (including power champions and burn-heavy cards).
   - [ ] Age II market cards + champions (47 cards + 8 champions).
   - [ ] Age III market cards + champions (47 cards + 8 champions).
-  - [ ] Power decks (12 each) card defs and wiring.
-    - [ ] Audit `rules_draft.md` power lists to ensure each age has 12 entries; fill any missing names.
-    - [ ] Age I power non-victory card defs (6).
-    - [ ] Age I power victory card defs (6, +1 VP on gain).
-    - [ ] Age II power non-victory card defs (6).
-    - [ ] Age II power victory card defs (6, +1 VP on gain).
-    - [ ] Age II power champion card defs (ex: Bannerman) and tagging.
-    - [ ] Age III power non-victory card defs (6).
-    - [ ] Age III power victory card defs (6, +1 VP on gain).
+  - [ ] Power decks card defs and wiring (counts per `rules_draft.md`).
+    - [ ] Audit `rules_draft.md` power lists and record exact counts per age.
+    - [ ] Age I power non-victory card defs (per rules_draft counts).
+    - [ ] Age I power victory card defs (per rules_draft counts, +1 VP on gain).
+    - [ ] Age II power non-victory card defs (per rules_draft counts).
+    - [ ] Age II power victory card defs (per rules_draft counts, +1 VP on gain).
+    - [ ] Age II power champion card defs (per rules_draft counts) and tagging.
+    - [ ] Age III power non-victory card defs (per rules_draft counts).
+    - [ ] Age III power victory card defs (per rules_draft counts, +1 VP on gain).
     - [ ] Verify power/burn/victory tags on power cards.
   - [ ] Replace `packages/engine/src/content/power-decks.ts` with real power deck lists (no market clones).
   - [ ] Update deck list exports/tests for market + power counts/uniqueness.

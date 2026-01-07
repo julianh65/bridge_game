@@ -152,9 +152,7 @@ export const GameCard = ({
           style={
             showArtImage
               ? {
-                  backgroundImage: `url(${resolvedArtUrl})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center"
+                  backgroundImage: `url(${resolvedArtUrl})`
                 }
               : undefined
           }
