@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent2 | scope: add action-flow tests for Age I market cards (Supply Ledger, Patrol Record, Banner Claim) | files: packages/engine/src/action-flow.test.ts, implementation_plan.md, progress.md | status: in progress
+none
 
 ## Milestone 8.5 progress
 - Removed the duplicate action panel, tightened the game view to fit the viewport, and reduced the board height while keeping the intel dock as a fixed overlay.
@@ -64,6 +64,8 @@
 
 ## Testing progress
 - Added action-flow coverage for Flank Step (bridge-less move) + Scavenger's Market (gold + draw).
+- Added action-flow coverage for Supply Ledger, Patrol Record, and Banner Claim.
+- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (Supply Ledger/Patrol Record/Banner Claim coverage).
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (Flank Step/Scavenger's Market coverage).
 - Added card draw tests covering reshuffle behavior and hand-limit overflow in `packages/engine/src/cards.test.ts`.
 - Added tests for card instance id sequencing and random draw-pile insertion in `packages/engine/src/cards.test.ts`.
@@ -95,6 +97,7 @@
 
 ## Docs maintenance
 - Expanded the Milestone 9 card-test checklist with Age I market sub-items in `implementation_plan.md`.
+- Marked the Milestone 9 Age I market card-test item (Supply Ledger/Patrol Record/Banner Claim) complete in `implementation_plan.md`.
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
 - Rewrote Milestone 9 notes into a coherent checklist in `implementation_plan.md`.
 - Marked the Milestone 7 champion ability hook tasks complete in `implementation_plan.md`.
