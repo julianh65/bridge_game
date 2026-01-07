@@ -319,6 +319,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
       - [x] Grand Strategist (Tactical Hand hit assignment)
 - [ ] Quick check in, the rules in rules_draft are kind of living and breathing as I update things or change balance so make sure that everything is still correct, and add a few more champions and their abilities and everything in to test
 
+
 ### Tasks (web)
 - Champion UI:
   - [x] display champion hp
@@ -344,6 +345,7 @@ Start going through the rules_draft and adding the logic for the different types
   - [x] Wormhole links (treat two hexes as adjacent for a round).
   - [x] Tunnel network adjacency (non-passive card effects).
 - [x] Add hit-assignment control + battle retreat effects (Focus Fire, Tactical Hand, Set to Skirmish).
+- [ ] UI: manual hit assignment prompt when Tactical Hand/Focus Fire are active (select targets for assigned hits).
   - [x] Set to Skirmish retreat-on-battle modifier.
   - [x] Focus Fire hit assignment control.
   - [x] Tactical Hand hit assignment control.
@@ -413,7 +415,25 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [ ] Age I/II/III power deck cards (12 each), including power champions and power-victory cards.
   - [ ] Update deck list exports to match rules counts and add tests for deck composition/uniqueness.
   - [ ] Define Age II card defs by category (movement/recruit/economy/deckcraft/combat/bridges/victory/champions).
+    - [ ] Age II Movement card defs (5).
+    - [ ] Age II Recruitment card defs (5).
+    - [ ] Age II Economy card defs (5).
+    - [ ] Age II Deckcraft card defs (5).
+    - [ ] Age II Combat/Tactics card defs (5).
+    - [ ] Age II Bridges/Terrain card defs (4).
+    - [ ] Age II Synergy/Gambits card defs (4).
+    - [ ] Age II Victory card defs (4).
+    - [ ] Age II Champion card defs (8).
   - [ ] Define Age III card defs by category (movement/recruit/economy/deckcraft/combat/bridges/victory/champions).
+    - [ ] Age III Movement card defs (4).
+    - [ ] Age III Recruitment card defs (4).
+    - [ ] Age III Economy card defs (4).
+    - [ ] Age III Deckcraft card defs (4).
+    - [ ] Age III Combat/Tactics card defs (4).
+    - [ ] Age III Bridges/Terrain card defs (2).
+    - [ ] Age III Synergy/Gambits card defs (2).
+    - [ ] Age III Victory card defs (4+).
+    - [ ] Age III Champion card defs (8).
   - [ ] Add Age I/II/III power deck card defs and wire into power deck exports/tests.
   - [x] Add card metadata tags for Burn/Power/Victory/Champion and ensure filters use them.
 - [x] Add “smoke sim” tests:
@@ -453,8 +473,9 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] When moving between hexes we need to also be able to determine if we want to move just troops, champion, champion plus split of troops etc
 - [ ] The market transition can happen to fast while we're still waiting to see what all the actions were.
 - [ ] Dice roll in the market and in general needs to be a bit bigger and clearly mark who is who, also each player should click to "roll" their respective die.
+  - [x] Enlarge market roll-off dice UI and add clearer player labels.
+  - [ ] Allow each player to click to roll their die (sync with server).
 - [x] In the market or on the card I don't see the nice champion stats that we created
-
 ### Other
 - [x] The champion needs to be more obvious, like a seperate thing with its health and name and stuff, and they can hover over it to see the stats
 - [x] A lot of duplicative information everywhere, like multiple live pills or whatever
@@ -512,6 +533,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Large and hard -- make the entire UI look a bit more dark fantasy and cooler
 - [x] For cards with victory points we need to denote how many VP's they're worth on the card
 - [ ] We need to add logic and look for escalating champion costs as per the rules
+- [ ] Slightly make the images a bit bigger and for all images it will crop, but I want it to crop like 10% higher than it is now, that is to say i want it centered 10% higher than it is now for all cards
 
 ## Milestone 9.5 -- Card Art + Description
 

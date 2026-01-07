@@ -17,6 +17,7 @@
 
 ## Active tasks
 - none
+- owner: agent3 | scope: add Frenzy combat modifier effect (dice bonus + self-damage) with tests; update plan | files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`, `progress.md` | status: in_progress
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -31,6 +32,7 @@
 - Added Column Advance (Age I) with stop-on-occupied path validation and tests. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside any in-flight edits.)
 - Added Frontier Claim (Age I) with capital-distance empty-hex targeting and tests. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside any in-flight edits.)
 - Added Age III champion card defs (Logistics Officer, Titan Vanguard, Center Bannerman, Blood Banker, Stormcaller, Grand Strategist, Capital Breaker) and wired them into the card registry. (Files: `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/content/cards/index.ts`.) (owner: agent2)
+- Added Age II champion card defs for implemented abilities (Jet Striker, Tax Reaver, Siege Engineer, Duelist Exemplar, Lone Wolf, Reliable Veteran, Capturer) and wired them into the card registry; Guerilla Native Mercenary + Exodia still pending targeting/condition support. (Files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/index.ts`.) (owner: agent2)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
@@ -155,6 +157,7 @@
 - Nudged GameCard art heights a touch taller across variants. (Files: `apps/web/src/styles.css`.)
 - Added Victory card VP badges in `GameCard`, wired configurable `victoryPoints` in card defs/engine VP gain, and added coverage in engine card tests.
 - Enabled champion stat blocks on market/hand GameCard views with compact hand styling; marked the plan item complete in `implementation_plan.md`. (Overlap note: `implementation_plan.md` touched alongside agent2 scope.)
+- Enlarged market roll-off dice UI and added clearer player labels; added a plan subtask for the remaining click-to-roll wiring. (Overlap note: `implementation_plan.md` touched alongside agent2 scope.)
 - Added a unit stack arrival pulse animation in the board view to make movement clearer during action reveals; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.)
 - Added faction labels (symbol + name) on CardsBrowser card tiles to denote faction-specific cards; marked the plan item complete in `implementation_plan.md`. (owner: agent1)
 - Added softer click sfx tags to main menu view toggles and Home create/join buttons for more audio coverage.

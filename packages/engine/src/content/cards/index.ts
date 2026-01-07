@@ -1,11 +1,13 @@
 import type { CardDef, CardDefId } from "./types";
 import { AGE1_CARDS } from "./age1";
+import { AGE2_CARDS } from "./age2";
 import { AGE3_CARDS } from "./age3";
 import { FACTION_CARDS } from "./faction";
 import { STARTER_CARDS } from "./starter";
 
 export * from "./types";
 export * from "./age1";
+export * from "./age2";
 export * from "./age3";
 export * from "./faction";
 export * from "./starter";
@@ -32,6 +34,7 @@ export const CARD_DEFS: CardDef[] = [
   ...STARTER_CARDS,
   ...FACTION_CARDS,
   ...AGE1_CARDS,
+  ...AGE2_CARDS,
   ...AGE3_CARDS
 ].map(addDerivedTags);
 

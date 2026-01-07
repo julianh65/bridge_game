@@ -3087,7 +3087,14 @@ h1 {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  font-size: 12px;
+  font-size: 13px;
+}
+
+.market-rolloff__name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
 }
 
 .market-rolloff__entry.is-winner .market-rolloff__name {
@@ -3110,6 +3117,13 @@ h1 {
   font-variant-numeric: tabular-nums;
   box-shadow: 0 6px 12px rgba(245, 158, 11, 0.25);
   transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.number-roll--lg {
+  min-width: 40px;
+  padding: 6px 14px;
+  font-size: 16px;
+  box-shadow: 0 8px 16px rgba(245, 158, 11, 0.3);
 }
 
 @keyframes numberRollFlicker {

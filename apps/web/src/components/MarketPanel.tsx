@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ChangeEvent } from "react";
+import { useEffect, useMemo, useState, type ChangeEvent, type CSSProperties } from "react";
 
 import { CARD_DEFS, type Bid, type GameView, type MarketState } from "@bridgefront/engine";
 
@@ -22,7 +22,7 @@ type MarketWinnerHighlight = {
 
 type MarketPanelProps = {
   market: MarketState;
-  players: Array<{ id: string; name: string }>;
+  players: GameView["public"]["players"];
   phase: GameView["public"]["phase"];
   player: GameView["public"]["players"][number] | null;
   status: RoomConnectionStatus;
@@ -67,6 +67,10 @@ export const MarketPanel = ({
     phase !== "round.market" ||
     !currentCard ||
     eligiblePlayerIds.every((id) => market.bids[id]);
+  const playerSeatIndexById = useMemo(
+    () => new Map(players.map((entry) => [entry.id, entry.seatIndex])),
+    [players]
+  );
   const [bidAmount, setBidAmount] = useState(0);
   const [showWinner, setShowWinner] = useState(true);
   const bidEntries = players.map((player) => {
@@ -292,6 +296,15 @@ export const MarketPanel = ({
       ? `Card ${rowIndexResolving + 1} of ${currentRow.length}`
       : "No market cards revealed.";
   const rollOffRoundsToShow = rollOffSchedule.rounds.slice(0, visibleRollRounds);
+  const playerSwatchStyle = (seatIndex: number | undefined): CSSProperties | undefined => {
+    if (typeof seatIndex !== "number") {
+      return undefined;
+    }
+    const index = Math.max(0, Math.min(5, Math.floor(seatIndex)));
+    return {
+      "--player-color": `var(--player-color-${index})`
+    } as CSSProperties;
+  };
   const rollOffPanel = showRollOff ? (
     <div className="market-rolloff-panel">
       <div className="market-bid__header">
@@ -310,18 +323,31 @@ export const MarketPanel = ({
               {round.rolls.map((roll, index) => {
                 const isWinner = roll.playerId === winnerHighlight?.playerId;
                 const delayMs = round.rollDelays[index] ?? round.startMs;
+                const seatIndex = playerSeatIndexById.get(roll.playerId);
+                const swatchStyle = playerSwatchStyle(seatIndex);
                 return (
                   <div
                     key={`roll-${roll.playerId}-${round.roundIndex}`}
                     className={`market-rolloff__entry${isWinner ? " is-winner" : ""}`}
                   >
-                    <span className="market-rolloff__name">{roll.name}</span>
+                    <span className="market-rolloff__name">
+                      {swatchStyle ? (
+                        <span
+                          className="player-swatch"
+                          style={swatchStyle}
+                          aria-hidden="true"
+                        />
+                      ) : null}
+                      {roll.name}
+                    </span>
                     <NumberRoll
                       value={roll.value}
                       sides={6}
                       durationMs={rollDurationMs}
                       delayMs={delayMs}
                       rollKey={`${winnerHighlight?.rollOffKey ?? 0}-${round.roundIndex}-${roll.playerId}`}
+                      className="number-roll--lg"
+                      label={`${roll.name} roll`}
                     />
                   </div>
                 );
