@@ -16,13 +16,14 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- [owner: agent2] [status: in-progress] Scope: add engine support for partial force moves (split stacks) for march + card moveStack effects, with validation/tests. Files: packages/engine/src/types.ts, packages/engine/src/action-flow.ts, packages/engine/src/units.ts, packages/engine/src/card-effects.ts, packages/engine/src/action-flow.test.ts, implementation_plan.md, progress.md.
 
 ## Milestone 8.5 progress
 - Improved hand card selection UX: added a selected-card summary with target hints + clear button, enabled click-to-deselect, and cleared card selection when switching to basic actions; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
 - Moved local resource display to the header (gold/VP) and added a bottom-left mana orb near the hand panel; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent3.)
 - Fixed hand-card hover popout stacking/spacing so hovered cards render above the actions column without clipping; marked the plan item complete in `implementation_plan.md`.
 - Raised hand-panel z-index and reordered hover/pass layering so hovered cards sit above most UI while pass/submit stays on top.
+- Let the hand cards column span under the actions column with padding so hovered cards can overlap the actions area without clipping.
 - Added unique faction symbols (small circle badges) across faction selection, lobby labels, unit stacks, and victory screen; marked the plan item complete in `implementation_plan.md`.
 - Restyled champion markers above stacks into circular tokens with glyph placeholders; marked the plan item complete in `implementation_plan.md`.
 - Added champion hover tooltips on board tokens with HP/attack/damage and a rules snippet; marked the plan item complete in `implementation_plan.md`.

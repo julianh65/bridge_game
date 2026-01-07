@@ -1992,6 +1992,8 @@ h1 {
   position: relative;
   z-index: 2;
   overflow: visible;
+  grid-column: 1 / -1;
+  padding-right: 220px;
 }
 
 .game-hand__targets {
@@ -2010,6 +2012,9 @@ h1 {
   max-width: 200px;
   position: relative;
   z-index: 1;
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
 }
 
 .game-hand__actions-header {
@@ -4623,6 +4628,17 @@ h1 {
 
   .game-hand__layout {
     grid-template-columns: 1fr;
+  }
+
+  .game-hand__cards {
+    grid-column: 1;
+    padding-right: 0;
+  }
+
+  .game-hand__actions {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: stretch;
   }
 
   .intel-grid {
