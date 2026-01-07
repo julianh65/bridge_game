@@ -344,6 +344,13 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [ ] Expand champion hooks for on-deploy/on-death/on-battle-win, movement exceptions, and conditional dice mods (Archivist Prime, Brute, Traitor, Siege Engineer, Capturer, Bannerman, etc.)
     - [x] Archivist Prime: +attack dice per card played this round
     - [x] Wormhole Artificer: +1 move distance when moving alone
+    - [ ] On-deploy triggers: Skirmisher Captain (deploy 1 Force), Siege Engineer (destroy adjacent Bridge)
+    - [ ] On-death triggers: Traitor (set owner mana to 0), Blood Banker (first champion death in hex grants gold)
+    - [ ] On-battle-win/kill triggers: Capturer (deploy 1 Force on win), Bounty Hunter/Tax Reaver (bonus gold on champion kill)
+    - [ ] Movement/deploy exceptions: Bridge Runner pathfinder, Guerilla Native Mercenary (deploy to any unoccupied hex), Logistics Officer (deploy as capital)
+    - [ ] Dice mods/thresholds: Inspiring Geezer (forces hit 1-3), Brute (extra dice if no enemy champion), Duelist Exemplar (if enemy champion +1 die/round), Lone Wolf (if no friendly forces +3 dice), Reliable Veteran (hits on 1-5)
+    - [ ] Siege/VP modifiers: Capital Breaker (siege hit buff), Bannerman/Center Bannerman (VP while on board/center)
+    - [ ] Active abilities: Field Surgeon (heal champion in hex 1/round), Stormcaller (Tempest AoE), Grand Strategist (Tactical Hand hit assignment)
 - [ ] Quick check in, the rules in rules_draft are kind of living and breathing as I update things or change balance so make sure that everything is still correct, and add a few more champions and their abilities and everything in to test
 
 ### Tasks (web)
@@ -369,6 +376,17 @@ Start going through the rules_draft and adding the logic for the different types
 - [ ] Add multi-target/multi-stack actions (move two stacks, build multiple bridges, deploy to multiple mines).
 - [ ] Add variable VP sources (Victory +2, center-based VP, timer VP).
 - [ ] Add champion recall + removal effects (return champion to hand, on-death penalties).
+- [ ] Add deckcraft primitives: draw/discard mixes, discard up to N, burn from hand, conditional draw, scry/topdeck (Quick Study, Cycle Notes, Hard Mulligan, Tome of Orders, War Chronicle, Precise Planning, Small Hands, Spellcaster).
+- [ ] Add conditional economy triggers: battle-won gold, enemy capital bonuses, opponent gold steal, other-players battle gold (Spoils of War, Smuggling Ring, Market Squeeze, Pulling Strings).
+- [ ] Add scaling/permanent counters tied to card state (Propaganda Recruitment, Future Investment).
+- [ ] Add bridge manipulation suite: build multiple bridges, destroy adjacent/any bridges, pivot, temporary bridges, bridge lockdown/trap.
+- [ ] Add relocation effects: champion move to capital/occupied/mine, recall to hand, move stack ignoring bridges with stop-on-occupy rules.
+- [ ] Add deployment variants: champion-hex deploys, mines/forges deploys, empty-hex near capital deploys, deploy to all mines, deploy to any unoccupied hex.
+- [ ] Add AoE/encirclement effects: Mortar Shot scatter, Attrition, Encirclement/Complete Encirclement, Cataclysm Core, Siege Writ.
+- [ ] Add combat state modifiers: Smoke Screen, Shock Drill, Frenzy self-damage + dice mods, Gold Plated Armor damage prevention.
+- [ ] Add cost overrides/free-play effects (Last Contract, A Hero Joins the Battle).
+- [ ] Add random card generation effects (Black Market Pull, Forge Miracle).
+- [ ] Add burn keyword enforcement for granted cards (Forge Miracle, power deck burn effects).
 
 
 ## Milestone 7.5 — Script to Generate Art for Cards
@@ -397,7 +415,13 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - Expand Age I market cards first (the ones that touch your most-used primitives).
   - [x] Added Flank Step, Scavenger's Market, Supply Ledger, Patrol Record (existing effects only).
   - [x] Added Banner Claim (Victory: move 1 stack 1 hex along a Bridge).
+- [ ] Add remaining Age I market cards + Age I market champions per rules_draft (movement/recruit/economy/deckcraft/combat/bridges/synergy/victory).
 - Expand Age II/III market + power deck lists to match the latest rules_draft (including power champions and burn-heavy cards).
+  - [ ] Age II market cards + champions (47 cards + 8 champions).
+  - [ ] Age III market cards + champions (47 cards + 8 champions).
+  - [ ] Age I/II/III power deck cards (12 each), including power champions and power-victory cards.
+  - [ ] Update deck list exports to match rules counts and add tests for deck composition/uniqueness.
+  - [ ] Add card metadata tags for Burn/Power/Victory/Champion and ensure filters use them.
 - [x] Add “smoke sim” tests:
   - random legal commands for N steps should not crash
 - [x] Add dev-only debug tools:
@@ -476,6 +500,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [x] Age I market: Supply Ledger / Patrol Record / Banner Claim coverage.
   - [x] Age I market: remaining orders (Quick March, Trade Caravan, Temporary Bridge, Patch Up, Quick Study).
   - [ ] Age II/III market + power deck card tests (as content lands).
+  - [ ] Champion ability tests (on-deploy, on-death, on-battle-win, dice mods, VP aura).
+  - [ ] Card primitive tests for new mechanics (bridge lockdown/trap, wormhole adjacency, dice roll cards, cost overrides).
 - [ ] At the end of the market phase we don't see the nice animation and transition for the last player who auto gets it
 - [x] It needs to be much more clear that Done is like "Pass" and won't let you go again
 - [ ] Do a targetted review and cleanup of the codebase, try to find things that aren't being used anymore, are wrong etc... and clean it up, without breaking behavior.

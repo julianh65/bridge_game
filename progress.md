@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- owner: agent2 | scope: fix market overlay end-of-phase animation for last auto-won card | files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/MarketOverlay.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md | status: in progress
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
@@ -217,6 +217,7 @@
 - Expanded the Milestone 5.5 phase-focused layout task with subitems and marked the focus row/log+player move subtasks complete.
 - Noted Banner Claim addition under the Milestone 8 Age I market expansion tasks in `implementation_plan.md`.
 - Reviewed the latest `rules_draft.md` card updates and added missing plan items (remaining faction passives, champion hook expansion, new card effect primitives, Age II/III + power deck expansion).
+- Expanded `implementation_plan.md` with rules-driven card/champion backlog items (champion abilities, card effect primitives, deck expansions, and test coverage). (Overlap note: edited `implementation_plan.md` while agent2 task is active.)
 - Added guidance to `agent_instructions.md` on reconciling other-agent/tooling changes.
 - Updated `agent_instructions.md` to require logging task scope/files in `progress.md` before coding and clearing entries after completion.
 - Added git hygiene guidance in `agent_instructions.md` to minimize user interruptions and preserve work.
