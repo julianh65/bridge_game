@@ -437,19 +437,15 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 ### Tasks (web - motion + phase clarity)
 - [ ] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen. This is after everyone locks in their actions. I want it to be like Player 1, show the card they played and flash it up, then show where they did it or something and make it extensible so later we can add animations or sound effects or something here.
 - [x] Add clearer phase transition cues between round phases. Make it flash on screen in big text slowly to everyone simultaneously.
-- [ ] Make the hexes look nicer slightly, more in theme and more clear who and which forces are on what and who's capital is who's etc...
-- [ ] The basic actions are too cluttered, like in general I want things folded in and out and you only expose buttons and thigns when you need to. So build bridge is the button and then you pick the edge and you don't need all this extra UI on the side, simplify it
 - [ ] we need a few UI's still, like dice rolling for draws and cards and other stuff
 - [x] We need a better more clear UI with symbols (just do emojis for now) to represent gold, mana VP
-- [ ] The placing starting bridge UI needs to be on the board not picking a bunch of axial coords.
+- [x] The placing starting bridge UI needs to be on the board not picking a bunch of axial coords.
 - [ ] We should have nice transitions between ages and at the start of the game
 - [ ] The bottom hand modal part is still a tiny bit clunky in that it can block stuff, maybe try to clean it up a bit and make it shorter and a bit more compact?
 - [ ] The table view has to be a bit more easy to read, idk where it can go, on the right where it is, on the top, but we need to at a glance be able to just briefly see everyone's status, you can make it smaller as well
 
 ### Other
-- [ ] I don't see the champions on the board
-
-
+- [ ] The champion needs to be more obvious, like a seperate thing with its health and name and stuff, and they can hover over it to see the stats
 
 ### Tasks (web - targeting reliability)
 - [x] Fix hex selection for Bridge Crew and Build Bridge edge picking.
@@ -458,7 +454,6 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] We need to more clearly guide the player what to do. The basic actions thing is too cluttered, we should probably keep that where the cards are and it should fan it when you click basic actions and show their mana cost and everything with a description
 - [x] The Log is taking up too much screen real estate, make that a seperate area or modal or something
 - [x] Urgent: Card targets are still not be selected properly when you click on the board. For example the bridge crew still doesn't work. I see the edge flash but it doesn't select it properly still. (Delayed BoardView pointer capture so clicks register.)
-- [ ] We need to reduce the amount of clicks, to play a card you shouldn't have to click then specify capital or something else then click where, it should just know.
 - [ ] Also can you double check, does it only work for 2 players right now?
 - [x] The standard setup still doesn't work, only auto setup works.
 - [x] The done button is a bit confusing, we need little helpers over the different buttons

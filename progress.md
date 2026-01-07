@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent2; scope: clean up `implementation_plan.md` and `progress.md` (dedupe/completion sync, tighten notes); files: `implementation_plan.md`, `progress.md`; status: in progress.
+- owner: agent1; scope: make the sidebar Table view more compact/readable at a glance (Milestone 8.5/9); files: apps/web/src/components/GameScreenSidebar.tsx, apps/web/src/styles.css, implementation_plan.md; status: in progress
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -94,7 +94,8 @@
 - Expanded the Milestone 9 card-test checklist with Age I market sub-items in `implementation_plan.md`.
 - Marked the Milestone 9 Age I market card-test item (Supply Ledger/Patrol Record/Banner Claim) complete in `implementation_plan.md`.
 - Checked off the remaining Age I market card-test checklist item (Quick March/Trade Caravan/Temporary Bridge/Patch Up/Quick Study) in `implementation_plan.md`.
-- Cleaned `implementation_plan.md` for duplicate UI tasks and marked starting-bridge board picking as complete.
+- Cleaned `implementation_plan.md` and `progress.md` (removed duplicate UI tasks, marked starting-bridge board picking as complete, trimmed test log clutter).
+- Overlap note: `implementation_plan.md` already included a champion-visibility wording tweak + new table-view readability task while cleaning.
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
 - Rewrote Milestone 9 notes into a coherent checklist in `implementation_plan.md`.
 - Marked the Milestone 7 champion ability hook tasks complete in `implementation_plan.md`.
