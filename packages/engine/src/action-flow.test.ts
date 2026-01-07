@@ -538,6 +538,29 @@ describe("action flow", () => {
     expect(path).toBeNull();
   });
 
+  it("destroys a bridge with a destroy-bridge effect", () => {
+    let { state, p1Edges } = setupToActionPhase();
+    const [edge] = p1Edges;
+
+    const destroyBridgeCard: CardDef = {
+      id: "test.destroy_bridge",
+      name: "Destroy Bridge",
+      rulesText: "Destroy a bridge adjacent to a hex you occupy.",
+      type: "Order",
+      deck: "starter",
+      tags: [],
+      cost: { mana: 0 },
+      initiative: 1,
+      burn: false,
+      targetSpec: { kind: "edge", requiresOccupiedEndpoint: true },
+      effects: [{ kind: "destroyBridge" }]
+    };
+
+    state = resolveCardEffects(state, "p1", destroyBridgeCard, { edgeKey: edge });
+
+    expect(state.board.bridges[edge]).toBeUndefined();
+  });
+
   it("moves part of a stack when forceCount is set", () => {
     let { state, p1Capital, p1Edges } = setupToActionPhase();
     const [edge] = p1Edges;

@@ -384,6 +384,7 @@ Start going through the rules_draft and adding the logic for the different types
 - [ ] Add conditional economy triggers: battle-won gold, enemy capital bonuses, opponent gold steal, other-players battle gold (Spoils of War, Smuggling Ring, Market Squeeze, Pulling Strings).
 - [ ] Add scaling/permanent counters tied to card state (Propaganda Recruitment, Future Investment).
 - [ ] Add bridge manipulation suite: build multiple bridges, destroy adjacent/any bridges, pivot, temporary bridges, bridge lockdown/trap.
+  - [x] Destroy bridge effect (adjacent/occupied-edge).
 - [ ] Add relocation effects: champion move to capital/occupied/mine, recall to hand, move stack ignoring bridges with stop-on-occupy rules.
 - [ ] Add deployment variants: champion-hex deploys, mines/forges deploys, empty-hex near capital deploys, deploy to all mines, deploy to any unoccupied hex.
 - [ ] Add AoE/encirclement effects: Mortar Shot scatter, Attrition, Encirclement/Complete Encirclement, Cataclysm Core, Siege Writ.

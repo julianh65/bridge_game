@@ -17,6 +17,7 @@
 
 ## Active tasks
 - owner: agent3 | scope: add modifier hooks for card draw + round-end triggers with engine coverage | files: packages/engine/src/types.ts, packages/engine/src/modifiers.ts, packages/engine/src/cards.ts, packages/engine/src/round-flow.ts, packages/engine/src/modifiers.test.ts, implementation_plan.md, progress.md | status: in progress
+- owner: agent2 | scope: expand collection focus cards with GameCard UI for revealed collection picks | files: apps/web/src/components/CollectionPanel.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md | status: in progress
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
@@ -404,6 +405,7 @@ none
 - Verified engine coverage with `npm run -w @bridgefront/engine test`.
 - Added targeting immunity modifiers (Ward/Immunity Field), attached Marked-for-Coin flags to champions, and added action-flow tests for enemy targeting blocks.
 - Added lock-bridge card effect support (locks an existing bridge until end of round) with action-flow coverage; marked subtask in `implementation_plan.md`. (Overlap note: touched `implementation_plan.md` while agent3 active.)
+- Added destroy-bridge card effect support for edge-targeted cards with action-flow coverage; marked subtask in `implementation_plan.md`. (Overlap note: touched `implementation_plan.md` while agent3/agent2 active.)
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

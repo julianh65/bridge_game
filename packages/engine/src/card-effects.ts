@@ -52,7 +52,8 @@ const SUPPORTED_EFFECTS = new Set([
   "topdeckFromHand",
   "ward",
   "immunityField",
-  "lockBridge"
+  "lockBridge",
+  "destroyBridge"
 ]);
 
 type TargetRecord = Record<string, unknown>;
@@ -731,10 +732,13 @@ export const isCardPlayable = (
 
   if (card.targetSpec.kind === "edge") {
     const hasBuildBridge = card.effects?.some((effect) => effect.kind === "buildBridge") ?? false;
-    const hasLockBridge = card.effects?.some((effect) => effect.kind === "lockBridge") ?? false;
+    const hasExistingBridgeEffect =
+      card.effects?.some(
+        (effect) => effect.kind === "lockBridge" || effect.kind === "destroyBridge"
+      ) ?? false;
     const plan = hasBuildBridge
       ? getBuildBridgePlan(state, playerId, card.targetSpec as TargetRecord, targets ?? null)
-      : hasLockBridge
+      : hasExistingBridgeEffect
         ? getExistingBridgePlan(state, playerId, card.targetSpec as TargetRecord, targets ?? null)
         : getBuildBridgePlan(state, playerId, card.targetSpec as TargetRecord, targets ?? null);
     if (!plan) {
@@ -1339,6 +1343,26 @@ export const resolveCardEffects = (
               }
             }
           ]
+        };
+        break;
+      }
+      case "destroyBridge": {
+        const plan = getExistingBridgePlan(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null
+        );
+        if (!plan) {
+          break;
+        }
+        const { [plan.key]: _removed, ...bridges } = nextState.board.bridges;
+        nextState = {
+          ...nextState,
+          board: {
+            ...nextState.board,
+            bridges
+          }
         };
         break;
       }
