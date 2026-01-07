@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- owner: agent3 | scope: add Age III market card defs (movement/recruit/economy/victory/combat subset) using existing effects; update plan | files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`, `progress.md` | status: in_progress
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -34,7 +34,7 @@
 - Added Age II champion card defs for implemented abilities (Jet Striker, Tax Reaver, Siege Engineer, Duelist Exemplar, Lone Wolf, Reliable Veteran, Capturer) and wired them into the card registry; Exodia still pending targeting/condition support. (Files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/index.ts`.) (owner: agent2)
 - Added Guerilla Native Mercenary (Age II) champion card def with allow-empty hex deployment, plus allow-empty target validation + UI highlights and tests; updated the plan checklist. (Files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.guerilla-native-mercenary.test.ts`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent2)
 - Added Age II combat/tactics card defs for Focus Fire, Ward, and Frenzy; updated the plan checklist. (Files: `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.) (Overlap note: touched `packages/engine/src/content/cards/age2.ts` + `implementation_plan.md` while agent2 active.)
-- Expanded power deck tasks in `implementation_plan.md` (Age I/II/III power card defs, power deck list wiring, tests, and rules audit).
+- Expanded power deck tasks in `implementation_plan.md` (Age I/II/III power card defs, power deck list wiring, tests, and rules audit). (Overlap note: commit also picked up pre-staged agent2 changes in `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.guerilla-native-mercenary.test.ts`, `apps/web/src/components/GameScreen.tsx`.)
 
 ## Milestone 9 progress
 - Shifted GameCard art cropping upward (~10%) with a slight zoom across variants; updated the plan checklist. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
