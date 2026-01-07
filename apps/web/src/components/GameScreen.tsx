@@ -104,7 +104,7 @@ const formatPhaseLabel = (phase: string) => {
   return spaced.replace(/^\w/, (value) => value.toUpperCase());
 };
 
-const CARD_REVEAL_DURATION_MS = 2400;
+const CARD_REVEAL_DURATION_MS = 2800;
 
 const buildCardCostLabel = (cardDef: CardDef | null): string | null => {
   if (!cardDef) {

@@ -1304,7 +1304,7 @@ h1 {
     rgba(245, 158, 11, 0.22),
     rgba(245, 158, 11, 0) 60%
   );
-  animation: actionRevealFade 2.4s ease-in-out forwards;
+  animation: actionRevealFade 2.8s ease-in-out forwards;
 }
 
 .action-reveal__panel {
@@ -1317,7 +1317,7 @@ h1 {
   display: grid;
   gap: 10px;
   text-align: left;
-  animation: actionRevealPop 2.4s ease-in-out forwards;
+  animation: actionRevealPop 2.8s ease-in-out forwards;
 }
 
 .action-reveal__eyebrow {
