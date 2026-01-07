@@ -502,7 +502,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [ ] Age II/III market + power deck card tests (as content lands).
   - [ ] Champion ability tests (on-deploy, on-death, on-battle-win, dice mods, VP aura).
   - [ ] Card primitive tests for new mechanics (bridge lockdown/trap, wormhole adjacency, dice roll cards, cost overrides).
-- [ ] At the end of the market phase we don't see the nice animation and transition for the last player who auto gets it
+- [x] At the end of the market phase we don't see the nice animation and transition for the last player who auto gets it
 - [x] It needs to be much more clear that Done is like "Pass" and won't let you go again
 - [ ] Do a targetted review and cleanup of the codebase, try to find things that aren't being used anymore, are wrong etc... and clean it up, without breaking behavior.
 - [x] Small, the board that displays in the re-roll container on setup spills outside its parent

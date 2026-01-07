@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent2 | scope: fix market overlay end-of-phase animation for last auto-won card | files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/MarketOverlay.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md | status: in progress
+- none
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
@@ -129,6 +129,7 @@
 - Added action reveal overlays for basic actions (build bridge/march/reinforce) with A1-style target labels; marked the plan item complete in `implementation_plan.md`. (owner: agent3)
 
 ## Milestone 9 progress
+- Forced the market overlay to surface the winner animation for the last card even if the overlay was closed, so the end-of-market win reveal always shows. (Overlap note: `apps/web/src/components/GameScreen.tsx`.)
 - Added a unit stack arrival pulse animation in the board view to make movement clearer during action reveals; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.)
 - Added softer click sfx tags to main menu view toggles and Home create/join buttons for more audio coverage.
 - Added UI sound effects (click/error/bell) with a global click handler, round bell cue, and moved audio files into web assets; marked the plan item complete in `implementation_plan.md`.

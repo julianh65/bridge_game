@@ -721,8 +721,16 @@ export const GameScreen = ({
   );
   const shouldHoldMarketOverlay =
     !isMarketPhase && (Boolean(marketWinner) || marketOutroHold);
+  const lastMarketCardIndex = view.public.market.currentRow.length - 1;
+  const isLastMarketWinner =
+    Boolean(marketWinner) &&
+    typeof marketWinner?.cardIndex === "number" &&
+    lastMarketCardIndex >= 0 &&
+    marketWinner.cardIndex === lastMarketCardIndex;
+  const shouldForceMarketOverlay = Boolean(isLastMarketWinner);
   const showMarketOverlay =
-    (isMarketPhase && isMarketOverlayOpen) || shouldHoldMarketOverlay;
+    (isMarketPhase && (isMarketOverlayOpen || shouldForceMarketOverlay)) ||
+    shouldHoldMarketOverlay;
   const canShowHandPanel =
     Boolean(view.private) && isActionPhase && !showMarketOverlay;
   const showVictoryScreen = Boolean(view.public.winnerPlayerId && isVictoryVisible);
@@ -2084,7 +2092,8 @@ export const GameScreen = ({
     </div>
   ) : null;
 
-  const showMarketOverlayToggle = isMarketPhase && !isMarketOverlayOpen;
+  const showMarketOverlayToggle =
+    isMarketPhase && !isMarketOverlayOpen && !shouldForceMarketOverlay;
   const marketOverlay = isMarketPhase || shouldHoldMarketOverlay ? (
     <>
       {showMarketOverlay ? (
