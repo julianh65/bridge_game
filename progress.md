@@ -141,6 +141,7 @@
 
 ## Docs maintenance
 - Expanded the Milestone 9 card-test checklist with Age I market sub-items in `implementation_plan.md`.
+- Added an owner-only TODO to `docs/dev.md` for replacing placeholder faction symbols with final icons and where to wire them.
 - Added a Milestone 8.5 TODO for a reusable hand-card picker/topdeck modal in `implementation_plan.md`.
 - Added a Milestone 9 TODO for bridge art assets/rendering in `implementation_plan.md`.
 - Marked the Milestone 9 Age I market card-test item (Supply Ledger/Patrol Record/Banner Claim) complete in `implementation_plan.md`.
