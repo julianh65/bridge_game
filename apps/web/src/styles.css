@@ -1188,7 +1188,7 @@ h1 {
 }
 
 .game-card__art {
-  height: 146px;
+  height: 150px;
   border-radius: 12px;
   border: 1px solid rgba(111, 90, 70, 0.65);
   background: linear-gradient(135deg, #f8e8d2, #f1d2af);
@@ -2467,7 +2467,7 @@ h1 {
 }
 
 .game-card--hand .game-card__art {
-  height: 96px;
+  height: 100px;
   font-size: 9px;
   letter-spacing: 0.18em;
 }
@@ -2792,7 +2792,7 @@ h1 {
 
 .market-card__art,
 .game-card--market .game-card__art {
-  height: 176px;
+  height: 180px;
   border-radius: 12px;
   border: 1px solid rgba(111, 90, 70, 0.65);
   background: linear-gradient(135deg, #f8e8d2, #f1d2af);
@@ -3275,7 +3275,7 @@ h1 {
 }
 
 .collection-card .game-card__art {
-  height: 118px;
+  height: 122px;
 }
 
 .collection-card .game-card__name {

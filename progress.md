@@ -146,6 +146,7 @@
 - Slightly enlarged the Victory VP badge for better legibility in the rules area.
 - Made GameCard art areas taller with a framed border treatment across variants and marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Tweaked GameCard art heights and strengthened the art frame border for more visual punch. (Files: `apps/web/src/styles.css`.)
+- Nudged GameCard art heights a touch taller across variants. (Files: `apps/web/src/styles.css`.)
 - Added Victory card VP badges in `GameCard`, wired configurable `victoryPoints` in card defs/engine VP gain, and added coverage in engine card tests.
 - Added a unit stack arrival pulse animation in the board view to make movement clearer during action reveals; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.)
 - Added faction labels (symbol + name) on CardsBrowser card tiles to denote faction-specific cards; marked the plan item complete in `implementation_plan.md`. (owner: agent1)
