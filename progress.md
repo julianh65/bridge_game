@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent2 | status: in progress | scope: add per-round discard counter tracking in engine (cards discarded this round) + coverage | files: packages/engine/src/player-flags.ts, packages/engine/src/cards.ts, packages/engine/src/card-effects.ts, packages/engine/src/round-flow.ts, packages/engine/src/action-flow.test.ts, implementation_plan.md, progress.md
+- none
 
 ## Milestone 8.5 progress
 - Prevented the hand panel from appearing while the market overlay holds after market phase end; marked the plan item complete in `implementation_plan.md`.
@@ -386,6 +386,7 @@ none
 - Implemented Hold the Line + Marked for Coin + Perfect Recall effects (modifier/topdeck handling) and added action-flow coverage.
 - Overlap note: included pre-existing `packages/engine/src/index.ts` export update for `CARD_DEFS_BY_ID`.
 - Added Archivist Prime dice scaling (cards played this round) + Wormhole Artificer solo-move bonus, plus card-play counter reset/increment logic and action-flow tests.
+- Added per-round discard tracking in player flags (counts Scout Report discards and hand-limit overflow), reset each round, with action-flow coverage.
 - Verified engine coverage with `npm run -w @bridgefront/engine test`.
 
 ## Open decisions

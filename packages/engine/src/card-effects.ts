@@ -831,7 +831,9 @@ export const resolveCardEffects = (
           nextState = addCardToHandWithOverflow(nextState, playerId, cardId);
         }
         for (const cardId of discard) {
-          nextState = addCardToDiscardPile(nextState, playerId, cardId);
+          nextState = addCardToDiscardPile(nextState, playerId, cardId, {
+            countAsDiscard: true
+          });
         }
         break;
       }

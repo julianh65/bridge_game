@@ -362,7 +362,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 Start going through the rules_draft and adding the logic for the different types of cards, keep track of which have been implemented or not and try to make it as extensible and smart as possible.
 
 ### Tasks
-- [ ] Add per-round counters for cards played/discarded (cards played now tracked for Archivist Prime; discard tracking + other cards pending).
+- [x] Add per-round counters for cards played/discarded (cards played now tracked for Archivist Prime; discard tracking + other cards pending).
 - [ ] Add draw/round-end triggers (on-draw penalties, end-of-round VP awards, marked champion payouts).
 - [ ] Add targeting immunities and marked/contract flags (Ward, Immunity Field, Marked for Coin).
 - [ ] Add movement/adjacency modifiers (bridge lockdown/trap, wormhole links, tunnel network).

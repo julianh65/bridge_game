@@ -16,7 +16,11 @@ import {
 } from "./index";
 import { applyChampionDeployment } from "./champions";
 import { applyModifierQuery, getCombatModifiers } from "./modifiers";
-import { getCardsPlayedThisRound, incrementCardsPlayedThisRound } from "./player-flags";
+import {
+  getCardsDiscardedThisRound,
+  getCardsPlayedThisRound,
+  incrementCardsPlayedThisRound
+} from "./player-flags";
 import { addForcesToHex } from "./units";
 
 const pickStartingEdges = (capital: HexKey, board: BoardState): EdgeKey[] => {
@@ -1238,6 +1242,7 @@ describe("action flow", () => {
     );
     state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
 
+    const beforeDiscards = getCardsDiscardedThisRound(state, "p1");
     state = runUntilBlocked(state);
 
     const p1After = state.players.find((player) => player.id === "p1");
@@ -1249,6 +1254,7 @@ describe("action flow", () => {
     expect(p1After.deck.drawPile).toEqual([]);
     const expectedDiscard = [injected.instanceId, ...created.instanceIds.slice(1)].sort();
     expect([...p1After.deck.discardPile].sort()).toEqual(expectedDiscard);
+    expect(getCardsDiscardedThisRound(state, "p1")).toBe(beforeDiscards + 2);
   });
 
   it("plays a bridge-building card on an empty edge", () => {

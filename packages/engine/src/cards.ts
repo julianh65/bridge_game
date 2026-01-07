@@ -2,6 +2,7 @@ import { randInt, shuffle } from "@bridgefront/shared";
 
 import type { CardDefId, CardInstanceID, GameState, PlayerID } from "./types";
 import { getCardDef } from "./content/cards";
+import { incrementCardsDiscardedThisRound } from "./player-flags";
 
 const getPlayer = (state: GameState, playerId: PlayerID) => {
   const player = state.players.find((entry) => entry.id === playerId);
@@ -43,6 +44,10 @@ const addPermanentVp = (state: GameState, playerId: PlayerID, amount: number): G
         : player
     )
   };
+};
+
+type DiscardOptions = {
+  countAsDiscard?: boolean;
 };
 
 export const createCardInstances = (
@@ -153,9 +158,7 @@ export const addCardToHandWithOverflow = (
 ): GameState => {
   const player = getPlayer(state, playerId);
   if (player.deck.hand.length >= state.config.HAND_LIMIT) {
-    return updatePlayerDeck(state, playerId, {
-      discardPile: [...player.deck.discardPile, cardInstanceId]
-    });
+    return addCardToDiscardPile(state, playerId, cardInstanceId, { countAsDiscard: true });
   }
 
   return updatePlayerDeck(state, playerId, {
@@ -196,10 +199,18 @@ export const drawCards = (
 
     const [top, ...rest] = drawPile;
     if (hand.length >= nextState.config.HAND_LIMIT) {
-      discardPile = [...discardPile, top];
-    } else {
-      hand = [...hand, top];
+      nextState = updatePlayerDeck(nextState, playerId, {
+        drawPile: rest,
+        discardPile,
+        hand
+      });
+      nextState = addCardToDiscardPile(nextState, playerId, top, { countAsDiscard: true });
+      player = getPlayer(nextState, playerId);
+      ({ drawPile, discardPile, hand } = player.deck);
+      continue;
     }
+
+    hand = [...hand, top];
 
     nextState = updatePlayerDeck(nextState, playerId, {
       drawPile: rest,
@@ -272,12 +283,17 @@ export const scrapCardFromHand = (
 export const addCardToDiscardPile = (
   state: GameState,
   playerId: PlayerID,
-  cardInstanceId: CardInstanceID
+  cardInstanceId: CardInstanceID,
+  options: DiscardOptions = {}
 ): GameState => {
   const player = getPlayer(state, playerId);
-  return updatePlayerDeck(state, playerId, {
+  const nextState = updatePlayerDeck(state, playerId, {
     discardPile: [...player.deck.discardPile, cardInstanceId]
   });
+  if (options.countAsDiscard) {
+    return incrementCardsDiscardedThisRound(nextState, playerId);
+  }
+  return nextState;
 };
 
 export const addCardToBurned = (
