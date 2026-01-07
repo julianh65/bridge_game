@@ -126,6 +126,31 @@ const getTargetString = (
   return typeof value === "string" && value.length > 0 ? value : null;
 };
 
+const getTargetNumber = (
+  record: Record<string, unknown> | null,
+  key: string
+): number | null => {
+  if (!record) {
+    return null;
+  }
+  const value = record[key];
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+};
+
+const getTargetStringArray = (
+  record: Record<string, unknown> | null,
+  key: string
+): string[] => {
+  if (!record) {
+    return [];
+  }
+  const value = record[key];
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.filter((entry) => typeof entry === "string" && entry.length > 0);
+};
+
 const getTargetCardInstanceIds = (record: Record<string, unknown> | null): string[] => {
   if (!record) {
     return [];
@@ -471,6 +496,56 @@ export const GameScreen = ({
     ? CARD_DEFS_BY_ID.get(selectedCard.defId) ?? null
     : null;
   const cardTargetKind = selectedCardDef?.targetSpec.kind ?? "none";
+  const moveStackEffect =
+    selectedCardDef?.effects?.find((effect) => effect.kind === "moveStack") ?? null;
+  const hasFixedMoveForceCount =
+    typeof moveStackEffect?.forceCount === "number" ||
+    typeof selectedCardDef?.targetSpec.forceCount === "number";
+  const cardMoveSupportsSplit =
+    Boolean(moveStackEffect) &&
+    !hasFixedMoveForceCount &&
+    (cardTargetKind === "stack" || cardTargetKind === "path");
+  const cardMoveForceCount = useMemo(() => {
+    if (!cardMoveSupportsSplit) {
+      return null;
+    }
+    const rawCount = getTargetNumber(targetRecord, "forceCount");
+    if (rawCount === null) {
+      return null;
+    }
+    const normalized = Math.floor(rawCount);
+    return normalized > 0 ? normalized : null;
+  }, [cardMoveSupportsSplit, targetRecord]);
+  const cardMoveStartHex = useMemo(() => {
+    if (!cardMoveSupportsSplit || !targetRecord) {
+      return null;
+    }
+    if (cardTargetKind === "path") {
+      const path = getTargetStringArray(targetRecord, "path");
+      return path.length > 0 ? path[0] : null;
+    }
+    if (cardTargetKind === "stack") {
+      return getTargetString(targetRecord, "from");
+    }
+    return null;
+  }, [cardMoveSupportsSplit, cardTargetKind, targetRecord]);
+  const cardMoveForceMax = useMemo(() => {
+    if (!localPlayerId || !cardMoveStartHex) {
+      return 0;
+    }
+    const hex = view.public.board.hexes[cardMoveStartHex];
+    if (!hex) {
+      return 0;
+    }
+    const unitIds = hex.occupants[localPlayerId] ?? [];
+    let count = 0;
+    for (const unitId of unitIds) {
+      if (view.public.board.units[unitId]?.kind === "force") {
+        count += 1;
+      }
+    }
+    return count;
+  }, [cardMoveStartHex, localPlayerId, view.public.board.hexes, view.public.board.units]);
   const topdeckEffect = selectedCardDef?.effects?.find(
     (effect) => effect.kind === "topdeckFromHand"
   );
@@ -748,6 +823,23 @@ export const GameScreen = ({
   }, [marchForceCount, marchForceMax, marchFrom]);
 
   useEffect(() => {
+    if (!cardMoveSupportsSplit || !cardMoveStartHex || cardMoveForceMax <= 1) {
+      if (cardMoveForceCount !== null) {
+        setCardForceCount(null);
+      }
+      return;
+    }
+    if (cardMoveForceCount !== null && cardMoveForceCount > cardMoveForceMax) {
+      setCardForceCount(cardMoveForceMax);
+    }
+  }, [
+    cardMoveForceCount,
+    cardMoveForceMax,
+    cardMoveStartHex,
+    cardMoveSupportsSplit
+  ]);
+
+  useEffect(() => {
     if (isMarketPhase) {
       setIsMarketOverlayOpen(true);
     } else {
@@ -1004,8 +1096,31 @@ export const GameScreen = ({
     };
   }, [activeCardReveal, actionRevealDurationMs, cardRevealKey]);
 
+  const applyCardMoveForceCount = (targets: Record<string, unknown>) => {
+    if (!cardMoveSupportsSplit || cardMoveForceCount === null) {
+      return targets;
+    }
+    return { ...targets, forceCount: cardMoveForceCount };
+  };
+
   const setCardTargetsObject = (targets: Record<string, unknown> | null) => {
-    setCardTargetsRaw(targets ? JSON.stringify(targets) : "");
+    if (!targets) {
+      setCardTargetsRaw("");
+      return;
+    }
+    const nextTargets = applyCardMoveForceCount(targets);
+    setCardTargetsRaw(JSON.stringify(nextTargets));
+  };
+
+  const setCardForceCount = (value: number | null) => {
+    const nextTargets = targetRecord ? { ...targetRecord } : {};
+    if (value === null) {
+      delete nextTargets.forceCount;
+    } else {
+      nextTargets.forceCount = value;
+    }
+    const hasTargets = Object.keys(nextTargets).length > 0;
+    setCardTargetsRaw(hasTargets ? JSON.stringify(nextTargets) : "");
   };
 
   const setCardInstanceTargets = (cardIds: string[]) => {
@@ -1621,7 +1736,19 @@ export const GameScreen = ({
     (cardId) => handCardLabels.get(cardId) ?? cardId
   );
   const topdeckLimitLabel = topdeckCount === 1 ? "1 card" : `${topdeckCount} cards`;
-  const handTargetsPanel =
+  const cardMoveStartLabel = cardMoveStartHex
+    ? hexLabels[cardMoveStartHex] ?? cardMoveStartHex
+    : null;
+  const showCardMoveSplitControls =
+    cardMoveSupportsSplit && Boolean(cardMoveStartHex) && cardMoveForceMax > 1;
+  const currentCardMoveForceCount =
+    cardMoveForceCount === null
+      ? Math.min(1, cardMoveForceMax)
+      : cardMoveForceCount;
+  const cardMoveMeta = cardMoveStartLabel
+    ? `From ${cardMoveStartLabel} (${cardMoveForceMax} forces)`
+    : `${cardMoveForceMax} forces`;
+  const topdeckPanel =
     selectedCardDef && topdeckCount > 0 ? (
       <div className="hand-targets">
         <div className="hand-targets__header">
@@ -1657,6 +1784,83 @@ export const GameScreen = ({
             : "No cards selected."}
         </p>
       </div>
+    ) : null;
+  const cardMovePanel = showCardMoveSplitControls ? (
+    <div className="hand-targets">
+      <div className="hand-targets__header">
+        <strong>Move forces</strong>
+        <span className="hand-targets__meta">{cardMoveMeta}</span>
+      </div>
+      <p className="hand-targets__hint">Choose how many forces move with this card.</p>
+      <div className="action-panel__split">
+        <div className="action-panel__split-header">
+          <span>Forces to move</span>
+          <div className="action-panel__split-toggle">
+            <button
+              type="button"
+              className={`btn btn-tertiary ${
+                cardMoveForceCount === null ? "is-active" : ""
+              }`}
+              onClick={() => setCardForceCount(null)}
+            >
+              Move all
+            </button>
+            <button
+              type="button"
+              className={`btn btn-tertiary ${
+                cardMoveForceCount !== null ? "is-active" : ""
+              }`}
+              onClick={() =>
+                setCardForceCount(
+                  cardMoveForceCount === null
+                    ? Math.min(1, cardMoveForceMax)
+                    : cardMoveForceCount
+                )
+              }
+            >
+              Split
+            </button>
+          </div>
+        </div>
+        {cardMoveForceCount !== null ? (
+          <div className="action-panel__split-controls">
+            <button
+              type="button"
+              className="btn btn-tertiary"
+              disabled={currentCardMoveForceCount <= 1}
+              onClick={() =>
+                setCardForceCount(Math.max(1, currentCardMoveForceCount - 1))
+              }
+            >
+              -
+            </button>
+            <div className="action-panel__split-count">{currentCardMoveForceCount}</div>
+            <button
+              type="button"
+              className="btn btn-tertiary"
+              disabled={currentCardMoveForceCount >= cardMoveForceMax}
+              onClick={() =>
+                setCardForceCount(
+                  Math.min(cardMoveForceMax, currentCardMoveForceCount + 1)
+                )
+              }
+            >
+              +
+            </button>
+            <span className="action-panel__split-hint">of {cardMoveForceMax} forces</span>
+          </div>
+        ) : (
+          <p className="action-panel__split-note">Moves the full stack.</p>
+        )}
+      </div>
+    </div>
+  ) : null;
+  const handTargetsPanel =
+    topdeckPanel || cardMovePanel ? (
+      <>
+        {topdeckPanel}
+        {cardMovePanel}
+      </>
     ) : null;
   const showHandPicker =
     isActionPhase && isHandPickerOpen && topdeckCount > 0 && Boolean(selectedCardDef);

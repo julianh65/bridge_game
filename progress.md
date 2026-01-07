@@ -127,6 +127,7 @@
 - Added a champion crest marker on unit stacks to make champion presence easier to spot on the board.
 - Added faction badges on unit stacks to help differentiate ownership at a glance.
 - Added a march force-count picker (move all vs split) to the action panel UI and passed `forceCount` through submit payloads; updated `implementation_plan.md` to split remaining card-move UI work.
+- Added force-count controls for card-driven stack moves in the hand targets panel and marked the plan item complete in `implementation_plan.md`.
 - Added engine support for partial force moves (optional `forceCount`), updated Quick Move/Banner Claim to move 1 force, and refreshed action-flow coverage; `implementation_plan.md` split UI vs engine subtasks.
 - Overlap note: commit included pre-staged battle UX files `apps/web/src/components/CombatOverlay.tsx` and `apps/web/src/lib/combat-log.ts` from another agent's scope.
 - Added combat round logging with dice/hit assignment payloads and a battle overlay that supports click-to-roll dice with hit assignment display; marked the Milestone 9 battle UX item complete in `implementation_plan.md`.
