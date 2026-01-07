@@ -443,7 +443,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] We should have nice transitions between ages and at the start of the game
 - [x] The bottom hand modal part is still a tiny bit clunky in that it can block stuff, maybe try to clean it up a bit and make it shorter and a bit more compact?
 - [x] The table view has to be a bit more easy to read, idk where it can go, on the right where it is, on the top, but we need to at a glance be able to just briefly see everyone's status, you can make it smaller as well
-- [ ] Can the bridges look a bit nicer? They right now just come from the center of each but they should be a bit shorter
+- [x] Can the bridges look a bit nicer? They right now just come from the center of each but they should be a bit shorter
 
 ### Other
 - [x] The champion needs to be more obvious, like a seperate thing with its health and name and stuff, and they can hover over it to see the stats
@@ -461,6 +461,12 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] The done button is a bit confusing, we need little helpers over the different buttons
 - [x] What is the play card vs submit thing below, it's confusing
 - [ ] Current player resources (mana, gold etc) is taking up too much space on the right side and should probably be moved to the top somewhere for gold and VP, mana should probably be a big blue ball in the bottom left with a number showing current and max like 3/6 near the cards
+- [ ] We need a single nice reuseable component for the cards and to use it across the board, it should have the art, the description, the initiative, mana and gold cost and other information, right now it doesn't look cohesive, and in the card playing slot you need to individually click each card to show the card info
+- [ ] Each hex should have a small label in it that is interpretable, not axial coords but like a1, b2 etc, maybe make it be from the top to bottom we have a and then left to right we have the number, then we should use that label in the log or other parts of the board
+- [ ] The champions still don't look nice on the board, it's like a long pill, they should probably just be another circle and each champion should have their own little image / logo (placeholder for now)
+- [ ] Each of the factions should have their own unique small like symbol, this can be placeholder for now but i want it to be like a small circle symbol that shows up in faction selection, next to their name, on their unit stacks etc...
+- [ ] The text of Mine Capital or whatever is a bit goofy looking and too big, it should just show that text on hover and the colored hexes are fine for now, eventually we will replace those with nice looking tiles to demarcate
+- [ ] Move the map legend to the bottom under the map
 
 ## Milestone 9 — Add Polish
 

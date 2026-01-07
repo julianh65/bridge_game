@@ -42,6 +42,26 @@ type BoardViewProps = {
 
 const HEX_DRAW_SCALE = 0.94;
 const HEX_DRAW_SIZE = HEX_SIZE * HEX_DRAW_SCALE;
+const BRIDGE_INSET = HEX_DRAW_SIZE * 0.35;
+
+const shortenSegment = (
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+  inset: number
+) => {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const length = Math.hypot(dx, dy);
+  if (!Number.isFinite(length) || length <= inset * 2) {
+    return { from, to };
+  }
+  const nx = dx / length;
+  const ny = dy / length;
+  return {
+    from: { x: from.x + nx * inset, y: from.y + ny * inset },
+    to: { x: to.x - nx * inset, y: to.y - ny * inset }
+  };
+};
 
 const tileTag = (tile: string) => {
   switch (tile) {
@@ -219,10 +239,11 @@ export const BoardView = ({
       if (!from || !to) {
         continue;
       }
+      const shortened = shortenSegment(from, to, BRIDGE_INSET);
       segments.push({
         key: bridge.key,
-        from,
-        to,
+        from: shortened.from,
+        to: shortened.to,
         ownerPlayerId: bridge.ownerPlayerId
       });
     }
@@ -251,10 +272,11 @@ export const BoardView = ({
       if (!from || !to) {
         continue;
       }
+      const shortened = shortenSegment(from, to, BRIDGE_INSET);
       segments.push({
         key: edgeKey,
-        from,
-        to
+        from: shortened.from,
+        to: shortened.to
       });
     }
     return segments;

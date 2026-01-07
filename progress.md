@@ -60,6 +60,7 @@
 - Added an action card reveal overlay that sequences resolved card plays with target summaries + board highlights, and animated unit stack movement transitions during board updates.
 - Slowed the action card reveal overlay timing for a less abrupt reveal.
 - Added an age/start-of-game transition cue overlay and marked the plan item complete in `implementation_plan.md`.
+- Shortened bridge render segments so they no longer draw center-to-center; marked the plan item complete in `implementation_plan.md`.
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.
