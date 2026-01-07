@@ -8,7 +8,6 @@ type GameScreenHeaderProps = {
   playerCount: number;
   winnerPlayerId: string | null;
   onToggle: () => void;
-  onLeave: () => void;
 };
 
 export const GameScreenHeader = ({
@@ -20,8 +19,7 @@ export const GameScreenHeader = ({
   roomId,
   playerCount,
   winnerPlayerId,
-  onToggle,
-  onLeave
+  onToggle
 }: GameScreenHeaderProps) => {
   return (
     <header className={`game-screen__header ${isCollapsed ? "is-collapsed" : ""}`}>
@@ -35,9 +33,6 @@ export const GameScreenHeader = ({
           <div className="game-screen__collapsed-actions">
             <button type="button" className="btn btn-tertiary" onClick={onToggle}>
               Show HUD
-            </button>
-            <button type="button" className="btn btn-secondary" onClick={onLeave}>
-              Leave Room
             </button>
           </div>
         </div>
@@ -60,9 +55,6 @@ export const GameScreenHeader = ({
             ) : null}
             <button type="button" className="btn btn-tertiary" onClick={onToggle}>
               Hide HUD
-            </button>
-            <button type="button" className="btn btn-secondary" onClick={onLeave}>
-              Leave Room
             </button>
           </div>
         </>

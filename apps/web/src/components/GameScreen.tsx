@@ -1368,7 +1368,6 @@ export const GameScreen = ({
         playerCount={view.public.players.length}
         winnerPlayerId={view.public.winnerPlayerId ?? null}
         onToggle={toggleHeaderCollapsed}
-        onLeave={onLeave}
       />
 
       {marketOverlay}
