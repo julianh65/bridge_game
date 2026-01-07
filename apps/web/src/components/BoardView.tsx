@@ -15,7 +15,7 @@ import {
 import { parseEdgeKey } from "@bridgefront/shared";
 
 import { HEX_SIZE, hexPoints } from "../lib/hex-geometry";
-import { getFactionSymbol } from "../lib/factions";
+import { getFactionIconUrl, getFactionSymbol } from "../lib/factions";
 import type { HexRender } from "../lib/board-preview";
 
 type ViewBox = {
@@ -262,7 +262,7 @@ const buildChampionTooltipLines = (champion: ChampionDetail): TooltipLine[] => {
   ];
   const uses = formatAbilityUses(champion.abilityUses);
   if (uses) {
-    lines.push({ text: `Uses: ${uses}`, tone: "body" });
+    lines.push({ text: `Ability uses (blue dot): ${uses}`, tone: "body" });
   }
   const rulesText = CARD_DEFS_BY_ID[champion.cardDefId]?.rulesText?.trim();
   if (rulesText) {
@@ -1257,6 +1257,7 @@ export const BoardView = ({
       {unitStacks.map((stack) => {
         const colorIndex = normalizeColorIndex(playerIndex.get(stack.ownerPlayerId));
         const factionSymbol = getFactionSymbol(playerFactionById?.[stack.ownerPlayerId]);
+        const factionIconUrl = getFactionIconUrl(playerFactionById?.[stack.ownerPlayerId]);
         const offsets =
           stack.occupantCount > 1
             ? [
@@ -1302,6 +1303,7 @@ export const BoardView = ({
         const badgeRadius = 4;
         const badgeX = 7;
         const badgeY = 7;
+        const iconSize = badgeRadius * 1.6;
         const isArriving = recentStackKeySet.has(stack.key);
         return (
           <g
@@ -1325,7 +1327,7 @@ export const BoardView = ({
                   {stack.forceCount}
                 </text>
               ) : null}
-              {factionSymbol ? (
+              {factionSymbol || factionIconUrl ? (
                 <g className="unit-faction" aria-hidden="true">
                   <circle
                     className="unit-faction__ring"
@@ -1333,14 +1335,26 @@ export const BoardView = ({
                     cy={badgeY}
                     r={badgeRadius}
                   />
-                  <text
-                    className="unit-faction__text"
-                    x={badgeX}
-                    y={badgeY}
-                    dominantBaseline="middle"
-                  >
-                    {factionSymbol}
-                  </text>
+                  {factionIconUrl ? (
+                    <image
+                      className="unit-faction__icon"
+                      href={factionIconUrl}
+                      x={badgeX - iconSize / 2}
+                      y={badgeY - iconSize / 2}
+                      width={iconSize}
+                      height={iconSize}
+                      preserveAspectRatio="xMidYMid meet"
+                    />
+                  ) : (
+                    <text
+                      className="unit-faction__text"
+                      x={badgeX}
+                      y={badgeY}
+                      dominantBaseline="middle"
+                    >
+                      {factionSymbol}
+                    </text>
+                  )}
                 </g>
               ) : null}
               {tokenLayout.map((token, index) => {

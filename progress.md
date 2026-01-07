@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- owner: agent1 | scope: add Shock Drill next-battle force-hit modifier effect + tests; update plan | files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.shock-drill.test.ts`, `implementation_plan.md`, `progress.md` | status: in_progress | overlap: `packages/engine/src/card-effects.ts` (agent3), `implementation_plan.md` (agent2/agent3)
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -157,6 +157,7 @@
 - Added Victory card VP badges in `GameCard`, wired configurable `victoryPoints` in card defs/engine VP gain, and added coverage in engine card tests.
 - Enabled champion stat blocks on market/hand GameCard views with compact hand styling; marked the plan item complete in `implementation_plan.md`. (Overlap note: `implementation_plan.md` touched alongside agent2 scope.)
 - Enlarged market roll-off dice UI and added clearer player labels; added a plan subtask for the remaining click-to-roll wiring. (Overlap note: `implementation_plan.md` touched alongside agent2 scope; commit also picked up pre-staged `packages/engine/src/content/cards/age2.ts` + `packages/engine/src/content/cards/index.ts` changes from agent2.)
+- Clarified the champion hover tooltip to call out that the blue dot shows remaining ability uses.
 - Added a unit stack arrival pulse animation in the board view to make movement clearer during action reveals; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.)
 - Added faction labels (symbol + name) on CardsBrowser card tiles to denote faction-specific cards; marked the plan item complete in `implementation_plan.md`. (owner: agent1)
 - Added softer click sfx tags to main menu view toggles and Home create/join buttons for more audio coverage.
