@@ -9,10 +9,13 @@ const DEFAULT_OUT_DIR = path.join(process.cwd(), "apps/web/public/card-art");
 const DEFAULT_MANIFEST = path.join(process.cwd(), "apps/web/src/data/card-art.json");
 const DEFAULT_CARDS_DIR = path.join(process.cwd(), "packages/engine/src/content/cards");
 const DEFAULT_PROMPT_PREFIX =
-  "Epic fantasy strategy card art, painterly, cinematic lighting, high detail, dramatic composition, no text, no border, no watermark.";
+  "Card game art. Dark mythic fantasy. A shattered world of black stone and broken landmasses suspended over void and mist. Ancient god-built structures, colossal bridges, and ruined fortresses carved from volcanic rock and dull gold. The image is vivid and has color. Reality feels heavy and unstable, with blue glowing chaos seeping through cracks in the world. Brutal, solemn tone; themes of gravity, decay, inevitability, and endurance. Painterly realism, high contrast lighting, dramatic shadows, colors broken by gold and eerie light. Monumental scale, sacred ruin, no humor, no whimsy, no modern elements.";
 const DEFAULT_NEGATIVE_PROMPT = "text, watermark, logo, frame, border, UI, caption";
-const DEFAULT_MODEL = "@cf/stabilityai/stable-diffusion-xl-base-1.0";
+const DEFAULT_OPENAI_MODEL = "gpt-image-1.5";
+const DEFAULT_CLOUDFLARE_MODEL = "@cf/stabilityai/stable-diffusion-xl-base-1.0";
 const DEFAULT_SIZE = "1024x1024";
+const DEFAULT_PROVIDER = "openai";
+const DEFAULT_OUTPUT_FORMAT = "png";
 
 const parseArgs = (argv) => {
   const args = {};
@@ -211,20 +214,90 @@ const buildPrompt = (card, options) => {
   const prefix = options.promptPrefix || DEFAULT_PROMPT_PREFIX;
   const suffix = options.promptSuffix || "";
   const parts = [prefix];
-  parts.push(`Card name: ${card.name}.`);
-  if (card.type) {
-    parts.push(`${card.type} card.`);
-  }
-  if (card.rulesText) {
-    parts.push(`Ability: ${card.rulesText}`);
-  }
-  if (card.factionId) {
-    parts.push(`Faction: ${card.factionId}.`);
-  }
   if (suffix) {
     parts.push(suffix);
   }
+  parts.push(card.name);
   return parts.join(" ").replace(/\s+/g, " ").trim();
+};
+
+const fetchBinary = async (url) => {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to download image: ${response.status} ${url}`);
+  }
+  const arrayBuffer = await response.arrayBuffer();
+  return Buffer.from(arrayBuffer);
+};
+
+const generateImageOpenAI = async (options) => {
+  if (typeof fetch !== "function") {
+    throw new Error("This script requires Node 18+ for fetch support.");
+  }
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error("Missing OPENAI_API_KEY environment variable.");
+  }
+  const model = options.model || process.env.OPENAI_IMAGE_MODEL || DEFAULT_OPENAI_MODEL;
+  const isDalle = model.startsWith("dall-e");
+  const isGptImage = model.startsWith("gpt-image");
+
+  const body = {
+    model,
+    prompt: options.prompt,
+    n: options.n
+  };
+  if (options.size) {
+    body.size = options.size;
+  }
+  if (options.quality) {
+    body.quality = options.quality;
+  }
+  if (options.background && isGptImage) {
+    body.background = options.background;
+  }
+  if (options.outputFormat && isGptImage) {
+    body.output_format = options.outputFormat;
+  }
+  if (typeof options.outputCompression === "number" && isGptImage) {
+    body.output_compression = options.outputCompression;
+  }
+  if (options.responseFormat && isDalle) {
+    body.response_format = options.responseFormat;
+  }
+
+  const response = await fetch("https://api.openai.com/v1/images/generations", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
+  });
+
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(`OpenAI image error: ${response.status} ${JSON.stringify(payload)}`);
+  }
+  const data = payload && Array.isArray(payload.data) ? payload.data : [];
+  if (data.length === 0) {
+    throw new Error("OpenAI image response did not include image data.");
+  }
+
+  const buffers = [];
+  for (const item of data) {
+    if (item.b64_json) {
+      buffers.push(Buffer.from(item.b64_json, "base64"));
+      continue;
+    }
+    if (item.url) {
+      buffers.push(await fetchBinary(item.url));
+      continue;
+    }
+    throw new Error("Unsupported OpenAI image payload format.");
+  }
+
+  return buffers;
 };
 
 const generateImageCloudflare = async (options) => {
@@ -236,7 +309,7 @@ const generateImageCloudflare = async (options) => {
   if (!accountId || !apiToken) {
     throw new Error("Missing CF_ACCOUNT_ID or CF_API_TOKEN environment variables.");
   }
-  const model = process.env.CF_IMAGE_MODEL || DEFAULT_MODEL;
+  const model = options.model || process.env.CF_IMAGE_MODEL || DEFAULT_CLOUDFLARE_MODEL;
   const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${model}`;
 
   const body = {
@@ -264,7 +337,7 @@ const generateImageCloudflare = async (options) => {
   const contentType = response.headers.get("content-type") || "";
   if (contentType.startsWith("image/")) {
     const arrayBuffer = await response.arrayBuffer();
-    return Buffer.from(arrayBuffer);
+    return [Buffer.from(arrayBuffer)];
   }
 
   const payload = await response.json().catch(() => null);
@@ -278,10 +351,10 @@ const generateImageCloudflare = async (options) => {
   }
   if (typeof image === "string") {
     const base64 = image.replace(/^data:image\/[a-zA-Z0-9+.-]+;base64,/, "");
-    return Buffer.from(base64, "base64");
+    return [Buffer.from(base64, "base64")];
   }
   if (Array.isArray(image)) {
-    return Buffer.from(image);
+    return [Buffer.from(image)];
   }
   throw new Error("Unsupported Cloudflare AI image payload format.");
 };
@@ -289,7 +362,7 @@ const generateImageCloudflare = async (options) => {
 const generateImageMock = async () => {
   const base64 =
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=";
-  return Buffer.from(base64, "base64");
+  return [Buffer.from(base64, "base64")];
 };
 
 const pickRandomSubset = (items, count, seed) => {
@@ -310,8 +383,23 @@ const formatCardLine = (card) => {
   return `${card.id} ${deck} - ${card.name}`.trim();
 };
 
+const buildFileBase = (card) => {
+  const raw = sanitizeFileName(card.name).replace(/_+/g, "_").replace(/^_+|_+$/g, "");
+  if (raw) {
+    return raw;
+  }
+  return sanitizeFileName(card.id);
+};
+
+const resolveFileExtension = (provider, model, outputFormat) => {
+  if (provider === "openai" && model && model.startsWith("gpt-image")) {
+    return outputFormat || DEFAULT_OUTPUT_FORMAT;
+  }
+  return "png";
+};
+
 const printUsage = () => {
-  console.log(`\nUsage: node scripts/generate-card-art.js [options]\n\nOptions:\n  --cards <id1,id2>     Comma-separated card ids to generate\n  --deck <deck>         Filter by deck (starter, age1, age2, age3, power)\n  --tag <tag>           Filter by tag (repeatable via comma)\n  --faction <id>        Filter by factionId\n  --count <n>           Randomly select N cards from the filtered list\n  --seed <n>            Seed for random selection and image generation\n  --provider <name>     cloudflare | mock (default: cloudflare)\n  --cards-dir <path>    Override the card defs directory\n  --out-dir <path>      Output directory for images\n  --manifest <path>     Manifest json path\n  --size <WxH>          Image size, e.g. 1024x1024 (default: 1024x1024)\n  --steps <n>           Diffusion steps (provider-specific)\n  --prompt-prefix <txt> Override the default prompt prefix\n  --prompt-suffix <txt> Extra prompt suffix to append\n  --negative-prompt <t> Negative prompt override\n  --force               Overwrite existing images\n  --dry-run             Print prompts without generating\n  --list                List available cards\n  --help                Show help\n`);
+  console.log(`\nUsage: node scripts/generate-card-art.js [options]\n\nOptions:\n  --cards <id1,id2>        Comma-separated card ids to generate\n  --deck <deck>            Filter by deck (starter, age1, age2, age3, power)\n  --tag <tag>              Filter by tag (repeatable via comma)\n  --faction <id>           Filter by factionId\n  --count <n>              Randomly select N cards from the filtered list\n  --seed <n>               Seed for random selection\n  --provider <name>        openai | cloudflare | mock (default: ${DEFAULT_PROVIDER})\n  --model <name>           Override provider model\n  --cards-dir <path>       Override the card defs directory\n  --out-dir <path>         Output directory for images\n  --manifest <path>        Manifest json path\n  --skip-manifest          Do not update the manifest file\n  --size <WxH|auto>        Image size (default: ${DEFAULT_SIZE})\n  --n <count>              Number of images per card (provider-specific)\n  --quality <level>        OpenAI quality (auto|high|medium|low)\n  --background <mode>      OpenAI background (auto|transparent|opaque)\n  --output-format <fmt>    OpenAI output format (png|jpeg|webp)\n  --output-compression <n> OpenAI output compression (0-100)\n  --response-format <fmt>  OpenAI dall-e response format (url|b64_json)\n  --steps <n>              Cloudflare diffusion steps\n  --prompt-prefix <txt>    Override the default prompt prefix\n  --prompt-suffix <txt>    Extra prompt suffix to append\n  --negative-prompt <t>    Cloudflare negative prompt override\n  --force                  Overwrite existing images\n  --dry-run                Print prompts without generating\n  --list                   List available cards\n  --help                   Show help\n\nEnvironment variables:\n  OPENAI_API_KEY           Required for provider=openai\n  OPENAI_IMAGE_MODEL       Optional OpenAI model override\n  CF_ACCOUNT_ID            Required for provider=cloudflare\n  CF_API_TOKEN             Required for provider=cloudflare\n  CF_IMAGE_MODEL           Optional Cloudflare model override\n`);
 };
 
 const main = async () => {
@@ -321,10 +409,11 @@ const main = async () => {
     return;
   }
 
+  const provider = args.provider || DEFAULT_PROVIDER;
+  const modelOverride = args.model ? String(args.model) : null;
   const cardsDir = args["cards-dir"] ? path.resolve(args["cards-dir"]) : DEFAULT_CARDS_DIR;
   const outDir = args["out-dir"] ? path.resolve(args["out-dir"]) : DEFAULT_OUT_DIR;
   const manifestPath = args.manifest ? path.resolve(args.manifest) : DEFAULT_MANIFEST;
-  const provider = args.provider || "cloudflare";
   const deckFilter = args.deck ? String(args.deck) : null;
   const tagFilter = args.tag ? String(args.tag).split(",").map((tag) => tag.trim()) : [];
   const factionFilter = args.faction ? String(args.faction) : null;
@@ -337,7 +426,20 @@ const main = async () => {
   const promptSuffix = args["prompt-suffix"] ? String(args["prompt-suffix"]) : "";
   const negativePrompt = args["negative-prompt"] ? String(args["negative-prompt"]) : "";
   const steps = args.steps ? Number(args.steps) : null;
-  const { width, height } = parseSize(args.size || DEFAULT_SIZE);
+  const sizeValue = args.size ? String(args.size) : DEFAULT_SIZE;
+  const imageCount = args.n ? Number(args.n) : 1;
+  const quality = args.quality ? String(args.quality) : null;
+  const background = args.background ? String(args.background) : null;
+  const outputFormat = args["output-format"] ? String(args["output-format"]) : DEFAULT_OUTPUT_FORMAT;
+  const outputCompression = args["output-compression"]
+    ? Number(args["output-compression"])
+    : null;
+  const responseFormat = args["response-format"] ? String(args["response-format"]) : null;
+  const skipManifest = Boolean(args["skip-manifest"]);
+
+  if (Number.isFinite(imageCount) && imageCount < 1) {
+    throw new Error("--n must be at least 1.");
+  }
 
   const cards = parseCardFiles(cardsDir);
   if (cards.length === 0) {
@@ -398,45 +500,87 @@ const main = async () => {
     return;
   }
 
+  if (provider === "cloudflare" && sizeValue === "auto") {
+    throw new Error("Cloudflare provider requires --size in WxH format.");
+  }
+
+  if (provider === "openai" && negativePrompt) {
+    console.warn("OpenAI image generation does not support negative prompts; ignoring.");
+  }
+
+  const sizeDimensions = provider === "cloudflare" ? parseSize(sizeValue) : null;
+
   fs.mkdirSync(outDir, { recursive: true });
-  const manifest = readJsonFile(manifestPath);
+  const manifest = skipManifest ? null : readJsonFile(manifestPath);
   const generateImage =
     provider === "mock"
       ? generateImageMock
       : provider === "cloudflare"
         ? generateImageCloudflare
-        : null;
+        : provider === "openai"
+          ? generateImageOpenAI
+          : null;
 
   if (!generateImage) {
     throw new Error(`Unsupported provider: ${provider}`);
   }
 
+  const fileBaseCounts = new Map();
+  const model = modelOverride || (provider === "cloudflare" ? DEFAULT_CLOUDFLARE_MODEL : DEFAULT_OPENAI_MODEL);
+  const fileExtension = resolveFileExtension(provider, model, outputFormat);
+
   for (const card of selection) {
     const prompt = buildPrompt(card, { promptPrefix, promptSuffix });
-    const fileName = `${sanitizeFileName(card.id)}.png`;
-    const outputPath = path.join(outDir, fileName);
+    const base = buildFileBase(card);
+    const nextCount = (fileBaseCounts.get(base) || 0) + 1;
+    fileBaseCounts.set(base, nextCount);
+    const baseWithCount = nextCount > 1 ? `${base}-${nextCount}` : base;
 
-    if (!force && fs.existsSync(outputPath)) {
-      console.log(`Skipping ${card.id}, image already exists.`);
-      manifest[card.id] = fileName;
-      continue;
-    }
-
-    console.log(`Generating art for ${card.id}...`);
-    const buffer = await generateImage({
+    console.log(`Generating art for ${card.name}...`);
+    const buffers = await generateImage({
       prompt,
       negativePrompt,
-      width,
-      height,
+      width: sizeDimensions ? sizeDimensions.width : null,
+      height: sizeDimensions ? sizeDimensions.height : null,
+      size: sizeValue,
       steps,
-      seed
+      seed,
+      n: imageCount,
+      model,
+      quality,
+      background,
+      outputFormat,
+      outputCompression,
+      responseFormat
     });
-    fs.writeFileSync(outputPath, buffer);
-    manifest[card.id] = fileName;
+
+    for (let i = 0; i < buffers.length; i += 1) {
+      const suffix = buffers.length > 1 ? `-${i + 1}` : "";
+      const fileName = `${baseWithCount}${suffix}.${fileExtension}`;
+      const outputPath = path.join(outDir, fileName);
+
+      if (!force && fs.existsSync(outputPath)) {
+        console.log(`Skipping ${fileName}, image already exists.`);
+        continue;
+      }
+
+      fs.writeFileSync(outputPath, buffers[i]);
+      if (manifest && buffers.length === 1) {
+        manifest[card.id] = fileName;
+      }
+    }
+
+    if (manifest && buffers.length > 1) {
+      console.log(`Manifest update skipped for ${card.id} (multiple images).`);
+    }
   }
 
-  writeJsonFile(manifestPath, manifest);
-  console.log(`\nUpdated manifest: ${manifestPath}`);
+  if (manifest) {
+    writeJsonFile(manifestPath, manifest);
+    console.log(`\nUpdated manifest: ${manifestPath}`);
+  } else {
+    console.log("\nManifest update skipped.");
+  }
 };
 
 main().catch((error) => {

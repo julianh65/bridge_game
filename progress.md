@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent3] Update card-art generator for OpenAI API (prompt template, title-based filenames, optional manifest update) and refresh plan/progress. Files: `scripts/generate-card-art.js`, `implementation_plan.md`, `progress.md`. (status: in progress)
+- none
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
@@ -423,6 +423,7 @@ none
 
 ## Milestone 7.5 progress
 - Added a card-art manifest + helper, GameCard art rendering, and a CLI script to generate diffusion art and update the manifest. (Files: `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`.)
+- Switched the card-art generator to OpenAI's image API, updated the base prompt + title suffix behavior, added title-based filenames, and made manifest updates optional. (Files: `scripts/generate-card-art.js`.)
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
