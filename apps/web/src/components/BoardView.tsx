@@ -261,8 +261,8 @@ const viewBoxEquals = (a: ViewBox, b: ViewBox): boolean => {
 const clampViewBox = (viewBox: ViewBox, baseViewBox: ViewBox): ViewBox => {
   const baseMaxX = baseViewBox.minX + baseViewBox.width;
   const baseMaxY = baseViewBox.minY + baseViewBox.height;
-  const marginX = viewBox.width * 0.45;
-  const marginY = viewBox.height * 0.45;
+  const marginX = viewBox.width * 0.7;
+  const marginY = viewBox.height * 0.7;
   const minAllowedX = baseViewBox.minX - marginX;
   const maxAllowedX = baseMaxX + marginX - viewBox.width;
   const minAllowedY = baseViewBox.minY - marginY;
@@ -797,6 +797,9 @@ export const BoardView = ({
   };
 
   const handlePointerLeave: PointerEventHandler<SVGSVGElement> = (event) => {
+    if (capturedPointersRef.current.size > 0) {
+      return;
+    }
     for (const pointerId of capturedPointersRef.current) {
       event.currentTarget.releasePointerCapture(pointerId);
     }

@@ -37,6 +37,7 @@
 - Aligned action enablement with action-step waiting eligibility and added action-panel hints for disabled states (no mana/submitted/not action phase).
 - Overlap note: commit also captured a BoardView pan/zoom clamp loosen (margin 0.15 → 0.3) + implementation plan task tweaks from agent2.
 - Loosened the BoardView pan clamp further (margin 0.45) to allow more off-screen drag freedom.
+- Loosened the BoardView pan clamp again (margin 0.7) and avoided clearing drag state on pointer leave while a drag capture is active to reduce edge jitter.
 - Added show/hide controls for the hand panel, made the actions column collapsible, and removed internal scrolling from the bottom hand area.
 - Removed the duplicate action panel, tightened the game view to fit the viewport, and reduced the board height while keeping the intel dock as a fixed overlay.
 - Consolidated the GameScreen layout: moved the action panel into the hand row, added an intel dock for players/log, and tightened the sidebar into status/resources/intel summaries (styles updated).
