@@ -331,6 +331,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Capital occupation VP bonus (+2 temp VP instead of +1)
   - [ ] etc. (start with 1–2 factions but first double check the rules from rules_draft)
 - [x] Support faction starter spell effects with existing primitives (Air Drop deployForces, Rich Veins increaseMineValue).
+- [x] Implement remaining faction starter spell effects (Hold the Line, Marked for Coin, Perfect Recall).
 - Implement champions:
   - [x] play champion card => spawn champion unit
   - [x] champion gold cost scaling by “nth champion currently controlled”

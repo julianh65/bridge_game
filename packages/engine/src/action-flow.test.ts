@@ -13,6 +13,7 @@ import {
   runUntilBlocked
 } from "./index";
 import { applyChampionDeployment } from "./champions";
+import { applyModifierQuery, getCombatModifiers } from "./modifiers";
 import { addForcesToHex } from "./units";
 
 const pickStartingEdges = (capital: HexKey, board: BoardState): EdgeKey[] => {
@@ -1610,5 +1611,180 @@ describe("action flow", () => {
       throw new Error("missing p1 state");
     }
     expect(p1After.resources.gold).toBe(p1Before.resources.gold + 4);
+  });
+
+  it("plays hold the line to boost defending forces on the chosen hex", () => {
+    let { state, p1Capital } = setupToActionPhase({ p1: "aerial" });
+
+    const injected = addCardToHand(state, "p1", "faction.bastion.hold_the_line");
+    state = injected.state;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { hexKey: p1Capital }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const hex = state.board.hexes[p1Capital];
+    const unitId = hex?.occupants["p1"]?.[0];
+    if (!unitId) {
+      throw new Error("missing p1 force on capital");
+    }
+    const unit = state.board.units[unitId];
+    if (!unit || unit.kind !== "force") {
+      throw new Error("expected a force unit on the capital");
+    }
+
+    const modifiers = getCombatModifiers(state, p1Capital);
+    const hitFaces = applyModifierQuery(
+      state,
+      modifiers,
+      (hooks) => hooks.getForceHitFaces,
+      {
+        hexKey: p1Capital,
+        attackerPlayerId: "p2",
+        defenderPlayerId: "p1",
+        round: 1,
+        side: "defenders",
+        unitId,
+        unit
+      },
+      2
+    );
+
+    expect(hitFaces).toBe(3);
+  });
+
+  it("plays marked for coin to award bonus gold when the target champion dies", () => {
+    let { state, p1Capital } = setupToActionPhase({ p1: "bastion" });
+    const neighbor = neighborHexKeys(p1Capital).find((key) => Boolean(state.board.hexes[key]));
+    if (!neighbor) {
+      throw new Error("missing neighbor hex for marked for coin test");
+    }
+
+    state = addChampionToHex(state, "p1", p1Capital).state;
+    const target = addChampionToHex(state, "p2", neighbor, { hp: 1, maxHp: 1, bounty: 2 });
+    state = target.state;
+
+    const marked = addCardToHand(state, "p1", "faction.veil.marked_for_coin");
+    state = marked.state;
+    const zap = addCardToHand(state, "p1", "starter.zap");
+    state = zap.state;
+
+    const p1Before = state.players.find((player) => player.id === "p1");
+    if (!p1Before) {
+      throw new Error("missing p1 state");
+    }
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: marked.instanceId,
+          targets: { unitId: target.unitId }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+    state = runUntilBlocked(state);
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: zap.instanceId,
+          targets: { unitId: target.unitId }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+    state = runUntilBlocked(state);
+
+    expect(state.board.units[target.unitId]).toBeUndefined();
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state after marked for coin");
+    }
+    expect(p1After.resources.gold).toBe(p1Before.resources.gold + 6);
+  });
+
+  it("plays perfect recall to draw and optionally topdeck a card", () => {
+    let { state } = setupToActionPhase();
+
+    state = {
+      ...state,
+      players: state.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              deck: {
+                ...player.deck,
+                hand: []
+              }
+            }
+          : player
+      )
+    };
+
+    const recall = addCardToHand(state, "p1", "faction.cipher.perfect_recall");
+    state = recall.state;
+    const topdeck = addCardToHand(state, "p1", "starter.zap");
+    state = topdeck.state;
+
+    const drawCard = createCardInstance(state, "starter.quick_move");
+    state = drawCard.state;
+    state = {
+      ...state,
+      players: state.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              deck: {
+                ...player.deck,
+                drawPile: [drawCard.instanceId, ...player.deck.drawPile]
+              }
+            }
+          : player
+      )
+    };
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: recall.instanceId,
+          targets: { cardInstanceId: topdeck.instanceId }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+    state = runUntilBlocked(state);
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state after perfect recall");
+    }
+    expect(p1After.deck.hand).toContain(drawCard.instanceId);
+    expect(p1After.deck.hand).not.toContain(topdeck.instanceId);
+    expect(p1After.deck.drawPile[0]).toBe(topdeck.instanceId);
   });
 });

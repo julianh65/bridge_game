@@ -316,6 +316,7 @@ none
 - Added Mine Overseer Extraction bonus (+1 mine gold while occupying a mine) with collection coverage.
 - Implemented champion abilities: Bodyguard hit redirect, Assassin's Edge pre-combat damage (per-round uses), and Flight movement override; added combat + action-flow coverage.
 - Implemented Hold the Line + Marked for Coin + Perfect Recall effects (modifier/topdeck handling) and added action-flow coverage.
+- Overlap note: included pre-existing `packages/engine/src/index.ts` export update for `CARD_DEFS_BY_ID`.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

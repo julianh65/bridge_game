@@ -10,7 +10,13 @@ import {
   isOccupiedByPlayer,
   wouldExceedTwoPlayers
 } from "./board";
-import { addCardToDiscardPile, addCardToHandWithOverflow, drawCards, takeTopCards } from "./cards";
+import {
+  addCardToDiscardPile,
+  addCardToHandWithOverflow,
+  drawCards,
+  takeTopCards,
+  topdeckCardFromHand
+} from "./cards";
 import { applyChampionDeployment, dealChampionDamage, healChampion } from "./champions";
 import { addChampionToHex, addForcesToHex, countPlayerChampions } from "./units";
 import {
@@ -35,7 +41,10 @@ const SUPPORTED_EFFECTS = new Set([
   "healChampion",
   "dealChampionDamage",
   "patchUp",
-  "recruit"
+  "recruit",
+  "holdTheLine",
+  "markForCoin",
+  "topdeckFromHand"
 ]);
 
 type TargetRecord = Record<string, unknown>;
@@ -137,6 +146,16 @@ const getChampionTargetId = (targets: CardPlayTargets): string | null => {
   const record = getTargetRecord(targets);
   const unitId = record?.unitId ?? record?.championId;
   return typeof unitId === "string" && unitId.length > 0 ? unitId : null;
+};
+
+const getCardInstanceTargets = (targets: CardPlayTargets): string[] => {
+  const record = getTargetRecord(targets);
+  const ids = record?.cardInstanceIds;
+  if (Array.isArray(ids)) {
+    return ids.filter((entry) => typeof entry === "string" && entry.length > 0);
+  }
+  const id = record?.cardInstanceId;
+  return typeof id === "string" && id.length > 0 ? [id] : [];
 };
 
 const isWithinDistance = (from: string, to: string, maxDistance: number): boolean => {
@@ -517,7 +536,22 @@ export const isCardPlayable = (
   }
 
   if (card.targetSpec.kind === "none") {
-    return targets == null;
+    if (targets == null) {
+      return true;
+    }
+    const canTopdeck = card.effects?.some((effect) => effect.kind === "topdeckFromHand");
+    if (!canTopdeck) {
+      return false;
+    }
+    const player = state.players.find((entry) => entry.id === playerId);
+    if (!player) {
+      return false;
+    }
+    const targetIds = getCardInstanceTargets(targets);
+    if (targetIds.length === 0) {
+      return false;
+    }
+    return targetIds.every((id) => player.deck.hand.includes(id));
   }
 
   if (card.targetSpec.kind === "hex") {
@@ -727,6 +761,28 @@ export const resolveCardEffects = (
         nextState = drawCards(nextState, playerId, count);
         break;
       }
+      case "topdeckFromHand": {
+        const count = typeof effect.count === "number" ? Math.max(0, Math.floor(effect.count)) : 1;
+        if (count <= 0) {
+          break;
+        }
+        const targetIds = getCardInstanceTargets(targets ?? null);
+        if (targetIds.length === 0) {
+          break;
+        }
+        const player = nextState.players.find((entry) => entry.id === playerId);
+        if (!player) {
+          break;
+        }
+        const validTargets = targetIds.filter((id) => player.deck.hand.includes(id));
+        if (validTargets.length === 0) {
+          break;
+        }
+        for (const cardInstanceId of validTargets.slice(0, count)) {
+          nextState = topdeckCardFromHand(nextState, playerId, cardInstanceId);
+        }
+        break;
+      }
       case "scoutReport": {
         const lookCount = Math.max(0, Number(effect.lookCount) || 0);
         const keepCount = Math.max(0, Number(effect.keepCount) || 0);
@@ -918,6 +974,76 @@ export const resolveCardEffects = (
           amount += capitalBonus;
         }
         nextState = healChampion(nextState, target.unitId, amount);
+        break;
+      }
+      case "holdTheLine": {
+        const target = getHexTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null
+        );
+        if (!target) {
+          break;
+        }
+        const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.${target.hexKey}`;
+        nextState = {
+          ...nextState,
+          modifiers: [
+            ...nextState.modifiers,
+            {
+              id: modifierId,
+              source: { type: "card", sourceId: card.id },
+              ownerPlayerId: playerId,
+              attachedHex: target.hexKey,
+              duration: { type: "endOfRound" },
+              hooks: {
+                getForceHitFaces: ({ modifier, unit, defenderPlayerId }, current) => {
+                  if (unit.kind !== "force") {
+                    return current;
+                  }
+                  if (modifier.ownerPlayerId && modifier.ownerPlayerId !== unit.ownerPlayerId) {
+                    return current;
+                  }
+                  if (defenderPlayerId !== unit.ownerPlayerId) {
+                    return current;
+                  }
+                  return Math.max(current, 3);
+                }
+              }
+            }
+          ]
+        };
+        break;
+      }
+      case "markForCoin": {
+        const target = getChampionTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null
+        );
+        if (!target) {
+          break;
+        }
+        const bounty = typeof effect.bounty === "number" ? Math.max(0, effect.bounty) : 0;
+        const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.${target.unitId}`;
+        nextState = {
+          ...nextState,
+          modifiers: [
+            ...nextState.modifiers,
+            {
+              id: modifierId,
+              source: { type: "card", sourceId: card.id },
+              ownerPlayerId: playerId,
+              duration: { type: "endOfRound" },
+              data: {
+                markedUnitId: target.unitId,
+                bonusGold: bounty
+              }
+            }
+          ]
+        };
         break;
       }
       case "buildBridge": {
