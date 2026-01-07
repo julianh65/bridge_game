@@ -379,6 +379,79 @@ export const BRUTE: CardDef = {
   }
 };
 
+export const BOUNTY_HUNTER: CardDef = {
+  id: "champion.age1.bounty_hunter",
+  name: "Bounty Hunter",
+  rulesText:
+    "Contract Pay: When an enemy Champion dies in a battle this Champion is in, gain +1 gold.",
+  type: "Champion",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 2 },
+  initiative: 75,
+  burn: true,
+  targetSpec: {
+    kind: "hex",
+    owner: "self",
+    occupied: true
+  },
+  champion: {
+    hp: 4,
+    attackDice: 2,
+    hitFaces: 3,
+    bounty: 2,
+    goldCostByChampionCount: [1, 3, 5]
+  }
+};
+
+export const SERGEANT: CardDef = {
+  id: "champion.age1.sergeant",
+  name: "Sergeant",
+  rulesText: "No special ability.",
+  type: "Champion",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1 },
+  initiative: 35,
+  burn: true,
+  targetSpec: {
+    kind: "hex",
+    owner: "self",
+    occupied: true
+  },
+  champion: {
+    hp: 3,
+    attackDice: 1,
+    hitFaces: 3,
+    bounty: 1,
+    goldCostByChampionCount: [1, 1, 1]
+  }
+};
+
+export const TRAITOR: CardDef = {
+  id: "champion.age1.traitor",
+  name: "Traitor",
+  rulesText: "Upon death: set the owner's mana to 0.",
+  type: "Champion",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1 },
+  initiative: 35,
+  burn: true,
+  targetSpec: {
+    kind: "hex",
+    owner: "self",
+    occupied: true
+  },
+  champion: {
+    hp: 5,
+    attackDice: 3,
+    hitFaces: 3,
+    bounty: 3,
+    goldCostByChampionCount: [1, 2, 5]
+  }
+};
+
 export const AGE1_CARDS: CardDef[] = [
   QUICK_MARCH,
   FLANK_STEP,
@@ -400,5 +473,8 @@ export const AGE1_CARDS: CardDef[] = [
   SKIRMISHER_CAPTAIN,
   BRIDGE_RUNNER,
   INSPIRING_GEEZER,
-  BRUTE
+  BRUTE,
+  BOUNTY_HUNTER,
+  SERGEANT,
+  TRAITOR
 ];

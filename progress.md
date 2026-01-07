@@ -17,7 +17,6 @@
 
 ## Active tasks
 - none
-- owner: agent1; scope: add missing Age I champions (Bounty Hunter/Sergeant/Traitor) to age1 card list + update plan; files: packages/engine/src/content/cards/age1.ts, implementation_plan.md, progress.md; status: in progress (overlap: implementation_plan.md, progress.md)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
@@ -329,6 +328,7 @@ none
 - Added an initial Age I market deck list export under `packages/engine/src/content/market-decks.ts`.
 - Added market deck tests to validate ids are unique, registered, and age-appropriate.
 - Added derived card tags for burn/power/victory/champion in the registry, with tests.
+- Added Age I champion cards for Bounty Hunter, Sergeant, and Traitor to the Age I market list.
 
 ## Debug UI progress
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.
