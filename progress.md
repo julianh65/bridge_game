@@ -17,9 +17,9 @@
 
 ## Active tasks
 - none
-- owner: agent3 — scope: add unit stack arrival/move pulse animation on board updates to make action-phase movement clearer — files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `progress.md`, `implementation_plan.md` — status: in progress
 
 ## Milestone 8.5 progress
+- Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
 - Simplified the basic actions UI: removed pick/clear buttons, made march/bridge targets clickable fields, and auto-clear march destination when the start changes; marked the plan item complete in `implementation_plan.md`. (Overlap note: touched `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`.)
 - Extended the market overlay outro hold so the hand panel stays hidden briefly after market phase ends if the overlay was open; marked the plan item complete in `implementation_plan.md`. (Overlap note: `implementation_plan.md` had pre-existing edits; touched `apps/web/src/components/GameScreen.tsx`.)
 - Restored basic action auto-pick mode on selection (bridge/march) per feedback; updated the plan item to match. (Overlap note: `apps/web/src/components/GameScreen.tsx` touched alongside agent1 scope.)
@@ -129,6 +129,7 @@
 - Added action reveal overlays for basic actions (build bridge/march/reinforce) with A1-style target labels; marked the plan item complete in `implementation_plan.md`. (owner: agent3)
 
 ## Milestone 9 progress
+- Added a unit stack arrival pulse animation in the board view to make movement clearer during action reveals; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.)
 - Added softer click sfx tags to main menu view toggles and Home create/join buttons for more audio coverage.
 - Added UI sound effects (click/error/bell) with a global click handler, round bell cue, and moved audio files into web assets; marked the plan item complete in `implementation_plan.md`.
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.

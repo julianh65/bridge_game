@@ -480,7 +480,7 @@ export const GameScreen = ({
   const lastMarketEventIndex = useRef(-1);
   const lastCardRevealIndex = useRef(-1);
   const marketOverlayHoldTimeout = useRef<number | null>(null);
-  const wasMarketPhaseRef = useRef(view.public.phase === "round.market");
+  const wasMarketPhaseRef = useRef(false);
 
   const localCapitalHexKey = useMemo(() => {
     if (!localPlayerId) {
@@ -1037,6 +1037,7 @@ export const GameScreen = ({
     const phase = view.public.phase;
     const isRoundPhase = phase.startsWith("round.");
     if (!hasAgeIntroShown.current && isRoundPhase && round === 1) {
+      playSfx("bell");
       setAgeCue({ label: formatAgeCueLabel(age), round, kind: "start" });
       setAgeCueKey((value) => value + 1);
       hasAgeIntroShown.current = true;
@@ -1047,6 +1048,7 @@ export const GameScreen = ({
       return;
     }
     lastAgeRef.current = age;
+    playSfx("bell");
     setAgeCue({ label: formatAgeCueLabel(age), round, kind: "shift" });
     setAgeCueKey((value) => value + 1);
     hasAgeIntroShown.current = true;
