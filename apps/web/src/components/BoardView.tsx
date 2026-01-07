@@ -44,6 +44,11 @@ type BoardViewProps = {
 const HEX_DRAW_SCALE = 0.94;
 const HEX_DRAW_SIZE = HEX_SIZE * HEX_DRAW_SCALE;
 const BRIDGE_INSET = HEX_DRAW_SIZE * 0.4;
+const BRIDGE_WIDTH = HEX_DRAW_SIZE * 0.32;
+const BRIDGE_RAIL_OFFSET = BRIDGE_WIDTH * 0.38;
+const BRIDGE_PLANK_EDGE_PAD = BRIDGE_WIDTH * 0.6;
+const BRIDGE_PLANK_SPACING = HEX_DRAW_SIZE * 0.28;
+const BRIDGE_PLANK_LENGTH = BRIDGE_WIDTH * 0.85;
 
 const shortenSegment = (
   from: { x: number; y: number },
@@ -234,6 +239,11 @@ export const BoardView = ({
       from: { x: number; y: number };
       to: { x: number; y: number };
       ownerPlayerId?: string;
+      length: number;
+      ux: number;
+      uy: number;
+      px: number;
+      py: number;
     }> = [];
     for (const bridge of Object.values(board.bridges)) {
       const from = hexCenters.get(bridge.from);
@@ -242,11 +252,21 @@ export const BoardView = ({
         continue;
       }
       const shortened = shortenSegment(from, to, BRIDGE_INSET);
+      const dx = shortened.to.x - shortened.from.x;
+      const dy = shortened.to.y - shortened.from.y;
+      const length = Math.hypot(dx, dy);
+      const ux = length > 0 ? dx / length : 0;
+      const uy = length > 0 ? dy / length : 0;
       segments.push({
         key: bridge.key,
         from: shortened.from,
         to: shortened.to,
-        ownerPlayerId: bridge.ownerPlayerId
+        ownerPlayerId: bridge.ownerPlayerId,
+        length,
+        ux,
+        uy,
+        px: -uy,
+        py: ux
       });
     }
     return segments;
@@ -808,6 +828,9 @@ export const BoardView = ({
       ))}
 
       {bridgeSegments.map((bridge) => {
+        if (bridge.length <= 0.01) {
+          return null;
+        }
         const colorIndex = normalizeColorIndex(
           bridge.ownerPlayerId ? playerIndex.get(bridge.ownerPlayerId) : undefined
         );
@@ -816,16 +839,82 @@ export const BoardView = ({
         const bridgeTitle = bridge.ownerPlayerId
           ? `Bridge ${bridge.key}\nOwner: ${playerLabel(bridge.ownerPlayerId)}`
           : `Bridge ${bridge.key}`;
+        const railOffset = BRIDGE_RAIL_OFFSET;
+        const plankSpan = bridge.length - BRIDGE_PLANK_EDGE_PAD * 2;
+        const plankCount =
+          plankSpan > 0 ? Math.max(1, Math.floor(plankSpan / BRIDGE_PLANK_SPACING) + 1) : 0;
+        const plankSpacing = plankCount > 1 ? plankSpan / (plankCount - 1) : 0;
+        const planks: Array<{
+          key: string;
+          x1: number;
+          y1: number;
+          x2: number;
+          y2: number;
+        }> = [];
+        for (let i = 0; i < plankCount; i += 1) {
+          const offset =
+            plankCount === 1 ? bridge.length / 2 : BRIDGE_PLANK_EDGE_PAD + i * plankSpacing;
+          const centerX = bridge.from.x + bridge.ux * offset;
+          const centerY = bridge.from.y + bridge.uy * offset;
+          const halfLength = BRIDGE_PLANK_LENGTH / 2;
+          planks.push({
+            key: `${bridge.key}-plank-${i}`,
+            x1: centerX + bridge.px * halfLength,
+            y1: centerY + bridge.py * halfLength,
+            x2: centerX - bridge.px * halfLength,
+            y2: centerY - bridge.py * halfLength
+          });
+        }
+        const railAFrom = {
+          x: bridge.from.x + bridge.px * railOffset,
+          y: bridge.from.y + bridge.py * railOffset
+        };
+        const railATo = {
+          x: bridge.to.x + bridge.px * railOffset,
+          y: bridge.to.y + bridge.py * railOffset
+        };
+        const railBFrom = {
+          x: bridge.from.x - bridge.px * railOffset,
+          y: bridge.from.y - bridge.py * railOffset
+        };
+        const railBTo = {
+          x: bridge.to.x - bridge.px * railOffset,
+          y: bridge.to.y - bridge.py * railOffset
+        };
         return (
-          <g key={bridge.key}>
+          <g key={bridge.key} className={className}>
             <title>{bridgeTitle}</title>
             <line
-              className={className}
+              className="bridge__body"
               x1={bridge.from.x}
               y1={bridge.from.y}
               x2={bridge.to.x}
               y2={bridge.to.y}
             />
+            <line
+              className="bridge__rail"
+              x1={railAFrom.x}
+              y1={railAFrom.y}
+              x2={railATo.x}
+              y2={railATo.y}
+            />
+            <line
+              className="bridge__rail"
+              x1={railBFrom.x}
+              y1={railBFrom.y}
+              x2={railBTo.x}
+              y2={railBTo.y}
+            />
+            {planks.map((plank) => (
+              <line
+                key={plank.key}
+                className="bridge__plank"
+                x1={plank.x1}
+                y1={plank.y1}
+                x2={plank.x2}
+                y2={plank.y2}
+              />
+            ))}
           </g>
         );
       })}

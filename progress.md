@@ -16,7 +16,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent2 | scope: render bridges as styled SVG planks/rails (bridge art assets) | files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md` | status: in progress (overlap: `apps/web/src/styles.css` with agent4)
+none
+
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -71,6 +72,7 @@
 - Moved the board tools bar (selected hex + reset view) into the footer under the board to reduce top clutter.
 - Floated the selected-hex chip and reset view button over the board (top-left) with matched heights to save vertical space.
 - Shrunk the board overlay controls and switched the selection label to use the board's A1-style tile labels instead of axial coords.
+- Updated the game board SVG to stretch to available height so it reaches the legend without extra empty space.
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.
@@ -83,6 +85,7 @@
 - Added faction badges on unit stacks to help differentiate ownership at a glance.
 - Overlap note: commit included pre-staged battle UX files `apps/web/src/components/CombatOverlay.tsx` and `apps/web/src/lib/combat-log.ts` from another agent's scope.
 - Added combat round logging with dice/hit assignment payloads and a battle overlay that supports click-to-roll dice with hit assignment display; marked the Milestone 9 battle UX item complete in `implementation_plan.md`.
+- Rendered bridges as plank/rail SVG assets in the board view and marked the plan item complete in `implementation_plan.md`.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.

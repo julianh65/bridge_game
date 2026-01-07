@@ -482,7 +482,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [x] Add faction badge chips on unit stacks.
 - [x] Enforce faction uniqueness in setup (no duplicate faction picks).
 - [x] Add deck UI with draw/discard piles, counts, direction arrows, and draw/discard animations.
-- [ ] Add bridge art assets (top-down) and render them in BoardView (SVG symbol/pattern instead of plain lines).
+- [x] Add bridge art assets (top-down) and render them in BoardView (SVG symbol/pattern instead of plain lines).
 - [ ] Low priority: add at least one targeted test for each card effect/card.
   - [x] Age I market: Flank Step movement without bridges.
   - [x] Age I market: Scavenger's Market gold + draw.

@@ -3272,7 +3272,7 @@ h1 {
 }
 
 .board-svg--game {
-  height: clamp(260px, 40vh, 420px);
+  height: 100%;
   flex: 1;
 }
 
