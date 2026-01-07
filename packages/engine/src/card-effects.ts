@@ -82,6 +82,7 @@ const SUPPORTED_EFFECTS = new Set([
   "linkCapitalToCenter",
   "battleCry",
   "smokeScreen",
+  "frenzy",
   "focusFire",
   "setToSkirmish",
   "evacuateChampion"
@@ -1870,6 +1871,54 @@ export const resolveCardEffects = (
                   };
                   const cleaned = removeModifierById(state, modifier.id);
                   return { ...cleaned, modifiers: [...cleaned.modifiers, tempModifier] };
+                }
+              }
+            }
+          ]
+        };
+        break;
+      }
+      case "frenzy": {
+        const target = getChampionTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null,
+          card
+        );
+        if (!target) {
+          break;
+        }
+        const diceBonus = typeof effect.diceBonus === "number" ? effect.diceBonus : 0;
+        const damage = typeof effect.damage === "number" ? effect.damage : 0;
+        nextState = dealChampionDamage(nextState, playerId, target.unitId, damage);
+        const updated = nextState.board.units[target.unitId];
+        if (!updated || updated.kind !== "champion") {
+          break;
+        }
+        if (diceBonus <= 0) {
+          break;
+        }
+        const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.${target.unitId}.frenzy`;
+        nextState = {
+          ...nextState,
+          modifiers: [
+            ...nextState.modifiers,
+            {
+              id: modifierId,
+              source: { type: "card", sourceId: card.id },
+              ownerPlayerId: playerId,
+              attachedUnitId: target.unitId,
+              duration: { type: "endOfRound" },
+              hooks: {
+                getChampionAttackDice: ({ unit }, current) => {
+                  if (unit.kind !== "champion") {
+                    return current;
+                  }
+                  if (unit.id !== target.unitId) {
+                    return current;
+                  }
+                  return current + diceBonus;
                 }
               }
             }

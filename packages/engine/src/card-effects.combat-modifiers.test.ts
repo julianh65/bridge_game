@@ -16,14 +16,19 @@ type ChampionUnit = GameState["board"]["units"][string] & { kind: "champion" };
 
 type ForceUnit = GameState["board"]["units"][string] & { kind: "force" };
 
-const createChampion = (id: string, ownerPlayerId: string, hex: string): ChampionUnit => ({
+const createChampion = (
+  id: string,
+  ownerPlayerId: string,
+  hex: string,
+  hp = 2
+): ChampionUnit => ({
   id,
   ownerPlayerId,
   kind: "champion",
   hex,
   cardDefId: `test.${id}`,
-  hp: 2,
-  maxHp: 2,
+  hp,
+  maxHp: hp,
   attackDice: 1,
   hitFaces: 3,
   bounty: 1,
@@ -171,6 +176,66 @@ describe("combat card effects", () => {
     state = resolveBattleAtHex(state, hexB);
     const secondRound = getFirstCombatRound(state, hexB);
     expect(getHits(secondRound, "p2")).toBe(1);
+  });
+
+  it("frenzy boosts dice for the round and deals damage immediately", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({ value: 6, next: rng }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 4, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(2);
+    const hexKey = "0,0";
+
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: { p1: ["c1"], p2: ["c2"] }
+    };
+
+    board.units = {
+      c1: createChampion("c1", "p1", hexKey, 4),
+      c2: createChampion("c2", "p2", hexKey, 4)
+    };
+
+    let state: GameState = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(9),
+      board
+    };
+
+    const frenzyCard: CardDef = {
+      id: "test.frenzy",
+      name: "Frenzy",
+      rulesText: "Target friendly Champion rolls +2 dice this round; it takes 2 damage.",
+      type: "Spell",
+      deck: "starter",
+      tags: [],
+      cost: { mana: 1 },
+      initiative: 1,
+      burn: false,
+      targetSpec: {
+        kind: "champion",
+        owner: "self"
+      },
+      effects: [{ kind: "frenzy", diceBonus: 2, damage: 2 }]
+    };
+
+    state = resolveCardEffects(state, "p1", frenzyCard, { unitId: "c1" });
+    const damaged = state.board.units.c1;
+    if (!damaged || damaged.kind !== "champion") {
+      throw new Error("missing frenzy target");
+    }
+    expect(damaged.hp).toBe(2);
+
+    state = resolveBattleAtHex(state, hexKey);
+
+    const round = getFirstCombatRound(state, hexKey);
+    expect(getDiceCount(round, "p1")).toBe(3);
+    expect(getDiceCount(round, "p2")).toBe(1);
   });
 
   it("focus fire assigns hits to champions in the next battle only", () => {

@@ -17,7 +17,6 @@
 
 ## Active tasks
 - none
-- owner: agent3 | scope: add Frenzy combat modifier effect (dice bonus + self-damage) with tests; update plan | files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`, `progress.md` | status: in_progress
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -465,6 +464,7 @@ none
 - Added Set to Skirmish retreat-on-battle effect (combat modifier) with targeted test coverage; updated `implementation_plan.md`. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.) (owner: agent3)
 - Added Set to Skirmish edge-case test coverage when no adjacent retreat hex exists. (Files: `packages/engine/src/card-effects.combat-modifiers.test.ts`.) (owner: agent3)
 - Added Focus Fire hit-assignment support (next-battle modifier + combat policy) with bodyguard-aware targeting and tests; updated `implementation_plan.md`. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/champions.ts`, `packages/engine/src/types.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.)
+- Added Frenzy combat modifier effect (dice bonus + self-damage) with tests; updated `implementation_plan.md`. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.) (Overlap note: `implementation_plan.md` also had pre-existing edits.)
 
 ## Milestone 7.5 progress
 - Added a card-art manifest + helper, GameCard art rendering, and a CLI script to generate diffusion art and update the manifest. (Files: `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`.)

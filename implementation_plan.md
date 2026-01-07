@@ -360,7 +360,11 @@ Start going through the rules_draft and adding the logic for the different types
 - [ ] Add relocation effects: champion move to capital/occupied/mine, recall to hand, move stack ignoring bridges with stop-on-occupy rules.
 - [ ] Add deployment variants: champion-hex deploys, mines/forges deploys, empty-hex near capital deploys, deploy to all mines, deploy to any unoccupied hex.
 - [ ] Add AoE/encirclement effects: Mortar Shot scatter, Attrition, Encirclement/Complete Encirclement, Cataclysm Core, Siege Writ.
-- [ ] Add combat state modifiers: Smoke Screen, Shock Drill, Frenzy self-damage + dice mods, Gold Plated Armor damage prevention.
+- [ ] Add combat state modifiers:
+  - [x] Smoke Screen: first battle this round enemy Forces hit on 1 only in combat round 1.
+  - [ ] Shock Drill: first battle this round your Forces hit on 1–5 in combat round 1.
+  - [x] Frenzy: target friendly Champion rolls +2 dice this round and takes 2 damage immediately.
+  - [ ] Gold Plated Armor: prevent champion damage at gold cost for the round.
 - [ ] Add cost overrides/free-play effects (Last Contract, A Hero Joins the Battle).
 - [ ] Add random card generation effects (Black Market Pull, Forge Miracle).
 - [ ] Add burn keyword enforcement for granted cards (Forge Miracle, power deck burn effects).
@@ -534,6 +538,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] For cards with victory points we need to denote how many VP's they're worth on the card
 - [ ] We need to add logic and look for escalating champion costs as per the rules
 - [ ] Slightly make the images a bit bigger and for all images it will crop, but I want it to crop like 10% higher than it is now, that is to say i want it centered 10% higher than it is now for all cards
+- [ ] Make the cards slightly more readable, try to maximize space usage, make the font slightly larger, and it should be way more obvious the mana and gold cost, you can even put them in the bottom left and right corner like in hearthstone, to that end the entire hand area on the bottom can be made like 10% taller to accomodate
 
 ## Milestone 9.5 -- Card Art + Description
 
