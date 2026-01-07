@@ -12,6 +12,15 @@ export const getPlayerIdsOnHex = (hex: HexState): PlayerID[] => {
     .map(([playerId]) => playerId);
 };
 
+export const getCenterHexKey = (board: BoardState): HexKey | null => {
+  for (const hex of Object.values(board.hexes)) {
+    if (hex.tile === "center") {
+      return hex.key;
+    }
+  }
+  return null;
+};
+
 export const countPlayersOnHex = (hex: HexState): number => {
   return getPlayerIdsOnHex(hex).length;
 };

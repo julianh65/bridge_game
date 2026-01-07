@@ -9,12 +9,13 @@ import type {
   PlayerID,
   PlayerState
 } from "./types";
-import { getBridgeKey, isOccupiedByPlayer, wouldExceedTwoPlayers } from "./board";
+import { getBridgeKey, isOccupiedByPlayer } from "./board";
 import { addCardToBurned, addCardToDiscardPile, removeCardFromHand } from "./cards";
 import { resolveCardEffects, isCardPlayable, validateMovePath } from "./card-effects";
 import { resolveImmediateBattles } from "./combat";
 import type { CardDef } from "./content/cards";
 import { getCardDef } from "./content/cards";
+import { resolveCapitalDeployHex } from "./deploy-utils";
 import { emit } from "./events";
 import { getDeployForcesCount } from "./modifiers";
 import { markPlayerMovedThisRound } from "./player-flags";
@@ -165,23 +166,11 @@ const canMarch = (state: GameState, playerId: PlayerID, from: string, to: string
   return false;
 };
 
-const getCapitalReinforceHex = (state: GameState, playerId: PlayerID): string | null => {
-  const player = state.players.find((entry) => entry.id === playerId);
-  if (!player?.capitalHex) {
-    return null;
-  }
-
-  const capitalHex = state.board.hexes[player.capitalHex];
-  if (!capitalHex) {
-    return null;
-  }
-
-  if (wouldExceedTwoPlayers(capitalHex, playerId)) {
-    return null;
-  }
-
-  return player.capitalHex;
-};
+const getCapitalReinforceHex = (
+  state: GameState,
+  playerId: PlayerID,
+  preferredHex?: string
+): string | null => resolveCapitalDeployHex(state, playerId, preferredHex ?? null);
 
 const isBasicActionValid = (state: GameState, playerId: PlayerID, action: BasicAction): boolean => {
   switch (action.kind) {
@@ -190,7 +179,7 @@ const isBasicActionValid = (state: GameState, playerId: PlayerID, action: BasicA
     case "march":
       return canMarch(state, playerId, action.from, action.to);
     case "capitalReinforce":
-      return Boolean(getCapitalReinforceHex(state, playerId));
+      return Boolean(getCapitalReinforceHex(state, playerId, action.hexKey));
     default: {
       const _exhaustive: never = action;
       return _exhaustive;
@@ -449,7 +438,7 @@ const resolveBasicAction = (state: GameState, playerId: PlayerID, action: BasicA
     case "march":
       return resolveMarch(state, playerId, action.from, action.to);
     case "capitalReinforce":
-      return resolveCapitalReinforce(state, playerId);
+      return resolveCapitalReinforce(state, playerId, action.hexKey);
     default: {
       const _exhaustive: never = action;
       return state;
@@ -492,8 +481,12 @@ const resolveMarch = (state: GameState, playerId: PlayerID, from: string, to: st
   return markPlayerMovedThisRound(movedState, playerId);
 };
 
-const resolveCapitalReinforce = (state: GameState, playerId: PlayerID): GameState => {
-  const capitalHex = getCapitalReinforceHex(state, playerId);
+const resolveCapitalReinforce = (
+  state: GameState,
+  playerId: PlayerID,
+  preferredHex?: string
+): GameState => {
+  const capitalHex = getCapitalReinforceHex(state, playerId, preferredHex);
   if (!capitalHex) {
     return state;
   }

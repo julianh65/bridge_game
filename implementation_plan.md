@@ -324,7 +324,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Bastion Home Guard (extra force on capital deploy)
   - [x] Assassins Contracts (bonus gold on champion kill)
   - [x] Aerial Tailwind (first stack move per round gets +1 hex)
-  - [ ] Aerial Wings (deploy to center as if capital when occupied)
+  - [x] Aerial Wings (deploy to center as if capital when occupied)
   - [x] Miners Deep Tunnels (occupied mines count adjacent/connected)
   - [ ] Cipher Quiet Study (round-start discard then redraw)
   - [x] Cipher Expanded Choice (pick from N+1 when choosing cards)

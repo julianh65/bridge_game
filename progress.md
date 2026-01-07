@@ -87,6 +87,7 @@
 - Implemented Veil Contracts (+2 gold per champion kill) via a champion-kill reward hook and added combat coverage; updated `implementation_plan.md`.
 - Implemented Cipher Expanded Choice (extra card offers on free-start + collection prompts), plus mine-draft multi-reveal selection support; marked plan item complete.
 - Implemented Aerial Tailwind (+1 max move distance on first stack move per round) via a moved-this-round flag + move validation hook, with action-flow coverage.
+- Implemented Aerial Wings (deploy to center as capital when occupied) via shared capital-deploy resolver and action-flow coverage; UI can pass `hexKey` for center targeting when ready (overlap: `packages/engine/src/action-flow.ts`).
 - Implemented Prospect Deep Tunnels (occupied mines treated as adjacent for movement) via a move-adjacency modifier hook, updated march validation, and added action-flow coverage; marked `implementation_plan.md`.
 - Implemented Gatewright capital occupation VP bonus (+2 control VP on enemy capitals) via a scoring hook + coverage; marked plan item complete.
 

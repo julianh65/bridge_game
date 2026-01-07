@@ -294,6 +294,14 @@ const findMineHex = (state: GameState): HexKey => {
   return mineHex.key;
 };
 
+const findCenterHex = (state: GameState): HexKey => {
+  const centerHex = Object.values(state.board.hexes).find((hex) => hex.tile === "center");
+  if (!centerHex) {
+    throw new Error("center hex not found");
+  }
+  return centerHex.key;
+};
+
 const findEmptyEdge = (state: GameState): EdgeKey => {
   const hexes = Object.values(state.board.hexes);
   const isEmpty = (hex: BoardState["hexes"][string]) =>
@@ -816,6 +824,36 @@ describe("action flow", () => {
     const p1 = state.players.find((player) => player.id === "p1");
     expect(p1?.resources.gold).toBe(startingGold - 1);
     expect(p1?.resources.mana).toBe(DEFAULT_CONFIG.MAX_MANA - 1);
+  });
+
+  it("allows Aerial wings to reinforce an occupied center", () => {
+    let { state } = setupToActionPhase({ p1: "aerial" });
+    const centerHex = findCenterHex(state);
+
+    state = {
+      ...state,
+      board: addForcesToHex(state.board, "p1", centerHex, 1)
+    };
+
+    const before = state.board.hexes[centerHex].occupants["p1"]?.length ?? 0;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "basic",
+          action: { kind: "capitalReinforce", hexKey: centerHex }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const after = state.board.hexes[centerHex].occupants["p1"]?.length ?? 0;
+    expect(after).toBe(before + 1);
   });
 
   it("plays a no-target card and discards it after resolution", () => {

@@ -19,6 +19,7 @@ import {
   getMoveMaxDistance,
   getMoveRequiresBridge
 } from "./modifiers";
+import { resolveCapitalDeployHex } from "./deploy-utils";
 import { markPlayerMovedThisRound } from "./player-flags";
 
 const SUPPORTED_TARGET_KINDS = new Set(["none", "edge", "stack", "path", "champion", "choice", "hex"]);
@@ -109,10 +110,17 @@ const getMovePathTarget = (targets: CardPlayTargets): string[] | null => {
 
 const getChoiceTarget = (
   targets: CardPlayTargets
-): { kind: "capital" } | { kind: "occupiedHex"; hexKey: string } | null => {
+):
+  | { kind: "capital"; hexKey?: string }
+  | { kind: "occupiedHex"; hexKey: string }
+  | null => {
   const record = getTargetRecord(targets);
   const choice = record?.choice ?? record?.kind;
   if (choice === "capital") {
+    const hexKey = record?.hexKey;
+    if (typeof hexKey === "string" && hexKey.length > 0) {
+      return { kind: "capital", hexKey };
+    }
     return { kind: "capital" };
   }
   if (choice === "occupiedHex") {
@@ -627,15 +635,7 @@ export const isCardPlayable = (
     }
 
     if (choice.kind === "capital") {
-      const player = state.players.find((entry) => entry.id === playerId);
-      if (!player?.capitalHex) {
-        return false;
-      }
-      const capitalHex = state.board.hexes[player.capitalHex];
-      if (!capitalHex) {
-        return false;
-      }
-      return !wouldExceedTwoPlayers(capitalHex, playerId);
+      return Boolean(resolveCapitalDeployHex(state, playerId, choice.hexKey ?? null));
     }
 
     if (choice.kind === "occupiedHex") {
@@ -762,23 +762,19 @@ export const resolveCardEffects = (
           break;
         }
         if (choice.kind === "capital") {
-          const player = nextState.players.find((entry) => entry.id === playerId);
-          if (!player?.capitalHex) {
-            break;
-          }
-          const capitalHex = nextState.board.hexes[player.capitalHex];
-          if (!capitalHex || wouldExceedTwoPlayers(capitalHex, playerId)) {
+          const deployHex = resolveCapitalDeployHex(nextState, playerId, choice.hexKey ?? null);
+          if (!deployHex) {
             break;
           }
           const baseCount = 2;
           const count = getDeployForcesCount(
             nextState,
-            { playerId, hexKey: player.capitalHex, baseCount },
+            { playerId, hexKey: deployHex, baseCount },
             baseCount
           );
           nextState = {
             ...nextState,
-            board: addForcesToHex(nextState.board, playerId, player.capitalHex, count)
+            board: addForcesToHex(nextState.board, playerId, deployHex, count)
           };
           break;
         }

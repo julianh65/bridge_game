@@ -144,6 +144,13 @@ const createAerialTailwindModifier = (playerId: PlayerID): Modifier => ({
   }
 });
 
+const createAerialWingsModifier = (playerId: PlayerID): Modifier => ({
+  id: buildModifierId("aerial", playerId, "wings"),
+  source: { type: "faction", sourceId: "aerial" },
+  ownerPlayerId: playerId,
+  duration: { type: "permanent" }
+});
+
 const createCipherExpandedChoiceModifier = (playerId: PlayerID): Modifier => ({
   id: buildModifierId("cipher", playerId, "expanded_choice"),
   source: { type: "faction", sourceId: "cipher" },
@@ -350,7 +357,7 @@ export const createFactionModifiers = (factionId: string, playerId: PlayerID): M
         createProspectDeepTunnelsModifier(playerId)
       ];
     case "aerial":
-      return [createAerialTailwindModifier(playerId)];
+      return [createAerialTailwindModifier(playerId), createAerialWingsModifier(playerId)];
     case "cipher":
       return [createCipherExpandedChoiceModifier(playerId)];
     case "gatewright":
@@ -362,6 +369,11 @@ export const createFactionModifiers = (factionId: string, playerId: PlayerID): M
     default:
       return [];
   }
+};
+
+export const hasAerialWings = (state: GameState, playerId: PlayerID): boolean => {
+  const targetId = buildModifierId("aerial", playerId, "wings");
+  return state.modifiers.some((modifier) => modifier.id === targetId);
 };
 
 export const addFactionModifiers = (
