@@ -137,11 +137,14 @@ export const PreGameLobby = ({
                   title={isTaken && takenBy ? `Taken by ${takenBy.name}` : undefined}
                   onClick={() => onPickFaction(faction.id)}
                 >
-                  <span className="faction-card__label">
-                    <span className="faction-symbol" aria-hidden="true">
-                      {faction.symbol}
+                  <span className="faction-card__meta">
+                    <span className="faction-card__label">
+                      <span className="faction-symbol" aria-hidden="true">
+                        {faction.symbol}
+                      </span>
+                      <span>{faction.name}</span>
                     </span>
-                    <span>{faction.name}</span>
+                    <span className="faction-card__desc">{faction.description}</span>
                   </span>
                   {isSelected ? (
                     <span className="chip chip--local">Selected</span>

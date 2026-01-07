@@ -808,9 +808,17 @@ h1 {
   background: #fff7ea;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 10px;
   font-size: 13px;
   color: var(--muted);
+}
+
+.faction-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
 }
 
 .faction-card__label {
@@ -819,6 +827,13 @@ h1 {
   gap: 8px;
   font-weight: 600;
   color: #3b2a12;
+}
+
+.faction-card__desc {
+  font-size: 11px;
+  line-height: 1.35;
+  color: inherit;
+  opacity: 0.85;
 }
 
 .faction-card:disabled {
@@ -844,6 +859,7 @@ h1 {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
+  align-self: flex-start;
 }
 
 .faction-inline {

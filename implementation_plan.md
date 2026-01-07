@@ -499,6 +499,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] The basic actions require too many clicks and that UI is cluttered, cut it down like reinforce is only in the capital we don't need to show that, or march doesn't need all of that jazz
 - [x] add some text to the gold and VP chits at the top that says gold or VP
 - [x] small / medium, make the borders on the cards for power cards vs champions slightly thicker and better looking
+- [x] Somewhere add a bit of description text for each faction to add themeing and color
 ## Milestone 9 — Add Polish
 
 ### Tasks

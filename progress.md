@@ -44,6 +44,7 @@
 - Raised hand-panel z-index and reordered hover/pass layering so hovered cards sit above most UI while pass/submit stays on top.
 - Let the hand cards column span under the actions column with padding so hovered cards can overlap the actions area without clipping.
 - Added unique faction symbols (small circle badges) across faction selection, lobby labels, unit stacks, and victory screen; marked the plan item complete in `implementation_plan.md`.
+- Added short faction descriptions to the pre-game faction cards for extra theme color; marked the plan item complete in `implementation_plan.md`. (owner: agent1)
 - Restyled champion markers above stacks into circular tokens with glyph placeholders; marked the plan item complete in `implementation_plan.md`.
 - Added champion hover tooltips on board tokens with HP/attack/damage and a rules snippet; marked the plan item complete in `implementation_plan.md`.
 - Tightened champion tooltip width, expanded rules text lines to reduce truncation, and switched champion token labels to current HP.
