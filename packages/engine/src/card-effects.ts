@@ -442,6 +442,28 @@ const resolveHexTarget = (
     return null;
   }
 
+  const requiresEmpty = targetSpec.requiresEmpty === true;
+  if (requiresEmpty && countPlayersOnHex(hex) > 0) {
+    return null;
+  }
+
+  const maxDistanceFromCapital =
+    typeof targetSpec.maxDistanceFromCapital === "number"
+      ? targetSpec.maxDistanceFromCapital
+      : NaN;
+  if (Number.isFinite(maxDistanceFromCapital)) {
+    const player = state.players.find((entry) => entry.id === playerId);
+    if (!player?.capitalHex) {
+      return null;
+    }
+    if (!state.board.hexes[player.capitalHex]) {
+      return null;
+    }
+    if (!isWithinDistance(player.capitalHex, hexKey, maxDistanceFromCapital)) {
+      return null;
+    }
+  }
+
   const maxDistance =
     typeof targetSpec.maxDistanceFromFriendlyChampion === "number"
       ? targetSpec.maxDistanceFromFriendlyChampion

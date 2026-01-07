@@ -195,6 +195,27 @@ export const NATIONAL_SERVICE: CardDef = {
   effects: [{ kind: "recruit", capitalCount: 1 }]
 };
 
+export const FRONTIER_CLAIM: CardDef = {
+  id: "age1.frontier_claim",
+  name: "Frontier Claim",
+  rulesText:
+    "Deploy 4 Forces to an empty hex within distance 1 of your Capital (ignoring Bridges).",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 2, gold: 2 },
+  initiative: 55,
+  burn: false,
+  targetSpec: {
+    kind: "hex",
+    owner: "any",
+    maxDistanceFromCapital: 1,
+    requiresEmpty: true,
+    allowCapital: false
+  },
+  effects: [{ kind: "deployForces", count: 4 }]
+};
+
 export const SCAVENGERS_MARKET: CardDef = {
   id: "age1.scavengers_market",
   name: "Scavenger's Market",
@@ -638,6 +659,7 @@ export const AGE1_CARDS: CardDef[] = [
   PAID_VOLUNTEERS,
   ESCORT_DETAIL,
   NATIONAL_SERVICE,
+  FRONTIER_CLAIM,
   SCAVENGERS_MARKET,
   TEMPORARY_BRIDGE,
   SABOTAGE_BRIDGE,
