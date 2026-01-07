@@ -362,7 +362,7 @@ Start going through the rules_draft and adding the logic for the different types
 - [ ] Add AoE/encirclement effects: Mortar Shot scatter, Attrition, Encirclement/Complete Encirclement, Cataclysm Core, Siege Writ.
 - [ ] Add combat state modifiers:
   - [x] Smoke Screen: first battle this round enemy Forces hit on 1 only in combat round 1.
-  - [ ] Shock Drill: first battle this round your Forces hit on 1–5 in combat round 1.
+  - [x] Shock Drill: first battle this round your Forces hit on 1–5 in combat round 1.
   - [x] Frenzy: target friendly Champion rolls +2 dice this round and takes 2 damage immediately.
   - [ ] Gold Plated Armor: prevent champion damage at gold cost for the round.
 - [ ] Add cost overrides/free-play effects (Last Contract, A Hero Joins the Battle).
