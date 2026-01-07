@@ -1864,20 +1864,6 @@ export const GameScreen = ({
       >
         <section className="panel game-board">
           <div className="game-board__placeholder">
-            <div className={`board-tools ${isBoardTargeting ? "is-targeting" : ""}`}>
-              <div className="board-tools__meta">
-                <span className="chip">
-                  {selectedHexKey ? `Selected ${selectedHexKey}` : "No hex selected"}
-                </span>
-                <button
-                  type="button"
-                  className="btn btn-tertiary"
-                  onClick={() => setResetViewToken((value) => value + 1)}
-                >
-                  Reset view
-                </button>
-              </div>
-            </div>
             <BoardView
               hexes={hexRender}
               board={view.public.board}
@@ -1900,11 +1886,27 @@ export const GameScreen = ({
               onEdgeClick={handleBoardEdgeClick}
               showTags={false}
             />
-            <div className="legend legend--compact game-board__legend">
-              <div className="legend__item legend__item--capital">Capital</div>
-              <div className="legend__item legend__item--forge">Forge</div>
-              <div className="legend__item legend__item--mine">Mine</div>
-              <div className="legend__item legend__item--center">Center</div>
+            <div className="game-board__footer">
+              <div className={`board-tools ${isBoardTargeting ? "is-targeting" : ""}`}>
+                <div className="board-tools__meta">
+                  <span className="chip">
+                    {selectedHexKey ? `Selected ${selectedHexKey}` : "No hex selected"}
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-tertiary"
+                    onClick={() => setResetViewToken((value) => value + 1)}
+                  >
+                    Reset view
+                  </button>
+                </div>
+              </div>
+              <div className="legend legend--compact game-board__legend">
+                <div className="legend__item legend__item--capital">Capital</div>
+                <div className="legend__item legend__item--forge">Forge</div>
+                <div className="legend__item legend__item--mine">Mine</div>
+                <div className="legend__item legend__item--center">Center</div>
+              </div>
             </div>
           </div>
         </section>

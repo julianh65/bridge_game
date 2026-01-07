@@ -17,7 +17,6 @@
 
 ## Active tasks
 - owner: agent3 | scope: implement missing faction starter spell effects (Hold the Line, Marked for Coin, Perfect Recall) + tests | files: `packages/engine/src/card-effects.ts`, `packages/engine/src/cards.ts`, `packages/engine/src/rewards.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md` | status: in progress
-- owner: agent1 | scope: relocate board-tools chip (selected hex + reset view) below the board and align with legend | files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css` | status: in progress (overlap: `apps/web/src/styles.css` with agent4)
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -67,6 +66,7 @@
 - Shortened bridge render segments a bit further by increasing the inset.
 - Added a1-style hex labels to the game board with top-to-bottom row letters and left-to-right numbers via BoardView label variants; marked the plan item complete in `implementation_plan.md` (overlap: `implementation_plan.md`, `progress.md` with agent4).
 - Moved the map legend below the board and hid special-tile tags on the game board (hover tooltip still shows tile info); marked the plan items complete in `implementation_plan.md`.
+- Moved the board tools bar (selected hex + reset view) into the footer under the board to reduce top clutter.
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.
