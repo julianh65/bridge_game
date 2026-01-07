@@ -448,7 +448,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 ### Tasks UI
 - [ ] We need to more clearly guide the player what to do. The basic actions thing is too cluttered, we should probably keep that where the cards are and it should fan it when you click basic actions and show their mana cost and everything with a description
 - [ ] The Log is taking up too much screen real estate, make that a seperate area or modal or something
-- [ ] Urgent: Card targets are still not be selected properly when you click on the board. For example the bridge crew still doesn't work. I see the edge flash but it doesn't select it properly still.
+- [x] Urgent: Card targets are still not be selected properly when you click on the board. For example the bridge crew still doesn't work. I see the edge flash but it doesn't select it properly still. (Delayed BoardView pointer capture so clicks register.)
 - [ ] We need to reduce the amount of clicks, to play a card you shouldn't have to click then specify capital or something else then click where, it should just know.
 - [ ] Also can you double check, does it only work for 2 players right now?
 - [x] The standard setup still doesn't work, only auto setup works.

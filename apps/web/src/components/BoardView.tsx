@@ -1,5 +1,9 @@
 import { useMemo, useRef, useState, useEffect } from "react";
-import type { PointerEventHandler, WheelEventHandler } from "react";
+import type {
+  PointerEvent as ReactPointerEvent,
+  PointerEventHandler,
+  WheelEventHandler
+} from "react";
 
 import type { BoardState } from "@bridgefront/engine";
 import { parseEdgeKey } from "@bridgefront/shared";
@@ -139,6 +143,7 @@ export const BoardView = ({
   const dragRef = useRef<{ x: number; y: number } | null>(null);
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
   const didDragRef = useRef(false);
+  const capturedPointersRef = useRef<Set<number>>(new Set());
   const activePointersRef = useRef<Map<number, { clientX: number; clientY: number }>>(
     new Map()
   );
@@ -422,18 +427,35 @@ export const BoardView = ({
     });
   };
 
+  // Delay pointer capture until we actually pan/pinch so clicks reach SVG targets.
+  const capturePointer = (event: ReactPointerEvent<SVGSVGElement>) => {
+    if (capturedPointersRef.current.has(event.pointerId)) {
+      return;
+    }
+    event.currentTarget.setPointerCapture(event.pointerId);
+    capturedPointersRef.current.add(event.pointerId);
+  };
+
+  const releasePointer = (event: ReactPointerEvent<SVGSVGElement>) => {
+    if (!capturedPointersRef.current.has(event.pointerId)) {
+      return;
+    }
+    event.currentTarget.releasePointerCapture(event.pointerId);
+    capturedPointersRef.current.delete(event.pointerId);
+  };
+
   const handlePointerDown: PointerEventHandler<SVGSVGElement> = (event) => {
     if (!enablePanZoom || (event.pointerType === "mouse" && event.button !== 0)) {
       return;
     }
     const point = toSvgPoint(event.clientX, event.clientY);
-    event.currentTarget.setPointerCapture(event.pointerId);
     activePointersRef.current.set(event.pointerId, {
       clientX: event.clientX,
       clientY: event.clientY
     });
     const pinchData = getPinchData();
     if (pinchData) {
+      capturePointer(event);
       pinchRef.current = pinchData;
       didDragRef.current = true;
       dragRef.current = null;
@@ -464,6 +486,7 @@ export const BoardView = ({
     if (pinchData) {
       if (!pinchRef.current) {
         pinchRef.current = pinchData;
+        capturePointer(event);
         didDragRef.current = true;
         setIsPanning(true);
         return;
@@ -471,6 +494,7 @@ export const BoardView = ({
       const scale =
         pinchData.distance > 0 ? pinchRef.current.distance / pinchData.distance : 1;
       pinchRef.current = pinchData;
+      capturePointer(event);
       setViewBox((current) => {
         const nextWidth = clamp(
           current.width * scale,
@@ -510,6 +534,7 @@ export const BoardView = ({
       if (Math.hypot(dx, dy) < 6) {
         return;
       }
+      capturePointer(event);
       didDragRef.current = true;
       setIsPanning(true);
       dragRef.current = point;
@@ -534,7 +559,7 @@ export const BoardView = ({
     if (!enablePanZoom) {
       return;
     }
-    event.currentTarget.releasePointerCapture(event.pointerId);
+    releasePointer(event);
     activePointersRef.current.delete(event.pointerId);
     if (activePointersRef.current.size < 2) {
       pinchRef.current = null;
@@ -542,13 +567,14 @@ export const BoardView = ({
     dragRef.current = null;
     dragStartRef.current = null;
     setIsPanning(false);
+    didDragRef.current = false;
   };
 
   const handlePointerCancel: PointerEventHandler<SVGSVGElement> = (event) => {
     if (!enablePanZoom) {
       return;
     }
-    event.currentTarget.releasePointerCapture(event.pointerId);
+    releasePointer(event);
     activePointersRef.current.delete(event.pointerId);
     if (activePointersRef.current.size < 2) {
       pinchRef.current = null;
@@ -556,14 +582,20 @@ export const BoardView = ({
     dragRef.current = null;
     dragStartRef.current = null;
     setIsPanning(false);
+    didDragRef.current = false;
   };
 
-  const handlePointerLeave = () => {
+  const handlePointerLeave: PointerEventHandler<SVGSVGElement> = (event) => {
+    for (const pointerId of capturedPointersRef.current) {
+      event.currentTarget.releasePointerCapture(pointerId);
+    }
+    capturedPointersRef.current.clear();
     dragRef.current = null;
     dragStartRef.current = null;
     activePointersRef.current.clear();
     pinchRef.current = null;
     setIsPanning(false);
+    didDragRef.current = false;
   };
 
   const clickable = Boolean(onHexClick);
