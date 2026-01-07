@@ -146,10 +146,25 @@ export const GameScreenSidebar = ({
           <h3>Table</h3>
         </div>
         <div className="table-list">
+          <div className="table-header" aria-hidden="true">
+            <span className="table-header__label table-header__label--name">Player</span>
+            <span className="table-header__label" title="Gold">
+              🟡
+            </span>
+            <span className="table-header__label" title="Mana">
+              🔵
+            </span>
+            <span className="table-header__label" title="Hand">
+              H
+            </span>
+            <span className="table-header__label table-header__label--status">Status</span>
+          </div>
           {players.map((player) => {
             const actionStatus = getActionStatusBadge(player.id);
             const actionStatusClass = actionStatus
-              ? ["status-pill", actionStatus.className].filter(Boolean).join(" ")
+              ? ["status-pill", "status-pill--compact", actionStatus.className]
+                  .filter(Boolean)
+                  .join(" ")
               : "";
             const rowClassName = [
               "table-row",
@@ -176,24 +191,24 @@ export const GameScreenSidebar = ({
                     <span className="player-meta">Seat {player.seatIndex}</span>
                   </div>
                 </div>
-                <div className="table-row__stats">
-                  <span className="table-stat" title="Gold">
-                    🟡 {player.resources.gold}
-                  </span>
-                  <span className="table-stat" title="Mana">
-                    🔵 {player.resources.mana}
-                  </span>
-                  <span className="table-stat">H {player.handCount}</span>
-                </div>
+                <span className="table-stat" title="Gold">
+                  {player.resources.gold}
+                </span>
+                <span className="table-stat" title="Mana">
+                  {player.resources.mana}
+                </span>
+                <span className="table-stat" title="Hand">
+                  {player.handCount}
+                </span>
                 <div className="table-row__status">
+                  {actionStatus ? <span className={actionStatusClass}>{actionStatus.label}</span> : null}
                   <span
-                    className={`status-pill ${
+                    className={`status-pill status-pill--compact ${
                       player.connected ? "status-pill--ready" : "status-pill--waiting"
                     }`}
                   >
                     {player.connected ? "On" : "Off"}
                   </span>
-                  {actionStatus ? <span className={actionStatusClass}>{actionStatus.label}</span> : null}
                 </div>
               </div>
             );
