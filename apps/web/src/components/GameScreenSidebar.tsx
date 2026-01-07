@@ -177,13 +177,6 @@ export const GameScreenSidebar = ({
                 </span>
                 <div className="table-row__status">
                   {actionStatus ? <span className={actionStatusClass}>{actionStatus.label}</span> : null}
-                  <span
-                    className={`status-pill status-pill--compact ${
-                      player.connected ? "status-pill--ready" : "status-pill--waiting"
-                    }`}
-                  >
-                    {player.connected ? "On" : "Off"}
-                  </span>
                 </div>
               </div>
             );

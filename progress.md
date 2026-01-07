@@ -16,8 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
-- owner: agent3 | scope: implement Cipher Expanded Choice passive (N+1 card offers) for free-start + collection prompts with tests and helper copy update | files: `packages/engine/src/types.ts`, `packages/engine/src/modifiers.ts`, `packages/engine/src/faction-passives.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/round-flow.test.ts`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `apps/web/src/components/CollectionPanel.tsx`, `implementation_plan.md` | status: in progress (overlap: `packages/engine/src/types.ts`, `packages/engine/src/modifiers.ts`, `packages/engine/src/faction-passives.ts`, `packages/engine/src/round-flow.ts` with agent2)
+- owner: agent3 | scope: implement Cipher Expanded Choice passive (N+1 card offers) for free-start + collection prompts with tests and helper copy update | files: `packages/engine/src/types.ts`, `packages/engine/src/modifiers.ts`, `packages/engine/src/faction-passives.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/round-flow.test.ts`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `apps/web/src/components/CollectionPanel.tsx`, `implementation_plan.md` | status: in progress
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -34,6 +33,7 @@ none
 - Added a phase transition cue overlay that flashes round phase changes in big text and marked the plan item complete in `implementation_plan.md`.
 - Made action status more obvious with a player-list summary and row highlighting, and marked the plan item complete in `implementation_plan.md`.
 - Reduced duplicate status pills in the command center by removing the summary chips (status still shown per player).
+- Removed per-row On/Off pills from the table list to reduce status noise.
 - Added a large Submit/Lock In action button to the action panel and marked the plan item complete in `implementation_plan.md`.
 - Added action-panel helper copy clarifying Done/Reinforce/Bridge/March/Play actions and marked the plan item complete in `implementation_plan.md`.
 - Submit button now reflects the selected action (Play Card/Build Bridge/etc.) to remove the play-vs-submit confusion; marked the plan item complete in `implementation_plan.md`.
@@ -62,6 +62,7 @@ none
 - Added a deck flow UI in the Deck tab showing draw/hand/discard/scrapped piles with animated arrows; marked the plan item complete in `implementation_plan.md`.
 - Improved board visuals with hex padding, a textured board backdrop, and beefier bridge styling; marked the plan item complete in `implementation_plan.md`.
 - Added a host-only debug state patch tool in the room debug panel + server command, and marked the plan item complete in `implementation_plan.md`.
+- Added a champion crest marker on unit stacks to make champion presence easier to spot on the board.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
@@ -77,6 +78,7 @@ none
 - Added Gatewright passives (capital assault + extortionists) and Veil clean-exit heal modifier with combat coverage; implementation plan update deferred until `implementation_plan.md` is free.
 - Implemented Bastion Home Guard (+1 force on capital deploy) via deploy-count hook; updated action flow/card effects tests.
 - Implemented Veil Contracts (+2 gold per champion kill) via a champion-kill reward hook and added combat coverage; updated `implementation_plan.md`.
+- Implemented Cipher Expanded Choice (extra card offers on free-start + collection prompts), plus mine-draft multi-reveal selection support; marked plan item complete.
 - Implemented Aerial Tailwind (+1 max move distance on first stack move per round) via a moved-this-round flag + move validation hook, with action-flow coverage.
 
 ## Testing progress
@@ -98,6 +100,7 @@ none
 - Ran `npm run -w @bridgefront/engine test -- src/market.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/cards.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/modifiers.test.ts src/combat.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts src/setup-flow.test.ts src/smoke.test.ts`.
 
 ## Docs maintenance
 - Expanded the Milestone 9 card-test checklist with Age I market sub-items in `implementation_plan.md`.

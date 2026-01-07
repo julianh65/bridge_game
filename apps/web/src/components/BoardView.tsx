@@ -868,6 +868,10 @@ export const BoardView = ({
           }
         }
         const stackTitle = stackTitleLines.join("\n");
+        const championLabel = "C";
+        const crestSize = 8;
+        const crestX = cx + 10;
+        const crestY = cy - 10;
         return (
           <g
             key={stack.key}
@@ -895,6 +899,31 @@ export const BoardView = ({
               <text x={cx} y={cy + 3} className="unit__count">
                 {stack.forceCount}
               </text>
+            ) : stack.championCount > 0 ? (
+              <text x={cx} y={cy + 3} className="unit__champion">
+                {championLabel}
+              </text>
+            ) : null}
+            {stack.championCount > 0 ? (
+              <g className="unit__champion-crest">
+                <rect
+                  className="unit__champion-crest-shape"
+                  x={crestX - crestSize / 2}
+                  y={crestY - crestSize / 2}
+                  width={crestSize}
+                  height={crestSize}
+                  rx={2}
+                  ry={2}
+                  transform={`rotate(45 ${crestX} ${crestY})`}
+                />
+                <text
+                  className="unit__champion-crest-text"
+                  x={crestX}
+                  y={crestY + 1}
+                >
+                  {championLabel}
+                </text>
+              </g>
             ) : null}
             {badgeLayout.map((badge, index) => {
               const badgeClass = [

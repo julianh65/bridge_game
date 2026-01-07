@@ -3211,6 +3211,24 @@ h1 {
   stroke-width: 1.1;
 }
 
+.unit__champion-crest-shape {
+  fill: #f7e2a6;
+  stroke: rgba(120, 86, 20, 0.9);
+  stroke-width: 0.9;
+  filter: drop-shadow(0 1px 2px rgba(40, 26, 12, 0.4));
+}
+
+.unit__champion-crest-text {
+  font-size: 6px;
+  font-weight: 700;
+  fill: #3b2a12;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.7);
+  stroke-width: 0.9;
+}
+
 .champion-badge {
   fill: #f7e2a6;
   stroke: rgba(120, 86, 20, 0.9);
