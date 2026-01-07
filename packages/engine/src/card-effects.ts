@@ -21,6 +21,7 @@ import {
 import {
   addCardToDiscardPile,
   addCardToHandWithOverflow,
+  createCardInstance,
   drawCards,
   takeTopCards,
   topdeckCardFromHand
@@ -1607,6 +1608,53 @@ export const resolveCardEffects = (
           ...nextState,
           board: moveUnitToHex(nextState.board, target.unitId, player.capitalHex)
         };
+        break;
+      }
+      case "recallChampion": {
+        const target = getChampionTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null,
+          card
+        );
+        if (!target) {
+          break;
+        }
+        const cardDefId = target.unit.cardDefId;
+        nextState = removeChampionFromBoard(nextState, target.unitId);
+        const player = nextState.players.find((entry) => entry.id === playerId);
+        if (!player) {
+          break;
+        }
+        let recalledInstanceId: string | null = null;
+        for (const instanceId of player.burned) {
+          const defId = nextState.cardsByInstanceId[instanceId]?.defId;
+          if (defId === cardDefId) {
+            recalledInstanceId = instanceId;
+            break;
+          }
+        }
+        if (recalledInstanceId) {
+          nextState = {
+            ...nextState,
+            players: nextState.players.map((entry) =>
+              entry.id === playerId
+                ? {
+                    ...entry,
+                    burned: entry.burned.filter((id) => id !== recalledInstanceId)
+                  }
+                : entry
+            )
+          };
+        } else {
+          const created = createCardInstance(nextState, cardDefId);
+          nextState = created.state;
+          recalledInstanceId = created.instanceId;
+        }
+        if (recalledInstanceId) {
+          nextState = addCardToHandWithOverflow(nextState, playerId, recalledInstanceId);
+        }
         break;
       }
       case "increaseMineValue": {

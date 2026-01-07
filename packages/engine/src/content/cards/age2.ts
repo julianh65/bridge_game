@@ -98,6 +98,23 @@ export const GOLD_PLATED_ARMOR: CardDef = {
   effects: [{ kind: "goldPlatedArmor", costPerDamage: 2 }]
 };
 
+export const CHAMPION_RECALL: CardDef = {
+  id: "age2.champion_recall",
+  name: "Champion Recall",
+  rulesText: "Recall a friendly Champion to your hand.",
+  type: "Spell",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 2 },
+  initiative: 35,
+  burn: false,
+  targetSpec: {
+    kind: "champion",
+    owner: "self"
+  },
+  effects: [{ kind: "recallChampion" }]
+};
+
 export const JET_STRIKER: CardDef = {
   id: "champion.age2.jet_striker",
   name: "Jet Striker",
@@ -301,6 +318,7 @@ export const AGE2_CARDS: CardDef[] = [
   FRENZY,
   REPAIR_ORDERS,
   GOLD_PLATED_ARMOR,
+  CHAMPION_RECALL,
   JET_STRIKER,
   GUERILLA_NATIVE_MERCENARY,
   TAX_REAVER,

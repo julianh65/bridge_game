@@ -442,7 +442,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
       - [x] Repair Orders.
       - [x] Gold Plated Armor.
       - [ ] Mortar Shot.
-      - [ ] Champion Recall.
+      - [x] Champion Recall.
     - [ ] Age II Bridges/Terrain card defs (4).
     - [ ] Age II Synergy/Gambits card defs (4).
     - [ ] Age II Victory card defs (4).
@@ -565,6 +565,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] I added some random sound effects I downloaded to sound_fx, assign each of them a name / meaning (bell should be for rounds) and add the sound effects to different clicks and stuff, also if you need to feel free to move the sound effects folder and stuff to the appropriate place
 - [x] Card styling, can we make the art slightly taller, and add a border around the images that looks nice?
 - [ ] Large and hard -- make the entire UI look a bit more dark fantasy and cooler
+  - [x] Add a darker in-game palette + background overrides (body `is-game`) plus nav/panel/button/status restyling.
+  - [ ] Convert remaining hard-coded light surfaces to theme variables so the dark palette is consistent.
 - [x] For cards with victory points we need to denote how many VP's they're worth on the card
 - [ ] We need to add logic and look for escalating champion costs as per the rules
 - [x] Slightly make the images a bit bigger and for all images it will crop, but I want it to crop like 10% higher than it is now, that is to say i want it centered 10% higher than it is now for all cards

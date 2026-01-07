@@ -69,6 +69,13 @@ export default function App() {
   const isGameLayout = view === "play" && showGame;
   const showPreGameLobby = Boolean(room.lobby && !room.view);
 
+  useEffect(() => {
+    document.body.classList.toggle("is-game", isGameLayout);
+    return () => {
+      document.body.classList.remove("is-game");
+    };
+  }, [isGameLayout]);
+
   return (
     <main
       className={`app ${isGameLayout ? "app--game" : ""}`}
