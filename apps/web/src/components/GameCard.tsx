@@ -3,6 +3,7 @@ import type { ElementType, ReactNode } from "react";
 import type { CardDef } from "@bridgefront/engine";
 
 import { getCardArtUrl } from "../lib/card-art";
+import { getFactionName, getFactionSymbol } from "../lib/factions";
 
 export type GameCardVariant = "grid" | "market" | "hand" | "detail" | "offer";
 
@@ -17,6 +18,7 @@ type GameCardProps = {
   showId?: boolean;
   showRules?: boolean;
   showTags?: boolean;
+  showFaction?: boolean;
   showChampionStats?: boolean;
   showArt?: boolean;
   artUrl?: string | null;
@@ -68,6 +70,7 @@ export const GameCard = ({
   showId = false,
   showRules = true,
   showTags = false,
+  showFaction = false,
   showChampionStats = false,
   showArt = true,
   artUrl = null,
@@ -97,6 +100,9 @@ export const GameCard = ({
   const manaLabel = showUnknown ? "?" : `${card?.cost.mana ?? 0}`;
   const goldLabel = showUnknown ? "?" : `${card?.cost.gold ?? 0}`;
   const artText = artLabel ?? (isHidden ? "Face down" : "Art");
+  const showFactionLabel = showFaction && !isHidden && Boolean(card?.factionId);
+  const factionName = showFactionLabel ? getFactionName(card?.factionId) : null;
+  const factionSymbol = showFactionLabel ? getFactionSymbol(card?.factionId) : null;
 
   const classes = [
     "game-card",
@@ -128,6 +134,16 @@ export const GameCard = ({
         {showId && !isHidden ? <p className="game-card__id">{cardId}</p> : null}
       </div>
       {deckLabel ? <div className="game-card__age">{deckLabel}</div> : null}
+      {showFactionLabel ? (
+        <div className="game-card__faction">
+          {factionSymbol ? (
+            <span className="faction-symbol faction-symbol--mini" aria-hidden="true">
+              {factionSymbol}
+            </span>
+          ) : null}
+          <span>Faction {factionName}</span>
+        </div>
+      ) : null}
       {showArt ? (
         <div
           className="game-card__art"

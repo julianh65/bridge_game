@@ -537,7 +537,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 Add a way for each card to have related card art and a card description that is thematic. This will be done with diffusion models so we need to have a script and some way to query to automatically pull card art for n cards and store them and let me view them. In addition to this we need other ways to style it up and make this look cool. I guess make the hexes look cool, the capitals, the pieces and forces and battles. It needs to have a bit of oomf. We can add some tasks here later when we get to it
 
-The overall cards viewer should also denote which ones are faction specific etc...
+- [x] Cards browser denotes faction-specific cards with a faction label.
 
 ## Milestone 9.7 -- Get all cards in
 Go through rules and add all cards in lol
