@@ -250,6 +250,8 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Move log + player list into a secondary row during market/collection phases.
   - [x] Expand market/collection focus cards (initiative/effects) for richer phase layouts.
 - [ ] Add collapsible/relocatable panels so not everything lives in the right sidebar.
+  - [x] Add collapsible sections for sidebar panels (status/table/intel).
+  - [ ] Consider optional panel relocation (dockable panels).
 - [x] Make the phase market at the top part much bigger and cooler
 - [ ] the bridge place mechanism still doesn't work
 - [x] During the game we don't need to see all the room id and those little details and top bar, those can be collapsed

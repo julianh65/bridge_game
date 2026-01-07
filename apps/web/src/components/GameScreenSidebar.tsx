@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 
 import type { GameView } from "@bridgefront/engine";
 
@@ -35,6 +35,16 @@ export const GameScreenSidebar = ({
   isInfoDockOpen,
   onToggleDock
 }: GameScreenSidebarProps) => {
+  type SectionKey = "status" | "table" | "intel";
+  const [openSections, setOpenSections] = useState<Record<SectionKey, boolean>>({
+    status: true,
+    table: true,
+    intel: true
+  });
+
+  const toggleSection = (section: SectionKey) => {
+    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
   const getActionStatusTooltip = (playerId: string): string => {
     if (!actionStep) {
       return `Action: not active (${phaseLabel}).`;
@@ -75,114 +85,159 @@ export const GameScreenSidebar = ({
       <div className="sidebar-section sidebar-section--status">
         <div className="sidebar-section__header">
           <h3>Status</h3>
-          <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
+          <div className="sidebar-section__actions">
+            <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
+            <button
+              type="button"
+              className="btn btn-tertiary sidebar-section__toggle"
+              onClick={() => toggleSection("status")}
+              aria-expanded={openSections.status}
+              aria-controls="sidebar-status"
+            >
+              {openSections.status ? "Hide" : "Show"}
+            </button>
+          </div>
         </div>
-        <div className="resource-row">
-          <span>Round</span>
-          <strong>{round}</strong>
-        </div>
-        <div className="resource-row">
-          <span>Phase</span>
-          <strong>{phaseLabel}</strong>
-        </div>
-        <div className="resource-row">
-          <span>Lead</span>
-          <strong>{leadPlayerName ?? "—"}</strong>
-        </div>
-        {!isInteractivePhase ? (
-          <p className="status-note">Resolving {phaseLabel}. Waiting on the server.</p>
+        {openSections.status ? (
+          <div className="sidebar-section__body" id="sidebar-status">
+            <div className="resource-row">
+              <span>Round</span>
+              <strong>{round}</strong>
+            </div>
+            <div className="resource-row">
+              <span>Phase</span>
+              <strong>{phaseLabel}</strong>
+            </div>
+            <div className="resource-row">
+              <span>Lead</span>
+              <strong>{leadPlayerName ?? "—"}</strong>
+            </div>
+            {!isInteractivePhase ? (
+              <p className="status-note">Resolving {phaseLabel}. Waiting on the server.</p>
+            ) : null}
+          </div>
         ) : null}
       </div>
 
       <div className="sidebar-section sidebar-section--table">
         <div className="sidebar-section__header">
           <h3>Table</h3>
+          <button
+            type="button"
+            className="btn btn-tertiary sidebar-section__toggle"
+            onClick={() => toggleSection("table")}
+            aria-expanded={openSections.table}
+            aria-controls="sidebar-table"
+          >
+            {openSections.table ? "Hide" : "Show"}
+          </button>
         </div>
-        <div className="table-list">
-          <div className="table-header" aria-hidden="true">
-            <span className="table-header__label table-header__label--name">Player</span>
-            <span className="table-header__label" title="Gold">
-              🟡
-            </span>
-            <span className="table-header__label" title="Mana">
-              🔵
-            </span>
-            <span className="table-header__label" title="Hand">
-              H
-            </span>
-            <span className="table-header__label table-header__label--status">Status</span>
-          </div>
-          {players.map((player) => {
-            const actionStatus = getActionStatusBadge(player.id);
-            const actionStatusClass = actionStatus
-              ? ["status-pill", "status-pill--compact", actionStatus.className]
-                  .filter(Boolean)
-                  .join(" ")
-              : "";
-            const rowClassName = [
-              "table-row",
-              actionStep
-                ? actionEligible.has(player.id)
-                  ? actionWaiting.has(player.id)
-                    ? "table-row--waiting"
-                    : "table-row--submitted"
-                  : "table-row--idle"
-                : ""
-            ]
-              .filter(Boolean)
-              .join(" ");
-            return (
-              <div
-                key={player.id}
-                className={rowClassName}
-                title={getActionStatusTooltip(player.id)}
-              >
-                <div className="table-row__main">
-                  <span className="player-swatch" style={playerSwatchStyle(player.seatIndex)} />
-                  <div>
-                    <span className="player-name">{player.name}</span>
-                    <span className="player-meta">Seat {player.seatIndex}</span>
-                  </div>
-                </div>
-                <span className="table-stat" title="Gold">
-                  {player.resources.gold}
+        {openSections.table ? (
+          <div className="sidebar-section__body" id="sidebar-table">
+            <div className="table-list">
+              <div className="table-header" aria-hidden="true">
+                <span className="table-header__label table-header__label--name">Player</span>
+                <span className="table-header__label" title="Gold">
+                  🟡
                 </span>
-                <span className="table-stat" title="Mana">
-                  {player.resources.mana}
+                <span className="table-header__label" title="Mana">
+                  🔵
                 </span>
-                <span className="table-stat" title="Hand">
-                  {player.handCount}
+                <span className="table-header__label" title="Hand">
+                  H
                 </span>
-                <div className="table-row__status">
-                  {actionStatus ? <span className={actionStatusClass}>{actionStatus.label}</span> : null}
-                </div>
+                <span className="table-header__label table-header__label--status">Status</span>
               </div>
-            );
-          })}
-        </div>
+              {players.map((player) => {
+                const actionStatus = getActionStatusBadge(player.id);
+                const actionStatusClass = actionStatus
+                  ? ["status-pill", "status-pill--compact", actionStatus.className]
+                      .filter(Boolean)
+                      .join(" ")
+                  : "";
+                const rowClassName = [
+                  "table-row",
+                  actionStep
+                    ? actionEligible.has(player.id)
+                      ? actionWaiting.has(player.id)
+                        ? "table-row--waiting"
+                        : "table-row--submitted"
+                      : "table-row--idle"
+                    : ""
+                ]
+                  .filter(Boolean)
+                  .join(" ");
+                return (
+                  <div
+                    key={player.id}
+                    className={rowClassName}
+                    title={getActionStatusTooltip(player.id)}
+                  >
+                    <div className="table-row__main">
+                      <span className="player-swatch" style={playerSwatchStyle(player.seatIndex)} />
+                      <div>
+                        <span className="player-name">{player.name}</span>
+                        <span className="player-meta">Seat {player.seatIndex}</span>
+                      </div>
+                    </div>
+                    <span className="table-stat" title="Gold">
+                      {player.resources.gold}
+                    </span>
+                    <span className="table-stat" title="Mana">
+                      {player.resources.mana}
+                    </span>
+                    <span className="table-stat" title="Hand">
+                      {player.handCount}
+                    </span>
+                    <div className="table-row__status">
+                      {actionStatus ? (
+                        <span className={actionStatusClass}>{actionStatus.label}</span>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
       </div>
 
       <div className="sidebar-section sidebar-section--intel">
         <div className="sidebar-section__header">
           <h3>Intel</h3>
-          <div className="dock-buttons">
+          <div className="sidebar-section__actions">
+            <div className="dock-buttons">
+              <button
+                type="button"
+                className={`btn btn-tertiary ${isInfoDockOpen ? "is-active" : ""}`}
+                onClick={onToggleDock}
+              >
+                Log <span className="dock-count">{logCount}</span>
+              </button>
+            </div>
             <button
               type="button"
-              className={`btn btn-tertiary ${isInfoDockOpen ? "is-active" : ""}`}
-              onClick={onToggleDock}
+              className="btn btn-tertiary sidebar-section__toggle"
+              onClick={() => toggleSection("intel")}
+              aria-expanded={openSections.intel}
+              aria-controls="sidebar-intel"
             >
-              Log <span className="dock-count">{logCount}</span>
+              {openSections.intel ? "Hide" : "Show"}
             </button>
           </div>
         </div>
-        <div className="intel-grid">
-          <div className="intel-card intel-card--log">
-            <span className="intel-label">Latest</span>
-            <span className="intel-value intel-snippet">
-              {lastLogLabel ?? "No events yet."}
-            </span>
+        {openSections.intel ? (
+          <div className="sidebar-section__body" id="sidebar-intel">
+            <div className="intel-grid">
+              <div className="intel-card intel-card--log">
+                <span className="intel-label">Latest</span>
+                <span className="intel-value intel-snippet">
+                  {lastLogLabel ?? "No events yet."}
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
+        ) : null}
       </div>
     </aside>
   );

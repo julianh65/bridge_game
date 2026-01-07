@@ -2195,6 +2195,26 @@ h1 {
   gap: 8px;
 }
 
+.sidebar-section__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sidebar-section__toggle.btn-tertiary {
+  padding: 6px 10px;
+  font-size: 11px;
+}
+
+.sidebar-section__body {
+  display: grid;
+  gap: 8px;
+}
+
+.sidebar-section--table .sidebar-section__body {
+  gap: 0;
+}
+
 .status-summary {
   display: flex;
   flex-wrap: wrap;

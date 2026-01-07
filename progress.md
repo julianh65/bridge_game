@@ -16,8 +16,6 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
-- owner: agent3 | scope: add collapsible sections in GameScreen sidebar | files: apps/web/src/components/GameScreenSidebar.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md | status: in progress
 - owner: agent4 | scope: implement bridge trap modifier (first enemy crossing loses a force) with move hook + tests | files: packages/engine/src/types.ts, packages/engine/src/modifiers.ts, packages/engine/src/card-effects.ts, packages/engine/src/action-flow.ts, packages/engine/src/units.ts, packages/engine/src/action-flow.test.ts, implementation_plan.md, progress.md | status: in progress
 
 ## Milestone 8.5 progress
@@ -279,6 +277,7 @@ none
 - Added a phase-focused layout row for market/collection panels and moved log/player sections into a secondary row during those phases.
 - Reduced board target click friction by ignoring invalid hex clicks while targeting and allowing start reselects for multi-step picks.
 - Enabled scrolling in the command-center sidebar so 5-6 player tables stay readable without clipping.
+- Added collapsible toggles for Status/Table/Intel sections in the command-center sidebar.
 - Stabilized BoardView pan/zoom by avoiding viewBox resets when board state updates (plan update deferred: `implementation_plan.md` locked by agent3).
 - Upgraded collection prompts to show full card tiles (initiative/rules/costs) for revealed picks instead of tag buttons.
 
