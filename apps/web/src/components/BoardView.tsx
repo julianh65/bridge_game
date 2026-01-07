@@ -604,7 +604,7 @@ export const BoardView = ({
   const clickable = Boolean(onHexClick);
   const edgeClickable = Boolean(onEdgeClick);
   const svgClasses = [className ?? "board-svg"];
-  if (enablePanZoom || clickable) {
+  if (enablePanZoom || clickable || edgeClickable) {
     svgClasses.push("board-svg--interactive");
   }
   if (isTargeting) {

@@ -10,6 +10,8 @@ import {
 } from "@bridgefront/engine";
 import { axialDistance, neighborHexKeys, parseHexKey } from "@bridgefront/shared";
 
+import { BoardView } from "./BoardView";
+import { buildHexRender } from "../lib/board-preview";
 import type { RoomConnectionStatus } from "../lib/room-client";
 
 type SetupStartingBridgesProps = {
@@ -115,7 +117,21 @@ export const SetupStartingBridges = ({
     },
     [view.public.board, capitalHex, localPlaced, startingBridges]
   );
+  const previewEdgeKeys = useMemo(
+    () => suggestions.map((edge) => edge.key),
+    [suggestions]
+  );
+  const boardHexes = useMemo(
+    () => buildHexRender(view.public.board),
+    [view.public.board]
+  );
+  const playerIndexById = useMemo(
+    () => Object.fromEntries(players.map((player) => [player.id, player.seatIndex])),
+    [players]
+  );
+  const highlightHexKeys = capitalHex ? [capitalHex] : [];
   const canPlace = status === "connected" && Boolean(playerId) && isWaiting;
+  const isTargeting = canPlace && previewEdgeKeys.length > 0;
   const helperText = (() => {
     if (status !== "connected") {
       return "Connect to place starting bridges.";
@@ -132,9 +148,7 @@ export const SetupStartingBridges = ({
     if (localRemaining <= 0) {
       return "You have placed all starting bridges.";
     }
-    return `Select ${localRemaining} more starting bridge${
-      localRemaining === 1 ? "" : "s"
-    }.`;
+    return `Click a highlighted bridge near your capital to place ${localRemaining} more.`;
   })();
 
   const handleSubmit = (edge: EdgeKey) => {
@@ -163,25 +177,24 @@ export const SetupStartingBridges = ({
           </div>
         ) : null}
       </div>
-      {suggestions.length > 0 ? (
-        <div className="setup-bridges__suggestions">
-          {suggestions.map((edge) => (
-            <button
-              key={edge.key}
-              type="button"
-              className="setup-bridges__suggestion"
-              disabled={!canPlace}
-              onClick={() => handleSubmit(edge.key)}
-              title={edge.alreadyExists ? "Bridge already exists" : "New bridge"}
-            >
-              {edge.key}
-              {edge.alreadyExists ? " (existing)" : ""}
-            </button>
-          ))}
-        </div>
-      ) : (
-        <p className="muted">No suggested edges available yet.</p>
-      )}
+      <div className="setup-bridges__board">
+        <BoardView
+          hexes={boardHexes}
+          board={view.public.board}
+          playerIndexById={playerIndexById}
+          showCoords={false}
+          showTags
+          showMineValues={false}
+          highlightHexKeys={highlightHexKeys}
+          previewEdgeKeys={previewEdgeKeys}
+          onEdgeClick={canPlace ? handleSubmit : undefined}
+          isTargeting={isTargeting}
+          className="board-svg board-svg--game setup-bridges__board-svg"
+        />
+        {previewEdgeKeys.length > 0 ? (
+          <p className="muted">Highlighted edges are valid starting bridges.</p>
+        ) : null}
+      </div>
       <div className="setup-bridges__players">
         {players.map((player) => {
           const remaining = remainingByPlayer[player.id] ?? 0;

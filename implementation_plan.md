@@ -435,7 +435,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Wasted space above the board, we don't need this thing Drag to pan · Scroll to zoom and the shared board state and board above it has too much padding
 
 ### Tasks (web - motion + phase clarity)
-- [ ] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen. This is after everyone locks in their actions. I want it to be like Player 1, show the card they played and flash it up, then show where they did it or something and make it extensible so later we can add animations or sound effects or something here.
+- [ ] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen. This is after everyone locks in their actions. I want it to be like Player 1, show the card they played and flash it up, then show where they did it or something and make it extensible so later we can add animations or sound effects or something here. Pieces also need to animate move around the board.
 - [x] Add clearer phase transition cues between round phases. Make it flash on screen in big text slowly to everyone simultaneously.
 - [ ] we need a few UI's still, like dice rolling for draws and cards and other stuff
 - [x] We need a better more clear UI with symbols (just do emojis for now) to represent gold, mana VP

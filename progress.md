@@ -16,9 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
-- owner: agent4 | scope: add board-based starting bridge placement UI in setup lobby (edge click overlays + instructions) | files: `apps/web/src/components/SetupStartingBridges.tsx`, `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css` | status: in progress
-- owner: agent1 | scope: fix Table row overflow/padding so status pills stay inside and layout feels tighter | files: `apps/web/src/styles.css`, `apps/web/src/components/GameScreenSidebar.tsx` | status: in progress (overlap: `apps/web/src/styles.css` with agent4)
+- owner: agent2 | scope: implement Aerial Tailwind passive (+1 move on first stack move per round) with engine tests | files: `packages/engine/src/faction-passives.ts`, `packages/engine/src/modifiers.ts`, `packages/engine/src/types.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/action-flow.test.ts` | status: in progress
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -49,7 +47,9 @@ none
 - Removed the board header/hints and tightened board panel padding to reduce wasted space above the board; marked the plan item complete in `implementation_plan.md`.
 - Improved champion visibility on the board with a halo + brighter label and marked the plan item complete in `implementation_plan.md` (overlap: `apps/web/src/styles.css` touched alongside layout tweaks).
 - Made the sidebar Table view more compact with a column header, aligned stats, and compact status pills; marked the plan item complete in `implementation_plan.md`.
+- Tightened Table spacing/columns and compact status pills to prevent overflow on narrower sidebars (overlap: `apps/web/src/styles.css` with agent4).
 - Auto-enabled card board targeting on card select (edge/stack/path/hex/choice) and updated card target buttons to show when board picking is active; marked the plan item complete in `implementation_plan.md`.
+- Moved starting bridge placement into a board-based picker with clickable edge previews and setup hints in the lobby UI (overlap: `apps/web/src/styles.css` with agent1).
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.
@@ -124,6 +124,7 @@ none
 - Expanded Milestone 5.5 layout tasks in `implementation_plan.md` with phase-focused subtasks.
 - Marked Bastion Shield Wall faction passive as done in `implementation_plan.md`.
 - Added PartyKit docs to the repo, added `apps/web/dist` to `.gitignore`, and captured outstanding tracked edits in git.
+- Logged an unclaimed plan tweak adding piece-movement animation notes to the card-reveal task (overlap: `implementation_plan.md`).
 
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.

@@ -524,9 +524,9 @@ h1 {
 }
 
 .status-pill--compact {
-  padding: 4px 8px;
-  font-size: 10px;
-  letter-spacing: 0.06em;
+  padding: 3px 6px;
+  font-size: 9px;
+  letter-spacing: 0.05em;
 }
 
 .status-pill--ready {
@@ -623,6 +623,15 @@ h1 {
 .setup-bridges__inputs {
   display: grid;
   gap: 8px;
+}
+
+.setup-bridges__board {
+  display: grid;
+  gap: 8px;
+}
+
+.setup-bridges__board-svg {
+  height: clamp(220px, 32vh, 360px);
 }
 
 .setup-bridges__suggestions {
@@ -1546,6 +1555,10 @@ h1 {
   background: #fffdf6;
 }
 
+.sidebar-section--table {
+  padding: 10px;
+}
+
 .sidebar-section h3 {
   margin: 0;
   font-size: 13px;
@@ -2414,20 +2427,20 @@ h1 {
 
 .table-list {
   display: grid;
-  gap: 6px;
-  --table-columns: minmax(140px, 1fr) repeat(3, 44px) minmax(120px, auto);
+  gap: 5px;
+  --table-columns: minmax(0, 1fr) repeat(3, minmax(28px, 34px)) minmax(0, 0.9fr);
 }
 
 .table-header {
   display: grid;
   grid-template-columns: var(--table-columns);
   align-items: center;
-  gap: 8px;
-  padding: 0 12px;
-  font-size: 10px;
+  gap: 6px;
+  padding: 0 8px;
+  font-size: 9px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   color: var(--muted);
 }
 
@@ -2447,11 +2460,15 @@ h1 {
   display: grid;
   grid-template-columns: var(--table-columns);
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
+  gap: 6px;
+  padding: 6px 8px;
   border-radius: 12px;
   border: 1px solid var(--border);
   background: #fffdf6;
+}
+
+.table-row > * {
+  min-width: 0;
 }
 
 .table-row--waiting {
@@ -2467,7 +2484,7 @@ h1 {
 .table-row__main {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
 }
 
@@ -2491,11 +2508,11 @@ h1 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 32px;
-  padding: 2px 6px;
+  min-width: 28px;
+  padding: 2px 4px;
   border-radius: 999px;
   background: #f1e6d3;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   color: #6c4a2f;
   text-align: center;
@@ -2505,8 +2522,16 @@ h1 {
 .table-row__status {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
   justify-content: flex-end;
+  min-width: 0;
+}
+
+.table-row__status .status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
 }
 .log-list {
   margin: 0;
