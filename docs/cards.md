@@ -106,3 +106,32 @@ OPENAI_API_KEY=sk-... node scripts/generate-card-art.js --cards age1.quick_march
 ### Model / size
 - Default model: `gpt-image-1.5` (override with `--model` or `OPENAI_IMAGE_MODEL`).
 - Default size: `1024x1024` (override with `--size`).
+
+## Renaming Cards Safely
+You can freely edit these UI-facing fields without breaking logic:
+- `name`
+- `rulesText`
+- `cost`, `initiative`, `burn`, `type`, `tags`
+- `champion` stats (`hp`, `attackDice`, `hitFaces`, `bounty`, `goldCostByChampionCount`)
+
+Do not change `id` values once a card exists. Card IDs are the stable keys referenced by
+deck lists, tests, logs, and saved state. If you need a true rename, create a new card
+with a new `id` and remove the old id from decks.
+
+### When you must change a card id
+If you do change an id, you must update every reference:
+- `packages/engine/src/content/starter-decks.ts`
+- `packages/engine/src/content/market-decks.ts`
+- `DEFAULT_CONFIG.freeStartingCardPool` (if used)
+- any tests or hardcoded card references
+
+## Creating Variants (Same Card, Different Initiative)
+To make a duplicate card with different stats:
+1) Copy the card definition in `packages/engine/src/content/cards/*.ts`.
+2) Give it a unique `id` (required).
+3) Adjust `initiative` or other stats.
+4) Add the new id to the appropriate deck list (`starter-decks.ts` or `market-decks.ts`).
+
+Notes:
+- If the `name` is identical, the UI/logs will show both variants with the same label.
+- The registry tests will fail if ids are not unique.

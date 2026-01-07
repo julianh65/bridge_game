@@ -133,6 +133,7 @@
 ## Milestone 9 progress
 - Forced the market overlay to surface the winner animation for the last card even if the overlay was closed, so the end-of-market win reveal always shows. (Overlap note: `apps/web/src/components/GameScreen.tsx`.)
 - Added a unit stack arrival pulse animation in the board view to make movement clearer during action reveals; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.)
+- Added faction labels (symbol + name) on CardsBrowser card tiles to denote faction-specific cards; marked the plan item complete in `implementation_plan.md`.
 - Added softer click sfx tags to main menu view toggles and Home create/join buttons for more audio coverage.
 - Added UI sound effects (click/error/bell) with a global click handler, round bell cue, and moved audio files into web assets; marked the plan item complete in `implementation_plan.md`.
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.
@@ -426,6 +427,7 @@ none
 - Added a card-art manifest + helper, GameCard art rendering, and a CLI script to generate diffusion art and update the manifest. (Files: `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`.)
 - Switched the card-art generator to OpenAI's image API, updated the base prompt + title suffix behavior, added title-based filenames, and made manifest updates optional. (Files: `scripts/generate-card-art.js`.)
 - Documented OpenAI card-art generator usage, API key setup, and prompt tuning in `docs/cards.md`.
+- Added docs guidance on safe card renames and creating variant cards with unique ids in `docs/cards.md`.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
