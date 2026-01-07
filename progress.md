@@ -17,6 +17,7 @@
 
 ## Active tasks
 - [owner: agent4] [status: in-progress] Scope: add champion hover tooltip on board stacks. Files: apps/web/src/components/BoardView.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md.
+- [owner: agent2] [status: in-progress] Scope: smooth basic bridge build picking (auto-enter pick mode, auto-exit on edge selection). Files: apps/web/src/components/GameScreen.tsx, progress.md, implementation_plan.md.
 
 ## Milestone 8.5 progress
 - Added unique faction symbols (small circle badges) across faction selection, lobby labels, unit stacks, and victory screen; marked the plan item complete in `implementation_plan.md`.
@@ -69,6 +70,7 @@
 - Added an action card reveal overlay that sequences resolved card plays with target summaries + board highlights, and animated unit stack movement transitions during board updates.
 - Slowed the action card reveal overlay timing for a less abrupt reveal.
 - Reworked the hand panel layout: stacked basic action buttons, moved deck counts to header pills, and floated Pass/Submit controls; marked the plan items complete in `implementation_plan.md`.
+- Adjusted the hand panel overlay to stop reserving vertical space and slimmed the actions column width.
 - Added an age/start-of-game transition cue overlay and marked the plan item complete in `implementation_plan.md`.
 - Shortened bridge render segments so they no longer draw center-to-center; marked the plan item complete in `implementation_plan.md`.
 - Shortened bridge render segments a bit further by increasing the inset.

@@ -1826,7 +1826,6 @@ h1 {
   flex-direction: column;
   gap: 10px;
   padding: 14px;
-  padding-bottom: 72px;
   position: absolute;
   left: 16px;
   right: 16px;
@@ -1882,7 +1881,7 @@ h1 {
 
 .game-hand__layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(180px, 240px);
+  grid-template-columns: minmax(0, 2.2fr) minmax(140px, 190px);
   gap: 12px;
   align-items: start;
 }
@@ -1902,11 +1901,11 @@ h1 {
 .game-hand__actions {
   display: grid;
   gap: 8px;
-  padding: 10px;
+  padding: 8px;
   border-radius: 12px;
   border: 1px solid var(--border);
   background: #fdf4e4;
-  max-width: 240px;
+  max-width: 200px;
 }
 
 .game-hand__actions-header {
