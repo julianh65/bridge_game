@@ -16,10 +16,11 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [owner: agent3] [status: in-progress] Scope: fix hand-card hover popout z-index/overflow so hovered cards render above containers. Files: apps/web/src/styles.css, apps/web/src/components/GameScreenHandPanel.tsx, apps/web/src/components/GameCard.tsx, progress.md.
+- none
 
 ## Milestone 8.5 progress
 - Improved hand card selection UX: added a selected-card summary with target hints + clear button, enabled click-to-deselect, and cleared card selection when switching to basic actions; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
+- Fixed hand-card hover popout stacking/spacing so hovered cards render above the actions column without clipping; marked the plan item complete in `implementation_plan.md`.
 - Added unique faction symbols (small circle badges) across faction selection, lobby labels, unit stacks, and victory screen; marked the plan item complete in `implementation_plan.md`.
 - Restyled champion markers above stacks into circular tokens with glyph placeholders; marked the plan item complete in `implementation_plan.md`.
 - Added champion hover tooltips on board tokens with HP/attack/damage and a rules snippet; marked the plan item complete in `implementation_plan.md`.
@@ -78,6 +79,7 @@
 - Slowed the action card reveal overlay timing for a less abrupt reveal.
 - Reworked the hand panel layout: stacked basic action buttons, moved deck counts to header pills, and floated Pass/Submit controls; marked the plan items complete in `implementation_plan.md`.
 - Smoothed basic Build Bridge picking by auto-entering edge pick mode on Bridge selection and exiting pick mode after an edge click; marked the plan item complete in `implementation_plan.md`. (Overlap note: commit also picked up staged `apps/web/src/components/BoardView.tsx` + `apps/web/src/styles.css` edits and `implementation_plan.md` changes while agent4 was active.)
+- Loosened BoardView pan bounds further so the board can be dragged more freely off-screen; marked the plan item complete in `implementation_plan.md`.
 - Adjusted the hand panel overlay to stop reserving vertical space and slimmed the actions column width.
 - Hid scrollbars on the hand card row while keeping horizontal scroll.
 - Refined Pass/Submit placement: removed the visible container, widened buttons evenly, and nudged the bar lower.
@@ -117,6 +119,7 @@
 - Rendered bridges as plank/rail SVG assets in the board view and marked the plan item complete in `implementation_plan.md`.
 - Standardized bridge rendering to a neutral color (no owner tint) and confirmed engine movement ignores bridge ownership.
 - Kept the market overlay visible briefly after market ends so the final winner highlight/animation shows; marked the plan item complete in `implementation_plan.md`.
+- Disabled board SVG text selection to prevent accidental highlights; marked the plan item complete in `implementation_plan.md`.
 - Added a pass confirmation step when mana remains before ending the action step; marked the plan item complete in `implementation_plan.md`.
 
 ## Bug audit progress

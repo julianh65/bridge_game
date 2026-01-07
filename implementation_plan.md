@@ -447,7 +447,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Mousing over a champion chit on the board should give a small pop up showing more info on the champion, the health, the card itself maybe, the damage and modifiers on it etc...
 - [x] The reveal length for each action should be configurable from settings
 - [x] The reveal modal that pops up shouldn't have the card ID on it
-- [ ] When hovering over a card in your hand and it pops out, it should be higher z index than anything else and not be contained if that's possible, right now it pops out but is contained by both its parent containers
+- [x] When hovering over a card in your hand and it pops out, it should be higher z index than anything else and not be contained if that's possible, right now it pops out but is contained by both its parent containers
 - [x] The Log is taking up too much screen real estate, make that a seperate area or modal or something
 - [x] Urgent: Card targets are still not be selected properly when you click on the board. For example the bridge crew still doesn't work. I see the edge flash but it doesn't select it properly still. (Delayed BoardView pointer capture so clicks register.)
 - [x] Also can you double check, does it only work for 2 players right now?
@@ -463,7 +463,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] The text of Mine Capital or whatever is a bit goofy looking and too big, it should just show that text on hover and the colored hexes are fine for now, eventually we will replace those with nice looking tiles to demarcate
 - [x] Move the map legend to the bottom under the map
 - [x] Small / medium task: the log should not use axial coords but our coordinate system of a1, a2 etc...
-- [ ] Small / medium task: can we allow for a bit more "freedom" in the moving of the board? Like allow to move off screen more up down left right when we drag around
+- [x] Small / medium task: can we allow for a bit more "freedom" in the moving of the board? Like allow to move off screen more up down left right when we drag around
 - [ ] Can we experiment with making the container that holds the cards and the actions see through
 - [x] (harder and urgent) We need a better ui/ux flow for the cards where you click cards and then change your mind, right now it feels clunky and not obvious what I've selected or if I've changed my state of what im about to submit / play
 
@@ -493,7 +493,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Small, the board that displays in the re-roll container on setup spills outside its parent
 - [x] Add a confirm if they click pass and they still have mana
 - [ ] We need to have a way such the players can determine how many forces in a stack they are moving, like they may not want to move all 10 units but rather do 5/5, but it needs to be very intuitive and not clunky, I think maybe it should be like a move all button vs a split button and when you hit split it lets you pick how many to move, it needs to be very smooth though
-- [ ] Any text on the board shouldn't be highlightable
+- [x] Any text on the board shouldn't be highlightable
 
 ## Milestone 9.5 -- Card Art + Description
 

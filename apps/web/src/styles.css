@@ -1890,6 +1890,9 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  position: relative;
+  z-index: 2;
+  overflow: visible;
 }
 
 .game-hand__targets {
@@ -1906,6 +1909,8 @@ h1 {
   border: 1px solid var(--border);
   background: #fdf4e4;
   max-width: 200px;
+  position: relative;
+  z-index: 1;
 }
 
 .game-hand__actions-header {
@@ -2163,12 +2168,14 @@ h1 {
   display: flex;
   align-items: flex-end;
   gap: 0;
-  padding: 6px 18px 10px 18px;
+  padding: 24px 22px 12px 22px;
   overflow-x: auto;
   overflow-y: visible;
   scroll-snap-type: x proximity;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  position: relative;
+  z-index: 1;
 }
 
 .hand-row::-webkit-scrollbar {
