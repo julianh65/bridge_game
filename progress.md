@@ -16,8 +16,9 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent3 | scope: fix BoardView import error by exporting card defs map from engine index | files: `packages/engine/src/index.ts` | status: in progress
+- owner: agent3 | scope: implement missing faction starter spell effects (Hold the Line, Marked for Coin, Perfect Recall) + tests | files: `packages/engine/src/card-effects.ts`, `packages/engine/src/cards.ts`, `packages/engine/src/rewards.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md` | status: in progress
 - owner: agent4 | scope: refine GameCard layout (centered title/type, initiative circle, cost line, age label, borders, sizing) per feedback | files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `progress.md` | status: in progress
+- owner: agent1 | scope: relocate board-tools chip (selected hex + reset view) below the board and align with legend | files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css` | status: in progress (overlap: `apps/web/src/styles.css` with agent4)
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -124,6 +125,7 @@
 
 ## Docs maintenance
 - Expanded the Milestone 9 card-test checklist with Age I market sub-items in `implementation_plan.md`.
+- Added a Milestone 9 TODO for bridge art assets/rendering in `implementation_plan.md`.
 - Marked the Milestone 9 Age I market card-test item (Supply Ledger/Patrol Record/Banner Claim) complete in `implementation_plan.md`.
 - Checked off the remaining Age I market card-test checklist item (Quick March/Trade Caravan/Temporary Bridge/Patch Up/Quick Study) in `implementation_plan.md`.
 - Cleaned `implementation_plan.md` and `progress.md` (removed duplicate UI tasks, marked starting-bridge board picking as complete, trimmed test log clutter).
