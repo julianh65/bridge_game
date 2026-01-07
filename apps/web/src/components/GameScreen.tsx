@@ -52,6 +52,12 @@ type MarketWinnerHighlight = {
   passPot: number | null;
 };
 
+type AgeCue = {
+  label: string;
+  round: number;
+  kind: "start" | "shift";
+};
+
 const parseTargets = (raw: string): Record<string, unknown> | null => {
   const trimmed = raw.trim();
   if (trimmed.length === 0) {
@@ -84,6 +90,8 @@ const formatPhaseLabel = (phase: string) => {
   const spaced = trimmed.replace(/([a-z])([A-Z])/g, "$1 $2").replace(".", " ");
   return spaced.replace(/^\w/, (value) => value.toUpperCase());
 };
+
+const formatAgeCueLabel = (age: string) => `Age ${age} Begins`;
 
 const getDefaultCardPickMode = (cardDef: CardDef | null): BoardPickMode => {
   if (!cardDef) {
@@ -182,6 +190,8 @@ export const GameScreen = ({
   const [combatQueue, setCombatQueue] = useState<CombatSequence[]>([]);
   const [phaseCue, setPhaseCue] = useState<{ label: string; round: number } | null>(null);
   const [phaseCueKey, setPhaseCueKey] = useState(0);
+  const [ageCue, setAgeCue] = useState<AgeCue | null>(null);
+  const [ageCueKey, setAgeCueKey] = useState(0);
   const [isVictoryVisible, setIsVictoryVisible] = useState(() =>
     Boolean(view.public.winnerPlayerId)
   );
@@ -197,8 +207,10 @@ export const GameScreen = ({
   const lastCombatEndIndex = useRef(-1);
   const hasMarketLogBaseline = useRef(false);
   const hasPhaseCueBaseline = useRef(false);
+  const hasAgeIntroShown = useRef(false);
   const lastPhaseRef = useRef(view.public.phase);
   const lastRoundRef = useRef(view.public.round);
+  const lastAgeRef = useRef(view.public.market.age);
   const targetRecord = useMemo(() => parseTargets(cardTargetsRaw), [cardTargetsRaw]);
   const selectedChampionId =
     getTargetString(targetRecord, "unitId") ?? getTargetString(targetRecord, "championId");
@@ -402,6 +414,27 @@ export const GameScreen = ({
   }, [view.public.phase, view.public.round, phaseLabel]);
 
   useEffect(() => {
+    const age = view.public.market.age;
+    const round = view.public.round;
+    const phase = view.public.phase;
+    const isRoundPhase = phase.startsWith("round.");
+    if (!hasAgeIntroShown.current && isRoundPhase && round === 1) {
+      setAgeCue({ label: formatAgeCueLabel(age), round, kind: "start" });
+      setAgeCueKey((value) => value + 1);
+      hasAgeIntroShown.current = true;
+      lastAgeRef.current = age;
+      return;
+    }
+    if (age === lastAgeRef.current) {
+      return;
+    }
+    lastAgeRef.current = age;
+    setAgeCue({ label: formatAgeCueLabel(age), round, kind: "shift" });
+    setAgeCueKey((value) => value + 1);
+    hasAgeIntroShown.current = true;
+  }, [view.public.market.age, view.public.phase, view.public.round]);
+
+  useEffect(() => {
     if (!phaseCue) {
       return;
     }
@@ -412,6 +445,18 @@ export const GameScreen = ({
       window.clearTimeout(timeout);
     };
   }, [phaseCue, phaseCueKey]);
+
+  useEffect(() => {
+    if (!ageCue) {
+      return;
+    }
+    const timeout = window.setTimeout(() => {
+      setAgeCue(null);
+    }, 3200);
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [ageCue, ageCueKey]);
 
   useEffect(() => {
     const logs = view.public.logs;
@@ -1380,6 +1425,22 @@ export const GameScreen = ({
             <span className="phase-cue__eyebrow">Phase change</span>
             <strong className="phase-cue__label">{phaseCue.label}</strong>
             <span className="phase-cue__round">Round {phaseCue.round}</span>
+          </div>
+        </div>
+      ) : null}
+      {ageCue ? (
+        <div
+          key={ageCueKey}
+          className="phase-cue phase-cue--age"
+          role="status"
+          aria-live="polite"
+        >
+          <div className="phase-cue__panel">
+            <span className="phase-cue__eyebrow">
+              {ageCue.kind === "start" ? "Game start" : "New age"}
+            </span>
+            <strong className="phase-cue__label">{ageCue.label}</strong>
+            <span className="phase-cue__round">Round {ageCue.round}</span>
           </div>
         </div>
       ) : null}

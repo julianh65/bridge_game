@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
+- owner: agent3 | scope: fix BoardView import error by exporting card defs map from engine index | files: `packages/engine/src/index.ts` | status: in progress
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -56,6 +56,7 @@ none
 - Auto-enabled card board targeting on card select (edge/stack/path/hex/choice) and updated card target buttons to show when board picking is active; marked the plan item complete in `implementation_plan.md`.
 - Moved starting bridge placement into a board-based picker with clickable edge previews and setup hints in the lobby UI (overlap: `apps/web/src/styles.css` with agent1).
 - Compressed the bottom hand panel spacing, card sizing, and detail typography to reduce its vertical footprint; marked the plan item complete in `implementation_plan.md`.
+- Added an age/start-of-game transition cue overlay and marked the plan item complete in `implementation_plan.md`.
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.

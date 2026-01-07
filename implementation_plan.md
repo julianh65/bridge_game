@@ -440,9 +440,10 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] we need a few UI's still, like dice rolling for draws and cards and other stuff
 - [x] We need a better more clear UI with symbols (just do emojis for now) to represent gold, mana VP
 - [x] The placing starting bridge UI needs to be on the board not picking a bunch of axial coords.
-- [ ] We should have nice transitions between ages and at the start of the game
+- [x] We should have nice transitions between ages and at the start of the game
 - [x] The bottom hand modal part is still a tiny bit clunky in that it can block stuff, maybe try to clean it up a bit and make it shorter and a bit more compact?
 - [x] The table view has to be a bit more easy to read, idk where it can go, on the right where it is, on the top, but we need to at a glance be able to just briefly see everyone's status, you can make it smaller as well
+- [ ] Can the bridges look a bit nicer? They right now just come from the center of each but they should be a bit shorter
 
 ### Other
 - [x] The champion needs to be more obvious, like a seperate thing with its health and name and stuff, and they can hover over it to see the stats

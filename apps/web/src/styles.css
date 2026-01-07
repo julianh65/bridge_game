@@ -1233,6 +1233,15 @@ h1 {
   animation: phaseCueFade 2.6s ease-in-out forwards;
 }
 
+.phase-cue--age {
+  background: radial-gradient(
+    circle at center,
+    rgba(219, 234, 254, 0.7),
+    rgba(219, 234, 254, 0) 60%
+  );
+  animation-duration: 3.2s;
+}
+
 .phase-cue__panel {
   display: grid;
   gap: 6px;
@@ -1245,11 +1254,22 @@ h1 {
   animation: phaseCuePop 2.6s ease-in-out forwards;
 }
 
+.phase-cue--age .phase-cue__panel {
+  border-color: rgba(14, 116, 144, 0.35);
+  background: rgba(240, 249, 255, 0.96);
+  box-shadow: 0 18px 40px rgba(12, 74, 110, 0.24);
+  animation-duration: 3.2s;
+}
+
 .phase-cue__eyebrow {
   font-size: 10px;
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--muted);
+}
+
+.phase-cue--age .phase-cue__eyebrow {
+  color: #075985;
 }
 
 .phase-cue__label {
@@ -1259,9 +1279,17 @@ h1 {
   color: var(--ink);
 }
 
+.phase-cue--age .phase-cue__label {
+  color: #0c4a6e;
+}
+
 .phase-cue__round {
   font-size: 14px;
   color: var(--muted);
+}
+
+.phase-cue--age .phase-cue__round {
+  color: #0f172a;
 }
 
 .game-screen__header {
