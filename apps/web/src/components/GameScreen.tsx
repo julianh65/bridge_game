@@ -161,6 +161,8 @@ export const GameScreen = ({
   const [resetViewToken, setResetViewToken] = useState(0);
   const [isInfoDockOpen, setIsInfoDockOpen] = useState(false);
   const [infoDockTab, setInfoDockTab] = useState<InfoDockTab>("players");
+  const [isHandPanelOpen, setIsHandPanelOpen] = useState(true);
+  const [isActionsCollapsed, setIsActionsCollapsed] = useState(false);
   const lastMarketEventIndex = useRef(-1);
   const hasMarketLogBaseline = useRef(false);
   const hasPhaseCueBaseline = useRef(false);
@@ -252,7 +254,8 @@ export const GameScreen = ({
   const isCollectionPhase = view.public.phase === "round.collection";
   const isInteractivePhase = isActionPhase || isMarketPhase || isCollectionPhase;
   const showPhaseFocus = isCollectionPhase;
-  const showHandPanel = Boolean(view.private) && isActionPhase;
+  const canShowHandPanel = Boolean(view.private) && isActionPhase;
+  const showHandPanel = canShowHandPanel && isHandPanelOpen;
   const showVictoryScreen = Boolean(view.public.winnerPlayerId && isVictoryVisible);
   const canDeclareAction =
     status === "connected" && Boolean(localPlayer) && isActionPhase && !localPlayer?.doneThisRound;
@@ -303,6 +306,8 @@ export const GameScreen = ({
       setPendingPath([]);
       setCardInstanceId("");
       setCardTargetsRaw("");
+      setIsHandPanelOpen(true);
+      setIsActionsCollapsed(false);
     }
   }, [isActionPhase]);
 
@@ -1202,8 +1207,19 @@ export const GameScreen = ({
   const handPanel = showHandPanel ? (
     <section className="panel game-hand">
       <div className="game-hand__header">
-        <h2>Hand</h2>
-        <span className="hand-meta">{handCount} cards</span>
+        <div>
+          <h2>Hand</h2>
+          <span className="hand-meta">{handCount} cards</span>
+        </div>
+        <div className="hand-controls">
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            onClick={() => setIsHandPanelOpen(false)}
+          >
+            Hide
+          </button>
+        </div>
       </div>
       <div className="game-hand__layout">
         <div className="game-hand__cards">
@@ -1286,31 +1302,53 @@ export const GameScreen = ({
             </>
           )}
         </div>
-        <aside className="game-hand__actions">
+        <aside className={`game-hand__actions ${isActionsCollapsed ? "is-collapsed" : ""}`}>
           <div className="game-hand__actions-header">
             <h3>Actions</h3>
-            <span className="hand-meta">Declare then submit</span>
+            <div className="hand-controls">
+              <span className="hand-meta">Declare then submit</span>
+              <button
+                type="button"
+                className="btn btn-tertiary"
+                onClick={() => setIsActionsCollapsed((value) => !value)}
+              >
+                {isActionsCollapsed ? "Expand" : "Collapse"}
+              </button>
+            </div>
           </div>
-          <ActionPanel
-            phase={view.public.phase}
-            player={localPlayer ?? null}
-            players={view.public.players}
-            actionStep={view.public.actionStep}
-            status={status}
-            edgeKey={edgeKey}
-            marchFrom={marchFrom}
-            marchTo={marchTo}
-            cardInstanceId={cardInstanceId}
-            cardTargetsRaw={cardTargetsRaw}
-            boardPickMode={boardPickMode}
-            onSubmit={onSubmitAction}
-            onEdgeKeyChange={setEdgeKey}
-            onMarchFromChange={setMarchFrom}
-            onMarchToChange={setMarchTo}
-            onCardInstanceIdChange={setCardInstanceId}
-            onCardTargetsRawChange={setCardTargetsRaw}
-            onBoardPickModeChange={setBoardPickModeSafe}
-          />
+          {isActionsCollapsed ? (
+            <div className="actions-collapsed">
+              <p className="muted">Actions folded.</p>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setIsActionsCollapsed(false)}
+              >
+                Expand actions
+              </button>
+            </div>
+          ) : (
+            <ActionPanel
+              phase={view.public.phase}
+              player={localPlayer ?? null}
+              players={view.public.players}
+              actionStep={view.public.actionStep}
+              status={status}
+              edgeKey={edgeKey}
+              marchFrom={marchFrom}
+              marchTo={marchTo}
+              cardInstanceId={cardInstanceId}
+              cardTargetsRaw={cardTargetsRaw}
+              boardPickMode={boardPickMode}
+              onSubmit={onSubmitAction}
+              onEdgeKeyChange={setEdgeKey}
+              onMarchFromChange={setMarchFrom}
+              onMarchToChange={setMarchTo}
+              onCardInstanceIdChange={setCardInstanceId}
+              onCardTargetsRawChange={setCardTargetsRaw}
+              onBoardPickModeChange={setBoardPickModeSafe}
+            />
+          )}
           {deckCounts ? (
             <div className="deck-counts deck-counts--compact">
               <div className="resource-row">
@@ -1331,6 +1369,19 @@ export const GameScreen = ({
       </div>
     </section>
   ) : null;
+
+  const handToggle =
+    canShowHandPanel && !isHandPanelOpen ? (
+      <div className="hand-toggle">
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => setIsHandPanelOpen(true)}
+        >
+          Show Hand
+        </button>
+      </div>
+    ) : null;
 
   const phaseFocusPanel = showPhaseFocus ? (
     <div className="game-screen__focus">
@@ -1743,6 +1794,7 @@ export const GameScreen = ({
       </div>
       {infoDock}
       {handPanel}
+      {handToggle}
     </section>
   );
 };
