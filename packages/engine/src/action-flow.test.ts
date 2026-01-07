@@ -1651,6 +1651,32 @@ describe("action flow", () => {
     expect(after).toBe(before + 1);
   });
 
+  it("plays recruit detachment with custom capital and occupied counts", () => {
+    let { state, p1Capital } = setupToActionPhase({ p1: "aerial" });
+    const card = getCardDef("age1.recruit_detachment");
+    if (!card) {
+      throw new Error("missing recruit detachment card");
+    }
+
+    const capitalBefore = state.board.hexes[p1Capital].occupants["p1"]?.length ?? 0;
+    state = resolveCardEffects(state, "p1", card, { choice: "capital" });
+    const capitalAfter = state.board.hexes[p1Capital].occupants["p1"]?.length ?? 0;
+    expect(capitalAfter - capitalBefore).toBe(4);
+
+    const neighbor = neighborHexKeys(p1Capital).find((key) => Boolean(state.board.hexes[key]));
+    if (!neighbor) {
+      throw new Error("missing neighbor for recruit detachment test");
+    }
+    state = {
+      ...state,
+      board: addForcesToHex(state.board, "p1", neighbor, 1)
+    };
+    const occupiedBefore = state.board.hexes[neighbor].occupants["p1"]?.length ?? 0;
+    state = resolveCardEffects(state, "p1", card, { choice: "occupiedHex", hexKey: neighbor });
+    const occupiedAfter = state.board.hexes[neighbor].occupants["p1"]?.length ?? 0;
+    expect(occupiedAfter - occupiedBefore).toBe(2);
+  });
+
   it("plays air drop to deploy forces near a friendly champion", () => {
     let { state, p1Capital } = setupToActionPhase();
     const neighbor = neighborHexKeys(p1Capital).find((key) => Boolean(state.board.hexes[key]));

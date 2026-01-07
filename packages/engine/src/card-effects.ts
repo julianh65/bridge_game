@@ -1170,12 +1170,18 @@ export const resolveCardEffects = (
         if (!choice) {
           break;
         }
+        const capitalCountRaw =
+          typeof effect.capitalCount === "number" ? effect.capitalCount : 2;
+        const occupiedCountRaw =
+          typeof effect.occupiedCount === "number" ? effect.occupiedCount : 1;
+        const capitalCount = Math.max(0, Math.floor(capitalCountRaw));
+        const occupiedCount = Math.max(0, Math.floor(occupiedCountRaw));
         if (choice.kind === "capital") {
           const deployHex = resolveCapitalDeployHex(nextState, playerId, choice.hexKey ?? null);
           if (!deployHex) {
             break;
           }
-          const baseCount = 2;
+          const baseCount = capitalCount;
           const count = getDeployForcesCount(
             nextState,
             { playerId, hexKey: deployHex, baseCount },
@@ -1198,7 +1204,7 @@ export const resolveCardEffects = (
           if (wouldExceedTwoPlayers(hex, playerId)) {
             break;
           }
-          const baseCount = 1;
+          const baseCount = occupiedCount;
           const count = getDeployForcesCount(
             nextState,
             { playerId, hexKey: choice.hexKey, baseCount },

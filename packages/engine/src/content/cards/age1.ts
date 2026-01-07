@@ -66,6 +66,60 @@ export const TRADE_CARAVAN: CardDef = {
   effects: [{ kind: "gainGold", amount: 3 }]
 };
 
+export const RECRUIT_DETACHMENT: CardDef = {
+  id: "age1.recruit_detachment",
+  name: "Recruit Detachment",
+  rulesText: "Deploy 4 Forces to your Capital, OR 2 Forces to a hex you occupy.",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 2, gold: 1 },
+  initiative: 45,
+  burn: false,
+  targetSpec: {
+    kind: "choice",
+    options: [
+      { kind: "capital" },
+      { kind: "occupiedHex", owner: "self" }
+    ]
+  },
+  effects: [{ kind: "recruit", capitalCount: 4, occupiedCount: 2 }]
+};
+
+export const PAID_VOLUNTEERS: CardDef = {
+  id: "age1.paid_volunteers",
+  name: "Paid Volunteers",
+  rulesText: "Deploy 4 Forces to your Capital.",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1, gold: 2 },
+  initiative: 65,
+  burn: false,
+  targetSpec: {
+    kind: "choice",
+    options: [{ kind: "capital" }]
+  },
+  effects: [{ kind: "recruit", capitalCount: 4 }]
+};
+
+export const NATIONAL_SERVICE: CardDef = {
+  id: "age1.national_service",
+  name: "National Service",
+  rulesText: "Deploy 1 Force to your Capital.",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 0, gold: 1 },
+  initiative: 55,
+  burn: false,
+  targetSpec: {
+    kind: "choice",
+    options: [{ kind: "capital" }]
+  },
+  effects: [{ kind: "recruit", capitalCount: 1 }]
+};
+
 export const SCAVENGERS_MARKET: CardDef = {
   id: "age1.scavengers_market",
   name: "Scavenger's Market",
@@ -330,6 +384,9 @@ export const AGE1_CARDS: CardDef[] = [
   FLANK_STEP,
   PROSPECTING,
   TRADE_CARAVAN,
+  RECRUIT_DETACHMENT,
+  PAID_VOLUNTEERS,
+  NATIONAL_SERVICE,
   SCAVENGERS_MARKET,
   TEMPORARY_BRIDGE,
   SABOTAGE_BRIDGE,
