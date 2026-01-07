@@ -524,6 +524,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [x] Age I market: remaining orders (Quick March, Trade Caravan, Temporary Bridge, Patch Up, Quick Study).
   - [ ] Age II/III market + power deck card tests (as content lands).
   - [ ] Champion ability tests (on-deploy, on-death, on-battle-win, dice mods, VP aura).
+    - [x] Bounty Hunter bonus gold on champion kill in battle.
   - [ ] Card primitive tests for new mechanics (bridge lockdown/trap, wormhole adjacency, dice roll cards, cost overrides).
 - [x] At the end of the market phase we don't see the nice animation and transition for the last player who auto gets it
 - [x] It needs to be much more clear that Done is like "Pass" and won't let you go again

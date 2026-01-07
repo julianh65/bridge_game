@@ -9,6 +9,7 @@ import { validateMovePath } from "./card-effects";
 import { getCardDef } from "./content/cards";
 import { createNewGame } from "./engine";
 import { applyModifierQuery, getCombatModifiers } from "./modifiers";
+import { applyChampionKillRewards } from "./rewards";
 import { addChampionToHex, addForcesToHex } from "./units";
 
 const getChampionCard = (cardId: string) => {
@@ -481,5 +482,60 @@ describe("champion abilities", () => {
     );
 
     expect(hitFaces).toBe(5);
+  });
+
+  it("grants Bounty Hunter bonus gold on champion kill in battle", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    const bountyCard = getChampionCard("champion.age1.bounty_hunter");
+    const hunter = addChampionToHex(board, "p1", hexKey, {
+      cardDefId: bountyCard.id,
+      hp: bountyCard.champion.hp,
+      attackDice: bountyCard.champion.attackDice,
+      hitFaces: bountyCard.champion.hitFaces,
+      bounty: bountyCard.champion.bounty
+    });
+    let state = {
+      ...base,
+      board: hunter.board,
+      phase: "round.action",
+      blocks: undefined
+    };
+    state = applyChampionDeployment(state, hunter.unitId, bountyCard.id, "p1");
+
+    const enemyCard = getChampionCard("champion.age1.sergeant");
+    const enemy = addChampionToHex(state.board, "p2", hexKey, {
+      cardDefId: enemyCard.id,
+      hp: enemyCard.champion.hp,
+      attackDice: enemyCard.champion.attackDice,
+      hitFaces: enemyCard.champion.hitFaces,
+      bounty: enemyCard.champion.bounty
+    });
+    state = {
+      ...state,
+      board: enemy.board
+    };
+
+    const startingGold = state.players.find((player) => player.id === "p1")?.resources.gold ?? 0;
+    const enemyUnit = state.board.units[enemy.unitId];
+    if (!enemyUnit || enemyUnit.kind !== "champion") {
+      throw new Error("missing enemy champion unit");
+    }
+
+    state = applyChampionKillRewards(state, {
+      killerPlayerId: "p1",
+      victimPlayerId: "p2",
+      killedChampions: [enemyUnit],
+      bounty: enemyUnit.bounty,
+      hexKey,
+      source: "battle"
+    });
+
+    const endingGold = state.players.find((player) => player.id === "p1")?.resources.gold ?? 0;
+    expect(endingGold).toBe(startingGold + enemyUnit.bounty + 1);
   });
 });

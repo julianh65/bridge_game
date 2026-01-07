@@ -163,6 +163,7 @@
 - Kept the market overlay visible briefly after market ends so the final winner highlight/animation shows; marked the plan item complete in `implementation_plan.md`.
 - Disabled board SVG text selection to prevent accidental highlights; marked the plan item complete in `implementation_plan.md`.
 - Added a pass confirmation step when mana remains before ending the action step; marked the plan item complete in `implementation_plan.md`.
+- Added a Bounty Hunter champion kill-reward test to cover bonus gold on champion kills in battle.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.
