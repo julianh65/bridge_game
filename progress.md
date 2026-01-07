@@ -16,7 +16,10 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- [agent1] Add board effect badges for attached edge/hex modifiers and expose public modifier views; touch `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.
+- [agent4] Add engine support for temporary hex-link movement modifiers (wormhole/tunnel network) with tests; touch `packages/engine/src/card-effects.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`. (status: in progress)
+- [agent3] Build card-art generation script + web manifest wiring for GameCard art rendering; touch `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`, `implementation_plan.md`, `progress.md`. (status: in progress)
+- Overlap note: active task entries for agent1/agent4 were already present while logging this update.
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
@@ -321,6 +324,7 @@ none
 - Added card registry tests for unique IDs and starter/free-start coverage.
 - Added an initial Age I market deck list export under `packages/engine/src/content/market-decks.ts`.
 - Added market deck tests to validate ids are unique, registered, and age-appropriate.
+- Added derived card tags for burn/power/victory/champion in the registry, with tests.
 
 ## Debug UI progress
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.

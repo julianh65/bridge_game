@@ -30,4 +30,21 @@ describe("card registry", () => {
       expect(getCardDef(id)).toBeDefined();
     }
   });
+
+  it("adds derived tags for burn/power/victory/champion cards", () => {
+    for (const card of CARD_DEFS) {
+      if (card.burn) {
+        expect(card.tags).toContain("burn");
+      }
+      if (card.type === "Champion") {
+        expect(card.tags).toContain("champion");
+      }
+      if (card.type === "Victory") {
+        expect(card.tags).toContain("victory");
+      }
+      if (card.deck === "power") {
+        expect(card.tags).toContain("power");
+      }
+    }
+  });
 });

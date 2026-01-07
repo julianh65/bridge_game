@@ -432,7 +432,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [ ] Age III market cards + champions (47 cards + 8 champions).
   - [ ] Age I/II/III power deck cards (12 each), including power champions and power-victory cards.
   - [ ] Update deck list exports to match rules counts and add tests for deck composition/uniqueness.
-  - [ ] Add card metadata tags for Burn/Power/Victory/Champion and ensure filters use them.
+  - [x] Add card metadata tags for Burn/Power/Victory/Champion and ensure filters use them.
 - [x] Add “smoke sim” tests:
   - random legal commands for N steps should not crash
 - [x] Add dev-only debug tools:
