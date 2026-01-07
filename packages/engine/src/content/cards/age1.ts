@@ -228,6 +228,55 @@ export const BRIDGE_RUNNER: CardDef = {
   }
 };
 
+export const INSPIRING_GEEZER: CardDef = {
+  id: "champion.age1.inspiring_geezer",
+  name: "Inspiring Geezer",
+  rulesText: "All friendly forces in this hex hit on 1-3.",
+  type: "Champion",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 2 },
+  initiative: 70,
+  burn: true,
+  targetSpec: {
+    kind: "hex",
+    owner: "self",
+    occupied: true
+  },
+  champion: {
+    hp: 2,
+    attackDice: 1,
+    hitFaces: 2,
+    bounty: 2,
+    goldCostByChampionCount: [1, 3, 5]
+  }
+};
+
+export const BRUTE: CardDef = {
+  id: "champion.age1.brute",
+  name: "Brute",
+  rulesText:
+    "If there is no enemy Champion in this hex, roll 2 extra dice (total 3) that hit on 1-3.",
+  type: "Champion",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 2 },
+  initiative: 35,
+  burn: true,
+  targetSpec: {
+    kind: "hex",
+    owner: "self",
+    occupied: true
+  },
+  champion: {
+    hp: 6,
+    attackDice: 1,
+    hitFaces: 3,
+    bounty: 2,
+    goldCostByChampionCount: [2, 4, 6]
+  }
+};
+
 export const AGE1_CARDS: CardDef[] = [
   QUICK_MARCH,
   FLANK_STEP,
@@ -241,5 +290,7 @@ export const AGE1_CARDS: CardDef[] = [
   PATROL_RECORD,
   BANNER_CLAIM,
   SKIRMISHER_CAPTAIN,
-  BRIDGE_RUNNER
+  BRIDGE_RUNNER,
+  INSPIRING_GEEZER,
+  BRUTE
 ];

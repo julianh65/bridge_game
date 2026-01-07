@@ -409,6 +409,7 @@ none
 - Added lock-bridge card effect support (locks an existing bridge until end of round) with action-flow coverage; marked subtask in `implementation_plan.md`. (Overlap note: touched `implementation_plan.md` while agent3 active.)
 - Added destroy-bridge card effect support for edge-targeted cards with action-flow coverage; marked subtask in `implementation_plan.md`. (Overlap note: touched `implementation_plan.md` while agent3/agent2 active.)
 - Added Age I champion cards for Skirmisher Captain + Bridge Runner, with on-deploy force add and pathfinder movement support, plus engine tests.
+- Added Age I champion cards for Inspiring Geezer + Brute, with combat modifiers and engine tests.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

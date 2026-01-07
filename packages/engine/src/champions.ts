@@ -12,6 +12,8 @@ const ARCHIVIST_PRIME_CHAMPION_ID = "champion.cipher.archivist_prime";
 const WORMHOLE_ARTIFICER_CHAMPION_ID = "champion.gatewright.wormhole_artificer";
 const SKIRMISHER_CAPTAIN_CHAMPION_ID = "champion.age1.skirmisher_captain";
 const BRIDGE_RUNNER_CHAMPION_ID = "champion.age1.bridge_runner";
+const INSPIRING_GEEZER_CHAMPION_ID = "champion.age1.inspiring_geezer";
+const BRUTE_CHAMPION_ID = "champion.age1.brute";
 
 const ASSASSINS_EDGE_KEY = "assassins_edge";
 
@@ -271,6 +273,73 @@ const createWormholeArtificerModifier = (unitId: UnitID, ownerPlayerId: PlayerID
   }
 });
 
+const createInspiringGeezerModifier = (
+  unitId: UnitID,
+  ownerPlayerId: PlayerID
+): Modifier => ({
+  id: buildChampionModifierId(unitId, "inspiring_geezer"),
+  source: { type: "champion", sourceId: INSPIRING_GEEZER_CHAMPION_ID },
+  ownerPlayerId,
+  duration: { type: "permanent" },
+  data: { unitId },
+  hooks: {
+    getForceHitFaces: ({ modifier, unit, hexKey, state }, current) => {
+      if (unit.kind !== "force") {
+        return current;
+      }
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== unit.ownerPlayerId) {
+        return current;
+      }
+      const sourceUnitId = getModifierUnitId(modifier);
+      if (!sourceUnitId) {
+        return current;
+      }
+      const sourceUnit = state.board.units[sourceUnitId];
+      if (!sourceUnit || sourceUnit.kind !== "champion") {
+        return current;
+      }
+      if (sourceUnit.hex !== hexKey) {
+        return current;
+      }
+      return Math.max(current, 3);
+    }
+  }
+});
+
+const createBruteModifier = (unitId: UnitID, ownerPlayerId: PlayerID): Modifier => ({
+  id: buildChampionModifierId(unitId, "brute"),
+  source: { type: "champion", sourceId: BRUTE_CHAMPION_ID },
+  ownerPlayerId,
+  duration: { type: "permanent" },
+  data: { unitId },
+  hooks: {
+    getChampionAttackDice: ({ modifier, unitId: contextUnitId, unit, hexKey, state }, current) => {
+      const sourceUnitId = getModifierUnitId(modifier);
+      if (!sourceUnitId || sourceUnitId !== contextUnitId) {
+        return current;
+      }
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== unit.ownerPlayerId) {
+        return current;
+      }
+      const hex = state.board.hexes[hexKey];
+      if (!hex) {
+        return current;
+      }
+      for (const [playerId, unitIds] of Object.entries(hex.occupants)) {
+        if (playerId === unit.ownerPlayerId) {
+          continue;
+        }
+        for (const occupantId of unitIds ?? []) {
+          if (state.board.units[occupantId]?.kind === "champion") {
+            return current;
+          }
+        }
+      }
+      return current + 2;
+    }
+  }
+});
+
 const createChampionModifiers = (
   unitId: UnitID,
   cardDefId: CardDefId,
@@ -289,6 +358,10 @@ const createChampionModifiers = (
       return [createWormholeArtificerModifier(unitId, ownerPlayerId)];
     case BRIDGE_RUNNER_CHAMPION_ID:
       return [createBridgeBypassModifier(unitId, ownerPlayerId, cardDefId)];
+    case INSPIRING_GEEZER_CHAMPION_ID:
+      return [createInspiringGeezerModifier(unitId, ownerPlayerId)];
+    case BRUTE_CHAMPION_ID:
+      return [createBruteModifier(unitId, ownerPlayerId)];
     default:
       return [];
   }
