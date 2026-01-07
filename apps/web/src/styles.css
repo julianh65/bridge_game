@@ -1185,6 +1185,33 @@ h1 {
   text-align: center;
   color: var(--ink);
   box-shadow: 0 14px 28px rgba(35, 28, 19, 0.14);
+  --card-type-bg: rgba(124, 45, 18, 0.08);
+  --card-type-border: rgba(124, 45, 18, 0.2);
+  --card-type-text: #7c2d12;
+}
+
+.game-card[data-type="Champion"] {
+  --card-type-bg: rgba(220, 38, 38, 0.15);
+  --card-type-border: rgba(220, 38, 38, 0.4);
+  --card-type-text: #b91c1c;
+}
+
+.game-card[data-type="Victory"] {
+  --card-type-bg: rgba(22, 163, 74, 0.16);
+  --card-type-border: rgba(22, 163, 74, 0.4);
+  --card-type-text: #166534;
+}
+
+.game-card[data-type="Spell"] {
+  --card-type-bg: rgba(37, 99, 235, 0.16);
+  --card-type-border: rgba(37, 99, 235, 0.38);
+  --card-type-text: #1d4ed8;
+}
+
+.game-card[data-type="Order"] {
+  --card-type-bg: rgba(217, 119, 6, 0.18);
+  --card-type-border: rgba(217, 119, 6, 0.4);
+  --card-type-text: #92400e;
 }
 
 .game-card__art {
@@ -1246,9 +1273,18 @@ h1 {
 
 .game-card__type {
   margin: -4px 0 0;
-  font-size: 12px;
-  font-style: italic;
-  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--card-type-text);
+  background: var(--card-type-bg);
+  border: 1px solid var(--card-type-border);
+  border-radius: 999px;
+  padding: 2px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .game-card__vp {
@@ -2477,7 +2513,9 @@ h1 {
 }
 
 .game-card--hand .game-card__type {
-  font-size: 10px;
+  font-size: 11px;
+  padding: 1px 8px;
+  letter-spacing: 0.06em;
 }
 
 .game-card--hand .game-card__rules {

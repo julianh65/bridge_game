@@ -361,7 +361,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
     - [x] Active abilities: Field Surgeon (heal champion in hex 1/round)
     - [ ] Active abilities:
       - [x] Stormcaller (Tempest AoE)
-      - [ ] Grand Strategist (Tactical Hand hit assignment)
+      - [x] Grand Strategist (Tactical Hand hit assignment)
 - [ ] Quick check in, the rules in rules_draft are kind of living and breathing as I update things or change balance so make sure that everything is still correct, and add a few more champions and their abilities and everything in to test
 
 ### Tasks (web)
@@ -389,6 +389,9 @@ Start going through the rules_draft and adding the logic for the different types
   - [x] Wormhole links (treat two hexes as adjacent for a round).
   - [x] Tunnel network adjacency (non-passive card effects).
 - [ ] Add hit-assignment control + battle retreat effects (Focus Fire, Tactical Hand, Set to Skirmish).
+  - [x] Set to Skirmish retreat-on-battle modifier.
+  - [ ] Focus Fire hit assignment control.
+  - [ ] Tactical Hand hit assignment control.
 - [ ] Add multi-target/multi-stack actions (move two stacks, build multiple bridges, deploy to multiple mines).
 - [ ] Add variable VP sources (Victory +2, center-based VP, timer VP).
 - [ ] Add champion recall + removal effects (return champion to hand, on-death penalties).
@@ -471,14 +474,15 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Shrink the board presence while the market overlay is open so the cards dominate.
 - [x] The cards on the market overlay look a little bit wide style wise, they should look like cards.
 - [x] The bids in the market should not be public / show in the bid status until everyone has bid
-- [ ] For the market bids the dice roll needs to be slowed down a bit, and they happen like "simultaneously" say the first dice roll happens and it's a draw, it will then do the second round, but those two will show up at the same time on the UI, it needs to be consecutive
+- [x] For the market bids the dice roll needs to be slowed down a bit, and they happen like "simultaneously" say the first dice roll happens and it's a draw, it will then do the second round, but those two will show up at the same time on the UI, it needs to be consecutive
 
 ### Tasks (web - deck + player status)
 - [x] Add a deck viewer so players can browse all cards in their current deck.
 
 ### Tasks (web - action flow + layout)
 - [x] Make only valid targets highlightable, like right now to build a bridge it will highlight the possible edges right, you should only be able to click on the edges not the hexes
-- [ ] The art is not showing up in the "hand" cards
+- [x] The art is not showing up in the "hand" cards
+- [x] It should be more clear the card type, like Champion or Victory or whatever should be slightly larger and look nice and each should have their own color
 
 ### Tasks (web - motion + phase clarity)
 - [x] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen. This is after everyone locks in their actions. I want it to be like Player 1, show the card they played and flash it up, then show where they did it or something and make it extensible so later we can add animations or sound effects or something here. Pieces also need to animate move around the board.
@@ -494,7 +498,6 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] When moving between hexes we need to also be able to determine if we want to move just troops, champion, champion plus split of troops etc
 - [ ] The market transition can happen to fast while we're still waiting to see what all the actions were.
 - [ ] Dice roll in the market and in general needs to be a bit bigger and clearly mark who is who, also each player should click to "roll" their respective die.
-- [ ] In general I want the phase transitions to be slower, players need to have time to soak in what just happened.
 
 ### Other
 - [x] The champion needs to be more obvious, like a seperate thing with its health and name and stuff, and they can hover over it to see the stats

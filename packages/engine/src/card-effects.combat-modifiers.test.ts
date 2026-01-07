@@ -1,4 +1,4 @@
-import { createRngState } from "@bridgefront/shared";
+import { createRngState, neighborHexKeys } from "@bridgefront/shared";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import * as shared from "@bridgefront/shared";
 
@@ -6,6 +6,7 @@ import { resolveBattleAtHex } from "./combat";
 import { resolveCardEffects } from "./card-effects";
 import { createBaseBoard } from "./board-generation";
 import { BATTLE_CRY, SMOKE_SCREEN } from "./content/cards/age1";
+import type { CardDef } from "./content/cards";
 import { createNewGame, DEFAULT_CONFIG } from "./index";
 import type { GameEvent, GameState } from "./types";
 
@@ -170,5 +171,70 @@ describe("combat card effects", () => {
     state = resolveBattleAtHex(state, hexB);
     const secondRound = getFirstCombatRound(state, hexB);
     expect(getHits(secondRound, "p2")).toBe(1);
+  });
+
+  it("set to skirmish retreats units to an empty adjacent hex", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 3, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(2);
+    const hexKey = "0,0";
+
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: { p1: ["f1", "c1"], p2: ["f2"] }
+    };
+
+    board.units = {
+      f1: createForce("f1", "p1", hexKey),
+      c1: createChampion("c1", "p1", hexKey),
+      f2: createForce("f2", "p2", hexKey)
+    };
+
+    let state: GameState = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(17),
+      board
+    };
+
+    const skirmishCard: CardDef = {
+      id: "test.set_to_skirmish",
+      name: "Set to Skirmish",
+      rulesText: "Retreat from battle in the chosen hex.",
+      type: "Order",
+      deck: "starter",
+      tags: [],
+      cost: { mana: 0 },
+      initiative: 1,
+      burn: false,
+      targetSpec: { kind: "hex" },
+      effects: [{ kind: "setToSkirmish" }]
+    };
+
+    state = resolveCardEffects(state, "p1", skirmishCard, { hexKey });
+    state = resolveBattleAtHex(state, hexKey);
+
+    const finalHex = state.board.hexes[hexKey];
+    expect(finalHex.occupants["p1"] ?? []).toHaveLength(0);
+    expect(finalHex.occupants["p2"] ?? []).toHaveLength(1);
+
+    const retreatHexes = new Set(
+      ["f1", "c1"]
+        .map((unitId) => state.board.units[unitId]?.hex)
+        .filter((key): key is string => typeof key === "string")
+    );
+    expect(retreatHexes.size).toBe(1);
+    const [retreatHex] = [...retreatHexes];
+    const neighbors = neighborHexKeys(hexKey).filter((key) =>
+      Boolean(state.board.hexes[key])
+    );
+    expect(neighbors).toContain(retreatHex);
+
+    const retreatOccupants = state.board.hexes[retreatHex].occupants;
+    expect(retreatOccupants["p2"] ?? []).toHaveLength(0);
   });
 });

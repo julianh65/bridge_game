@@ -1,5 +1,12 @@
 import type { CardDef } from "./content/cards";
-import { areAdjacent, axialDistance, parseEdgeKey, parseHexKey } from "@bridgefront/shared";
+import {
+  areAdjacent,
+  axialDistance,
+  neighborHexKeys,
+  parseEdgeKey,
+  parseHexKey,
+  randInt
+} from "@bridgefront/shared";
 
 import type { CardPlayTargets, GameState, Modifier, PlayerID, TileType } from "./types";
 import {
@@ -75,6 +82,7 @@ const SUPPORTED_EFFECTS = new Set([
   "linkCapitalToCenter",
   "battleCry",
   "smokeScreen",
+  "setToSkirmish",
   "evacuateChampion"
 ]);
 
@@ -1861,6 +1869,97 @@ export const resolveCardEffects = (
                   };
                   const cleaned = removeModifierById(state, modifier.id);
                   return { ...cleaned, modifiers: [...cleaned.modifiers, tempModifier] };
+                }
+              }
+            }
+          ]
+        };
+        break;
+      }
+      case "setToSkirmish": {
+        const target = getHexTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null
+        );
+        if (!target) {
+          break;
+        }
+        const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.${target.hexKey}.skirmish`;
+        nextState = {
+          ...nextState,
+          modifiers: [
+            ...nextState.modifiers,
+            {
+              id: modifierId,
+              source: { type: "card", sourceId: card.id },
+              ownerPlayerId: playerId,
+              attachedHex: target.hexKey,
+              duration: { type: "endOfRound" },
+              hooks: {
+                beforeCombatRound: ({ state, modifier, hexKey, round }) => {
+                  if (round !== 1) {
+                    return state;
+                  }
+                  const ownerId = modifier.ownerPlayerId;
+                  if (!ownerId) {
+                    return state;
+                  }
+                  const hex = state.board.hexes[hexKey];
+                  if (!hex) {
+                    return state;
+                  }
+                  const ownerUnits = hex.occupants[ownerId] ?? [];
+                  if (ownerUnits.length === 0) {
+                    return state;
+                  }
+
+                  const candidates = neighborHexKeys(hexKey).filter((neighbor) => {
+                    const neighborHex = state.board.hexes[neighbor];
+                    if (!neighborHex) {
+                      return false;
+                    }
+                    return countPlayersOnHex(neighborHex) === 0;
+                  });
+
+                  if (candidates.length === 0) {
+                    let nextState = state;
+                    const forceCount = ownerUnits.filter(
+                      (unitId) => state.board.units[unitId]?.kind === "force"
+                    ).length;
+                    if (forceCount > 0) {
+                      nextState = removeForcesFromHex(
+                        nextState,
+                        ownerId,
+                        hexKey,
+                        ownerUnits,
+                        forceCount
+                      );
+                    }
+                    for (const unitId of ownerUnits) {
+                      const unit = nextState.board.units[unitId];
+                      if (!unit || unit.kind !== "champion") {
+                        continue;
+                      }
+                      nextState = dealChampionDamage(
+                        nextState,
+                        ownerId,
+                        unitId,
+                        unit.hp
+                      );
+                    }
+                    return nextState;
+                  }
+
+                  const roll = randInt(state.rngState, 0, candidates.length - 1);
+                  const retreatHex = candidates[roll.value] ?? candidates[0];
+                  let nextState: GameState = {
+                    ...state,
+                    rngState: roll.next
+                  };
+                  nextState = moveUnits(nextState, ownerId, ownerUnits, hexKey, retreatHex);
+                  return nextState;
                 }
               }
             }

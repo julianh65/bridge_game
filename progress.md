@@ -16,9 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent4 | scope: make market roll-off rounds animate sequentially (no overlap) | files: `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`, `progress.md` | status: in-progress
-- owner: agent3 | scope: implement Set to Skirmish retreat-on-battle effect + tests | files: `packages/engine/src/card-effects.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md`
-- owner: agent2 | scope: add Tactical Hand (Grand Strategist) hit-assignment logic + tests | files: `packages/engine/src/combat.ts`, `packages/engine/src/champions.ts`, `packages/engine/src/types.ts`, `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`, `progress.md` | status: in_progress
+- none
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -48,6 +46,7 @@
 - Added a market roll-off tie-break panel with suspenseful rolling dice numbers using a reusable `NumberRoll` component; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
 - Extended market roll-off to include pass-tie roll-offs, increased roll suspense timing, and labeled roll-offs in the log (engine market tests updated).
 - Delayed the market winner highlight until after the roll-off animation completes and moved the roll-off panel to the center of the market layout. (Overlap note: `apps/web/src/styles.css` touched alongside agent1.)
+- Made market roll-off rounds animate sequentially (no overlap) with per-round scheduling; marked the plan item complete in `implementation_plan.md`.
 - Made the market roll-off animation duration configurable via `MARKET_ROLLOFF_DURATION_MS` in `DEFAULT_CONFIG` and documented it.
 - Removed the Live connection pill from the header and enlarged gold/VP chips with clearer labels. (Overlap note: `apps/web/src/styles.css` touched alongside agent1.)
 - Added compact gold/VP labels in the collapsed header chips so the HUD always shows text; marked the plan item complete in `implementation_plan.md`.
@@ -310,6 +309,7 @@ none
 - Added a champion-target card pick mode with valid-target highlights so Emergency Evac (and other champion cards) can be selected from the board; updated `implementation_plan.md`. (Files: `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Fixed hand/hand-picker card art lookups by using defIds for GameCard art and marked the plan item complete. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `implementation_plan.md`.)
 - Enlarged hand card mana/gold cost display for better readability; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
+- Restyled card type labels with larger, colored pills for Champion/Victory/Spell/Order cards; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
@@ -456,6 +456,8 @@ none
 - Added Logistics Officer deploy-as-capital support in `resolveCapitalDeployHex` with action-flow coverage; updated `implementation_plan.md`. (Overlap note: `progress.md`/`implementation_plan.md` also include pre-existing checklist updates for board-pick highlights and champion ability tests.)
 - Added Stormcaller Tempest AoE champion ability (adjacent enemy champion damage) with per-round uses and champion ability test; updated `implementation_plan.md`. (Overlap note: `implementation_plan.md` had pre-existing checklist updates.)
 - Added champion ability tests for Ironclad Warden (Bodyguard) and Shadeblade (Assassin's Edge); updated the plan checklist. (Files: `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.) (owner: agent2)
+- Added Tactical Hand hit-assignment support for Grand Strategist with combat logic + tests; updated `implementation_plan.md`. (Files: `packages/engine/src/combat.ts`, `packages/engine/src/champions.ts`, `packages/engine/src/types.ts`, `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.) (owner: agent2)
+- Added Set to Skirmish retreat-on-battle effect (combat modifier) with targeted test coverage; updated `implementation_plan.md`. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.) (owner: agent3)
 
 ## Milestone 7.5 progress
 - Added a card-art manifest + helper, GameCard art rendering, and a CLI script to generate diffusion art and update the manifest. (Files: `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`.)
