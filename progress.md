@@ -16,8 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent3 | scope: add implementation plan TODO for reusable hand-card picker/topdeck UI | files: `implementation_plan.md`, `progress.md` | status: in progress
-- owner: agent2 | scope: render bridges as styled SVG planks/rails (bridge art assets) | files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md` | status: in progress (overlap: `apps/web/src/styles.css` with agent4)
+- owner: agent2 | scope: unify bridge color (no ownership) + confirm engine allows crossing any bridge | files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `packages/engine/src/action-flow.ts`, `packages/engine/src/board.ts`, `progress.md` | status: in progress
 
 
 ## Milestone 8.5 progress
@@ -134,6 +133,7 @@
 
 ## Docs maintenance
 - Expanded the Milestone 9 card-test checklist with Age I market sub-items in `implementation_plan.md`.
+- Added a Milestone 8.5 TODO for a reusable hand-card picker/topdeck modal in `implementation_plan.md`.
 - Added a Milestone 9 TODO for bridge art assets/rendering in `implementation_plan.md`.
 - Marked the Milestone 9 Age I market card-test item (Supply Ledger/Patrol Record/Banner Claim) complete in `implementation_plan.md`.
 - Checked off the remaining Age I market card-test checklist item (Quick March/Trade Caravan/Temporary Bridge/Patch Up/Quick Study) in `implementation_plan.md`.
