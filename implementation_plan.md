@@ -463,7 +463,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] The text of Mine Capital or whatever is a bit goofy looking and too big, it should just show that text on hover and the colored hexes are fine for now, eventually we will replace those with nice looking tiles to demarcate
 - [x] Move the map legend to the bottom under the map
 - [x] Small / medium task: the log should not use axial coords but our coordinate system of a1, a2 etc...
-- [x] Small / medium task: can we allow for a bit more "freedom" in the moving of the board? Like allow to move off screen more up down left right when we drag around
+- [ ] Small / medium task: can we allow for a bit more "freedom" in the moving of the board? Like allow to move off screen more up down left right when we drag around
 - [ ] Can we experiment with making the container that holds the cards and the actions see through
 - [x] (harder and urgent) We need a better ui/ux flow for the cards where you click cards and then change your mind, right now it feels clunky and not obvious what I've selected or if I've changed my state of what im about to submit / play
 
@@ -493,6 +493,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Small, the board that displays in the re-roll container on setup spills outside its parent
 - [ ] Add a confirm if they click pass and they still have mana
 - [ ] We need to have a way such the players can determine how many forces in a stack they are moving, like they may not want to move all 10 units but rather do 5/5, but it needs to be very intuitive and not clunky, I think maybe it should be like a move all button vs a split button and when you hit split it lets you pick how many to move, it needs to be very smooth though
+- [ ] Any text on the board shouldn't be highlightable
 
 ## Milestone 9.5 -- Card Art + Description
 

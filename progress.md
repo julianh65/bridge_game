@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [agent1] In progress: keep the market overlay visible briefly after market ends so the final winner highlight/animation shows (scope: market overlay UX; files: `apps/web/src/components/GameScreen.tsx`).
+- none
 
 ## Milestone 8.5 progress
 - Improved hand card selection UX: added a selected-card summary with target hints + clear button, enabled click-to-deselect, and cleared card selection when switching to basic actions; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
@@ -113,6 +113,7 @@
 - Added combat round logging with dice/hit assignment payloads and a battle overlay that supports click-to-roll dice with hit assignment display; marked the Milestone 9 battle UX item complete in `implementation_plan.md`.
 - Rendered bridges as plank/rail SVG assets in the board view and marked the plan item complete in `implementation_plan.md`.
 - Standardized bridge rendering to a neutral color (no owner tint) and confirmed engine movement ignores bridge ownership.
+- Kept the market overlay visible briefly after market ends so the final winner highlight/animation shows; marked the plan item complete in `implementation_plan.md`.
 
 ## Bug audit progress
 - Logged potential issues from the quick scan in `docs/bugs.md`.

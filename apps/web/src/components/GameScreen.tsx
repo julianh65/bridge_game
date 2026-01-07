@@ -1621,9 +1621,10 @@ export const GameScreen = ({
     </div>
   ) : null;
 
-  const showMarketOverlay = isMarketPhase && isMarketOverlayOpen;
+  const shouldHoldMarketOverlay = !isMarketPhase && Boolean(marketWinner);
+  const showMarketOverlay = (isMarketPhase && isMarketOverlayOpen) || shouldHoldMarketOverlay;
   const showMarketOverlayToggle = isMarketPhase && !isMarketOverlayOpen;
-  const marketOverlay = isMarketPhase ? (
+  const marketOverlay = isMarketPhase || shouldHoldMarketOverlay ? (
     <>
       {showMarketOverlay ? (
         <div className="market-overlay" role="dialog" aria-modal="true">
@@ -1638,7 +1639,7 @@ export const GameScreen = ({
               status={status}
               onSubmitBid={onSubmitMarketBid}
               winnerHighlight={marketWinner}
-              onClose={() => setIsMarketOverlayOpen(false)}
+              onClose={isMarketPhase ? () => setIsMarketOverlayOpen(false) : undefined}
             />
           </div>
         </div>
