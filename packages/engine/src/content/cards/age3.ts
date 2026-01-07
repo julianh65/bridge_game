@@ -155,6 +155,39 @@ export const WORMHOLE_GATE: CardDef = {
   effects: [{ kind: "linkHexes" }]
 };
 
+export const CONQUEST_RECORD: CardDef = {
+  id: "age3.conquest_record",
+  name: "Conquest Record",
+  rulesText: "When played: Gain 3 gold.",
+  type: "Victory",
+  victoryPoints: 1,
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 1 },
+  initiative: 50,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "gainGold", amount: 3 }]
+};
+
+export const FINAL_OATH: CardDef = {
+  id: "age3.final_oath",
+  name: "Final Oath",
+  rulesText: "When played: Heal a friendly Champion anywhere 2.",
+  type: "Victory",
+  victoryPoints: 1,
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 1 },
+  initiative: 35,
+  burn: false,
+  targetSpec: {
+    kind: "champion",
+    owner: "self"
+  },
+  effects: [{ kind: "healChampion", amount: 2 }]
+};
+
 export const LOGISTICS_OFFICER: CardDef = {
   id: "champion.age3.logistics_officer",
   name: "Logistics Officer",
@@ -337,6 +370,8 @@ export const AGE3_CARDS: CardDef[] = [
   LAST_LECTURE,
   EXECUTION_ORDER,
   WORMHOLE_GATE,
+  CONQUEST_RECORD,
+  FINAL_OATH,
   LOGISTICS_OFFICER,
   TITAN_VANGUARD,
   CENTER_BANNERMAN,

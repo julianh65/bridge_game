@@ -466,6 +466,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
       - [ ] Ruin the Span.
     - [ ] Age III Synergy/Gambits card defs (2).
     - [ ] Age III Victory card defs (4+).
+      - [x] Conquest Record.
+      - [x] Final Oath.
     - [ ] Age III Champion card defs (8).
   - [x] Add card metadata tags for Burn/Power/Victory/Champion and ensure filters use them.
 - [x] Add “smoke sim” tests:
