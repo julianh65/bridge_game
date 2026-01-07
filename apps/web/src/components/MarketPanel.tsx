@@ -4,16 +4,20 @@ import { CARD_DEFS, type Bid, type GameView, type MarketState } from "@bridgefro
 
 import type { RoomConnectionStatus } from "../lib/room-client";
 import { GameCard } from "./GameCard";
+import { NumberRoll } from "./NumberRoll";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 
 type MarketWinnerHighlight = {
   cardId: string;
   cardIndex: number | null;
+  playerId: string | null;
   playerName: string;
   kind: "buy" | "pass";
   amount: number | null;
   passPot: number | null;
+  rollOff: Array<Record<string, number>> | null;
+  rollOffKey: number;
 };
 
 type MarketPanelProps = {
@@ -149,6 +153,35 @@ export const MarketPanel = ({
     return { card, def, index, isHidden, isActive, isResolved, isWinner, label };
   });
   const showOrderRail = isOverlay && currentRow.length > 0;
+  const playerNameById = new Map(players.map((entry) => [entry.id, entry.name]));
+  const rollOffRounds =
+    winnerHighlight?.rollOff
+      ?.map((round, roundIndex) => {
+        if (!round || typeof round !== "object") {
+          return null;
+        }
+        const rolls: Array<{ playerId: string; name: string; value: number }> = [];
+        const seen = new Set<string>();
+        for (const player of players) {
+          const value = round[player.id];
+          if (typeof value === "number") {
+            rolls.push({ playerId: player.id, name: player.name, value });
+            seen.add(player.id);
+          }
+        }
+        for (const [playerId, value] of Object.entries(round)) {
+          if (seen.has(playerId) || typeof value !== "number") {
+            continue;
+          }
+          rolls.push({
+            playerId,
+            name: playerNameById.get(playerId) ?? playerId,
+            value
+          });
+        }
+        return rolls.length > 0 ? { roundIndex, rolls } : null;
+      })
+      .filter((round): round is { roundIndex: number; rolls: Array<{ playerId: string; name: string; value: number }> } => Boolean(round)) ?? [];
 
   let bidHint = "Enter a bid amount to buy or pass.";
   if (status !== "connected") {
@@ -333,6 +366,51 @@ export const MarketPanel = ({
               </ul>
             )}
           </div>
+
+          {rollOffRounds.length > 0 ? (
+            <div className="market-bid market-bid--rolloff">
+              <div className="market-bid__header">
+                <h4>Roll-off</h4>
+                <span className="market-pill">Tie-break</span>
+              </div>
+              <p className="action-panel__hint">
+                Dice roll tiebreaker resolved for this card.
+              </p>
+              <div className="market-rolloff">
+                {rollOffRounds.map((round) => (
+                  <div
+                    key={`rolloff-${winnerHighlight?.rollOffKey ?? 0}-${round.roundIndex}`}
+                    className="market-rolloff__round"
+                  >
+                    <span className="market-rolloff__label">
+                      Round {round.roundIndex + 1}
+                    </span>
+                    <div className="market-rolloff__rolls">
+                      {round.rolls.map((roll, index) => {
+                        const isWinner = roll.playerId === winnerHighlight?.playerId;
+                        const delayMs = round.roundIndex * 480 + index * 120;
+                        return (
+                          <div
+                            key={`roll-${roll.playerId}-${round.roundIndex}`}
+                            className={`market-rolloff__entry${isWinner ? " is-winner" : ""}`}
+                          >
+                            <span className="market-rolloff__name">{roll.name}</span>
+                            <NumberRoll
+                              value={roll.value}
+                              sides={6}
+                              durationMs={820}
+                              delayMs={delayMs}
+                              rollKey={`${winnerHighlight?.rollOffKey ?? 0}-${round.roundIndex}-${roll.playerId}`}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </aside>
       </div>
     </section>

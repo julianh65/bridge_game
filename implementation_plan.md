@@ -426,6 +426,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen. This is after everyone locks in their actions. I want it to be like Player 1, show the card they played and flash it up, then show where they did it or something and make it extensible so later we can add animations or sound effects or something here. Pieces also need to animate move around the board.
 - [x] Add clearer phase transition cues between round phases. Make it flash on screen in big text slowly to everyone simultaneously.
 - [ ] we need a few UI's still, like dice rolling for draws and cards and other stuff
+- [x] Add market roll-off dice display with suspenseful rolling numbers.
 - [x] We need a better more clear UI with symbols (just do emojis for now) to represent gold, mana VP
 - [x] The placing starting bridge UI needs to be on the board not picking a bunch of axial coords.
 - [x] We should have nice transitions between ages and at the start of the game
@@ -466,6 +467,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Small / medium task: can we allow for a bit more "freedom" in the moving of the board? Like allow to move off screen more up down left right when we drag around
 - [ ] Can we experiment with making the container that holds the cards and the actions see through
 - [x] (harder and urgent) We need a better ui/ux flow for the cards where you click cards and then change your mind, right now it feels clunky and not obvious what I've selected or if I've changed my state of what im about to submit / play
+- [ ] There's no pop up in the action phase to show what each player has done for basic actions
+- [ ] After the market phase while we're showing the last card, the hand modal instantly pops up
 
 ## Milestone 9 — Add Polish
 

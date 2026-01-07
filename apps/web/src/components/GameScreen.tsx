@@ -48,10 +48,13 @@ type ChampionTargetOption = {
 type MarketWinnerHighlight = {
   cardId: string;
   cardIndex: number | null;
+  playerId: string | null;
   playerName: string;
   kind: "buy" | "pass";
   amount: number | null;
   passPot: number | null;
+  rollOff: Array<Record<string, number>> | null;
+  rollOffKey: number;
 };
 
 type CardRevealTargetInfo = {
@@ -816,14 +819,30 @@ export const GameScreen = ({
     const playerName = playerId ? playerNames.get(playerId) ?? playerId : "Unknown";
     const amount = typeof payload.amount === "number" ? payload.amount : null;
     const passPot = typeof payload.passPot === "number" ? payload.passPot : null;
+    const rollOffRaw = Array.isArray(payload.rollOff) ? payload.rollOff : null;
+    const rollOff =
+      rollOffRaw
+        ?.map((round) => {
+          if (!round || typeof round !== "object" || Array.isArray(round)) {
+            return null;
+          }
+          const cleaned = Object.fromEntries(
+            Object.entries(round).filter(([, value]) => typeof value === "number")
+          ) as Record<string, number>;
+          return Object.keys(cleaned).length > 0 ? cleaned : null;
+        })
+        .filter((round): round is Record<string, number> => Boolean(round)) ?? null;
     lastMarketEventIndex.current = foundIndex;
     setMarketWinner({
       cardId,
       cardIndex,
+      playerId,
       playerName,
       kind: event.type === "market.buy" ? "buy" : "pass",
       amount,
-      passPot
+      passPot,
+      rollOff: rollOff && rollOff.length > 0 ? rollOff : null,
+      rollOffKey: foundIndex
     });
   }, [view.public.logs, playerNames]);
 
