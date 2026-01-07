@@ -17,6 +17,8 @@
 
 ## Active tasks
 - owner: agent2 | scope: prune completed basic tasks from implementation plan for readability | files: `implementation_plan.md`, `progress.md` | status: in progress
+- owner: agent4 | scope: investigate/fix action submit + basic action buttons disabled in action phase (UI eligibility gating + hints) | files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `progress.md`, `implementation_plan.md` | status: in progress
+- owner: agent3 | scope: update log formatting to use A1-style board labels instead of axial coords | files: `apps/web/src/lib/event-format.ts`, `apps/web/src/components/GameScreen.tsx`, `progress.md`, `implementation_plan.md` | status: in progress
 
 
 ## Milestone 8.5 progress
@@ -119,6 +121,7 @@
 - Added action-flow coverage for Supply Ledger, Patrol Record, and Banner Claim.
 - Added action-flow coverage for Quick March, Trade Caravan, and Quick Study.
 - Expanded smoke tests to cover 3-4 player auto-resolve + randomized flows in `packages/engine/src/smoke.test.ts`.
+- Expanded smoke tests to cover 5-6 player auto-resolve + randomized flows in `packages/engine/src/smoke.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/smoke.test.ts`.
 - Added card draw tests covering reshuffle behavior and hand-limit overflow in `packages/engine/src/cards.test.ts`.
 - Added tests for card instance id sequencing and random draw-pile insertion in `packages/engine/src/cards.test.ts`.
@@ -212,6 +215,7 @@ none
 - Added a collapsible GameScreen header with a compact HUD toggle for play sessions.
 - Added a phase-focused layout row for market/collection panels and moved log/player sections into a secondary row during those phases.
 - Reduced board target click friction by ignoring invalid hex clicks while targeting and allowing start reselects for multi-step picks.
+- Enabled scrolling in the command-center sidebar so 5-6 player tables stay readable without clipping.
 - Stabilized BoardView pan/zoom by avoiding viewBox resets when board state updates (plan update deferred: `implementation_plan.md` locked by agent3).
 
 ## Milestone 0 progress

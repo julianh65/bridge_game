@@ -729,7 +729,7 @@ describe("smoke sim", () => {
       id: `p${index + 1}`,
       name: `Player ${index + 1}`
     }));
-  const playerCounts = [2, 3, 4];
+  const playerCounts = [2, 3, 4, 5, 6];
 
   playerCounts.forEach((count) => {
     it(`auto-resolves blocks across a few rounds (${count}p)`, () => {
