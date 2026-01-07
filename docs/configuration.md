@@ -8,6 +8,9 @@ Edit that file to adjust rules and regenerate the board in the debug UI.
 ### Victory condition
 - `VP_TO_WIN`: total VP required to win at the end of scoring (default 10).
 
+### Action reveal timing
+- `ACTION_REVEAL_DURATION_MS`: how long the action reveal overlay stays on screen (milliseconds).
+
 ### Board size and capitals
 - `boardRadiusByPlayerCount`: radius per player count.
 - `capitalSlotsByPlayerCount`: explicit `HexKey` lists for each player count.

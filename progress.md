@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
+- [owner: agent4] [status: in-progress] Scope: add champion hover tooltip on board stacks. Files: apps/web/src/components/BoardView.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md.
 
 ## Milestone 8.5 progress
 - Added unique faction symbols (small circle badges) across faction selection, lobby labels, unit stacks, and victory screen; marked the plan item complete in `implementation_plan.md`.
@@ -185,6 +185,7 @@ none
 - Marked Bastion Shield Wall faction passive as done in `implementation_plan.md`.
 - Added PartyKit docs to the repo, added `apps/web/dist` to `.gitignore`, and captured outstanding tracked edits in git.
 - Logged an unclaimed plan tweak adding piece-movement animation notes to the card-reveal task (overlap: `implementation_plan.md`).
+- Documented `ACTION_REVEAL_DURATION_MS` in `docs/configuration.md` and added an owner note in `docs/dev.md`.
 
 ## Setup balance notes
 - Reviewed setup placement logic and drafted balance ideas (symmetry/score-based placement, resource equity thresholds, default rule tweaks); pending decision.

@@ -36,3 +36,7 @@
     `apps/web/src/components/VictoryScreen.tsx`, and `apps/web/src/components/BoardView.tsx` to use the icon.
   - Keep the `.faction-symbol` sizing class as the consistent 18/16/14px container; update CSS if icons
     need different sizing or padding.
+
+## Owner notes (Julian)
+- Action reveal overlay duration is configured in `packages/engine/src/config.ts` via
+  `ACTION_REVEAL_DURATION_MS` (milliseconds). Adjust this to speed up or slow down action reveals.
