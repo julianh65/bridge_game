@@ -82,6 +82,7 @@ const SUPPORTED_EFFECTS = new Set([
   "linkCapitalToCenter",
   "battleCry",
   "smokeScreen",
+  "focusFire",
   "setToSkirmish",
   "evacuateChampion"
 ]);
@@ -1864,6 +1865,66 @@ export const resolveCardEffects = (
                           return current;
                         }
                         return Math.min(current, 1);
+                      }
+                    }
+                  };
+                  const cleaned = removeModifierById(state, modifier.id);
+                  return { ...cleaned, modifiers: [...cleaned.modifiers, tempModifier] };
+                }
+              }
+            }
+          ]
+        };
+        break;
+      }
+      case "focusFire": {
+        const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.focus_fire`;
+        nextState = {
+          ...nextState,
+          modifiers: [
+            ...nextState.modifiers,
+            {
+              id: modifierId,
+              source: { type: "card", sourceId: card.id },
+              ownerPlayerId: playerId,
+              duration: { type: "endOfRound" },
+              hooks: {
+                beforeCombatRound: ({
+                  state,
+                  modifier,
+                  hexKey,
+                  round,
+                  attackerPlayerId,
+                  defenderPlayerId
+                }) => {
+                  if (round !== 1) {
+                    return state;
+                  }
+                  const ownerId = modifier.ownerPlayerId;
+                  if (!ownerId) {
+                    return state;
+                  }
+                  if (ownerId !== attackerPlayerId && ownerId !== defenderPlayerId) {
+                    return state;
+                  }
+                  const tempModifier: Modifier = {
+                    id: `${modifier.id}.battle`,
+                    source: { type: "card", sourceId: card.id },
+                    ownerPlayerId: ownerId,
+                    attachedHex: hexKey,
+                    duration: { type: "endOfBattle" },
+                    hooks: {
+                      getHitAssignmentPolicy: (
+                        { targetSide, attackerPlayerId, defenderPlayerId },
+                        current
+                      ) => {
+                        if (ownerId === attackerPlayerId && targetSide === "defenders") {
+                          return "focusFire";
+                        }
+                        if (ownerId === defenderPlayerId && targetSide === "attackers") {
+                          return "focusFire";
+                        }
+                        return current;
                       }
                     }
                   };

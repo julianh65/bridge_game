@@ -155,7 +155,7 @@ const createBodyguardModifier = (unitId: UnitID, ownerPlayerId: PlayerID): Modif
   source: { type: "champion", sourceId: BODYGUARD_CHAMPION_ID },
   ownerPlayerId,
   duration: { type: "permanent" },
-  data: { unitId },
+  data: { unitId, bodyguard: true },
   hooks: {
     getHitAssignmentPolicy: ({ modifier, targetUnitIds, state }, current) => {
       if (current === "bodyguard") {

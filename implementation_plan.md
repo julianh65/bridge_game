@@ -8,17 +8,9 @@ The aim is to reach “playable with friends” quickly while preserving a clean
 ## Milestone 0 — Repo scaffolding + dev ergonomics
 
 ### Tasks
-- [x] Create repo structure.
-- [x] Set up TypeScript project references (or workspace tsconfig).
-- [x] Add formatting/linting (minimal): Prettier + ESLint.
 - [x] Add basic test runner for engine (`vitest` preferred for TS).
 - [x] Add a single shared `@bridgefront/shared` package for ids/hex/RNG utils.
 - [x] Add dev scripts (web dev server, room server dev, tests).
-
-### Acceptance criteria
-- `apps/web` loads a blank page and compiles.
-- `apps/server` runs a websocket room that echoes a message.
-- `packages/engine` tests run in CI/local.
 
 ---
 
@@ -53,8 +45,6 @@ The aim is to reach “playable with friends” quickly while preserving a clean
 
 ### Tasks
 - [x] Build a local-only debug UI in `apps/web` that renders a seeded board.
-- [x] Show player count, radius, and capital slots, plus special tile placements.
-- [x] Controls for seed + player count and a regenerate action.
 
 ### Acceptance criteria
 - `apps/web` shows a deterministic board inspector without needing the server.
@@ -83,12 +73,6 @@ The aim is to reach “playable with friends” quickly while preserving a clean
   - collect 2 per player, then commit
 - [x] Implement free starting card:
   - reveal 3, prompt choose 1, insert random, return others to bottom
-
-
-### Acceptance criteria
-- With a fixed seed, setup produces a deterministic board.
-- Setup completes without UI by submitting commands in tests.
-- After setup, engine advances to Round 1 Reset automatically.
 
 ---
 
@@ -124,14 +108,6 @@ Goal: get the board game “moving pieces and fighting” ASAP.
   - expire end-of-round modifiers
   - destroy temporary bridges
 
-### Acceptance criteria
-- Two players can:
-  - build bridges
-  - march into each other
-  - trigger a battle immediately
-  - run a siege at end of action phase
-- No crashes across multiple rounds with random commands in tests.
-
 ---
 
 ## Milestone 4 — Multiplayer server + room protocol + minimal UI
@@ -150,20 +126,14 @@ Goal: get the board game “moving pieces and fighting” ASAP.
 ### Tasks (web)
 - [x] Implement Home + Lobby:
   - [x] create/join room UI
-  - [x] seat list
   - [x] host-controlled start with pre-game lobby snapshot
 - [x] Lobby polish:
   - [x] room code copy to clipboard
   - [x] board preview panel + reroll control
 - [x] Implement Game Screen minimal:
   - [x] render board (SVG hexes)
-  - [x] show units + bridges
   - [x] show resources and phase
   - [x] show log events as text
-
-### Acceptance criteria
-- Two browser tabs can join the same room and see shared state updates live.
-- Clicking a “debug action” button (server command) changes state and both UIs update.
 
 ---
 
@@ -173,7 +143,6 @@ Goal: allow two browsers to complete setup and reach the action phase quickly.
 
 ### Tasks (server)
 - [x] Replace auto-start with host-controlled start (agent2 work).
-- [x] Optional dev-only auto-setup command (server-side) for fast testing.
 
 ### Tasks (web)
 - [x] Setup UI for `setup.capitalDraft`:
@@ -200,7 +169,6 @@ Goal: make the action phase match the rules: simultaneous declarations + initiat
 - [x] Implement Action Steps:
   - block on `actionStep.declarations`
   - collect one declaration per eligible player
-  - pay costs on declaration reveal (or on submit; choose one and stay consistent)
   - resolve cards by initiative, then basic actions by lead order
   - after each resolution, run immediate battle checks
 - [x] Implement deck/hand operations:
@@ -253,19 +221,6 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Add collapsible sections for sidebar panels (status/table/intel).
 - [x] Make the phase market at the top part much bigger and cooler
 - [x] During the game we don't need to see all the room id and those little details and top bar, those can be collapsed
-
-
-### Tasks (web - pan/zoom)
-- [x] Fix world-to-screen coordinate transforms so picks stay accurate under zoom.
-- [x] Make wheel zoom anchor to cursor; clamp zoom levels; keep board in view with soft bounds.
-- [x] Improve drag panning (ignore clicks after drag threshold) and add touch/pinch support.
-- [x] Add "fit board" view reset that works across screen sizes and on resize.
-
-### Acceptance criteria
-- Hand is presented as actual cards (not a list), with clear playable/selected states and readable text.
-- Selecting a card or action highlights only legal targets and updates as you hover/click.
-- Board clicks are reliable at all zoom levels; panning and selection do not conflict.
-- Pan/zoom feels stable: wheel zoom anchors to cursor, drag does not mis-select, reset view recenters.
 
 ---
 
@@ -388,10 +343,10 @@ Start going through the rules_draft and adding the logic for the different types
   - [x] Bridge trap (first enemy crossing loses a force).
   - [x] Wormhole links (treat two hexes as adjacent for a round).
   - [x] Tunnel network adjacency (non-passive card effects).
-- [ ] Add hit-assignment control + battle retreat effects (Focus Fire, Tactical Hand, Set to Skirmish).
+- [x] Add hit-assignment control + battle retreat effects (Focus Fire, Tactical Hand, Set to Skirmish).
   - [x] Set to Skirmish retreat-on-battle modifier.
-  - [ ] Focus Fire hit assignment control.
-  - [ ] Tactical Hand hit assignment control.
+  - [x] Focus Fire hit assignment control.
+  - [x] Tactical Hand hit assignment control.
 - [ ] Add multi-target/multi-stack actions (move two stacks, build multiple bridges, deploy to multiple mines).
 - [ ] Add variable VP sources (Victory +2, center-based VP, timer VP).
 - [ ] Add champion recall + removal effects (return champion to hand, on-death penalties).
@@ -413,7 +368,6 @@ Start going through the rules_draft and adding the logic for the different types
 
 ### Tasks
 - [x] Add a card-art manifest in the web client that maps card ids to image paths.
-- [x] Update `GameCard` to render art images when a manifest entry exists.
 - [x] Add a CLI script to select cards, build prompts, call a diffusion provider, and write images + update the manifest.
 - [x] Decide on the default diffusion provider + credentials workflow (OpenAI image API via `OPENAI_API_KEY`).
 - [x] Document how to run the art script and tune prompts/negative prompts.
@@ -495,8 +449,6 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] The placing starting bridge UI needs to be on the board not picking a bunch of axial coords.
 - [x] We should have nice transitions between ages and at the start of the game
 - [x] The bottom hand modal part is still a tiny bit clunky in that it can block stuff, maybe try to clean it up a bit and make it shorter and a bit more compact?
-- [x] The table view has to be a bit more easy to read, idk where it can go, on the right where it is, on the top, but we need to at a glance be able to just briefly see everyone's status, you can make it smaller as well
-- [x] Can the bridges look a bit nicer? They right now just come from the center of each but they should be a bit shorter
 - [x] The mana and gold costs on the cards in hand needs to be much larger and easier to see
 - [ ] When moving between hexes we need to also be able to determine if we want to move just troops, champion, champion plus split of troops etc
 - [ ] The market transition can happen to fast while we're still waiting to see what all the actions were.
@@ -514,15 +466,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 ### Tasks UI
 - [x] The basic actions in the card hand panel below needs to be reworked, it's taking up too much horizontal space, The bridge march reinforce buttons should be stacked and be thinner and we can probably streamline the whole UI of each when they're expanded
 - [x] The draw, Discard and Scrapped can be pills at the top of the container and are taking up too much space
-- [x] The Pass and Submit actions should be floating in the middle bottom of the container and be larger
-- [x] Mousing over a champion chit on the board should give a small pop up showing more info on the champion, the health, the card itself maybe, the damage and modifiers on it etc...
 - [x] Also can you double check, does it only work for 2 players right now?
 - [x] The standard setup still doesn't work, only auto setup works.
-- [x] Add a reusable hand-card picker modal for effects like Perfect Recall (topdeck/select cards).
-- [x] Each hex should have a small label in it that is interpretable, not axial coords but like a1, b2 etc, maybe make it be from the top to bottom we have a and then left to right we have the number, then we should use that label in the log or other parts of the board
-- [x] Each of the factions should have their own unique small like symbol, this can be placeholder for now but i want it to be like a small circle symbol that shows up in faction selection, next to their name, on their unit stacks etc...
-- [x] Small / medium task: the log should not use axial coords but our coordinate system of a1, a2 etc...
-- [x] Small / medium task: can we allow for a bit more "freedom" in the moving of the board? Like allow to move off screen more up down left right when we drag around
 - [x] Can we experiment with making the container that holds the cards and the actions see through
 - [x] (harder and urgent) We need a better ui/ux flow for the cards where you click cards and then change your mind, right now it feels clunky and not obvious what I've selected or if I've changed my state of what im about to submit / play
 - [x] There's no pop up in the action phase to show what each player has done for basic actions
@@ -536,13 +481,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 ### Tasks
 - [x] Improve board visuals: nicer bridges and a bit of padding between hexes for a shattered plains look.
 - [x] Add battle UX: click-to-roll dice with shared roll animations and visible hit assignment.
-- [x] Add a host-only board state editor/debug panel (JSON view + light patch tools) for test games, only if it stays simple.
 - [x] Add a victory screen (winner, final VP, recap, rematch/exit).
 - [x] Upgrade on-board visuals for units/champions/factions (distinct tokens, faction badges).
-  - [x] Add champion crest markers on unit stacks.
-  - [x] Add faction badge chips on unit stacks.
-- [x] Enforce faction uniqueness in setup (no duplicate faction picks).
-- [x] Add deck UI with draw/discard piles, counts, direction arrows, and draw/discard animations.
 - [x] Add bridge art assets (top-down) and render them in BoardView (SVG symbol/pattern instead of plain lines).
 - [ ] Low priority: add at least one targeted test for each card effect/card.
   - [x] Age I market: Flank Step movement without bridges.

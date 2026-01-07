@@ -254,6 +254,27 @@ const findTacticalHandSource = (
   return null;
 };
 
+const hasBodyguardModifier = (
+  modifiers: GameState["modifiers"],
+  targetUnitIds: UnitID[],
+  units: Record<UnitID, UnitState>
+): boolean => {
+  if (targetUnitIds.length === 0) {
+    return false;
+  }
+  const hasForce = targetUnitIds.some((unitId) => units[unitId]?.kind === "force");
+  if (!hasForce) {
+    return false;
+  }
+  return modifiers.some((modifier) => {
+    if (modifier.data?.bodyguard !== true) {
+      return false;
+    }
+    const unitId = modifier.data?.unitId;
+    return typeof unitId === "string" && targetUnitIds.includes(unitId);
+  });
+};
+
 const assignHits = (
   unitIds: UnitID[],
   hits: number,
@@ -312,7 +333,7 @@ const assignHits = (
     return { hitsByUnit, nextState, bodyguardUsed: used };
   }
 
-  if (policy === "tacticalHand") {
+  if (policy === "tacticalHand" || policy === "focusFire") {
     let used = bodyguardUsed;
     const forceUnitIds = unitIds.filter((unitId) => units[unitId]?.kind === "force");
     const championRemaining = new Map<UnitID, number>();
@@ -343,7 +364,8 @@ const assignHits = (
     };
 
     let assignedManual = 0;
-    const manualHits = Math.min(TACTICAL_HAND_HITS, hits);
+    const manualLimit = policy === "tacticalHand" ? TACTICAL_HAND_HITS : hits;
+    const manualHits = Math.min(manualLimit, hits);
     for (let i = 0; i < manualHits; i += 1) {
       const targetId = pickManualTarget();
       if (!targetId) {
@@ -699,7 +721,9 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
       defenderAssignmentContext
     );
     const defenderPolicy = defenderTacticalSource ? "tacticalHand" : defenderBasePolicy;
-    const defenderBodyguardActive = defenderBasePolicy === "bodyguard";
+    const defenderBodyguardActive =
+      defenderBasePolicy === "bodyguard" ||
+      hasBodyguardModifier(modifiers, defenders, nextUnits);
     const assignedToDefenders = assignHits(
       defenders,
       attackerRoll.hits,
@@ -724,7 +748,9 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
       attackerAssignmentContext
     );
     const attackerPolicy = attackerTacticalSource ? "tacticalHand" : attackerBasePolicy;
-    const attackerBodyguardActive = attackerBasePolicy === "bodyguard";
+    const attackerBodyguardActive =
+      attackerBasePolicy === "bodyguard" ||
+      hasBodyguardModifier(modifiers, attackers, nextUnits);
     const assignedToAttackers = assignHits(
       attackers,
       defenderRoll.hits,

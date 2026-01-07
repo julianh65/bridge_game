@@ -173,6 +173,66 @@ describe("combat card effects", () => {
     expect(getHits(secondRound, "p2")).toBe(1);
   });
 
+  it("focus fire assigns hits to champions in the next battle only", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({ value: 1, next: rng }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 4, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(2);
+    const hexKey = "0,0";
+
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: { p1: ["f1", "f2"], p2: ["c1", "c2", "f3"] }
+    };
+
+    board.units = {
+      f1: createForce("f1", "p1", hexKey),
+      f2: createForce("f2", "p1", hexKey),
+      f3: createForce("f3", "p2", hexKey),
+      c1: { ...createChampion("c1", "p2", hexKey), hp: 1 },
+      c2: createChampion("c2", "p2", hexKey)
+    };
+
+    let state: GameState = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(12),
+      board
+    };
+
+    const focusFireCard: CardDef = {
+      id: "test.focus_fire",
+      name: "Focus Fire",
+      rulesText: "Assign your hits in the next battle.",
+      type: "Spell",
+      deck: "starter",
+      tags: [],
+      cost: { mana: 1 },
+      initiative: 10,
+      burn: false,
+      targetSpec: { kind: "none" },
+      effects: [{ kind: "focusFire" }]
+    };
+
+    state = resolveCardEffects(state, "p1", focusFireCard);
+    state = resolveBattleAtHex(state, hexKey);
+
+    const round = getFirstCombatRound(state, hexKey);
+    const championHits = round.hitsToDefenders.champions.map((entry) => entry.unitId).sort();
+    expect(championHits).toEqual(["c1", "c2"]);
+    expect(round.hitsToDefenders.forces).toBe(0);
+
+    const focusFireActive = state.modifiers.some(
+      (modifier) => modifier.source.sourceId === focusFireCard.id
+    );
+    expect(focusFireActive).toBe(false);
+  });
+
   it("set to skirmish retreats units to an empty adjacent hex", () => {
     const base = createNewGame(DEFAULT_CONFIG, 3, [
       { id: "p1", name: "Player 1" },

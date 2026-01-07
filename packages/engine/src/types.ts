@@ -178,7 +178,8 @@ export type HitAssignmentPolicy =
   | "forcesFirst"
   | "championsFirst"
   | "bodyguard"
-  | "tacticalHand";
+  | "tacticalHand"
+  | "focusFire";
 
 export type CombatEndReason = "eliminated" | "noHits" | "stale";
 
