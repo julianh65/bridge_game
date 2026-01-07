@@ -19,7 +19,7 @@
 - [agent1] Move Cipher Quiet Study prompt to after market resolution and normalize hand picker card heights. Files: `packages/engine/src/round-flow.ts`, `packages/engine/src/engine.ts`, `apps/web/src/styles.css`, `apps/web/src/components/GameScreen.tsx`, `packages/engine/src/round-flow.test.ts`. Status: in progress.
 
 ## Milestone 8.5 progress
-- Separated basic action selection from board targeting (no auto-enter pick mode); marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/components/GameScreen.tsx` touched alongside agent1 scope.)
+- Restored basic action auto-pick mode on selection (bridge/march) per feedback; updated the plan item to match. (Overlap note: `apps/web/src/components/GameScreen.tsx` touched alongside agent1 scope.)
 - Prevented the hand panel from appearing while the market overlay holds after market phase end; marked the plan item complete in `implementation_plan.md`.
 - Made the hand/action panel semi-transparent with a subtle blur so the board reads through; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched.)
 - Increased hand/action panel transparency after feedback to let the board read through more clearly. (Overlap note: `apps/web/src/styles.css` touched.)
