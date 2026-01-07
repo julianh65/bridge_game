@@ -37,6 +37,7 @@ import { buildHexRender } from "../lib/board-preview";
 import { extractCombatSequences, type CombatSequence } from "../lib/combat-log";
 import { formatGameEvent } from "../lib/event-format";
 import type { RoomConnectionStatus } from "../lib/room-client";
+import { playSfx } from "../lib/sfx";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 
@@ -845,6 +846,9 @@ export const GameScreen = ({
 
   const handleMarchFromChange = (value: string) => {
     setMarchFrom(value);
+    if (value === "" || value !== marchFrom) {
+      setMarchTo("");
+    }
     setMarchForceCount(null);
   };
 
@@ -1010,13 +1014,18 @@ export const GameScreen = ({
       lastRoundRef.current = round;
       return;
     }
-    if (phase === lastPhaseRef.current && round === lastRoundRef.current) {
+    const previousPhase = lastPhaseRef.current;
+    const previousRound = lastRoundRef.current;
+    if (phase === previousPhase && round === previousRound) {
       return;
     }
     lastPhaseRef.current = phase;
     lastRoundRef.current = round;
     if (!phase.startsWith("round.")) {
       return;
+    }
+    if (round !== previousRound) {
+      playSfx("bell");
     }
     setPhaseCue({ label: phaseLabel, round });
     setPhaseCueKey((value) => value + 1);
@@ -2331,9 +2340,6 @@ export const GameScreen = ({
         boardPickMode={boardPickMode}
         basicActionIntent={basicActionIntent}
         onBasicActionIntentChange={handleBasicActionIntentChange}
-        onEdgeKeyChange={setEdgeKey}
-        onMarchFromChange={handleMarchFromChange}
-        onMarchToChange={setMarchTo}
         onMarchForceCountChange={setMarchForceCount}
         onReinforceHexChange={setReinforceHex}
         onBoardPickModeChange={setBoardPickModeSafe}

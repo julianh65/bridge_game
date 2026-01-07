@@ -17,8 +17,10 @@
 
 ## Active tasks
 - none
+- owner: agent4 — scope: add UI sound effects mapping + hook click/bell/error cues — files: `apps/web/src/lib/sfx.ts`, `apps/web/src/App.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/assets/sfx/*`, `implementation_plan.md` — status: in progress
 
 ## Milestone 8.5 progress
+- Simplified the basic actions UI: removed pick/clear buttons, made march/bridge targets clickable fields, and auto-clear march destination when the start changes; marked the plan item complete in `implementation_plan.md`. (Overlap note: touched `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`.)
 - Extended the market overlay outro hold so the hand panel stays hidden briefly after market phase ends if the overlay was open; marked the plan item complete in `implementation_plan.md`. (Overlap note: `implementation_plan.md` had pre-existing edits; touched `apps/web/src/components/GameScreen.tsx`.)
 - Restored basic action auto-pick mode on selection (bridge/march) per feedback; updated the plan item to match. (Overlap note: `apps/web/src/components/GameScreen.tsx` touched alongside agent1 scope.)
 - Prevented the hand panel from appearing while the market overlay holds after market phase end; marked the plan item complete in `implementation_plan.md`.

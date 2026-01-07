@@ -73,9 +73,6 @@ type GameScreenHandPanelProps = {
   boardPickMode: BoardPickMode;
   basicActionIntent: BasicActionIntent;
   onBasicActionIntentChange: (intent: BasicActionIntent) => void;
-  onEdgeKeyChange: (edgeKey: string) => void;
-  onMarchFromChange: (hexKey: string) => void;
-  onMarchToChange: (hexKey: string) => void;
   onMarchForceCountChange: (value: number | null) => void;
   onReinforceHexChange: (hexKey: string) => void;
   onBoardPickModeChange: (mode: BoardPickMode) => void;
@@ -112,9 +109,6 @@ export const GameScreenHandPanel = ({
   boardPickMode,
   basicActionIntent,
   onBasicActionIntentChange,
-  onEdgeKeyChange,
-  onMarchFromChange,
-  onMarchToChange,
   onMarchForceCountChange,
   onReinforceHexChange,
   onBoardPickModeChange,
@@ -324,9 +318,6 @@ export const GameScreenHandPanel = ({
                 boardPickMode={boardPickMode}
                 basicActionIntent={basicActionIntent}
                 onBasicActionIntentChange={onBasicActionIntentChange}
-                onEdgeKeyChange={onEdgeKeyChange}
-                onMarchFromChange={onMarchFromChange}
-                onMarchToChange={onMarchToChange}
                 onMarchForceCountChange={onMarchForceCountChange}
                 onReinforceHexChange={onReinforceHexChange}
                 onBoardPickModeChange={onBoardPickModeChange}

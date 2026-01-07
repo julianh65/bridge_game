@@ -28,9 +28,6 @@ type ActionPanelProps = {
   boardPickMode: BoardPickMode;
   basicActionIntent: BasicActionIntent;
   onBasicActionIntentChange: (value: BasicActionIntent) => void;
-  onEdgeKeyChange: (value: string) => void;
-  onMarchFromChange: (value: string) => void;
-  onMarchToChange: (value: string) => void;
   onMarchForceCountChange: (value: number | null) => void;
   onReinforceHexChange: (value: string) => void;
   onBoardPickModeChange: (mode: BoardPickMode) => void;
@@ -49,9 +46,6 @@ export const ActionPanel = ({
   boardPickMode,
   basicActionIntent,
   onBasicActionIntentChange,
-  onEdgeKeyChange,
-  onMarchFromChange,
-  onMarchToChange,
   onMarchForceCountChange,
   onReinforceHexChange,
   onBoardPickModeChange
@@ -113,41 +107,18 @@ export const ActionPanel = ({
       {basicActionIntent === "bridge" ? (
         <label className={`action-field action-field--compact ${isPickingBridge ? "is-active" : ""}`}>
           <span>Bridge edge</span>
-          <div className="action-field__controls">
-            <div
-              className={`action-field__value ${
-                edgeKey.trim().length > 0 ? "" : "is-empty"
-              } ${isPickingBridge ? "is-active" : ""}`}
-            >
-              {edgeKey.trim().length > 0 ? edgeKey : "Pick an edge on the board"}
-            </div>
-            <button
-              type="button"
-              className={`btn btn-tertiary ${
-                boardPickMode === "bridgeEdge" ? "is-active" : ""
-              }`}
-              onClick={() =>
-                onBoardPickModeChange(
-                  boardPickMode === "bridgeEdge" ? "none" : "bridgeEdge"
-                )
-              }
-            >
-              Pick
-            </button>
-            <button
-              type="button"
-              className="btn btn-tertiary"
-              disabled={edgeKey.trim().length === 0}
-              onClick={() => {
-                onEdgeKeyChange("");
-                if (boardPickMode === "bridgeEdge") {
-                  onBoardPickModeChange("none");
-                }
-              }}
-            >
-              Clear
-            </button>
-          </div>
+          <button
+            type="button"
+            className={`action-field__value action-field__value--button ${
+              edgeKey.trim().length > 0 ? "" : "is-empty"
+            } ${isPickingBridge ? "is-active" : ""}`}
+            disabled={!canSubmitAction}
+            onClick={() =>
+              onBoardPickModeChange(isPickingBridge ? "none" : "bridgeEdge")
+            }
+          >
+            {edgeKey.trim().length > 0 ? edgeKey : "Pick an edge on the board"}
+          </button>
         </label>
       ) : null}
 
@@ -155,82 +126,33 @@ export const ActionPanel = ({
         <div className="action-panel__march">
           <label className={`action-field action-field--compact ${isPickingMarchFrom ? "is-active" : ""}`}>
             <span>March from</span>
-            <div className="action-field__controls">
-              <div
-                className={`action-field__value ${
-                  marchFrom.trim().length > 0 ? "" : "is-empty"
-                } ${isPickingMarchFrom ? "is-active" : ""}`}
-              >
-                {marchFrom.trim().length > 0 ? marchFrom : "Pick a start hex"}
-              </div>
-              <button
-                type="button"
-                className={`btn btn-tertiary ${
-                  boardPickMode === "marchFrom" ? "is-active" : ""
-                }`}
-                onClick={() =>
-                  onBoardPickModeChange(
-                    boardPickMode === "marchFrom" ? "none" : "marchFrom"
-                  )
-                }
-              >
-                Pick
-              </button>
-              <button
-                type="button"
-                className="btn btn-tertiary"
-                disabled={marchFrom.trim().length === 0 && marchTo.trim().length === 0}
-                onClick={() => {
-                  onMarchFromChange("");
-                  onMarchToChange("");
-                  onMarchForceCountChange(null);
-                  if (boardPickMode === "marchFrom" || boardPickMode === "marchTo") {
-                    onBoardPickModeChange("none");
-                  }
-                }}
-              >
-                Clear
-              </button>
-            </div>
+            <button
+              type="button"
+              className={`action-field__value action-field__value--button ${
+                marchFrom.trim().length > 0 ? "" : "is-empty"
+              } ${isPickingMarchFrom ? "is-active" : ""}`}
+              disabled={!canSubmitAction}
+              onClick={() =>
+                onBoardPickModeChange(isPickingMarchFrom ? "none" : "marchFrom")
+              }
+            >
+              {marchFrom.trim().length > 0 ? marchFrom : "Pick a start hex"}
+            </button>
           </label>
           <label className={`action-field action-field--compact ${isPickingMarchTo ? "is-active" : ""}`}>
             <span>March to</span>
-            <div className="action-field__controls">
-              <div
-                className={`action-field__value ${
-                  marchTo.trim().length > 0 ? "" : "is-empty"
-                } ${isPickingMarchTo ? "is-active" : ""}`}
-              >
-                {marchTo.trim().length > 0 ? marchTo : "Pick a destination hex"}
-              </div>
-              <button
-                type="button"
-                className={`btn btn-tertiary ${
-                  boardPickMode === "marchTo" ? "is-active" : ""
-                }`}
-                disabled={marchFrom.trim().length === 0}
-                onClick={() =>
-                  onBoardPickModeChange(
-                    boardPickMode === "marchTo" ? "none" : "marchTo"
-                  )
-                }
-              >
-                Pick
-              </button>
-              <button
-                type="button"
-                className="btn btn-tertiary"
-                disabled={marchTo.trim().length === 0}
-                onClick={() => {
-                  onMarchToChange("");
-                  if (boardPickMode === "marchTo") {
-                    onBoardPickModeChange("none");
-                  }
-                }}
-              >
-                Clear
-              </button>
-            </div>
+            <button
+              type="button"
+              className={`action-field__value action-field__value--button ${
+                marchTo.trim().length > 0 ? "" : "is-empty"
+              } ${isPickingMarchTo ? "is-active" : ""}`}
+              disabled={!canSubmitAction || marchFrom.trim().length === 0}
+              onClick={() =>
+                onBoardPickModeChange(isPickingMarchTo ? "none" : "marchTo")
+              }
+            >
+              {marchTo.trim().length > 0 ? marchTo : "Pick a destination hex"}
+            </button>
           </label>
           {showSplitControls ? (
             <div className="action-panel__split">
@@ -301,14 +223,8 @@ export const ActionPanel = ({
       {basicActionIntent === "reinforce" ? (
         <label className="action-field action-field--compact">
           <span>Reinforce target</span>
-          <div className="action-field__controls">
-            <div
-              className={`action-field__value ${
-                selectedReinforce ? "" : "is-empty"
-              }`}
-            >
-              {reinforceLabel}
-            </div>
+          <div className={`action-field__value ${selectedReinforce ? "" : "is-empty"}`}>
+            {reinforceLabel}
           </div>
           {reinforceOptions.length > 1 ? (
             <div className="action-panel__buttons">

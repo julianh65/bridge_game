@@ -3523,6 +3523,19 @@ h1 {
     color 0.2s ease;
 }
 
+.action-field__value--button {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  appearance: none;
+}
+
+.action-field__value--button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .action-field__value.is-empty {
   color: var(--muted);
   font-style: italic;
