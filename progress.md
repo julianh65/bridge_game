@@ -16,6 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
+- owner: agent3 | scope: add implementation plan TODO for reusable hand-card picker/topdeck UI | files: `implementation_plan.md`, `progress.md` | status: in progress
 - owner: agent2 | scope: unify bridge color (no ownership) + confirm engine allows crossing any bridge | files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `packages/engine/src/action-flow.ts`, `packages/engine/src/board.ts`, `progress.md` | status: in progress
 
 
