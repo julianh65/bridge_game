@@ -16,9 +16,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
-- owner: agent4; scope: remove board header/hints and tighten board panel padding to reduce wasted space above the board; files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`; status: in progress.
 - owner: agent2; scope: clean up `implementation_plan.md` and `progress.md` (dedupe/completion sync, tighten notes); files: `implementation_plan.md`, `progress.md`; status: in progress.
+- owner: agent1; scope: make champion markers more visible on the board (halo/label tweak); files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`; status: in progress. (Overlap note: `apps/web/src/styles.css` may overlap with other layout tweaks.)
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats (plan item already checked in `implementation_plan.md`).
@@ -47,6 +46,7 @@ none
 - Fixed SetupCapitalDraft hook ordering to prevent hook-mismatch crashes once capital draft completes, unblocking manual setup progression.
 - Delayed BoardView pointer capture until pan/pinch starts so edge/hex clicks register reliably during targeting.
 - Disabled hex clicks/highlights during edge targeting so only edges are selectable; updated card edge hint copy and marked the plan item complete in `implementation_plan.md` (overlap: `apps/web/src/components/GameScreen.tsx` touched alongside agent4 scope).
+- Removed the board header/hints and tightened board panel padding to reduce wasted space above the board; marked the plan item complete in `implementation_plan.md`.
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.

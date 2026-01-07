@@ -1353,8 +1353,6 @@ export const GameScreen = ({
       >
         <section className="panel game-board">
           <div className="game-board__placeholder">
-            <h2>Board</h2>
-            <p className="muted">Shared board state.</p>
             <div className="legend legend--compact">
               <div className="legend__item legend__item--capital">Capital</div>
               <div className="legend__item legend__item--forge">Forge</div>
@@ -1362,7 +1360,6 @@ export const GameScreen = ({
               <div className="legend__item legend__item--center">Center</div>
             </div>
             <div className={`board-tools ${isBoardTargeting ? "is-targeting" : ""}`}>
-              <span className="board-tools__hint">Drag to pan · Scroll to zoom</span>
               <div className="board-tools__meta">
                 <span className="chip">
                   {selectedHexKey ? `Selected ${selectedHexKey}` : "No hex selected"}
