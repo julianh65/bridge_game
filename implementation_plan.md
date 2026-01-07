@@ -532,6 +532,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [ ] Age II/III market + power deck card tests (as content lands).
   - [ ] Champion ability tests (on-deploy, on-death, on-battle-win, dice mods, VP aura).
     - [x] Bounty Hunter bonus gold on champion kill in battle.
+    - [x] Ironclad Warden bodyguard hit assignment policy.
+    - [x] Shadeblade Assassin's Edge pre-combat damage.
   - [ ] Card primitive tests for new mechanics (bridge lockdown/trap, wormhole adjacency, dice roll cards, cost overrides).
 - [x] At the end of the market phase we don't see the nice animation and transition for the last player who auto gets it
 - [x] It needs to be much more clear that Done is like "Pass" and won't let you go again
