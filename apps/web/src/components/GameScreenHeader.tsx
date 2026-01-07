@@ -25,6 +25,7 @@ export const GameScreenHeader = ({
   localVpTotal,
   onToggle
 }: GameScreenHeaderProps) => {
+  const showConnectionStatus = connectionLabel !== "Live";
   const resourceChips =
     localGold === null && localVpTotal === null ? null : (
       <div className="game-screen__resources">
@@ -42,7 +43,7 @@ export const GameScreenHeader = ({
             <span className="resource-chip__icon" aria-hidden="true">
               🟢
             </span>
-            <span className="resource-chip__label">VP</span>
+            <span className="resource-chip__label">Victory Points</span>
             <strong className="resource-chip__value">{localVpTotal}</strong>
           </div>
         ) : null}
@@ -54,7 +55,9 @@ export const GameScreenHeader = ({
         <div className="game-screen__collapsed-bar">
           <div className="game-screen__collapsed-meta">
             {resourceChips}
-            <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
+            {showConnectionStatus ? (
+              <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
+            ) : null}
             <span className="status-pill status-pill--phase">Phase: {phaseLabel}</span>
             <span className="status-pill">Round {round}</span>
           </div>
@@ -75,7 +78,9 @@ export const GameScreenHeader = ({
           </div>
           <div className="game-screen__meta">
             {resourceChips}
-            <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
+            {showConnectionStatus ? (
+              <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
+            ) : null}
             <span className="status-pill status-pill--phase">Phase: {phaseLabel}</span>
             <span className="status-pill">Round {round}</span>
             <span className="status-pill">Players: {playerCount}</span>
