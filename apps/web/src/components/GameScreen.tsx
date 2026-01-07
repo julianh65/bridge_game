@@ -301,6 +301,7 @@ export const GameScreen = ({
   const [edgeKey, setEdgeKey] = useState("");
   const [marchFrom, setMarchFrom] = useState("");
   const [marchTo, setMarchTo] = useState("");
+  const [reinforceHex, setReinforceHex] = useState("");
   const [cardInstanceId, setCardInstanceId] = useState("");
   const [cardTargetsRaw, setCardTargetsRaw] = useState("");
   const [boardPickMode, setBoardPickMode] = useState<BoardPickMode>("none");
@@ -328,6 +329,67 @@ export const GameScreen = ({
   const [basicActionIntent, setBasicActionIntent] = useState<BasicActionIntent>("none");
   const lastMarketEventIndex = useRef(-1);
   const lastCardRevealIndex = useRef(-1);
+
+  const localCapitalHexKey = useMemo(() => {
+    if (!localPlayerId) {
+      return null;
+    }
+    for (const hex of Object.values(view.public.board.hexes)) {
+      if (hex.tile === "capital" && hex.ownerPlayerId === localPlayerId) {
+        return hex.key;
+      }
+    }
+    return null;
+  }, [localPlayerId, view.public.board.hexes]);
+
+  const centerHexKey = useMemo(() => {
+    for (const hex of Object.values(view.public.board.hexes)) {
+      if (hex.tile === "center") {
+        return hex.key;
+      }
+    }
+    return null;
+  }, [view.public.board.hexes]);
+
+  const canUseCenterAsCapital = useMemo(() => {
+    if (!localPlayerId || localPlayer?.factionId !== "aerial" || !centerHexKey) {
+      return false;
+    }
+    const centerHex = view.public.board.hexes[centerHexKey];
+    if (!centerHex) {
+      return false;
+    }
+    return isOccupiedByPlayer(centerHex, localPlayerId);
+  }, [localPlayer?.factionId, localPlayerId, centerHexKey, view.public.board.hexes]);
+
+  const reinforceOptions = useMemo(() => {
+    if (!localPlayerId) {
+      return [];
+    }
+    const options: { key: string; label: string }[] = [];
+    if (localCapitalHexKey) {
+      const capitalHex = view.public.board.hexes[localCapitalHexKey];
+      if (capitalHex && !wouldExceedTwoPlayers(capitalHex, localPlayerId)) {
+        options.push({ key: localCapitalHexKey, label: "Capital" });
+      }
+    }
+    if (canUseCenterAsCapital && centerHexKey) {
+      const centerHex = view.public.board.hexes[centerHexKey];
+      if (centerHex && !wouldExceedTwoPlayers(centerHex, localPlayerId)) {
+        options.push({ key: centerHexKey, label: "Center" });
+      }
+    }
+    return options;
+  }, [
+    canUseCenterAsCapital,
+    centerHexKey,
+    localCapitalHexKey,
+    localPlayerId,
+    view.public.board.hexes
+  ]);
+
+  const selectedReinforce =
+    reinforceOptions.find((option) => option.key === reinforceHex) ?? reinforceOptions[0] ?? null;
   const lastCombatEndIndex = useRef(-1);
   const hasMarketLogBaseline = useRef(false);
   const hasCardRevealBaseline = useRef(false);
@@ -414,7 +476,7 @@ export const GameScreen = ({
   }
   const canSubmitDone = canDeclareAction;
   const canSubmitAction = canSubmitDone && availableMana >= 1;
-  const canReinforce = canSubmitAction && availableGold >= 1;
+  const canReinforce = canSubmitAction && availableGold >= 1 && reinforceOptions.length > 0;
   const canBuildBridge = canSubmitAction && edgeKey.trim().length > 0;
   const canMarch =
     canSubmitAction && marchFrom.trim().length > 0 && marchTo.trim().length > 0;
@@ -445,12 +507,12 @@ export const GameScreen = ({
       action: { kind: "march", from: marchFrom.trim(), to: marchTo.trim() }
     };
     primaryActionLabel = "March";
-  } else if (basicActionIntent === "reinforce" && canReinforce) {
+  } else if (basicActionIntent === "reinforce" && canReinforce && selectedReinforce) {
     primaryAction = {
       kind: "basic",
-      action: { kind: "capitalReinforce" }
+      action: { kind: "capitalReinforce", hexKey: selectedReinforce.key }
     };
-    primaryActionLabel = "Reinforce";
+    primaryActionLabel = `Reinforce ${selectedReinforce.label}`;
   }
   const toggleHeaderCollapsed = () => {
     setIsHeaderCollapsed((value) => !value);
@@ -476,6 +538,15 @@ export const GameScreen = ({
     }
   }, [cardInstanceId, handCards]);
 
+  useEffect(() => {
+    if (reinforceHex.length === 0) {
+      return;
+    }
+    if (!reinforceOptions.some((option) => option.key === reinforceHex)) {
+      setReinforceHex("");
+    }
+  }, [reinforceHex, reinforceOptions]);
+
   const setBoardPickModeSafe = (mode: BoardPickMode) => {
     setBoardPickMode(mode);
     setPendingEdgeStart(null);
@@ -496,6 +567,7 @@ export const GameScreen = ({
       setPendingPath([]);
       setCardInstanceId("");
       setCardTargetsRaw("");
+      setReinforceHex("");
       setIsHandPanelOpen(true);
       setBasicActionIntent("none");
     }
@@ -1369,16 +1441,71 @@ export const GameScreen = ({
                 <div className="card-detail__row">
                   <span>Target choice</span>
                   <div className="card-detail__row-actions">
-                    <button
-                      type="button"
-                      className="btn btn-tertiary"
-                      onClick={() => {
-                        setBoardPickModeSafe("none");
-                        setCardTargetsObject({ choice: "capital" });
-                      }}
-                    >
-                      Capital
-                    </button>
+                    {(() => {
+                      const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
+                      const options = Array.isArray(targetSpec.options)
+                        ? targetSpec.options
+                        : [];
+                      const hasCapitalOption = options.some(
+                        (option) =>
+                          option &&
+                          typeof option === "object" &&
+                          (option as Record<string, unknown>).kind === "capital"
+                      );
+                      if (!hasCapitalOption) {
+                        return null;
+                      }
+                      const selectedChoice =
+                        getTargetString(targetRecord, "choice") ??
+                        getTargetString(targetRecord, "kind");
+                      const selectedHex = getTargetString(targetRecord, "hexKey");
+                      const capitalKey = localCapitalHexKey;
+                      const canPickCapital = Boolean(capitalKey);
+                      const canPickCenter = canUseCenterAsCapital && centerHexKey;
+                      return (
+                        <>
+                          <button
+                            type="button"
+                            className={`btn btn-tertiary ${
+                              selectedChoice === "capital" &&
+                              (!selectedHex || selectedHex === capitalKey)
+                                ? "is-active"
+                                : ""
+                            }`}
+                            disabled={!canPickCapital}
+                            onClick={() => {
+                              setBoardPickModeSafe("none");
+                              setCardTargetsObject(
+                                capitalKey
+                                  ? { choice: "capital", hexKey: capitalKey }
+                                  : { choice: "capital" }
+                              );
+                            }}
+                          >
+                            Capital
+                          </button>
+                          {canPickCenter ? (
+                            <button
+                              type="button"
+                              className={`btn btn-tertiary ${
+                                selectedChoice === "capital" && selectedHex === centerHexKey
+                                  ? "is-active"
+                                  : ""
+                              }`}
+                              onClick={() => {
+                                if (!centerHexKey) {
+                                  return;
+                                }
+                                setBoardPickModeSafe("none");
+                                setCardTargetsObject({ choice: "capital", hexKey: centerHexKey });
+                              }}
+                            >
+                              Center
+                            </button>
+                          ) : null}
+                        </>
+                      );
+                    })()}
                     <button
                       type="button"
                       className={`btn btn-tertiary ${
@@ -1797,12 +1924,15 @@ export const GameScreen = ({
         edgeKey={edgeKey}
         marchFrom={marchFrom}
         marchTo={marchTo}
+        reinforceHex={reinforceHex}
+        reinforceOptions={reinforceOptions}
         boardPickMode={boardPickMode}
         basicActionIntent={basicActionIntent}
         onBasicActionIntentChange={setBasicActionIntent}
         onEdgeKeyChange={setEdgeKey}
         onMarchFromChange={setMarchFrom}
         onMarchToChange={setMarchTo}
+        onReinforceHexChange={setReinforceHex}
         onBoardPickModeChange={setBoardPickModeSafe}
         onSelectCard={handleSelectCard}
         onSubmitAction={onSubmitAction}

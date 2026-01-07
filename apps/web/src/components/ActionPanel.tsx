@@ -24,12 +24,15 @@ type ActionPanelProps = {
   edgeKey: string;
   marchFrom: string;
   marchTo: string;
+  reinforceHex: string;
+  reinforceOptions: { key: string; label: string }[];
   boardPickMode: BoardPickMode;
   basicActionIntent: BasicActionIntent;
   onBasicActionIntentChange: (value: BasicActionIntent) => void;
   onEdgeKeyChange: (value: string) => void;
   onMarchFromChange: (value: string) => void;
   onMarchToChange: (value: string) => void;
+  onReinforceHexChange: (value: string) => void;
   onBoardPickModeChange: (mode: BoardPickMode) => void;
 };
 
@@ -40,12 +43,15 @@ export const ActionPanel = ({
   edgeKey,
   marchFrom,
   marchTo,
+  reinforceHex,
+  reinforceOptions,
   boardPickMode,
   basicActionIntent,
   onBasicActionIntentChange,
   onEdgeKeyChange,
   onMarchFromChange,
   onMarchToChange,
+  onReinforceHexChange,
   onBoardPickModeChange
 }: ActionPanelProps) => {
   const isActionPhase = phase === "round.action";
@@ -55,10 +61,16 @@ export const ActionPanel = ({
     isActionPhase &&
     !player?.doneThisRound &&
     (player?.resources.mana ?? 0) >= 1;
-  const canReinforce = canSubmitAction && (player?.resources.gold ?? 0) >= 1;
+  const canReinforce =
+    canSubmitAction && (player?.resources.gold ?? 0) >= 1 && reinforceOptions.length > 0;
   const isPickingBridge = boardPickMode === "bridgeEdge";
   const isPickingMarchFrom = boardPickMode === "marchFrom";
   const isPickingMarchTo = boardPickMode === "marchTo";
+  const selectedReinforce =
+    reinforceOptions.find((option) => option.key === reinforceHex) ?? reinforceOptions[0] ?? null;
+  const reinforceLabel = selectedReinforce
+    ? `${selectedReinforce.label} (${selectedReinforce.key})`
+    : "Select a target";
 
   const toggleIntent = (intent: BasicActionIntent) => {
     const nextIntent = basicActionIntent === intent ? "none" : intent;
@@ -221,6 +233,37 @@ export const ActionPanel = ({
             </div>
           </label>
         </div>
+      ) : null}
+
+      {basicActionIntent === "reinforce" ? (
+        <label className="action-field action-field--compact">
+          <span>Reinforce target</span>
+          <div className="action-field__controls">
+            <div
+              className={`action-field__value ${
+                selectedReinforce ? "" : "is-empty"
+              }`}
+            >
+              {reinforceLabel}
+            </div>
+          </div>
+          {reinforceOptions.length > 1 ? (
+            <div className="action-panel__buttons">
+              {reinforceOptions.map((option) => (
+                <button
+                  key={option.key}
+                  type="button"
+                  className={`btn btn-tertiary ${
+                    option.key === selectedReinforce?.key ? "is-active" : ""
+                  }`}
+                  onClick={() => onReinforceHexChange(option.key)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </label>
       ) : null}
     </div>
   );

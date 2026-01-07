@@ -17,7 +17,6 @@
 
 ## Active tasks
 - owner: agent3 | scope: fix BoardView import error by exporting card defs map from engine index | files: `packages/engine/src/index.ts` | status: in progress
-- owner: agent1 | scope: wire UI targeting for Aerial Wings capital deploys (reinforce + capital-choice cards) | files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx` | status: in progress
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -40,6 +39,7 @@
 - Added a large Submit/Lock In action button to the action panel and marked the plan item complete in `implementation_plan.md`.
 - Added action-panel helper copy clarifying Done/Reinforce/Bridge/March/Play actions and marked the plan item complete in `implementation_plan.md`.
 - Submit button now reflects the selected action (Play Card/Build Bridge/etc.) to remove the play-vs-submit confusion; marked the plan item complete in `implementation_plan.md`.
+- Wired Aerial Wings UI targeting so reinforce/capital-choice actions can select the center when occupied (passes `hexKey`).
 - Replaced market focus row with a full-screen overlay + toggle, redesigned market cards with art placeholders and metadata, and marked Milestone 8.5 market tasks complete in `implementation_plan.md`.
 - Added an order rail to the market overlay and tightened market card sizing so the overlay reads as a sequenced card run; marked the related checklist items complete in `implementation_plan.md`.
 - Hid market bid details in the status list until all bids are submitted and marked the plan item complete in `implementation_plan.md`.
