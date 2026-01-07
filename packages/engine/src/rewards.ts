@@ -1,5 +1,5 @@
 import type { ChampionKillContext, GameState, PlayerID } from "./types";
-import { getChampionKillBonusGold } from "./modifiers";
+import { getChampionKillBonusGold, getChampionKillStealGold } from "./modifiers";
 
 const MARK_FOR_COIN_CARD_ID = "faction.veil.marked_for_coin";
 
@@ -22,6 +22,51 @@ const addGold = (state: GameState, playerId: PlayerID, amount: number): GameStat
         : player
     )
   };
+};
+
+const transferGold = (
+  state: GameState,
+  fromPlayerId: PlayerID,
+  toPlayerId: PlayerID,
+  amount: number
+): GameState => {
+  if (amount <= 0 || fromPlayerId === toPlayerId) {
+    return state;
+  }
+
+  let changed = false;
+  const nextPlayers = state.players.map((player) => {
+    if (player.id === fromPlayerId) {
+      if (player.resources.gold === 0) {
+        return player;
+      }
+      const nextGold = Math.max(0, player.resources.gold - amount);
+      if (nextGold === player.resources.gold) {
+        return player;
+      }
+      changed = true;
+      return {
+        ...player,
+        resources: {
+          ...player.resources,
+          gold: nextGold
+        }
+      };
+    }
+    if (player.id === toPlayerId) {
+      changed = true;
+      return {
+        ...player,
+        resources: {
+          ...player.resources,
+          gold: player.resources.gold + amount
+        }
+      };
+    }
+    return player;
+  });
+
+  return changed ? { ...state, players: nextPlayers } : state;
 };
 
 const applyMarkedForCoinRewards = (
@@ -86,9 +131,23 @@ export const applyChampionKillRewards = (
   let nextState = state;
   if (context.killerPlayerId !== context.victimPlayerId) {
     const bonus = getChampionKillBonusGold(nextState, context, 0);
+    const steal = getChampionKillStealGold(nextState, context, 0);
     const total = context.bounty + bonus;
     if (total > 0) {
       nextState = addGold(nextState, context.killerPlayerId, total);
+    }
+    if (steal > 0) {
+      const victim = nextState.players.find((player) => player.id === context.victimPlayerId);
+      const available = victim?.resources.gold ?? 0;
+      const stealAmount = Math.min(steal, available);
+      if (stealAmount > 0) {
+        nextState = transferGold(
+          nextState,
+          context.victimPlayerId,
+          context.killerPlayerId,
+          stealAmount
+        );
+      }
     }
   }
 

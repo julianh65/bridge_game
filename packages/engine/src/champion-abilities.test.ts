@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { DEFAULT_CONFIG } from "./config";
 import { getBridgeKey } from "./board";
 import { createBaseBoard } from "./board-generation";
-import { applyChampionDeployment } from "./champions";
+import { applyChampionDeathEffects, applyChampionDeployment } from "./champions";
 import { validateMovePath } from "./card-effects";
 import { getCardDef } from "./content/cards";
 import { createNewGame } from "./engine";
@@ -618,5 +618,265 @@ describe("champion abilities", () => {
 
     const endingGold = state.players.find((player) => player.id === "p1")?.resources.gold ?? 0;
     expect(endingGold).toBe(startingGold + enemyUnit.bounty + 1);
+  });
+
+  it("steals gold on champion kills for Tax Reaver", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    const reaver = addChampionToHex(board, "p1", hexKey, {
+      cardDefId: "champion.age2.tax_reaver",
+      hp: 6,
+      attackDice: 2,
+      hitFaces: 3,
+      bounty: 3
+    });
+    let state = {
+      ...base,
+      board: reaver.board,
+      phase: "round.action",
+      blocks: undefined
+    };
+    state = applyChampionDeployment(state, reaver.unitId, "champion.age2.tax_reaver", "p1");
+    state = {
+      ...state,
+      players: state.players.map((player) =>
+        player.id === "p2"
+          ? {
+              ...player,
+              resources: {
+                ...player.resources,
+                gold: 1
+              }
+            }
+          : player
+      )
+    };
+
+    const victim = addChampionToHex(state.board, "p2", hexKey, {
+      cardDefId: "champion.age1.sergeant",
+      hp: 3,
+      attackDice: 1,
+      hitFaces: 3,
+      bounty: 0
+    });
+    state = {
+      ...state,
+      board: victim.board
+    };
+
+    const victimUnit = state.board.units[victim.unitId];
+    if (!victimUnit || victimUnit.kind !== "champion") {
+      throw new Error("missing victim champion unit");
+    }
+
+    const p1GoldStart = state.players.find((player) => player.id === "p1")?.resources.gold ?? 0;
+    const p2GoldStart = state.players.find((player) => player.id === "p2")?.resources.gold ?? 0;
+
+    state = applyChampionKillRewards(state, {
+      killerPlayerId: "p1",
+      victimPlayerId: "p2",
+      killedChampions: [victimUnit],
+      bounty: 0,
+      hexKey,
+      source: "battle"
+    });
+
+    const p1GoldEnd = state.players.find((player) => player.id === "p1")?.resources.gold ?? 0;
+    const p2GoldEnd = state.players.find((player) => player.id === "p2")?.resources.gold ?? 0;
+    expect(p1GoldEnd - p1GoldStart).toBe(1);
+    expect(p2GoldStart - p2GoldEnd).toBe(1);
+  });
+
+  it("deploys a force when Capturer wins a battle", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    const capturer = addChampionToHex(board, "p1", hexKey, {
+      cardDefId: "champion.age2.capturer",
+      hp: 5,
+      attackDice: 2,
+      hitFaces: 3,
+      bounty: 0
+    });
+
+    let state = {
+      ...base,
+      board: capturer.board,
+      phase: "round.action",
+      blocks: undefined
+    };
+    state = applyChampionDeployment(state, capturer.unitId, "champion.age2.capturer", "p1");
+
+    const modifier = state.modifiers.find(
+      (entry) => entry.source.type === "champion" && entry.source.sourceId === "champion.age2.capturer"
+    );
+    if (!modifier?.hooks?.afterBattle) {
+      throw new Error("missing capturer modifier");
+    }
+
+    const beforeForces =
+      state.board.hexes[hexKey].occupants["p1"]?.filter(
+        (unitId) => state.board.units[unitId]?.kind === "force"
+      ).length ?? 0;
+
+    const nextState = modifier.hooks.afterBattle({
+      state,
+      modifier,
+      hexKey,
+      attackerPlayerId: "p1",
+      defenderPlayerId: "p2",
+      round: 1,
+      reason: "eliminated",
+      winnerPlayerId: "p1",
+      attackers: [capturer.unitId],
+      defenders: []
+    });
+
+    const afterForces =
+      nextState.board.hexes[hexKey].occupants["p1"]?.filter(
+        (unitId) => nextState.board.units[unitId]?.kind === "force"
+      ).length ?? 0;
+
+    expect(afterForces).toBe(beforeForces + 1);
+  });
+
+  it("boosts forces in capital sieges for Capital Breaker", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    const hex = board.hexes[hexKey];
+    if (!hex) {
+      throw new Error("missing hex for capital breaker test");
+    }
+    board.hexes[hexKey] = {
+      ...hex,
+      tile: "capital",
+      ownerPlayerId: "p2"
+    };
+    const breaker = addChampionToHex(board, "p1", hexKey, {
+      cardDefId: "champion.age3.capital_breaker",
+      hp: 8,
+      attackDice: 3,
+      hitFaces: 3,
+      bounty: 4
+    });
+
+    let state = {
+      ...base,
+      board: breaker.board,
+      phase: "round.action",
+      blocks: undefined
+    };
+    state = applyChampionDeployment(state, breaker.unitId, "champion.age3.capital_breaker", "p1");
+    state = {
+      ...state,
+      board: addForcesToHex(state.board, "p1", hexKey, 1)
+    };
+
+    const forceId = (state.board.hexes[hexKey].occupants["p1"] ?? []).find(
+      (unitId) => state.board.units[unitId]?.kind === "force"
+    );
+    if (!forceId) {
+      throw new Error("missing force unit for capital breaker test");
+    }
+    const forceUnit = state.board.units[forceId];
+    if (!forceUnit || forceUnit.kind !== "force") {
+      throw new Error("expected force unit for capital breaker test");
+    }
+
+    const modifiers = getCombatModifiers(state, hexKey);
+    const hitFaces = applyModifierQuery(
+      state,
+      modifiers,
+      (hooks) => hooks.getForceHitFaces,
+      {
+        hexKey,
+        attackerPlayerId: "p1",
+        defenderPlayerId: "p2",
+        round: 1,
+        side: "attackers",
+        unitId: forceId,
+        unit: forceUnit
+      },
+      2
+    );
+
+    expect(hitFaces).toBe(3);
+  });
+
+  it("grants gold once per round for Blood Banker champion deaths in its hex", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    const banker = addChampionToHex(board, "p1", hexKey, {
+      cardDefId: "champion.age3.blood_banker",
+      hp: 7,
+      attackDice: 2,
+      hitFaces: 3,
+      bounty: 3
+    });
+    let state = {
+      ...base,
+      board: banker.board,
+      phase: "round.action",
+      blocks: undefined
+    };
+    state = applyChampionDeployment(state, banker.unitId, "champion.age3.blood_banker", "p1");
+
+    const enemy = addChampionToHex(state.board, "p2", hexKey, {
+      cardDefId: "champion.age1.sergeant",
+      hp: 3,
+      attackDice: 1,
+      hitFaces: 3,
+      bounty: 1
+    });
+    state = { ...state, board: enemy.board };
+
+    const enemyUnit = state.board.units[enemy.unitId];
+    if (!enemyUnit || enemyUnit.kind !== "champion") {
+      throw new Error("missing enemy champion unit");
+    }
+
+    const goldStart = state.players.find((player) => player.id === "p1")?.resources.gold ?? 0;
+    state = applyChampionDeathEffects(state, [enemyUnit]);
+    const goldAfter = state.players.find((player) => player.id === "p1")?.resources.gold ?? 0;
+    expect(goldAfter).toBe(goldStart + 2);
+
+    const nextEnemy = addChampionToHex(state.board, "p2", hexKey, {
+      cardDefId: "champion.age1.sergeant",
+      hp: 3,
+      attackDice: 1,
+      hitFaces: 3,
+      bounty: 1
+    });
+    state = { ...state, board: nextEnemy.board };
+    const nextEnemyUnit = state.board.units[nextEnemy.unitId];
+    if (!nextEnemyUnit || nextEnemyUnit.kind !== "champion") {
+      throw new Error("missing second enemy champion unit");
+    }
+
+    const goldBeforeSecond = state.players.find((player) => player.id === "p1")?.resources.gold ?? 0;
+    state = applyChampionDeathEffects(state, [nextEnemyUnit]);
+    const goldAfterSecond = state.players.find((player) => player.id === "p1")?.resources.gold ?? 0;
+    expect(goldAfterSecond).toBe(goldBeforeSecond);
+
+    const bankerUnit = state.board.units[banker.unitId];
+    if (!bankerUnit || bankerUnit.kind !== "champion") {
+      throw new Error("missing blood banker unit");
+    }
+    expect(bankerUnit.abilityUses["blood_ledger"]?.remaining).toBe(0);
   });
 });

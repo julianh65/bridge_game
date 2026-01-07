@@ -191,6 +191,20 @@ export const getChampionKillBonusGold = (
   );
 };
 
+export const getChampionKillStealGold = (
+  state: GameState,
+  context: ChampionKillContext,
+  base: number
+): number => {
+  return applyModifierQuery(
+    state,
+    state.modifiers,
+    (hooks) => hooks.getChampionKillStealGold,
+    context,
+    base
+  );
+};
+
 export const getCardChoiceCount = (
   state: GameState,
   context: CardChoiceContext,

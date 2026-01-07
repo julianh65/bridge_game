@@ -347,15 +347,17 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
     - [x] On-deploy triggers: Skirmisher Captain (deploy 1 Force).
     - [x] On-deploy triggers: Siege Engineer (destroy adjacent Bridge).
     - [x] On-death triggers: Traitor (set owner mana to 0)
-    - [ ] On-death triggers: Blood Banker (first champion death in hex grants gold)
+    - [x] On-death triggers: Blood Banker (first champion death in hex grants gold)
     - [x] On-battle-win/kill triggers: Bounty Hunter (bonus gold on champion kill in battle)
-    - [ ] On-battle-win/kill triggers: Capturer (deploy 1 Force on win), Tax Reaver (bonus gold on champion kill)
+    - [x] On-battle-win/kill triggers: Capturer (deploy 1 Force on win), Tax Reaver (steal gold on champion kill)
     - [x] Movement exceptions: Bridge Runner pathfinder (adjacent moves ignore bridges).
     - [ ] Movement/deploy exceptions: Guerilla Native Mercenary (deploy to any unoccupied hex), Logistics Officer (deploy as capital)
     - [x] Dice mods/thresholds: Inspiring Geezer (forces hit 1-3), Brute (extra dice if no enemy champion).
     - [x] Dice mods/thresholds: Duelist Exemplar (if enemy champion +1 die/round), Lone Wolf (if no friendly forces +3 dice), Reliable Veteran (hits on 1-5)
-    - [ ] Siege/VP modifiers: Capital Breaker (siege hit buff), Bannerman/Center Bannerman (VP while on board/center)
-    - [ ] Active abilities: Field Surgeon (heal champion in hex 1/round), Stormcaller (Tempest AoE), Grand Strategist (Tactical Hand hit assignment)
+    - [x] Siege modifiers: Capital Breaker (siege hit buff)
+    - [ ] VP modifiers: Bannerman/Center Bannerman (VP while on board/center)
+    - [x] Active abilities: Field Surgeon (heal champion in hex 1/round)
+    - [ ] Active abilities: Stormcaller (Tempest AoE), Grand Strategist (Tactical Hand hit assignment)
 - [ ] Quick check in, the rules in rules_draft are kind of living and breathing as I update things or change balance so make sure that everything is still correct, and add a few more champions and their abilities and everything in to test
 
 ### Tasks (web)
@@ -437,6 +439,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [x] Added Sabotage Bridge, Bridge Trap, and Tunnel Network (bridge/terrain effects).
   - [x] Added Recruit Detachment, Paid Volunteers, and National Service (recruit variants).
   - [x] Added Escort Detail with champion-targeted deploy support.
+  - [x] Added Battle Cry and Smoke Screen combat-tactics cards with first-battle modifiers.
 - Expand Age II/III market + power deck lists to match the latest rules_draft (including power champions and burn-heavy cards).
   - [ ] Age II market cards + champions (47 cards + 8 champions).
   - [ ] Age III market cards + champions (47 cards + 8 champions).

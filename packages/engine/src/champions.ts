@@ -29,9 +29,14 @@ const DUELIST_EXEMPLAR_CHAMPION_ID = "champion.age2.duelist_exemplar";
 const LONE_WOLF_CHAMPION_ID = "champion.age2.lone_wolf";
 const RELIABLE_VETERAN_CHAMPION_ID = "champion.age2.reliable_veteran";
 const SIEGE_ENGINEER_CHAMPION_ID = "champion.age2.siege_engineer";
+const CAPTURER_CHAMPION_ID = "champion.age2.capturer";
+const TAX_REAVER_CHAMPION_ID = "champion.age2.tax_reaver";
+const BLOOD_BANKER_CHAMPION_ID = "champion.age3.blood_banker";
+const CAPITAL_BREAKER_CHAMPION_ID = "champion.age3.capital_breaker";
 
 const ASSASSINS_EDGE_KEY = "assassins_edge";
 const STITCHWORK_KEY = "stitchwork";
+const BLOOD_LEDGER_KEY = "blood_ledger";
 
 const BRIDGE_BYPASS_CHAMPION_IDS = new Set([FLIGHT_CHAMPION_ID, BRIDGE_RUNNER_CHAMPION_ID]);
 
@@ -41,6 +46,9 @@ const PER_ROUND_ABILITY_USES: Record<CardDefId, Record<string, number>> = {
   },
   [FIELD_SURGEON_CHAMPION_ID]: {
     [STITCHWORK_KEY]: 1
+  },
+  [BLOOD_BANKER_CHAMPION_ID]: {
+    [BLOOD_LEDGER_KEY]: 1
   }
 };
 
@@ -553,6 +561,125 @@ const createBountyHunterModifier = (
   }
 });
 
+const createTaxReaverModifier = (
+  unitId: UnitID,
+  ownerPlayerId: PlayerID
+): Modifier => ({
+  id: buildChampionModifierId(unitId, "tax_reaver"),
+  source: { type: "champion", sourceId: TAX_REAVER_CHAMPION_ID },
+  ownerPlayerId,
+  duration: { type: "permanent" },
+  data: { unitId },
+  hooks: {
+    getChampionKillStealGold: (
+      { modifier, state, killerPlayerId, hexKey, source, killedChampions },
+      current
+    ) => {
+      if (source !== "battle") {
+        return current;
+      }
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== killerPlayerId) {
+        return current;
+      }
+      if (killedChampions.length === 0) {
+        return current;
+      }
+      const sourceUnitId = getModifierUnitId(modifier);
+      if (!sourceUnitId) {
+        return current;
+      }
+      const sourceUnit = state.board.units[sourceUnitId];
+      if (!sourceUnit || sourceUnit.kind !== "champion") {
+        return current;
+      }
+      if (sourceUnit.hex !== hexKey) {
+        return current;
+      }
+      return current + killedChampions.length * 2;
+    }
+  }
+});
+
+const createCapturerModifier = (
+  unitId: UnitID,
+  ownerPlayerId: PlayerID
+): Modifier => ({
+  id: buildChampionModifierId(unitId, "capturer"),
+  source: { type: "champion", sourceId: CAPTURER_CHAMPION_ID },
+  ownerPlayerId,
+  duration: { type: "permanent" },
+  data: { unitId },
+  hooks: {
+    afterBattle: ({ state, modifier, winnerPlayerId, hexKey, attackers, defenders }) => {
+      const ownerId = modifier.ownerPlayerId;
+      if (!ownerId || winnerPlayerId !== ownerId) {
+        return state;
+      }
+      const sourceUnitId = getModifierUnitId(modifier);
+      if (!sourceUnitId) {
+        return state;
+      }
+      const sourceUnit = state.board.units[sourceUnitId];
+      if (!sourceUnit || sourceUnit.kind !== "champion") {
+        return state;
+      }
+      if (sourceUnit.hex !== hexKey) {
+        return state;
+      }
+      if (![...attackers, ...defenders].includes(sourceUnitId)) {
+        return state;
+      }
+      return {
+        ...state,
+        board: addForcesToHex(state.board, ownerId, hexKey, 1)
+      };
+    }
+  }
+});
+
+const createCapitalBreakerModifier = (
+  unitId: UnitID,
+  ownerPlayerId: PlayerID
+): Modifier => ({
+  id: buildChampionModifierId(unitId, "capital_breaker"),
+  source: { type: "champion", sourceId: CAPITAL_BREAKER_CHAMPION_ID },
+  ownerPlayerId,
+  duration: { type: "permanent" },
+  data: { unitId },
+  hooks: {
+    getForceHitFaces: ({ modifier, unit, hexKey, state, round }, current) => {
+      if (unit.kind !== "force") {
+        return current;
+      }
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== unit.ownerPlayerId) {
+        return current;
+      }
+      if (round !== 1) {
+        return current;
+      }
+      const sourceUnitId = getModifierUnitId(modifier);
+      if (!sourceUnitId) {
+        return current;
+      }
+      const sourceUnit = state.board.units[sourceUnitId];
+      if (!sourceUnit || sourceUnit.kind !== "champion") {
+        return current;
+      }
+      if (sourceUnit.hex !== hexKey) {
+        return current;
+      }
+      const hex = state.board.hexes[hexKey];
+      if (!hex || hex.tile !== "capital") {
+        return current;
+      }
+      if (!hex.ownerPlayerId || hex.ownerPlayerId === unit.ownerPlayerId) {
+        return current;
+      }
+      return Math.max(current, 3);
+    }
+  }
+});
+
 const createChampionModifiers = (
   unitId: UnitID,
   cardDefId: CardDefId,
@@ -585,6 +712,12 @@ const createChampionModifiers = (
       return [createReliableVeteranModifier(unitId, ownerPlayerId)];
     case BOUNTY_HUNTER_CHAMPION_ID:
       return [createBountyHunterModifier(unitId, ownerPlayerId)];
+    case TAX_REAVER_CHAMPION_ID:
+      return [createTaxReaverModifier(unitId, ownerPlayerId)];
+    case CAPTURER_CHAMPION_ID:
+      return [createCapturerModifier(unitId, ownerPlayerId)];
+    case CAPITAL_BREAKER_CHAMPION_ID:
+      return [createCapitalBreakerModifier(unitId, ownerPlayerId)];
     default:
       return [];
   }
@@ -772,6 +905,27 @@ const setPlayerMana = (state: GameState, playerId: PlayerID, mana: number): Game
   return changed ? { ...state, players } : state;
 };
 
+const addGold = (state: GameState, playerId: PlayerID, amount: number): GameState => {
+  if (amount <= 0) {
+    return state;
+  }
+  let changed = false;
+  const players = state.players.map((player) => {
+    if (player.id !== playerId) {
+      return player;
+    }
+    changed = true;
+    return {
+      ...player,
+      resources: {
+        ...player.resources,
+        gold: player.resources.gold + amount
+      }
+    };
+  });
+  return changed ? { ...state, players } : state;
+};
+
 export const applyChampionDeathEffects = (
   state: GameState,
   killedChampions: ChampionUnitState[]
@@ -786,6 +940,30 @@ export const applyChampionDeathEffects = (
       continue;
     }
     nextState = setPlayerMana(nextState, champion.ownerPlayerId, 0);
+  }
+
+  for (const champion of killedChampions) {
+    const hex = nextState.board.hexes[champion.hex];
+    if (!hex) {
+      continue;
+    }
+    const occupantGroups = Object.values(hex.occupants);
+    for (const unitIds of occupantGroups) {
+      for (const unitId of unitIds ?? []) {
+        const unit = nextState.board.units[unitId];
+        if (!unit || unit.kind !== "champion") {
+          continue;
+        }
+        if (unit.cardDefId !== BLOOD_BANKER_CHAMPION_ID) {
+          continue;
+        }
+        if (!canChampionUseAbility(unit, BLOOD_LEDGER_KEY)) {
+          continue;
+        }
+        nextState = consumeChampionAbilityUse(nextState, unitId, BLOOD_LEDGER_KEY);
+        nextState = addGold(nextState, unit.ownerPlayerId, 2);
+      }
+    }
   }
 
   return nextState;
