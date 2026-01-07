@@ -23,6 +23,7 @@ import {
   addChampionToHex,
   addForcesToHex,
   countPlayerChampions,
+  moveUnitToHex,
   selectMovingUnits
 } from "./units";
 import {
@@ -49,6 +50,7 @@ const SUPPORTED_EFFECTS = new Set([
   "gainGold",
   "gainMana",
   "drawCards",
+  "drawCardsIfHandEmpty",
   "scoutReport",
   "prospecting",
   "buildBridge",
@@ -70,7 +72,8 @@ const SUPPORTED_EFFECTS = new Set([
   "linkHexes",
   "linkCapitalToCenter",
   "battleCry",
-  "smokeScreen"
+  "smokeScreen",
+  "evacuateChampion"
 ]);
 
 type TargetRecord = Record<string, unknown>;
@@ -1012,9 +1015,31 @@ export const isCardPlayable = (
   }
 
   if (card.targetSpec.kind === "champion") {
-    return Boolean(
-      getChampionTarget(state, playerId, card.targetSpec as TargetRecord, targets ?? null, card)
+    const target = getChampionTarget(
+      state,
+      playerId,
+      card.targetSpec as TargetRecord,
+      targets ?? null,
+      card
     );
+    if (!target) {
+      return false;
+    }
+    const needsCapital = card.effects?.some(
+      (effect) => effect.kind === "evacuateChampion"
+    );
+    if (!needsCapital) {
+      return true;
+    }
+    const player = state.players.find((entry) => entry.id === playerId);
+    if (!player?.capitalHex) {
+      return false;
+    }
+    const capitalHex = state.board.hexes[player.capitalHex];
+    if (!capitalHex) {
+      return false;
+    }
+    return !wouldExceedTwoPlayers(capitalHex, playerId);
   }
 
   if (card.targetSpec.kind === "choice") {
@@ -1145,6 +1170,21 @@ export const resolveCardEffects = (
       }
       case "drawCards": {
         const count = typeof effect.count === "number" ? effect.count : 0;
+        nextState = drawCards(nextState, playerId, count);
+        break;
+      }
+      case "drawCardsIfHandEmpty": {
+        const count = typeof effect.count === "number" ? effect.count : 0;
+        if (count <= 0) {
+          break;
+        }
+        const player = nextState.players.find((entry) => entry.id === playerId);
+        if (!player) {
+          break;
+        }
+        if (player.deck.hand.length > 0) {
+          break;
+        }
         nextState = drawCards(nextState, playerId, count);
         break;
       }
@@ -1304,6 +1344,34 @@ export const resolveCardEffects = (
         nextState = {
           ...nextState,
           board: addForcesToHex(nextState.board, playerId, targetHexKey, count)
+        };
+        break;
+      }
+      case "evacuateChampion": {
+        const target = getChampionTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null,
+          card
+        );
+        if (!target) {
+          break;
+        }
+        const player = nextState.players.find((entry) => entry.id === playerId);
+        if (!player?.capitalHex) {
+          break;
+        }
+        const capitalHex = nextState.board.hexes[player.capitalHex];
+        if (!capitalHex) {
+          break;
+        }
+        if (wouldExceedTwoPlayers(capitalHex, playerId)) {
+          break;
+        }
+        nextState = {
+          ...nextState,
+          board: moveUnitToHex(nextState.board, target.unitId, player.capitalHex)
         };
         break;
       }

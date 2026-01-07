@@ -181,6 +181,58 @@ export const addChampionToHex = (
   };
 };
 
+export const moveUnitToHex = (
+  board: BoardState,
+  unitId: UnitID,
+  to: HexKey
+): BoardState => {
+  const unit = board.units[unitId];
+  if (!unit) {
+    return board;
+  }
+  if (unit.hex === to) {
+    return board;
+  }
+  const fromHex = board.hexes[unit.hex];
+  const toHex = board.hexes[to];
+  if (!fromHex || !toHex) {
+    return board;
+  }
+
+  const fromUnits = fromHex.occupants[unit.ownerPlayerId] ?? [];
+  const nextFromUnits = fromUnits.filter((entry) => entry !== unitId);
+  const toUnits = toHex.occupants[unit.ownerPlayerId] ?? [];
+  const nextToUnits = toUnits.includes(unitId) ? toUnits : [...toUnits, unitId];
+
+  return {
+    ...board,
+    units: {
+      ...board.units,
+      [unitId]: {
+        ...unit,
+        hex: to
+      }
+    },
+    hexes: {
+      ...board.hexes,
+      [unit.hex]: {
+        ...fromHex,
+        occupants: {
+          ...fromHex.occupants,
+          [unit.ownerPlayerId]: nextFromUnits
+        }
+      },
+      [to]: {
+        ...toHex,
+        occupants: {
+          ...toHex.occupants,
+          [unit.ownerPlayerId]: nextToUnits
+        }
+      }
+    }
+  };
+};
+
 export const moveStack = (
   board: BoardState,
   playerId: PlayerID,

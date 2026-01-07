@@ -38,6 +38,23 @@ export const FLANK_STEP: CardDef = {
   effects: [{ kind: "moveStack", maxDistance: 1, requiresBridge: false }]
 };
 
+export const EMERGENCY_EVAC: CardDef = {
+  id: "age1.emergency_evac",
+  name: "Emergency Evac",
+  rulesText: "Move 1 friendly Champion to your Capital. Heal it 1 HP.",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1 },
+  initiative: 45,
+  burn: false,
+  targetSpec: {
+    kind: "champion",
+    owner: "self"
+  },
+  effects: [{ kind: "evacuateChampion" }, { kind: "healChampion", amount: 1 }]
+};
+
 export const PROSPECTING: CardDef = {
   id: "age1.prospecting",
   name: "Prospecting",
@@ -310,6 +327,20 @@ export const PAID_LOGISTICS: CardDef = {
   effects: [{ kind: "gainMana", amount: 1 }]
 };
 
+export const SMALL_HANDS: CardDef = {
+  id: "age1.small_hands",
+  name: "Small Hands",
+  rulesText: "If this is the last card in your hand, draw 3 cards.",
+  type: "Spell",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1 },
+  initiative: 70,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "drawCardsIfHandEmpty", count: 3 }]
+};
+
 export const SUPPLY_LEDGER: CardDef = {
   id: "age1.supply_ledger",
   name: "Supply Ledger",
@@ -557,6 +588,7 @@ export const TRAITOR: CardDef = {
 export const AGE1_CARDS: CardDef[] = [
   QUICK_MARCH,
   FLANK_STEP,
+  EMERGENCY_EVAC,
   PROSPECTING,
   TRADE_CARAVAN,
   RECRUIT_DETACHMENT,
@@ -574,6 +606,7 @@ export const AGE1_CARDS: CardDef[] = [
   QUICK_STUDY,
   MAKE_A_PLAY,
   PAID_LOGISTICS,
+  SMALL_HANDS,
   SUPPLY_LEDGER,
   PATROL_RECORD,
   BANNER_CLAIM,
