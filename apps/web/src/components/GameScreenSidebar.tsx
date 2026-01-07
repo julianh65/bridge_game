@@ -13,8 +13,6 @@ type GameScreenSidebarProps = {
   actionEligible: Set<string>;
   actionWaiting: Set<string>;
   isInteractivePhase: boolean;
-  localResources: { gold: number; mana: number };
-  localVpTotal: number | null;
   logCount: number;
   lastLogLabel: string | null;
   isInfoDockOpen: boolean;
@@ -32,8 +30,6 @@ export const GameScreenSidebar = ({
   actionEligible,
   actionWaiting,
   isInteractivePhase,
-  localResources,
-  localVpTotal,
   logCount,
   lastLogLabel,
   isInfoDockOpen,
@@ -95,24 +91,6 @@ export const GameScreenSidebar = ({
         </div>
         {!isInteractivePhase ? (
           <p className="status-note">Resolving {phaseLabel}. Waiting on the server.</p>
-        ) : null}
-      </div>
-
-      <div className="sidebar-section">
-        <h3>Resources</h3>
-        <div className="resource-row">
-          <span>🟡 Gold</span>
-          <strong>{localResources.gold}</strong>
-        </div>
-        <div className="resource-row">
-          <span>🔵 Mana</span>
-          <strong>{localResources.mana}</strong>
-        </div>
-        {localVpTotal !== null ? (
-          <div className="resource-row">
-            <span>🟢 VP</span>
-            <strong>{localVpTotal}</strong>
-          </div>
         ) : null}
       </div>
 

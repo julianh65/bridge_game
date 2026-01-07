@@ -17,11 +17,12 @@
 
 ## Active tasks
 - none
-- [owner: agent4] [status: in-progress] Scope: move local resources (gold/VP) to header and add bottom-left mana orb in the hand panel. Files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/GameScreenHeader.tsx, apps/web/src/components/GameScreenSidebar.tsx, apps/web/src/components/GameScreenHandPanel.tsx, apps/web/src/styles.css (overlap with agent2), implementation_plan.md, progress.md.
 
 ## Milestone 8.5 progress
 - Improved hand card selection UX: added a selected-card summary with target hints + clear button, enabled click-to-deselect, and cleared card selection when switching to basic actions; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
+- Moved local resource display to the header (gold/VP) and added a bottom-left mana orb near the hand panel; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent3.)
 - Fixed hand-card hover popout stacking/spacing so hovered cards render above the actions column without clipping; marked the plan item complete in `implementation_plan.md`.
+- Raised hand-panel z-index and reordered hover/pass layering so hovered cards sit above most UI while pass/submit stays on top.
 - Added unique faction symbols (small circle badges) across faction selection, lobby labels, unit stacks, and victory screen; marked the plan item complete in `implementation_plan.md`.
 - Restyled champion markers above stacks into circular tokens with glyph placeholders; marked the plan item complete in `implementation_plan.md`.
 - Added champion hover tooltips on board tokens with HP/attack/damage and a rules snippet; marked the plan item complete in `implementation_plan.md`.

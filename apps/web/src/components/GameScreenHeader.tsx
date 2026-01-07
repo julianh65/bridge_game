@@ -7,6 +7,8 @@ type GameScreenHeaderProps = {
   roomId: string;
   playerCount: number;
   winnerPlayerId: string | null;
+  localGold: number | null;
+  localVpTotal: number | null;
   onToggle: () => void;
 };
 
@@ -19,13 +21,39 @@ export const GameScreenHeader = ({
   roomId,
   playerCount,
   winnerPlayerId,
+  localGold,
+  localVpTotal,
   onToggle
 }: GameScreenHeaderProps) => {
+  const resourceChips =
+    localGold === null && localVpTotal === null ? null : (
+      <div className="game-screen__resources">
+        {localGold !== null ? (
+          <div className="resource-chip resource-chip--gold">
+            <span className="resource-chip__icon" aria-hidden="true">
+              🟡
+            </span>
+            <span className="resource-chip__label">Gold</span>
+            <strong className="resource-chip__value">{localGold}</strong>
+          </div>
+        ) : null}
+        {localVpTotal !== null ? (
+          <div className="resource-chip resource-chip--vp">
+            <span className="resource-chip__icon" aria-hidden="true">
+              🟢
+            </span>
+            <span className="resource-chip__label">VP</span>
+            <strong className="resource-chip__value">{localVpTotal}</strong>
+          </div>
+        ) : null}
+      </div>
+    );
   return (
     <header className={`game-screen__header ${isCollapsed ? "is-collapsed" : ""}`}>
       {isCollapsed ? (
         <div className="game-screen__collapsed-bar">
           <div className="game-screen__collapsed-meta">
+            {resourceChips}
             <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
             <span className="status-pill status-pill--phase">Phase: {phaseLabel}</span>
             <span className="status-pill">Round {round}</span>
@@ -46,6 +74,7 @@ export const GameScreenHeader = ({
             </p>
           </div>
           <div className="game-screen__meta">
+            {resourceChips}
             <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
             <span className="status-pill status-pill--phase">Phase: {phaseLabel}</span>
             <span className="status-pill">Round {round}</span>

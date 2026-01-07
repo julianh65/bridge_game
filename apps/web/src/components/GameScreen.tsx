@@ -534,6 +534,7 @@ export const GameScreen = ({
   const isEdgePickMode = boardPickMode === "bridgeEdge" || boardPickMode === "cardEdge";
   const availableMana = localPlayer?.resources.mana ?? 0;
   const availableGold = localPlayer?.resources.gold ?? 0;
+  const maxMana = view.public.config.MAX_MANA;
   let actionHint: string | null = null;
   if (status !== "connected") {
     actionHint = "Connect to submit actions.";
@@ -1543,10 +1544,7 @@ export const GameScreen = ({
     setIsHandPickerOpen(false);
     setBoardPickModeSafe(getDefaultCardPickMode(cardDef));
   };
-  const localResources = {
-    gold: availableGold,
-    mana: availableMana
-  };
+  const localGold = view.private ? availableGold : null;
   const localVpTotal = view.private?.vp ? view.private.vp.total : null;
   const selectedHexLabel = selectedHexKey ? hexLabels[selectedHexKey] ?? null : null;
   const selectedLabelText = selectedHexKey
@@ -1762,6 +1760,8 @@ export const GameScreen = ({
         roomId={roomId}
         playerCount={view.public.players.length}
         winnerPlayerId={view.public.winnerPlayerId ?? null}
+        localGold={localGold}
+        localVpTotal={localVpTotal}
         onToggle={toggleHeaderCollapsed}
       />
 
@@ -1834,8 +1834,6 @@ export const GameScreen = ({
           actionEligible={actionEligible}
           actionWaiting={actionWaiting}
           isInteractivePhase={isInteractivePhase}
-          localResources={localResources}
-          localVpTotal={localVpTotal}
           logCount={logCount}
           lastLogLabel={lastLogLabel}
           isInfoDockOpen={isInfoDockOpen}
@@ -1851,6 +1849,7 @@ export const GameScreen = ({
         handCards={handCards}
         deckCounts={deckCounts}
         availableMana={availableMana}
+        maxMana={maxMana}
         availableGold={availableGold}
         canDeclareAction={canDeclareAction}
         canSubmitAction={canSubmitAction}

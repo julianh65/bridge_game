@@ -44,6 +44,7 @@ type GameScreenHandPanelProps = {
   handCards: NonNullable<GameView["private"]>["handCards"];
   deckCounts: NonNullable<GameView["private"]>["deckCounts"] | null;
   availableMana: number;
+  maxMana: number;
   availableGold: number;
   canDeclareAction: boolean;
   canSubmitAction: boolean;
@@ -79,6 +80,7 @@ export const GameScreenHandPanel = ({
   handCards,
   deckCounts,
   availableMana,
+  maxMana,
   availableGold,
   canDeclareAction,
   canSubmitAction,
@@ -113,6 +115,7 @@ export const GameScreenHandPanel = ({
   const selectedTargetHint = getCardTargetHint(selectedCardDef);
   const [isPassConfirming, setIsPassConfirming] = useState(false);
   const shouldConfirmPass = availableMana > 0;
+  const manaLabel = `${availableMana}/${maxMana}`;
 
   useEffect(() => {
     if (!canSubmitDone || !shouldConfirmPass) {
@@ -148,6 +151,10 @@ export const GameScreenHandPanel = ({
     <>
       {showHandPanel ? (
         <section className="panel game-hand">
+          <div className="mana-orb" aria-label={`Mana ${manaLabel}`}>
+            <span className="mana-orb__label">Mana</span>
+            <strong className="mana-orb__value">{manaLabel}</strong>
+          </div>
           <div className="game-hand__header">
             <div>
               <h2>Hand</h2>
