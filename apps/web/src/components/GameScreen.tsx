@@ -1907,6 +1907,7 @@ export const GameScreen = ({
               status={status}
               onSubmitBid={onSubmitMarketBid}
               winnerHighlight={marketWinner}
+              rollDurationMs={view.public.config.MARKET_ROLLOFF_DURATION_MS}
               onClose={isMarketPhase ? () => setIsMarketOverlayOpen(false) : undefined}
             />
           </div>

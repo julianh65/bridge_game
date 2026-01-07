@@ -55,6 +55,7 @@ export type GameConfig = {
   ROUNDS_MAX: number;
   VP_TO_WIN: number;
   ACTION_REVEAL_DURATION_MS: number;
+  MARKET_ROLLOFF_DURATION_MS: number;
   boardRadiusByPlayerCount: Record<number, number>;
   tileCountsByPlayerCount: Record<number, TileCounts>;
   capitalSlotsByPlayerCount: Record<number, HexKey[]>;

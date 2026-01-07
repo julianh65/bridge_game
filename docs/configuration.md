@@ -11,6 +11,9 @@ Edit that file to adjust rules and regenerate the board in the debug UI.
 ### Action reveal timing
 - `ACTION_REVEAL_DURATION_MS`: how long the action reveal overlay stays on screen (milliseconds).
 
+### Market roll-off timing
+- `MARKET_ROLLOFF_DURATION_MS`: how long each roll-off die roll animates in the market overlay (milliseconds).
+
 ### Board size and capitals
 - `boardRadiusByPlayerCount`: radius per player count.
 - `capitalSlotsByPlayerCount`: explicit `HexKey` lists for each player count.

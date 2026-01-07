@@ -28,6 +28,7 @@ type MarketPanelProps = {
   status: RoomConnectionStatus;
   onSubmitBid: (bid: Bid) => void;
   winnerHighlight?: MarketWinnerHighlight | null;
+  rollDurationMs?: number;
   layout?: "sidebar" | "overlay";
   onClose?: () => void;
 };
@@ -40,6 +41,7 @@ export const MarketPanel = ({
   status,
   onSubmitBid,
   winnerHighlight,
+  rollDurationMs: rollDurationOverride,
   layout = "sidebar",
   onClose
 }: MarketPanelProps) => {
@@ -155,7 +157,7 @@ export const MarketPanel = ({
   });
   const showOrderRail = isOverlay && currentRow.length > 0;
   const playerNameById = new Map(players.map((entry) => [entry.id, entry.name]));
-  const rollDurationMs = 1100;
+  const rollDurationMs = Math.max(0, rollDurationOverride ?? 1100);
   const rollDelayBaseMs = 160;
   const rollRoundGapMs = 520;
   const rollGapMs = 140;

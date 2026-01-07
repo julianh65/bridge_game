@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- owner: agent3 | status: in progress | scope: keep hand panel hidden while post-market overlay is showing | files: apps/web/src/components/GameScreen.tsx, progress.md, implementation_plan.md
 
 ## Milestone 8.5 progress
 - Prevented the hand panel from appearing while the market overlay holds after market phase end; marked the plan item complete in `implementation_plan.md`.
@@ -25,6 +25,7 @@
 - Added a market roll-off tie-break panel with suspenseful rolling dice numbers using a reusable `NumberRoll` component; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
 - Extended market roll-off to include pass-tie roll-offs, increased roll suspense timing, and labeled roll-offs in the log (engine market tests updated).
 - Delayed the market winner highlight until after the roll-off animation completes and moved the roll-off panel to the center of the market layout. (Overlap note: `apps/web/src/styles.css` touched alongside agent1.)
+- Made the market roll-off animation duration configurable via `MARKET_ROLLOFF_DURATION_MS` in `DEFAULT_CONFIG` and documented it.
 - Removed the Live connection pill from the header and enlarged gold/VP chips with clearer labels. (Overlap note: `apps/web/src/styles.css` touched alongside agent1.)
 - Repositioned the mana orb to the hand panel bottom-right (outside the actions panel) to reduce the perceived empty space above the cards.
 - Tightened the hand layout spacing and aligned the action panel to the bottom of the hand row to reduce empty vertical gaps.
