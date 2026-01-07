@@ -450,7 +450,7 @@ none
 - Added Tax Reaver kill-steal rewards, Capturer battle-win force deploy, Blood Banker per-round gold trigger, and Capital Breaker siege hit buff via champion modifiers + new kill-steal hook; added champion ability tests and plan updates.
 - Added Bannerman/Center Bannerman VP bonuses via a scoring bonus hook, plus scoring tests and plan updates.
 - Added Logistics Officer deploy-as-capital support in `resolveCapitalDeployHex` with action-flow coverage; updated `implementation_plan.md`. (Overlap note: `progress.md`/`implementation_plan.md` also include pre-existing checklist updates for board-pick highlights and champion ability tests.)
-- Added champion ability tests for Ironclad Warden (Bodyguard) and Shadeblade (Assassin's Edge); updated the plan checklist. (Files: `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.)
+- Added champion ability tests for Ironclad Warden (Bodyguard) and Shadeblade (Assassin's Edge); updated the plan checklist. (Files: `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.) (owner: agent2)
 
 ## Milestone 7.5 progress
 - Added a card-art manifest + helper, GameCard art rendering, and a CLI script to generate diffusion art and update the manifest. (Files: `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`.)

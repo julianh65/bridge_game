@@ -121,6 +121,142 @@ describe("champion abilities", () => {
     expect(path).toEqual([fromHex, toHex]);
   });
 
+  it("uses bodyguard hit assignment when forces protect a champion", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const card = getChampionCard("champion.bastion.ironclad_warden");
+    const hexKey = "0,0";
+    const deployed = addChampionToHex(board, "p1", hexKey, {
+      cardDefId: card.id,
+      hp: card.champion.hp,
+      attackDice: card.champion.attackDice,
+      hitFaces: card.champion.hitFaces,
+      bounty: card.champion.bounty
+    });
+    const boardWithForce = addForcesToHex(deployed.board, "p1", hexKey, 1);
+
+    let state = {
+      ...base,
+      board: boardWithForce,
+      phase: "round.action",
+      blocks: undefined
+    };
+
+    state = applyChampionDeployment(state, deployed.unitId, card.id, "p1");
+
+    const occupants = state.board.hexes[hexKey].occupants["p1"] ?? [];
+    const targetUnitIds = occupants.filter((unitId) => {
+      const unit = state.board.units[unitId];
+      return unit?.kind === "champion" || unit?.kind === "force";
+    });
+
+    const modifiers = getCombatModifiers(state, hexKey);
+    const policy = applyModifierQuery(
+      state,
+      modifiers,
+      (hooks) => hooks.getHitAssignmentPolicy,
+      {
+        hexKey,
+        attackerPlayerId: "p2",
+        defenderPlayerId: "p1",
+        round: 1,
+        targetSide: "defenders",
+        targetUnitIds,
+        hits: 1
+      },
+      "random"
+    );
+
+    expect(policy).toBe("bodyguard");
+
+    const noForcePolicy = applyModifierQuery(
+      state,
+      modifiers,
+      (hooks) => hooks.getHitAssignmentPolicy,
+      {
+        hexKey,
+        attackerPlayerId: "p2",
+        defenderPlayerId: "p1",
+        round: 1,
+        targetSide: "defenders",
+        targetUnitIds: [deployed.unitId],
+        hits: 1
+      },
+      "random"
+    );
+
+    expect(noForcePolicy).toBe("random");
+  });
+
+  it("triggers Assassin's Edge before combat round 1", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const shadeblade = getChampionCard("champion.veil.shadeblade");
+    const enemyCard = getChampionCard("champion.age1.sergeant");
+    const hexKey = "0,0";
+    const deployedShade = addChampionToHex(board, "p1", hexKey, {
+      cardDefId: shadeblade.id,
+      hp: shadeblade.champion.hp,
+      attackDice: shadeblade.champion.attackDice,
+      hitFaces: shadeblade.champion.hitFaces,
+      bounty: shadeblade.champion.bounty
+    });
+    const deployedEnemy = addChampionToHex(deployedShade.board, "p2", hexKey, {
+      cardDefId: enemyCard.id,
+      hp: enemyCard.champion.hp,
+      attackDice: enemyCard.champion.attackDice,
+      hitFaces: enemyCard.champion.hitFaces,
+      bounty: enemyCard.champion.bounty
+    });
+
+    let state = {
+      ...base,
+      board: deployedEnemy.board,
+      phase: "round.action",
+      blocks: undefined
+    };
+
+    state = applyChampionDeployment(state, deployedShade.unitId, shadeblade.id, "p1");
+
+    const enemyUnit = state.board.units[deployedEnemy.unitId];
+    if (!enemyUnit || enemyUnit.kind !== "champion") {
+      throw new Error("missing enemy champion for assassin's edge test");
+    }
+    const enemyHp = enemyUnit.hp;
+
+    state = runModifierEvents(
+      state,
+      getCombatModifiers(state, hexKey),
+      (hooks) => hooks.beforeCombatRound,
+      {
+        hexKey,
+        attackerPlayerId: "p1",
+        defenderPlayerId: "p2",
+        round: 1,
+        attackers: [deployedShade.unitId],
+        defenders: [deployedEnemy.unitId]
+      }
+    );
+
+    const damagedEnemy = state.board.units[deployedEnemy.unitId];
+    if (!damagedEnemy || damagedEnemy.kind !== "champion") {
+      throw new Error("missing damaged enemy for assassin's edge test");
+    }
+    expect(damagedEnemy.hp).toBe(enemyHp - 1);
+
+    const shadeUnit = state.board.units[deployedShade.unitId];
+    if (!shadeUnit || shadeUnit.kind !== "champion") {
+      throw new Error("missing shadeblade unit");
+    }
+    expect(shadeUnit.abilityUses["assassins_edge"]?.remaining).toBe(0);
+  });
+
   it("boosts friendly forces in the hex for Inspiring Geezer", () => {
     const base = createNewGame(DEFAULT_CONFIG, 1, [
       { id: "p1", name: "Player 1" },
