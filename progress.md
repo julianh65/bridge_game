@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
+- owner: agent3; scope: add a simple host-only debug state patch tool (path/value) in the room debug panel and server command handling; files: `apps/web/src/components/RoomDebugPanel.tsx`, `apps/web/src/lib/room-client.ts`, `apps/server/src/server.ts`; status: in progress.
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats (plan item already checked in `implementation_plan.md`).
@@ -70,6 +70,7 @@ none
 ## Testing progress
 - Added action-flow coverage for Flank Step (bridge-less move) + Scavenger's Market (gold + draw).
 - Added action-flow coverage for Supply Ledger, Patrol Record, and Banner Claim.
+- Overlap note: staged action-flow tests for Quick March, Trade Caravan, and Quick Study were included from another agent's scope.
 - Added action-flow coverage for Quick March, Trade Caravan, and Quick Study.
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (Supply Ledger/Patrol Record/Banner Claim coverage).
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (Flank Step/Scavenger's Market coverage).
