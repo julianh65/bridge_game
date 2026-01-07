@@ -34,6 +34,7 @@
 - Made action status more obvious with a player-list summary and row highlighting, and marked the plan item complete in `implementation_plan.md`.
 - Reduced duplicate status pills in the command center by removing the summary chips (status still shown per player).
 - Removed per-row On/Off pills from the table list to reduce status noise.
+- Overlap note: commit also included pre-staged edits in `apps/web/src/components/BoardView.tsx` and `apps/web/src/styles.css` from another agent.
 - Added a large Submit/Lock In action button to the action panel and marked the plan item complete in `implementation_plan.md`.
 - Added action-panel helper copy clarifying Done/Reinforce/Bridge/March/Play actions and marked the plan item complete in `implementation_plan.md`.
 - Submit button now reflects the selected action (Play Card/Build Bridge/etc.) to remove the play-vs-submit confusion; marked the plan item complete in `implementation_plan.md`.
