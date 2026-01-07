@@ -351,7 +351,9 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
     - [x] On-battle-win/kill triggers: Bounty Hunter (bonus gold on champion kill in battle)
     - [x] On-battle-win/kill triggers: Capturer (deploy 1 Force on win), Tax Reaver (steal gold on champion kill)
     - [x] Movement exceptions: Bridge Runner pathfinder (adjacent moves ignore bridges).
-    - [ ] Movement/deploy exceptions: Guerilla Native Mercenary (deploy to any unoccupied hex), Logistics Officer (deploy as capital)
+    - [ ] Movement/deploy exceptions:
+      - [ ] Guerilla Native Mercenary (deploy to any unoccupied hex)
+      - [x] Logistics Officer (deploy as capital)
     - [x] Dice mods/thresholds: Inspiring Geezer (forces hit 1-3), Brute (extra dice if no enemy champion).
     - [x] Dice mods/thresholds: Duelist Exemplar (if enemy champion +1 die/round), Lone Wolf (if no friendly forces +3 dice), Reliable Veteran (hits on 1-5)
     - [x] Siege modifiers: Capital Breaker (siege hit buff)
@@ -489,6 +491,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 ### Tasks (web - targeting reliability)
 - [x] Fix hex selection for Bridge Crew and Build Bridge edge picking.
+- [x] Add board-pick mode + valid target highlights for champion-targeted cards (ex: Emergency Evac).
 
 ### Tasks UI
 - [x] The basic actions in the card hand panel below needs to be reworked, it's taking up too much horizontal space, The bridge march reinforce buttons should be stacked and be thinner and we can probably streamline the whole UI of each when they're expanded
@@ -550,6 +553,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Card styling, can we make the art slightly taller, and add a border around the images that looks nice?
 - [ ] Large and hard -- make the entire UI look a bit more dark fantasy and cooler
 - [x] For cards with victory points we need to denote how many VP's they're worth on the card
+- [ ] We need to add logic and look for escalating champion costs as per the rules
 
 ## Milestone 9.5 -- Card Art + Description
 

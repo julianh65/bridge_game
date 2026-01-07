@@ -2,6 +2,8 @@ import type { GameState, HexKey, PlayerID } from "./types";
 import { getCenterHexKey, isOccupiedByPlayer, wouldExceedTwoPlayers } from "./board";
 import { hasAerialWings } from "./faction-passives";
 
+const LOGISTICS_OFFICER_CHAMPION_ID = "champion.age3.logistics_officer";
+
 const getCapitalHexKey = (state: GameState, playerId: PlayerID): HexKey | null => {
   const player = state.players.find((entry) => entry.id === playerId);
   if (!player?.capitalHex) {
@@ -31,6 +33,25 @@ const getAerialCenterHexKey = (state: GameState, playerId: PlayerID): HexKey | n
   return centerHexKey;
 };
 
+const getLogisticsOfficerHexKeys = (state: GameState, playerId: PlayerID): HexKey[] => {
+  const hexKeys = new Set<HexKey>();
+  for (const unit of Object.values(state.board.units)) {
+    if (unit.kind !== "champion") {
+      continue;
+    }
+    if (unit.ownerPlayerId !== playerId) {
+      continue;
+    }
+    if (unit.cardDefId !== LOGISTICS_OFFICER_CHAMPION_ID) {
+      continue;
+    }
+    if (state.board.hexes[unit.hex]) {
+      hexKeys.add(unit.hex);
+    }
+  }
+  return [...hexKeys];
+};
+
 const isDeployable = (state: GameState, playerId: PlayerID, hexKey: HexKey): boolean => {
   const hex = state.board.hexes[hexKey];
   if (!hex) {
@@ -53,6 +74,11 @@ export const resolveCapitalDeployHex = (
   }
   if (centerHexKey && centerHexKey !== capitalHexKey) {
     candidates.push(centerHexKey);
+  }
+  for (const hexKey of getLogisticsOfficerHexKeys(state, playerId)) {
+    if (!candidates.includes(hexKey)) {
+      candidates.push(hexKey);
+    }
   }
 
   if (preferredHex) {

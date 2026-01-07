@@ -272,7 +272,7 @@ const addChampionToHex = (
   state: GameState,
   playerId: string,
   hexKey: HexKey,
-  options?: { hp?: number; maxHp?: number; bounty?: number }
+  options?: { hp?: number; maxHp?: number; bounty?: number; cardDefId?: string }
 ): { state: GameState; unitId: string } => {
   const hex = state.board.hexes[hexKey];
   if (!hex) {
@@ -295,7 +295,7 @@ const addChampionToHex = (
     ownerPlayerId: playerId,
     kind: "champion" as const,
     hex: hexKey,
-    cardDefId: `test.${unitId}`,
+    cardDefId: options?.cardDefId ?? `test.${unitId}`,
     hp,
     maxHp,
     attackDice: 0,
@@ -1154,6 +1154,41 @@ describe("action flow", () => {
     state = runUntilBlocked(state);
 
     const after = state.board.hexes[centerHex].occupants["p1"]?.length ?? 0;
+    expect(after).toBe(before + 1);
+  });
+
+  it("allows Logistics Officer to reinforce its hex", () => {
+    let { state, p1Capital } = setupToActionPhase();
+    const neighbor = neighborHexKeys(p1Capital).find((key) => Boolean(state.board.hexes[key]));
+    if (!neighbor) {
+      throw new Error("missing neighbor hex for logistics officer test");
+    }
+
+    const deployed = addChampionToHex(state, "p1", neighbor, {
+      cardDefId: "champion.age3.logistics_officer",
+      hp: 4,
+      bounty: 3
+    });
+    state = deployed.state;
+
+    const before = state.board.hexes[neighbor].occupants["p1"]?.length ?? 0;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "basic",
+          action: { kind: "capitalReinforce", hexKey: neighbor }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const after = state.board.hexes[neighbor].occupants["p1"]?.length ?? 0;
     expect(after).toBe(before + 1);
   });
 

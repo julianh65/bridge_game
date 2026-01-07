@@ -16,9 +16,9 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent4
-  scope: investigate Emergency Evac card rendering/behavior issue (UI targeting vs engine effect) and fix if needed
-  files: progress.md, packages/engine/src/content/cards/age1.ts, packages/engine/src/card-effects.ts, apps/web/src/components/GameCard.tsx, apps/web/src/components/GameScreenHandPanel.tsx, apps/web/src/components/GameScreen.tsx
+- owner: agent1
+  scope: implement Roll Out (Age I) with multi-stack move targeting/effect support + engine test coverage (overlaps agent4 in card data/effects)
+  files: packages/engine/src/card-effects.ts, packages/engine/src/content/cards/age1.ts, packages/engine/src/card-effects.roll-out.test.ts
   status: in_progress
 
 ## Milestone 8 progress
@@ -305,6 +305,7 @@ none
 - Stabilized BoardView pan/zoom by avoiding viewBox resets when board state updates (plan update deferred: `implementation_plan.md` locked by agent3).
 - Upgraded collection prompts to show full card tiles (initiative/rules/costs) for revealed picks instead of tag buttons.
 - Added a collapsible Command Center sidebar toggle so the board can expand when the right panel is hidden; marked the plan item complete in `implementation_plan.md`.
+- Added a champion-target card pick mode with valid-target highlights so Emergency Evac (and other champion cards) can be selected from the board; updated `implementation_plan.md`. (Files: `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 
 ## Milestone 0 progress
 - Workspace scaffolding created: `apps/` + `packages/`, root tsconfig refs, ESLint/Prettier configs, PartyKit config, and gitignore.
@@ -448,6 +449,8 @@ none
 - Added Duelist Exemplar/Lone Wolf/Reliable Veteran champion dice mods and tests; marked the plan item complete in `implementation_plan.md`.
 - Added Tax Reaver kill-steal rewards, Capturer battle-win force deploy, Blood Banker per-round gold trigger, and Capital Breaker siege hit buff via champion modifiers + new kill-steal hook; added champion ability tests and plan updates.
 - Added Bannerman/Center Bannerman VP bonuses via a scoring bonus hook, plus scoring tests and plan updates.
+- Added Logistics Officer deploy-as-capital support in `resolveCapitalDeployHex` with action-flow coverage; updated `implementation_plan.md`. (Overlap note: `progress.md`/`implementation_plan.md` also include pre-existing checklist updates for board-pick highlights and champion ability tests.)
+- Added champion ability tests for Ironclad Warden (Bodyguard) and Shadeblade (Assassin's Edge); updated the plan checklist. (Files: `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.)
 
 ## Milestone 7.5 progress
 - Added a card-art manifest + helper, GameCard art rendering, and a CLI script to generate diffusion art and update the manifest. (Files: `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`.)
