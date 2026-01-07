@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { createCardInstances } from "./cards";
 import { createBaseBoard } from "./board-generation";
+import { applyChampionDeployment } from "./champions";
 import { createFactionModifiers } from "./faction-passives";
 import { DEFAULT_CONFIG, createNewGame } from "./index";
 import {
@@ -16,6 +17,7 @@ import {
   resolveQuietStudyChoices,
   resolveCollectionChoices
 } from "./round-flow";
+import { addChampionToHex } from "./units";
 
 describe("round reset", () => {
   it("applies income, mana reset, and draws with hand limit overflow", () => {
@@ -799,6 +801,61 @@ describe("scoring", () => {
           : player
       )
     };
+
+    const next = applyScoring(state);
+    const p1 = next.players.find((player) => player.id === "p1");
+
+    expect(p1?.vp.control).toBe(2);
+  });
+
+  it("adds control bonus for Bannerman while on the board", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const bannerman = addChampionToHex(board, "p1", "1,0", {
+      cardDefId: "champion.power.bannerman",
+      hp: 3,
+      attackDice: 2,
+      hitFaces: 2,
+      bounty: 5
+    });
+    let state = {
+      ...base,
+      board: bannerman.board
+    };
+    state = applyChampionDeployment(state, bannerman.unitId, "champion.power.bannerman", "p1");
+
+    const next = applyScoring(state);
+    const p1 = next.players.find((player) => player.id === "p1");
+
+    expect(p1?.vp.control).toBe(1);
+  });
+
+  it("adds center bannerman bonus when on the center", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const bannerman = addChampionToHex(board, "p1", "0,0", {
+      cardDefId: "champion.age3.center_bannerman",
+      hp: 3,
+      attackDice: 2,
+      hitFaces: 2,
+      bounty: 5
+    });
+    let state = {
+      ...base,
+      board: bannerman.board
+    };
+    state = applyChampionDeployment(
+      state,
+      bannerman.unitId,
+      "champion.age3.center_bannerman",
+      "p1"
+    );
 
     const next = applyScoring(state);
     const p1 = next.players.find((player) => player.id === "p1");

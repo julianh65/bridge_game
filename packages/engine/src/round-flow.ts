@@ -26,6 +26,7 @@ import {
   applyModifierQuery,
   expireEndOfRoundModifiers,
   getCardChoiceCount,
+  getControlBonus,
   getControlValue,
   runModifierEvents
 } from "./modifiers";
@@ -732,7 +733,8 @@ export const applyScoring = (state: GameState): GameState => {
   }
 
   const players = state.players.map((player) => {
-    const control = controlTotals[player.id] ?? 0;
+    const controlBonus = getControlBonus(state, { playerId: player.id }, 0);
+    const control = (controlTotals[player.id] ?? 0) + controlBonus;
     const total = player.vp.permanent + control;
     return {
       ...player,

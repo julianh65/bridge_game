@@ -257,6 +257,10 @@ export type ControlValueContext = {
   baseValue: number;
 };
 
+export type ControlBonusContext = {
+  playerId: PlayerID;
+};
+
 export type RoundEndContext = {
   round: number;
 };
@@ -282,6 +286,7 @@ export type ModifierHooks = {
   getMineGoldValue?: ModifierQueryHook<MineGoldContext, number>;
   getCardChoiceCount?: ModifierQueryHook<CardChoiceContext, number>;
   getControlValue?: ModifierQueryHook<ControlValueContext, number>;
+  getControlBonus?: ModifierQueryHook<ControlBonusContext, number>;
   getChampionKillBonusGold?: ModifierQueryHook<ChampionKillContext, number>;
   getChampionKillStealGold?: ModifierQueryHook<ChampionKillContext, number>;
   onCardDraw?: ModifierEventHook<CardDrawContext>;

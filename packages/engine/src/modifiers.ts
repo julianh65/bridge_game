@@ -6,6 +6,7 @@ import type {
   CombatEndContext,
   CombatRoundContext,
   CombatUnitContext,
+  ControlBonusContext,
   ControlValueContext,
   DeployForcesContext,
   GameState,
@@ -233,6 +234,20 @@ export const getControlValue = (
   );
 };
 
+export const getControlBonus = (
+  state: GameState,
+  context: ControlBonusContext,
+  base: number
+): number => {
+  return applyModifierQuery(
+    state,
+    state.modifiers,
+    (hooks) => hooks.getControlBonus,
+    context,
+    base
+  );
+};
+
 export const runModifierEvents = <TContext>(
   state: GameState,
   modifiers: Modifier[],
@@ -269,6 +284,7 @@ export type {
   CombatEndContext,
   CombatRoundContext,
   CombatUnitContext,
+  ControlBonusContext,
   ControlValueContext,
   DeployForcesContext,
   MoveContext,

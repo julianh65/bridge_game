@@ -17,6 +17,7 @@
 
 ## Active tasks
 - owner: agent1; scope: add Emergency Evac (Age I) champion recall-to-capital effect + tests; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/units.ts`, `packages/engine/src/card-effects.emergency-evac.test.ts`, `implementation_plan.md`; status: in-progress. (Overlap: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` if other agents are editing.)
+- owner: agent2; scope: add Small Hands (Age I) with hand-empty conditional draw effect + action-flow coverage; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`; status: in-progress. (Overlap: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` with agent1.)
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -440,6 +441,7 @@ none
 - Added Siege Engineer on-deploy bridge destruction with champion ability test coverage.
 - Added Duelist Exemplar/Lone Wolf/Reliable Veteran champion dice mods and tests; marked the plan item complete in `implementation_plan.md`.
 - Added Tax Reaver kill-steal rewards, Capturer battle-win force deploy, Blood Banker per-round gold trigger, and Capital Breaker siege hit buff via champion modifiers + new kill-steal hook; added champion ability tests and plan updates.
+- Added Bannerman/Center Bannerman VP bonuses via a scoring bonus hook, plus scoring tests and plan updates.
 
 ## Milestone 7.5 progress
 - Added a card-art manifest + helper, GameCard art rendering, and a CLI script to generate diffusion art and update the manifest. (Files: `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`.)

@@ -33,6 +33,8 @@ const CAPTURER_CHAMPION_ID = "champion.age2.capturer";
 const TAX_REAVER_CHAMPION_ID = "champion.age2.tax_reaver";
 const BLOOD_BANKER_CHAMPION_ID = "champion.age3.blood_banker";
 const CAPITAL_BREAKER_CHAMPION_ID = "champion.age3.capital_breaker";
+const BANNERMAN_CHAMPION_ID = "champion.power.bannerman";
+const CENTER_BANNERMAN_CHAMPION_ID = "champion.age3.center_bannerman";
 
 const ASSASSINS_EDGE_KEY = "assassins_edge";
 const STITCHWORK_KEY = "stitchwork";
@@ -680,6 +682,58 @@ const createCapitalBreakerModifier = (
   }
 });
 
+const createBannermanModifier = (unitId: UnitID, ownerPlayerId: PlayerID): Modifier => ({
+  id: buildChampionModifierId(unitId, "bannerman"),
+  source: { type: "champion", sourceId: BANNERMAN_CHAMPION_ID },
+  ownerPlayerId,
+  duration: { type: "permanent" },
+  data: { unitId },
+  hooks: {
+    getControlBonus: ({ modifier, state, playerId }, current) => {
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== playerId) {
+        return current;
+      }
+      const sourceUnitId = getModifierUnitId(modifier);
+      if (!sourceUnitId) {
+        return current;
+      }
+      const sourceUnit = state.board.units[sourceUnitId];
+      if (!sourceUnit || sourceUnit.kind !== "champion") {
+        return current;
+      }
+      return current + 1;
+    }
+  }
+});
+
+const createCenterBannermanModifier = (unitId: UnitID, ownerPlayerId: PlayerID): Modifier => ({
+  id: buildChampionModifierId(unitId, "center_bannerman"),
+  source: { type: "champion", sourceId: CENTER_BANNERMAN_CHAMPION_ID },
+  ownerPlayerId,
+  duration: { type: "permanent" },
+  data: { unitId },
+  hooks: {
+    getControlBonus: ({ modifier, state, playerId }, current) => {
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== playerId) {
+        return current;
+      }
+      const sourceUnitId = getModifierUnitId(modifier);
+      if (!sourceUnitId) {
+        return current;
+      }
+      const sourceUnit = state.board.units[sourceUnitId];
+      if (!sourceUnit || sourceUnit.kind !== "champion") {
+        return current;
+      }
+      const hex = state.board.hexes[sourceUnit.hex];
+      if (!hex || hex.tile !== "center") {
+        return current;
+      }
+      return current + 1;
+    }
+  }
+});
+
 const createChampionModifiers = (
   unitId: UnitID,
   cardDefId: CardDefId,
@@ -718,6 +772,10 @@ const createChampionModifiers = (
       return [createCapturerModifier(unitId, ownerPlayerId)];
     case CAPITAL_BREAKER_CHAMPION_ID:
       return [createCapitalBreakerModifier(unitId, ownerPlayerId)];
+    case BANNERMAN_CHAMPION_ID:
+      return [createBannermanModifier(unitId, ownerPlayerId)];
+    case CENTER_BANNERMAN_CHAMPION_ID:
+      return [createCenterBannermanModifier(unitId, ownerPlayerId)];
     default:
       return [];
   }

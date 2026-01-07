@@ -355,7 +355,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
     - [x] Dice mods/thresholds: Inspiring Geezer (forces hit 1-3), Brute (extra dice if no enemy champion).
     - [x] Dice mods/thresholds: Duelist Exemplar (if enemy champion +1 die/round), Lone Wolf (if no friendly forces +3 dice), Reliable Veteran (hits on 1-5)
     - [x] Siege modifiers: Capital Breaker (siege hit buff)
-    - [ ] VP modifiers: Bannerman/Center Bannerman (VP while on board/center)
+    - [x] VP modifiers: Bannerman/Center Bannerman (VP while on board/center)
     - [x] Active abilities: Field Surgeon (heal champion in hex 1/round)
     - [ ] Active abilities: Stormcaller (Tempest AoE), Grand Strategist (Tactical Hand hit assignment)
 - [ ] Quick check in, the rules in rules_draft are kind of living and breathing as I update things or change balance so make sure that everything is still correct, and add a few more champions and their abilities and everything in to test
