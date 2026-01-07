@@ -1,15 +1,22 @@
-import { neighborHexKeys } from "@bridgefront/shared";
+import { createRngState, neighborHexKeys } from "@bridgefront/shared";
 import { describe, expect, it } from "vitest";
 
 import { DEFAULT_CONFIG } from "./config";
 import { getBridgeKey } from "./board";
 import { createBaseBoard } from "./board-generation";
-import { applyChampionDeathEffects, applyChampionDeployment } from "./champions";
+import {
+  GRAND_STRATEGIST_CHAMPION_ID,
+  TACTICAL_HAND_KEY,
+  applyChampionDeathEffects,
+  applyChampionDeployment
+} from "./champions";
+import { resolveBattleAtHex } from "./combat";
 import { validateMovePath } from "./card-effects";
 import { getCardDef } from "./content/cards";
 import { createNewGame } from "./engine";
 import { applyModifierQuery, getCombatModifiers, runModifierEvents } from "./modifiers";
 import { applyChampionKillRewards } from "./rewards";
+import type { GameEvent, GameState } from "./types";
 import { addChampionToHex, addForcesToHex } from "./units";
 
 const getChampionCard = (cardId: string) => {
@@ -18,6 +25,18 @@ const getChampionCard = (cardId: string) => {
     throw new Error(`missing champion card ${cardId}`);
   }
   return card;
+};
+
+type CombatRoundPayload = Extract<GameEvent, { type: "combat.round" }>["payload"];
+
+const getFirstCombatRound = (state: GameState, hexKey: string): CombatRoundPayload => {
+  const entry = state.logs.find(
+    (event) => event.type === "combat.round" && event.payload.hexKey === hexKey
+  );
+  if (!entry || entry.type !== "combat.round") {
+    throw new Error(`missing combat round log for ${hexKey}`);
+  }
+  return entry.payload;
 };
 
 describe("champion abilities", () => {
@@ -189,6 +208,66 @@ describe("champion abilities", () => {
     );
 
     expect(noForcePolicy).toBe("random");
+  });
+
+  it("assigns tactical hand hits to enemy champions first", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    const deployedStrategist = addChampionToHex(board, "p1", hexKey, {
+      cardDefId: GRAND_STRATEGIST_CHAMPION_ID,
+      hp: 6,
+      attackDice: 3,
+      hitFaces: 6,
+      bounty: 3
+    });
+    const deployedDefenderA = addChampionToHex(deployedStrategist.board, "p2", hexKey, {
+      cardDefId: "test.defender_a",
+      hp: 2,
+      attackDice: 0,
+      hitFaces: 0,
+      bounty: 0
+    });
+    const deployedDefenderB = addChampionToHex(deployedDefenderA.board, "p2", hexKey, {
+      cardDefId: "test.defender_b",
+      hp: 5,
+      attackDice: 0,
+      hitFaces: 0,
+      bounty: 0
+    });
+
+    let state: GameState = {
+      ...base,
+      board: deployedDefenderB.board,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(7)
+    };
+
+    state = applyChampionDeployment(
+      state,
+      deployedStrategist.unitId,
+      GRAND_STRATEGIST_CHAMPION_ID,
+      "p1"
+    );
+    state = resolveBattleAtHex(state, hexKey);
+
+    const firstRound = getFirstCombatRound(state, hexKey);
+    const hitsByUnit = Object.fromEntries(
+      firstRound.hitsToDefenders.champions.map((entry) => [entry.unitId, entry.hits])
+    );
+
+    expect(hitsByUnit[deployedDefenderA.unitId]).toBe(2);
+    expect(hitsByUnit[deployedDefenderB.unitId]).toBe(1);
+
+    const strategistUnit = state.board.units[deployedStrategist.unitId];
+    if (!strategistUnit || strategistUnit.kind !== "champion") {
+      throw new Error("missing grand strategist unit");
+    }
+    expect(strategistUnit.abilityUses[TACTICAL_HAND_KEY]?.remaining).toBe(0);
   });
 
   it("triggers Assassin's Edge before combat round 1", () => {

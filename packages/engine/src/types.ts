@@ -173,7 +173,12 @@ export type Duration =
 
 export type CombatSide = "attackers" | "defenders";
 
-export type HitAssignmentPolicy = "random" | "forcesFirst" | "championsFirst" | "bodyguard";
+export type HitAssignmentPolicy =
+  | "random"
+  | "forcesFirst"
+  | "championsFirst"
+  | "bodyguard"
+  | "tacticalHand";
 
 export type CombatEndReason = "eliminated" | "noHits" | "stale";
 

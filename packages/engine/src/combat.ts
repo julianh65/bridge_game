@@ -24,11 +24,18 @@ import {
   getCombatModifiers,
   runModifierEvents
 } from "./modifiers";
-import { applyChampionDeathEffects, removeChampionModifiers } from "./champions";
+import {
+  consumeChampionAbilityUse,
+  GRAND_STRATEGIST_CHAMPION_ID,
+  TACTICAL_HAND_KEY,
+  applyChampionDeathEffects,
+  removeChampionModifiers
+} from "./champions";
 import { applyChampionKillRewards } from "./rewards";
 
 const FORCE_HIT_FACES = 2;
 const MAX_STALE_COMBAT_ROUNDS = 20;
+const TACTICAL_HAND_HITS = 3;
 
 type HitRollResult = {
   hits: number;
@@ -224,13 +231,37 @@ const rollHitsForUnits = (
   return { hits, nextState, rolls };
 };
 
+const findTacticalHandSource = (
+  state: GameState,
+  hexKey: HexKey,
+  ownerPlayerId: PlayerID
+): UnitID | null => {
+  const hex = state.board.hexes[hexKey];
+  if (!hex) {
+    return null;
+  }
+  const occupantIds = hex.occupants[ownerPlayerId] ?? [];
+  for (const unitId of occupantIds) {
+    const unit = state.board.units[unitId];
+    if (
+      unit?.kind === "champion" &&
+      unit.cardDefId === GRAND_STRATEGIST_CHAMPION_ID &&
+      (unit.abilityUses[TACTICAL_HAND_KEY]?.remaining ?? 0) > 0
+    ) {
+      return unitId;
+    }
+  }
+  return null;
+};
+
 const assignHits = (
   unitIds: UnitID[],
   hits: number,
   policy: HitAssignmentPolicy,
   units: Record<UnitID, UnitState>,
   rngState: GameState["rngState"],
-  bodyguardUsed = false
+  bodyguardUsed = false,
+  bodyguardActive = policy === "bodyguard"
 ): HitAssignmentResult => {
   const hitsByUnit: Record<UnitID, number> = {};
   let nextState = rngState;
@@ -278,6 +309,98 @@ const assignHits = (
       }
       hitsByUnit[targetId] = (hitsByUnit[targetId] ?? 0) + 1;
     }
+    return { hitsByUnit, nextState, bodyguardUsed: used };
+  }
+
+  if (policy === "tacticalHand") {
+    let used = bodyguardUsed;
+    const forceUnitIds = unitIds.filter((unitId) => units[unitId]?.kind === "force");
+    const championRemaining = new Map<UnitID, number>();
+    for (const unitId of unitIds) {
+      const unit = units[unitId];
+      if (unit?.kind === "champion") {
+        championRemaining.set(unitId, unit.hp);
+      }
+    }
+    const forceTargets = forceUnitIds.slice().sort();
+
+    const pickManualTarget = (): UnitID | null => {
+      let bestChampion: UnitID | null = null;
+      let bestHp = Number.POSITIVE_INFINITY;
+      for (const [unitId, remaining] of championRemaining.entries()) {
+        if (remaining <= 0) {
+          continue;
+        }
+        if (remaining < bestHp || (remaining === bestHp && unitId < (bestChampion ?? ""))) {
+          bestChampion = unitId;
+          bestHp = remaining;
+        }
+      }
+      if (bestChampion) {
+        return bestChampion;
+      }
+      return forceTargets[0] ?? null;
+    };
+
+    let assignedManual = 0;
+    const manualHits = Math.min(TACTICAL_HAND_HITS, hits);
+    for (let i = 0; i < manualHits; i += 1) {
+      const targetId = pickManualTarget();
+      if (!targetId) {
+        break;
+      }
+      const targetUnit = units[targetId];
+      if (
+        bodyguardActive &&
+        !used &&
+        targetUnit?.kind === "champion" &&
+        forceUnitIds.length > 0
+      ) {
+        const redirectId = pickRandomTarget(forceUnitIds);
+        if (redirectId) {
+          hitsByUnit[redirectId] = (hitsByUnit[redirectId] ?? 0) + 1;
+          used = true;
+          assignedManual += 1;
+          continue;
+        }
+      }
+
+      hitsByUnit[targetId] = (hitsByUnit[targetId] ?? 0) + 1;
+      assignedManual += 1;
+      if (targetUnit?.kind === "champion") {
+        const remaining = (championRemaining.get(targetId) ?? 0) - 1;
+        championRemaining.set(targetId, remaining);
+      } else if (targetUnit?.kind === "force") {
+        const index = forceTargets.indexOf(targetId);
+        if (index >= 0) {
+          forceTargets.splice(index, 1);
+        }
+      }
+    }
+
+    const remainingHits = hits - assignedManual;
+    for (let i = 0; i < remainingHits; i += 1) {
+      const targetId = pickRandomTarget(unitIds);
+      if (!targetId) {
+        break;
+      }
+      const targetUnit = units[targetId];
+      if (
+        bodyguardActive &&
+        !used &&
+        targetUnit?.kind === "champion" &&
+        forceUnitIds.length > 0
+      ) {
+        const redirectId = pickRandomTarget(forceUnitIds);
+        if (redirectId) {
+          hitsByUnit[redirectId] = (hitsByUnit[redirectId] ?? 0) + 1;
+          used = true;
+          continue;
+        }
+      }
+      hitsByUnit[targetId] = (hitsByUnit[targetId] ?? 0) + 1;
+    }
+
     return { hitsByUnit, nextState, bodyguardUsed: used };
   }
 
@@ -555,24 +678,36 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
     }
     staleRounds = 0;
 
+    const defenderTacticalSource =
+      attackerRoll.hits > 0
+        ? findTacticalHandSource(nextState, hexKey, participants[0])
+        : null;
+    const attackerTacticalSource =
+      defenderRoll.hits > 0
+        ? findTacticalHandSource(nextState, hexKey, participants[1])
+        : null;
+
     const defenderAssignmentContext: CombatAssignmentContext = {
       ...contextBase,
       targetSide: "defenders",
       targetUnitIds: defenders,
       hits: attackerRoll.hits
     };
-    const defenderPolicy = getHitAssignmentPolicy(
+    const defenderBasePolicy = getHitAssignmentPolicy(
       nextState,
       modifiers,
       defenderAssignmentContext
     );
+    const defenderPolicy = defenderTacticalSource ? "tacticalHand" : defenderBasePolicy;
+    const defenderBodyguardActive = defenderBasePolicy === "bodyguard";
     const assignedToDefenders = assignHits(
       defenders,
       attackerRoll.hits,
       defenderPolicy,
       nextUnits,
       rngState,
-      bodyguardUsed.defenders
+      bodyguardUsed.defenders,
+      defenderBodyguardActive
     );
     rngState = assignedToDefenders.nextState;
     bodyguardUsed.defenders =
@@ -583,22 +718,42 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
       targetUnitIds: attackers,
       hits: defenderRoll.hits
     };
-    const attackerPolicy = getHitAssignmentPolicy(
+    const attackerBasePolicy = getHitAssignmentPolicy(
       nextState,
       modifiers,
       attackerAssignmentContext
     );
+    const attackerPolicy = attackerTacticalSource ? "tacticalHand" : attackerBasePolicy;
+    const attackerBodyguardActive = attackerBasePolicy === "bodyguard";
     const assignedToAttackers = assignHits(
       attackers,
       defenderRoll.hits,
       attackerPolicy,
       nextUnits,
       rngState,
-      bodyguardUsed.attackers
+      bodyguardUsed.attackers,
+      attackerBodyguardActive
     );
     rngState = assignedToAttackers.nextState;
     bodyguardUsed.attackers =
       assignedToAttackers.bodyguardUsed ?? bodyguardUsed.attackers;
+
+    if (defenderTacticalSource) {
+      nextState = consumeChampionAbilityUse(
+        nextState,
+        defenderTacticalSource,
+        TACTICAL_HAND_KEY
+      );
+      nextUnits = nextState.board.units;
+    }
+    if (attackerTacticalSource) {
+      nextState = consumeChampionAbilityUse(
+        nextState,
+        attackerTacticalSource,
+        TACTICAL_HAND_KEY
+      );
+      nextUnits = nextState.board.units;
+    }
 
     nextState = emit(nextState, {
       type: "combat.round",

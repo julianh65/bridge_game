@@ -33,6 +33,7 @@ const CAPTURER_CHAMPION_ID = "champion.age2.capturer";
 const TAX_REAVER_CHAMPION_ID = "champion.age2.tax_reaver";
 const BLOOD_BANKER_CHAMPION_ID = "champion.age3.blood_banker";
 const STORMCALLER_CHAMPION_ID = "champion.age3.stormcaller";
+export const GRAND_STRATEGIST_CHAMPION_ID = "champion.age3.grand_strategist";
 const CAPITAL_BREAKER_CHAMPION_ID = "champion.age3.capital_breaker";
 const BANNERMAN_CHAMPION_ID = "champion.power.bannerman";
 const CENTER_BANNERMAN_CHAMPION_ID = "champion.age3.center_bannerman";
@@ -41,6 +42,7 @@ const ASSASSINS_EDGE_KEY = "assassins_edge";
 const STITCHWORK_KEY = "stitchwork";
 const BLOOD_LEDGER_KEY = "blood_ledger";
 const TEMPEST_KEY = "tempest";
+export const TACTICAL_HAND_KEY = "tactical_hand";
 
 const BRIDGE_BYPASS_CHAMPION_IDS = new Set([FLIGHT_CHAMPION_ID, BRIDGE_RUNNER_CHAMPION_ID]);
 
@@ -56,6 +58,9 @@ const PER_ROUND_ABILITY_USES: Record<CardDefId, Record<string, number>> = {
   },
   [STORMCALLER_CHAMPION_ID]: {
     [TEMPEST_KEY]: 1
+  },
+  [GRAND_STRATEGIST_CHAMPION_ID]: {
+    [TACTICAL_HAND_KEY]: 1
   }
 };
 
@@ -127,7 +132,7 @@ const getChampionAbilityRemaining = (unit: GameState["board"]["units"][string], 
 const canChampionUseAbility = (unit: GameState["board"]["units"][string], key: string) =>
   getChampionAbilityRemaining(unit, key) > 0;
 
-const consumeChampionAbilityUse = (
+export const consumeChampionAbilityUse = (
   state: GameState,
   unitId: UnitID,
   key: string
