@@ -66,6 +66,7 @@ export const MarketPanel = ({
     !currentCard ||
     eligiblePlayerIds.every((id) => market.bids[id]);
   const [bidAmount, setBidAmount] = useState(0);
+  const [showWinner, setShowWinner] = useState(true);
   const bidEntries = players.map((player) => {
     const bid = market.bids[player.id];
     const isOut = market.playersOut[player.id];
@@ -119,7 +120,7 @@ export const MarketPanel = ({
       : `Pass ${playerBid.amount}`
     : null;
 
-  const winnerAnnouncement = winnerHighlight
+  const winnerAnnouncement = showWinner && winnerHighlight
     ? {
         title: `${winnerHighlight.playerName} won`,
         detail:
@@ -149,11 +150,15 @@ export const MarketPanel = ({
     const isActive = index === rowIndexResolving;
     const isResolved = index < rowIndexResolving;
     const label = isHidden ? "Face down" : def?.name ?? card.cardId;
-    const isWinner = isWinnerCard(index, card.cardId);
+    const isWinner = showWinner && isWinnerCard(index, card.cardId);
     return { card, def, index, isHidden, isActive, isResolved, isWinner, label };
   });
   const showOrderRail = isOverlay && currentRow.length > 0;
   const playerNameById = new Map(players.map((entry) => [entry.id, entry.name]));
+  const rollDurationMs = 1100;
+  const rollDelayBaseMs = 160;
+  const rollRoundGapMs = 520;
+  const rollGapMs = 140;
   const rollOffRounds =
     winnerHighlight?.rollOff
       ?.map((round, roundIndex) => {
@@ -181,7 +186,33 @@ export const MarketPanel = ({
         }
         return rolls.length > 0 ? { roundIndex, rolls } : null;
       })
-      .filter((round): round is { roundIndex: number; rolls: Array<{ playerId: string; name: string; value: number }> } => Boolean(round)) ?? [];
+      .filter(
+        (
+          round
+        ): round is { roundIndex: number; rolls: Array<{ playerId: string; name: string; value: number }> } =>
+          Boolean(round)
+      ) ?? [];
+  const showRollOff = rollOffRounds.length > 0;
+  const rollOffDurationMs = rollOffRounds.reduce((max, round) => {
+    const lastIndex = Math.max(round.rolls.length - 1, 0);
+    const endAt =
+      rollDelayBaseMs + round.roundIndex * rollRoundGapMs + lastIndex * rollGapMs + rollDurationMs;
+    return Math.max(max, endAt);
+  }, 0);
+
+  useEffect(() => {
+    if (!winnerHighlight || !showRollOff) {
+      setShowWinner(true);
+      return;
+    }
+    setShowWinner(false);
+    const timeout = window.setTimeout(() => {
+      setShowWinner(true);
+    }, rollOffDurationMs + 200);
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [winnerHighlight?.rollOffKey, rollOffDurationMs, showRollOff]);
 
   let bidHint = "Enter a bid amount to buy or pass.";
   if (status !== "connected") {
@@ -202,6 +233,47 @@ export const MarketPanel = ({
     currentRow.length > 0
       ? `Card ${rowIndexResolving + 1} of ${currentRow.length}`
       : "No market cards revealed.";
+  const rollOffPanel = showRollOff ? (
+    <div className="market-rolloff-panel">
+      <div className="market-bid__header">
+        <h4>Roll-off</h4>
+        <span className="market-pill">Tie-break</span>
+      </div>
+      <p className="action-panel__hint">Dice roll tiebreaker resolved for this card.</p>
+      <div className="market-rolloff market-rolloff--center">
+        {rollOffRounds.map((round) => (
+          <div
+            key={`rolloff-${winnerHighlight?.rollOffKey ?? 0}-${round.roundIndex}`}
+            className="market-rolloff__round"
+          >
+            <span className="market-rolloff__label">Round {round.roundIndex + 1}</span>
+            <div className="market-rolloff__rolls">
+              {round.rolls.map((roll, index) => {
+                const isWinner = roll.playerId === winnerHighlight?.playerId;
+                const delayMs =
+                  rollDelayBaseMs + round.roundIndex * rollRoundGapMs + index * rollGapMs;
+                return (
+                  <div
+                    key={`roll-${roll.playerId}-${round.roundIndex}`}
+                    className={`market-rolloff__entry${isWinner ? " is-winner" : ""}`}
+                  >
+                    <span className="market-rolloff__name">{roll.name}</span>
+                    <NumberRoll
+                      value={roll.value}
+                      sides={6}
+                      durationMs={rollDurationMs}
+                      delayMs={delayMs}
+                      rollKey={`${winnerHighlight?.rollOffKey ?? 0}-${round.roundIndex}-${roll.playerId}`}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ) : null;
 
   return (
     <section className={`market-panel${isOverlay ? " market-panel--overlay" : ""}`}>
@@ -227,6 +299,7 @@ export const MarketPanel = ({
       </div>
 
       <div className="market-panel__layout">
+        {rollOffPanel}
         <div className="market-panel__cards">
           {currentRow.length === 0 ? (
             <div className="hand-empty">No market cards revealed.</div>
@@ -366,51 +439,6 @@ export const MarketPanel = ({
               </ul>
             )}
           </div>
-
-          {rollOffRounds.length > 0 ? (
-            <div className="market-bid market-bid--rolloff">
-              <div className="market-bid__header">
-                <h4>Roll-off</h4>
-                <span className="market-pill">Tie-break</span>
-              </div>
-              <p className="action-panel__hint">
-                Dice roll tiebreaker resolved for this card.
-              </p>
-              <div className="market-rolloff">
-                {rollOffRounds.map((round) => (
-                  <div
-                    key={`rolloff-${winnerHighlight?.rollOffKey ?? 0}-${round.roundIndex}`}
-                    className="market-rolloff__round"
-                  >
-                    <span className="market-rolloff__label">
-                      Round {round.roundIndex + 1}
-                    </span>
-                    <div className="market-rolloff__rolls">
-                      {round.rolls.map((roll, index) => {
-                        const isWinner = roll.playerId === winnerHighlight?.playerId;
-                        const delayMs = 160 + round.roundIndex * 520 + index * 140;
-                        return (
-                          <div
-                            key={`roll-${roll.playerId}-${round.roundIndex}`}
-                            className={`market-rolloff__entry${isWinner ? " is-winner" : ""}`}
-                          >
-                            <span className="market-rolloff__name">{roll.name}</span>
-                            <NumberRoll
-                              value={roll.value}
-                              sides={6}
-                              durationMs={1100}
-                              delayMs={delayMs}
-                              rollKey={`${winnerHighlight?.rollOffKey ?? 0}-${round.roundIndex}-${roll.playerId}`}
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : null}
         </aside>
       </div>
     </section>

@@ -2851,6 +2851,22 @@ h1 {
   gap: 10px;
 }
 
+.market-rolloff-panel {
+  display: grid;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(111, 90, 70, 0.22);
+  background: #fff4df;
+  grid-column: 1 / -1;
+  justify-items: center;
+  text-align: center;
+}
+
+.market-rolloff--center {
+  width: min(420px, 100%);
+}
+
 .market-rolloff__round {
   display: grid;
   gap: 6px;

@@ -16,14 +16,14 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [owner: agent3] [status: in-progress] Scope: implement Archivist Prime + Wormhole Artificer champion abilities (cards-played counter, movement bonus) with engine tests + card text updates. Files: packages/engine/src/champions.ts, packages/engine/src/player-flags.ts, packages/engine/src/action-flow.ts, packages/engine/src/round-flow.ts, packages/engine/src/content/cards/faction.ts, packages/engine/src/action-flow.test.ts, implementation_plan.md, progress.md.
-- [owner: agent1] [status: in-progress] Scope: delay market winner highlight until roll-off animation completes. Files: apps/web/src/components/MarketPanel.tsx, apps/web/src/styles.css, progress.md.
+- none
 
 ## Milestone 8.5 progress
 - Improved hand card selection UX: added a selected-card summary with target hints + clear button, enabled click-to-deselect, and cleared card selection when switching to basic actions; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
 - Moved local resource display to the header (gold/VP) and added a bottom-left mana orb near the hand panel; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent3.)
 - Added a market roll-off tie-break panel with suspenseful rolling dice numbers using a reusable `NumberRoll` component; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
 - Extended market roll-off to include pass-tie roll-offs, increased roll suspense timing, and labeled roll-offs in the log (engine market tests updated).
+- Delayed the market winner highlight until after the roll-off animation completes and moved the roll-off panel to the center of the market layout. (Overlap note: `apps/web/src/styles.css` touched alongside agent1.)
 - Removed the Live connection pill from the header and enlarged gold/VP chips with clearer labels. (Overlap note: `apps/web/src/styles.css` touched alongside agent1.)
 - Repositioned the mana orb to the hand panel bottom-right (outside the actions panel) to reduce the perceived empty space above the cards.
 - Tightened the hand layout spacing and aligned the action panel to the bottom of the hand row to reduce empty vertical gaps.
@@ -379,6 +379,7 @@ none
 - Implemented champion abilities: Bodyguard hit redirect, Assassin's Edge pre-combat damage (per-round uses), and Flight movement override; added combat + action-flow coverage.
 - Implemented Hold the Line + Marked for Coin + Perfect Recall effects (modifier/topdeck handling) and added action-flow coverage.
 - Overlap note: included pre-existing `packages/engine/src/index.ts` export update for `CARD_DEFS_BY_ID`.
+- Added Archivist Prime dice scaling (cards played this round) + Wormhole Artificer solo-move bonus, plus card-play counter reset/increment logic and action-flow tests.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
