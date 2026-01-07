@@ -100,12 +100,12 @@ const getActionHint = (
     return "Actions are available during the action phase.";
   }
   if (player.doneThisRound) {
-    return "You already submitted this action step.";
+    return "You already passed; you cannot act again this step.";
   }
   if (player.resources.mana < 1) {
-    return "No mana for actions; you can choose done.";
+    return "No mana for actions; you can pass to lock in.";
   }
-  return "Declare one action or choose done.";
+  return "Declare one action or pass to lock in.";
 };
 
 export const ActionPanel = ({
@@ -195,7 +195,7 @@ export const ActionPanel = ({
               declaration: { kind: "basic", action: { kind: "capitalReinforce" } }
             }
           : canSubmitDone
-            ? { label: "Submit: Done", declaration: { kind: "done" } }
+            ? { label: "Submit: Pass", declaration: { kind: "done" } }
             : null;
   const hint = getActionHint(phase, status, player);
   const showActionHelp = isActionPhase;
@@ -239,7 +239,7 @@ export const ActionPanel = ({
           disabled={!canSubmitDone}
           onClick={() => onSubmit({ kind: "done" })}
         >
-          Done
+          Pass (Done)
         </button>
         <button
           type="button"
@@ -254,7 +254,7 @@ export const ActionPanel = ({
       </div>
       {showActionHelp ? (
         <p className="action-panel__hint">
-          <strong>Done:</strong> lock in no action this step.
+          <strong>Pass / Done:</strong> lock in no action this step (no more turns).
           <br />
           <strong>Reinforce:</strong> add forces to your capital (costs 1 mana + 1
           gold).
