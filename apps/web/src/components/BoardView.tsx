@@ -92,6 +92,7 @@ const TOOLTIP_PADDING_X = 8;
 const TOOLTIP_PADDING_Y = 6;
 const TOOLTIP_OFFSET_X = 14;
 const TOOLTIP_OFFSET_Y = 16;
+const UNIT_MOVE_PULSE_MS = 720;
 
 const shortenSegment = (
   from: { x: number; y: number },
@@ -317,6 +318,10 @@ export const BoardView = ({
   const pinchRef = useRef<{ distance: number; center: { x: number; y: number } } | null>(
     null
   );
+  const [recentStackKeys, setRecentStackKeys] = useState<string[]>([]);
+  const recentStackTimersRef = useRef<Record<string, number>>({});
+  const previousStackKeysRef = useRef<Set<string>>(new Set());
+  const hasStackBaselineRef = useRef(false);
   const highlightSet = useMemo(() => new Set(highlightHexKeys), [highlightHexKeys]);
   const validSet = useMemo(() => new Set(validHexKeys), [validHexKeys]);
   const hasValidTargets = validSet.size > 0;
@@ -505,6 +510,48 @@ export const BoardView = ({
     return stacks;
   }, [board, hexCenters]);
 
+  useEffect(() => {
+    const nextKeys = new Set(unitStacks.map((stack) => stack.key));
+    if (!hasStackBaselineRef.current) {
+      hasStackBaselineRef.current = true;
+      previousStackKeysRef.current = nextKeys;
+      return;
+    }
+
+    const arrivals = unitStacks
+      .filter((stack) => !previousStackKeysRef.current.has(stack.key))
+      .map((stack) => stack.key);
+
+    if (arrivals.length > 0) {
+      setRecentStackKeys((prev) => {
+        const merged = new Set(prev);
+        arrivals.forEach((key) => merged.add(key));
+        return Array.from(merged);
+      });
+
+      arrivals.forEach((key) => {
+        const existing = recentStackTimersRef.current[key];
+        if (existing) {
+          window.clearTimeout(existing);
+        }
+        recentStackTimersRef.current[key] = window.setTimeout(() => {
+          setRecentStackKeys((prev) => prev.filter((entry) => entry !== key));
+          delete recentStackTimersRef.current[key];
+        }, UNIT_MOVE_PULSE_MS);
+      });
+    }
+
+    previousStackKeysRef.current = nextKeys;
+  }, [unitStacks]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(recentStackTimersRef.current).forEach((timeoutId) => {
+        window.clearTimeout(timeoutId);
+      });
+    };
+  }, []);
+
   const fallbackPlayerIndex = useMemo(() => {
     const ids = new Set<string>();
     for (const stack of unitStacks) {
@@ -529,6 +576,8 @@ export const BoardView = ({
     }
     return merged;
   }, [playerIndexById, fallbackPlayerIndex]);
+
+  const recentStackKeySet = useMemo(() => new Set(recentStackKeys), [recentStackKeys]);
 
   const playerLabel = (playerId?: string) => {
     if (!playerId) {
@@ -1106,106 +1155,114 @@ export const BoardView = ({
         const badgeRadius = 4;
         const badgeX = 7;
         const badgeY = 7;
+        const isArriving = recentStackKeySet.has(stack.key);
         return (
           <g
             key={stack.key}
-            className="unit-stack"
+            className={`unit-stack${isArriving ? " unit-stack--arrive" : ""}`}
             transform={`translate(${stackX} ${stackY})`}
             style={{ transition: "transform 320ms ease" }}
             onClick={() => handleStackClick(stack.hexKey)}
           >
-            <circle
-              className={
-                colorIndex !== undefined ? `unit unit--p${colorIndex}` : "unit"
-              }
-              cx={0}
-              cy={0}
-              r={10}
-            />
-            {stack.forceCount > 0 ? (
-              <text x={0} y={3} className="unit__count">
-                {stack.forceCount}
-              </text>
-            ) : null}
-            {factionSymbol ? (
-              <g className="unit-faction" aria-hidden="true">
-                <circle
-                  className="unit-faction__ring"
-                  cx={badgeX}
-                  cy={badgeY}
-                  r={badgeRadius}
-                />
-                <text
-                  className="unit-faction__text"
-                  x={badgeX}
-                  y={badgeY}
-                  dominantBaseline="middle"
-                >
-                  {factionSymbol}
+            <g className="unit-stack__body">
+              <circle
+                className={
+                  colorIndex !== undefined ? `unit unit--p${colorIndex}` : "unit"
+                }
+                cx={0}
+                cy={0}
+                r={10}
+              />
+              {stack.forceCount > 0 ? (
+                <text x={0} y={3} className="unit__count">
+                  {stack.forceCount}
                 </text>
-              </g>
-            ) : null}
-            {tokenLayout.map((token, index) => {
-              const ringClass = [
-                "champion-token__ring",
-                colorIndex !== undefined ? `champion-token__ring--p${colorIndex}` : "",
-                token.isExtra ? "champion-token__ring--extra" : ""
-              ]
-                .filter(Boolean)
-                .join(" ");
-              const textClass = [
-                "champion-token__text",
-                token.isExtra ? "champion-token__text--extra" : ""
-              ]
-                .filter(Boolean)
-                .join(" ");
-              const anchorX = stackX + token.cx;
-              const anchorY = stackY + token.cy;
-              const handleTokenEnter = () => {
-                if (isPanning || didDragRef.current) {
-                  return;
-                }
-                const lines = token.champion
-                  ? buildChampionTooltipLines(token.champion)
-                  : buildExtraChampionTooltipLines(token.extraCount ?? 0);
-                const tooltip = buildTooltip(lines, anchorX, anchorY);
-                if (tooltip) {
-                  setChampionTooltip(tooltip);
-                }
-              };
-              const hpRadius = 5;
-              const hpCx = token.cx + tokenRadius - 3.5;
-              const hpCy = token.cy - tokenRadius + 3.5;
-              return (
-                <g
-                  key={`${stack.key}-champion-${index}`}
-                  onMouseEnter={handleTokenEnter}
-                  onMouseLeave={() => setChampionTooltip(null)}
-                >
-                  <circle className={ringClass} cx={token.cx} cy={token.cy} r={tokenRadius} />
-                  <text className={textClass} x={token.cx} y={token.cy + 0.5}>
-                    {token.label}
+              ) : null}
+              {factionSymbol ? (
+                <g className="unit-faction" aria-hidden="true">
+                  <circle
+                    className="unit-faction__ring"
+                    cx={badgeX}
+                    cy={badgeY}
+                    r={badgeRadius}
+                  />
+                  <text
+                    className="unit-faction__text"
+                    x={badgeX}
+                    y={badgeY}
+                    dominantBaseline="middle"
+                  >
+                    {factionSymbol}
                   </text>
-                  {token.champion ? (
-                    <g className="champion-token__hp">
-                      <circle
-                        className="champion-token__hp-dot"
-                        cx={hpCx}
-                        cy={hpCy}
-                        r={hpRadius}
-                      />
-                      <text
-                        className="champion-token__hp-text"
-                        x={hpCx}
-                        y={hpCy + 0.4}
-                      >
-                        {token.champion.hp}
-                      </text>
-                    </g>
-                  ) : null}
                 </g>
-              );
-            })}
+              ) : null}
+              {tokenLayout.map((token, index) => {
+                const ringClass = [
+                  "champion-token__ring",
+                  colorIndex !== undefined ? `champion-token__ring--p${colorIndex}` : "",
+                  token.isExtra ? "champion-token__ring--extra" : ""
+                ]
+                  .filter(Boolean)
+                  .join(" ");
+                const textClass = [
+                  "champion-token__text",
+                  token.isExtra ? "champion-token__text--extra" : ""
+                ]
+                  .filter(Boolean)
+                  .join(" ");
+                const anchorX = stackX + token.cx;
+                const anchorY = stackY + token.cy;
+                const handleTokenEnter = () => {
+                  if (isPanning || didDragRef.current) {
+                    return;
+                  }
+                  const lines = token.champion
+                    ? buildChampionTooltipLines(token.champion)
+                    : buildExtraChampionTooltipLines(token.extraCount ?? 0);
+                  const tooltip = buildTooltip(lines, anchorX, anchorY);
+                  if (tooltip) {
+                    setChampionTooltip(tooltip);
+                  }
+                };
+                const hpRadius = 5;
+                const hpCx = token.cx + tokenRadius - 3.5;
+                const hpCy = token.cy - tokenRadius + 3.5;
+                return (
+                  <g
+                    key={`${stack.key}-champion-${index}`}
+                    onMouseEnter={handleTokenEnter}
+                    onMouseLeave={() => setChampionTooltip(null)}
+                  >
+                    <circle
+                      className={ringClass}
+                      cx={token.cx}
+                      cy={token.cy}
+                      r={tokenRadius}
+                    />
+                    <text className={textClass} x={token.cx} y={token.cy + 0.5}>
+                      {token.label}
+                    </text>
+                    {token.champion ? (
+                      <g className="champion-token__hp">
+                        <circle
+                          className="champion-token__hp-dot"
+                          cx={hpCx}
+                          cy={hpCy}
+                          r={hpRadius}
+                        />
+                        <text
+                          className="champion-token__hp-text"
+                          x={hpCx}
+                          y={hpCy + 0.4}
+                        >
+                          {token.champion.hp}
+                        </text>
+                      </g>
+                    ) : null}
+                  </g>
+                );
+              })}
+            </g>
           </g>
         );
       })}
