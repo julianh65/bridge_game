@@ -580,6 +580,16 @@ export const GameScreen = ({
     ? CARD_DEFS_BY_ID.get(selectedCard.defId) ?? null
     : null;
   const cardTargetKind = selectedCardDef?.targetSpec.kind ?? "none";
+  const championTargetOwner =
+    cardTargetKind === "champion" && selectedCardDef
+      ? (() => {
+          const rawOwner = selectedCardDef.targetSpec.owner;
+          if (rawOwner === "self" || rawOwner === "enemy" || rawOwner === "any") {
+            return rawOwner;
+          }
+          return "self";
+        })()
+      : null;
   const moveStackEffect =
     selectedCardDef?.effects?.find((effect) => effect.kind === "moveStack") ?? null;
   const hasFixedMoveForceCount =
@@ -699,6 +709,25 @@ export const GameScreen = ({
         return a.id.localeCompare(b.id);
       });
   }, [view.public.board.units, playerNames]);
+  const eligibleChampionTargets = useMemo(() => {
+    if (!championTargetOwner) {
+      return [];
+    }
+    if (championTargetOwner === "any") {
+      return championUnits;
+    }
+    if (!localPlayerId) {
+      return [];
+    }
+    if (championTargetOwner === "self") {
+      return championUnits.filter((unit) => unit.ownerId === localPlayerId);
+    }
+    return championUnits.filter((unit) => unit.ownerId !== localPlayerId);
+  }, [championTargetOwner, championUnits, localPlayerId]);
+  const selectedChampion =
+    selectedChampionId
+      ? championUnits.find((unit) => unit.id === selectedChampionId) ?? null
+      : null;
   const leadSeatIndex =
     view.public.players.length > 0
       ? (view.public.round - 1 + view.public.players.length) % view.public.players.length
@@ -1985,6 +2014,20 @@ export const GameScreen = ({
   const cardMoveMeta = cardMoveStartLabel
     ? `From ${cardMoveStartLabel} (${cardMoveForceMax} forces)`
     : `${cardMoveForceMax} forces`;
+  const championTargetScopeLabel =
+    championTargetOwner === "self"
+      ? "Your champions"
+      : championTargetOwner === "enemy"
+        ? "Enemy champions"
+        : championTargetOwner === "any"
+          ? "Any champion"
+          : null;
+  const selectedChampionLabel = selectedChampion
+    ? `${selectedChampion.name} (${selectedChampion.ownerName})`
+    : null;
+  const selectedChampionHexLabel = selectedChampion
+    ? hexLabels[selectedChampion.hex] ?? selectedChampion.hex
+    : null;
   const topdeckPanel =
     selectedCardDef && topdeckCount > 0 ? (
       <div className="hand-targets">
@@ -2092,11 +2135,65 @@ export const GameScreen = ({
       </div>
     </div>
   ) : null;
+  const championTargetPanel =
+    selectedCardDef && cardTargetKind === "champion" ? (
+      <div className="hand-targets">
+        <div className="hand-targets__header">
+          <strong>Target champion</strong>
+          <span className="hand-targets__meta">
+            {championTargetScopeLabel ?? "Champion"} ({eligibleChampionTargets.length})
+          </span>
+        </div>
+        <p className="hand-targets__hint">
+          Click a champion on the board, or pick one below. Clicking a hex cycles
+          between champions on that hex.
+        </p>
+        {eligibleChampionTargets.length > 0 ? (
+          <div className="hand-targets__list">
+            {eligibleChampionTargets.map((unit) => {
+              const hexLabel = hexLabels[unit.hex] ?? unit.hex;
+              const isSelected = unit.id === selectedChampionId;
+              return (
+                <button
+                  key={unit.id}
+                  type="button"
+                  className={`btn btn-tertiary hand-targets__option${
+                    isSelected ? " is-active" : ""
+                  }`}
+                  aria-pressed={isSelected}
+                  onClick={() => {
+                    setSelectedHexKey(unit.hex);
+                    setBoardPickModeSafe("cardChampion");
+                    setCardTargetsObject({ unitId: unit.id });
+                  }}
+                >
+                  <span className="hand-targets__option-name">{unit.name}</span>
+                  <span className="hand-targets__option-meta">
+                    {unit.ownerName} · {hexLabel} · HP {unit.hp}/{unit.maxHp}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="hand-targets__selected">No eligible champions on the board.</p>
+        )}
+        {selectedChampionLabel ? (
+          <p className="hand-targets__selected">
+            Selected: {selectedChampionLabel}
+            {selectedChampionHexLabel ? ` @ ${selectedChampionHexLabel}` : ""}.
+          </p>
+        ) : (
+          <p className="hand-targets__selected">No champion selected yet.</p>
+        )}
+      </div>
+    ) : null;
   const handTargetsPanel =
-    topdeckPanel || cardMovePanel ? (
+    topdeckPanel || cardMovePanel || championTargetPanel ? (
       <>
         {topdeckPanel}
         {cardMovePanel}
+        {championTargetPanel}
       </>
     ) : null;
   const showHandPicker =
