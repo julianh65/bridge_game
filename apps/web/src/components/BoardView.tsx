@@ -10,6 +10,7 @@ import { CARD_DEFS_BY_ID, type BoardState, type UseCounter } from "@bridgefront/
 import { parseEdgeKey } from "@bridgefront/shared";
 
 import { HEX_SIZE, hexPoints } from "../lib/hex-geometry";
+import { getFactionSymbol } from "../lib/factions";
 import type { HexRender } from "../lib/board-preview";
 
 type ViewBox = {
@@ -1058,6 +1059,7 @@ export const BoardView = ({
 
       {unitStacks.map((stack) => {
         const colorIndex = normalizeColorIndex(playerIndex.get(stack.ownerPlayerId));
+        const factionSymbol = getFactionSymbol(playerFactionById?.[stack.ownerPlayerId]);
         const offsets =
           stack.occupantCount > 1
             ? [
@@ -1100,6 +1102,9 @@ export const BoardView = ({
           cx: -totalTokenWidth / 2 + tokenRadius + index * (tokenDiameter + tokenGap),
           cy: tokenCenterY
         }));
+        const badgeRadius = 4;
+        const badgeX = 7;
+        const badgeY = 7;
         return (
           <g
             key={stack.key}
@@ -1120,6 +1125,24 @@ export const BoardView = ({
               <text x={0} y={3} className="unit__count">
                 {stack.forceCount}
               </text>
+            ) : null}
+            {factionSymbol ? (
+              <g className="unit-faction" aria-hidden="true">
+                <circle
+                  className="unit-faction__ring"
+                  cx={badgeX}
+                  cy={badgeY}
+                  r={badgeRadius}
+                />
+                <text
+                  className="unit-faction__text"
+                  x={badgeX}
+                  y={badgeY}
+                  dominantBaseline="middle"
+                >
+                  {factionSymbol}
+                </text>
+              </g>
             ) : null}
             {tokenLayout.map((token, index) => {
               const ringClass = [

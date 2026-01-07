@@ -482,7 +482,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Add battle UX: click-to-roll dice with shared roll animations and visible hit assignment.
 - [x] Add a host-only board state editor/debug panel (JSON view + light patch tools) for test games, only if it stays simple.
 - [x] Add a victory screen (winner, final VP, recap, rematch/exit).
-- [ ] Upgrade on-board visuals for units/champions/factions (distinct tokens, faction badges).
+- [x] Upgrade on-board visuals for units/champions/factions (distinct tokens, faction badges).
   - [x] Add champion crest markers on unit stacks.
   - [x] Add faction badge chips on unit stacks.
 - [x] Enforce faction uniqueness in setup (no duplicate faction picks).

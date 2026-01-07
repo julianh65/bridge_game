@@ -132,7 +132,7 @@
 - Improved board visuals with hex padding, a textured board backdrop, and beefier bridge styling; marked the plan item complete in `implementation_plan.md`.
 - Added a host-only debug state patch tool in the room debug panel + server command, and marked the plan item complete in `implementation_plan.md`.
 - Added a champion crest marker on unit stacks to make champion presence easier to spot on the board.
-- Added faction badges on unit stacks to help differentiate ownership at a glance.
+- Added compact faction badge glyphs on unit stacks and a unit ring to make tokens more distinct at a glance.
 - Added a march force-count picker (move all vs split) to the action panel UI and passed `forceCount` through submit payloads; updated `implementation_plan.md` to split remaining card-move UI work.
 - Added force-count controls for card-driven stack moves in the hand targets panel and marked the plan item complete in `implementation_plan.md`.
 - Added engine support for partial force moves (optional `forceCount`), updated Quick Move/Banner Claim to move 1 force, and refreshed action-flow coverage; `implementation_plan.md` split UI vs engine subtasks.
