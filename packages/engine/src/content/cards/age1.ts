@@ -180,6 +180,54 @@ export const BANNER_CLAIM: CardDef = {
   effects: [{ kind: "moveStack", maxDistance: 1, forceCount: 1 }]
 };
 
+export const SKIRMISHER_CAPTAIN: CardDef = {
+  id: "champion.age1.skirmisher_captain",
+  name: "Skirmisher Captain",
+  rulesText: "On deploy: Deploy 1 Force to its hex.",
+  type: "Champion",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 2 },
+  initiative: 65,
+  burn: true,
+  targetSpec: {
+    kind: "hex",
+    owner: "self",
+    occupied: true
+  },
+  champion: {
+    hp: 4,
+    attackDice: 2,
+    hitFaces: 3,
+    bounty: 2,
+    goldCostByChampionCount: [0, 2, 4]
+  }
+};
+
+export const BRIDGE_RUNNER: CardDef = {
+  id: "champion.age1.bridge_runner",
+  name: "Bridge Runner",
+  rulesText: "Pathfinder: may move to adjacent hexes without Bridges.",
+  type: "Champion",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 2 },
+  initiative: 55,
+  burn: true,
+  targetSpec: {
+    kind: "hex",
+    owner: "self",
+    occupied: true
+  },
+  champion: {
+    hp: 3,
+    attackDice: 3,
+    hitFaces: 2,
+    bounty: 2,
+    goldCostByChampionCount: [0, 2, 4]
+  }
+};
+
 export const AGE1_CARDS: CardDef[] = [
   QUICK_MARCH,
   FLANK_STEP,
@@ -191,5 +239,7 @@ export const AGE1_CARDS: CardDef[] = [
   QUICK_STUDY,
   SUPPLY_LEDGER,
   PATROL_RECORD,
-  BANNER_CLAIM
+  BANNER_CLAIM,
+  SKIRMISHER_CAPTAIN,
+  BRIDGE_RUNNER
 ];

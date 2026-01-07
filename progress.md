@@ -17,6 +17,8 @@
 
 ## Active tasks
 - none
+- owner: agent3 | scope: add collapsible sections in GameScreen sidebar | files: apps/web/src/components/GameScreenSidebar.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md | status: in progress
+- owner: agent4 | scope: implement bridge trap modifier (first enemy crossing loses a force) with move hook + tests | files: packages/engine/src/types.ts, packages/engine/src/modifiers.ts, packages/engine/src/card-effects.ts, packages/engine/src/action-flow.ts, packages/engine/src/units.ts, packages/engine/src/action-flow.test.ts, implementation_plan.md, progress.md | status: in progress
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
@@ -407,6 +409,7 @@ none
 - Added modifier hooks for on-card-draw and end-of-round events, wired draw/cleanup dispatch, and covered with engine tests.
 - Added lock-bridge card effect support (locks an existing bridge until end of round) with action-flow coverage; marked subtask in `implementation_plan.md`. (Overlap note: touched `implementation_plan.md` while agent3 active.)
 - Added destroy-bridge card effect support for edge-targeted cards with action-flow coverage; marked subtask in `implementation_plan.md`. (Overlap note: touched `implementation_plan.md` while agent3/agent2 active.)
+- Added Age I champion cards for Skirmisher Captain + Bridge Runner, with on-deploy force add and pathfinder movement support, plus engine tests.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

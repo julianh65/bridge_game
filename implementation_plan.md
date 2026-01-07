@@ -344,10 +344,12 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [ ] Expand champion hooks for on-deploy/on-death/on-battle-win, movement exceptions, and conditional dice mods (Archivist Prime, Brute, Traitor, Siege Engineer, Capturer, Bannerman, etc.)
     - [x] Archivist Prime: +attack dice per card played this round
     - [x] Wormhole Artificer: +1 move distance when moving alone
-    - [ ] On-deploy triggers: Skirmisher Captain (deploy 1 Force), Siege Engineer (destroy adjacent Bridge)
+    - [x] On-deploy triggers: Skirmisher Captain (deploy 1 Force).
+    - [ ] On-deploy triggers: Siege Engineer (destroy adjacent Bridge).
     - [ ] On-death triggers: Traitor (set owner mana to 0), Blood Banker (first champion death in hex grants gold)
     - [ ] On-battle-win/kill triggers: Capturer (deploy 1 Force on win), Bounty Hunter/Tax Reaver (bonus gold on champion kill)
-    - [ ] Movement/deploy exceptions: Bridge Runner pathfinder, Guerilla Native Mercenary (deploy to any unoccupied hex), Logistics Officer (deploy as capital)
+    - [x] Movement exceptions: Bridge Runner pathfinder (adjacent moves ignore bridges).
+    - [ ] Movement/deploy exceptions: Guerilla Native Mercenary (deploy to any unoccupied hex), Logistics Officer (deploy as capital)
     - [ ] Dice mods/thresholds: Inspiring Geezer (forces hit 1-3), Brute (extra dice if no enemy champion), Duelist Exemplar (if enemy champion +1 die/round), Lone Wolf (if no friendly forces +3 dice), Reliable Veteran (hits on 1-5)
     - [ ] Siege/VP modifiers: Capital Breaker (siege hit buff), Bannerman/Center Bannerman (VP while on board/center)
     - [ ] Active abilities: Field Surgeon (heal champion in hex 1/round), Stormcaller (Tempest AoE), Grand Strategist (Tactical Hand hit assignment)

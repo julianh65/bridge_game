@@ -3,14 +3,19 @@ import { randInt } from "@bridgefront/shared";
 import type { CardDefId, GameState, Modifier, PlayerID, UnitID } from "./types";
 import { applyChampionKillRewards } from "./rewards";
 import { getCardsPlayedThisRound } from "./player-flags";
+import { addForcesToHex } from "./units";
 
 const BODYGUARD_CHAMPION_ID = "champion.bastion.ironclad_warden";
 const ASSASSINS_EDGE_CHAMPION_ID = "champion.veil.shadeblade";
 const FLIGHT_CHAMPION_ID = "champion.aerial.skystriker_ace";
 const ARCHIVIST_PRIME_CHAMPION_ID = "champion.cipher.archivist_prime";
 const WORMHOLE_ARTIFICER_CHAMPION_ID = "champion.gatewright.wormhole_artificer";
+const SKIRMISHER_CAPTAIN_CHAMPION_ID = "champion.age1.skirmisher_captain";
+const BRIDGE_RUNNER_CHAMPION_ID = "champion.age1.bridge_runner";
 
 const ASSASSINS_EDGE_KEY = "assassins_edge";
+
+const BRIDGE_BYPASS_CHAMPION_IDS = new Set([FLIGHT_CHAMPION_ID, BRIDGE_RUNNER_CHAMPION_ID]);
 
 const PER_ROUND_ABILITY_USES: Record<CardDefId, Record<string, number>> = {
   [ASSASSINS_EDGE_CHAMPION_ID]: {
@@ -182,9 +187,13 @@ const createAssassinsEdgeModifier = (unitId: UnitID, ownerPlayerId: PlayerID): M
   }
 });
 
-const createFlightModifier = (unitId: UnitID, ownerPlayerId: PlayerID): Modifier => ({
-  id: buildChampionModifierId(unitId, "flight"),
-  source: { type: "champion", sourceId: FLIGHT_CHAMPION_ID },
+const createBridgeBypassModifier = (
+  unitId: UnitID,
+  ownerPlayerId: PlayerID,
+  sourceId: CardDefId
+): Modifier => ({
+  id: buildChampionModifierId(unitId, "bridge_bypass"),
+  source: { type: "champion", sourceId },
   ownerPlayerId,
   duration: { type: "permanent" },
   data: { unitId },
@@ -211,7 +220,7 @@ const createFlightModifier = (unitId: UnitID, ownerPlayerId: PlayerID): Modifier
       }
       if (
         movingUnits.some(
-          (unit) => unit?.kind === "champion" && unit.cardDefId !== FLIGHT_CHAMPION_ID
+          (unit) => unit?.kind === "champion" && !BRIDGE_BYPASS_CHAMPION_IDS.has(unit.cardDefId)
         )
       ) {
         return current;
@@ -273,14 +282,46 @@ const createChampionModifiers = (
     case ASSASSINS_EDGE_CHAMPION_ID:
       return [createAssassinsEdgeModifier(unitId, ownerPlayerId)];
     case FLIGHT_CHAMPION_ID:
-      return [createFlightModifier(unitId, ownerPlayerId)];
+      return [createBridgeBypassModifier(unitId, ownerPlayerId, cardDefId)];
     case ARCHIVIST_PRIME_CHAMPION_ID:
       return [createArchivistPrimeModifier(unitId, ownerPlayerId)];
     case WORMHOLE_ARTIFICER_CHAMPION_ID:
       return [createWormholeArtificerModifier(unitId, ownerPlayerId)];
+    case BRIDGE_RUNNER_CHAMPION_ID:
+      return [createBridgeBypassModifier(unitId, ownerPlayerId, cardDefId)];
     default:
       return [];
   }
+};
+
+const getDeployForcesOnChampionDeploy = (cardDefId: CardDefId): number => {
+  switch (cardDefId) {
+    case SKIRMISHER_CAPTAIN_CHAMPION_ID:
+      return 1;
+    default:
+      return 0;
+  }
+};
+
+const applyChampionOnDeploy = (
+  state: GameState,
+  unitId: UnitID,
+  cardDefId: CardDefId,
+  ownerPlayerId: PlayerID
+): GameState => {
+  const forceCount = getDeployForcesOnChampionDeploy(cardDefId);
+  if (forceCount <= 0) {
+    return state;
+  }
+  const unit = state.board.units[unitId];
+  if (!unit || unit.kind !== "champion") {
+    return state;
+  }
+  const nextBoard = addForcesToHex(state.board, ownerPlayerId, unit.hex, forceCount);
+  return {
+    ...state,
+    board: nextBoard
+  };
 };
 
 export const applyChampionDeployment = (
@@ -292,7 +333,7 @@ export const applyChampionDeployment = (
   let nextState = setChampionAbilityUses(state, unitId, buildAbilityUses(cardDefId));
   const modifiers = createChampionModifiers(unitId, cardDefId, ownerPlayerId);
   if (modifiers.length === 0) {
-    return nextState;
+    return applyChampionOnDeploy(nextState, unitId, cardDefId, ownerPlayerId);
   }
   const existing = new Set(nextState.modifiers.map((modifier) => modifier.id));
   const nextModifiers = [...nextState.modifiers];
@@ -302,9 +343,10 @@ export const applyChampionDeployment = (
     }
   }
   if (nextModifiers.length === nextState.modifiers.length) {
-    return nextState;
+    return applyChampionOnDeploy(nextState, unitId, cardDefId, ownerPlayerId);
   }
-  return { ...nextState, modifiers: nextModifiers };
+  nextState = { ...nextState, modifiers: nextModifiers };
+  return applyChampionOnDeploy(nextState, unitId, cardDefId, ownerPlayerId);
 };
 
 export const refreshChampionAbilityUsesForRound = (state: GameState): GameState => {
