@@ -437,10 +437,10 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [x] Allow direct edge clicks for bridge/card edge picks via preview edges.
 - [x] Add a large "Submit/Lock In" action button for action declarations.
 - [ ] Consolidate or rearrange panels so the game screen feels cohesive. Right now like the whole basic action panel is on the side and cards on the bottom, those should kind of be together in the bottom area, the log is a bit not nice etc...
-- [ ] Make only valid targets highlightable, like right now to build a bridge it will highlight the possible edges right, you should only be able to click on the edges not the hexes
+- [x] Make only valid targets highlightable, like right now to build a bridge it will highlight the possible edges right, you should only be able to click on the edges not the hexes
 
 ### Tasks (web - motion + phase clarity)
-- [ ] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen.
+- [ ] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen. This is after everyone locks in their actions. I want it to be like Player 1, show the card they played and flash it up, then show where they did it or something and make it extensible so later we can add animations or sound effects or something here.
 - [x] Add clearer phase transition cues between round phases. Make it flash on screen in big text slowly to everyone simultaneously.
 - [ ] Make the hexes look nicer slightly, more in theme and more clear who and which forces are on what and who's capital is who's etc...
 
@@ -455,6 +455,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Also can you double check, does it only work for 2 players right now?
 - [x] The standard setup still doesn't work, only auto setup works.
 - [x] The done button is a bit confusing, we need little helpers over the different buttons
+- [ ] What is the play card vs submit thing below, it's confusing
 
 ## Milestone 9 — Add Polish
 

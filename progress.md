@@ -37,6 +37,7 @@
 - Fixed edge-pick hex selection by letting unit stack clicks trigger hex targeting (Bridge Crew/build bridge) and marked the plan item complete in `implementation_plan.md`.
 - Fixed SetupCapitalDraft hook ordering to prevent hook-mismatch crashes once capital draft completes, unblocking manual setup progression.
 - Delayed BoardView pointer capture until pan/pinch starts so edge/hex clicks register reliably during targeting.
+- Disabled hex clicks/highlights during edge targeting so only edges are selectable; updated card edge hint copy and marked the plan item complete in `implementation_plan.md` (overlap: `apps/web/src/components/GameScreen.tsx` touched alongside agent4 scope).
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.

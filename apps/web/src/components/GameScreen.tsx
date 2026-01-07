@@ -46,6 +46,8 @@ type MarketWinnerHighlight = {
   passPot: number | null;
 };
 
+type InfoDockTab = "players" | "log";
+
 const parseTargets = (raw: string): Record<string, unknown> | null => {
   const trimmed = raw.trim();
   if (trimmed.length === 0) {
@@ -157,6 +159,8 @@ export const GameScreen = ({
   const [pendingStackFrom, setPendingStackFrom] = useState<string | null>(null);
   const [pendingPath, setPendingPath] = useState<string[]>([]);
   const [resetViewToken, setResetViewToken] = useState(0);
+  const [isInfoDockOpen, setIsInfoDockOpen] = useState(false);
+  const [infoDockTab, setInfoDockTab] = useState<InfoDockTab>("players");
   const lastMarketEventIndex = useRef(-1);
   const hasMarketLogBaseline = useRef(false);
   const hasPhaseCueBaseline = useRef(false);
@@ -214,6 +218,10 @@ export const GameScreen = ({
         return { eligibleCount, waitingCount, submittedCount, idleCount };
       })()
     : null;
+  const connectedCount = view.public.players.filter((player) => player.connected).length;
+  const logCount = view.public.logs.length;
+  const lastLogEntry = logCount > 0 ? view.public.logs[logCount - 1] : null;
+  const lastLogLabel = lastLogEntry ? formatGameEvent(lastLogEntry, playerNames) : null;
   const getActionStatusTooltip = (playerId: string): string => {
     if (!actionStep) {
       return `Action: not active (${phaseLabel}).`;
@@ -249,6 +257,7 @@ export const GameScreen = ({
   const canDeclareAction =
     status === "connected" && Boolean(localPlayer) && isActionPhase && !localPlayer?.doneThisRound;
   const isBoardTargeting = boardPickMode !== "none";
+  const isEdgePickMode = boardPickMode === "bridgeEdge" || boardPickMode === "cardEdge";
   const availableMana = localPlayer?.resources.mana ?? 0;
   const availableGold = localPlayer?.resources.gold ?? 0;
   const toggleHeaderCollapsed = () => {
@@ -262,6 +271,14 @@ export const GameScreen = ({
     return {
       "--player-color": `var(--player-color-${index})`
     } as CSSProperties;
+  };
+  const openDockTab = (tab: InfoDockTab) => {
+    setInfoDockTab(tab);
+    setIsInfoDockOpen(true);
+  };
+  const toggleDockTab = (tab: InfoDockTab) => {
+    setInfoDockTab(tab);
+    setIsInfoDockOpen((open) => !(open && infoDockTab === tab));
   };
 
   useEffect(() => {
@@ -926,9 +943,7 @@ export const GameScreen = ({
                   </button>
                 </div>
                 <p className="card-detail__hint">
-                  {pendingEdgeStart
-                    ? `Pick adjacent hex to ${pendingEdgeStart} or click a highlighted edge.`
-                    : "Click a highlighted edge or pick two adjacent hexes."}
+                  Click a highlighted edge on the board.
                 </p>
               </div>
             );
@@ -1336,24 +1351,19 @@ export const GameScreen = ({
     </>
   ) : null;
 
-  const logSection = (
-    <div className="sidebar-section">
-      <h3>Log</h3>
-      {view.public.logs.length === 0 ? (
-        <div className="log-empty">Waiting for events.</div>
-      ) : (
-        <ul className="log-list">
-          {view.public.logs.map((entry, index) => (
-            <li key={`${entry.type}-${index}`}>{formatGameEvent(entry, playerNames)}</li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
+  const logContent =
+    view.public.logs.length === 0 ? (
+      <div className="log-empty">Waiting for events.</div>
+    ) : (
+      <ul className="log-list">
+        {view.public.logs.map((entry, index) => (
+          <li key={`${entry.type}-${index}`}>{formatGameEvent(entry, playerNames)}</li>
+        ))}
+      </ul>
+    );
 
-  const playersSection = (
-    <div className="sidebar-section">
-      <h3>Players</h3>
+  const playersContent = (
+    <>
       {actionStatusSummary ? (
         <div className="player-list__summary">
           <span className="status-pill status-pill--waiting">
@@ -1419,15 +1429,154 @@ export const GameScreen = ({
           );
         })}
       </ul>
+    </>
+  );
+
+  const infoDock = isInfoDockOpen ? (
+    <section className="panel game-dock" aria-live="polite">
+      <div className="game-dock__header">
+        <div className="game-dock__title">
+          <span className="game-dock__eyebrow">Table intel</span>
+          <strong className="game-dock__label">
+            {infoDockTab === "players" ? "Players" : "Log"}
+          </strong>
+        </div>
+        <div className="game-dock__tabs" role="tablist" aria-label="Game info">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={infoDockTab === "players"}
+            className={`btn btn-tertiary ${
+              infoDockTab === "players" ? "is-active" : ""
+            }`}
+            onClick={() => openDockTab("players")}
+          >
+            Players
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={infoDockTab === "log"}
+            className={`btn btn-tertiary ${infoDockTab === "log" ? "is-active" : ""}`}
+            onClick={() => openDockTab("log")}
+          >
+            Log
+          </button>
+        </div>
+        <button
+          type="button"
+          className="btn btn-tertiary game-dock__close"
+          onClick={() => setIsInfoDockOpen(false)}
+        >
+          Close
+        </button>
+      </div>
+      <div className="game-dock__body">
+        {infoDockTab === "players" ? playersContent : logContent}
+      </div>
+    </section>
+  ) : null;
+
+  const statusSection = (
+    <div className="sidebar-section sidebar-section--status">
+      <div className="sidebar-section__header">
+        <h3>Status</h3>
+        <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
+      </div>
+      <div className="resource-row">
+        <span>Round</span>
+        <strong>{view.public.round}</strong>
+      </div>
+      <div className="resource-row">
+        <span>Phase</span>
+        <strong>{phaseLabel}</strong>
+      </div>
+      <div className="resource-row">
+        <span>Lead</span>
+        <strong>{leadPlayer ? leadPlayer.name : "—"}</strong>
+      </div>
+      {actionStatusSummary ? (
+        <div className="status-summary">
+          <span className="status-pill status-pill--waiting">
+            Waiting {actionStatusSummary.waitingCount}
+          </span>
+          <span className="status-pill status-pill--ready">
+            Submitted {actionStatusSummary.submittedCount}
+          </span>
+          {actionStatusSummary.idleCount > 0 ? (
+            <span className="status-pill status-pill--idle">
+              Idle {actionStatusSummary.idleCount}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
+      {!isInteractivePhase ? (
+        <p className="status-note">Resolving {phaseLabel}. Waiting on the server.</p>
+      ) : null}
     </div>
   );
 
-  const auxPanels = showPhaseFocus ? (
-    <div className="game-screen__aux">
-      {logSection}
-      {playersSection}
+  const resourcesSection = (
+    <div className="sidebar-section">
+      <h3>Resources</h3>
+      <div className="resource-row">
+        <span>Gold</span>
+        <strong>{localPlayer?.resources.gold ?? 0}</strong>
+      </div>
+      <div className="resource-row">
+        <span>Mana</span>
+        <strong>{localPlayer?.resources.mana ?? 0}</strong>
+      </div>
+      {view.private?.vp ? (
+        <div className="resource-row">
+          <span>VP</span>
+          <strong>{view.private.vp.total}</strong>
+        </div>
+      ) : null}
     </div>
-  ) : null;
+  );
+
+  const intelSection = (
+    <div className="sidebar-section sidebar-section--intel">
+      <div className="sidebar-section__header">
+        <h3>Intel</h3>
+        <div className="dock-buttons">
+          <button
+            type="button"
+            className={`btn btn-tertiary ${
+              isInfoDockOpen && infoDockTab === "players" ? "is-active" : ""
+            }`}
+            onClick={() => toggleDockTab("players")}
+          >
+            Players <span className="dock-count">{view.public.players.length}</span>
+          </button>
+          <button
+            type="button"
+            className={`btn btn-tertiary ${
+              isInfoDockOpen && infoDockTab === "log" ? "is-active" : ""
+            }`}
+            onClick={() => toggleDockTab("log")}
+          >
+            Log <span className="dock-count">{logCount}</span>
+          </button>
+        </div>
+      </div>
+      <div className="intel-grid">
+        <div className="intel-card">
+          <span className="intel-label">Players online</span>
+          <strong className="intel-value">
+            {connectedCount}/{view.public.players.length}
+          </strong>
+        </div>
+        <div className="intel-card intel-card--log">
+          <span className="intel-label">Latest</span>
+          <span className="intel-value intel-snippet">
+            {lastLogLabel ?? "No events yet."}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <section className="game-screen">
@@ -1543,39 +1692,19 @@ export const GameScreen = ({
               resetViewToken={resetViewToken}
               selectedHexKey={selectedHexKey}
               highlightHexKeys={highlightHexKeys}
-              validHexKeys={validHexKeys}
+              validHexKeys={isEdgePickMode ? [] : validHexKeys}
               previewEdgeKeys={previewEdgeKeys}
               isTargeting={isBoardTargeting}
-              onHexClick={handleBoardHexClick}
+              onHexClick={isEdgePickMode ? undefined : handleBoardHexClick}
               onEdgeClick={handleBoardEdgeClick}
             />
           </div>
         </section>
 
         <aside className="panel game-sidebar">
-          <h2>Player Panel</h2>
-
-          <div className="sidebar-section">
-            <h3>Resources</h3>
-            <div className="resource-row">
-              <span>Gold</span>
-              <strong>{localPlayer?.resources.gold ?? 0}</strong>
-            </div>
-            <div className="resource-row">
-              <span>Mana</span>
-              <strong>{localPlayer?.resources.mana ?? 0}</strong>
-            </div>
-            <div className="resource-row">
-              <span>Lead</span>
-              <strong>{leadPlayer ? leadPlayer.name : "—"}</strong>
-            </div>
-            {view.private?.vp ? (
-              <div className="resource-row">
-                <span>VP</span>
-                <strong>{view.private.vp.total}</strong>
-              </div>
-            ) : null}
-          </div>
+          <h2>Command Center</h2>
+          {statusSection}
+          {resourcesSection}
 
           {isActionPhase ? (
             <div className="sidebar-section">
@@ -1602,18 +1731,10 @@ export const GameScreen = ({
               />
             </div>
           ) : null}
-
-          {!isInteractivePhase ? (
-            <div className="sidebar-section">
-              <h3>Phase</h3>
-              <p className="muted">Resolving {phaseLabel}. Waiting on the server.</p>
-            </div>
-          ) : null}
-          {!showPhaseFocus ? logSection : null}
-          {!showPhaseFocus ? playersSection : null}
+          {intelSection}
         </aside>
       </div>
-      {auxPanels}
+      {infoDock}
       {handPanel}
     </section>
   );
