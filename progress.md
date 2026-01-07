@@ -17,6 +17,7 @@
 
 ## Active tasks
 - owner: agent2 | scope: add deck flow UI to DeckViewer with pile counts + animated arrows (overlap note: styles.css also in agent4 scope) | files: apps/web/src/components/DeckViewer.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md | status: in progress
+- owner: agent1 | scope: add victory screen overlay with final VP recap + rematch/exit, expose public VP in GameView (overlap: styles.css with agent2) | files: packages/engine/src/types.ts, packages/engine/src/view.ts, apps/web/src/components/VictoryScreen.tsx, apps/web/src/components/GameScreen.tsx, apps/web/src/App.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md | status: in progress
 
 ## Milestone 8.5 progress
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.
@@ -28,6 +29,7 @@
 - Added a phase transition cue overlay that flashes round phase changes in big text and marked the plan item complete in `implementation_plan.md`.
 - Made action status more obvious with a player-list summary and row highlighting, and marked the plan item complete in `implementation_plan.md`.
 - Added a large Submit/Lock In action button to the action panel and marked the plan item complete in `implementation_plan.md`.
+- Added action-panel helper copy clarifying Done/Reinforce/Bridge/March/Play actions and marked the plan item complete in `implementation_plan.md`.
 - Replaced market focus row with a full-screen overlay + toggle, redesigned market cards with art placeholders and metadata, and marked Milestone 8.5 market tasks complete in `implementation_plan.md`.
 - Added an order rail to the market overlay and tightened market card sizing so the overlay reads as a sequenced card run; marked the related checklist items complete in `implementation_plan.md`.
 - Hid market bid details in the status list until all bids are submitted and marked the plan item complete in `implementation_plan.md`.

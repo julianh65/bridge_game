@@ -452,7 +452,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] We need to reduce the amount of clicks, to play a card you shouldn't have to click then specify capital or something else then click where, it should just know.
 - [ ] Also can you double check, does it only work for 2 players right now?
 - [x] The standard setup still doesn't work, only auto setup works.
-- [ ] The done button is a bit confusing, we need little helpers over the different buttons
+- [x] The done button is a bit confusing, we need little helpers over the different buttons
 
 ## Milestone 9 — Add Polish
 

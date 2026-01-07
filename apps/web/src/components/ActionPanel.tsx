@@ -198,6 +198,7 @@ export const ActionPanel = ({
             ? { label: "Submit: Done", declaration: { kind: "done" } }
             : null;
   const hint = getActionHint(phase, status, player);
+  const showActionHelp = isActionPhase;
   const pickLabel =
     boardPickMode === "marchFrom"
       ? "Board pick: March from"
@@ -251,6 +252,18 @@ export const ActionPanel = ({
           Capital Reinforce (-1 mana, -1 gold)
         </button>
       </div>
+      {showActionHelp ? (
+        <p className="action-panel__hint">
+          <strong>Done:</strong> lock in no action this step.
+          <br />
+          <strong>Reinforce:</strong> add forces to your capital (costs 1 mana + 1
+          gold).
+          <br />
+          <strong>Bridge/March:</strong> spend 1 mana after picking a target.
+          <br />
+          <strong>Play Card:</strong> pay the card&apos;s cost and targets.
+        </p>
+      ) : null}
       <label className={`action-field ${isPickingBridge ? "is-active" : ""}`}>
         <span>Bridge edge</span>
         <div className="action-field__controls">
