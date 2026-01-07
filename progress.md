@@ -16,7 +16,6 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
 - [owner: agent2] [status: in-progress] Scope: smooth basic bridge build picking (auto-enter pick mode, auto-exit on edge selection). Files: apps/web/src/components/GameScreen.tsx, progress.md, implementation_plan.md.
 
 ## Milestone 8.5 progress
@@ -75,6 +74,7 @@ none
 - Adjusted the hand panel overlay to stop reserving vertical space and slimmed the actions column width.
 - Hid scrollbars on the hand card row while keeping horizontal scroll.
 - Refined Pass/Submit placement: removed the visible container, widened buttons evenly, and nudged the bar lower.
+- Nudged the Pass/Submit bar further down to sit closer to the screen edge.
 - Added an age/start-of-game transition cue overlay and marked the plan item complete in `implementation_plan.md`.
 - Shortened bridge render segments so they no longer draw center-to-center; marked the plan item complete in `implementation_plan.md`.
 - Shortened bridge render segments a bit further by increasing the inset.

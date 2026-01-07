@@ -1967,7 +1967,7 @@ h1 {
   flex-wrap: wrap;
   position: absolute;
   left: 50%;
-  bottom: 6px;
+  bottom: 2px;
   transform: translateX(-50%);
   padding: 0;
   border: none;
