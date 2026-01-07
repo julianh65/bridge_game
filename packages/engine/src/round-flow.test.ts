@@ -691,6 +691,46 @@ describe("scoring", () => {
     expect(next.winnerPlayerId).toBe("p1");
   });
 
+  it("boosts control VP for gatewright occupying an enemy capital", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    board.hexes["0,0"] = {
+      ...board.hexes["0,0"],
+      tile: "capital",
+      ownerPlayerId: "p2",
+      occupants: { p1: ["u1"] }
+    };
+    board.hexes["0,-1"] = {
+      ...board.hexes["0,-1"],
+      tile: "capital",
+      ownerPlayerId: "p1",
+      occupants: {}
+    };
+    board.units = {
+      u1: { id: "u1", ownerPlayerId: "p1", kind: "force", hex: "0,0" }
+    };
+
+    const state = {
+      ...base,
+      board,
+      modifiers: createFactionModifiers("gatewright", "p1"),
+      players: base.players.map((player) =>
+        player.id === "p1"
+          ? { ...player, capitalHex: "0,-1", factionId: "gatewright" }
+          : player
+      )
+    };
+
+    const next = applyScoring(state);
+    const p1 = next.players.find((player) => player.id === "p1");
+
+    expect(p1?.vp.control).toBe(2);
+  });
+
   it("applies round cap tiebreakers when no one meets the VP threshold", () => {
     const config = {
       ...DEFAULT_CONFIG,

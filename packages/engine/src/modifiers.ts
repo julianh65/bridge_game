@@ -5,6 +5,7 @@ import type {
   CombatEndContext,
   CombatRoundContext,
   CombatUnitContext,
+  ControlValueContext,
   DeployForcesContext,
   GameState,
   HexKey,
@@ -188,6 +189,20 @@ export const getCardChoiceCount = (
   );
 };
 
+export const getControlValue = (
+  state: GameState,
+  context: ControlValueContext,
+  base: number
+): number => {
+  return applyModifierQuery(
+    state,
+    state.modifiers,
+    (hooks) => hooks.getControlValue,
+    context,
+    base
+  );
+};
+
 export const runModifierEvents = <TContext>(
   state: GameState,
   modifiers: Modifier[],
@@ -219,6 +234,7 @@ export type {
   CombatEndContext,
   CombatRoundContext,
   CombatUnitContext,
+  ControlValueContext,
   DeployForcesContext,
   MoveContext
 };

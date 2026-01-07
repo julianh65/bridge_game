@@ -328,7 +328,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [ ] Miners Deep Tunnels (occupied mines count adjacent/connected)
   - [ ] Cipher Quiet Study (round-start discard then redraw)
   - [x] Cipher Expanded Choice (pick from N+1 when choosing cards)
-  - [ ] Capital occupation VP bonus (+2 temp VP instead of +1)
+  - [x] Capital occupation VP bonus (+2 temp VP instead of +1)
   - [ ] etc. (start with 1–2 factions but first double check the rules from rules_draft)
 - [x] Support faction starter spell effects with existing primitives (Air Drop deployForces, Rich Veins increaseMineValue).
 - Implement champions:

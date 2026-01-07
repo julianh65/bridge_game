@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
+- owner: agent1; scope: add combat round event logging + battle dice UI overlay (click-to-roll, hit assignment) for Milestone 9 battle UX; files: `packages/engine/src/combat.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/lib/event-format.ts`, `apps/web/src/styles.css`; status: in-progress
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -83,6 +83,7 @@ none
 - Implemented Veil Contracts (+2 gold per champion kill) via a champion-kill reward hook and added combat coverage; updated `implementation_plan.md`.
 - Implemented Cipher Expanded Choice (extra card offers on free-start + collection prompts), plus mine-draft multi-reveal selection support; marked plan item complete.
 - Implemented Aerial Tailwind (+1 max move distance on first stack move per round) via a moved-this-round flag + move validation hook, with action-flow coverage.
+- Implemented Gatewright capital occupation VP bonus (+2 control VP on enemy capitals) via a scoring hook + coverage; marked plan item complete.
 
 ## Testing progress
 - Added action-flow coverage for Flank Step (bridge-less move) + Scavenger's Market (gold + draw).
@@ -104,6 +105,7 @@ none
 - Ran `npm run -w @bridgefront/engine test -- src/cards.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/modifiers.test.ts src/combat.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts src/setup-flow.test.ts src/smoke.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts`.
 
 ## Docs maintenance
 - Expanded the Milestone 9 card-test checklist with Age I market sub-items in `implementation_plan.md`.

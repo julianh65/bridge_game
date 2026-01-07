@@ -240,6 +240,13 @@ export type CardChoiceContext = {
   baseCount: number;
 };
 
+export type ControlValueContext = {
+  playerId: PlayerID;
+  hexKey: HexKey;
+  tile: TileType;
+  baseValue: number;
+};
+
 export type ModifierQueryHook<TContext, TValue> = (
   ctx: TContext & { modifier: Modifier; state: GameState },
   current: TValue
@@ -259,6 +266,7 @@ export type ModifierHooks = {
   getDeployForcesCount?: ModifierQueryHook<DeployForcesContext, number>;
   getMineGoldValue?: ModifierQueryHook<MineGoldContext, number>;
   getCardChoiceCount?: ModifierQueryHook<CardChoiceContext, number>;
+  getControlValue?: ModifierQueryHook<ControlValueContext, number>;
   getChampionKillBonusGold?: ModifierQueryHook<ChampionKillContext, number>;
   beforeCombatRound?: ModifierEventHook<CombatRoundContext>;
   afterBattle?: ModifierEventHook<CombatEndContext>;

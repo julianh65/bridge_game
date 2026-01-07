@@ -226,6 +226,28 @@ const createGatewrightCapitalAssaultModifier = (playerId: PlayerID): Modifier =>
   }
 });
 
+const createGatewrightCapitalVpBonusModifier = (playerId: PlayerID): Modifier => ({
+  id: buildModifierId("gatewright", playerId, "capital_vp_bonus"),
+  source: { type: "faction", sourceId: "gatewright" },
+  ownerPlayerId: playerId,
+  duration: { type: "permanent" },
+  hooks: {
+    getControlValue: ({ modifier, playerId: occupantId, hexKey, tile, state }, current) => {
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== occupantId) {
+        return current;
+      }
+      if (tile !== "capital") {
+        return current;
+      }
+      const hex = state.board.hexes[hexKey];
+      if (!hex || !hex.ownerPlayerId || hex.ownerPlayerId === occupantId) {
+        return current;
+      }
+      return Math.max(current, 2);
+    }
+  }
+});
+
 const createGatewrightExtortionistsModifier = (playerId: PlayerID): Modifier => ({
   id: buildModifierId("gatewright", playerId, "extortionists"),
   source: { type: "faction", sourceId: "gatewright" },
@@ -297,6 +319,7 @@ export const createFactionModifiers = (factionId: string, playerId: PlayerID): M
     case "gatewright":
       return [
         createGatewrightCapitalAssaultModifier(playerId),
+        createGatewrightCapitalVpBonusModifier(playerId),
         createGatewrightExtortionistsModifier(playerId)
       ];
     default:

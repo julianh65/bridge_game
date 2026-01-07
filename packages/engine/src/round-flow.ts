@@ -18,7 +18,12 @@ import {
   scrapCardFromHand
 } from "./cards";
 import { refreshChampionAbilityUsesForRound } from "./champions";
-import { applyModifierQuery, expireEndOfRoundModifiers, getCardChoiceCount } from "./modifiers";
+import {
+  applyModifierQuery,
+  expireEndOfRoundModifiers,
+  getCardChoiceCount,
+  getControlValue
+} from "./modifiers";
 import { MOVED_THIS_ROUND_FLAG } from "./player-flags";
 
 const MINE_OVERSEER_CHAMPION_ID = "champion.prospect.mine_overseer";
@@ -590,17 +595,21 @@ export const applyScoring = (state: GameState): GameState => {
       continue;
     }
     const occupant = occupants[0];
-    if (hex.tile === "center") {
-      controlTotals = addControl(controlTotals, occupant, 1);
+    let baseControl = 0;
+    if (hex.tile === "center" || hex.tile === "forge") {
+      baseControl = 1;
+    } else if (hex.tile === "capital" && hex.ownerPlayerId && hex.ownerPlayerId !== occupant) {
+      baseControl = 1;
+    }
+    if (baseControl <= 0) {
       continue;
     }
-    if (hex.tile === "forge") {
-      controlTotals = addControl(controlTotals, occupant, 1);
-      continue;
-    }
-    if (hex.tile === "capital" && hex.ownerPlayerId && hex.ownerPlayerId !== occupant) {
-      controlTotals = addControl(controlTotals, occupant, 1);
-    }
+    const adjusted = getControlValue(
+      state,
+      { playerId: occupant, hexKey: hex.key, tile: hex.tile, baseValue: baseControl },
+      baseControl
+    );
+    controlTotals = addControl(controlTotals, occupant, adjusted);
   }
 
   const players = state.players.map((player) => {
