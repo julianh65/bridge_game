@@ -4087,6 +4087,31 @@ h1 {
   opacity: 0.85;
 }
 
+.board-effect {
+  pointer-events: none;
+}
+
+.board-effect__badge {
+  fill: rgba(34, 26, 18, 0.7);
+  stroke: rgba(255, 248, 236, 0.9);
+  stroke-width: 1;
+}
+
+.board-effect--edge .board-effect__badge {
+  fill: rgba(69, 26, 16, 0.75);
+}
+
+.board-effect__text {
+  font-size: 7px;
+  font-weight: 700;
+  fill: #fff7e6;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  paint-order: stroke;
+  stroke: rgba(21, 16, 12, 0.55);
+  stroke-width: 1.6;
+}
+
 .board-svg--interactive .bridge:hover {
   opacity: 1;
   filter: drop-shadow(0 1px 3px rgba(34, 26, 18, 0.55));

@@ -2282,6 +2282,7 @@ export const GameScreen = ({
               <BoardView
                 hexes={hexRender}
                 board={view.public.board}
+                modifiers={view.public.modifiers}
                 playerIndexById={playerColorIndexById}
                 playerFactionById={playerFactionById}
                 showCoords={false}

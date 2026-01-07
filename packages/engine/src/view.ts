@@ -2,6 +2,8 @@ import type {
   BlockState,
   GameState,
   GameView,
+  Modifier,
+  ModifierView,
   PlayerID,
   SetupPrivateView,
   SetupPublicView
@@ -62,6 +64,11 @@ const mapCardInstances = (state: GameState, instanceIds: string[]) => {
   );
 };
 
+const toModifierView = (modifier: Modifier): ModifierView => {
+  const { hooks, ...rest } = modifier;
+  return rest;
+};
+
 export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): GameView => {
   const viewer = state.players.find((player) => player.id === viewerPlayerId) ?? null;
   const actionStep =
@@ -110,6 +117,7 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
       round: state.round,
       phase: state.phase,
       board: state.board,
+      modifiers: state.modifiers.map(toModifierView),
       market: state.market,
       logs: state.logs,
       players: state.players.map((player) => ({

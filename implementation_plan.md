@@ -241,19 +241,17 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Add interaction state styling for board + controls (active/hover/selected/disabled/error).
 - [x] Add lightweight motion (card play, target highlight pulse, selection fade) to reduce the "debug UI" feel.
 - [x] Add tooltips for hex stacks/bridges/units and per-player action status (hex/bridge/unit tooltips done).
-- [ ] Clean up sidebar/board layout spacing and typography for readability.
+- [x] Clean up sidebar/board layout spacing and typography for readability.
 - [x] Add a clear phase marker in the header/status area.
 - [x] Gate phase-specific panels (action/market/collection) and add an idle-phase callout.
 - [x] Move the hand panel into a full-width bottom panel during the action phase.
-- [ ] Add phase-focused layouts (market/collection focus + log/player repositioning).
+- [x] Add phase-focused layouts (market/collection focus + log/player repositioning).
   - [x] Add a focus row for market/collection panels above the board.
   - [x] Move log + player list into a secondary row during market/collection phases.
   - [x] Expand market/collection focus cards (initiative/effects) for richer phase layouts.
 - [x] Add collapsible/relocatable panels so not everything lives in the right sidebar.
   - [x] Add collapsible sections for sidebar panels (status/table/intel).
-  - [ ] Consider optional panel relocation (dockable panels).
 - [x] Make the phase market at the top part much bigger and cooler
-- [ ] the bridge place mechanism still doesn't work
 - [x] During the game we don't need to see all the room id and those little details and top bar, those can be collapsed
 
 
@@ -362,7 +360,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - Champion UI:
   - [x] display champion hp
   - [ ] show ability usage counters (optional)
-- Add simple “effect badges” on hexes/edges for attached modifiers (optional)
+- [x] Add simple “effect badges” on hexes/edges for attached modifiers (optional)
 
 ### Acceptance criteria
 - At least one faction passive changes combat outcome in the expected situations.

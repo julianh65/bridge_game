@@ -6,7 +6,12 @@ import type {
   WheelEventHandler
 } from "react";
 
-import { CARD_DEFS_BY_ID, type BoardState, type UseCounter } from "@bridgefront/engine";
+import {
+  CARD_DEFS_BY_ID,
+  type BoardState,
+  type ModifierView,
+  type UseCounter
+} from "@bridgefront/engine";
 import { parseEdgeKey } from "@bridgefront/shared";
 
 import { HEX_SIZE, hexPoints } from "../lib/hex-geometry";
@@ -23,6 +28,7 @@ type ViewBox = {
 type BoardViewProps = {
   hexes: HexRender[];
   board?: BoardState;
+  modifiers?: ModifierView[];
   playerIndexById?: Record<string, number>;
   playerFactionById?: Record<string, string>;
   showCoords?: boolean;
@@ -76,6 +82,15 @@ type ChampionTooltip = {
   lines: TooltipLine[];
 };
 
+type EffectBadge = {
+  key: string;
+  x: number;
+  y: number;
+  label: string;
+  title: string;
+  tone: "edge" | "hex";
+};
+
 const HEX_DRAW_SCALE = 0.94;
 const HEX_DRAW_SIZE = HEX_SIZE * HEX_DRAW_SCALE;
 const BRIDGE_INSET = HEX_DRAW_SIZE * 0.4;
@@ -93,6 +108,8 @@ const TOOLTIP_PADDING_Y = 6;
 const TOOLTIP_OFFSET_X = 14;
 const TOOLTIP_OFFSET_Y = 16;
 const UNIT_MOVE_PULSE_MS = 720;
+const EFFECT_BADGE_RADIUS = HEX_DRAW_SIZE * 0.12;
+const EFFECT_BADGE_OFFSET = HEX_DRAW_SIZE * 0.3;
 
 const shortenSegment = (
   from: { x: number; y: number },
@@ -162,6 +179,14 @@ const normalizeColorIndex = (value: number | undefined) => {
 
 const getCardName = (cardDefId: string) => {
   return CARD_DEFS_BY_ID[cardDefId]?.name ?? cardDefId;
+};
+
+const getModifierSourceLabel = (modifier: ModifierView) => {
+  if (modifier.source.type === "faction") {
+    return `Faction: ${formatAbilityName(modifier.source.sourceId)}`;
+  }
+  const name = getCardName(modifier.source.sourceId);
+  return modifier.source.type === "champion" ? `Champion: ${name}` : name;
 };
 
 const getChampionGlyph = (name: string) => {
@@ -283,6 +308,7 @@ const clampViewBox = (viewBox: ViewBox, baseViewBox: ViewBox): ViewBox => {
 export const BoardView = ({
   hexes,
   board,
+  modifiers,
   playerIndexById,
   playerFactionById,
   showCoords = true,
@@ -428,6 +454,100 @@ export const BoardView = ({
     }
     return segments;
   }, [previewEdgeKeys, hexCenters]);
+
+  const bridgeSegmentByKey = useMemo(() => {
+    const map = new Map<string, (typeof bridgeSegments)[number]>();
+    bridgeSegments.forEach((segment) => {
+      map.set(segment.key, segment);
+    });
+    return map;
+  }, [bridgeSegments]);
+
+  const effectBadges = useMemo(() => {
+    const edgeBadges: EffectBadge[] = [];
+    const hexBadges: EffectBadge[] = [];
+    if (!modifiers || modifiers.length === 0) {
+      return { edgeBadges, hexBadges };
+    }
+    const edgeModifiers = new Map<string, ModifierView[]>();
+    const hexModifiers = new Map<string, ModifierView[]>();
+
+    modifiers.forEach((modifier) => {
+      if (modifier.attachedEdge) {
+        const list = edgeModifiers.get(modifier.attachedEdge) ?? [];
+        list.push(modifier);
+        edgeModifiers.set(modifier.attachedEdge, list);
+      }
+      if (modifier.attachedHex) {
+        const list = hexModifiers.get(modifier.attachedHex) ?? [];
+        list.push(modifier);
+        hexModifiers.set(modifier.attachedHex, list);
+      }
+    });
+
+    const buildLabel = (entries: ModifierView[]) =>
+      entries.length > 1 ? String(entries.length) : "FX";
+    const buildTitle = (entries: ModifierView[]) =>
+      entries.map((modifier) => getModifierSourceLabel(modifier)).join("\n");
+
+    edgeModifiers.forEach((entries, edgeKey) => {
+      let x: number | null = null;
+      let y: number | null = null;
+      const segment = bridgeSegmentByKey.get(edgeKey);
+      if (segment) {
+        x = (segment.from.x + segment.to.x) / 2 + segment.px * (BRIDGE_WIDTH * 0.55);
+        y = (segment.from.y + segment.to.y) / 2 + segment.py * (BRIDGE_WIDTH * 0.55);
+      } else {
+        try {
+          const [fromKey, toKey] = parseEdgeKey(edgeKey);
+          const from = hexCenters.get(fromKey);
+          const to = hexCenters.get(toKey);
+          if (from && to) {
+            const midX = (from.x + to.x) / 2;
+            const midY = (from.y + to.y) / 2;
+            const dx = to.x - from.x;
+            const dy = to.y - from.y;
+            const length = Math.hypot(dx, dy) || 1;
+            const px = -dy / length;
+            const py = dx / length;
+            x = midX + px * (BRIDGE_WIDTH * 0.55);
+            y = midY + py * (BRIDGE_WIDTH * 0.55);
+          }
+        } catch {
+          x = null;
+          y = null;
+        }
+      }
+      if (x === null || y === null) {
+        return;
+      }
+      edgeBadges.push({
+        key: edgeKey,
+        x,
+        y,
+        label: buildLabel(entries),
+        title: buildTitle(entries),
+        tone: "edge"
+      });
+    });
+
+    hexModifiers.forEach((entries, hexKey) => {
+      const center = hexCenters.get(hexKey);
+      if (!center) {
+        return;
+      }
+      hexBadges.push({
+        key: hexKey,
+        x: center.x + EFFECT_BADGE_OFFSET,
+        y: center.y - EFFECT_BADGE_OFFSET,
+        label: buildLabel(entries),
+        title: buildTitle(entries),
+        tone: "hex"
+      });
+    });
+
+    return { edgeBadges, hexBadges };
+  }, [bridgeSegmentByKey, hexCenters, modifiers]);
 
   const unitStacks = useMemo(() => {
     if (!board) {
@@ -1106,6 +1226,26 @@ export const BoardView = ({
           </g>
         );
       })}
+
+      {effectBadges.hexBadges.map((badge) => (
+        <g key={`effect-hex-${badge.key}`} className="board-effect board-effect--hex">
+          <title>{badge.title}</title>
+          <circle className="board-effect__badge" cx={badge.x} cy={badge.y} r={EFFECT_BADGE_RADIUS} />
+          <text className="board-effect__text" x={badge.x} y={badge.y}>
+            {badge.label}
+          </text>
+        </g>
+      ))}
+
+      {effectBadges.edgeBadges.map((badge) => (
+        <g key={`effect-edge-${badge.key}`} className="board-effect board-effect--edge">
+          <title>{badge.title}</title>
+          <circle className="board-effect__badge" cx={badge.x} cy={badge.y} r={EFFECT_BADGE_RADIUS} />
+          <text className="board-effect__text" x={badge.x} y={badge.y}>
+            {badge.label}
+          </text>
+        </g>
+      ))}
 
       {unitStacks.map((stack) => {
         const colorIndex = normalizeColorIndex(playerIndex.get(stack.ownerPlayerId));

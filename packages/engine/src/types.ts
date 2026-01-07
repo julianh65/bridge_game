@@ -304,6 +304,8 @@ export type Modifier = {
   hooks?: HookSpec;
 };
 
+export type ModifierView = Omit<Modifier, "hooks">;
+
 export type BlockState = {
   type: "setup.capitalDraft";
   waitingFor: PlayerID[];
@@ -567,6 +569,7 @@ export type GameView = {
     round: number;
     phase: PhaseState;
     board: BoardState;
+    modifiers: ModifierView[];
     market: MarketState;
     logs: GameEvent[];
     players: PlayerPublicView[];
