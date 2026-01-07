@@ -16,7 +16,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- [owner: agent2] [status: in-progress] Scope: add UI force-count picker for march actions and pass `forceCount` in submit payload; update layout/styles. Files: apps/web/src/components/ActionPanel.tsx, apps/web/src/components/GameScreen.tsx, apps/web/src/components/GameScreenHandPanel.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md.
+- none
+- [owner: agent1] [status: in-progress] Scope: make market roll-off animation reliably visible (include pass-tie roll-offs + lengthen roll suspense). Files: packages/engine/src/market.ts, packages/engine/src/market.test.ts, apps/web/src/components/MarketPanel.tsx, apps/web/src/components/NumberRoll.tsx, apps/web/src/styles.css, progress.md.
 
 ## Milestone 8.5 progress
 - Improved hand card selection UX: added a selected-card summary with target hints + clear button, enabled click-to-deselect, and cleared card selection when switching to basic actions; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
@@ -24,6 +25,7 @@
 - Added a market roll-off tie-break panel with suspenseful rolling dice numbers using a reusable `NumberRoll` component; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
 - Removed the Live connection pill from the header and enlarged gold/VP chips with clearer labels. (Overlap note: `apps/web/src/styles.css` touched alongside agent1.)
 - Repositioned the mana orb to the hand panel bottom-right (outside the actions panel) to reduce the perceived empty space above the cards.
+- Tightened the hand layout spacing and aligned the action panel to the bottom of the hand row to reduce empty vertical gaps.
 - Fixed hand-card hover popout stacking/spacing so hovered cards render above the actions column without clipping; marked the plan item complete in `implementation_plan.md`.
 - Raised hand-panel z-index and reordered hover/pass layering so hovered cards sit above most UI while pass/submit stays on top.
 - Let the hand cards column span under the actions column with padding so hovered cards can overlap the actions area without clipping.
@@ -122,6 +124,7 @@
 - Added a host-only debug state patch tool in the room debug panel + server command, and marked the plan item complete in `implementation_plan.md`.
 - Added a champion crest marker on unit stacks to make champion presence easier to spot on the board.
 - Added faction badges on unit stacks to help differentiate ownership at a glance.
+- Added a march force-count picker (move all vs split) to the action panel UI and passed `forceCount` through submit payloads; updated `implementation_plan.md` to split remaining card-move UI work.
 - Added engine support for partial force moves (optional `forceCount`), updated Quick Move/Banner Claim to move 1 force, and refreshed action-flow coverage; `implementation_plan.md` split UI vs engine subtasks.
 - Overlap note: commit included pre-staged battle UX files `apps/web/src/components/CombatOverlay.tsx` and `apps/web/src/lib/combat-log.ts` from another agent's scope.
 - Added combat round logging with dice/hit assignment payloads and a battle overlay that supports click-to-roll dice with hit assignment display; marked the Milestone 9 battle UX item complete in `implementation_plan.md`.
