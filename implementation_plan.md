@@ -445,6 +445,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [x] Added Emergency Evac with champion recall to capital + heal effect.
   - [x] Added Make a Play and Paid Logistics deckcraft cards (gain mana, burn).
   - [x] Added Small Hands deckcraft card (draw when hand empty).
+  - [x] Added Roll Out with multi-stack movement support.
 - Expand Age II/III market + power deck lists to match the latest rules_draft (including power champions and burn-heavy cards).
   - [ ] Age II market cards + champions (47 cards + 8 champions).
   - [ ] Age III market cards + champions (47 cards + 8 champions).

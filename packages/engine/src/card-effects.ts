@@ -41,6 +41,7 @@ const SUPPORTED_TARGET_KINDS = new Set([
   "edge",
   "stack",
   "path",
+  "multiPath",
   "champion",
   "choice",
   "hex",
@@ -55,6 +56,7 @@ const SUPPORTED_EFFECTS = new Set([
   "prospecting",
   "buildBridge",
   "moveStack",
+  "moveStacks",
   "deployForces",
   "increaseMineValue",
   "healChampion",
@@ -89,6 +91,7 @@ type MoveValidation = {
   requiresBridge: boolean;
   requireStartOccupied: boolean;
   forceCount?: number;
+  movingUnitIds?: string[];
 };
 
 const getTargetRecord = (targets: CardPlayTargets): TargetRecord | null => {
@@ -171,6 +174,40 @@ const getMovePathTarget = (targets: CardPlayTargets): string[] | null => {
     return null;
   }
   return [stack.from, stack.to];
+};
+
+const normalizePath = (value: unknown): string[] | null => {
+  if (!Array.isArray(value) || value.length < 2) {
+    return null;
+  }
+  if (!value.every((entry) => typeof entry === "string" && entry.length > 0)) {
+    return null;
+  }
+  return value as string[];
+};
+
+const getMultiPathTargets = (targets: CardPlayTargets): string[][] | null => {
+  const record = getTargetRecord(targets);
+  const raw = record?.paths ?? record?.path;
+  if (!raw) {
+    return null;
+  }
+  if (!Array.isArray(raw) || raw.length === 0) {
+    return null;
+  }
+  if (raw.every((entry) => typeof entry === "string")) {
+    const single = normalizePath(raw);
+    return single ? [single] : null;
+  }
+  const paths: string[][] = [];
+  for (const entry of raw) {
+    const path = normalizePath(entry);
+    if (!path) {
+      return null;
+    }
+    paths.push(path);
+  }
+  return paths.length > 0 ? paths : null;
 };
 
 const getChoiceTarget = (
@@ -634,7 +671,23 @@ export const validateMovePath = (
     }
   }
 
-  const movingUnitIds = selectMovingUnits(state.board, playerId, path[0], options.forceCount);
+  const fromHex = state.board.hexes[path[0]];
+  if (!fromHex) {
+    return null;
+  }
+  const providedUnits =
+    Array.isArray(options.movingUnitIds) && options.movingUnitIds.length > 0
+      ? options.movingUnitIds
+      : null;
+  const movingUnitIds = providedUnits
+    ? providedUnits
+    : selectMovingUnits(state.board, playerId, path[0], options.forceCount);
+  if (providedUnits) {
+    const occupantSet = new Set(fromHex.occupants[playerId] ?? []);
+    if (!providedUnits.every((unitId) => occupantSet.has(unitId))) {
+      return null;
+    }
+  }
   if (options.requireStartOccupied && movingUnitIds.length === 0) {
     return null;
   }
@@ -848,6 +901,27 @@ const moveUnitsAlongPath = (
   return nextState;
 };
 
+const moveUnitIdsAlongPath = (
+  state: GameState,
+  playerId: PlayerID,
+  path: string[],
+  movingUnitIds: string[]
+): GameState => {
+  if (movingUnitIds.length === 0) {
+    return state;
+  }
+
+  let nextState = state;
+  for (let index = 0; index < path.length - 1; index += 1) {
+    const from = path[index];
+    const to = path[index + 1];
+    nextState = moveUnits(nextState, playerId, movingUnitIds, from, to);
+    nextState = runMoveEvents(nextState, { playerId, from, to, path, movingUnitIds });
+  }
+
+  return nextState;
+};
+
 export const isCardPlayable = (
   state: GameState,
   playerId: PlayerID,
@@ -986,6 +1060,58 @@ export const isCardPlayable = (
         forceCount
       })
     );
+  }
+
+  if (card.targetSpec.kind === "multiPath") {
+    const targetSpec = card.targetSpec as TargetRecord;
+    const owner = typeof targetSpec.owner === "string" ? targetSpec.owner : "self";
+    if (owner !== "self") {
+      return false;
+    }
+    const paths = getMultiPathTargets(targets ?? null);
+    if (!paths || paths.length === 0) {
+      return false;
+    }
+    const minPaths =
+      typeof targetSpec.minPaths === "number" ? Math.max(0, Math.floor(targetSpec.minPaths)) : 1;
+    const maxPaths =
+      typeof targetSpec.maxPaths === "number"
+        ? Math.max(0, Math.floor(targetSpec.maxPaths))
+        : Number.POSITIVE_INFINITY;
+    if (paths.length < minPaths || paths.length > maxPaths) {
+      return false;
+    }
+    const moveEffect = card.effects?.find(
+      (effect) => effect.kind === "moveStacks"
+    ) as TargetRecord | undefined;
+    const maxDistance =
+      typeof moveEffect?.maxDistance === "number"
+        ? moveEffect.maxDistance
+        : typeof targetSpec.maxDistance === "number"
+          ? targetSpec.maxDistance
+          : undefined;
+    const requiresBridge =
+      moveEffect?.requiresBridge === false ? false : targetSpec.requiresBridge !== false;
+    const seenStarts = new Set<string>();
+    let moveState = state;
+    for (const path of paths) {
+      const start = path[0];
+      if (seenStarts.has(start)) {
+        return false;
+      }
+      seenStarts.add(start);
+      if (
+        !validateMovePath(moveState, playerId, path, {
+          maxDistance,
+          requiresBridge,
+          requireStartOccupied: true
+        })
+      ) {
+        return false;
+      }
+      moveState = markPlayerMovedThisRound(moveState, playerId);
+    }
+    return true;
   }
 
   if (card.targetSpec.kind === "stack" || card.targetSpec.kind === "path") {
@@ -1880,6 +2006,73 @@ export const resolveCardEffects = (
           player.capitalHex,
           centerHexKey
         );
+        break;
+      }
+      case "moveStacks": {
+        const paths = getMultiPathTargets(targets ?? null);
+        if (!paths || paths.length === 0) {
+          break;
+        }
+        const targetSpec = card.targetSpec as TargetRecord;
+        const owner = typeof targetSpec.owner === "string" ? targetSpec.owner : "self";
+        if (owner !== "self") {
+          break;
+        }
+        const minPaths =
+          typeof targetSpec.minPaths === "number"
+            ? Math.max(0, Math.floor(targetSpec.minPaths))
+            : 1;
+        const maxPaths =
+          typeof targetSpec.maxPaths === "number"
+            ? Math.max(0, Math.floor(targetSpec.maxPaths))
+            : Number.POSITIVE_INFINITY;
+        if (paths.length < minPaths || paths.length > maxPaths) {
+          break;
+        }
+        const maxDistance =
+          typeof effect.maxDistance === "number"
+            ? effect.maxDistance
+            : typeof targetSpec.maxDistance === "number"
+              ? targetSpec.maxDistance
+              : undefined;
+        const requiresBridge =
+          effect.requiresBridge === false ? false : targetSpec.requiresBridge !== false;
+        const seenStarts = new Set<string>();
+        const movePlans: Array<{ path: string[]; unitIds: string[] }> = [];
+        let validationState = nextState;
+        const snapshotBoard = nextState.board;
+        for (const path of paths) {
+          const start = path[0];
+          if (seenStarts.has(start)) {
+            movePlans.length = 0;
+            break;
+          }
+          seenStarts.add(start);
+          const unitIds = selectMovingUnits(snapshotBoard, playerId, start);
+          if (unitIds.length === 0) {
+            movePlans.length = 0;
+            break;
+          }
+          const validPath = validateMovePath(validationState, playerId, path, {
+            maxDistance,
+            requiresBridge,
+            requireStartOccupied: true,
+            movingUnitIds: unitIds
+          });
+          if (!validPath) {
+            movePlans.length = 0;
+            break;
+          }
+          movePlans.push({ path: validPath, unitIds });
+          validationState = markPlayerMovedThisRound(validationState, playerId);
+        }
+        if (movePlans.length === 0) {
+          break;
+        }
+        for (const plan of movePlans) {
+          nextState = moveUnitIdsAlongPath(nextState, playerId, plan.path, plan.unitIds);
+          nextState = markPlayerMovedThisRound(nextState, playerId);
+        }
         break;
       }
       case "moveStack": {

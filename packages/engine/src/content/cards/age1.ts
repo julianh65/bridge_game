@@ -19,6 +19,26 @@ export const QUICK_MARCH: CardDef = {
   effects: [{ kind: "moveStack", maxDistance: 2 }]
 };
 
+export const ROLL_OUT: CardDef = {
+  id: "age1.roll_out",
+  name: "Roll Out",
+  rulesText: "Move up to 2 different stacks up to 1 hex along Bridges each.",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1 },
+  initiative: 60,
+  burn: false,
+  targetSpec: {
+    kind: "multiPath",
+    owner: "self",
+    maxDistance: 1,
+    maxPaths: 2,
+    requiresBridge: true
+  },
+  effects: [{ kind: "moveStacks", maxDistance: 1 }]
+};
+
 export const FLANK_STEP: CardDef = {
   id: "age1.flank_step",
   name: "Flank Step",
@@ -587,6 +607,7 @@ export const TRAITOR: CardDef = {
 
 export const AGE1_CARDS: CardDef[] = [
   QUICK_MARCH,
+  ROLL_OUT,
   FLANK_STEP,
   EMERGENCY_EVAC,
   PROSPECTING,
