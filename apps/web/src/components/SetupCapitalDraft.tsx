@@ -77,6 +77,7 @@ export const SetupCapitalDraft = ({
     () => capitalSlots.filter((slot) => !capitalByHex.has(slot)),
     [capitalSlots, capitalByHex]
   );
+  const draftOrder = useMemo(() => buildDraftOrder(players), [players]);
 
   const isCapitalDraft =
     view.public.phase === "setup" &&
@@ -87,7 +88,6 @@ export const SetupCapitalDraft = ({
     return null;
   }
 
-  const draftOrder = useMemo(() => buildDraftOrder(players), [players]);
   const pickedPlayers = new Set(capitalByPlayer.keys());
   const nextPickerId = draftOrder.find((id) => !pickedPlayers.has(id)) ?? null;
   const nextPickerName =

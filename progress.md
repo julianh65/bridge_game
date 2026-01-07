@@ -17,7 +17,7 @@
 
 ## Active tasks
 - owner: agent4 | scope: investigate/fix board click target selection for bridge/hex picks (urgent card targeting not selecting) | files: apps/web/src/components/BoardView.tsx, apps/web/src/components/GameScreen.tsx, apps/web/src/components/ActionPanel.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md | status: in progress
-- owner: agent3 | scope: investigate/fix manual setup flow (standard setup not working without auto) | files: apps/web/src/components/SetupCapitalDraft.tsx, apps/web/src/components/SetupStartingBridges.tsx, apps/web/src/components/SetupFreeStartingCardPick.tsx, apps/web/src/components/PreGameLobby.tsx, apps/server/src/server.ts, progress.md, implementation_plan.md | status: in progress
+- owner: agent2 | scope: add deck flow UI to DeckViewer with pile counts + animated arrows (overlap note: styles.css also in agent4 scope) | files: apps/web/src/components/DeckViewer.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md | status: in progress
 
 ## Milestone 8.5 progress
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.
@@ -35,6 +35,7 @@
 - Added a market winner highlight/animation on the overlay cards and marked the plan item complete in `implementation_plan.md`.
 - Enabled direct edge clicks for bridge/card edge targeting (preview edges even before selecting a start hex) and noted the subtask in `implementation_plan.md`.
 - Fixed edge-pick hex selection by letting unit stack clicks trigger hex targeting (Bridge Crew/build bridge) and marked the plan item complete in `implementation_plan.md`.
+- Fixed SetupCapitalDraft hook ordering to prevent hook-mismatch crashes once capital draft completes, unblocking manual setup progression.
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.
