@@ -437,7 +437,7 @@ none
 - Switched the card-art generator to OpenAI's image API, updated the base prompt + title suffix behavior, added title-based filenames, and made manifest updates optional. (Files: `scripts/generate-card-art.js`.)
 - Documented OpenAI card-art generator usage, API key setup, and prompt tuning in `docs/cards.md`.
 - Added docs guidance on safe card renames and creating variant cards with unique ids in `docs/cards.md`.
-- Added a pre-check in the art generator to skip OpenAI calls when target filenames already exist; manifest still updated for single-image skips.
+- Added a pre-check in the art generator to skip OpenAI calls when target filenames already exist; manifest still updated for single-image skips. (Overlap note: commit also picked up pre-staged changes in `packages/engine/src/champions.ts`, `packages/engine/src/champion-abilities.test.ts`, and `implementation_plan.md`.)
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
