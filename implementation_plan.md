@@ -449,6 +449,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - show full state JSON
   - force advance to next phase
   - seed controls
+- [x] Set explicit Victory card VP values in card defs and surface them in card UI.
 
 ## Milestone 8.5 -- Things I've noticed and nice to haves
 

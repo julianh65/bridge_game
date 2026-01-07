@@ -16,10 +16,11 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- owner: agent1; scope: implement Siege Engineer on-deploy bridge destruction + tests; files: packages/engine/src/champions.ts, packages/engine/src/champion-abilities.test.ts, implementation_plan.md, progress.md; status: in progress
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
+- Added explicit victoryPoints values to Age I Victory cards and marked the plan item complete in `implementation_plan.md`.
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
