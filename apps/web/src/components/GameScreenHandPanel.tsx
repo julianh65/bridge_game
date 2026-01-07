@@ -89,6 +89,19 @@ export const GameScreenHandPanel = ({
               <span className="hand-meta">{handCount} cards</span>
             </div>
             <div className="hand-controls">
+              {deckCounts ? (
+                <div className="deck-pills" aria-label="Deck counts">
+                  <span className="deck-pill">
+                    Draw <strong>{deckCounts.drawPile}</strong>
+                  </span>
+                  <span className="deck-pill">
+                    Discard <strong>{deckCounts.discardPile}</strong>
+                  </span>
+                  <span className="deck-pill">
+                    Scrapped <strong>{deckCounts.scrapped}</strong>
+                  </span>
+                </div>
+              ) : null}
               <button type="button" className="btn btn-tertiary" onClick={onHideHandPanel}>
                 Hide
               </button>
@@ -178,24 +191,6 @@ export const GameScreenHandPanel = ({
             </aside>
           </div>
           <div className="game-hand__footer">
-            {deckCounts ? (
-              <div className="deck-counts deck-counts--compact">
-                <div className="resource-row">
-                  <span>Draw</span>
-                  <strong>{deckCounts.drawPile}</strong>
-                </div>
-                <div className="resource-row">
-                  <span>Discard</span>
-                  <strong>{deckCounts.discardPile}</strong>
-                </div>
-                <div className="resource-row">
-                  <span>Scrapped</span>
-                  <strong>{deckCounts.scrapped}</strong>
-                </div>
-              </div>
-            ) : (
-              <div />
-            )}
             <div className="hand-submit">
               <button
                 type="button"
