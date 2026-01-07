@@ -16,7 +16,10 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- owner: agent1
+  scope: implement Column Advance (Age I) with stop-on-occupied movement validation + tests (overlaps card effects/data)
+  files: packages/engine/src/card-effects.ts, packages/engine/src/content/cards/age1.ts, packages/engine/src/card-effects.column-advance.test.ts, progress.md, implementation_plan.md
+  status: in_progress
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -448,6 +451,7 @@ none
 - Added Tax Reaver kill-steal rewards, Capturer battle-win force deploy, Blood Banker per-round gold trigger, and Capital Breaker siege hit buff via champion modifiers + new kill-steal hook; added champion ability tests and plan updates.
 - Added Bannerman/Center Bannerman VP bonuses via a scoring bonus hook, plus scoring tests and plan updates.
 - Added Logistics Officer deploy-as-capital support in `resolveCapitalDeployHex` with action-flow coverage; updated `implementation_plan.md`. (Overlap note: `progress.md`/`implementation_plan.md` also include pre-existing checklist updates for board-pick highlights and champion ability tests.)
+- Added Stormcaller Tempest AoE champion ability (adjacent enemy champion damage) with per-round uses and champion ability test; updated `implementation_plan.md`. (Overlap note: `implementation_plan.md` had pre-existing checklist updates.)
 - Added champion ability tests for Ironclad Warden (Bodyguard) and Shadeblade (Assassin's Edge); updated the plan checklist. (Files: `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.) (owner: agent2)
 
 ## Milestone 7.5 progress

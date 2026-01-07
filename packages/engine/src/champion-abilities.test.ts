@@ -257,6 +257,94 @@ describe("champion abilities", () => {
     expect(shadeUnit.abilityUses["assassins_edge"]?.remaining).toBe(0);
   });
 
+  it("triggers Stormcaller tempest on adjacent enemy champions", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const enemyCard = getChampionCard("champion.age1.sergeant");
+    const stormHex = "0,0";
+    const adjacentHex = neighborHexKeys(stormHex).find((key) => Boolean(board.hexes[key]));
+    if (!adjacentHex) {
+      throw new Error("missing adjacent hex for stormcaller test");
+    }
+
+    const deployedStorm = addChampionToHex(board, "p1", stormHex, {
+      cardDefId: "champion.age3.stormcaller",
+      hp: 8,
+      attackDice: 3,
+      hitFaces: 2,
+      bounty: 4
+    });
+    const deployedEnemy = addChampionToHex(deployedStorm.board, "p2", stormHex, {
+      cardDefId: enemyCard.id,
+      hp: enemyCard.champion.hp,
+      attackDice: enemyCard.champion.attackDice,
+      hitFaces: enemyCard.champion.hitFaces,
+      bounty: enemyCard.champion.bounty
+    });
+    const deployedAdjacent = addChampionToHex(deployedEnemy.board, "p2", adjacentHex, {
+      cardDefId: enemyCard.id,
+      hp: enemyCard.champion.hp,
+      attackDice: enemyCard.champion.attackDice,
+      hitFaces: enemyCard.champion.hitFaces,
+      bounty: enemyCard.champion.bounty
+    });
+
+    let state = {
+      ...base,
+      board: deployedAdjacent.board,
+      phase: "round.action",
+      blocks: undefined
+    };
+
+    state = applyChampionDeployment(state, deployedStorm.unitId, "champion.age3.stormcaller", "p1");
+
+    const adjacentUnit = state.board.units[deployedAdjacent.unitId];
+    const battleEnemy = state.board.units[deployedEnemy.unitId];
+    if (!adjacentUnit || adjacentUnit.kind !== "champion") {
+      throw new Error("missing adjacent enemy champion");
+    }
+    if (!battleEnemy || battleEnemy.kind !== "champion") {
+      throw new Error("missing battle enemy champion");
+    }
+    const adjacentHp = adjacentUnit.hp;
+    const battleHp = battleEnemy.hp;
+
+    state = runModifierEvents(
+      state,
+      getCombatModifiers(state, stormHex),
+      (hooks) => hooks.beforeCombatRound,
+      {
+        hexKey: stormHex,
+        attackerPlayerId: "p1",
+        defenderPlayerId: "p2",
+        round: 1,
+        attackers: [deployedStorm.unitId],
+        defenders: [deployedEnemy.unitId]
+      }
+    );
+
+    const damagedAdjacent = state.board.units[deployedAdjacent.unitId];
+    if (!damagedAdjacent || damagedAdjacent.kind !== "champion") {
+      throw new Error("missing damaged adjacent champion");
+    }
+    expect(damagedAdjacent.hp).toBe(adjacentHp - 1);
+
+    const stillBattleEnemy = state.board.units[deployedEnemy.unitId];
+    if (!stillBattleEnemy || stillBattleEnemy.kind !== "champion") {
+      throw new Error("missing battle enemy after tempest");
+    }
+    expect(stillBattleEnemy.hp).toBe(battleHp);
+
+    const stormUnit = state.board.units[deployedStorm.unitId];
+    if (!stormUnit || stormUnit.kind !== "champion") {
+      throw new Error("missing stormcaller unit");
+    }
+    expect(stormUnit.abilityUses["tempest"]?.remaining).toBe(0);
+  });
+
   it("boosts friendly forces in the hex for Inspiring Geezer", () => {
     const base = createNewGame(DEFAULT_CONFIG, 1, [
       { id: "p1", name: "Player 1" },

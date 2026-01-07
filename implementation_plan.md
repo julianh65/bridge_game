@@ -359,7 +359,9 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
     - [x] Siege modifiers: Capital Breaker (siege hit buff)
     - [x] VP modifiers: Bannerman/Center Bannerman (VP while on board/center)
     - [x] Active abilities: Field Surgeon (heal champion in hex 1/round)
-    - [ ] Active abilities: Stormcaller (Tempest AoE), Grand Strategist (Tactical Hand hit assignment)
+    - [ ] Active abilities:
+      - [x] Stormcaller (Tempest AoE)
+      - [ ] Grand Strategist (Tactical Hand hit assignment)
 - [ ] Quick check in, the rules in rules_draft are kind of living and breathing as I update things or change balance so make sure that everything is still correct, and add a few more champions and their abilities and everything in to test
 
 ### Tasks (web)

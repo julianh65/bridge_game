@@ -32,6 +32,7 @@ const SIEGE_ENGINEER_CHAMPION_ID = "champion.age2.siege_engineer";
 const CAPTURER_CHAMPION_ID = "champion.age2.capturer";
 const TAX_REAVER_CHAMPION_ID = "champion.age2.tax_reaver";
 const BLOOD_BANKER_CHAMPION_ID = "champion.age3.blood_banker";
+const STORMCALLER_CHAMPION_ID = "champion.age3.stormcaller";
 const CAPITAL_BREAKER_CHAMPION_ID = "champion.age3.capital_breaker";
 const BANNERMAN_CHAMPION_ID = "champion.power.bannerman";
 const CENTER_BANNERMAN_CHAMPION_ID = "champion.age3.center_bannerman";
@@ -39,6 +40,7 @@ const CENTER_BANNERMAN_CHAMPION_ID = "champion.age3.center_bannerman";
 const ASSASSINS_EDGE_KEY = "assassins_edge";
 const STITCHWORK_KEY = "stitchwork";
 const BLOOD_LEDGER_KEY = "blood_ledger";
+const TEMPEST_KEY = "tempest";
 
 const BRIDGE_BYPASS_CHAMPION_IDS = new Set([FLIGHT_CHAMPION_ID, BRIDGE_RUNNER_CHAMPION_ID]);
 
@@ -51,6 +53,9 @@ const PER_ROUND_ABILITY_USES: Record<CardDefId, Record<string, number>> = {
   },
   [BLOOD_BANKER_CHAMPION_ID]: {
     [BLOOD_LEDGER_KEY]: 1
+  },
+  [STORMCALLER_CHAMPION_ID]: {
+    [TEMPEST_KEY]: 1
   }
 };
 
@@ -639,6 +644,71 @@ const createCapturerModifier = (
   }
 });
 
+const createStormcallerModifier = (
+  unitId: UnitID,
+  ownerPlayerId: PlayerID
+): Modifier => ({
+  id: buildChampionModifierId(unitId, "stormcaller"),
+  source: { type: "champion", sourceId: STORMCALLER_CHAMPION_ID },
+  ownerPlayerId,
+  duration: { type: "permanent" },
+  data: { unitId },
+  hooks: {
+    beforeCombatRound: ({ state, modifier, attackers, defenders }) => {
+      const sourceUnitId = getModifierUnitId(modifier);
+      if (!sourceUnitId) {
+        return state;
+      }
+      const sourceUnit = state.board.units[sourceUnitId];
+      if (!sourceUnit || sourceUnit.kind !== "champion") {
+        return state;
+      }
+      if (!canChampionUseAbility(sourceUnit, TEMPEST_KEY)) {
+        return state;
+      }
+      if (![...attackers, ...defenders].includes(sourceUnitId)) {
+        return state;
+      }
+
+      const neighborKeys = neighborHexKeys(sourceUnit.hex).filter(
+        (key) => Boolean(state.board.hexes[key])
+      );
+      if (neighborKeys.length === 0) {
+        return state;
+      }
+
+      const targetIds: UnitID[] = [];
+      for (const hexKey of neighborKeys) {
+        const hex = state.board.hexes[hexKey];
+        if (!hex) {
+          continue;
+        }
+        for (const [playerId, unitIds] of Object.entries(hex.occupants)) {
+          if (playerId === sourceUnit.ownerPlayerId) {
+            continue;
+          }
+          for (const targetId of unitIds ?? []) {
+            const unit = state.board.units[targetId];
+            if (unit?.kind === "champion") {
+              targetIds.push(targetId);
+            }
+          }
+        }
+      }
+
+      if (targetIds.length === 0) {
+        return state;
+      }
+
+      let nextState = consumeChampionAbilityUse(state, sourceUnitId, TEMPEST_KEY);
+      for (const targetId of targetIds) {
+        nextState = dealChampionDamage(nextState, sourceUnit.ownerPlayerId, targetId, 1);
+      }
+      return nextState;
+    }
+  }
+});
+
 const createCapitalBreakerModifier = (
   unitId: UnitID,
   ownerPlayerId: PlayerID
@@ -770,6 +840,8 @@ const createChampionModifiers = (
       return [createTaxReaverModifier(unitId, ownerPlayerId)];
     case CAPTURER_CHAMPION_ID:
       return [createCapturerModifier(unitId, ownerPlayerId)];
+    case STORMCALLER_CHAMPION_ID:
+      return [createStormcallerModifier(unitId, ownerPlayerId)];
     case CAPITAL_BREAKER_CHAMPION_ID:
       return [createCapitalBreakerModifier(unitId, ownerPlayerId)];
     case BANNERMAN_CHAMPION_ID:
