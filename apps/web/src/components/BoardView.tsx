@@ -5,7 +5,7 @@ import type {
   WheelEventHandler
 } from "react";
 
-import type { BoardState } from "@bridgefront/engine";
+import { CARD_DEFS_BY_ID, type BoardState } from "@bridgefront/engine";
 import { parseEdgeKey } from "@bridgefront/shared";
 
 import { HEX_SIZE, hexPoints } from "../lib/hex-geometry";
@@ -87,6 +87,20 @@ const normalizeColorIndex = (value: number | undefined) => {
   }
   return Math.max(0, Math.min(5, Math.floor(value)));
 };
+
+const getCardName = (cardDefId: string) => {
+  return CARD_DEFS_BY_ID[cardDefId]?.name ?? cardDefId;
+};
+
+const truncateChampionName = (name: string) => {
+  const maxLength = 9;
+  if (name.length <= maxLength) {
+    return name;
+  }
+  return `${name.slice(0, maxLength - 3)}...`;
+};
+
+const estimateBadgeWidth = (label: string) => Math.max(28, label.length * 6 + 12);
 
 const viewBoxEquals = (a: ViewBox, b: ViewBox): boolean => {
   const epsilon = 0.01;
@@ -248,6 +262,7 @@ export const BoardView = ({
       championDetails: Array<{
         id: string;
         cardDefId: string;
+        name: string;
         hp: number;
         maxHp: number;
       }>;
@@ -283,9 +298,11 @@ export const BoardView = ({
             forceCount += 1;
           } else {
             championCount += 1;
+            const name = getCardName(unit.cardDefId);
             championDetails.push({
               id: unit.id,
               cardDefId: unit.cardDefId,
+              name,
               hp: unit.hp,
               maxHp: unit.maxHp
             });
@@ -782,6 +799,61 @@ export const BoardView = ({
         const offset = offsets[stack.offsetIndex % offsets.length] ?? offsets[0];
         const cx = stack.x + offset.dx;
         const cy = stack.y + offset.dy;
+        const championBadges = (() => {
+          if (stack.championDetails.length === 0) {
+            return [];
+          }
+          const maxBadges = 2;
+          const badges = stack.championDetails.slice(0, maxBadges).map((champion) => {
+            const shortName = truncateChampionName(champion.name);
+            return {
+              label: `${shortName} ${champion.hp}/${champion.maxHp}`,
+              title: `${champion.name} ${champion.hp}/${champion.maxHp}`,
+              isExtra: false
+            };
+          });
+          const extraCount = stack.championDetails.length - maxBadges;
+          if (extraCount > 0) {
+            badges.push({
+              label: `+${extraCount}`,
+              title: `${extraCount} more champion${extraCount === 1 ? "" : "s"}`,
+              isExtra: true
+            });
+          }
+          return badges;
+        })();
+        const badgeHeight = 12;
+        const badgeGap = 4;
+        const badgeY = cy - 28;
+        const badgeWidths = championBadges.map((badge) => estimateBadgeWidth(badge.label));
+        const totalBadgeWidth =
+          badgeWidths.reduce((sum, width) => sum + width, 0) +
+          Math.max(0, badgeWidths.length - 1) * badgeGap;
+        const badgeLayout = (() => {
+          if (championBadges.length === 0) {
+            return [];
+          }
+          const layout: Array<{
+            label: string;
+            title: string;
+            isExtra: boolean;
+            width: number;
+            x: number;
+          }> = [];
+          let cursorX = cx - totalBadgeWidth / 2;
+          championBadges.forEach((badge, index) => {
+            const width = badgeWidths[index] ?? estimateBadgeWidth(badge.label);
+            layout.push({
+              label: badge.label,
+              title: badge.title,
+              isExtra: badge.isExtra,
+              width,
+              x: cursorX
+            });
+            cursorX += width + badgeGap;
+          });
+          return layout;
+        })();
         const stackTitleLines = [
           `Stack ${playerLabel(stack.ownerPlayerId)}`,
           `Forces: ${stack.forceCount}`,
@@ -791,7 +863,7 @@ export const BoardView = ({
           stackTitleLines.push("Champion HP:");
           for (const champion of stack.championDetails) {
             stackTitleLines.push(
-              `- ${champion.cardDefId} ${champion.hp}/${champion.maxHp}`
+              `- ${champion.name} ${champion.hp}/${champion.maxHp}`
             );
           }
         }
@@ -824,11 +896,39 @@ export const BoardView = ({
                 {stack.forceCount}
               </text>
             ) : null}
-            {stack.championCount > 0 ? (
-              <text x={cx} y={cy - 10} className="unit__champion">
-                C{stack.championCount}
-              </text>
-            ) : null}
+            {badgeLayout.map((badge, index) => {
+              const badgeClass = [
+                "champion-badge",
+                colorIndex !== undefined ? `champion-badge--p${colorIndex}` : "",
+                badge.isExtra ? "champion-badge--extra" : ""
+              ]
+                .filter(Boolean)
+                .join(" ");
+              return (
+                <g
+                  key={`${stack.key}-badge-${index}`}
+                  className="champion-badge__wrap"
+                >
+                  <title>{badge.title}</title>
+                  <rect
+                    className={badgeClass}
+                    x={badge.x}
+                    y={badgeY}
+                    width={badge.width}
+                    height={badgeHeight}
+                    rx={badgeHeight / 2}
+                    ry={badgeHeight / 2}
+                  />
+                  <text
+                    className="champion-badge__text"
+                    x={badge.x + badge.width / 2}
+                    y={badgeY + badgeHeight / 2}
+                  >
+                    {badge.label}
+                  </text>
+                </g>
+              );
+            })}
           </g>
         );
       })}

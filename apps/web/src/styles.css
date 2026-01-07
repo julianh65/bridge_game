@@ -3205,6 +3205,52 @@ h1 {
   stroke-width: 1.1;
 }
 
+.champion-badge {
+  fill: #f7e2a6;
+  stroke: rgba(120, 86, 20, 0.9);
+  stroke-width: 0.9;
+  filter: drop-shadow(0 1px 2px rgba(40, 26, 12, 0.45));
+}
+
+.champion-badge--extra {
+  fill: #f1d4a6;
+}
+
+.champion-badge__text {
+  font-size: 7px;
+  font-weight: 700;
+  fill: #3b2a12;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.6);
+  stroke-width: 1;
+}
+
+.champion-badge--p0 {
+  stroke: var(--player-color-0);
+}
+
+.champion-badge--p1 {
+  stroke: var(--player-color-1);
+}
+
+.champion-badge--p2 {
+  stroke: var(--player-color-2);
+}
+
+.champion-badge--p3 {
+  stroke: var(--player-color-3);
+}
+
+.champion-badge--p4 {
+  stroke: var(--player-color-4);
+}
+
+.champion-badge--p5 {
+  stroke: var(--player-color-5);
+}
+
 .victory-screen {
   position: fixed;
   inset: 0;

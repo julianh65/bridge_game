@@ -445,7 +445,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] The table view has to be a bit more easy to read, idk where it can go, on the right where it is, on the top, but we need to at a glance be able to just briefly see everyone's status, you can make it smaller as well
 
 ### Other
-- [ ] The champion needs to be more obvious, like a seperate thing with its health and name and stuff, and they can hover over it to see the stats
+- [x] The champion needs to be more obvious, like a seperate thing with its health and name and stuff, and they can hover over it to see the stats
 - [ ] A lot of duplicative information everywhere, like multiple live pills or whatever
 
 ### Tasks (web - targeting reliability)

@@ -17,7 +17,7 @@
 
 ## Active tasks
 - owner: agent2 | scope: implement Aerial Tailwind passive (+1 move on first stack move per round) with engine tests | files: `packages/engine/src/faction-passives.ts`, `packages/engine/src/modifiers.ts`, `packages/engine/src/types.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/action-flow.test.ts` | status: in progress
-- owner: agent4 | scope: make champion stacks more visible on the board with name/HP badges | files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md` | status: in progress
+- owner: agent3 | scope: implement Cipher Expanded Choice passive (N+1 card offers) for free-start + collection prompts with tests and helper copy update | files: `packages/engine/src/types.ts`, `packages/engine/src/modifiers.ts`, `packages/engine/src/faction-passives.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/round-flow.test.ts`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `implementation_plan.md` | status: in progress
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -47,6 +47,7 @@
 - Disabled hex clicks/highlights during edge targeting so only edges are selectable; updated card edge hint copy and marked the plan item complete in `implementation_plan.md` (overlap: `apps/web/src/components/GameScreen.tsx` touched alongside agent4 scope).
 - Removed the board header/hints and tightened board panel padding to reduce wasted space above the board; marked the plan item complete in `implementation_plan.md`.
 - Improved champion visibility on the board with a halo + brighter label and marked the plan item complete in `implementation_plan.md` (overlap: `apps/web/src/styles.css` touched alongside layout tweaks).
+- Added champion name/HP badges above stacks for clearer champion visibility and marked the plan item complete in `implementation_plan.md`.
 - Made the sidebar Table view more compact with a column header, aligned stats, and compact status pills; marked the plan item complete in `implementation_plan.md`.
 - Tightened Table spacing and stacked compact status pills (removed uppercase) to prevent overflow on narrower sidebars (overlap: `apps/web/src/styles.css` with agent4).
 - Auto-enabled card board targeting on card select (edge/stack/path/hex/choice) and updated card target buttons to show when board picking is active; marked the plan item complete in `implementation_plan.md`.
