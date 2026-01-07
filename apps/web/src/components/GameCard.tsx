@@ -2,6 +2,8 @@ import type { ElementType, ReactNode } from "react";
 
 import type { CardDef } from "@bridgefront/engine";
 
+import { getCardArtUrl } from "../lib/card-art";
+
 export type GameCardVariant = "grid" | "market" | "hand" | "detail" | "offer";
 
 type GameCardProps = {
@@ -17,6 +19,7 @@ type GameCardProps = {
   showTags?: boolean;
   showChampionStats?: boolean;
   showArt?: boolean;
+  artUrl?: string | null;
   showStats?: boolean;
   count?: number | null;
   isHidden?: boolean;
@@ -67,6 +70,7 @@ export const GameCard = ({
   showTags = false,
   showChampionStats = false,
   showArt = true,
+  artUrl = null,
   showStats = true,
   count = null,
   isHidden = false,
@@ -87,9 +91,12 @@ export const GameCard = ({
   const isChampion = Boolean(card?.champion);
   const isPower = deck === "power";
   const showUnknown = isHidden || !card;
+  const resolvedArtUrl = artUrl ?? getCardArtUrl(cardId);
+  const showArtImage = Boolean(resolvedArtUrl) && !isHidden;
   const initiativeLabel = showStats ? (showUnknown ? "?" : `${card?.initiative ?? "?"}`) : null;
   const manaLabel = showUnknown ? "?" : `${card?.cost.mana ?? 0}`;
   const goldLabel = showUnknown ? "?" : `${card?.cost.gold ?? 0}`;
+  const artText = artLabel ?? (isHidden ? "Face down" : "Art");
 
   const classes = [
     "game-card",
@@ -122,8 +129,19 @@ export const GameCard = ({
       </div>
       {deckLabel ? <div className="game-card__age">{deckLabel}</div> : null}
       {showArt ? (
-        <div className="game-card__art">
-          <span>{artLabel ?? (isHidden ? "Face down" : "Art")}</span>
+        <div
+          className="game-card__art"
+          style={
+            showArtImage
+              ? {
+                  backgroundImage: `url(${resolvedArtUrl})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center"
+                }
+              : undefined
+          }
+        >
+          {!showArtImage ? <span>{artText}</span> : null}
         </div>
       ) : null}
       {showRules ? (

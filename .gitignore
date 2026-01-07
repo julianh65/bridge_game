@@ -8,3 +8,7 @@ coverage
 .DS_Store
 *.log
 *.tsbuildinfo
+/apps/web/public/card-art/*.png
+/apps/web/public/card-art/*.jpg
+/apps/web/public/card-art/*.jpeg
+/apps/web/public/card-art/*.webp
