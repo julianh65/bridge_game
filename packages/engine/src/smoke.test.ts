@@ -724,27 +724,39 @@ const advanceWithRandomChoices = (
 };
 
 describe("smoke sim", () => {
-  it("auto-resolves blocks across a few rounds", () => {
-    let state = createNewGame(DEFAULT_CONFIG, 123, [
-      { id: "p1", name: "Player 1" },
-      { id: "p2", name: "Player 2" }
-    ]);
+  const buildLobbyPlayers = (count: number) =>
+    Array.from({ length: count }, (_, index) => ({
+      id: `p${index + 1}`,
+      name: `Player ${index + 1}`
+    }));
+  const playerCounts = [2, 3, 4];
 
-    state = advanceWithAutoChoices(state, 3);
+  playerCounts.forEach((count) => {
+    it(`auto-resolves blocks across a few rounds (${count}p)`, () => {
+      let state = createNewGame(DEFAULT_CONFIG, 120 + count, buildLobbyPlayers(count));
 
-    expect(state.round).toBeGreaterThanOrEqual(3);
+      state = advanceWithAutoChoices(state, 3);
+
+      expect(state.round).toBeGreaterThanOrEqual(3);
+    });
   });
 
-  it("runs randomized legal commands without crashing", () => {
-    const picker = createDecisionPicker(8675309);
-    const startState = createNewGame(DEFAULT_CONFIG, 456, [
-      { id: "p1", name: "Player 1" },
-      { id: "p2", name: "Player 2" }
-    ]);
+  playerCounts.forEach((count) => {
+    it(`runs randomized legal commands without crashing (${count}p)`, () => {
+      const picker = createDecisionPicker(8675309 + count);
+      const startState = createNewGame(DEFAULT_CONFIG, 450 + count, buildLobbyPlayers(count));
+      const targetRound = count > 2 ? 3 : 4;
+      const maxSteps = 240 + count * 80;
 
-    const { state, steps } = advanceWithRandomChoices(startState, picker, 4, 300);
+      const { state, steps } = advanceWithRandomChoices(
+        startState,
+        picker,
+        targetRound,
+        maxSteps
+      );
 
-    expect(steps).toBeGreaterThan(0);
-    expect(state.round).toBeGreaterThan(0);
+      expect(steps).toBeGreaterThan(0);
+      expect(state.round).toBeGreaterThan(0);
+    });
   });
 });

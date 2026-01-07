@@ -17,7 +17,6 @@
 
 ## Active tasks
 - owner: agent3 | scope: add a reusable hand-card picker modal for topdeck-from-hand targets (Perfect Recall) | files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md` | status: in progress
-- owner: agent1 | scope: verify multi-player (3-4 player) engine flow to confirm it's not 2-player only; extend smoke coverage | files: `packages/engine/src/smoke.test.ts`, `implementation_plan.md`, `progress.md` | status: in progress
 
 
 ## Milestone 8.5 progress
@@ -78,6 +77,7 @@
 - Updated the game board SVG to stretch to available height so it reaches the legend without extra empty space.
 - Set the main board layout to flex-fill and raised the hand panel z-index so it stays above the board when open.
 - Positioned the hand panel as an absolute overlay so opening/closing it no longer resizes the board.
+- Verified multi-player (3-4 player) engine flow via expanded smoke coverage and marked the plan item complete in `implementation_plan.md`.
 
 ## Milestone 9 progress
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.
@@ -117,6 +117,8 @@
 - Added action-flow coverage for Flank Step (bridge-less move) + Scavenger's Market (gold + draw).
 - Added action-flow coverage for Supply Ledger, Patrol Record, and Banner Claim.
 - Added action-flow coverage for Quick March, Trade Caravan, and Quick Study.
+- Expanded smoke tests to cover 3-4 player auto-resolve + randomized flows in `packages/engine/src/smoke.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/smoke.test.ts`.
 - Added card draw tests covering reshuffle behavior and hand-limit overflow in `packages/engine/src/cards.test.ts`.
 - Added tests for card instance id sequencing and random draw-pile insertion in `packages/engine/src/cards.test.ts`.
 - Added Victory card gain VP coverage in `packages/engine/src/cards.test.ts`.
