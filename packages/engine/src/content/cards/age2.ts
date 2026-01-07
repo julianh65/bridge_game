@@ -73,6 +73,31 @@ export const JET_STRIKER: CardDef = {
   }
 };
 
+export const GUERILLA_NATIVE_MERCENARY: CardDef = {
+  id: "champion.age2.guerilla_native_mercenary",
+  name: "Guerilla Native Mercenary",
+  rulesText:
+    "Can be deployed to any unoccupied hex on the board (in addition to being able to be deployed to anywhere you occupy).",
+  type: "Champion",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 2 },
+  initiative: 45,
+  burn: true,
+  targetSpec: {
+    kind: "hex",
+    owner: "self",
+    allowEmpty: true
+  },
+  champion: {
+    hp: 4,
+    attackDice: 2,
+    hitFaces: 2,
+    bounty: 3,
+    goldCostByChampionCount: [1, 3, 5]
+  }
+};
+
 export const TAX_REAVER: CardDef = {
   id: "champion.age2.tax_reaver",
   name: "Tax Reaver",
@@ -225,6 +250,7 @@ export const AGE2_CARDS: CardDef[] = [
   WARD,
   FRENZY,
   JET_STRIKER,
+  GUERILLA_NATIVE_MERCENARY,
   TAX_REAVER,
   SIEGE_ENGINEER,
   DUELIST_EXEMPLAR,

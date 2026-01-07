@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent2 | scope: add Guerilla Native Mercenary champion (deploy to any empty hex) + UI empty-hex targeting highlight; update plan | files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/index.ts`, `apps/web/src/components/GameScreen.tsx`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md` | status: in_progress
+- none
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -31,8 +31,13 @@
 - Added Column Advance (Age I) with stop-on-occupied path validation and tests. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside any in-flight edits.)
 - Added Frontier Claim (Age I) with capital-distance empty-hex targeting and tests. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside any in-flight edits.)
 - Added Age III champion card defs (Logistics Officer, Titan Vanguard, Center Bannerman, Blood Banker, Stormcaller, Grand Strategist, Capital Breaker) and wired them into the card registry. (Files: `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/content/cards/index.ts`.) (owner: agent2)
-- Added Age II champion card defs for implemented abilities (Jet Striker, Tax Reaver, Siege Engineer, Duelist Exemplar, Lone Wolf, Reliable Veteran, Capturer) and wired them into the card registry; Guerilla Native Mercenary + Exodia still pending targeting/condition support. (Files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/index.ts`.) (owner: agent2)
+- Added Age II champion card defs for implemented abilities (Jet Striker, Tax Reaver, Siege Engineer, Duelist Exemplar, Lone Wolf, Reliable Veteran, Capturer) and wired them into the card registry; Exodia still pending targeting/condition support. (Files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/index.ts`.) (owner: agent2)
+- Added Guerilla Native Mercenary (Age II) champion card def with allow-empty hex deployment, plus allow-empty target validation + UI highlights and tests; updated the plan checklist. (Files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.guerilla-native-mercenary.test.ts`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent2)
 - Added Age II combat/tactics card defs for Focus Fire, Ward, and Frenzy; updated the plan checklist. (Files: `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.) (Overlap note: touched `packages/engine/src/content/cards/age2.ts` + `implementation_plan.md` while agent2 active.)
+- Expanded power deck tasks in `implementation_plan.md` (Age I/II/III power card defs, power deck list wiring, tests, and rules audit).
+
+## Milestone 9 progress
+- Shifted GameCard art cropping upward (~10%) with a slight zoom across variants; updated the plan checklist. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.

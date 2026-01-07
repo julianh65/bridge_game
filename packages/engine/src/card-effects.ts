@@ -430,9 +430,14 @@ const resolveHexTarget = (
   if (owner !== "self" && owner !== "enemy" && owner !== "any") {
     return null;
   }
+  const allowEmpty = targetSpec.allowEmpty === true;
+  const requiresEmpty = targetSpec.requiresEmpty === true;
+  const isEmpty = countPlayersOnHex(hex) === 0;
 
   if (owner === "self" && !isOccupiedByPlayer(hex, playerId)) {
-    return null;
+    if (!(allowEmpty || requiresEmpty) || !isEmpty) {
+      return null;
+    }
   }
 
   if (owner === "enemy" && !hasEnemyUnits(hex, playerId)) {
@@ -440,7 +445,7 @@ const resolveHexTarget = (
   }
 
   const requiresOccupied = targetSpec.occupied === true;
-  if (requiresOccupied && countPlayersOnHex(hex) === 0) {
+  if (requiresOccupied && isEmpty) {
     return null;
   }
 
@@ -453,8 +458,7 @@ const resolveHexTarget = (
     return null;
   }
 
-  const requiresEmpty = targetSpec.requiresEmpty === true;
-  if (requiresEmpty && countPlayersOnHex(hex) > 0) {
+  if (requiresEmpty && !isEmpty) {
     return null;
   }
 

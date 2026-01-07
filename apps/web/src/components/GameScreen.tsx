@@ -1814,7 +1814,9 @@ export const GameScreen = ({
       if (owner !== "self" && owner !== "enemy" && owner !== "any") {
         return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
+      const allowEmpty = targetSpec.allowEmpty === true;
       const requiresOccupied = targetSpec.occupied === true;
+      const requiresEmpty = targetSpec.requiresEmpty === true;
       const tile = typeof targetSpec.tile === "string" ? targetSpec.tile : null;
       const allowCapital = targetSpec.allowCapital !== false;
       const maxDistanceFromChampion =
@@ -1852,13 +1854,19 @@ export const GameScreen = ({
         if (!hex) {
           continue;
         }
+        const isEmpty = !hasAnyOccupants(key);
         if (owner === "self" && !isOccupiedByPlayer(hex, localPlayerId)) {
-          continue;
+          if (!(allowEmpty || requiresEmpty) || !isEmpty) {
+            continue;
+          }
         }
         if (owner === "enemy" && !hasEnemyUnits(hex, localPlayerId)) {
           continue;
         }
-        if (requiresOccupied && !hasAnyOccupants(key)) {
+        if (requiresOccupied && isEmpty) {
+          continue;
+        }
+        if (requiresEmpty && !isEmpty) {
           continue;
         }
         if (tile && hex.tile !== tile) {

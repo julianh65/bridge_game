@@ -307,7 +307,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
     - [x] On-battle-win/kill triggers: Capturer (deploy 1 Force on win), Tax Reaver (steal gold on champion kill)
     - [x] Movement exceptions: Bridge Runner pathfinder (adjacent moves ignore bridges).
     - [ ] Movement/deploy exceptions:
-      - [ ] Guerilla Native Mercenary (deploy to any unoccupied hex)
+      - [x] Guerilla Native Mercenary (deploy to any unoccupied hex)
       - [x] Logistics Officer (deploy as capital)
     - [x] Dice mods/thresholds: Inspiring Geezer (forces hit 1-3), Brute (extra dice if no enemy champion).
     - [x] Dice mods/thresholds: Duelist Exemplar (if enemy champion +1 die/round), Lone Wolf (if no friendly forces +3 dice), Reliable Veteran (hits on 1-5)
@@ -416,8 +416,19 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - Expand Age II/III market + power deck lists to match the latest rules_draft (including power champions and burn-heavy cards).
   - [ ] Age II market cards + champions (47 cards + 8 champions).
   - [ ] Age III market cards + champions (47 cards + 8 champions).
-  - [ ] Age I/II/III power deck cards (12 each), including power champions and power-victory cards.
-  - [ ] Update deck list exports to match rules counts and add tests for deck composition/uniqueness.
+  - [ ] Power decks (12 each) card defs and wiring.
+    - [ ] Audit `rules_draft.md` power lists to ensure each age has 12 entries; fill any missing names.
+    - [ ] Age I power non-victory card defs (6).
+    - [ ] Age I power victory card defs (6, +1 VP on gain).
+    - [ ] Age II power non-victory card defs (6).
+    - [ ] Age II power victory card defs (6, +1 VP on gain).
+    - [ ] Age II power champion card defs (ex: Bannerman) and tagging.
+    - [ ] Age III power non-victory card defs (6).
+    - [ ] Age III power victory card defs (6, +1 VP on gain).
+    - [ ] Verify power/burn/victory tags on power cards.
+  - [ ] Replace `packages/engine/src/content/power-decks.ts` with real power deck lists (no market clones).
+  - [ ] Update deck list exports/tests for market + power counts/uniqueness.
+  - [ ] Add power deck card tests (at least one per unique effect).
   - [ ] Define Age II card defs by category (movement/recruit/economy/deckcraft/combat/bridges/victory/champions).
     - [ ] Age II Movement card defs (5).
     - [ ] Age II Recruitment card defs (5).
@@ -442,7 +453,6 @@ Pause and read through the rules of the game. Make sure that what we've done ali
     - [ ] Age III Synergy/Gambits card defs (2).
     - [ ] Age III Victory card defs (4+).
     - [ ] Age III Champion card defs (8).
-  - [ ] Add Age I/II/III power deck card defs and wire into power deck exports/tests.
   - [x] Add card metadata tags for Burn/Power/Victory/Champion and ensure filters use them.
 - [x] Add “smoke sim” tests:
   - random legal commands for N steps should not crash
@@ -541,7 +551,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Large and hard -- make the entire UI look a bit more dark fantasy and cooler
 - [x] For cards with victory points we need to denote how many VP's they're worth on the card
 - [ ] We need to add logic and look for escalating champion costs as per the rules
-- [ ] Slightly make the images a bit bigger and for all images it will crop, but I want it to crop like 10% higher than it is now, that is to say i want it centered 10% higher than it is now for all cards
+- [x] Slightly make the images a bit bigger and for all images it will crop, but I want it to crop like 10% higher than it is now, that is to say i want it centered 10% higher than it is now for all cards
 - [ ] Make the cards slightly more readable, try to maximize space usage, make the font slightly larger, and it should be way more obvious the mana and gold cost, you can even put them in the bottom left and right corner like in hearthstone, to that end the entire hand area on the bottom can be made like 10% taller to accomodate
 - [ ] Confirm that champion targetting cards have a UI and work such that you can target a specific champion if there are two in the same hex
 - [ ] Hard: What I'd really like is for the actions to happen on the board as they're revealed with the reveal thing. So after the card is revaled that player one built a bridge here then the bridge builds on the board, and after a player moves something it moves on the boards, and it should animate between the hexes
