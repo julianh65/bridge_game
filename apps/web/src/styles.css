@@ -1180,7 +1180,7 @@ h1 {
   padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   position: relative;
   text-align: center;
   color: var(--ink);
@@ -1219,6 +1219,9 @@ h1 {
   border-radius: 12px;
   border: 1px solid rgba(111, 90, 70, 0.65);
   background: linear-gradient(135deg, #f8e8d2, #f1d2af);
+  background-size: 110%;
+  background-position: 50% 40%;
+  background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1262,13 +1265,13 @@ h1 {
 
 .game-card__header {
   display: grid;
-  gap: 8px;
+  gap: 6px;
   justify-items: center;
 }
 
 .game-card__name {
   margin: 0;
-  font-size: 18px;
+  font-size: 19px;
 }
 
 .game-card__type {
@@ -1326,12 +1329,12 @@ h1 {
 
 .game-card__rules-block {
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 
 .game-card__rules {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink);
   line-height: 1.4;
   text-align: left;
@@ -1372,30 +1375,47 @@ h1 {
 .game-card__cost {
   margin-top: auto;
   display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 2px 0;
+}
+
+.game-card__cost-chip {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 6px;
-  flex-wrap: wrap;
-  font-size: 12px;
-  color: #4b2e1a;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: #f8efe1;
+  font-size: 13px;
+  font-weight: 700;
+  color: #3f2a16;
+  box-shadow: 0 6px 12px rgba(15, 23, 42, 0.12);
+}
+
+.game-card__cost-chip--mana {
+  border-color: rgba(59, 130, 246, 0.45);
+  background: radial-gradient(circle at 30% 30%, #dbeafe, #93c5fd 75%);
+  color: #1e3a8a;
+}
+
+.game-card__cost-chip--gold {
+  border-color: rgba(217, 119, 6, 0.45);
+  background: radial-gradient(circle at 30% 30%, #fef3c7, #facc15 80%);
+  color: #92400e;
 }
 
 .game-card__cost-icon {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .game-card__cost-number {
-  font-weight: 600;
-}
-
-.game-card__cost-plus {
-  color: var(--muted);
-}
-
-.game-card__cost-suffix {
-  font-size: 11px;
-  color: var(--muted);
-  margin-left: 4px;
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .game-card__tags {
@@ -2499,29 +2519,29 @@ h1 {
   padding: 10px;
   gap: 6px;
   text-align: center;
-  aspect-ratio: 5 / 8;
+  aspect-ratio: 5 / 9;
 }
 
 .game-card--hand .game-card__art {
-  height: 100px;
+  height: 110px;
   font-size: 9px;
   letter-spacing: 0.18em;
 }
 
 .game-card--hand .game-card__name {
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .game-card--hand .game-card__type {
-  font-size: 11px;
+  font-size: 12px;
   padding: 1px 8px;
   letter-spacing: 0.06em;
 }
 
 .game-card--hand .game-card__rules {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
 }
 
 .game-card--hand .game-card__champion {
@@ -2538,7 +2558,7 @@ h1 {
 }
 
 .game-card--hand .game-card__age {
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.16em;
 }
 
@@ -2554,27 +2574,21 @@ h1 {
 }
 
 .game-card--hand .game-card__cost {
-  font-size: 13px;
-  font-weight: 600;
-  color: #3f2a16;
+  padding: 4px 0 0;
+}
+
+.game-card--hand .game-card__cost-chip {
+  padding: 6px 12px;
+  font-size: 14px;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.18);
 }
 
 .game-card--hand .game-card__cost-icon {
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .game-card--hand .game-card__cost-number {
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.game-card--hand .game-card__cost-plus {
-  font-size: 12px;
-}
-
-.game-card--hand .game-card__cost-suffix {
-  font-size: 10px;
-  letter-spacing: 0.02em;
+  font-size: 16px;
 }
 
 .game-card--market .game-card__age {
@@ -2911,7 +2925,7 @@ h1 {
 .market-card__rules,
 .game-card--market .game-card__rules {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink);
   -webkit-line-clamp: 5;
 }
@@ -3379,7 +3393,20 @@ h1 {
 }
 
 .collection-card .game-card__cost {
+  padding: 2px 0 0;
+}
+
+.collection-card .game-card__cost-chip {
+  padding: 3px 8px;
   font-size: 11px;
+}
+
+.collection-card .game-card__cost-icon {
+  font-size: 12px;
+}
+
+.collection-card .game-card__cost-number {
+  font-size: 12px;
 }
 
 .collection-prompt__label {

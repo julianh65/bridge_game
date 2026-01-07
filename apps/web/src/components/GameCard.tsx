@@ -189,20 +189,6 @@ export const GameCard = ({
           </div>
         </div>
       ) : null}
-      {showStats ? (
-        <div className="game-card__cost">
-          <span className="game-card__cost-icon" aria-hidden="true">
-            🔵
-          </span>
-          <span className="game-card__cost-number">{manaLabel}</span>
-          <span className="game-card__cost-plus">+</span>
-          <span className="game-card__cost-icon" aria-hidden="true">
-            🟡
-          </span>
-          <span className="game-card__cost-number">{goldLabel}</span>
-          <span className="game-card__cost-suffix">to play</span>
-        </div>
-      ) : null}
       {showTags && !isHidden && tags.length > 0 ? (
         <div className="game-card__tags">
           {tags.map((tag) => (
@@ -210,6 +196,22 @@ export const GameCard = ({
               {tag}
             </span>
           ))}
+        </div>
+      ) : null}
+      {showStats ? (
+        <div className="game-card__cost">
+          <span className="game-card__cost-chip game-card__cost-chip--mana">
+            <span className="game-card__cost-icon" aria-hidden="true">
+              🔵
+            </span>
+            <span className="game-card__cost-number">{manaLabel}</span>
+          </span>
+          <span className="game-card__cost-chip game-card__cost-chip--gold">
+            <span className="game-card__cost-icon" aria-hidden="true">
+              🟡
+            </span>
+            <span className="game-card__cost-number">{goldLabel}</span>
+          </span>
         </div>
       ) : null}
     </Component>

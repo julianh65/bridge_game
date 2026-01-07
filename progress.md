@@ -16,8 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
-- owner: agent2; scope: improve card readability (larger fonts, clearer mana/gold cost corners) + slightly taller hand cards; files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in progress
+- owner: agent3; scope: implement Age II Slow (champion dice reduction) card effect + tests + plan update; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`, `progress.md`; status: in progress
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -42,6 +41,7 @@
 
 ## Milestone 9 progress
 - Shifted GameCard art cropping upward (~10%) with a slight zoom across variants; updated the plan checklist. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
+- Improved GameCard readability with larger fonts, cost chips in bottom corners, and taller hand cards; updated the plan checklist. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
