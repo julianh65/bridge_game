@@ -51,7 +51,8 @@ const SUPPORTED_EFFECTS = new Set([
   "markForCoin",
   "topdeckFromHand",
   "ward",
-  "immunityField"
+  "immunityField",
+  "lockBridge"
 ]);
 
 type TargetRecord = Record<string, unknown>;
@@ -444,6 +445,57 @@ const getBuildBridgePlan = (
   return { from: rawA, to: rawB, key: canonicalKey };
 };
 
+const getExistingBridgePlan = (
+  state: GameState,
+  playerId: PlayerID,
+  targetSpec: TargetRecord,
+  targets: CardPlayTargets
+): BuildBridgePlan | null => {
+  const edgeKey = getEdgeKeyTarget(targets);
+  if (!edgeKey) {
+    return null;
+  }
+
+  let rawA: string;
+  let rawB: string;
+  try {
+    [rawA, rawB] = parseEdgeKey(edgeKey);
+  } catch {
+    return null;
+  }
+
+  const fromHex = state.board.hexes[rawA];
+  const toHex = state.board.hexes[rawB];
+  if (!fromHex || !toHex) {
+    return null;
+  }
+
+  try {
+    if (!areAdjacent(parseHexKey(rawA), parseHexKey(rawB))) {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+
+  const canonicalKey = getBridgeKey(rawA, rawB);
+  if (!state.board.bridges[canonicalKey]) {
+    return null;
+  }
+
+  const allowAnywhere = targetSpec.anywhere === true;
+  const requiresOccupiedEndpoint = allowAnywhere ? false : targetSpec.requiresOccupiedEndpoint !== false;
+  if (
+    requiresOccupiedEndpoint &&
+    !isOccupiedByPlayer(fromHex, playerId) &&
+    !isOccupiedByPlayer(toHex, playerId)
+  ) {
+    return null;
+  }
+
+  return { from: rawA, to: rawB, key: canonicalKey };
+};
+
 export const validateMovePath = (
   state: GameState,
   playerId: PlayerID,
@@ -678,14 +730,19 @@ export const isCardPlayable = (
   }
 
   if (card.targetSpec.kind === "edge") {
-    const plan = getBuildBridgePlan(
-      state,
-      playerId,
-      card.targetSpec as TargetRecord,
-      targets ?? null
-    );
+    const hasBuildBridge = card.effects?.some((effect) => effect.kind === "buildBridge") ?? false;
+    const hasLockBridge = card.effects?.some((effect) => effect.kind === "lockBridge") ?? false;
+    const plan = hasBuildBridge
+      ? getBuildBridgePlan(state, playerId, card.targetSpec as TargetRecord, targets ?? null)
+      : hasLockBridge
+        ? getExistingBridgePlan(state, playerId, card.targetSpec as TargetRecord, targets ?? null)
+        : getBuildBridgePlan(state, playerId, card.targetSpec as TargetRecord, targets ?? null);
     if (!plan) {
       return false;
+    }
+
+    if (!hasBuildBridge) {
+      return true;
     }
 
     const movePath = getMovePathTarget(targets ?? null);
@@ -1248,6 +1305,40 @@ export const resolveCardEffects = (
               }
             }
           }
+        };
+        break;
+      }
+      case "lockBridge": {
+        const plan = getExistingBridgePlan(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null
+        );
+        if (!plan) {
+          break;
+        }
+        const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.${plan.key}.lock`;
+        nextState = {
+          ...nextState,
+          modifiers: [
+            ...nextState.modifiers,
+            {
+              id: modifierId,
+              source: { type: "card", sourceId: card.id },
+              ownerPlayerId: playerId,
+              attachedEdge: plan.key,
+              duration: { type: "endOfRound" },
+              hooks: {
+                getMoveAdjacency: ({ modifier, from, to }, current) => {
+                  if (!modifier.attachedEdge) {
+                    return current;
+                  }
+                  return getBridgeKey(from, to) === modifier.attachedEdge ? false : current;
+                }
+              }
+            }
+          ]
         };
         break;
       }

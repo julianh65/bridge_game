@@ -507,6 +507,37 @@ describe("action flow", () => {
     expect(toHex.occupants["p1"]?.length ?? 0).toBe(4);
   });
 
+  it("blocks movement across a locked bridge", () => {
+    let { state, p1Capital, p1Edges } = setupToActionPhase();
+    const [edge] = p1Edges;
+    const [a, b] = parseEdgeKey(edge);
+    const to = a === p1Capital ? b : a;
+
+    const lockBridgeCard: CardDef = {
+      id: "test.lock_bridge",
+      name: "Lock Bridge",
+      rulesText: "Choose a bridge; it cannot be crossed this round.",
+      type: "Order",
+      deck: "starter",
+      tags: [],
+      cost: { mana: 0 },
+      initiative: 1,
+      burn: false,
+      targetSpec: { kind: "edge", requiresOccupiedEndpoint: true },
+      effects: [{ kind: "lockBridge" }]
+    };
+
+    state = resolveCardEffects(state, "p1", lockBridgeCard, { edgeKey: edge });
+
+    const path = validateMovePath(state, "p1", [p1Capital, to], {
+      maxDistance: 1,
+      requiresBridge: true,
+      requireStartOccupied: true
+    });
+
+    expect(path).toBeNull();
+  });
+
   it("moves part of a stack when forceCount is set", () => {
     let { state, p1Capital, p1Edges } = setupToActionPhase();
     const [edge] = p1Edges;

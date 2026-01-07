@@ -372,6 +372,10 @@ Start going through the rules_draft and adding the logic for the different types
 - [ ] Add draw/round-end triggers (on-draw penalties, end-of-round VP awards, marked champion payouts).
 - [x] Add targeting immunities and marked/contract flags (Ward, Immunity Field, Marked for Coin).
 - [ ] Add movement/adjacency modifiers (bridge lockdown/trap, wormhole links, tunnel network).
+  - [x] Bridge lockdown effect (lock a bridge until end of round).
+  - [ ] Bridge trap (first enemy crossing loses a force).
+  - [ ] Wormhole links (treat two hexes as adjacent for a round).
+  - [ ] Tunnel network adjacency (non-passive card effects).
 - [ ] Add hit-assignment control + battle retreat effects (Focus Fire, Tactical Hand, Set to Skirmish).
 - [ ] Add multi-target/multi-stack actions (move two stacks, build multiple bridges, deploy to multiple mines).
 - [ ] Add variable VP sources (Victory +2, center-based VP, timer VP).
