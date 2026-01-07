@@ -443,6 +443,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Add card-play reveal animation (who played what, where it landed). This should be timed so it flashes up for a few seconds and we see things happen. This is after everyone locks in their actions. I want it to be like Player 1, show the card they played and flash it up, then show where they did it or something and make it extensible so later we can add animations or sound effects or something here.
 - [x] Add clearer phase transition cues between round phases. Make it flash on screen in big text slowly to everyone simultaneously.
 - [ ] Make the hexes look nicer slightly, more in theme and more clear who and which forces are on what and who's capital is who's etc...
+- [ ] The basic actions are too cluttered, like in general I want things folded in and out and you only expose buttons and thigns when you need to. So build bridge is the button and then you pick the edge and you don't need all this extra UI on the side, simplify it
+
 
 ### Tasks (web - targeting reliability)
 - [x] Fix hex selection for Bridge Crew and Build Bridge edge picking.

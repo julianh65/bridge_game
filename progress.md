@@ -16,8 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
-- owner: agent2 | scope: add targeted tests for age1 market card effects (Flank Step, Scavenger's Market) (no overlap with Veil Contracts files) | files: packages/engine/src/action-flow.test.ts, progress.md, implementation_plan.md | status: in progress
+- owner: agent4 | scope: remove duplicate action panel + fit GameScreen to viewport (reduce board height, prevent page scroll) | files: apps/web/src/components/GameScreen.tsx, apps/web/src/App.tsx, apps/web/src/styles.css, progress.md | status: in progress
 
 ## Milestone 8.5 progress
 - Consolidated the GameScreen layout: moved the action panel into the hand row, added an intel dock for players/log, and tightened the sidebar into status/resources/intel summaries (styles updated).
@@ -63,6 +62,8 @@ none
 - Implemented Veil Contracts (+2 gold per champion kill) via a champion-kill reward hook and added combat coverage; updated `implementation_plan.md`.
 
 ## Testing progress
+- Added action-flow coverage for Flank Step (bridge-less move) + Scavenger's Market (gold + draw).
+- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (Flank Step/Scavenger's Market coverage).
 - Added card draw tests covering reshuffle behavior and hand-limit overflow in `packages/engine/src/cards.test.ts`.
 - Added tests for card instance id sequencing and random draw-pile insertion in `packages/engine/src/cards.test.ts`.
 - Ran `npm test` (engine Vitest).
@@ -92,6 +93,7 @@ none
 - Ran `npm run -w @bridgefront/engine test -- src/combat.test.ts`.
 
 ## Docs maintenance
+- Expanded the Milestone 9 card-test checklist with Age I market sub-items in `implementation_plan.md`.
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
 - Rewrote Milestone 9 notes into a coherent checklist in `implementation_plan.md`.
 - Marked the Milestone 7 champion ability hook tasks complete in `implementation_plan.md`.

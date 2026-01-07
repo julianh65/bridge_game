@@ -550,6 +550,37 @@ describe("action flow", () => {
     expect(toHex.occupants["p1"]?.length ?? 0).toBe(4);
   });
 
+  it("plays flank step to move without a bridge", () => {
+    let { state, p1Capital } = setupToActionPhase();
+    const edgeKey = pickOpenBridgeEdge(p1Capital, state.board);
+    const [a, b] = parseEdgeKey(edgeKey);
+    const to = a === p1Capital ? b : a;
+
+    const injected = addCardToHand(state, "p1", "age1.flank_step");
+    state = injected.state;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { from: p1Capital, to }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const fromHex = state.board.hexes[p1Capital];
+    const toHex = state.board.hexes[to];
+    expect(fromHex.occupants["p1"]?.length ?? 0).toBe(0);
+    expect(toHex.occupants["p1"]?.length ?? 0).toBe(4);
+  });
+
   it("reinforces a capital and spends gold", () => {
     let { state, p1Capital } = setupToActionPhase();
     const startingGold = DEFAULT_CONFIG.START_GOLD + DEFAULT_CONFIG.BASE_INCOME;
@@ -597,6 +628,53 @@ describe("action flow", () => {
     expect(p1After.resources.mana).toBe(p1Before.resources.mana - 1);
     expect(p1After.deck.hand.includes(injected.instanceId)).toBe(false);
     expect(p1After.deck.discardPile).toContain(injected.instanceId);
+  });
+
+  it("plays scavenger's market to gain gold and draw a card", () => {
+    let { state } = setupToActionPhase();
+    const playCard = createCardInstance(state, "age1.scavengers_market");
+    const drawCard = createCardInstance(playCard.state, "starter.supply_cache");
+    state = drawCard.state;
+
+    state = {
+      ...state,
+      players: state.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              deck: {
+                hand: [playCard.instanceId],
+                drawPile: [drawCard.instanceId],
+                discardPile: [],
+                scrapped: []
+              }
+            }
+          : player
+      )
+    };
+
+    const p1Before = state.players.find((player) => player.id === "p1");
+    if (!p1Before) {
+      throw new Error("missing p1 state");
+    }
+
+    state = applyCommand(
+      state,
+      { type: "SubmitAction", payload: { kind: "card", cardInstanceId: playCard.instanceId } },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state");
+    }
+    expect(p1After.resources.gold).toBe(p1Before.resources.gold + 1);
+    expect(p1After.deck.hand).toContain(drawCard.instanceId);
+    expect(p1After.deck.hand).not.toContain(playCard.instanceId);
+    expect(p1After.deck.discardPile).toContain(playCard.instanceId);
   });
 
   it("plays scout report to keep the top card and discard the rest", () => {
