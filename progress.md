@@ -133,7 +133,7 @@
 ## Milestone 9 progress
 - Forced the market overlay to surface the winner animation for the last card even if the overlay was closed, so the end-of-market win reveal always shows. (Overlap note: `apps/web/src/components/GameScreen.tsx`.)
 - Added a unit stack arrival pulse animation in the board view to make movement clearer during action reveals; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.)
-- Added faction labels (symbol + name) on CardsBrowser card tiles to denote faction-specific cards; marked the plan item complete in `implementation_plan.md`.
+- Added faction labels (symbol + name) on CardsBrowser card tiles to denote faction-specific cards; marked the plan item complete in `implementation_plan.md`. (owner: agent1)
 - Added softer click sfx tags to main menu view toggles and Home create/join buttons for more audio coverage.
 - Added UI sound effects (click/error/bell) with a global click handler, round bell cue, and moved audio files into web assets; marked the plan item complete in `implementation_plan.md`.
 - Enforced unique faction picks in the lobby (server rejects duplicates; UI disables taken factions with status styling) and marked the plan item complete in `implementation_plan.md`. Overlap note: touched `apps/server/src/server.ts` + `apps/web/src/components/PreGameLobby.tsx`, which are in agent3's manual setup scope.
