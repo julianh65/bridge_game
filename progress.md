@@ -71,7 +71,7 @@ none
 - Added an action card reveal overlay that sequences resolved card plays with target summaries + board highlights, and animated unit stack movement transitions during board updates.
 - Slowed the action card reveal overlay timing for a less abrupt reveal.
 - Reworked the hand panel layout: stacked basic action buttons, moved deck counts to header pills, and floated Pass/Submit controls; marked the plan items complete in `implementation_plan.md`.
-- Smoothed basic Build Bridge picking by auto-entering edge pick mode on Bridge selection and exiting pick mode after an edge click; marked the plan item complete in `implementation_plan.md`. (Overlap note: touched `implementation_plan.md` while agent4 has an active task.)
+- Smoothed basic Build Bridge picking by auto-entering edge pick mode on Bridge selection and exiting pick mode after an edge click; marked the plan item complete in `implementation_plan.md`. (Overlap note: commit also picked up staged `apps/web/src/components/BoardView.tsx` + `apps/web/src/styles.css` edits and `implementation_plan.md` changes while agent4 was active.)
 - Adjusted the hand panel overlay to stop reserving vertical space and slimmed the actions column width.
 - Hid scrollbars on the hand card row while keeping horizontal scroll.
 - Refined Pass/Submit placement: removed the visible container, widened buttons evenly, and nudged the bar lower.
