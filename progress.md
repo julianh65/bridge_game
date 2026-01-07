@@ -16,7 +16,10 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
+- owner: agent4; scope: Milestone 9 board visuals (hex padding + bridge styling); files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/lib/hex-geometry.ts`, `apps/web/src/styles.css`; status: in progress.
+- Owner: agent2
+- Scope: add action-flow tests for Age I market orders (Quick March, Trade Caravan, Quick Study) and sync plan checkboxes.
+- Files: packages/engine/src/action-flow.test.ts, implementation_plan.md, progress.md
 
 ## Milestone 8.5 progress
 - Slimmed the action strip: moved Pass/Submit + deck counts into the hand footer, simplified basic actions, and added a command-center table with per-player gold/mana/hand counts.
@@ -33,6 +36,7 @@ none
 - Made action status more obvious with a player-list summary and row highlighting, and marked the plan item complete in `implementation_plan.md`.
 - Added a large Submit/Lock In action button to the action panel and marked the plan item complete in `implementation_plan.md`.
 - Added action-panel helper copy clarifying Done/Reinforce/Bridge/March/Play actions and marked the plan item complete in `implementation_plan.md`.
+- Submit button now reflects the selected action (Play Card/Build Bridge/etc.) to remove the play-vs-submit confusion; marked the plan item complete in `implementation_plan.md`.
 - Replaced market focus row with a full-screen overlay + toggle, redesigned market cards with art placeholders and metadata, and marked Milestone 8.5 market tasks complete in `implementation_plan.md`.
 - Added an order rail to the market overlay and tightened market card sizing so the overlay reads as a sequenced card run; marked the related checklist items complete in `implementation_plan.md`.
 - Hid market bid details in the status list until all bids are submitted and marked the plan item complete in `implementation_plan.md`.

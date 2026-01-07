@@ -230,7 +230,11 @@ export const GameScreenHandPanel = ({
                 type="button"
                 className="btn btn-primary"
                 disabled={!primaryAction}
-                title={primaryAction ? primaryActionLabel : "Select an action to submit"}
+                title={
+                  primaryAction
+                    ? `Lock in action: ${primaryActionLabel}`
+                    : "Select an action to submit"
+                }
                 onClick={() => {
                   if (!primaryAction) {
                     return;
@@ -238,7 +242,7 @@ export const GameScreenHandPanel = ({
                   onSubmitAction(primaryAction);
                 }}
               >
-                Submit
+                {primaryAction ? primaryActionLabel : "Submit"}
               </button>
             </div>
           </div>

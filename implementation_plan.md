@@ -440,6 +440,12 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] The basic actions are too cluttered, like in general I want things folded in and out and you only expose buttons and thigns when you need to. So build bridge is the button and then you pick the edge and you don't need all this extra UI on the side, simplify it
 - [ ] we need a few UI's still, like dice rolling for draws and cards and other stuff
 - [ ] We need a better more clear UI with symbols (just do emojis for now) to represent gold, mana VP
+- [ ] The placing starting bridge UI needs to be on the board not picking a bunch of axial coords.
+- [ ] We should have nice transitions between ages and at the start of the game
+
+### Other
+- [ ] I don't see the champions on the board
+
 
 
 ### Tasks (web - targeting reliability)
@@ -453,7 +459,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] Also can you double check, does it only work for 2 players right now?
 - [x] The standard setup still doesn't work, only auto setup works.
 - [x] The done button is a bit confusing, we need little helpers over the different buttons
-- [ ] What is the play card vs submit thing below, it's confusing
+- [x] What is the play card vs submit thing below, it's confusing
 
 ## Milestone 9 — Add Polish
 
