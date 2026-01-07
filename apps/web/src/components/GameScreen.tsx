@@ -1738,31 +1738,6 @@ export const GameScreen = ({
           {statusSection}
           {resourcesSection}
 
-          {isActionPhase ? (
-            <div className="sidebar-section">
-              <h3>Actions</h3>
-              <ActionPanel
-                phase={view.public.phase}
-                player={localPlayer ?? null}
-                players={view.public.players}
-                actionStep={view.public.actionStep}
-                status={status}
-                edgeKey={edgeKey}
-                marchFrom={marchFrom}
-                marchTo={marchTo}
-                cardInstanceId={cardInstanceId}
-                cardTargetsRaw={cardTargetsRaw}
-                boardPickMode={boardPickMode}
-                onSubmit={onSubmitAction}
-                onEdgeKeyChange={setEdgeKey}
-                onMarchFromChange={setMarchFrom}
-                onMarchToChange={setMarchTo}
-                onCardInstanceIdChange={setCardInstanceId}
-                onCardTargetsRawChange={setCardTargetsRaw}
-                onBoardPickModeChange={setBoardPickModeSafe}
-              />
-            </div>
-          ) : null}
           {intelSection}
         </aside>
       </div>

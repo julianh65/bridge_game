@@ -16,9 +16,10 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent4 | scope: remove duplicate action panel + fit GameScreen to viewport (reduce board height, prevent page scroll) | files: apps/web/src/components/GameScreen.tsx, apps/web/src/App.tsx, apps/web/src/styles.css, progress.md | status: in progress
+- owner: agent2 | scope: add action-flow tests for Age I market cards (Supply Ledger, Patrol Record, Banner Claim) | files: packages/engine/src/action-flow.test.ts, implementation_plan.md, progress.md | status: in progress
 
 ## Milestone 8.5 progress
+- Removed the duplicate action panel, tightened the game view to fit the viewport, and reduced the board height while keeping the intel dock as a fixed overlay.
 - Consolidated the GameScreen layout: moved the action panel into the hand row, added an intel dock for players/log, and tightened the sidebar into status/resources/intel summaries (styles updated).
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.
 - Added a Deck tab that shows hand/draw/discard/scrapped piles for the local player, backed by new private `deckCards` data in `GameView`, and marked the plan item complete in `implementation_plan.md`.

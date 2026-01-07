@@ -56,6 +56,24 @@ select {
   gap: 24px;
 }
 
+.app--game {
+  height: 100vh;
+  min-height: 0;
+  padding: 16px;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.app--game .app__nav {
+  padding: 8px 12px;
+  gap: 12px;
+}
+
+.app--game .view-toggle button {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
 .app__nav {
   display: flex;
   align-items: center;
@@ -1178,7 +1196,10 @@ h1 {
 .game-screen {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .phase-cue {
@@ -1266,6 +1287,7 @@ h1 {
   display: grid;
   grid-template-columns: minmax(0, 2.2fr) minmax(240px, 320px);
   gap: 20px;
+  min-height: 0;
 }
 
 .game-screen__layout--focus {
@@ -1289,6 +1311,12 @@ h1 {
 
 .game-dock {
   padding: 0;
+  position: fixed;
+  right: 16px;
+  top: 120px;
+  width: clamp(240px, 32vw, 420px);
+  max-height: min(52vh, 420px);
+  z-index: 55;
 }
 
 .game-dock__header {
@@ -1382,7 +1410,9 @@ h1 {
 }
 
 .game-board {
-  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .game-board__placeholder {
@@ -1390,6 +1420,8 @@ h1 {
   flex-direction: column;
   gap: 12px;
   height: 100%;
+  min-height: 0;
+  flex: 1;
 }
 
 .game-board__grid {
@@ -1431,6 +1463,7 @@ h1 {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(220px, 320px);
   gap: 16px;
+  align-items: start;
 }
 
 .game-hand__cards {
@@ -1446,6 +1479,8 @@ h1 {
   border-radius: 12px;
   border: 1px solid var(--border);
   background: #fdf4e4;
+  max-height: clamp(220px, 32vh, 320px);
+  overflow: auto;
 }
 
 .game-hand__actions-header {
@@ -2610,7 +2645,8 @@ h1 {
 }
 
 .board-svg--game {
-  height: min(54vh, 520px);
+  height: clamp(260px, 40vh, 420px);
+  flex: 1;
 }
 
 .board-tools {
@@ -3159,6 +3195,14 @@ h1 {
 
   .intel-grid {
     grid-template-columns: 1fr;
+  }
+
+  .game-dock {
+    right: 12px;
+    left: 12px;
+    top: auto;
+    bottom: 12px;
+    width: auto;
   }
 
   .game-dock__body {

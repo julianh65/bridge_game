@@ -45,10 +45,11 @@ export default function App() {
 
   const showLobby = room.view?.public.phase === "setup";
   const showGame = Boolean(room.view && room.view.public.phase !== "setup");
+  const isGameLayout = view === "play" && showGame;
   const showPreGameLobby = Boolean(room.lobby && !room.view);
 
   return (
-    <main className="app">
+    <main className={`app ${isGameLayout ? "app--game" : ""}`}>
       <nav className="app__nav">
         <div className="app__nav-left">
           <span className="app__nav-label">Bridgefront</span>
