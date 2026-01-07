@@ -354,7 +354,7 @@ Setup steps:
    - gold = START_GOLD
 6. Deck setup:
    - common starter deck + faction starter spell + faction champion
-   - if faction is unassigned/unknown, resolve to default (Bastion)
+   - if faction is unassigned/unknown, resolve to default (Leadbound)
    - champion card goes into opening hand first
    - draw until 6
 7. Starting bridges:

@@ -318,12 +318,12 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] query application pipeline (combat queries wired)
   - [x] event trigger dispatch (combat before/after hooks)
 - [ ] Implement faction passives as permanent modifiers:
-  - [x] Bastion Shield Wall
-  - [x] Prospect Ore Cut / Mine Militia
-  - [x] Bastion Home Guard (extra force on capital deploy)
+  - [x] Leadbound Shield Wall
+  - [x] Refiner Ore Cut / Mine Militia
+  - [x] Leadbound Home Guard (extra force on capital deploy)
   - [x] Assassins Contracts (bonus gold on champion kill)
-  - [x] Aerial Tailwind (first stack move per round gets +1 hex)
-  - [x] Aerial Wings (deploy to center as if capital when occupied)
+  - [x] Vapourborn Tailwind (first stack move per round gets +1 hex)
+  - [x] Vapourborn Wings (deploy to center as if capital when occupied)
   - [x] Miners Deep Tunnels (occupied mines count adjacent/connected)
   - [x] Cipher Quiet Study (round-start discard then redraw)
   - [x] Cipher Expanded Choice (pick from N+1 when choosing cards)

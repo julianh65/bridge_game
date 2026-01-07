@@ -82,7 +82,7 @@
 - Added a large Submit/Lock In action button to the action panel and marked the plan item complete in `implementation_plan.md`.
 - Added action-panel helper copy clarifying Done/Reinforce/Bridge/March/Play actions and marked the plan item complete in `implementation_plan.md`.
 - Submit button now reflects the selected action (Play Card/Build Bridge/etc.) to remove the play-vs-submit confusion; marked the plan item complete in `implementation_plan.md`.
-- Wired Aerial Wings UI targeting so reinforce/capital-choice actions can select the center when occupied (passes `hexKey`).
+- Wired Vapourborn Wings UI targeting so reinforce/capital-choice actions can select the center when occupied (passes `hexKey`).
 - Replaced market focus row with a full-screen overlay + toggle, redesigned market cards with art placeholders and metadata, and marked Milestone 8.5 market tasks complete in `implementation_plan.md`.
 - Added an order rail to the market overlay and tightened market card sizing so the overlay reads as a sequenced card run; marked the related checklist items complete in `implementation_plan.md`.
 - Hid market bid details in the status list until all bids are submitted and marked the plan item complete in `implementation_plan.md`.
@@ -169,13 +169,13 @@
 - ActionPanel now allows “Done” submissions even when mana is 0.
 
 ## Faction passives progress
-- Added Gatewright passives (capital assault + extortionists) and Veil clean-exit heal modifier with combat coverage; implementation plan update deferred until `implementation_plan.md` is free.
-- Implemented Bastion Home Guard (+1 force on capital deploy) via deploy-count hook; updated action flow/card effects tests.
-- Implemented Veil Contracts (+2 gold per champion kill) via a champion-kill reward hook and added combat coverage; updated `implementation_plan.md`.
+- Added Gatewright passives (capital assault + extortionists) and Virteous clean-exit heal modifier with combat coverage; implementation plan update deferred until `implementation_plan.md` is free.
+- Implemented Leadbound Home Guard (+1 force on capital deploy) via deploy-count hook; updated action flow/card effects tests.
+- Implemented Virteous Contracts (+2 gold per champion kill) via a champion-kill reward hook and added combat coverage; updated `implementation_plan.md`.
 - Implemented Cipher Expanded Choice (extra card offers on free-start + collection prompts), plus mine-draft multi-reveal selection support; marked plan item complete.
-- Implemented Aerial Tailwind (+1 max move distance on first stack move per round) via a moved-this-round flag + move validation hook, with action-flow coverage.
-- Implemented Aerial Wings (deploy to center as capital when occupied) via shared capital-deploy resolver and action-flow coverage; UI can pass `hexKey` for center targeting when ready (overlap: `packages/engine/src/action-flow.ts`).
-- Implemented Prospect Deep Tunnels (occupied mines treated as adjacent for movement) via a move-adjacency modifier hook, updated march validation, and added action-flow coverage; marked `implementation_plan.md`.
+- Implemented Vapourborn Tailwind (+1 max move distance on first stack move per round) via a moved-this-round flag + move validation hook, with action-flow coverage.
+- Implemented Vapourborn Wings (deploy to center as capital when occupied) via shared capital-deploy resolver and action-flow coverage; UI can pass `hexKey` for center targeting when ready (overlap: `packages/engine/src/action-flow.ts`).
+- Implemented Refiner Deep Tunnels (occupied mines treated as adjacent for movement) via a move-adjacency modifier hook, updated march validation, and added action-flow coverage; marked `implementation_plan.md`.
 - Implemented Gatewright capital occupation VP bonus (+2 control VP on enemy capitals) via a scoring hook + coverage; marked plan item complete.
 
 ## Testing progress
@@ -238,7 +238,7 @@
 - Marked the Milestone 8 smoke sim task complete in `implementation_plan.md`.
 - Audited `rules_draft.md` alignment and logged follow-ups in `implementation_plan.md`.
 - Expanded Milestone 5.5 layout tasks in `implementation_plan.md` with phase-focused subtasks.
-- Marked Bastion Shield Wall faction passive as done in `implementation_plan.md`.
+- Marked Leadbound Shield Wall faction passive as done in `implementation_plan.md`.
 - Added PartyKit docs to the repo, added `apps/web/dist` to `.gitignore`, and captured outstanding tracked edits in git.
 - Logged an unclaimed plan tweak adding piece-movement animation notes to the card-reveal task (overlap: `implementation_plan.md`).
 - Documented `ACTION_REVEAL_DURATION_MS` in `docs/configuration.md` and added an owner note in `docs/dev.md`.
@@ -301,7 +301,7 @@ none
 ## Milestone 2 progress
 - Added base board generation (axial hex grid, center tile) and capital slot mapping with tests.
 - Added setup flow blocks and commands for capital draft, starting bridges, and free starting card; setup now advances to `round.reset` with tests. Free starting card uses the configured card pool (now real card IDs).
-- Added starting forces + starter deck initialization after capital draft (defaulting to Bastion if no faction chosen), with champion in hand and draw to 6 before starting bridges.
+- Added starting forces + starter deck initialization after capital draft (defaulting to Leadbound if no faction chosen), with champion in hand and draw to 6 before starting bridges.
 - Wired special tile placement into setup after capital draft (mines/forges now land on the game board with mine values assigned).
 - Added procedural placement for forges/mines (including home mines) and mine values with deterministic tests.
 - Board generation is now configurable via `DEFAULT_CONFIG` (radius, capital slots, placement rules). Added `docs/configuration.md`.
@@ -372,7 +372,7 @@ none
 
 ## Milestone 5 progress
 - Added action-step card declarations for no-target cards (gain gold/draw cards) with initiative-ordered resolution before basic actions; cards leave hand on declaration and discard/burn after resolution, plus Supply Cache coverage.
-- Added Prospecting card effect handling (base + mine bonus gold) with action-flow tests.
+- Added Refinering card effect handling (base + mine bonus gold) with action-flow tests.
 - Added moveStack/buildBridge card effect support with target validation and action-flow tests (stack/path moves + temporary bridge).
 - Added Bridge Crew support with edge + optional move path validation and coverage.
 - Added champion-target card support (heal/damage/patch up) with action-flow tests (heal cap, capital bonus, bounty on kill).
@@ -398,8 +398,8 @@ none
 ## Milestone 7 progress
 - Implemented champion card play (hex targeting validation + deployment), champion gold cost scaling, and champion limit checks in engine with tests.
 - Added champion HP details to board stack tooltips in the UI.
-- Added Bastion Shield Wall passive as a permanent faction modifier, wired during setup, with setup/combat coverage.
-- Added Prospect Ore Cut (mine gold +1) and Mine Militia (defender forces hit on 1-3 in mines) passives with combat/collection coverage.
+- Added Leadbound Shield Wall passive as a permanent faction modifier, wired during setup, with setup/combat coverage.
+- Added Refiner Ore Cut (mine gold +1) and Mine Militia (defender forces hit on 1-3 in mines) passives with combat/collection coverage.
 - Added combat modifier query pipeline (force/champion stats + hit assignment policy), before/after combat hook dispatch, and coverage.
 - Implemented modifier duration expiry (end-of-battle/end-of-round + uses consumption) with tests.
 - Added `deployForces` and `increaseMineValue` card effect support for faction starter spells (Air Drop, Rich Veins) with action-flow coverage.

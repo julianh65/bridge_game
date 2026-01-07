@@ -30,7 +30,7 @@
 
 ## Owner-only TODOs (Julian - not for agents, do later)
 - Replace placeholder faction symbols with final icons once art is ready (not a current task).
-  - Add icon files to `apps/web/public/factions/` named by faction id, e.g. `bastion.svg`.
+  - Add icon files to `apps/web/public/factions/` named by faction id, e.g. `leadbound.svg`.
   - Update `apps/web/src/lib/factions.ts` to include an `iconSrc` (or swap `symbol` usage) per faction.
   - Swap UI renderers in `apps/web/src/components/PreGameLobby.tsx`, `apps/web/src/components/Lobby.tsx`,
     `apps/web/src/components/VictoryScreen.tsx`, and `apps/web/src/components/BoardView.tsx` to use the icon.

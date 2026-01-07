@@ -1,7 +1,7 @@
 import bellUrl from "../assets/sfx/single-church-bell-2-352062.mp3";
 import clickUrl from "../assets/sfx/click-buttons-ui-menu-sounds-effects-button-14-205402.mp3";
 import errorUrl from "../assets/sfx/error-002-337159.mp3";
-import softUrl from "../assets/sfx/ui-sound-374228.mp3";
+import softUrl from "../assets/sfx/computer-mouse-click-351398.mp3";
 
 export type SfxName = "click" | "soft" | "error" | "bell";
 

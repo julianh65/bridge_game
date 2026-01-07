@@ -23,7 +23,7 @@ The gaps widen and the mist rises.
 Age III: The dissolution
 The outer world is gone, knife-fight to the end. Unleash your most powerful relics to ensure your house is the only one left standing on the last solid ground.
 Factions (right now the ones below are just shitty placeholders)
-Bastion ->
+Leadbound ->
 Zealots of gravity, they worship weight.
 Lore: They believe that if they build their walls thick and heavy enough the Roil cannot move them. They sew lead into their skin and make armor of basalt.
 Champion: The Anchorite: A warrior that has chained a massive slab of basalt to his back, dragging it into battle.
@@ -231,7 +231,7 @@ Starting resources: each player starts with 4 gold.
 Deck setup:
 Take the common starter deck (§22.1) shared across factions.
 Add your faction starter spell (§22.2) and faction Champion (§22.3).
-If no faction is chosen, default to Bastion.
+If no faction is chosen, default to Leadbound.
 Shuffle to form your draw pile
 Put your faction Champion card into your hand first, then draw until you have 6 cards in hand total.
 Starting bridges: each player places 2 Bridges simultaneously.
@@ -433,7 +433,7 @@ Each faction has:
 Passive abilities
 One unique starter spell
 One faction Champion (starts in your opening hand)
-21.1 Bastion (Defense / Troops)
+21.1 Leadbound (Defense / Troops)
 Passive A — Shield Wall: In the first combat round of each battle where you are the Defender, your Forces hit on 1–3.
 Passive B — Home Guard: Each time you deploy Forces into your Capital, deploy +1 extra Force.
 21.2 Assassins (Champions + Champion Killing)
@@ -507,22 +507,22 @@ Init: 20 / 100
 Type: Order
 Deal 1 damage to any Champion within 1 cell of a cell you occupy.
 22.2 Faction Unique Starter Spells (1 each)
-Bastion — Hold the Line
+Leadbound — Hold the Line
 Cost: 1 mana
 Init: 35 / 105
 Type: Spell
 Choose a hex you occupy. Until end of round, when you defend in that hex, your Forces hit on 1–3.
-Veil — Marked for Coin
+Virteous — Marked for Coin
 Cost: 1 mana
 Init: 35 / 105
 Type: Spell
 Mark an enemy Champion within distance 2 of one of your Champions. If it dies before end of round, gain +4 gold.
-Aerial — Air Drop
+Vapourborn — Air Drop
 Cost: 2 mana + 1 gold
 Init: 30 / 100
 Type: Spell
 Deploy 3 Forces into any non‑Capital hex within distance 1 of one of your Champions (ignores Bridges).
-Prospect — Rich Veins
+Refiner — Rich Veins
 Cost: 2 mana
 Init: 45 / 120
 Type: Spell
@@ -538,7 +538,7 @@ Init: 50 / 125
 Type: Spell
 Build 1 Bridge anywhere on the board.
 22.3 Faction Champions (Start‑of‑Game Champions)
-Bastion — Ironclad Warden
+Leadbound — Ironclad Warden
 Cost: 2 mana
 Gold (1st/2nd/3rd): 1 / 3 / 5
 Init: 70 / 135
@@ -547,7 +547,7 @@ HP 6
 Attack: 2 dice, hits on 1–2
 Bounty: 3
 Bodyguard — In battles with Ironclad, the first hit that would be assigned to a friendly Champion is assigned to a friendly Force instead (if any).
-Veil — Shadeblade
+Virteous — Shadeblade
 Cost: 2 mana
 Gold: 0 / 2 / 4
 Init: 55 / 115
@@ -556,7 +556,7 @@ HP 3
 Attack: 5 dice, hits on 1
 Bounty: 3
 Assassin’s Edge (1/round) — Before combat round 1 of a battle Shadeblade is in, deal 1 damage to an enemy Champion in that hex.
-Aerial — Skystriker Ace
+Vapourborn — Skystriker Ace
 Cost: 2 mana
 Gold: 0 / 2 / 4
 Init: 60 / 120
@@ -565,7 +565,7 @@ HP 4
 Attack: 2 dice, hits on 1–3
 Bounty: 3
 Flight — May move to adjacent hexes without Bridges.
-Prospect — Mine Overseer
+Refiner — Mine Overseer
 Cost: 2 mana
 Gold: 1 / 3 / 5
 Init: 65 / 125
@@ -642,7 +642,7 @@ Cost: 1 mana + 2 gold — Init: 55 / 130 — Type: Order
 Deploy 2 forcs into your capital. Increase the amount of forces by 1 every time this card is discarded. (Max 10). Burn.
 
 C) Economy (5)
-Prospecting
+Refinering
 Cost: 1 mana — Init: 30 / 100 — Type: Order
 Gain +2 gold. If you occupy a Mine, gain +3 gold instead.
 Trade Caravan
