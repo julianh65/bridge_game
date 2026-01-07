@@ -25,6 +25,7 @@
 - Added champion hover tooltips on board tokens with HP/attack/damage and a rules snippet; marked the plan item complete in `implementation_plan.md`.
 - Tightened champion tooltip width, expanded rules text lines to reduce truncation, and switched champion token labels to current HP.
 - Removed the unit ring + faction badge chip, restored champion glyph labels, and added a small HP pip on each champion token.
+- Removed the champion crest marker on stacks and widened multi-champion token spacing.
 - Overlap note: commit also picked up pre-staged changes in `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, and `implementation_plan.md`.
 - Increased bridge preview hitbox width to make edge selection easier. (Overlap note: touched `apps/web/src/styles.css` alongside agent3/agent4.)
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.

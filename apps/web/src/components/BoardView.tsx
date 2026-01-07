@@ -1081,7 +1081,7 @@ export const BoardView = ({
           return tokens;
         })();
         const tokenRadius = 8;
-        const tokenGap = 4;
+        const tokenGap = 6;
         const tokenCenterY = -26;
         const tokenDiameter = tokenRadius * 2;
         const totalTokenWidth =
@@ -1110,10 +1110,6 @@ export const BoardView = ({
           }
         }
         const stackTitle = stackTitleLines.join("\n");
-        const championLabel = "C";
-        const crestSize = 8;
-        const crestX = 10;
-        const crestY = -10;
         return (
           <g
             key={stack.key}
@@ -1135,31 +1131,6 @@ export const BoardView = ({
               <text x={0} y={3} className="unit__count">
                 {stack.forceCount}
               </text>
-            ) : stack.championCount > 0 ? (
-              <text x={0} y={3} className="unit__champion">
-                {championLabel}
-              </text>
-            ) : null}
-            {stack.championCount > 0 ? (
-              <g className="unit__champion-crest">
-                <rect
-                  className="unit__champion-crest-shape"
-                  x={crestX - crestSize / 2}
-                  y={crestY - crestSize / 2}
-                  width={crestSize}
-                  height={crestSize}
-                  rx={2}
-                  ry={2}
-                  transform={`rotate(45 ${crestX} ${crestY})`}
-                />
-                <text
-                  className="unit__champion-crest-text"
-                  x={crestX}
-                  y={crestY + 1}
-                >
-                  {championLabel}
-                </text>
-              </g>
             ) : null}
             {tokenLayout.map((token, index) => {
               const ringClass = [
