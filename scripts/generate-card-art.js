@@ -9,7 +9,7 @@ const DEFAULT_OUT_DIR = path.join(process.cwd(), "apps/web/public/card-art");
 const DEFAULT_MANIFEST = path.join(process.cwd(), "apps/web/src/data/card-art.json");
 const DEFAULT_CARDS_DIR = path.join(process.cwd(), "packages/engine/src/content/cards");
 const DEFAULT_PROMPT_PREFIX =
-  "Card game art. Dark mythic fantasy. A shattered world of black stone and broken landmasses suspended over void and mist. Ancient god-built structures, colossal bridges, and ruined fortresses carved from volcanic rock and dull gold. The image is vivid and has color. Reality feels heavy and unstable, with blue glowing chaos seeping through cracks in the world. Brutal, solemn tone; themes of gravity, decay, inevitability, and endurance. Painterly realism, high contrast lighting, dramatic shadows, colors broken by gold and eerie light. Monumental scale, sacred ruin, no humor, no whimsy, no modern elements.";
+  "Card game art. Dark mythic fantasy. A shattered world with void and mist. Muted but colorful. Ancient structures. sacred ruins, no modern elements. Concept to capture: ";
 const DEFAULT_NEGATIVE_PROMPT = "text, watermark, logo, frame, border, UI, caption";
 const DEFAULT_OPENAI_MODEL = "gpt-image-1.5";
 const DEFAULT_CLOUDFLARE_MODEL = "@cf/stabilityai/stable-diffusion-xl-base-1.0";
@@ -530,11 +530,29 @@ const main = async () => {
   const fileExtension = resolveFileExtension(provider, model, outputFormat);
 
   for (const card of selection) {
-    const prompt = buildPrompt(card, { promptPrefix, promptSuffix });
     const base = buildFileBase(card);
     const nextCount = (fileBaseCounts.get(base) || 0) + 1;
     fileBaseCounts.set(base, nextCount);
     const baseWithCount = nextCount > 1 ? `${base}-${nextCount}` : base;
+    const expectedCount = provider === "openai" ? imageCount : 1;
+    const expectedFiles = [];
+    for (let i = 0; i < expectedCount; i += 1) {
+      const suffix = expectedCount > 1 ? `-${i + 1}` : "";
+      const fileName = `${baseWithCount}${suffix}.${fileExtension}`;
+      expectedFiles.push({ fileName, outputPath: path.join(outDir, fileName) });
+    }
+
+    if (!force && expectedFiles.every((entry) => fs.existsSync(entry.outputPath))) {
+      console.log(`Skipping ${card.name}, ${expectedCount} image(s) already exist.`);
+      if (manifest && expectedCount === 1) {
+        manifest[card.id] = expectedFiles[0].fileName;
+      } else if (manifest && expectedCount > 1) {
+        console.log(`Manifest update skipped for ${card.id} (multiple images).`);
+      }
+      continue;
+    }
+
+    const prompt = buildPrompt(card, { promptPrefix, promptSuffix });
 
     console.log(`Generating art for ${card.name}...`);
     const buffers = await generateImage({

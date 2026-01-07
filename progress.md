@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent1; scope: implement Siege Engineer on-deploy bridge destruction + tests; files: packages/engine/src/champions.ts, packages/engine/src/champion-abilities.test.ts, implementation_plan.md, progress.md; status: in progress
+- none
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -429,6 +429,7 @@ none
 - Added board effect badges for attached edge/hex modifiers using public modifier views; marked the optional plan item complete. (Overlap note: touched `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Added champion ability usage counters on board tokens and marked the optional plan item complete. (Overlap note: touched `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md` while agent3 is active.)
 - Added Traitor on-death mana wipe and Bounty Hunter champion-kill bonus gold hooks, with combat tests.
+- Added Siege Engineer on-deploy bridge destruction with champion ability test coverage.
 - Added Duelist Exemplar/Lone Wolf/Reliable Veteran champion dice mods and tests; marked the plan item complete in `implementation_plan.md`.
 
 ## Milestone 7.5 progress
@@ -436,6 +437,7 @@ none
 - Switched the card-art generator to OpenAI's image API, updated the base prompt + title suffix behavior, added title-based filenames, and made manifest updates optional. (Files: `scripts/generate-card-art.js`.)
 - Documented OpenAI card-art generator usage, API key setup, and prompt tuning in `docs/cards.md`.
 - Added docs guidance on safe card renames and creating variant cards with unique ids in `docs/cards.md`.
+- Added a pre-check in the art generator to skip OpenAI calls when target filenames already exist; manifest still updated for single-image skips.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

@@ -1,4 +1,4 @@
-import { randInt } from "@bridgefront/shared";
+import { neighborHexKeys, randInt } from "@bridgefront/shared";
 
 import type {
   CardDefId,
@@ -8,6 +8,7 @@ import type {
   PlayerID,
   UnitID
 } from "./types";
+import { getBridgeKey } from "./board";
 import { applyChampionKillRewards } from "./rewards";
 import { getCardsPlayedThisRound } from "./player-flags";
 import { addForcesToHex } from "./units";
@@ -26,6 +27,7 @@ const TRAITOR_CHAMPION_ID = "champion.age1.traitor";
 const DUELIST_EXEMPLAR_CHAMPION_ID = "champion.age2.duelist_exemplar";
 const LONE_WOLF_CHAMPION_ID = "champion.age2.lone_wolf";
 const RELIABLE_VETERAN_CHAMPION_ID = "champion.age2.reliable_veteran";
+const SIEGE_ENGINEER_CHAMPION_ID = "champion.age2.siege_engineer";
 
 const ASSASSINS_EDGE_KEY = "assassins_edge";
 
@@ -526,25 +528,69 @@ const getDeployForcesOnChampionDeploy = (cardDefId: CardDefId): number => {
   }
 };
 
-const applyChampionOnDeploy = (
+const getAdjacentBridgeKeys = (state: GameState, hexKey: string): string[] => {
+  const neighbors = neighborHexKeys(hexKey).filter((key) => Boolean(state.board.hexes[key]));
+  const bridgeKeys: string[] = [];
+  for (const neighbor of neighbors) {
+    const edgeKey = getBridgeKey(hexKey, neighbor);
+    if (state.board.bridges[edgeKey]) {
+      bridgeKeys.push(edgeKey);
+    }
+  }
+  return bridgeKeys;
+};
+
+const destroyAdjacentBridgeOnDeploy = (
   state: GameState,
   unitId: UnitID,
-  cardDefId: CardDefId,
-  ownerPlayerId: PlayerID
+  cardDefId: CardDefId
 ): GameState => {
-  const forceCount = getDeployForcesOnChampionDeploy(cardDefId);
-  if (forceCount <= 0) {
+  if (cardDefId !== SIEGE_ENGINEER_CHAMPION_ID) {
     return state;
   }
   const unit = state.board.units[unitId];
   if (!unit || unit.kind !== "champion") {
     return state;
   }
-  const nextBoard = addForcesToHex(state.board, ownerPlayerId, unit.hex, forceCount);
+  const bridgeKeys = getAdjacentBridgeKeys(state, unit.hex);
+  if (bridgeKeys.length === 0) {
+    return state;
+  }
+  const pick = randInt(state.rngState, 0, bridgeKeys.length - 1);
+  const edgeKey = bridgeKeys[pick.value] ?? bridgeKeys[0];
+  if (!edgeKey || !state.board.bridges[edgeKey]) {
+    return { ...state, rngState: pick.next };
+  }
+  const { [edgeKey]: _removed, ...bridges } = state.board.bridges;
   return {
     ...state,
-    board: nextBoard
+    rngState: pick.next,
+    board: {
+      ...state.board,
+      bridges
+    }
   };
+};
+
+const applyChampionOnDeploy = (
+  state: GameState,
+  unitId: UnitID,
+  cardDefId: CardDefId,
+  ownerPlayerId: PlayerID
+): GameState => {
+  let nextState = state;
+  const forceCount = getDeployForcesOnChampionDeploy(cardDefId);
+  const unit = state.board.units[unitId];
+  if (!unit || unit.kind !== "champion") {
+    return nextState;
+  }
+  if (forceCount > 0) {
+    nextState = {
+      ...nextState,
+      board: addForcesToHex(nextState.board, ownerPlayerId, unit.hex, forceCount)
+    };
+  }
+  return destroyAdjacentBridgeOnDeploy(nextState, unitId, cardDefId);
 };
 
 export const applyChampionDeployment = (

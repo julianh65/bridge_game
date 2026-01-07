@@ -345,7 +345,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
     - [x] Archivist Prime: +attack dice per card played this round
     - [x] Wormhole Artificer: +1 move distance when moving alone
     - [x] On-deploy triggers: Skirmisher Captain (deploy 1 Force).
-    - [ ] On-deploy triggers: Siege Engineer (destroy adjacent Bridge).
+    - [x] On-deploy triggers: Siege Engineer (destroy adjacent Bridge).
     - [x] On-death triggers: Traitor (set owner mana to 0)
     - [ ] On-death triggers: Blood Banker (first champion death in hex grants gold)
     - [x] On-battle-win/kill triggers: Bounty Hunter (bonus gold on champion kill in battle)

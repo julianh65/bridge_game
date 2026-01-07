@@ -1,6 +1,8 @@
+import { neighborHexKeys } from "@bridgefront/shared";
 import { describe, expect, it } from "vitest";
 
 import { DEFAULT_CONFIG } from "./config";
+import { getBridgeKey } from "./board";
 import { createBaseBoard } from "./board-generation";
 import { applyChampionDeployment } from "./champions";
 import { validateMovePath } from "./card-effects";
@@ -45,6 +47,42 @@ describe("champion abilities", () => {
     const occupants = state.board.hexes["0,0"].occupants["p1"] ?? [];
     const forceUnits = occupants.filter((unitId) => state.board.units[unitId]?.kind === "force");
     expect(forceUnits).toHaveLength(1);
+  });
+
+  it("destroys an adjacent bridge on Siege Engineer deploy", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    const neighbor = neighborHexKeys(hexKey).find((key) => Boolean(board.hexes[key]));
+    if (!neighbor) {
+      throw new Error("missing neighbor for siege engineer test");
+    }
+    const edgeKey = getBridgeKey(hexKey, neighbor);
+    board.bridges = {
+      ...board.bridges,
+      [edgeKey]: { key: edgeKey, from: hexKey, to: neighbor }
+    };
+    const deployed = addChampionToHex(board, "p1", hexKey, {
+      cardDefId: "champion.age2.siege_engineer",
+      hp: 5,
+      attackDice: 2,
+      hitFaces: 2,
+      bounty: 3
+    });
+
+    let state = {
+      ...base,
+      board: deployed.board,
+      phase: "round.action",
+      blocks: undefined
+    };
+
+    state = applyChampionDeployment(state, deployed.unitId, "champion.age2.siege_engineer", "p1");
+
+    expect(state.board.bridges[edgeKey]).toBeUndefined();
   });
 
   it("allows Bridge Runner to move without bridges", () => {
