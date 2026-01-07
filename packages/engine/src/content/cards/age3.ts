@@ -138,6 +138,23 @@ export const EXECUTION_ORDER: CardDef = {
   effects: [{ kind: "dealChampionDamage", amount: 3 }]
 };
 
+export const WORMHOLE_GATE: CardDef = {
+  id: "age3.wormhole_gate",
+  name: "Wormhole Gate",
+  rulesText: "Choose 2 hexes anywhere on the board; treat them as adjacent this round. Burn.",
+  type: "Spell",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 3 },
+  initiative: 45,
+  burn: true,
+  targetSpec: {
+    kind: "hexPair",
+    allowSame: false
+  },
+  effects: [{ kind: "linkHexes" }]
+};
+
 export const LOGISTICS_OFFICER: CardDef = {
   id: "champion.age3.logistics_officer",
   name: "Logistics Officer",
@@ -319,6 +336,7 @@ export const AGE3_CARDS: CardDef[] = [
   TOME_OF_ORDERS,
   LAST_LECTURE,
   EXECUTION_ORDER,
+  WORMHOLE_GATE,
   LOGISTICS_OFFICER,
   TITAN_VANGUARD,
   CENTER_BANNERMAN,

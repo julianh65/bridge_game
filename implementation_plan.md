@@ -440,7 +440,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
       - [x] Frenzy.
       - [x] Slow.
       - [x] Repair Orders.
-      - [ ] Gold Plated Armor.
+      - [x] Gold Plated Armor.
       - [ ] Mortar Shot.
       - [ ] Champion Recall.
     - [ ] Age II Bridges/Terrain card defs (4).
@@ -462,6 +462,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
     - [ ] Age III Combat/Tactics card defs (4).
       - [x] Execution Order.
     - [ ] Age III Bridges/Terrain card defs (2).
+      - [x] Wormhole Gate.
+      - [ ] Ruin the Span.
     - [ ] Age III Synergy/Gambits card defs (2).
     - [ ] Age III Victory card defs (4+).
     - [ ] Age III Champion card defs (8).
@@ -566,7 +568,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Slightly make the images a bit bigger and for all images it will crop, but I want it to crop like 10% higher than it is now, that is to say i want it centered 10% higher than it is now for all cards
 - [x] Make the cards slightly more readable, try to maximize space usage, make the font slightly larger, and it should be way more obvious the mana and gold cost, you can even put them in the bottom left and right corner like in hearthstone, to that end the entire hand area on the bottom can be made like 10% taller to accomodate
 - [x] Confirm that champion targetting cards have a UI and work such that you can target a specific champion if there are two in the same hex
-- [ ] Hard: What I'd really like is for the actions to happen on the board as they're revealed with the reveal thing. So after the card is revaled that player one built a bridge here then the bridge builds on the board, and after a player moves something it moves on the boards, and it should animate between the hexes
+- [ ] Hard: What I'd really like is for the actions to happen on the board as they're revealed with the reveal thing. So after the card is revaled that player one built a bridge here then the bridge builds on the board, and after a player moves something it moves on the boards, and it should animate between the hexes (TODO LATER DON'T PICK THIS UP IT'S DANGEROUS)
 
 ## Milestone 9.5 -- Card Art + Description
 
