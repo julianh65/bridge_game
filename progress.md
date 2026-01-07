@@ -16,10 +16,10 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-none
-- owner: agent1; scope: add emoji resource symbols (gold/mana/VP) to main sidebar + table stats; files: `apps/web/src/components/GameScreenSidebar.tsx`, `progress.md`, `implementation_plan.md`; status: in progress.
+- owner: agent4; scope: Milestone 9 board visuals (hex padding + bridge styling); files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/lib/hex-geometry.ts`, `apps/web/src/styles.css`; status: in progress.
 
 ## Milestone 8.5 progress
+- Added emoji resource symbols (gold/mana/VP) in the command center + table stats and marked the plan item complete in `implementation_plan.md`.
 - Slimmed the action strip: moved Pass/Submit + deck counts into the hand footer, simplified basic actions, and added a command-center table with per-player gold/mana/hand counts.
 - Added show/hide controls for the hand panel, made the actions column collapsible, and removed internal scrolling from the bottom hand area.
 - Removed the duplicate action panel, tightened the game view to fit the viewport, and reduced the board height while keeping the intel dock as a fixed overlay.
@@ -106,6 +106,7 @@ none
 - Expanded the Milestone 9 card-test checklist with Age I market sub-items in `implementation_plan.md`.
 - Marked the Milestone 9 Age I market card-test item (Supply Ledger/Patrol Record/Banner Claim) complete in `implementation_plan.md`.
 - Checked off the remaining Age I market card-test checklist item (Quick March/Trade Caravan/Temporary Bridge/Patch Up/Quick Study) in `implementation_plan.md`.
+- Overlap note: `implementation_plan.md` already included updates for board-visuals polish + new wasted-space task while syncing the card-test checklist.
 - Updated milestone checkboxes in `implementation_plan.md` to match current status.
 - Rewrote Milestone 9 notes into a coherent checklist in `implementation_plan.md`.
 - Marked the Milestone 7 champion ability hook tasks complete in `implementation_plan.md`.
