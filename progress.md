@@ -17,6 +17,7 @@
 
 ## Active tasks
 - owner: agent3 | scope: add a reusable hand-card picker modal for topdeck-from-hand targets (Perfect Recall) | files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md` | status: in progress
+- owner: agent2 | scope: add unique faction symbols + display them in lobby/selection/board badges | files: `apps/web/src/lib/factions.ts`, `apps/web/src/components/PreGameLobby.tsx`, `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/Lobby.tsx`, `apps/web/src/components/VictoryScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md` | status: in progress
 
 
 ## Milestone 8.5 progress
@@ -25,6 +26,7 @@
 - Added show/hide controls for the hand panel, made the actions column collapsible, and removed internal scrolling from the bottom hand area.
 - Removed the duplicate action panel, tightened the game view to fit the viewport, and reduced the board height while keeping the intel dock as a fixed overlay.
 - Consolidated the GameScreen layout: moved the action panel into the hand row, added an intel dock for players/log, and tightened the sidebar into status/resources/intel summaries (styles updated).
+- Dropped the remaining target strip under the hand and made choice/champion card targeting board-driven (capital/center click + champion-hex cycling).
 - Added a reusable `GameCard` component with art/cost/initiative details, refactored card displays (hand, market, deck, cards browser, free starting offers), and marked the plan item complete in `implementation_plan.md`.
 - Refined `GameCard` layouts: centered titles, italicized type line, initiative circles, age labels above art, cost line with emoji, larger hand/market sizing, and power/champion borders (overlap: `apps/web/src/styles.css` with agent1).
 - Increased card height/sizing in the hand + market views, stretched art areas, and slimmed the hand action column to give cards more space.

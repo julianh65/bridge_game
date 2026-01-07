@@ -864,6 +864,30 @@ export const GameScreen = ({
     }
     setSelectedHexKey(hexKey);
 
+    if (boardPickMode === "none" && cardTargetKind === "champion" && selectedCardDef) {
+      const rawOwner = selectedCardDef.targetSpec.owner;
+      const owner =
+        rawOwner === "self" || rawOwner === "enemy" || rawOwner === "any"
+          ? rawOwner
+          : "self";
+      const eligibleChampions =
+        !localPlayer || owner === "any"
+          ? championUnits
+          : owner === "self"
+            ? championUnits.filter((unit) => unit.ownerId === localPlayer.id)
+            : championUnits.filter((unit) => unit.ownerId !== localPlayer.id);
+      const championsOnHex = eligibleChampions.filter((unit) => unit.hex === hexKey);
+      if (championsOnHex.length > 0) {
+        const currentIndex = championsOnHex.findIndex(
+          (unit) => unit.id === selectedChampionId
+        );
+        const nextIndex =
+          currentIndex >= 0 ? (currentIndex + 1) % championsOnHex.length : 0;
+        setCardTargetsObject({ unitId: championsOnHex[nextIndex].id });
+        return;
+      }
+    }
+
     if (boardPickMode === "marchFrom") {
       setMarchFrom(hexKey);
       setBoardPickMode("marchTo");
@@ -932,6 +956,25 @@ export const GameScreen = ({
       return;
     }
     if (boardPickMode === "cardChoice") {
+      if (selectedCardDef && cardTargetKind === "choice") {
+        const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
+        const options = Array.isArray(targetSpec.options) ? targetSpec.options : [];
+        const hasCapitalOption = options.some(
+          (option) =>
+            option && typeof option === "object" && (option as Record<string, unknown>).kind === "capital"
+        );
+        const canPickCenter = canUseCenterAsCapital && centerHexKey;
+        if (hasCapitalOption) {
+          if (localCapitalHexKey && hexKey === localCapitalHexKey) {
+            setCardTargetsObject({ choice: "capital", hexKey });
+            return;
+          }
+          if (canPickCenter && centerHexKey && hexKey === centerHexKey) {
+            setCardTargetsObject({ choice: "capital", hexKey });
+            return;
+          }
+        }
+      }
       setCardTargetsObject({ choice: "occupiedHex", hexKey });
     }
     if (boardPickMode === "cardHex") {
@@ -1225,32 +1268,46 @@ export const GameScreen = ({
       }
       const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
       const options = Array.isArray(targetSpec.options) ? targetSpec.options : [];
+      const hasCapitalOption = options.some(
+        (option) =>
+          option && typeof option === "object" && (option as Record<string, unknown>).kind === "capital"
+      );
       const occupiedOption = options.find(
         (option) =>
           option && typeof option === "object" && (option as Record<string, unknown>).kind === "occupiedHex"
       ) as Record<string, unknown> | undefined;
-      if (!occupiedOption) {
+      if (!occupiedOption && !hasCapitalOption) {
         return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
-      const owner = typeof occupiedOption.owner === "string" ? occupiedOption.owner : "self";
-      for (const key of hexKeys) {
-        if (!canEnter(key)) {
-          continue;
+      if (occupiedOption) {
+        const owner = typeof occupiedOption.owner === "string" ? occupiedOption.owner : "self";
+        for (const key of hexKeys) {
+          if (!canEnter(key)) {
+            continue;
+          }
+          if (owner === "any") {
+            const hex = boardHexes[key];
+            const hasOccupants = hex
+              ? Object.values(hex.occupants).some((unitIds) => unitIds.length > 0)
+              : false;
+            if (hasOccupants) {
+              validTargets.add(key);
+            }
+          } else if (owner === "enemy") {
+            if (hasEnemy(key)) {
+              validTargets.add(key);
+            }
+          } else if (isOccupied(key)) {
+            validTargets.add(key);
+          }
         }
-        if (owner === "any") {
-          const hex = boardHexes[key];
-          const hasOccupants = hex
-            ? Object.values(hex.occupants).some((unitIds) => unitIds.length > 0)
-            : false;
-          if (hasOccupants) {
-            validTargets.add(key);
-          }
-        } else if (owner === "enemy") {
-          if (hasEnemy(key)) {
-            validTargets.add(key);
-          }
-        } else if (isOccupied(key)) {
-          validTargets.add(key);
+      }
+      if (hasCapitalOption) {
+        if (localCapitalHexKey) {
+          validTargets.add(localCapitalHexKey);
+        }
+        if (canUseCenterAsCapital && centerHexKey) {
+          validTargets.add(centerHexKey);
         }
       }
     }
@@ -1364,341 +1421,6 @@ export const GameScreen = ({
     return Array.from(merged);
   }, [targetPreviewEdgeKeys, revealEdgeKeys]);
 
-  const cardTargetPanel = selectedCardDef
-    ? (() => {
-        switch (cardTargetKind) {
-          case "none":
-            return <p className="card-detail__hint">No targets required.</p>;
-          case "edge":
-            return (
-              <div className="card-detail__targets">
-                <div className="card-detail__row">
-                  <span>Target edge</span>
-                  <button
-                    type="button"
-                    className={`btn btn-tertiary ${
-                      boardPickMode === "cardEdge" ? "is-active" : ""
-                    }`}
-                    onClick={() =>
-                      setBoardPickModeSafe(
-                        boardPickMode === "cardEdge" ? "none" : "cardEdge"
-                      )
-                    }
-                  >
-                    {boardPickMode === "cardEdge" ? "Picking" : "Pick on board"}
-                  </button>
-                </div>
-                <p className="card-detail__hint">
-                  Click a highlighted edge on the board.
-                </p>
-              </div>
-            );
-          case "stack":
-            return (
-              <div className="card-detail__targets">
-                <div className="card-detail__row">
-                  <span>Target stack</span>
-                  <button
-                    type="button"
-                    className={`btn btn-tertiary ${
-                      boardPickMode === "cardStack" ? "is-active" : ""
-                    }`}
-                    onClick={() =>
-                      setBoardPickModeSafe(
-                        boardPickMode === "cardStack" ? "none" : "cardStack"
-                      )
-                    }
-                  >
-                    {boardPickMode === "cardStack" ? "Picking" : "Pick on board"}
-                  </button>
-                </div>
-                <p className="card-detail__hint">
-                  {pendingStackFrom
-                    ? `Pick destination from ${pendingStackFrom}`
-                    : "Pick a start hex, then a destination hex."}
-                </p>
-              </div>
-            );
-          case "path":
-            return (
-              <div className="card-detail__targets">
-                <div className="card-detail__row">
-                  <span>Target path</span>
-                  <div className="card-detail__row-actions">
-                    <button
-                      type="button"
-                      className={`btn btn-tertiary ${
-                        boardPickMode === "cardPath" ? "is-active" : ""
-                      }`}
-                      onClick={() =>
-                        setBoardPickModeSafe(
-                          boardPickMode === "cardPath" ? "none" : "cardPath"
-                        )
-                      }
-                    >
-                      {boardPickMode === "cardPath" ? "Picking" : "Pick on board"}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-tertiary"
-                      onClick={() => {
-                        setPendingPath([]);
-                        setCardTargetsRaw("");
-                      }}
-                    >
-                      Clear path
-                    </button>
-                  </div>
-                </div>
-                <p className="card-detail__hint">
-                  {pendingPath.length > 0
-                    ? `Path: ${pendingPath.join(" → ")}`
-                    : "Click hexes to build a contiguous path."}
-                </p>
-              </div>
-            );
-          case "choice":
-            return (
-              <div className="card-detail__targets">
-                <div className="card-detail__row">
-                  <span>Target choice</span>
-                  <div className="card-detail__row-actions">
-                    {(() => {
-                      const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
-                      const options = Array.isArray(targetSpec.options)
-                        ? targetSpec.options
-                        : [];
-                      const hasCapitalOption = options.some(
-                        (option) =>
-                          option &&
-                          typeof option === "object" &&
-                          (option as Record<string, unknown>).kind === "capital"
-                      );
-                      if (!hasCapitalOption) {
-                        return null;
-                      }
-                      const selectedChoice =
-                        getTargetString(targetRecord, "choice") ??
-                        getTargetString(targetRecord, "kind");
-                      const selectedHex = getTargetString(targetRecord, "hexKey");
-                      const capitalKey = localCapitalHexKey;
-                      const canPickCapital = Boolean(capitalKey);
-                      const canPickCenter = canUseCenterAsCapital && centerHexKey;
-                      return (
-                        <>
-                          <button
-                            type="button"
-                            className={`btn btn-tertiary ${
-                              selectedChoice === "capital" &&
-                              (!selectedHex || selectedHex === capitalKey)
-                                ? "is-active"
-                                : ""
-                            }`}
-                            disabled={!canPickCapital}
-                            onClick={() => {
-                              setBoardPickModeSafe("none");
-                              setCardTargetsObject(
-                                capitalKey
-                                  ? { choice: "capital", hexKey: capitalKey }
-                                  : { choice: "capital" }
-                              );
-                            }}
-                          >
-                            Capital
-                          </button>
-                          {canPickCenter ? (
-                            <button
-                              type="button"
-                              className={`btn btn-tertiary ${
-                                selectedChoice === "capital" && selectedHex === centerHexKey
-                                  ? "is-active"
-                                  : ""
-                              }`}
-                              onClick={() => {
-                                if (!centerHexKey) {
-                                  return;
-                                }
-                                setBoardPickModeSafe("none");
-                                setCardTargetsObject({ choice: "capital", hexKey: centerHexKey });
-                              }}
-                            >
-                              Center
-                            </button>
-                          ) : null}
-                        </>
-                      );
-                    })()}
-                    <button
-                      type="button"
-                      className={`btn btn-tertiary ${
-                        boardPickMode === "cardChoice" ? "is-active" : ""
-                      }`}
-                      onClick={() =>
-                        setBoardPickModeSafe(
-                          boardPickMode === "cardChoice" ? "none" : "cardChoice"
-                        )
-                      }
-                    >
-                      {boardPickMode === "cardChoice" ? "Picking hex" : "Occupied hex"}
-                    </button>
-                  </div>
-                </div>
-                <p className="card-detail__hint">
-                  Pick capital immediately or select an occupied hex on the board.
-                </p>
-              </div>
-            );
-          case "hex": {
-            const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
-            const owner =
-              typeof targetSpec.owner === "string" ? targetSpec.owner : "any";
-            const ownerLabel =
-              owner === "self" ? "friendly" : owner === "enemy" ? "enemy" : "any";
-            const requiresOccupied = targetSpec.occupied === true;
-            const tile = typeof targetSpec.tile === "string" ? targetSpec.tile : null;
-            const allowCapital = targetSpec.allowCapital !== false;
-            const maxDistanceFromChampion =
-              typeof targetSpec.maxDistanceFromFriendlyChampion === "number"
-                ? targetSpec.maxDistanceFromFriendlyChampion
-                : null;
-            const requirementBits: string[] = [];
-            if (requiresOccupied) {
-              requirementBits.push("occupied");
-            }
-            if (tile) {
-              requirementBits.push(`${tile} tile`);
-            }
-            if (!allowCapital) {
-              requirementBits.push("non-capital");
-            }
-            if (owner !== "any") {
-              requirementBits.push(`${ownerLabel} controlled`);
-            }
-            if (maxDistanceFromChampion !== null) {
-              requirementBits.push(`within ${maxDistanceFromChampion} of friendly champion`);
-            }
-            const requirementLabel =
-              requirementBits.length > 0
-                ? `Eligible hexes: ${requirementBits.join(", ")}.`
-                : "Pick a hex on the board.";
-            const selectedHex = getTargetString(targetRecord, "hexKey");
-            return (
-              <div className="card-detail__targets">
-                <div className="card-detail__row">
-                  <span>Target hex</span>
-                  <div className="card-detail__row-actions">
-                    <button
-                      type="button"
-                      className={`btn btn-tertiary ${
-                        boardPickMode === "cardHex" ? "is-active" : ""
-                      }`}
-                      onClick={() =>
-                        setBoardPickModeSafe(
-                          boardPickMode === "cardHex" ? "none" : "cardHex"
-                        )
-                      }
-                    >
-                      {boardPickMode === "cardHex" ? "Picking" : "Pick on board"}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-tertiary"
-                      onClick={() => {
-                        setBoardPickModeSafe("none");
-                        setCardTargetsRaw("");
-                      }}
-                    >
-                      Clear
-                    </button>
-                  </div>
-                </div>
-                {selectedHex ? (
-                  <p className="card-detail__hint">Selected: {selectedHex}.</p>
-                ) : null}
-                <p className="card-detail__hint">{requirementLabel}</p>
-              </div>
-            );
-          }
-          case "champion": {
-            const rawOwner = selectedCardDef.targetSpec.owner;
-            const owner =
-              rawOwner === "self" || rawOwner === "enemy" || rawOwner === "any"
-                ? rawOwner
-                : "self";
-            const ownerLabel =
-              owner === "self" ? "Friendly" : owner === "enemy" ? "Enemy" : "Any";
-            const eligibleChampions =
-              !localPlayer || owner === "any"
-                ? championUnits
-                : owner === "self"
-                  ? championUnits.filter((unit) => unit.ownerId === localPlayer.id)
-                  : championUnits.filter((unit) => unit.ownerId !== localPlayer.id);
-            const maxDistance =
-              typeof selectedCardDef.targetSpec.maxDistance === "number"
-                ? selectedCardDef.targetSpec.maxDistance
-                : null;
-            const requiresFriendlyChampion =
-              selectedCardDef.targetSpec.requiresFriendlyChampion === true;
-            const rangeHint =
-              maxDistance !== null
-                ? `Range: within ${maxDistance} hex${
-                    maxDistance === 1 ? "" : "es"
-                  }${requiresFriendlyChampion ? " of a friendly champion." : "."}`
-                : requiresFriendlyChampion
-                  ? "Requires a friendly champion near the target."
-                  : null;
-            return (
-              <div className="card-detail__targets">
-                <div className="card-detail__row">
-                  <span>Target {ownerLabel.toLowerCase()} champion</span>
-                  <button
-                    type="button"
-                    className="btn btn-tertiary"
-                    onClick={() => {
-                      setBoardPickModeSafe("none");
-                      setCardTargetsRaw("");
-                    }}
-                  >
-                    Clear
-                  </button>
-                </div>
-                {eligibleChampions.length > 0 ? (
-                  <div className="card-detail__options">
-                    {eligibleChampions.map((unit) => {
-                      const isSelected = selectedChampionId === unit.id;
-                      return (
-                        <button
-                          key={unit.id}
-                          type="button"
-                          className={`btn btn-tertiary ${isSelected ? "is-active" : ""}`}
-                          title={unit.id}
-                          onClick={() => {
-                            setBoardPickModeSafe("none");
-                            setCardTargetsObject({ unitId: unit.id });
-                          }}
-                        >
-                          {unit.name} · {unit.ownerName} · {unit.hex} · {unit.hp}/
-                          {unit.maxHp}
-                        </button>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <p className="card-detail__hint">No eligible champions on the board.</p>
-                )}
-                {rangeHint ? <p className="card-detail__hint">{rangeHint}</p> : null}
-              </div>
-            );
-          }
-          default:
-            return (
-              <p className="card-detail__hint">
-                Target kind: {cardTargetKind}. Targeting UI is not available yet.
-              </p>
-            );
-        }
-      })()
-    : null;
   const handleSelectCard = (cardId: string) => {
     const card = handCards.find((entry) => entry.id === cardId) ?? null;
     const cardDef = card ? CARD_DEFS_BY_ID.get(card.defId) ?? null : null;
@@ -1950,8 +1672,6 @@ export const GameScreen = ({
         availableGold={availableGold}
         canDeclareAction={canDeclareAction}
         selectedCardId={cardInstanceId}
-        selectedCardDef={selectedCardDef}
-        cardTargetPanel={cardTargetPanel}
         phase={view.public.phase}
         player={localPlayer ?? null}
         status={status}
