@@ -10,7 +10,6 @@ import { parseEdgeKey } from "@bridgefront/shared";
 
 import { HEX_SIZE, hexPoints } from "../lib/hex-geometry";
 import type { HexRender } from "../lib/board-preview";
-import { getFactionName } from "../lib/factions";
 
 type ViewBox = {
   minX: number;
@@ -282,7 +281,6 @@ export const BoardView = ({
   hexes,
   board,
   playerIndexById,
-  playerFactionById,
   showCoords = true,
   showTags = true,
   showMineValues = true,
@@ -1092,24 +1090,6 @@ export const BoardView = ({
           cx: -totalTokenWidth / 2 + tokenRadius + index * (tokenDiameter + tokenGap),
           cy: tokenCenterY
         }));
-        const stackTitleLines = [
-          `Stack ${playerLabel(stack.ownerPlayerId)}`,
-          `Forces: ${stack.forceCount}`,
-          `Champions: ${stack.championCount}`
-        ];
-        const factionId = playerFactionById?.[stack.ownerPlayerId];
-        if (factionId && factionId !== "unassigned") {
-          stackTitleLines.splice(1, 0, `Faction: ${getFactionName(factionId)}`);
-        }
-        if (stack.championDetails.length > 0) {
-          stackTitleLines.push("Champion HP:");
-          for (const champion of stack.championDetails) {
-            stackTitleLines.push(
-              `- ${champion.name} ${champion.hp}/${champion.maxHp}`
-            );
-          }
-        }
-        const stackTitle = stackTitleLines.join("\n");
         return (
           <g
             key={stack.key}
@@ -1118,7 +1098,6 @@ export const BoardView = ({
             style={{ transition: "transform 320ms ease" }}
             onClick={() => handleStackClick(stack.hexKey)}
           >
-            <title>{stackTitle}</title>
             <circle
               className={
                 colorIndex !== undefined ? `unit unit--p${colorIndex}` : "unit"

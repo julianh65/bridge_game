@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- [owner: agent3] [status: in-progress] Scope: fix hand-card hover popout z-index/overflow so hovered cards render above containers. Files: apps/web/src/styles.css, apps/web/src/components/GameScreenHandPanel.tsx, apps/web/src/components/GameCard.tsx, progress.md.
 
 ## Milestone 8.5 progress
 - Improved hand card selection UX: added a selected-card summary with target hints + clear button, enabled click-to-deselect, and cleared card selection when switching to basic actions; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
@@ -26,6 +26,7 @@
 - Tightened champion tooltip width, expanded rules text lines to reduce truncation, and switched champion token labels to current HP.
 - Removed the unit ring + faction badge chip, restored champion glyph labels, and added a small HP pip on each champion token.
 - Removed the champion crest marker on stacks and widened multi-champion token spacing.
+- Removed the native browser tooltip on unit stack/champion token hover so only the custom SVG tooltip appears.
 - Overlap note: commit also picked up pre-staged changes in `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, and `implementation_plan.md`.
 - Increased bridge preview hitbox width to make edge selection easier. (Overlap note: touched `apps/web/src/styles.css` alongside agent3/agent4.)
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
