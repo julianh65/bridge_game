@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-
+- [owner: agent3] [status: in-progress] Scope: make action reveal duration configurable and hide card IDs in the reveal overlay. Files: packages/engine/src/types.ts, packages/engine/src/config.ts, packages/engine/src/view.ts, apps/web/src/components/GameScreen.tsx, apps/web/src/components/ActionRevealOverlay.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md.
 
 ## Milestone 8.5 progress
 - Added unique faction symbols (small circle badges) across faction selection, lobby labels, unit stacks, and victory screen; marked the plan item complete in `implementation_plan.md`.
@@ -72,6 +72,7 @@
 - Shortened bridge render segments so they no longer draw center-to-center; marked the plan item complete in `implementation_plan.md`.
 - Shortened bridge render segments a bit further by increasing the inset.
 - Loosened BoardView pan bounds so the board can be dragged farther off-screen and marked the plan item complete in `implementation_plan.md`.
+- Overlap note: included unclaimed `implementation_plan.md` TODO additions (champion hover details, reveal length/settings tweaks, hand hover z-index).
 - Added a1-style hex labels to the game board with top-to-bottom row letters and left-to-right numbers via BoardView label variants; marked the plan item complete in `implementation_plan.md` (overlap: `implementation_plan.md`, `progress.md` with agent4).
 - Updated event log formatting to use a1-style board labels instead of axial coords (overlap: `apps/web/src/components/GameScreen.tsx` with agent4).
 - Updated event log formatting to use card names instead of card ids (overlap: `apps/web/src/components/GameScreen.tsx` with agent4).

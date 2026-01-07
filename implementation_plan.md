@@ -408,24 +408,15 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 
 ## Milestone 8.5 -- Things I've noticed and nice to haves
 
-### Tasks (web - home + onboarding)
-- [x] Refresh the main landing page layout and typography.
-- [x] Add a placeholder panel for rules/tutorial access.
-- [x] Fix the non-auto setup flow (faction picks + start gating) so manual setup works.
-
 ### Tasks (web - market overlay + cards)
 - [x] Replace the market focus row with a full-screen overlay that can be shown/hidden.
-- [x] Redesign market cards to show art placeholder, cost, initiative, type, tags, and rules text.
 - [x] Shrink the board presence while the market overlay is open so the cards dominate.
-- [x] The market overlay should clearly denote the order of cards still to be played
 - [x] The cards on the market overlay look a little bit wide style wise, they should look like cards.
 - [x] The bids in the market should not be public / show in the bid status until everyone has bid
 - [x] We need a clear animation or something to show who won the card
 
 ### Tasks (web - deck + player status)
 - [x] Add a deck viewer so players can browse all cards in their current deck.
-- [x] Add per-player colors and reflect ownership in player list + board occupancy.
-- [x] Make action status more obvious (who still needs to act, who is done).
 
 ### Tasks (web - action flow + layout)
 - [x] Reduce card targeting clicks so board picks are direct and visible once selected. That is to say I don't want to have 2 clicks to do things, like some cards are like deploy forces, then you need to click into capital or hex, and then you click the hex on the board, like it's too many, it should just be click the card and then click where / what you want to do it on and it just does the correct one
@@ -457,6 +448,10 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [ ] The basic actions in the card hand panel below needs to be reworked, it's taking up too much horizontal space, The bridge march reinforce buttons should be stacked and be thinner and we can probably streamline the whole UI of each when they're expanded
 - [ ] The draw, Discard and Scrapped can be pills at the top of the container and are taking up too much space
 - [ ] The Pass and Submit actions should be floating in the middle bottom of the container and be larger
+- [ ] Mousing over a champion chit on the board should give a small pop up showing more info on the champion, the health, the card itself maybe, the damage and modifiers on it etc...
+- [ ] The reveal length for each action should be configurable from settings
+- [ ] The reveal modal that pops up shouldn't have the card ID on it
+- [ ] When hovering over a card in your hand and it pops out, it should be higher z index than anything else and not be contained if that's possible, right now it pops out but is contained by both its parent containers
 - [x] The Log is taking up too much screen real estate, make that a seperate area or modal or something
 - [x] Urgent: Card targets are still not be selected properly when you click on the board. For example the bridge crew still doesn't work. I see the edge flash but it doesn't select it properly still. (Delayed BoardView pointer capture so clicks register.)
 - [x] Also can you double check, does it only work for 2 players right now?
