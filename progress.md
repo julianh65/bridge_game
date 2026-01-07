@@ -46,7 +46,7 @@
 - Added a market roll-off tie-break panel with suspenseful rolling dice numbers using a reusable `NumberRoll` component; marked the plan item complete in `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` touched alongside agent4.)
 - Extended market roll-off to include pass-tie roll-offs, increased roll suspense timing, and labeled roll-offs in the log (engine market tests updated).
 - Delayed the market winner highlight until after the roll-off animation completes and moved the roll-off panel to the center of the market layout. (Overlap note: `apps/web/src/styles.css` touched alongside agent1.)
-- Made market roll-off rounds animate sequentially (no overlap) with per-round scheduling; marked the plan item complete in `implementation_plan.md`.
+- Made market roll-off rounds animate sequentially (no overlap) with per-round scheduling; marked the plan item complete in `implementation_plan.md`. (owner: agent4; files: `apps/web/src/components/MarketPanel.tsx`)
 - Made the market roll-off animation duration configurable via `MARKET_ROLLOFF_DURATION_MS` in `DEFAULT_CONFIG` and documented it.
 - Removed the Live connection pill from the header and enlarged gold/VP chips with clearer labels. (Overlap note: `apps/web/src/styles.css` touched alongside agent1.)
 - Added compact gold/VP labels in the collapsed header chips so the HUD always shows text; marked the plan item complete in `implementation_plan.md`.

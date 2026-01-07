@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useMemo, useState, type ChangeEvent } from "react";
 
 import { CARD_DEFS, type Bid, type GameView, type MarketState } from "@bridgefront/engine";
 
@@ -156,14 +156,18 @@ export const MarketPanel = ({
     return { card, def, index, isHidden, isActive, isResolved, isWinner, label };
   });
   const showOrderRail = isOverlay && currentRow.length > 0;
-  const playerNameById = new Map(players.map((entry) => [entry.id, entry.name]));
   const rollDurationMs = Math.max(0, rollDurationOverride ?? 1100);
   const rollDelayBaseMs = 160;
-  const rollRoundGapMs = 520;
+  const rollRoundGapMs = 300;
   const rollGapMs = 140;
-  const rollOffRounds =
-    winnerHighlight?.rollOff
-      ?.map((round, roundIndex) => {
+  const rollOffRounds = useMemo(() => {
+    const rollOff = winnerHighlight?.rollOff;
+    if (!rollOff || rollOff.length === 0) {
+      return [];
+    }
+    const playerNameById = new Map(players.map((entry) => [entry.id, entry.name]));
+    return rollOff
+      .map((round, roundIndex) => {
         if (!round || typeof round !== "object") {
           return null;
         }
@@ -193,14 +197,48 @@ export const MarketPanel = ({
           round
         ): round is { roundIndex: number; rolls: Array<{ playerId: string; name: string; value: number }> } =>
           Boolean(round)
-      ) ?? [];
-  const showRollOff = rollOffRounds.length > 0;
-  const rollOffDurationMs = rollOffRounds.reduce((max, round) => {
-    const lastIndex = Math.max(round.rolls.length - 1, 0);
-    const endAt =
-      rollDelayBaseMs + round.roundIndex * rollRoundGapMs + lastIndex * rollGapMs + rollDurationMs;
-    return Math.max(max, endAt);
-  }, 0);
+      );
+  }, [players, winnerHighlight?.rollOff]);
+
+  const rollOffSchedule = useMemo(
+    () =>
+      rollOffRounds.reduce(
+        (schedule, round) => {
+          const lastIndex = Math.max(round.rolls.length - 1, 0);
+          const rollDelays = round.rolls.map(
+            (_roll, index) => schedule.nextStartMs + index * rollGapMs
+          );
+          const endMs = schedule.nextStartMs + lastIndex * rollGapMs + rollDurationMs;
+          schedule.rounds.push({
+            ...round,
+            startMs: schedule.nextStartMs,
+            endMs,
+            rollDelays
+          });
+          schedule.nextStartMs = endMs + rollRoundGapMs;
+          return schedule;
+        },
+        {
+          rounds: [] as Array<{
+            roundIndex: number;
+            rolls: Array<{ playerId: string; name: string; value: number }>;
+            startMs: number;
+            endMs: number;
+            rollDelays: number[];
+          }>,
+          nextStartMs: rollDelayBaseMs
+        }
+      ),
+    [rollDelayBaseMs, rollDurationMs, rollGapMs, rollOffRounds, rollRoundGapMs]
+  );
+  const showRollOff = rollOffSchedule.rounds.length > 0;
+  const rollOffDurationMs =
+    rollOffSchedule.rounds.length > 0
+      ? rollOffSchedule.rounds[rollOffSchedule.rounds.length - 1]?.endMs ?? 0
+      : 0;
+  const [visibleRollRounds, setVisibleRollRounds] = useState(
+    rollOffSchedule.rounds.length
+  );
 
   useEffect(() => {
     if (!winnerHighlight || !showRollOff) {
@@ -215,6 +253,24 @@ export const MarketPanel = ({
       window.clearTimeout(timeout);
     };
   }, [winnerHighlight?.rollOffKey, rollOffDurationMs, showRollOff]);
+
+  useEffect(() => {
+    if (!winnerHighlight || rollOffSchedule.rounds.length === 0) {
+      setVisibleRollRounds(rollOffSchedule.rounds.length);
+      return;
+    }
+
+    setVisibleRollRounds(1);
+    const timeouts = rollOffSchedule.rounds.slice(1).map((round, index) =>
+      window.setTimeout(() => {
+        setVisibleRollRounds(index + 2);
+      }, round.startMs)
+    );
+
+    return () => {
+      timeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
+    };
+  }, [rollOffSchedule, winnerHighlight?.rollOffKey]);
 
   let bidHint = "Enter a bid amount to buy or pass.";
   if (status !== "connected") {
@@ -235,6 +291,7 @@ export const MarketPanel = ({
     currentRow.length > 0
       ? `Card ${rowIndexResolving + 1} of ${currentRow.length}`
       : "No market cards revealed.";
+  const rollOffRoundsToShow = rollOffSchedule.rounds.slice(0, visibleRollRounds);
   const rollOffPanel = showRollOff ? (
     <div className="market-rolloff-panel">
       <div className="market-bid__header">
@@ -243,7 +300,7 @@ export const MarketPanel = ({
       </div>
       <p className="action-panel__hint">Dice roll tiebreaker resolved for this card.</p>
       <div className="market-rolloff market-rolloff--center">
-        {rollOffRounds.map((round) => (
+        {rollOffRoundsToShow.map((round) => (
           <div
             key={`rolloff-${winnerHighlight?.rollOffKey ?? 0}-${round.roundIndex}`}
             className="market-rolloff__round"
@@ -252,8 +309,7 @@ export const MarketPanel = ({
             <div className="market-rolloff__rolls">
               {round.rolls.map((roll, index) => {
                 const isWinner = roll.playerId === winnerHighlight?.playerId;
-                const delayMs =
-                  rollDelayBaseMs + round.roundIndex * rollRoundGapMs + index * rollGapMs;
+                const delayMs = round.rollDelays[index] ?? round.startMs;
                 return (
                   <div
                     key={`roll-${roll.playerId}-${round.roundIndex}`}
