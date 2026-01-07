@@ -346,8 +346,10 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
     - [x] Wormhole Artificer: +1 move distance when moving alone
     - [x] On-deploy triggers: Skirmisher Captain (deploy 1 Force).
     - [ ] On-deploy triggers: Siege Engineer (destroy adjacent Bridge).
-    - [ ] On-death triggers: Traitor (set owner mana to 0), Blood Banker (first champion death in hex grants gold)
-    - [ ] On-battle-win/kill triggers: Capturer (deploy 1 Force on win), Bounty Hunter/Tax Reaver (bonus gold on champion kill)
+    - [x] On-death triggers: Traitor (set owner mana to 0)
+    - [ ] On-death triggers: Blood Banker (first champion death in hex grants gold)
+    - [x] On-battle-win/kill triggers: Bounty Hunter (bonus gold on champion kill in battle)
+    - [ ] On-battle-win/kill triggers: Capturer (deploy 1 Force on win), Tax Reaver (bonus gold on champion kill)
     - [x] Movement exceptions: Bridge Runner pathfinder (adjacent moves ignore bridges).
     - [ ] Movement/deploy exceptions: Guerilla Native Mercenary (deploy to any unoccupied hex), Logistics Officer (deploy as capital)
     - [x] Dice mods/thresholds: Inspiring Geezer (forces hit 1-3), Brute (extra dice if no enemy champion).

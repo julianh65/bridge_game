@@ -665,6 +665,132 @@ describe("combat resolution", () => {
     expect(p2?.resources.gold).toBe(0);
   });
 
+  it("awards bounty hunter bonus gold when an enemy champion dies in battle", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({
+      value: 1,
+      next: rng
+    }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        p1: ["c1"],
+        p2: ["c2"]
+      }
+    };
+    board.units = {
+      c1: {
+        id: "c1",
+        ownerPlayerId: "p1",
+        kind: "champion",
+        hex: hexKey,
+        cardDefId: "champion.age1.bounty_hunter",
+        hp: 4,
+        maxHp: 4,
+        attackDice: 2,
+        hitFaces: 3,
+        bounty: 2,
+        abilityUses: {}
+      },
+      c2: {
+        id: "c2",
+        ownerPlayerId: "p2",
+        kind: "champion",
+        hex: hexKey,
+        cardDefId: "test.c2",
+        hp: 1,
+        maxHp: 1,
+        attackDice: 0,
+        hitFaces: 0,
+        bounty: 2,
+        abilityUses: {}
+      }
+    };
+
+    let state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(25),
+      board,
+      modifiers: [],
+      players: base.players.map((player) => ({
+        ...player,
+        resources: { ...player.resources, gold: 0 }
+      }))
+    };
+
+    state = applyChampionDeployment(state, "c1", "champion.age1.bounty_hunter", "p1");
+
+    const resolved = resolveBattleAtHex(state, hexKey);
+    const p1 = resolved.players.find((player) => player.id === "p1");
+
+    expect(p1?.resources.gold).toBe(3);
+  });
+
+  it("sets owner mana to 0 when a traitor champion dies", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({
+      value: 1,
+      next: rng
+    }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        p1: ["f1"],
+        p2: ["c2"]
+      }
+    };
+    board.units = {
+      f1: { id: "f1", ownerPlayerId: "p1", kind: "force", hex: hexKey },
+      c2: {
+        id: "c2",
+        ownerPlayerId: "p2",
+        kind: "champion",
+        hex: hexKey,
+        cardDefId: "champion.age1.traitor",
+        hp: 1,
+        maxHp: 1,
+        attackDice: 0,
+        hitFaces: 0,
+        bounty: 3,
+        abilityUses: {}
+      }
+    };
+
+    const state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(26),
+      board,
+      players: base.players.map((player) =>
+        player.id === "p2"
+          ? { ...player, resources: { ...player.resources, mana: 3 } }
+          : player
+      )
+    };
+
+    const resolved = resolveBattleAtHex(state, hexKey);
+    const p2 = resolved.players.find((player) => player.id === "p2");
+
+    expect(p2?.resources.mana).toBe(0);
+  });
+
   it("heals veil champions after battle", () => {
     vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({
       value: 1,

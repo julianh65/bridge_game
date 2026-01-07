@@ -24,7 +24,7 @@ import {
   getCombatModifiers,
   runModifierEvents
 } from "./modifiers";
-import { removeChampionModifiers } from "./champions";
+import { applyChampionDeathEffects, removeChampionModifiers } from "./champions";
 import { applyChampionKillRewards } from "./rewards";
 
 const FORCE_HIT_FACES = 2;
@@ -664,6 +664,14 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
     };
     if (uniqueChampionIds.length > 0) {
       nextState = removeChampionModifiers(nextState, uniqueChampionIds);
+    }
+
+    const killedChampions = [
+      ...defenderHits.killedChampions,
+      ...attackerHits.killedChampions
+    ];
+    if (killedChampions.length > 0) {
+      nextState = applyChampionDeathEffects(nextState, killedChampions);
     }
 
     if (defenderHits.killedChampions.length > 0) {

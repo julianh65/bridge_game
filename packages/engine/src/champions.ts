@@ -1,6 +1,13 @@
 import { randInt } from "@bridgefront/shared";
 
-import type { CardDefId, GameState, Modifier, PlayerID, UnitID } from "./types";
+import type {
+  CardDefId,
+  ChampionUnitState,
+  GameState,
+  Modifier,
+  PlayerID,
+  UnitID
+} from "./types";
 import { applyChampionKillRewards } from "./rewards";
 import { getCardsPlayedThisRound } from "./player-flags";
 import { addForcesToHex } from "./units";
@@ -14,6 +21,8 @@ const SKIRMISHER_CAPTAIN_CHAMPION_ID = "champion.age1.skirmisher_captain";
 const BRIDGE_RUNNER_CHAMPION_ID = "champion.age1.bridge_runner";
 const INSPIRING_GEEZER_CHAMPION_ID = "champion.age1.inspiring_geezer";
 const BRUTE_CHAMPION_ID = "champion.age1.brute";
+const BOUNTY_HUNTER_CHAMPION_ID = "champion.age1.bounty_hunter";
+const TRAITOR_CHAMPION_ID = "champion.age1.traitor";
 
 const ASSASSINS_EDGE_KEY = "assassins_edge";
 
@@ -340,6 +349,45 @@ const createBruteModifier = (unitId: UnitID, ownerPlayerId: PlayerID): Modifier 
   }
 });
 
+const createBountyHunterModifier = (
+  unitId: UnitID,
+  ownerPlayerId: PlayerID
+): Modifier => ({
+  id: buildChampionModifierId(unitId, "bounty_hunter"),
+  source: { type: "champion", sourceId: BOUNTY_HUNTER_CHAMPION_ID },
+  ownerPlayerId,
+  duration: { type: "permanent" },
+  data: { unitId },
+  hooks: {
+    getChampionKillBonusGold: (
+      { modifier, state, killerPlayerId, hexKey, source, killedChampions },
+      current
+    ) => {
+      if (source !== "battle") {
+        return current;
+      }
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== killerPlayerId) {
+        return current;
+      }
+      if (killedChampions.length === 0) {
+        return current;
+      }
+      const sourceUnitId = getModifierUnitId(modifier);
+      if (!sourceUnitId) {
+        return current;
+      }
+      const sourceUnit = state.board.units[sourceUnitId];
+      if (!sourceUnit || sourceUnit.kind !== "champion") {
+        return current;
+      }
+      if (sourceUnit.hex !== hexKey) {
+        return current;
+      }
+      return current + killedChampions.length;
+    }
+  }
+});
+
 const createChampionModifiers = (
   unitId: UnitID,
   cardDefId: CardDefId,
@@ -362,6 +410,8 @@ const createChampionModifiers = (
       return [createInspiringGeezerModifier(unitId, ownerPlayerId)];
     case BRUTE_CHAMPION_ID:
       return [createBruteModifier(unitId, ownerPlayerId)];
+    case BOUNTY_HUNTER_CHAMPION_ID:
+      return [createBountyHunterModifier(unitId, ownerPlayerId)];
     default:
       return [];
   }
@@ -483,6 +533,47 @@ export const removeChampionModifiers = (state: GameState, unitIds: UnitID[]): Ga
   return { ...state, modifiers: nextModifiers };
 };
 
+const setPlayerMana = (state: GameState, playerId: PlayerID, mana: number): GameState => {
+  let changed = false;
+  const players = state.players.map((player) => {
+    if (player.id !== playerId) {
+      return player;
+    }
+    if (player.resources.mana === mana) {
+      return player;
+    }
+    changed = true;
+    return {
+      ...player,
+      resources: {
+        ...player.resources,
+        mana
+      }
+    };
+  });
+
+  return changed ? { ...state, players } : state;
+};
+
+export const applyChampionDeathEffects = (
+  state: GameState,
+  killedChampions: ChampionUnitState[]
+): GameState => {
+  if (killedChampions.length === 0) {
+    return state;
+  }
+
+  let nextState = state;
+  for (const champion of killedChampions) {
+    if (champion.cardDefId !== TRAITOR_CHAMPION_ID) {
+      continue;
+    }
+    nextState = setPlayerMana(nextState, champion.ownerPlayerId, 0);
+  }
+
+  return nextState;
+};
+
 export const healChampion = (state: GameState, unitId: UnitID, amount: number): GameState => {
   if (!Number.isFinite(amount) || amount <= 0) {
     return state;
@@ -580,6 +671,7 @@ export const dealChampionDamage = (
   }
 
   nextState = removeChampionModifiers(nextState, [unitId]);
+  nextState = applyChampionDeathEffects(nextState, [unit]);
 
   if (unit.ownerPlayerId !== sourcePlayerId) {
     nextState = applyChampionKillRewards(nextState, {
