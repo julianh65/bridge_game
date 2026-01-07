@@ -157,14 +157,11 @@ export const GameScreenHandPanel = ({
                     })}
                   </div>
                   {selectedCardDef ? (
-                    <div className="card-detail">
-                      <GameCard
-                        variant="detail"
-                        card={selectedCardDef}
-                        cardId={selectedCardId}
-                        showId={false}
-                        showChampionStats
-                      />
+                    <div className="card-detail card-detail--targets">
+                      <div className="card-detail__header">
+                        <strong>{selectedCardDef.name}</strong>
+                        <span className="card-detail__meta">Targets</span>
+                      </div>
                       {cardTargetPanel}
                     </div>
                   ) : null}

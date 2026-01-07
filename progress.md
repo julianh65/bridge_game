@@ -16,8 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent3 | scope: implement missing faction starter spell effects (Hold the Line, Marked for Coin, Perfect Recall) + tests | files: `packages/engine/src/card-effects.ts`, `packages/engine/src/cards.ts`, `packages/engine/src/rewards.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md` | status: in progress
-- owner: agent4 | scope: remove enlarged card preview under hand; keep compact target controls | files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `progress.md` | status: in progress
+- owner: agent2 | scope: render bridges as styled SVG planks/rails (bridge art assets) | files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md` | status: in progress (overlap: `apps/web/src/styles.css` with agent4)
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -28,6 +27,7 @@
 - Added a reusable `GameCard` component with art/cost/initiative details, refactored card displays (hand, market, deck, cards browser, free starting offers), and marked the plan item complete in `implementation_plan.md`.
 - Refined `GameCard` layouts: centered titles, italicized type line, initiative circles, age labels above art, cost line with emoji, larger hand/market sizing, and power/champion borders (overlap: `apps/web/src/styles.css` with agent1).
 - Increased card height/sizing in the hand + market views, stretched art areas, and slimmed the hand action column to give cards more space.
+- Removed the full-size card preview under the hand panel; kept a compact targets strip instead.
 - Added a rules/tutorial placeholder panel on the Home landing page and marked the plan item complete in `implementation_plan.md`.
 - Added a Deck tab that shows hand/draw/discard/scrapped piles for the local player, backed by new private `deckCards` data in `GameView`, and marked the plan item complete in `implementation_plan.md`.
 - Refreshed the Home landing page layout/typography and marked the plan item complete in `implementation_plan.md`.
@@ -125,6 +125,7 @@
 - Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts src/setup-flow.test.ts src/smoke.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts`.
 - Ran `npm run -w @bridgefront/engine test -- src/round-flow.test.ts`.
+- Ran `npm run -w @bridgefront/engine test -- src/action-flow.test.ts` (Hold the Line/Marked for Coin/Perfect Recall coverage).
 
 ## Docs maintenance
 - Expanded the Milestone 9 card-test checklist with Age I market sub-items in `implementation_plan.md`.
@@ -314,6 +315,7 @@ none
 - Added `deployForces` and `increaseMineValue` card effect support for faction starter spells (Air Drop, Rich Veins) with action-flow coverage.
 - Added Mine Overseer Extraction bonus (+1 mine gold while occupying a mine) with collection coverage.
 - Implemented champion abilities: Bodyguard hit redirect, Assassin's Edge pre-combat damage (per-round uses), and Flight movement override; added combat + action-flow coverage.
+- Implemented Hold the Line + Marked for Coin + Perfect Recall effects (modifier/topdeck handling) and added action-flow coverage.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).
