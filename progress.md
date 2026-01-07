@@ -16,8 +16,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent2 | scope: implement Aerial Tailwind passive (+1 move on first stack move per round) with engine tests | files: `packages/engine/src/faction-passives.ts`, `packages/engine/src/modifiers.ts`, `packages/engine/src/types.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/action-flow.test.ts` | status: in progress
-- owner: agent3 | scope: implement Cipher Expanded Choice passive (N+1 card offers) for free-start + collection prompts with tests and helper copy update | files: `packages/engine/src/types.ts`, `packages/engine/src/modifiers.ts`, `packages/engine/src/faction-passives.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/round-flow.test.ts`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `implementation_plan.md` | status: in progress (overlap: `packages/engine/src/types.ts`, `packages/engine/src/modifiers.ts`, `packages/engine/src/faction-passives.ts`, `packages/engine/src/round-flow.ts` with agent2)
+none
+- owner: agent3 | scope: implement Cipher Expanded Choice passive (N+1 card offers) for free-start + collection prompts with tests and helper copy update | files: `packages/engine/src/types.ts`, `packages/engine/src/modifiers.ts`, `packages/engine/src/faction-passives.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/round-flow.test.ts`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `apps/web/src/components/CollectionPanel.tsx`, `implementation_plan.md` | status: in progress (overlap: `packages/engine/src/types.ts`, `packages/engine/src/modifiers.ts`, `packages/engine/src/faction-passives.ts`, `packages/engine/src/round-flow.ts` with agent2)
 
 ## Milestone 8.5 progress
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
@@ -77,6 +77,7 @@
 - Added Gatewright passives (capital assault + extortionists) and Veil clean-exit heal modifier with combat coverage; implementation plan update deferred until `implementation_plan.md` is free.
 - Implemented Bastion Home Guard (+1 force on capital deploy) via deploy-count hook; updated action flow/card effects tests.
 - Implemented Veil Contracts (+2 gold per champion kill) via a champion-kill reward hook and added combat coverage; updated `implementation_plan.md`.
+- Implemented Aerial Tailwind (+1 max move distance on first stack move per round) via a moved-this-round flag + move validation hook, with action-flow coverage.
 
 ## Testing progress
 - Added action-flow coverage for Flank Step (bridge-less move) + Scavenger's Market (gold + draw).

@@ -234,6 +234,12 @@ export type MineGoldContext = {
   mineValue: number;
 };
 
+export type CardChoiceContext = {
+  playerId: PlayerID;
+  kind: "freeStartingCard" | "mineDraft" | "forgeDraft" | "centerPick";
+  baseCount: number;
+};
+
 export type ModifierQueryHook<TContext, TValue> = (
   ctx: TContext & { modifier: Modifier; state: GameState },
   current: TValue
@@ -249,8 +255,10 @@ export type ModifierHooks = {
   getChampionHitFaces?: ModifierQueryHook<CombatUnitContext, number>;
   getHitAssignmentPolicy?: ModifierQueryHook<CombatAssignmentContext, HitAssignmentPolicy>;
   getMoveRequiresBridge?: ModifierQueryHook<MoveContext, boolean>;
+  getMoveMaxDistance?: ModifierQueryHook<MoveContext, number>;
   getDeployForcesCount?: ModifierQueryHook<DeployForcesContext, number>;
   getMineGoldValue?: ModifierQueryHook<MineGoldContext, number>;
+  getCardChoiceCount?: ModifierQueryHook<CardChoiceContext, number>;
   getChampionKillBonusGold?: ModifierQueryHook<ChampionKillContext, number>;
   beforeCombatRound?: ModifierEventHook<CombatRoundContext>;
   afterBattle?: ModifierEventHook<CombatEndContext>;
@@ -447,6 +455,7 @@ export type CollectionChoice =
       hexKey: HexKey;
       choice: "gold" | "draft";
       gainCard?: boolean;
+      cardId?: CardDefId;
     }
   | {
       kind: "forge";

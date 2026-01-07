@@ -1,4 +1,5 @@
 import type { GameState, Modifier, PlayerID } from "./types";
+import { hasPlayerMovedThisRound } from "./player-flags";
 
 const buildModifierId = (factionId: string, playerId: PlayerID, key: string) =>
   `faction.${factionId}.${playerId}.${key}`;
@@ -85,6 +86,45 @@ const createProspectMineMilitiaModifier = (playerId: PlayerID): Modifier => ({
         return current;
       }
       return Math.max(current, 3);
+    }
+  }
+});
+
+const createAerialTailwindModifier = (playerId: PlayerID): Modifier => ({
+  id: buildModifierId("aerial", playerId, "tailwind"),
+  source: { type: "faction", sourceId: "aerial" },
+  ownerPlayerId: playerId,
+  duration: { type: "permanent" },
+  hooks: {
+    getMoveMaxDistance: ({ modifier, playerId: movingPlayerId, state }, current) => {
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== movingPlayerId) {
+        return current;
+      }
+      if (current <= 0) {
+        return current;
+      }
+      if (hasPlayerMovedThisRound(state, movingPlayerId)) {
+        return current;
+      }
+      return current + 1;
+    }
+  }
+});
+
+const createCipherExpandedChoiceModifier = (playerId: PlayerID): Modifier => ({
+  id: buildModifierId("cipher", playerId, "expanded_choice"),
+  source: { type: "faction", sourceId: "cipher" },
+  ownerPlayerId: playerId,
+  duration: { type: "permanent" },
+  hooks: {
+    getCardChoiceCount: ({ modifier, playerId: choosingPlayerId }, current) => {
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== choosingPlayerId) {
+        return current;
+      }
+      if (current <= 0) {
+        return current;
+      }
+      return current + 1;
     }
   }
 });
@@ -250,6 +290,10 @@ export const createFactionModifiers = (factionId: string, playerId: PlayerID): M
       return [createVeilCleanExitModifier(playerId), createVeilContractsModifier(playerId)];
     case "prospect":
       return [createProspectOreCutModifier(playerId), createProspectMineMilitiaModifier(playerId)];
+    case "aerial":
+      return [createAerialTailwindModifier(playerId)];
+    case "cipher":
+      return [createCipherExpandedChoiceModifier(playerId)];
     case "gatewright":
       return [
         createGatewrightCapitalAssaultModifier(playerId),

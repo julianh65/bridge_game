@@ -1,4 +1,4 @@
-import { areAdjacent, parseEdgeKey, parseHexKey } from "@bridgefront/shared";
+import { areAdjacent, neighborHexKeys, parseEdgeKey, parseHexKey } from "@bridgefront/shared";
 
 import type {
   ActionDeclaration,
@@ -9,14 +9,15 @@ import type {
   PlayerID,
   PlayerState
 } from "./types";
-import { getBridgeKey, hasBridge, isOccupiedByPlayer, wouldExceedTwoPlayers } from "./board";
+import { getBridgeKey, isOccupiedByPlayer, wouldExceedTwoPlayers } from "./board";
 import { addCardToBurned, addCardToDiscardPile, removeCardFromHand } from "./cards";
-import { resolveCardEffects, isCardPlayable } from "./card-effects";
+import { resolveCardEffects, isCardPlayable, validateMovePath } from "./card-effects";
 import { resolveImmediateBattles } from "./combat";
 import type { CardDef } from "./content/cards";
 import { getCardDef } from "./content/cards";
 import { emit } from "./events";
-import { getDeployForcesCount, getMoveRequiresBridge } from "./modifiers";
+import { getDeployForcesCount } from "./modifiers";
+import { markPlayerMovedThisRound } from "./player-flags";
 import { addForcesToHex, countPlayerChampions, moveStack } from "./units";
 
 const BASIC_ACTION_MANA_COST = 1;
@@ -128,33 +129,44 @@ const canMarch = (state: GameState, playerId: PlayerID, from: string, to: string
     return false;
   }
 
+  if (!isOccupiedByPlayer(fromHex, playerId)) {
+    return false;
+  }
+
+  const options = { maxDistance: 1, requiresBridge: true, requireStartOccupied: true };
+
   try {
-    if (!areAdjacent(parseHexKey(from), parseHexKey(to))) {
-      return false;
+    if (areAdjacent(parseHexKey(from), parseHexKey(to))) {
+      return Boolean(validateMovePath(state, playerId, [from, to], options));
     }
   } catch {
     return false;
   }
 
-  if (!isOccupiedByPlayer(fromHex, playerId)) {
+  let neighbors: string[];
+  try {
+    neighbors = neighborHexKeys(from);
+  } catch {
     return false;
   }
 
-  const movingUnitIds = fromHex.occupants[playerId] ?? [];
-  const requiresBridge = getMoveRequiresBridge(
-    state,
-    { playerId, from, to, path: [from, to], movingUnitIds },
-    true
-  );
-  if (requiresBridge && !hasBridge(state.board, from, to)) {
-    return false;
+  for (const mid of neighbors) {
+    if (!state.board.hexes[mid]) {
+      continue;
+    }
+    try {
+      if (!areAdjacent(parseHexKey(mid), parseHexKey(to))) {
+        continue;
+      }
+    } catch {
+      continue;
+    }
+    if (validateMovePath(state, playerId, [from, mid, to], options)) {
+      return true;
+    }
   }
 
-  if (wouldExceedTwoPlayers(toHex, playerId)) {
-    return false;
-  }
-
-  return true;
+  return false;
 };
 
 const getCapitalReinforceHex = (state: GameState, playerId: PlayerID): string | null => {
@@ -476,10 +488,11 @@ const resolveMarch = (state: GameState, playerId: PlayerID, from: string, to: st
     return state;
   }
 
-  return {
+  const movedState = {
     ...state,
     board: moveStack(state.board, playerId, from, to)
   };
+  return markPlayerMovedThisRound(movedState, playerId);
 };
 
 const resolveCapitalReinforce = (state: GameState, playerId: PlayerID): GameState => {

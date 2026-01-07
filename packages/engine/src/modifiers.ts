@@ -1,4 +1,5 @@
 import type {
+  CardChoiceContext,
   ChampionKillContext,
   CombatAssignmentContext,
   CombatEndContext,
@@ -131,6 +132,20 @@ export const getMoveRequiresBridge = (
   );
 };
 
+export const getMoveMaxDistance = (
+  state: GameState,
+  context: MoveContext,
+  base: number
+): number => {
+  return applyModifierQuery(
+    state,
+    state.modifiers,
+    (hooks) => hooks.getMoveMaxDistance,
+    context,
+    base
+  );
+};
+
 export const getDeployForcesCount = (
   state: GameState,
   context: DeployForcesContext,
@@ -154,6 +169,20 @@ export const getChampionKillBonusGold = (
     state,
     state.modifiers,
     (hooks) => hooks.getChampionKillBonusGold,
+    context,
+    base
+  );
+};
+
+export const getCardChoiceCount = (
+  state: GameState,
+  context: CardChoiceContext,
+  base: number
+): number => {
+  return applyModifierQuery(
+    state,
+    state.modifiers,
+    (hooks) => hooks.getCardChoiceCount,
     context,
     base
   );
@@ -185,6 +214,7 @@ export const runModifierEvents = <TContext>(
 };
 
 export type {
+  CardChoiceContext,
   CombatAssignmentContext,
   CombatEndContext,
   CombatRoundContext,

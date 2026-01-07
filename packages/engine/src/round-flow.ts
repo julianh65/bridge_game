@@ -19,6 +19,7 @@ import {
 } from "./cards";
 import { refreshChampionAbilityUsesForRound } from "./champions";
 import { applyModifierQuery, expireEndOfRoundModifiers } from "./modifiers";
+import { MOVED_THIS_ROUND_FLAG } from "./player-flags";
 
 const MINE_OVERSEER_CHAMPION_ID = "champion.prospect.mine_overseer";
 
@@ -36,7 +37,11 @@ export const applyRoundReset = (state: GameState): GameState => {
         gold: player.resources.gold + state.config.BASE_INCOME,
         mana: state.config.MAX_MANA
       },
-      doneThisRound: false
+      doneThisRound: false,
+      flags: {
+        ...player.flags,
+        [MOVED_THIS_ROUND_FLAG]: false
+      }
     }))
   };
 

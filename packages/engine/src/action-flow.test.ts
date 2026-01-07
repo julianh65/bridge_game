@@ -34,6 +34,27 @@ const pickOpenBridgeEdge = (capital: HexKey, board: BoardState): EdgeKey => {
   throw new Error("no available edge for build bridge test");
 };
 
+const pickTwoStepMarchTarget = (
+  capital: HexKey,
+  edge: EdgeKey,
+  board: BoardState
+): { mid: HexKey; to: HexKey } => {
+  const [a, b] = parseEdgeKey(edge);
+  const mid = a === capital ? b : a;
+  const neighbors = neighborHexKeys(mid).filter((key) => key !== capital && Boolean(board.hexes[key]));
+  for (const neighbor of neighbors) {
+    const hex = board.hexes[neighbor];
+    if (!hex) {
+      continue;
+    }
+    if (countPlayersOnHex(hex) > 0) {
+      continue;
+    }
+    return { mid, to: neighbor };
+  }
+  throw new Error("no open two-step march target");
+};
+
 const advanceThroughMarket = (state: GameState): GameState => {
   let nextState = state;
 
@@ -61,10 +82,12 @@ const advanceThroughMarket = (state: GameState): GameState => {
   return nextState;
 };
 
-const setupToActionPhase = (): { state: GameState; p1Capital: HexKey; p1Edges: EdgeKey[] } => {
+const setupToActionPhase = (
+  factions: Partial<Record<"p1" | "p2", string>> = {}
+): { state: GameState; p1Capital: HexKey; p1Edges: EdgeKey[] } => {
   let state = createNewGame(DEFAULT_CONFIG, 123, [
-    { id: "p1", name: "Player 1" },
-    { id: "p2", name: "Player 2" }
+    { id: "p1", name: "Player 1", factionId: factions.p1 },
+    { id: "p2", name: "Player 2", factionId: factions.p2 }
   ]);
 
   state = runUntilBlocked(state);
@@ -396,6 +419,100 @@ describe("action flow", () => {
     const toHex = state.board.hexes[to];
     expect(fromHex.occupants["p1"]?.length ?? 0).toBe(0);
     expect(toHex.occupants["p1"]?.length ?? 0).toBe(4);
+  });
+
+  it("allows Aerial tailwind to march an extra hex", () => {
+    let { state, p1Capital, p1Edges } = setupToActionPhase({ p1: "aerial" });
+    const [edge] = p1Edges;
+    const { mid, to } = pickTwoStepMarchTarget(p1Capital, edge, state.board);
+
+    const bridgeKey = getBridgeKey(mid, to);
+    if (!state.board.bridges[bridgeKey]) {
+      state = {
+        ...state,
+        board: {
+          ...state.board,
+          bridges: {
+            ...state.board.bridges,
+            [bridgeKey]: {
+              key: bridgeKey,
+              from: mid,
+              to
+            }
+          }
+        }
+      };
+    }
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: { kind: "basic", action: { kind: "march", from: p1Capital, to } }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const fromHex = state.board.hexes[p1Capital];
+    const toHex = state.board.hexes[to];
+    expect(fromHex.occupants["p1"]?.length ?? 0).toBe(0);
+    expect(toHex.occupants["p1"]?.length ?? 0).toBe(4);
+
+    const p1 = state.players.find((player) => player.id === "p1");
+    expect(p1?.flags.movedThisRound).toBe(true);
+  });
+
+  it("does not allow tailwind marches after a move is recorded", () => {
+    let { state, p1Capital, p1Edges } = setupToActionPhase({ p1: "aerial" });
+    const [edge] = p1Edges;
+    const { mid, to } = pickTwoStepMarchTarget(p1Capital, edge, state.board);
+
+    const bridgeKey = getBridgeKey(mid, to);
+    if (!state.board.bridges[bridgeKey]) {
+      state = {
+        ...state,
+        board: {
+          ...state.board,
+          bridges: {
+            ...state.board.bridges,
+            [bridgeKey]: {
+              key: bridgeKey,
+              from: mid,
+              to
+            }
+          }
+        }
+      };
+    }
+
+    state = {
+      ...state,
+      players: state.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              flags: {
+                ...player.flags,
+                movedThisRound: true
+              }
+            }
+          : player
+      )
+    };
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: { kind: "basic", action: { kind: "march", from: p1Capital, to } }
+      },
+      "p1"
+    );
+
+    expect(state.blocks?.payload.declarations["p1"]).toBeNull();
   });
 
   it("allows flight champions to march without bridges", () => {

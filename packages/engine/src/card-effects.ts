@@ -13,7 +13,8 @@ import {
 import { addCardToDiscardPile, addCardToHandWithOverflow, drawCards, takeTopCards } from "./cards";
 import { applyChampionDeployment, dealChampionDamage, healChampion } from "./champions";
 import { addChampionToHex, addForcesToHex, countPlayerChampions } from "./units";
-import { getDeployForcesCount, getMoveRequiresBridge } from "./modifiers";
+import { getDeployForcesCount, getMoveMaxDistance, getMoveRequiresBridge } from "./modifiers";
+import { markPlayerMovedThisRound } from "./player-flags";
 
 const SUPPORTED_TARGET_KINDS = new Set(["none", "edge", "stack", "path", "champion", "choice", "hex"]);
 const SUPPORTED_EFFECTS = new Set([
@@ -299,20 +300,13 @@ const getBuildBridgePlan = (
   return { from: rawA, to: rawB, key: canonicalKey };
 };
 
-const validateMovePath = (
+export const validateMovePath = (
   state: GameState,
   playerId: PlayerID,
   path: string[],
   options: MoveValidation
 ): string[] | null => {
   if (path.length < 2) {
-    return null;
-  }
-
-  if (
-    typeof options.maxDistance === "number" &&
-    (options.maxDistance <= 0 || path.length - 1 > options.maxDistance)
-  ) {
     return null;
   }
 
@@ -328,6 +322,23 @@ const validateMovePath = (
   }
 
   const movingUnitIds = startHex.occupants[playerId] ?? [];
+  let maxDistance = options.maxDistance;
+  if (typeof maxDistance === "number") {
+    maxDistance = getMoveMaxDistance(
+      state,
+      {
+        playerId,
+        from: path[0],
+        to: path[path.length - 1],
+        path,
+        movingUnitIds
+      },
+      maxDistance
+    );
+    if (maxDistance <= 0 || path.length - 1 > maxDistance) {
+      return null;
+    }
+  }
   const requiresBridge = getMoveRequiresBridge(
     state,
     {
@@ -952,6 +963,7 @@ export const resolveCardEffects = (
           break;
         }
         nextState = moveUnitsAlongPath(nextState, playerId, validPath);
+        nextState = markPlayerMovedThisRound(nextState, playerId);
         break;
       }
       default:

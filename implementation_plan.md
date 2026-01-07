@@ -323,7 +323,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Prospect Ore Cut / Mine Militia
   - [x] Bastion Home Guard (extra force on capital deploy)
   - [x] Assassins Contracts (bonus gold on champion kill)
-  - [ ] Aerial Tailwind (first stack move per round gets +1 hex)
+  - [x] Aerial Tailwind (first stack move per round gets +1 hex)
   - [ ] Aerial Wings (deploy to center as if capital when occupied)
   - [ ] Miners Deep Tunnels (occupied mines count adjacent/connected)
   - [ ] Cipher Quiet Study (round-start discard then redraw)
