@@ -16,10 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent1
-  scope: implement Column Advance (Age I) with stop-on-occupied movement validation + tests (overlaps card effects/data)
-  files: packages/engine/src/card-effects.ts, packages/engine/src/content/cards/age1.ts, packages/engine/src/card-effects.column-advance.test.ts, progress.md, implementation_plan.md
-  status: in_progress
+- none
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -31,6 +28,7 @@
 - Added Small Hands (Age I) with hand-empty draw effect and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.)
 - Added action-flow tests for Age I Paid Volunteers + National Service recruit cards; updated the plan checklist. (Files: `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (Overlap note: `progress.md` includes agent4 active-task update.)
 - Added Roll Out (Age I) with multi-stack move targeting/effect support and tests. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside any in-flight edits.)
+- Added Column Advance (Age I) with stop-on-occupied path validation and tests. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside any in-flight edits.)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.

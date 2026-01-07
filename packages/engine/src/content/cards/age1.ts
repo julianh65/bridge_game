@@ -75,6 +75,27 @@ export const EMERGENCY_EVAC: CardDef = {
   effects: [{ kind: "evacuateChampion" }, { kind: "healChampion", amount: 1 }]
 };
 
+export const COLUMN_ADVANCE: CardDef = {
+  id: "age1.column_advance",
+  name: "Column Advance",
+  rulesText:
+    "Move 1 stack up to 3 hexes along Bridges; must stop if it enters any occupied hex.",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 2 },
+  initiative: 55,
+  burn: false,
+  targetSpec: {
+    kind: "path",
+    owner: "self",
+    maxDistance: 3,
+    requiresBridge: true,
+    stopOnOccupied: true
+  },
+  effects: [{ kind: "moveStack", maxDistance: 3, stopOnOccupied: true }]
+};
+
 export const PROSPECTING: CardDef = {
   id: "age1.prospecting",
   name: "Prospecting",
@@ -610,6 +631,7 @@ export const AGE1_CARDS: CardDef[] = [
   ROLL_OUT,
   FLANK_STEP,
   EMERGENCY_EVAC,
+  COLUMN_ADVANCE,
   PROSPECTING,
   TRADE_CARAVAN,
   RECRUIT_DETACHMENT,

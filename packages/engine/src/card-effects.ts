@@ -92,6 +92,7 @@ type MoveValidation = {
   requireStartOccupied: boolean;
   forceCount?: number;
   movingUnitIds?: string[];
+  stopOnOccupied?: boolean;
 };
 
 const getTargetRecord = (targets: CardPlayTargets): TargetRecord | null => {
@@ -745,6 +746,9 @@ export const validateMovePath = (
       if (hex && hasEnemyUnits(hex, playerId)) {
         return null;
       }
+      if (hex && options.stopOnOccupied && countPlayersOnHex(hex) > 0) {
+        return null;
+      }
     }
   }
 
@@ -1033,6 +1037,9 @@ export const isCardPlayable = (
     const requiresBridge =
       moveEffect.requiresBridge === false ? false : card.targetSpec.requiresBridge !== false;
     const forceCount = getMoveStackForceCount(card, moveEffect, targets ?? null);
+    const stopOnOccupied =
+      moveEffect.stopOnOccupied === true ||
+      (card.targetSpec as TargetRecord | undefined)?.stopOnOccupied === true;
 
     let moveState = state;
     if (card.effects?.some((effect) => effect.kind === "buildBridge")) {
@@ -1057,7 +1064,8 @@ export const isCardPlayable = (
         maxDistance,
         requiresBridge,
         requireStartOccupied: true,
-        forceCount
+        forceCount,
+        stopOnOccupied
       })
     );
   }
@@ -1092,6 +1100,8 @@ export const isCardPlayable = (
           : undefined;
     const requiresBridge =
       moveEffect?.requiresBridge === false ? false : targetSpec.requiresBridge !== false;
+    const stopOnOccupied =
+      moveEffect?.stopOnOccupied === true || targetSpec.stopOnOccupied === true;
     const seenStarts = new Set<string>();
     let moveState = state;
     for (const path of paths) {
@@ -1104,7 +1114,8 @@ export const isCardPlayable = (
         !validateMovePath(moveState, playerId, path, {
           maxDistance,
           requiresBridge,
-          requireStartOccupied: true
+          requireStartOccupied: true,
+          stopOnOccupied
         })
       ) {
         return false;
@@ -1130,12 +1141,15 @@ export const isCardPlayable = (
       (effect) => effect.kind === "moveStack"
     ) as TargetRecord | undefined;
     const forceCount = getMoveStackForceCount(card, moveEffect, targets ?? null);
+    const stopOnOccupied =
+      moveEffect?.stopOnOccupied === true || card.targetSpec.stopOnOccupied === true;
     return Boolean(
       validateMovePath(state, playerId, movePath, {
         maxDistance,
         requiresBridge,
         requireStartOccupied: true,
-        forceCount
+        forceCount,
+        stopOnOccupied
       })
     );
   }
@@ -2037,6 +2051,8 @@ export const resolveCardEffects = (
               : undefined;
         const requiresBridge =
           effect.requiresBridge === false ? false : targetSpec.requiresBridge !== false;
+        const stopOnOccupied =
+          effect.stopOnOccupied === true || targetSpec.stopOnOccupied === true;
         const seenStarts = new Set<string>();
         const movePlans: Array<{ path: string[]; unitIds: string[] }> = [];
         let validationState = nextState;
@@ -2057,7 +2073,8 @@ export const resolveCardEffects = (
             maxDistance,
             requiresBridge,
             requireStartOccupied: true,
-            movingUnitIds: unitIds
+            movingUnitIds: unitIds,
+            stopOnOccupied
           });
           if (!validPath) {
             movePlans.length = 0;
@@ -2088,12 +2105,16 @@ export const resolveCardEffects = (
               : undefined;
         const requiresBridge =
           effect.requiresBridge === false ? false : card.targetSpec.requiresBridge !== false;
+        const stopOnOccupied =
+          effect.stopOnOccupied === true ||
+          (card.targetSpec as TargetRecord | undefined)?.stopOnOccupied === true;
         const forceCount = getMoveStackForceCount(card, effect, targets ?? null);
         const validPath = validateMovePath(nextState, playerId, movePath, {
           maxDistance,
           requiresBridge,
           requireStartOccupied: true,
-          forceCount
+          forceCount,
+          stopOnOccupied
         });
         if (!validPath) {
           break;
