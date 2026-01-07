@@ -467,7 +467,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Move the map legend to the bottom under the map
 - [x] Small / medium task: the log should not use axial coords but our coordinate system of a1, a2 etc...
 - [x] Small / medium task: can we allow for a bit more "freedom" in the moving of the board? Like allow to move off screen more up down left right when we drag around
-- [ ] Can we experiment with making the container that holds the cards and the actions see through
+- [x] Can we experiment with making the container that holds the cards and the actions see through
 - [x] (harder and urgent) We need a better ui/ux flow for the cards where you click cards and then change your mind, right now it feels clunky and not obvious what I've selected or if I've changed my state of what im about to submit / play
 - [x] There's no pop up in the action phase to show what each player has done for basic actions
 - [ ] After the market phase while we're showing the last card, the hand modal instantly pops up
