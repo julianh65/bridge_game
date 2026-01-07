@@ -10,7 +10,7 @@ import { parseEdgeKey } from "@bridgefront/shared";
 
 import { HEX_SIZE, hexPoints } from "../lib/hex-geometry";
 import type { HexRender } from "../lib/board-preview";
-import { getFactionName, getFactionSymbol } from "../lib/factions";
+import { getFactionName } from "../lib/factions";
 
 type ViewBox = {
   minX: number;
@@ -162,15 +162,15 @@ const getCardName = (cardDefId: string) => {
   return CARD_DEFS_BY_ID[cardDefId]?.name ?? cardDefId;
 };
 
-const getFactionBadge = (factionId?: string | null): string | null => {
-  if (!factionId || factionId === "unassigned") {
-    return null;
+const getChampionGlyph = (name: string) => {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  const initials = words.map((word) => word[0]?.toUpperCase() ?? "").join("");
+  const glyph = initials.replace(/[^A-Z]/g, "").slice(0, 2);
+  if (glyph) {
+    return glyph;
   }
-  const symbol = getFactionSymbol(factionId);
-  if (!symbol) {
-    return null;
-  }
-  return symbol.toUpperCase();
+  const fallback = name.replace(/[^A-Za-z0-9]/g, "").slice(0, 2).toUpperCase();
+  return fallback || "C";
 };
 
 const formatAbilityName = (abilityId: string) =>
@@ -1066,7 +1066,7 @@ export const BoardView = ({
           }
           const maxTokens = 3;
           const tokens = stack.championDetails.slice(0, maxTokens).map((champion) => ({
-            label: `${champion.hp}`,
+            label: getChampionGlyph(champion.name),
             isExtra: false,
             champion
           }));
@@ -1114,9 +1114,6 @@ export const BoardView = ({
         const crestSize = 8;
         const crestX = 10;
         const crestY = -10;
-        const factionBadge = getFactionBadge(factionId);
-        const factionBadgeRadius = 8;
-        const factionBadgeCenterY = 18;
         return (
           <g
             key={stack.key}
@@ -1126,14 +1123,6 @@ export const BoardView = ({
             onClick={() => handleStackClick(stack.hexKey)}
           >
             <title>{stackTitle}</title>
-            {stack.championCount > 0 ? (
-              <circle
-                className="unit__champion-halo"
-                cx={0}
-                cy={0}
-                r={13}
-              />
-            ) : null}
             <circle
               className={
                 colorIndex !== undefined ? `unit unit--p${colorIndex}` : "unit"
@@ -1172,25 +1161,6 @@ export const BoardView = ({
                 </text>
               </g>
             ) : null}
-            {factionBadge ? (
-              <g className="unit__faction-badge">
-                <circle
-                  className="unit__faction-badge-shape"
-                  cx={0}
-                  cy={factionBadgeCenterY}
-                  r={factionBadgeRadius}
-                />
-                <text
-                  className={`unit__faction-badge-text${
-                    colorIndex !== undefined ? ` unit__faction-badge-text--p${colorIndex}` : ""
-                  }`}
-                  x={0}
-                  y={factionBadgeCenterY + 0.5}
-                >
-                  {factionBadge}
-                </text>
-              </g>
-            ) : null}
             {tokenLayout.map((token, index) => {
               const ringClass = [
                 "champion-token__ring",
@@ -1219,6 +1189,9 @@ export const BoardView = ({
                   setChampionTooltip(tooltip);
                 }
               };
+              const hpRadius = 5;
+              const hpCx = token.cx + tokenRadius - 3.5;
+              const hpCy = token.cy - tokenRadius + 3.5;
               return (
                 <g
                   key={`${stack.key}-champion-${index}`}
@@ -1229,6 +1202,23 @@ export const BoardView = ({
                   <text className={textClass} x={token.cx} y={token.cy + 0.5}>
                     {token.label}
                   </text>
+                  {token.champion ? (
+                    <g className="champion-token__hp">
+                      <circle
+                        className="champion-token__hp-dot"
+                        cx={hpCx}
+                        cy={hpCy}
+                        r={hpRadius}
+                      />
+                      <text
+                        className="champion-token__hp-text"
+                        x={hpCx}
+                        y={hpCy + 0.4}
+                      >
+                        {token.champion.hp}
+                      </text>
+                    </g>
+                  ) : null}
                 </g>
               );
             })}

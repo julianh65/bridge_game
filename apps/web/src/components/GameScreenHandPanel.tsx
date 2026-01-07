@@ -1,11 +1,40 @@
 import type { CSSProperties, ReactNode } from "react";
 
-import { CARD_DEFS, type ActionDeclaration, type GameView } from "@bridgefront/engine";
+import {
+  CARD_DEFS,
+  type ActionDeclaration,
+  type CardDef,
+  type GameView
+} from "@bridgefront/engine";
 
 import { ActionPanel, type BasicActionIntent, type BoardPickMode } from "./ActionPanel";
 import { GameCard } from "./GameCard";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
+
+const getCardTargetHint = (cardDef: CardDef | null): string | null => {
+  if (!cardDef) {
+    return null;
+  }
+  switch (cardDef.targetSpec.kind) {
+    case "edge":
+      return "Pick an edge on the board.";
+    case "stack":
+      return "Pick a stack, then a destination.";
+    case "path":
+      return "Pick a path on the board.";
+    case "hex":
+      return "Pick a hex on the board.";
+    case "choice":
+      return "Pick a capital or occupied hex.";
+    case "champion":
+      return "Click a hex with an eligible champion.";
+    case "none":
+      return "No targets required.";
+    default:
+      return null;
+  }
+};
 
 type GameScreenHandPanelProps = {
   canShowHandPanel: boolean;
@@ -78,6 +107,10 @@ export const GameScreenHandPanel = ({
 }: GameScreenHandPanelProps) => {
   const showHandPanel = canShowHandPanel && isHandPanelOpen;
   const handCount = handCards.length;
+  const selectedCard = handCards.find((card) => card.id === selectedCardId) ?? null;
+  const selectedCardDef = selectedCard ? CARD_DEFS_BY_ID.get(selectedCard.defId) ?? null : null;
+  const selectedLabel = selectedCardDef?.name ?? selectedCard?.defId ?? null;
+  const selectedTargetHint = getCardTargetHint(selectedCardDef);
 
   return (
     <>
@@ -170,6 +203,24 @@ export const GameScreenHandPanel = ({
                 <h3>Actions</h3>
                 <span className="hand-meta">Basic actions</span>
               </div>
+              {selectedCard && selectedLabel ? (
+                <div className="hand-selection">
+                  <div className="hand-selection__main">
+                    <span className="hand-selection__eyebrow">Selected card</span>
+                    <strong className="hand-selection__name">{selectedLabel}</strong>
+                    {selectedTargetHint ? (
+                      <span className="hand-selection__hint">{selectedTargetHint}</span>
+                    ) : null}
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn-tertiary"
+                    onClick={() => onSelectCard(selectedCard.id)}
+                  >
+                    Clear
+                  </button>
+                </div>
+              ) : null}
               {actionHint ? <p className="action-panel__hint">{actionHint}</p> : null}
               <ActionPanel
                 player={player}

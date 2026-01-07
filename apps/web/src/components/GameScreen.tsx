@@ -622,15 +622,19 @@ export const GameScreen = ({
   const handleCombatClose = () => {
     setCombatQueue((queue) => queue.slice(1));
   };
+  const clearCardSelection = () => {
+    setCardInstanceId("");
+    setCardTargetsRaw("");
+    setIsHandPickerOpen(false);
+    setBoardPickMode("none");
+    setPendingEdgeStart(null);
+    setPendingStackFrom(null);
+    setPendingPath([]);
+  };
 
   useEffect(() => {
     if (cardInstanceId && !handCards.some((card) => card.id === cardInstanceId)) {
-      setCardInstanceId("");
-      setCardTargetsRaw("");
-      setBoardPickMode("none");
-      setPendingEdgeStart(null);
-      setPendingStackFrom(null);
-      setPendingPath([]);
+      clearCardSelection();
     }
   }, [cardInstanceId, handCards]);
 
@@ -662,6 +666,9 @@ export const GameScreen = ({
   };
 
   const handleBasicActionIntentChange = (intent: BasicActionIntent) => {
+    if (intent !== "none" && cardInstanceId) {
+      clearCardSelection();
+    }
     if (intent === "bridge") {
       setBoardPickModeSafe("bridgeEdge");
       return;
@@ -1524,8 +1531,13 @@ export const GameScreen = ({
   }, [targetPreviewEdgeKeys, revealEdgeKeys]);
 
   const handleSelectCard = (cardId: string) => {
+    if (cardId === cardInstanceId) {
+      clearCardSelection();
+      return;
+    }
     const card = handCards.find((entry) => entry.id === cardId) ?? null;
     const cardDef = card ? CARD_DEFS_BY_ID.get(card.defId) ?? null : null;
+    setBasicActionIntent("none");
     setCardInstanceId(cardId);
     setCardTargetsRaw("");
     setIsHandPickerOpen(false);

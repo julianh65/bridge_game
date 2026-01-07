@@ -3763,8 +3763,7 @@ h1 {
 
 .unit {
   fill: var(--player-color-0);
-  stroke: rgba(24, 20, 15, 0.55);
-  stroke-width: 1;
+  stroke: none;
 }
 
 .unit--p0 {
@@ -3799,12 +3798,6 @@ h1 {
   stroke: rgba(25, 20, 14, 0.4);
 }
 
-.unit__champion-halo {
-  fill: none;
-  stroke: rgba(246, 214, 132, 0.95);
-  stroke-width: 2.2;
-}
-
 .unit__count {
   font-size: 9px;
   fill: #fff7e6;
@@ -3833,48 +3826,6 @@ h1 {
   paint-order: stroke;
   stroke: rgba(255, 255, 255, 0.7);
   stroke-width: 0.9;
-}
-
-.unit__faction-badge-shape {
-  fill: #f7f0e5;
-  stroke: rgba(25, 20, 14, 0.5);
-  stroke-width: 0.8;
-}
-
-.unit__faction-badge-text {
-  font-size: 5.5px;
-  font-weight: 700;
-  text-anchor: middle;
-  dominant-baseline: middle;
-  paint-order: stroke;
-  stroke: rgba(255, 255, 255, 0.7);
-  stroke-width: 1;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
-}
-
-.unit__faction-badge-text--p0 {
-  fill: var(--player-color-0);
-}
-
-.unit__faction-badge-text--p1 {
-  fill: var(--player-color-1);
-}
-
-.unit__faction-badge-text--p2 {
-  fill: var(--player-color-2);
-}
-
-.unit__faction-badge-text--p3 {
-  fill: var(--player-color-3);
-}
-
-.unit__faction-badge-text--p4 {
-  fill: var(--player-color-4);
-}
-
-.unit__faction-badge-text--p5 {
-  fill: var(--player-color-5);
 }
 
 .champion-token__ring {
@@ -3926,6 +3877,20 @@ h1 {
 
 .champion-token__ring--p5 {
   stroke: var(--player-color-5);
+}
+
+.champion-token__hp-dot {
+  fill: #2f2014;
+  stroke: rgba(246, 214, 132, 0.9);
+  stroke-width: 0.7;
+}
+
+.champion-token__hp-text {
+  font-size: 5.5px;
+  font-weight: 700;
+  fill: #f7e2a6;
+  text-anchor: middle;
+  dominant-baseline: middle;
 }
 
 .champion-tooltip {
