@@ -1466,14 +1466,20 @@ h1 {
 .game-hand {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+  padding: 14px;
+}
+
+.game-hand h2 {
+  margin: 0 0 4px;
+  font-size: 16px;
 }
 
 .game-hand__header {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 12px;
+  gap: 8px;
 }
 
 .hand-controls {
@@ -1484,27 +1490,27 @@ h1 {
 }
 
 .hand-controls .btn {
-  padding: 6px 10px;
-  font-size: 12px;
+  padding: 4px 8px;
+  font-size: 11px;
 }
 
 .game-hand__layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(220px, 320px);
-  gap: 16px;
+  grid-template-columns: minmax(0, 1.4fr) minmax(200px, 300px);
+  gap: 12px;
   align-items: start;
 }
 
 .game-hand__cards {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .game-hand__actions {
   display: grid;
-  gap: 12px;
-  padding: 12px;
+  gap: 8px;
+  padding: 10px;
   border-radius: 12px;
   border: 1px solid var(--border);
   background: #fdf4e4;
@@ -1529,7 +1535,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -1540,7 +1546,7 @@ h1 {
 }
 
 .hand-submit .btn {
-  padding: 10px 16px;
+  padding: 8px 14px;
 }
 
 .deck-counts--compact .resource-row {
@@ -1667,7 +1673,7 @@ h1 {
   display: flex;
   align-items: flex-end;
   gap: 0;
-  padding: 8px 24px 14px 24px;
+  padding: 6px 18px 10px 18px;
   overflow-x: auto;
   overflow-y: visible;
   scroll-snap-type: x proximity;
@@ -1691,7 +1697,7 @@ h1 {
   background: transparent;
   padding: 0;
   cursor: pointer;
-  width: clamp(110px, 30vw, 150px);
+  width: clamp(100px, 26vw, 140px);
   transform: translateY(var(--hand-lift, 0px)) rotate(var(--hand-rotate, 0deg));
   transform-origin: bottom center;
   transition: transform 0.2s ease;
@@ -1699,7 +1705,7 @@ h1 {
 }
 
 .hand-card + .hand-card {
-  margin-left: -36px;
+  margin-left: -32px;
 }
 
 .hand-card__face {
@@ -1711,8 +1717,8 @@ h1 {
   box-shadow: 0 10px 18px rgba(35, 28, 19, 0.16);
   display: grid;
   grid-template-rows: auto 1fr auto;
-  gap: 6px;
-  padding: 10px;
+  gap: 5px;
+  padding: 8px;
   text-align: left;
   color: var(--ink);
   transition: box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
@@ -1726,12 +1732,12 @@ h1 {
 }
 
 .hand-card__name {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
 }
 
 .hand-card__cost {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--muted);
   padding: 2px 6px;
   border-radius: 999px;
@@ -1742,7 +1748,7 @@ h1 {
 .hand-card__body {
   display: grid;
   gap: 4px;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--muted);
   align-content: start;
 }
@@ -1753,14 +1759,14 @@ h1 {
 }
 
 .hand-card__meta {
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .hand-card__footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: 9px;
   color: var(--muted);
 }
 
@@ -2224,26 +2230,26 @@ h1 {
 }
 
 .card-detail {
-  margin-top: 10px;
-  padding: 10px;
+  margin-top: 6px;
+  padding: 8px;
   border-radius: 10px;
   border: 1px solid var(--border);
   background: #fff7e6;
   display: grid;
-  gap: 8px;
+  gap: 6px;
   animation: detailFade 0.2s ease;
 }
 
 .card-detail__header {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .card-detail__meta {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--muted);
   padding: 2px 8px;
   border-radius: 999px;
@@ -2252,7 +2258,7 @@ h1 {
 
 .card-detail__rules {
   margin: 0;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--ink);
 }
 
@@ -2266,7 +2272,7 @@ h1 {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted);
 }
 
@@ -2284,9 +2290,9 @@ h1 {
 
 .card-detail__hint {
   margin: 0;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted);
-  padding: 6px 8px;
+  padding: 4px 6px;
   border-radius: 8px;
   background: #f6f0e4;
 }
