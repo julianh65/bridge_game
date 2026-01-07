@@ -4378,6 +4378,20 @@ h1 {
   dominant-baseline: middle;
 }
 
+.champion-token__uses-dot {
+  fill: #1e3a8a;
+  stroke: rgba(219, 234, 254, 0.9);
+  stroke-width: 0.7;
+}
+
+.champion-token__uses-text {
+  font-size: 5px;
+  font-weight: 700;
+  fill: #eff6ff;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
 .champion-tooltip {
   pointer-events: none;
 }

@@ -213,6 +213,13 @@ const formatAbilityUses = (uses: Record<string, UseCounter>): string | null => {
     .join(", ");
 };
 
+const getAbilityUseTotal = (uses: Record<string, UseCounter>): number => {
+  return Object.values(uses).reduce((sum, entry) => {
+    const remaining = typeof entry?.remaining === "number" ? entry.remaining : 0;
+    return sum + Math.max(0, remaining);
+  }, 0);
+};
+
 const wrapText = (text: string, maxLength: number): string[] => {
   const words = text.trim().split(/\s+/).filter(Boolean);
   if (words.length === 0) {
@@ -1367,6 +1374,13 @@ export const BoardView = ({
                 const hpRadius = 5;
                 const hpCx = token.cx + tokenRadius - 3.5;
                 const hpCy = token.cy - tokenRadius + 3.5;
+                const abilityCount = token.champion
+                  ? getAbilityUseTotal(token.champion.abilityUses)
+                  : 0;
+                const abilityLabel = abilityCount > 9 ? "9+" : String(abilityCount);
+                const abilityRadius = 4;
+                const abilityCx = token.cx - tokenRadius + 3.5;
+                const abilityCy = token.cy - tokenRadius + 3.5;
                 return (
                   <g
                     key={`${stack.key}-champion-${index}`}
@@ -1396,6 +1410,23 @@ export const BoardView = ({
                           y={hpCy + 0.4}
                         >
                           {token.champion.hp}
+                        </text>
+                      </g>
+                    ) : null}
+                    {token.champion && abilityCount > 0 ? (
+                      <g className="champion-token__uses">
+                        <circle
+                          className="champion-token__uses-dot"
+                          cx={abilityCx}
+                          cy={abilityCy}
+                          r={abilityRadius}
+                        />
+                        <text
+                          className="champion-token__uses-text"
+                          x={abilityCx}
+                          y={abilityCy + 0.2}
+                        >
+                          {abilityLabel}
                         </text>
                       </g>
                     ) : null}

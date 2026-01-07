@@ -16,7 +16,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
+- [agent3] Update card-art generator for OpenAI API (prompt template, title-based filenames, optional manifest update) and refresh plan/progress. Files: `scripts/generate-card-art.js`, `implementation_plan.md`, `progress.md`. (status: in progress)
+- [agent4] Add Age I recruitment cards (Recruit Detachment, Paid Volunteers, National Service) plus recruit effect support for custom counts with tests; touch `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md`. (status: in progress; overlap: `implementation_plan.md` with agent2)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
@@ -418,6 +419,7 @@ none
 - Added bridge trap modifiers (first enemy crossing loses a force) via move hooks with action-flow coverage.
 - Added hex-link movement modifiers for wormhole/tunnel network effects (linkHexes + linkCapitalToCenter) with action-flow coverage; marked the plan items complete.
 - Added board effect badges for attached edge/hex modifiers using public modifier views; marked the optional plan item complete. (Overlap note: touched `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.)
+- Added champion ability usage counters on board tokens and marked the optional plan item complete. (Overlap note: touched `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md` while agent3 is active.)
 
 ## Milestone 7.5 progress
 - Added a card-art manifest + helper, GameCard art rendering, and a CLI script to generate diffusion art and update the manifest. (Files: `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`.)
