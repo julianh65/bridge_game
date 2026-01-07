@@ -339,6 +339,8 @@ export const GameScreen = ({
   const actionStep = view.public.actionStep;
   const actionEligible = new Set(actionStep?.eligiblePlayerIds ?? []);
   const actionWaiting = new Set(actionStep?.waitingForPlayerIds ?? []);
+  const isLocalEligible = Boolean(localPlayerId && actionEligible.has(localPlayerId));
+  const isLocalWaiting = Boolean(localPlayerId && actionWaiting.has(localPlayerId));
   const [edgeKey, setEdgeKey] = useState("");
   const [marchFrom, setMarchFrom] = useState("");
   const [marchTo, setMarchTo] = useState("");
@@ -512,7 +514,7 @@ export const GameScreen = ({
   const logCount = view.public.logs.length;
   const lastLogEntry = logCount > 0 ? view.public.logs[logCount - 1] : null;
   const lastLogLabel = lastLogEntry
-    ? formatGameEvent(lastLogEntry, playerNames, hexLabels)
+    ? formatGameEvent(lastLogEntry, playerNames, hexLabels, CARD_DEFS_BY_ID)
     : null;
   const activeCombat = combatQueue[0] ?? null;
   const isActionPhase = view.public.phase === "round.action";
@@ -1609,7 +1611,7 @@ export const GameScreen = ({
       <ul className="log-list">
         {view.public.logs.map((entry, index) => (
           <li key={`${entry.type}-${index}`}>
-            {formatGameEvent(entry, playerNames, hexLabels)}
+            {formatGameEvent(entry, playerNames, hexLabels, CARD_DEFS_BY_ID)}
           </li>
         ))}
       </ul>

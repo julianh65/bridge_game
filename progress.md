@@ -16,7 +16,6 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
 - owner: agent4 | scope: investigate/fix action submit + basic action buttons disabled in action phase (UI eligibility gating + hints) | files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `progress.md`, `implementation_plan.md` | status: in progress
 - owner: agent1 | scope: restyle champion token on board into circular badge with icon placeholder | files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `progress.md`, `implementation_plan.md` | status: in progress
 
@@ -73,6 +72,7 @@
 - Shortened bridge render segments a bit further by increasing the inset.
 - Added a1-style hex labels to the game board with top-to-bottom row letters and left-to-right numbers via BoardView label variants; marked the plan item complete in `implementation_plan.md` (overlap: `implementation_plan.md`, `progress.md` with agent4).
 - Updated event log formatting to use a1-style board labels instead of axial coords (overlap: `apps/web/src/components/GameScreen.tsx` with agent4).
+- Updated event log formatting to use card names instead of card ids (overlap: `apps/web/src/components/GameScreen.tsx` with agent4).
 - Overlap note: `implementation_plan.md` updated while agent2 is pruning plan tasks.
 - Moved the map legend below the board and hid special-tile tags on the game board (hover tooltip still shows tile info); marked the plan items complete in `implementation_plan.md`.
 - Moved the board tools bar (selected hex + reset view) into the footer under the board to reduce top clutter.

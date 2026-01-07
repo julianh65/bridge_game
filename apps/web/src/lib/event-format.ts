@@ -1,7 +1,8 @@
-import type { GameEvent, PlayerID } from "@bridgefront/engine";
+import type { CardDef, GameEvent, PlayerID } from "@bridgefront/engine";
 import { parseEdgeKey } from "@bridgefront/shared";
 
 type PlayerNameLookup = Map<PlayerID, string>;
+type CardDefLookup = Map<string, CardDef>;
 
 const formatHexKey = (hexKey: string, hexLabels?: Record<string, string>): string => {
   return hexLabels?.[hexKey] ?? hexKey;
@@ -17,6 +18,13 @@ const formatEdgeKey = (edgeKey: string, hexLabels?: Record<string, string>): str
   } catch {
     return edgeKey;
   }
+};
+
+const formatCardId = (cardId: string, cardDefsById?: CardDefLookup): string => {
+  if (!cardDefsById) {
+    return cardId;
+  }
+  return cardDefsById.get(cardId)?.name ?? cardId;
 };
 
 const readString = (value: unknown): string | null => {
@@ -72,7 +80,8 @@ const formatCombatSide = (
 export const formatGameEvent = (
   event: GameEvent,
   playersById: PlayerNameLookup,
-  hexLabels?: Record<string, string>
+  hexLabels?: Record<string, string>,
+  cardDefsById?: CardDefLookup
 ): string => {
   const payload = event.payload ?? {};
   const playerId = readString(payload.playerId);
@@ -93,7 +102,8 @@ export const formatGameEvent = (
     }
     case "setup.freeStartingCardPicked": {
       const cardId = readString(payload.cardId) ?? "unknown";
-      return `${formatPlayer(playerId, playersById)} picked free card ${cardId}`;
+      const cardLabel = formatCardId(cardId, cardDefsById);
+      return `${formatPlayer(playerId, playersById)} picked free card ${cardLabel}`;
     }
     case "lobby.diceRolled": {
       const roll = readNumber(payload.roll);
@@ -159,7 +169,8 @@ export const formatGameEvent = (
             return null;
           }
           const age = readString(record?.age);
-          return age ? `${cardId} (${age})` : cardId;
+          const cardLabel = formatCardId(cardId, cardDefsById);
+          return age ? `${cardLabel} (${age})` : cardLabel;
         })
         .filter((value): value is string => Boolean(value));
       if (cards.length === 0) {
@@ -173,13 +184,15 @@ export const formatGameEvent = (
       const rollOff = readArray(payload.rollOff);
       const priceLabel = amount !== null ? ` for ${amount}g` : "";
       const rollOffLabel = rollOff && rollOff.length > 0 ? " (roll-off)" : "";
-      return `${formatPlayer(playerId, playersById)} bought ${cardId}${priceLabel}${rollOffLabel}`;
+      const cardLabel = formatCardId(cardId, cardDefsById);
+      return `${formatPlayer(playerId, playersById)} bought ${cardLabel}${priceLabel}${rollOffLabel}`;
     }
     case "market.pass": {
       const cardId = readString(payload.cardId) ?? "unknown";
       const passPot = readNumber(payload.passPot);
       const potLabel = passPot && passPot > 0 ? ` and won ${passPot}g` : "";
-      return `${formatPlayer(playerId, playersById)} took ${cardId} on pass${potLabel}`;
+      const cardLabel = formatCardId(cardId, cardDefsById);
+      return `${formatPlayer(playerId, playersById)} took ${cardLabel} on pass${potLabel}`;
     }
     default:
       break;
@@ -187,7 +200,8 @@ export const formatGameEvent = (
 
   if (event.type.startsWith("action.card.")) {
     const cardId = readString(payload.cardId) ?? event.type.slice("action.card.".length);
-    return `${formatPlayer(playerId, playersById)} played ${cardId}`;
+    const cardLabel = formatCardId(cardId, cardDefsById);
+    return `${formatPlayer(playerId, playersById)} played ${cardLabel}`;
   }
 
   if (event.type.startsWith("phase.")) {
@@ -210,7 +224,7 @@ export const formatGameEvent = (
     summaryParts.push(`edge=${formatEdgeKey(edgeKey, hexLabels)}`);
   }
   if (cardId) {
-    summaryParts.push(`card=${cardId}`);
+    summaryParts.push(`card=${formatCardId(cardId, cardDefsById)}`);
   }
 
   if (summaryParts.length > 0) {
