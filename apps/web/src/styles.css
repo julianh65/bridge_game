@@ -1674,6 +1674,11 @@ h1 {
   flex: 1;
 }
 
+.game-board__legend {
+  justify-content: center;
+  width: 100%;
+}
+
 .game-board__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(56px, 1fr));

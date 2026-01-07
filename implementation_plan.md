@@ -465,8 +465,8 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Each hex should have a small label in it that is interpretable, not axial coords but like a1, b2 etc, maybe make it be from the top to bottom we have a and then left to right we have the number, then we should use that label in the log or other parts of the board
 - [ ] The champions still don't look nice on the board, it's like a long pill, they should probably just be another circle and each champion should have their own little image / logo (placeholder for now)
 - [ ] Each of the factions should have their own unique small like symbol, this can be placeholder for now but i want it to be like a small circle symbol that shows up in faction selection, next to their name, on their unit stacks etc...
-- [ ] The text of Mine Capital or whatever is a bit goofy looking and too big, it should just show that text on hover and the colored hexes are fine for now, eventually we will replace those with nice looking tiles to demarcate
-- [ ] Move the map legend to the bottom under the map
+- [x] The text of Mine Capital or whatever is a bit goofy looking and too big, it should just show that text on hover and the colored hexes are fine for now, eventually we will replace those with nice looking tiles to demarcate
+- [x] Move the map legend to the bottom under the map
 
 ## Milestone 9 — Add Polish
 

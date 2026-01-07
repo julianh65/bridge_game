@@ -1864,12 +1864,6 @@ export const GameScreen = ({
       >
         <section className="panel game-board">
           <div className="game-board__placeholder">
-            <div className="legend legend--compact">
-              <div className="legend__item legend__item--capital">Capital</div>
-              <div className="legend__item legend__item--forge">Forge</div>
-              <div className="legend__item legend__item--mine">Mine</div>
-              <div className="legend__item legend__item--center">Center</div>
-            </div>
             <div className={`board-tools ${isBoardTargeting ? "is-targeting" : ""}`}>
               <div className="board-tools__meta">
                 <span className="chip">
@@ -1904,7 +1898,14 @@ export const GameScreen = ({
               isTargeting={isBoardTargeting}
               onHexClick={isEdgePickMode ? undefined : handleBoardHexClick}
               onEdgeClick={handleBoardEdgeClick}
+              showTags={false}
             />
+            <div className="legend legend--compact game-board__legend">
+              <div className="legend__item legend__item--capital">Capital</div>
+              <div className="legend__item legend__item--forge">Forge</div>
+              <div className="legend__item legend__item--mine">Mine</div>
+              <div className="legend__item legend__item--center">Center</div>
+            </div>
           </div>
         </section>
 
