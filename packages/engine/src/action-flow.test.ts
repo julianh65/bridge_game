@@ -4,8 +4,9 @@ import { describe, expect, it } from "vitest";
 import type { BoardState, EdgeKey, GameState, HexKey } from "./types";
 import { createBaseBoard } from "./board-generation";
 import { createCardInstance, createCardInstances } from "./cards";
-import { validateMovePath } from "./card-effects";
+import { isCardPlayable, resolveCardEffects, validateMovePath } from "./card-effects";
 import { getCardDef } from "./content/cards";
+import type { CardDef } from "./content/cards";
 import {
   applyCommand,
   countPlayersOnHex,
@@ -1926,6 +1927,106 @@ describe("action flow", () => {
       throw new Error("missing p1 state after marked for coin");
     }
     expect(p1After.resources.gold).toBe(p1Before.resources.gold + 6);
+  });
+
+  it("applies ward to block enemy card targeting", () => {
+    let { state } = setupToActionPhase();
+    const p2Capital = state.players.find((player) => player.id === "p2")?.capitalHex;
+    if (!p2Capital) {
+      throw new Error("missing p2 capital");
+    }
+
+    const target = addChampionToHex(state, "p2", p2Capital);
+    state = target.state;
+
+    const wardCard: CardDef = {
+      id: "test.ward",
+      name: "Ward",
+      rulesText: "",
+      type: "Spell",
+      deck: "power",
+      tags: ["test"],
+      cost: { mana: 0 },
+      initiative: 0,
+      burn: false,
+      targetSpec: {
+        kind: "champion",
+        owner: "self"
+      },
+      effects: [{ kind: "ward" }]
+    };
+
+    state = resolveCardEffects(state, "p2", wardCard, { unitId: target.unitId });
+
+    const wardModifier = state.modifiers.find(
+      (modifier) => modifier.attachedUnitId === target.unitId
+    );
+    const targeting = wardModifier?.data?.targeting;
+    if (!targeting || typeof targeting !== "object") {
+      throw new Error("missing ward targeting data");
+    }
+    expect(targeting).toMatchObject({ blockEnemyCards: true });
+
+    const zapCard = getCardDef("starter.zap");
+    if (!zapCard) {
+      throw new Error("missing zap card");
+    }
+
+    expect(isCardPlayable(state, "p1", zapCard, { unitId: target.unitId })).toBe(false);
+    expect(isCardPlayable(state, "p2", zapCard, { unitId: target.unitId })).toBe(true);
+  });
+
+  it("applies immunity field to block enemy spells only", () => {
+    let { state } = setupToActionPhase();
+    const p2Capital = state.players.find((player) => player.id === "p2")?.capitalHex;
+    if (!p2Capital) {
+      throw new Error("missing p2 capital");
+    }
+
+    const target = addChampionToHex(state, "p2", p2Capital);
+    state = target.state;
+
+    const immunityField: CardDef = {
+      id: "test.immunity_field",
+      name: "Immunity Field",
+      rulesText: "",
+      type: "Spell",
+      deck: "power",
+      tags: ["test"],
+      cost: { mana: 0 },
+      initiative: 0,
+      burn: false,
+      targetSpec: { kind: "none" },
+      effects: [{ kind: "immunityField" }]
+    };
+
+    state = resolveCardEffects(state, "p2", immunityField);
+
+    const spellCard: CardDef = {
+      id: "test.enemy_spell",
+      name: "Enemy Spell",
+      rulesText: "",
+      type: "Spell",
+      deck: "power",
+      tags: ["test"],
+      cost: { mana: 0 },
+      initiative: 0,
+      burn: false,
+      targetSpec: {
+        kind: "champion",
+        owner: "any"
+      },
+      effects: [{ kind: "dealChampionDamage", amount: 1 }]
+    };
+
+    const zapCard = getCardDef("starter.zap");
+    if (!zapCard) {
+      throw new Error("missing zap card");
+    }
+
+    expect(isCardPlayable(state, "p1", spellCard, { unitId: target.unitId })).toBe(false);
+    expect(isCardPlayable(state, "p1", zapCard, { unitId: target.unitId })).toBe(true);
+    expect(isCardPlayable(state, "p2", spellCard, { unitId: target.unitId })).toBe(true);
   });
 
   it("plays perfect recall to draw and optionally topdeck a card", () => {

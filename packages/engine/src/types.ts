@@ -282,6 +282,7 @@ export type Modifier = {
   id: string;
   source: { type: "faction" | "card" | "champion"; sourceId: string };
   ownerPlayerId?: PlayerID;
+  attachedUnitId?: UnitID;
   attachedHex?: HexKey;
   attachedEdge?: EdgeKey;
   duration: Duration;

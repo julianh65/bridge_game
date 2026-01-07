@@ -16,7 +16,8 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent1 — scope: add card-target immunity support (Ward/Immunity Field), align Marked-for-Coin targeting data, add engine tests — files: `packages/engine/src/card-effects.ts`, `packages/engine/src/types.ts`, `packages/engine/src/rewards.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md` — status: in progress
+- none
+- owner: agent3 — scope: add unit stack arrival/move pulse animation on board updates to make action-phase movement clearer — files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `progress.md`, `implementation_plan.md` — status: in progress
 
 ## Milestone 8.5 progress
 - Simplified the basic actions UI: removed pick/clear buttons, made march/bridge targets clickable fields, and auto-clear march destination when the start changes; marked the plan item complete in `implementation_plan.md`. (Overlap note: touched `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`.)
@@ -398,6 +399,7 @@ none
 - Added Archivist Prime dice scaling (cards played this round) + Wormhole Artificer solo-move bonus, plus card-play counter reset/increment logic and action-flow tests.
 - Added per-round discard tracking in player flags (counts Scout Report discards and hand-limit overflow), reset each round, with action-flow coverage.
 - Verified engine coverage with `npm run -w @bridgefront/engine test`.
+- Added targeting immunity modifiers (Ward/Immunity Field), attached Marked-for-Coin flags to champions, and added action-flow tests for enemy targeting blocks.
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

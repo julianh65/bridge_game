@@ -1,7 +1,7 @@
 import type { CardDef } from "./content/cards";
 import { areAdjacent, axialDistance, parseEdgeKey, parseHexKey } from "@bridgefront/shared";
 
-import type { CardPlayTargets, GameState, PlayerID, TileType } from "./types";
+import type { CardPlayTargets, GameState, Modifier, PlayerID, TileType } from "./types";
 import {
   countPlayersOnHex,
   getBridgeKey,
@@ -49,7 +49,9 @@ const SUPPORTED_EFFECTS = new Set([
   "recruit",
   "holdTheLine",
   "markForCoin",
-  "topdeckFromHand"
+  "topdeckFromHand",
+  "ward",
+  "immunityField"
 ]);
 
 type TargetRecord = Record<string, unknown>;
@@ -215,11 +217,85 @@ const hasFriendlyChampionWithinRange = (
   );
 };
 
+type TargetingGuard = {
+  blockEnemyCards: boolean;
+  blockEnemySpells: boolean;
+  scope: "attachedUnit" | "ownerChampions";
+};
+
+const isModifierActive = (modifier: Modifier): boolean => {
+  if (modifier.duration.type === "uses") {
+    return modifier.duration.remaining > 0;
+  }
+  return true;
+};
+
+const getTargetingGuard = (modifier: Modifier): TargetingGuard | null => {
+  if (!isModifierActive(modifier)) {
+    return null;
+  }
+  const raw = modifier.data?.targeting;
+  if (!raw || typeof raw !== "object") {
+    return null;
+  }
+  const record = raw as Record<string, unknown>;
+  const blockEnemyCards = record.blockEnemyCards === true;
+  const blockEnemySpells = record.blockEnemySpells === true;
+  if (!blockEnemyCards && !blockEnemySpells) {
+    return null;
+  }
+  const scope = record.scope === "ownerChampions" ? "ownerChampions" : "attachedUnit";
+  return { blockEnemyCards, blockEnemySpells, scope };
+};
+
+const guardAppliesToChampion = (
+  modifier: Modifier,
+  guard: TargetingGuard,
+  unitId: string,
+  unitOwnerId: PlayerID
+): boolean => {
+  if (guard.scope === "ownerChampions") {
+    return modifier.ownerPlayerId === unitOwnerId;
+  }
+  return modifier.attachedUnitId === unitId;
+};
+
+const isChampionTargetableByCard = (
+  state: GameState,
+  playerId: PlayerID,
+  card: CardDef,
+  unit: GameState["board"]["units"][string]
+): boolean => {
+  if (playerId === unit.ownerPlayerId) {
+    return true;
+  }
+  const isSpell = card.type === "Spell";
+
+  for (const modifier of state.modifiers) {
+    const guard = getTargetingGuard(modifier);
+    if (!guard) {
+      continue;
+    }
+    if (!guardAppliesToChampion(modifier, guard, unit.id, unit.ownerPlayerId)) {
+      continue;
+    }
+    if (guard.blockEnemyCards) {
+      return false;
+    }
+    if (guard.blockEnemySpells && isSpell) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
 const getChampionTarget = (
   state: GameState,
   playerId: PlayerID,
   targetSpec: TargetRecord,
-  targets: CardPlayTargets
+  targets: CardPlayTargets,
+  card?: CardDef
 ): { unitId: string; unit: GameState["board"]["units"][string] } | null => {
   const unitId = getChampionTargetId(targets);
   if (!unitId) {
@@ -252,6 +328,10 @@ const getChampionTarget = (
     if (!hasFriendlyChampionWithinRange(state, playerId, unit.hex, maxDistance)) {
       return null;
     }
+  }
+
+  if (card && !isChampionTargetableByCard(state, playerId, card, unit)) {
+    return null;
   }
 
   return { unitId, unit };
@@ -686,7 +766,7 @@ export const isCardPlayable = (
 
   if (card.targetSpec.kind === "champion") {
     return Boolean(
-      getChampionTarget(state, playerId, card.targetSpec as TargetRecord, targets ?? null)
+      getChampionTarget(state, playerId, card.targetSpec as TargetRecord, targets ?? null, card)
     );
   }
 
@@ -969,7 +1049,8 @@ export const resolveCardEffects = (
           nextState,
           playerId,
           card.targetSpec as TargetRecord,
-          targets ?? null
+          targets ?? null,
+          card
         );
         if (!target) {
           break;
@@ -983,7 +1064,8 @@ export const resolveCardEffects = (
           nextState,
           playerId,
           card.targetSpec as TargetRecord,
-          targets ?? null
+          targets ?? null,
+          card
         );
         if (!target) {
           break;
@@ -997,7 +1079,8 @@ export const resolveCardEffects = (
           nextState,
           playerId,
           card.targetSpec as TargetRecord,
-          targets ?? null
+          targets ?? null,
+          card
         );
         if (!target) {
           break;
@@ -1057,7 +1140,8 @@ export const resolveCardEffects = (
           nextState,
           playerId,
           card.targetSpec as TargetRecord,
-          targets ?? null
+          targets ?? null,
+          card
         );
         if (!target) {
           break;
@@ -1072,10 +1156,66 @@ export const resolveCardEffects = (
               id: modifierId,
               source: { type: "card", sourceId: card.id },
               ownerPlayerId: playerId,
+              attachedUnitId: target.unitId,
               duration: { type: "endOfRound" },
               data: {
                 markedUnitId: target.unitId,
                 bonusGold: bounty
+              }
+            }
+          ]
+        };
+        break;
+      }
+      case "ward": {
+        const target = getChampionTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null,
+          card
+        );
+        if (!target) {
+          break;
+        }
+        const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.${target.unitId}`;
+        nextState = {
+          ...nextState,
+          modifiers: [
+            ...nextState.modifiers,
+            {
+              id: modifierId,
+              source: { type: "card", sourceId: card.id },
+              ownerPlayerId: playerId,
+              attachedUnitId: target.unitId,
+              duration: { type: "endOfRound" },
+              data: {
+                targeting: {
+                  blockEnemyCards: true,
+                  scope: "attachedUnit"
+                }
+              }
+            }
+          ]
+        };
+        break;
+      }
+      case "immunityField": {
+        const modifierId = `card.${card.id}.${playerId}.${nextState.revision}`;
+        nextState = {
+          ...nextState,
+          modifiers: [
+            ...nextState.modifiers,
+            {
+              id: modifierId,
+              source: { type: "card", sourceId: card.id },
+              ownerPlayerId: playerId,
+              duration: { type: "endOfRound" },
+              data: {
+                targeting: {
+                  blockEnemySpells: true,
+                  scope: "ownerChampions"
+                }
               }
             }
           ]

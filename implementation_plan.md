@@ -363,7 +363,7 @@ Start going through the rules_draft and adding the logic for the different types
 ### Tasks
 - [x] Add per-round counters for cards played/discarded (cards played now tracked for Archivist Prime; discard tracking + other cards pending).
 - [ ] Add draw/round-end triggers (on-draw penalties, end-of-round VP awards, marked champion payouts).
-- [ ] Add targeting immunities and marked/contract flags (Ward, Immunity Field, Marked for Coin).
+- [x] Add targeting immunities and marked/contract flags (Ward, Immunity Field, Marked for Coin).
 - [ ] Add movement/adjacency modifiers (bridge lockdown/trap, wormhole links, tunnel network).
 - [ ] Add hit-assignment control + battle retreat effects (Focus Fire, Tactical Hand, Set to Skirmish).
 - [ ] Add multi-target/multi-stack actions (move two stacks, build multiple bridges, deploy to multiple mines).
@@ -486,7 +486,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [x] UI: add a smooth force-count picker (move all vs split) in the action panel.
   - [x] UI: add force-count controls for card-driven stack moves.
 - [x] Any text on the board shouldn't be highlightable
-- [ ] Add some animations for units moving during the action reveal phase
+- [x] Add some animations for units moving during the action reveal phase
 - [x] I added some random sound effects I downloaded to sound_fx, assign each of them a name / meaning (bell should be for rounds) and add the sound effects to different clicks and stuff, also if you need to feel free to move the sound effects folder and stuff to the appropriate place
 
 ## Milestone 9.5 -- Card Art + Description

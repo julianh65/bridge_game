@@ -44,7 +44,7 @@ const applyMarkedForCoinRewards = (
     if (!ownerId) {
       continue;
     }
-    const markedId = modifier.data?.markedUnitId;
+    const markedId = modifier.attachedUnitId ?? modifier.data?.markedUnitId;
     if (typeof markedId !== "string" || !killedIds.has(markedId)) {
       continue;
     }
