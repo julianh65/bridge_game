@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- owner: agent2 | scope: prune completed basic tasks from implementation plan for readability | files: `implementation_plan.md`, `progress.md` | status: in progress
+- none
 - owner: agent4 | scope: investigate/fix action submit + basic action buttons disabled in action phase (UI eligibility gating + hints) | files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `progress.md`, `implementation_plan.md` | status: in progress
 - owner: agent3 | scope: update log formatting to use A1-style board labels instead of axial coords | files: `apps/web/src/lib/event-format.ts`, `apps/web/src/components/GameScreen.tsx`, `progress.md`, `implementation_plan.md` | status: in progress
 
@@ -146,6 +146,7 @@
 ## Docs maintenance
 - Expanded the Milestone 9 card-test checklist with Age I market sub-items in `implementation_plan.md`.
 - Added an owner-only TODO to `docs/dev.md` for replacing placeholder faction symbols with final icons and where to wire them.
+- Restored the previously removed completed milestone sections in `implementation_plan.md` per request.
 - Added a Milestone 8.5 TODO for a reusable hand-card picker/topdeck modal in `implementation_plan.md`.
 - Added a Milestone 9 TODO for bridge art assets/rendering in `implementation_plan.md`.
 - Marked the Milestone 9 Age I market card-test item (Supply Ledger/Patrol Record/Banner Claim) complete in `implementation_plan.md`.
