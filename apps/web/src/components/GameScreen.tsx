@@ -361,6 +361,8 @@ const getDefaultCardPickMode = (cardDef: CardDef | null): BoardPickMode => {
       return "cardStack";
     case "path":
       return "cardPath";
+    case "champion":
+      return "cardChampion";
     case "hex":
       return "cardHex";
     case "choice":
@@ -1351,7 +1353,11 @@ export const GameScreen = ({
     }
     setSelectedHexKey(hexKey);
 
-    if (boardPickMode === "none" && cardTargetKind === "champion" && selectedCardDef) {
+    if (
+      (boardPickMode === "none" || boardPickMode === "cardChampion") &&
+      cardTargetKind === "champion" &&
+      selectedCardDef
+    ) {
       const rawOwner = selectedCardDef.targetSpec.owner;
       const owner =
         rawOwner === "self" || rawOwner === "enemy" || rawOwner === "any"
@@ -1865,6 +1871,31 @@ export const GameScreen = ({
           continue;
         }
         validTargets.add(key);
+      }
+    }
+
+    if (boardPickMode === "cardChampion") {
+      if (!selectedCardDef || cardTargetKind !== "champion") {
+        return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
+      }
+      const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
+      const owner = typeof targetSpec.owner === "string" ? targetSpec.owner : "self";
+      if (owner !== "self" && owner !== "enemy" && owner !== "any") {
+        return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
+      }
+      for (const unit of Object.values(board.units)) {
+        if (unit.kind !== "champion") {
+          continue;
+        }
+        if (owner === "self" && unit.ownerPlayerId !== localPlayerId) {
+          continue;
+        }
+        if (owner === "enemy" && unit.ownerPlayerId === localPlayerId) {
+          continue;
+        }
+        if (boardHexes[unit.hex]) {
+          validTargets.add(unit.hex);
+        }
       }
     }
 

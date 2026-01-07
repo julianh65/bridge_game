@@ -10,6 +10,7 @@ export type BoardPickMode =
   | "marchTo"
   | "bridgeEdge"
   | "cardEdge"
+  | "cardChampion"
   | "cardHex"
   | "cardStack"
   | "cardPath"
