@@ -1896,9 +1896,9 @@ h1 {
   right: 16px;
   bottom: 16px;
   z-index: 58;
-  background: rgba(255, 250, 240, 0.78);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 250, 240, 0.62);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
 }
 
 .mana-orb {
@@ -2012,9 +2012,9 @@ h1 {
   padding: 8px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: rgba(253, 244, 228, 0.82);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(253, 244, 228, 0.68);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
   position: relative;
   z-index: 1;
   flex: 0 0 clamp(160px, 18vw, 200px);
