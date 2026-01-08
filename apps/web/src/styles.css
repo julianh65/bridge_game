@@ -4102,8 +4102,8 @@ body.is-game .market-overlay__panel {
 
 .market-overlay__toggle {
   position: fixed;
-  right: 24px;
-  top: 120px;
+  left: 50%;
+  bottom: 36px;
   z-index: 65;
   min-width: 180px;
   padding: 12px 20px;
@@ -4114,6 +4114,7 @@ body.is-game .market-overlay__panel {
   justify-content: center;
   letter-spacing: 0.02em;
   box-shadow: 0 12px 24px rgba(20, 12, 6, 0.35);
+  transform: translateX(-50%);
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
@@ -4122,7 +4123,7 @@ body.is-game .market-overlay__panel {
 }
 
 .market-overlay__toggle:hover:not(:disabled) {
-  transform: translateY(-1px);
+  transform: translate(-50%, -1px);
   box-shadow: 0 14px 30px rgba(20, 12, 6, 0.4);
 }
 
@@ -7860,8 +7861,9 @@ body.is-game .combat-outcome__auto {
 
   .market-overlay__toggle {
     top: auto;
+    left: 50%;
+    right: auto;
     bottom: 24px;
-    right: 16px;
     min-width: 160px;
   }
 
