@@ -115,6 +115,39 @@ const CollectionCardOption = ({
   );
 };
 
+type CollectionHandCardOptionProps = {
+  card: CardInstance;
+  isSelected: boolean;
+  disabled: boolean;
+  onSelect: () => void;
+};
+
+const CollectionHandCardOption = ({
+  card,
+  isSelected,
+  disabled,
+  onSelect
+}: CollectionHandCardOptionProps) => {
+  const cardDef = CARD_DEFS_BY_ID.get(card.defId) ?? null;
+  return (
+    <button
+      type="button"
+      className={`collection-card-option${isSelected ? " is-selected" : ""}`}
+      disabled={disabled}
+      aria-pressed={isSelected}
+      onClick={onSelect}
+    >
+      <GameCard
+        card={cardDef}
+        cardId={card.defId}
+        variant="grid"
+        className="collection-card"
+        showId={false}
+      />
+    </button>
+  );
+};
+
 export const CollectionPanel = ({
   phase,
   collectionPublic,
@@ -500,34 +533,27 @@ export const CollectionPanel = ({
                           No cards in hand.
                         </div>
                       ) : (
-                        <ul className="card-list">
+                        <div className="collection-card-grid">
                           {handCards.map((card) => {
-                            const def = CARD_DEFS_BY_ID.get(card.defId);
-                            const label = def?.name ?? card.defId;
                             const isSelected = selectedReforgeId === card.id;
                             return (
-                              <li key={card.id}>
-                                <button
-                                  type="button"
-                                  className={`card-tag card-tag--clickable ${
-                                    isSelected ? "is-selected" : ""
-                                  }`}
-                                  disabled={!canInteract}
-                                  onClick={() =>
-                                    setChoice(prompt, {
-                                      kind: "forge",
-                                      hexKey: prompt.hexKey,
-                                      choice: "reforge",
-                                      scrapCardId: card.id
-                                    })
-                                  }
-                                >
-                                  {label} · {card.id}
-                                </button>
-                              </li>
+                              <CollectionHandCardOption
+                                key={card.id}
+                                card={card}
+                                isSelected={isSelected}
+                                disabled={!canInteract}
+                                onSelect={() =>
+                                  setChoice(prompt, {
+                                    kind: "forge",
+                                    hexKey: prompt.hexKey,
+                                    choice: "reforge",
+                                    scrapCardId: card.id
+                                  })
+                                }
+                              />
                             );
                           })}
-                        </ul>
+                        </div>
                       )}
                     </div>
                     <div className="collection-prompt__section">

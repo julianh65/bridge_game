@@ -352,7 +352,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] I want there to be an animation when cards are drawn
 - [ ] on the board we need to see the mine yields
 - [ ] The pass and confirm pass button is bugged
-- [ ] The forge scrap doesn't look right, i just see a bunch of pills with random card ids
+- [x] The forge scrap doesn't look right, i just see a bunch of pills with random card ids
 - [ ] remove the mine draft, it should just give gold, and update the rules
 
 ### Mini Milestone For Me
