@@ -134,6 +134,7 @@ export const SetupStartingBridges = ({
   );
   const highlightHexKeys = capitalHex ? [capitalHex] : [];
   const canPlace = status === "connected" && Boolean(playerId) && isWaiting;
+  const canEdit = status === "connected" && Boolean(playerId);
   const isTargeting = canPlace && previewEdgeKeys.length > 0;
   const helperText = (() => {
     if (status !== "connected") {
@@ -149,13 +150,20 @@ export const SetupStartingBridges = ({
       return "Waiting for other players to place bridges.";
     }
     if (localRemaining <= 0) {
-      return "You have placed all starting bridges.";
+      return "You have placed all starting bridges. Click a selected bridge to change it.";
     }
     return `Click a highlighted bridge near your capital to place ${localRemaining} more.`;
   })();
 
   const handleSubmit = (edge: EdgeKey) => {
     onSubmitChoice({ kind: "placeStartingBridge", edgeKey: edge });
+  };
+
+  const handleRemove = (edge: EdgeKey) => {
+    if (!canEdit) {
+      return;
+    }
+    onSubmitChoice({ kind: "removeStartingBridge", edgeKey: edge });
   };
 
   if (!startingBridges) {
@@ -216,8 +224,17 @@ export const SetupStartingBridges = ({
                 {isLocal && placedEdges.length > 0 ? (
                   <ul className="card-list">
                     {placedEdges.map((edge) => (
-                      <li key={edge} className="card-tag" title={edge}>
-                        {edge}
+                      <li key={edge}>
+                        <button
+                          type="button"
+                          className="card-tag card-tag--clickable setup-bridges__selected"
+                          onClick={() => handleRemove(edge)}
+                          disabled={!canEdit}
+                          title={`Remove ${edge}`}
+                        >
+                          <span>{edge}</span>
+                          <span className="setup-bridges__selected-remove">x</span>
+                        </button>
                       </li>
                     ))}
                   </ul>

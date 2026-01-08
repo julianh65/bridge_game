@@ -15,6 +15,7 @@ import {
   createFreeStartingCardBlock,
   createStartingBridgesBlock,
   finalizeCapitalDraft,
+  finalizeFreeStartingCardPick,
   finalizeStartingBridges
 } from "./setup-flow";
 import {
@@ -415,7 +416,8 @@ export const runUntilBlocked = (state: GameState): GameState => {
     }
 
     if (advanceReadyState.blocks.type === "setup.freeStartingCardPick") {
-      nextState = enterPhase(advanceReadyState, "round.reset");
+      const finalized = finalizeFreeStartingCardPick(advanceReadyState);
+      nextState = enterPhase(finalized, "round.reset");
       continue;
     }
 

@@ -952,6 +952,18 @@ body.is-game .setup-bridges__suggestion:hover:not(:disabled) {
   font-weight: 600;
 }
 
+.setup-bridges__selected {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.setup-bridges__selected-remove {
+  font-size: 11px;
+  opacity: 0.6;
+  text-transform: uppercase;
+}
+
 .setup-card-pick__offers {
   display: flex;
   flex-wrap: wrap;

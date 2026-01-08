@@ -332,4 +332,155 @@ describe("setup flow", () => {
     expect(state.blocks?.payload.offers["p1"]).toHaveLength(4);
     expect(state.blocks?.payload.offers["p2"]).toHaveLength(3);
   });
+
+  it("allows removing a starting bridge selection before advancing", () => {
+    let state = createNewGame(DEFAULT_CONFIG, 321, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    state = runUntilBlocked(state);
+    const slots = state.blocks?.payload.availableSlots ?? [];
+    const p1Slot = slots[0];
+    const p2Slot = slots[1] ?? slots[0];
+
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "pickCapital", hexKey: p1Slot } },
+      "p1"
+    );
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "pickCapital", hexKey: p2Slot } },
+      "p2"
+    );
+    state = runUntilBlocked(state);
+    state = advanceSetup(state);
+    state = runUntilBlocked(state);
+    expect(state.blocks?.type).toBe("setup.startingBridges");
+
+    const p1Capital = state.players.find((player) => player.id === "p1")?.capitalHex;
+    if (!p1Capital) {
+      throw new Error("missing p1 capital for starting bridge test");
+    }
+    const [p1EdgeA] = pickStartingEdges(p1Capital, state.board);
+
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "placeStartingBridge", edgeKey: p1EdgeA } },
+      "p1"
+    );
+    const afterPlace = state.blocks;
+    if (!afterPlace || afterPlace.type !== "setup.startingBridges") {
+      throw new Error("expected starting bridges block after placement");
+    }
+    expect(afterPlace.payload.remaining["p1"]).toBe(1);
+    expect(afterPlace.payload.selectedEdges["p1"]).toContain(p1EdgeA);
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitSetupChoice",
+        payload: { kind: "removeStartingBridge", edgeKey: p1EdgeA }
+      },
+      "p1"
+    );
+    const afterRemove = state.blocks;
+    if (!afterRemove || afterRemove.type !== "setup.startingBridges") {
+      throw new Error("expected starting bridges block after removal");
+    }
+    expect(afterRemove.payload.remaining["p1"]).toBe(2);
+    expect(afterRemove.payload.selectedEdges["p1"]).not.toContain(p1EdgeA);
+    expect(afterRemove.waitingFor).toContain("p1");
+  });
+
+  it("allows unpicking a free starting card before setup advances", () => {
+    let state = createNewGame(DEFAULT_CONFIG, 654, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    state = runUntilBlocked(state);
+    const slots = state.blocks?.payload.availableSlots ?? [];
+    const p1Slot = slots[0];
+    const p2Slot = slots[1] ?? slots[0];
+
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "pickCapital", hexKey: p1Slot } },
+      "p1"
+    );
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "pickCapital", hexKey: p2Slot } },
+      "p2"
+    );
+    state = runUntilBlocked(state);
+    state = advanceSetup(state);
+    state = runUntilBlocked(state);
+    expect(state.blocks?.type).toBe("setup.startingBridges");
+
+    const p1Capital = state.players.find((player) => player.id === "p1")?.capitalHex;
+    const p2Capital = state.players.find((player) => player.id === "p2")?.capitalHex;
+    if (!p1Capital || !p2Capital) {
+      throw new Error("missing capitals for free card unpick test");
+    }
+    const [p1EdgeA, p1EdgeB] = pickStartingEdges(p1Capital, state.board);
+    const [p2EdgeA, p2EdgeB] = pickStartingEdges(p2Capital, state.board);
+
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "placeStartingBridge", edgeKey: p1EdgeA } },
+      "p1"
+    );
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "placeStartingBridge", edgeKey: p1EdgeB } },
+      "p1"
+    );
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "placeStartingBridge", edgeKey: p2EdgeA } },
+      "p2"
+    );
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "placeStartingBridge", edgeKey: p2EdgeB } },
+      "p2"
+    );
+
+    state = runUntilBlocked(state);
+    state = advanceSetup(state);
+    state = runUntilBlocked(state);
+    expect(state.blocks?.type).toBe("setup.freeStartingCardPick");
+
+    const p1Offer = state.blocks?.payload.offers["p1"]?.[0];
+    if (!p1Offer) {
+      throw new Error("missing free starting card offer");
+    }
+
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "pickFreeStartingCard", cardId: p1Offer } },
+      "p1"
+    );
+    const afterPick = state.blocks;
+    if (!afterPick || afterPick.type !== "setup.freeStartingCardPick") {
+      throw new Error("expected free starting card block after pick");
+    }
+    expect(afterPick.payload.chosen["p1"]).toBe(p1Offer);
+    expect(afterPick.waitingFor).not.toContain("p1");
+
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "unpickFreeStartingCard" } },
+      "p1"
+    );
+    const afterUnpick = state.blocks;
+    if (!afterUnpick || afterUnpick.type !== "setup.freeStartingCardPick") {
+      throw new Error("expected free starting card block after unpick");
+    }
+    expect(afterUnpick.payload.chosen["p1"]).toBeNull();
+    expect(afterUnpick.waitingFor).toContain("p1");
+  });
 });

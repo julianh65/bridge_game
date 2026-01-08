@@ -49,7 +49,9 @@ export const SetupFreeStartingCardPick = ({
   const isWaiting = Boolean(playerId && waitingFor.includes(playerId));
   const offers = privateSetup?.offers ?? [];
   const chosenCard = privateSetup?.chosen ?? null;
-  const canPick = status === "connected" && Boolean(playerId) && isWaiting;
+  const canInteract = status === "connected" && Boolean(playerId);
+  const canPick = canInteract && isWaiting;
+  const canUnpick = canInteract && Boolean(chosenCard);
 
   const helperText = (() => {
     if (status !== "connected") {
@@ -60,13 +62,31 @@ export const SetupFreeStartingCardPick = ({
     }
     if (chosenCard) {
       const name = CARD_DEFS_BY_ID.get(chosenCard)?.name ?? chosenCard;
-      return `You picked ${name}.`;
+      return `You picked ${name}. Click it again to change your selection.`;
     }
     if (!isWaiting) {
       return "Waiting for other players to pick.";
     }
     return "Choose one of your offers.";
   })();
+
+  const handleOfferClick = (cardId: string) => {
+    if (!canInteract) {
+      return;
+    }
+    if (cardId === chosenCard) {
+      if (canUnpick) {
+        onSubmitChoice({ kind: "unpickFreeStartingCard" });
+      }
+      return;
+    }
+    if (chosenCard) {
+      onSubmitChoice({ kind: "unpickFreeStartingCard" });
+    }
+    if (canPick || chosenCard) {
+      onSubmitChoice({ kind: "pickFreeStartingCard", cardId });
+    }
+  };
 
   if (!cardPickSetup) {
     return null;
@@ -86,13 +106,14 @@ export const SetupFreeStartingCardPick = ({
                 {offers.map((cardId) => {
                   const def = CARD_DEFS_BY_ID.get(cardId);
                   const isChosen = chosenCard === cardId;
+                  const canChange = canInteract && (isWaiting || Boolean(chosenCard));
                   return (
                     <button
                       key={cardId}
                       type="button"
                       className={`setup-card-pick__offer${isChosen ? " is-selected" : ""}`}
-                      onClick={() => onSubmitChoice({ kind: "pickFreeStartingCard", cardId })}
-                      disabled={!canPick || Boolean(chosenCard)}
+                      onClick={() => handleOfferClick(cardId)}
+                      disabled={!canChange}
                     >
                       <GameCard
                         variant="offer"

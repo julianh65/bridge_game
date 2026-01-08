@@ -18,6 +18,7 @@
 
 ## Active tasks
  - owner: agent2; scope: add Age II movement cards (Triple March, Coordinated Advance, Breakthrough Line) and battle-win cleanup draw effect with tests; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.breakthrough-line.test.ts`, `implementation_plan.md`, `progress.md`; status: in progress
+ - owner: agent5; scope: combat overlay sync (shared roll readiness + synchronized reveal timing) for combat redesign; files: `apps/server/src/server.ts`, `apps/web/src/lib/room-client.ts`, `apps/web/src/App.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in progress (overlap note: `apps/web/src/components/GameScreen.tsx` also in agent3 scope)
 
 
 ## Planning updates

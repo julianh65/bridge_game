@@ -44,6 +44,22 @@ const getCapitalDraftWaitingFor = (
   return players.map((player) => player.id).filter((playerId) => !choices[playerId]);
 };
 
+const getStartingBridgeWaitingFor = (
+  players: PlayerState[],
+  remaining: Record<PlayerID, number>
+): PlayerID[] => {
+  return players
+    .map((player) => player.id)
+    .filter((playerId) => (remaining[playerId] ?? 0) > 0);
+};
+
+const getFreeStartingCardWaitingFor = (
+  players: PlayerState[],
+  chosen: Record<PlayerID, CardDefId | null>
+): PlayerID[] => {
+  return players.map((player) => player.id).filter((playerId) => !chosen[playerId]);
+};
+
 export const createCapitalDraftBlock = (players: PlayerState[], availableSlots: HexKey[]): BlockState => ({
   type: "setup.capitalDraft",
   waitingFor: players.map((player) => player.id),
@@ -263,6 +279,44 @@ export const finalizeStartingBridges = (state: GameState): GameState => {
   return nextState;
 };
 
+export const finalizeFreeStartingCardPick = (state: GameState): GameState => {
+  const block = state.blocks;
+  if (!block || block.type !== "setup.freeStartingCardPick") {
+    return state;
+  }
+
+  let nextState = state;
+  let remainingDeck = [...block.payload.remainingDeck];
+
+  for (const player of state.players) {
+    const chosen = block.payload.chosen[player.id];
+    if (!chosen) {
+      throw new Error("player missing free starting card choice");
+    }
+    const offers = block.payload.offers[player.id] ?? [];
+    const unchosen = offers.filter((cardId) => cardId !== chosen);
+    if (unchosen.length > 0) {
+      const { value: returnedCards, next } = shuffle(nextState.rngState, unchosen);
+      remainingDeck = [...remainingDeck, ...returnedCards];
+      nextState = { ...nextState, rngState: next };
+    }
+
+    const { state: stateWithCard, instanceId } = createCardInstance(nextState, chosen);
+    nextState = insertCardIntoDrawPileRandom(stateWithCard, player.id, instanceId);
+  }
+
+  return {
+    ...nextState,
+    blocks: {
+      ...block,
+      payload: {
+        ...block.payload,
+        remainingDeck
+      }
+    }
+  };
+};
+
 export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId: PlayerID): GameState => {
   const block = state.blocks;
   if (!block) {
@@ -381,6 +435,36 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
   }
 
   if (block.type === "setup.startingBridges") {
+    if (choice.kind === "removeStartingBridge") {
+      const [rawA, rawB] = parseEdgeKey(choice.edgeKey);
+      const edgeKey = getBridgeKey(rawA, rawB);
+      const selected = block.payload.selectedEdges[playerId] ?? [];
+      if (!selected.includes(edgeKey)) {
+        throw new Error("starting bridge not selected by player");
+      }
+
+      const nextSelected = {
+        ...block.payload.selectedEdges,
+        [playerId]: selected.filter((edge) => edge !== edgeKey)
+      };
+      const nextRemaining = {
+        ...block.payload.remaining,
+        [playerId]: Math.min(2, (block.payload.remaining[playerId] ?? 0) + 1)
+      };
+
+      return {
+        ...state,
+        blocks: {
+          ...block,
+          waitingFor: getStartingBridgeWaitingFor(state.players, nextRemaining),
+          payload: {
+            remaining: nextRemaining,
+            selectedEdges: nextSelected
+          }
+        }
+      };
+    }
+
     if (choice.kind !== "placeStartingBridge") {
       throw new Error("expected placeStartingBridge during starting bridge placement");
     }
@@ -431,16 +515,11 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
       [playerId]: [...block.payload.selectedEdges[playerId], edgeKey]
     };
 
-    const nextWaitingFor =
-      nextRemaining[playerId] === 0
-        ? block.waitingFor.filter((id) => id !== playerId)
-        : block.waitingFor;
-
     const nextState = {
       ...state,
       blocks: {
         ...block,
-        waitingFor: nextWaitingFor,
+        waitingFor: getStartingBridgeWaitingFor(state.players, nextRemaining),
         payload: {
           remaining: nextRemaining,
           selectedEdges: nextSelected
@@ -452,44 +531,54 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
   }
 
   if (block.type === "setup.freeStartingCardPick") {
+    if (choice.kind === "unpickFreeStartingCard") {
+      if (!block.payload.chosen[playerId]) {
+        throw new Error("player has no free starting card to unpick");
+      }
+      const nextChosen = { ...block.payload.chosen, [playerId]: null };
+
+      return {
+        ...state,
+        blocks: {
+          ...block,
+          waitingFor: getFreeStartingCardWaitingFor(state.players, nextChosen),
+          payload: {
+            ...block.payload,
+            chosen: nextChosen
+          }
+        }
+      };
+    }
+
     if (choice.kind !== "pickFreeStartingCard") {
       throw new Error("expected pickFreeStartingCard during free starting card pick");
-    }
-    if (!block.waitingFor.includes(playerId)) {
-      throw new Error("player already picked a free starting card");
     }
 
     const offers = block.payload.offers[playerId];
     if (!offers || !offers.includes(choice.cardId)) {
       throw new Error("card is not in player's offer");
     }
-    if (block.payload.chosen[playerId]) {
-      throw new Error("player already chose a free starting card");
+    const alreadyChosen = block.payload.chosen[playerId] ?? null;
+    if (!block.waitingFor.includes(playerId) && !alreadyChosen) {
+      throw new Error("player already picked a free starting card");
+    }
+    if (alreadyChosen === choice.cardId) {
+      return state;
     }
 
-    const unchosen = offers.filter((cardId) => cardId !== choice.cardId);
-    const { value: returnedCards, next } = shuffle(state.rngState, unchosen);
-    const stateWithReturnedCards = { ...state, rngState: next };
-
-    const { state: stateWithCard, instanceId } = createCardInstance(
-      stateWithReturnedCards,
-      choice.cardId
-    );
-    const updatedState = insertCardIntoDrawPileRandom(stateWithCard, playerId, instanceId);
-    const remainingDeck = [...block.payload.remainingDeck, ...returnedCards];
+    const nextChosen = {
+      ...block.payload.chosen,
+      [playerId]: choice.cardId
+    };
 
     const nextState = {
-      ...updatedState,
+      ...state,
       blocks: {
         ...block,
-        waitingFor: block.waitingFor.filter((id) => id !== playerId),
+        waitingFor: getFreeStartingCardWaitingFor(state.players, nextChosen),
         payload: {
           ...block.payload,
-          chosen: {
-            ...block.payload.chosen,
-            [playerId]: choice.cardId
-          },
-          remainingDeck
+          chosen: nextChosen
         }
       }
     };
