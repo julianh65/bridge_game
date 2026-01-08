@@ -272,7 +272,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [ ] Free starting card draft screen with improved presentation.
   - [ ] Transition to main game after all setup steps complete.
 - [ ] Champion card UI shows iconography for health, dice, hits, and bounty.
-- [ ] Market HUD shows current gold with the same emoji/visual language used elsewhere.
+- [x] Market HUD shows current gold with the same emoji/visual language used elsewhere.
 - [ ] Champion cards communicate gold cost scaling for the nth champion clearly.
 - [ ] Action reveal popup uses A1-style board labels (not axial coords).
 - [ ] Collection UI becomes a modal overlay (no top-bar layout shift).

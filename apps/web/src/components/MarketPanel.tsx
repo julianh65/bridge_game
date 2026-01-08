@@ -445,7 +445,10 @@ export const MarketPanel = ({
           <div className="market-bid">
             <div className="market-bid__header">
               <h4>Bid</h4>
-              <span className="market-pill">Gold {gold}</span>
+              <span className="market-pill">
+                <span aria-hidden="true">🟡</span>
+                Gold {gold}
+              </span>
             </div>
             {phase === "round.market" && currentCard ? (
               <div className="market-bid__current">

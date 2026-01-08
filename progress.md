@@ -18,6 +18,7 @@
 
 ## Active tasks
 - none
+- owner: agent2; scope: combat overlay redesign (UI structure, dice flow staging, faction labels, retreat placeholders); files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`; status: in progress
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -59,6 +60,9 @@
 - Rebalanced dark-theme contrast by lifting card/hand surfaces and adding a themed board background + hex strokes for clearer board readability. (Files: `apps/web/src/styles.css`.) (owner: agent2)
 - Restyled phase cue and action reveal overlays for dark theme with warmer panels and higher-contrast text. (Files: `apps/web/src/styles.css`.) (owner: agent2)
 - Applied the dark-fantasy theme to cards/deck views, setup screens, and combat/hand-picker overlays; enabled theme class for non-game views. (Files: `apps/web/src/App.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
+
+## Milestone After Full Test Play and Thinking progress
+- Added the gold emoji chip in the market bid HUD to match the resource iconography used elsewhere; updated the plan checklist. (Files: `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.) (owner: agent4) (Overlap note: `progress.md` includes agent2 active-task update.)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
