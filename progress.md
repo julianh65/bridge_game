@@ -17,10 +17,10 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent1
-  scope: make collection phase overlay hideable like market and add clearer collection context for who/what is being collected
-  files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/CollectionPanel.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md
-  status: in progress
+- owner: agent3
+  scope: show played card art in action reveal overlay
+  files: apps/web/src/components/ActionRevealOverlay.tsx, apps/web/src/components/GameScreen.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md
+  status: in progress (overlap note: `apps/web/src/styles.css` also in agent1/agent2 scope)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -35,6 +35,7 @@
 - Moved the floating market overlay toggle button toward the bottom-center to keep it away from the top-right HUD. (File: `apps/web/src/styles.css`.) (Overlap note: `apps/web/src/styles.css` is also in agent1 scope.)
 
 ## Milestone After Full Test Play and Thinking progress
+- Made the collection overlay toggleable like the market and added a collection context summary + hex labels/notes for why each prompt appears; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Added setup host-advance gating in the engine (AdvanceSetup command + setup status view), updated setup/action/smoke tests plus server auto-setup + sample-game helpers, and added a host-only Advance Setup button in the lobby; updated the plan checklist. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/action-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/index.ts`, `apps/server/src/server.ts`, `apps/web/src/lib/sample-game.ts`, `apps/web/src/components/Lobby.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.)
 - Added per-faction starter deck mapping scaffold (defaults to the common deck), updated card registry coverage, and noted the remaining per-faction initiative work in the plan. (Files: `packages/engine/src/content/starter-decks.ts`, `packages/engine/src/content/cards/cards.test.ts`, `implementation_plan.md`.)
 - Added per-faction starter initiative variants for Quick Move/Zap/Scout Report and updated starter decks to use the faction-specific IDs; marked the plan item complete. (Files: `packages/engine/src/content/cards/starter.ts`, `packages/engine/src/content/starter-decks.ts`, `implementation_plan.md`.)
@@ -63,6 +64,7 @@
 - Fixed CombatOverlay crash by moving the auto-close effect below `isResolved` initialization. (File: `apps/web/src/components/CombatOverlay.tsx`.)
 - Fixed combat sync flow so the roll button advances to the next round after the shared reveal finishes instead of staying in "Waiting for opponent". (File: `apps/web/src/components/CombatOverlay.tsx`.)
 - Removed the combat overlay Skip button and added hit pip visuals above hit summaries for clearer attacker/defender impact. (Files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`.)
+- Added per-unit hit-face labels in the combat overlay so forces/champions show their hit thresholds; updated the plan checklist. (Files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` is also in agent1 scope.)
 - Implemented retreat rules with a combat retreat block + action-resolution queue pause, added a retreat selection overlay, and wired retreat to spend mana, run one final round, and move units across the chosen bridge; updated the plan checklist and added smoke/combat test coverage. (Files: `packages/engine/src/types.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/view.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/combat.test.ts`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreen.tsx` + `apps/web/src/styles.css` overlap agent1 scope.) (Test: `npm run -w @bridgefront/engine test -- combat.test.ts`.)
 - Switched action reveal target labels to A1-style board labels, added basic action hover tooltips, and added an active effects intel list; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenSidebar.tsx`, `apps/web/src/components/ActionPanel.tsx`, `implementation_plan.md`.)
 - Added action-reveal-synced board animations for move paths, edge highlights, and target pulses during action resolution; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreen.tsx` + `apps/web/src/styles.css` overlap agent2 scope.)

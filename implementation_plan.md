@@ -333,12 +333,12 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] the market dice roll is a bit weird for ties, like it seemed like it insta skipped and i didn’t get to see who won it, at the end of the rolls it needs to show who won the roll and pause
 - [ ] when the action phase flashes up also show the card that was played, like the art and all
 - [ ] right now the mana orb can sometimes cover up the action panel when it goes to split or move all
-- [ ] for the collection phase modal that should be hid-able like the market, and it should have more detail as to who’s collecting what and why
+- [x] for the collection phase modal that should be hid-able like the market, and it should have more detail as to who’s collecting what and why
 - [ ] need to add order of basic actions logic, different factions will always act before others, that should show in the faction selector and be configurable from the config and should also really impact the game
 - [x] hard: the forces should move around the board and bridges and things should happen in sync with the popup modal during the action phase
 - [ ] there’s still a bit of buginess between phase transitions where we go from action phase to collection phase like the collection modal will instantly pop up
 - [ ] scout report still doesn’t let you choose which ones to draw or discard
-- [ ] in the combat screen we should see what the champions as well as forces hit on (if there are modifiers it should reflect that as well)
+- [x] in the combat screen we should see what the champions as well as forces hit on (if there are modifiers it should reflect that as well)
 - [ ] tunnel network didn’t work
 
 ### Mini Milestone For Me
@@ -355,7 +355,6 @@ I need some sort of script or way to edit the cards and decks in a nice UI with 
 - [x] Add a dev-only Card Editor view (toggle or route) that reuses card filters/grid.
 - [x] Implement inline editors for allowed fields with validation, revert, and "dirty" indicators.
 - [x] Add a clone-card flow that creates a new draft ID (suffix) and carries editable fields.
-- [ ] Add a deck editor panel (market/power per age) to adjust counts and view totals.
 - [x] Surface initiative collisions in the editor view with per-deck grouping.
 - [x] Add an export panel that copies JSON patch + human-readable change summary.
 - [x] Add a local patch-apply script for Card Editor exports (edits only; clones manual).

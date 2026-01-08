@@ -26,12 +26,16 @@ type CollectionPanelProps = {
   players: Array<{ id: string; name: string }>;
   handCards: CardInstance[];
   status: RoomConnectionStatus;
+  labelByHex?: Record<string, string>;
   onSubmitChoices: (choices: CollectionChoice[]) => void;
 };
 
 const getPromptKey = (kind: CollectionPrompt["kind"], hexKey: string) => `${kind}:${hexKey}`;
 
 const getChoiceKey = (choice: CollectionChoice) => getPromptKey(choice.kind, choice.hexKey);
+
+const formatHexLabel = (hexKey: string, labelByHex?: Record<string, string>) =>
+  labelByHex?.[hexKey] ?? hexKey;
 
 const getPromptSignature = (prompt: CollectionPrompt) => {
   const reveals = prompt.revealed.join(",");
@@ -119,6 +123,7 @@ export const CollectionPanel = ({
   players,
   handCards,
   status,
+  labelByHex,
   onSubmitChoices
 }: CollectionPanelProps) => {
   const prompts = collectionPrivate?.prompts ?? [];
@@ -142,6 +147,26 @@ export const CollectionPanel = ({
     [players]
   );
   const waitingFor = collectionPublic?.waitingForPlayerIds ?? [];
+  const promptSummary = useMemo(() => {
+    return prompts.map((prompt) => {
+      const hexLabel = formatHexLabel(prompt.hexKey, labelByHex);
+      const kindLabel =
+        prompt.kind === "mine" ? "Mine" : prompt.kind === "forge" ? "Forge" : "Center";
+      let detail = "";
+      if (prompt.kind === "mine") {
+        detail = `Value ${prompt.mineValue} gold · choose gold or draft`;
+      } else if (prompt.kind === "forge") {
+        detail = "Scrap 1 to reforge or draft a card";
+      } else {
+        detail = "Pick 1 power card";
+      }
+      return {
+        key: getPromptKey(prompt.kind, prompt.hexKey),
+        title: `${kindLabel} ${hexLabel}`,
+        detail
+      };
+    });
+  }, [labelByHex, prompts]);
 
   useEffect(() => {
     const next: Record<string, { revealed: boolean; roll: number; rollKey: string }> = {};
@@ -293,6 +318,22 @@ export const CollectionPanel = ({
           <div className="hand-empty">No collection prompts for you this round.</div>
         ) : (
           <div className="collection-prompts">
+            <div className="collection-summary">
+              <div className="collection-summary__header">
+                <span className="collection-summary__title">Your collection sites</span>
+                <span className="collection-summary__count">
+                  {prompts.length} to resolve
+                </span>
+              </div>
+              <ul className="collection-summary__list">
+                {promptSummary.map((entry) => (
+                  <li key={entry.key} className="collection-summary__item">
+                    <span className="collection-summary__label">{entry.title}</span>
+                    <span className="collection-summary__detail">{entry.detail}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
             {prompts.map((prompt) => {
               const key = getPromptKey(prompt.kind, prompt.hexKey);
               const selection = selections[key];
@@ -302,6 +343,9 @@ export const CollectionPanel = ({
               );
               const isStageActive = highlightStage === prompt.kind;
               const isStageDimmed = highlightStage !== null && !isStageActive;
+              const hexLabel = formatHexLabel(prompt.hexKey, labelByHex);
+              const revealCount = prompt.revealed.length;
+              const revealLabel = revealCount === 1 ? "1 card" : `${revealCount} cards`;
 
               if (prompt.kind === "mine") {
                 const selectedGold = selection?.kind === "mine" && selection.choice === "gold";
@@ -324,14 +368,17 @@ export const CollectionPanel = ({
                   >
                     <div className="collection-prompt__header">
                       <span className="collection-prompt__title">Mine</span>
-                      <span className="collection-prompt__meta">
-                        {prompt.hexKey}
-                      </span>
+                      <span className="collection-prompt__meta">{hexLabel}</span>
                     </div>
                     <div className="collection-prompt__section">
                       <span className="collection-prompt__label">
                         Value {prompt.mineValue} gold
                       </span>
+                      <p className="collection-prompt__note">
+                        {revealCount > 0
+                          ? `Reveal ${revealLabel} to draft 1, or take the gold.`
+                          : "No cards left to draft this round; take the gold."}
+                      </p>
                       <div className="collection-prompt__options">
                         <button
                           type="button"
@@ -437,14 +484,17 @@ export const CollectionPanel = ({
                   >
                     <div className="collection-prompt__header">
                       <span className="collection-prompt__title">Forge</span>
-                      <span className="collection-prompt__meta">
-                        {prompt.hexKey}
-                      </span>
+                      <span className="collection-prompt__meta">{hexLabel}</span>
                     </div>
                     <div className="collection-prompt__section">
                       <span className="collection-prompt__label">
                         Reforge (scrap 1 card)
                       </span>
+                      <p className="collection-prompt__note">
+                        {revealCount > 0
+                          ? `Scrap 1 card to reforge, or draft 1 of ${revealLabel}.`
+                          : "No cards left to draft; reforge is still available."}
+                      </p>
                       {handCards.length === 0 ? (
                         <div className="collection-prompt__note">
                           No cards in hand.
@@ -542,12 +592,15 @@ export const CollectionPanel = ({
                   >
                     <div className="collection-prompt__header">
                       <span className="collection-prompt__title">Center</span>
-                      <span className="collection-prompt__meta">
-                        {prompt.hexKey}
-                      </span>
+                      <span className="collection-prompt__meta">{hexLabel}</span>
                     </div>
                     <div className="collection-prompt__section">
                       <span className="collection-prompt__label">Pick 1 card</span>
+                      <p className="collection-prompt__note">
+                        {revealCount > 0
+                          ? `Pick 1 power card from ${revealLabel}.`
+                          : "No power cards left to reveal this round."}
+                      </p>
                       {prompt.revealed.length === 0 ? (
                         <div className="collection-prompt__note">
                           No cards revealed.
