@@ -669,6 +669,7 @@ Done
     - [x] Age II market: Insight (draw 2).
     - [x] Age II market: Refined Ingots (mine bonus gold).
     - [x] Age II market: War Taxes (gain gold).
+    - [x] Age II market: Bridge Lockdown (lock bridge modifier).
   - [ ] Champion ability tests (on-deploy, on-death, on-battle-win, dice mods, VP aura).
     - [x] Bounty Hunter bonus gold on champion kill in battle.
     - [x] Ironclad Warden bodyguard hit assignment policy.

@@ -17,7 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- [agent3] Add Bridge Lockdown card-effect test and update the plan checklist. Scope: engine test + plan/progress updates. Files: `packages/engine/src/card-effects.bridge-lockdown.test.ts`, `implementation_plan.md`, `progress.md`. Status: in progress.
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -127,6 +126,7 @@
 - Added Refined Ingots card-effect test for base vs mine bonus gold and updated the plan checklist. (Files: `packages/engine/src/card-effects.refined-ingots.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.refined-ingots.test.ts`.) (owner: agent2)
 - Added War Taxes card-effect test for flat gold gain and updated the plan checklist. (Files: `packages/engine/src/card-effects.war-taxes.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.war-taxes.test.ts`.) (owner: agent3)
 - Added Insight card-effect test for draw 2 (plan already marked complete). (File: `packages/engine/src/card-effects.insight.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.insight.test.ts`.) (owner: agent3)
+- Added Bridge Lockdown card-effect test to lock an existing bridge and updated the plan checklist. (Files: `packages/engine/src/card-effects.bridge-lockdown.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.bridge-lockdown.test.ts`.) (owner: agent3)
 - Added Age II movement card defs (Triple March, Coordinated Advance, Breakthrough Line) plus a battle-win cleanup draw modifier and tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.breakthrough-line.test.ts`, `implementation_plan.md`.) (owner: agent2)
 - Added Age II Bridge Network with multi-edge build-bridge support and tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.bridge-network.test.ts`, `implementation_plan.md`.) (owner: agent2)
 - Added Age III Wormhole Gate card def (link-hexes) and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (owner: agent4)
