@@ -4256,7 +4256,9 @@ body.is-game .market-overlay__panel {
 .market-overlay__toggle {
   position: fixed;
   left: 50%;
-  bottom: 36px;
+  right: auto;
+  top: auto;
+  bottom: 84px;
   z-index: 65;
   min-width: 180px;
   padding: 12px 20px;
