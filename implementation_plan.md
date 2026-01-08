@@ -702,6 +702,7 @@ Done
     - [x] Age II market: Triple March (move up to 3 along bridges).
     - [x] Age II market: Stall (no-op).
     - [x] Age II market: Burn the Bridges (destroy connected bridges).
+    - [x] Age II market: Encirclement (adjacent force removal).
     - [x] Age II market: Center Dispatch (draw if you occupy center).
     - [x] Age II market: Repair Orders (heal all champions).
   - [ ] Champion ability tests (on-deploy, on-death, on-battle-win, dice mods, VP aura).
@@ -712,7 +713,7 @@ Done
     - [x] Bridge lockdown movement block.
     - [ ] Bridge trap force-loss trigger.
     - [ ] Wormhole adjacency override.
-    - [ ] Dice roll gold thresholds.
+    - [x] Dice roll gold thresholds.
     - [ ] Cost override/scaling primitives.
 - [x] At the end of the market phase we don't see the nice animation and transition for the last player who auto gets it
 - [x] It needs to be much more clear that Done is like "Pass" and won't let you go again

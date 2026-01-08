@@ -17,18 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent4
-  scope: add a War Profiteers dice-roll primitive test and mark the plan checklist item.
-  files: packages/engine/src/card-effects.war-profiteers.test.ts, implementation_plan.md, progress.md
-  status: in progress
-- owner: agent3
-  scope: add Encirclement card-effect test (adjacent requirement + force removal cap).
-  files: packages/engine/src/card-effects.encirclement.test.ts, implementation_plan.md, progress.md
-  status: in progress
-- owner: agent2
-  scope: add Patch Up card-effect test (capital bonus vs base heal).
-  files: packages/engine/src/card-effects.patch-up.test.ts, progress.md
-  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -150,6 +138,7 @@
 - Added Age II Miner Army with mine-occupancy force deployment and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added Age II Interrupt deckcraft card with draw-other-players effect and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- action-flow.test.ts`.) (owner: agent4)
 - Added Bridge Lockdown movement-block test and expanded the card-primitive checklist in the plan. (Files: `packages/engine/src/card-effects.bridge-lockdown.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.bridge-lockdown.test.ts`.) (owner: agent4)
+- Added War Profiteers dice-roll gold threshold tests and marked the primitive checklist item. (Files: `packages/engine/src/card-effects.war-profiteers.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.war-profiteers.test.ts`.) (owner: agent4)
 - Added Age II Gold Plated Armor with gold-for-damage prevention, combat integration, and tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/champions.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.) (Overlap note: touched `packages/engine/src/card-effects.combat-modifiers.test.ts` while agent3 active.)
 - Added partial-damage coverage for Gold Plated Armor (only affordable hits prevented) and marked the combat modifier checklist complete in `implementation_plan.md`. (Files: `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.) (owner: agent2) (Test: `npm run -w @bridgefront/engine test -- card-effects.combat-modifiers.test.ts`.)
 - Added Age II Slow combat modifier (target champion rolls 1 die next battle) with tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.)
@@ -170,6 +159,7 @@
 - Added Triple March card-effect test for max-distance validation and movement along bridges; updated the plan checklist. (Files: `packages/engine/src/card-effects.triple-march.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.triple-march.test.ts`.) (owner: agent3)
 - Added Stall card-effect test confirming no-op orders are currently not playable and updated the plan checklist. (Files: `packages/engine/src/card-effects.stall.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.stall.test.ts`.) (owner: agent3)
 - Added Wormhole Link card-effect test for hex-link modifiers and range validation; updated the plan checklist. (Files: `packages/engine/src/card-effects.wormhole-link.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.wormhole-link.test.ts`.) (owner: agent3)
+- Added Encirclement card-effect test for adjacent-occupancy requirement and force removal cap; updated the plan checklist. (Files: `packages/engine/src/card-effects.encirclement.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.encirclement.test.ts`.) (owner: agent3)
 - Added Strategic Triumph card-effect test for gold gain and updated the plan checklist. (Files: `packages/engine/src/card-effects.strategic-triumph.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.strategic-triumph.test.ts`.) (owner: agent2)
 - Added Small Hands card-effect test for draw-if-empty hand (plan already tracked). (File: `packages/engine/src/card-effects.small-hands.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.small-hands.test.ts`.) (owner: agent2)
 - Added Center Dispatch card-effect test for center-conditional draw and updated the plan checklist. (Files: `packages/engine/src/card-effects.center-dispatch.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.center-dispatch.test.ts`.) (owner: agent2)
