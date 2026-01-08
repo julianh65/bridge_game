@@ -691,6 +691,29 @@ const getBuildBridgePlan = (
   return { from: rawA, to: rawB, key: canonicalKey };
 };
 
+const getBuildBridgePlans = (
+  state: GameState,
+  playerId: PlayerID,
+  targetSpec: TargetRecord,
+  targets: CardPlayTargets
+): BuildBridgePlan[] | null => {
+  const edgeKeys = getEdgeKeyTargets(targets);
+  if (!edgeKeys || edgeKeys.length === 0) {
+    return null;
+  }
+  const plans: BuildBridgePlan[] = [];
+  const seen = new Set<string>();
+  for (const edgeKey of edgeKeys) {
+    const plan = getBuildBridgePlan(state, playerId, targetSpec, { edgeKey });
+    if (!plan || seen.has(plan.key)) {
+      return null;
+    }
+    seen.add(plan.key);
+    plans.push(plan);
+  }
+  return plans;
+};
+
 const getExistingBridgePlan = (
   state: GameState,
   playerId: PlayerID,
@@ -2638,6 +2661,36 @@ export const resolveCardEffects = (
         break;
       }
       case "buildBridge": {
+        const isTemporary = effect.temporary === true;
+        if (card.targetSpec.kind === "multiEdge") {
+          const plans = getBuildBridgePlans(
+            nextState,
+            playerId,
+            card.targetSpec as TargetRecord,
+            targets ?? null
+          );
+          if (!plans || plans.length === 0) {
+            break;
+          }
+          const bridges = { ...nextState.board.bridges };
+          for (const plan of plans) {
+            bridges[plan.key] = {
+              key: plan.key,
+              from: plan.from,
+              to: plan.to,
+              ownerPlayerId: playerId,
+              temporary: isTemporary ? true : undefined
+            };
+          }
+          nextState = {
+            ...nextState,
+            board: {
+              ...nextState.board,
+              bridges
+            }
+          };
+          break;
+        }
         const plan = getBuildBridgePlan(
           nextState,
           playerId,
@@ -2647,7 +2700,6 @@ export const resolveCardEffects = (
         if (!plan) {
           break;
         }
-        const isTemporary = effect.temporary === true;
         nextState = {
           ...nextState,
           board: {

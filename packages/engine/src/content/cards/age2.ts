@@ -276,6 +276,24 @@ export const BRIDGE_LOCKDOWN: CardDef = {
   effects: [{ kind: "lockBridge" }]
 };
 
+export const BRIDGE_NETWORK: CardDef = {
+  id: "age2.bridge_network",
+  name: "Bridge Network",
+  rulesText: "Build 3 Bridges, each touching a hex you occupy.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 2 },
+  initiative: 75,
+  burn: false,
+  targetSpec: {
+    kind: "multiEdge",
+    minEdges: 3,
+    maxEdges: 3
+  },
+  effects: [{ kind: "buildBridge" }]
+};
+
 export const WORMHOLE_LINK: CardDef = {
   id: "age2.wormhole_link",
   name: "Wormhole Link",
@@ -507,6 +525,7 @@ export const AGE2_CARDS: CardDef[] = [
   REFINED_INGOTS,
   GUILD_FAVOR,
   BRIDGE_LOCKDOWN,
+  BRIDGE_NETWORK,
   WORMHOLE_LINK,
   JET_STRIKER,
   GUERILLA_NATIVE_MERCENARY,

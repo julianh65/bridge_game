@@ -472,7 +472,7 @@ Done
     - [ ] Age II Bridges/Terrain card defs (4).
       - [x] Bridge Lockdown.
       - [x] Wormhole Link.
-      - [ ] Bridge Network.
+      - [x] Bridge Network.
       - [ ] Bridge Pivot.
     - [ ] Age II Synergy/Gambits card defs (4).
     - [ ] Age II Victory card defs (4).
