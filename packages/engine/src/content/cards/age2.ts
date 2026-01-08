@@ -284,6 +284,23 @@ export const WAR_TAXES: CardDef = {
   effects: [{ kind: "gainGold", amount: 4 }]
 };
 
+export const SMUGGLING_RING: CardDef = {
+  id: "age2.smuggling_ring",
+  name: "Smuggling Ring",
+  rulesText: "Gain +2 gold. If you occupy an enemy Capital right now, gain +3 more.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 75,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [
+    { kind: "gainGold", amount: 2 },
+    { kind: "gainGoldIfEnemyCapital", amount: 3 }
+  ]
+};
+
 export const REFINED_INGOTS: CardDef = {
   id: "age2.refined_ingots",
   name: "Refined Ingots",
@@ -661,6 +678,7 @@ export const AGE2_CARDS: CardDef[] = [
   CHAMPION_RECALL,
   BURN_THE_BRIDGES,
   WAR_TAXES,
+  SMUGGLING_RING,
   REFINED_INGOTS,
   GUILD_FAVOR,
   INSIGHT,
