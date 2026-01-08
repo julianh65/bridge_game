@@ -4285,7 +4285,9 @@ body.is-game .market-overlay__panel {
 .deck-toggle {
   position: fixed;
   right: 24px;
+  right: calc(24px + env(safe-area-inset-right));
   bottom: 128px;
+  bottom: calc(128px + env(safe-area-inset-bottom));
   z-index: 65;
   min-width: 140px;
   padding: 10px 16px;
@@ -4296,6 +4298,11 @@ body.is-game .market-overlay__panel {
   letter-spacing: 0.02em;
   box-shadow: 0 12px 24px rgba(20, 12, 6, 0.32);
   transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.deck-toggle--return {
+  bottom: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom));
 }
 
 .deck-toggle:hover:not(:disabled) {
@@ -8308,8 +8315,15 @@ body.is-game .combat-outcome__auto {
 
   .deck-toggle {
     right: 16px;
+    right: calc(16px + env(safe-area-inset-right));
     bottom: 120px;
+    bottom: calc(120px + env(safe-area-inset-bottom));
     min-width: 120px;
+  }
+
+  .deck-toggle--return {
+    bottom: 20px;
+    bottom: calc(20px + env(safe-area-inset-bottom));
   }
 
   .collection-overlay__toggle {
