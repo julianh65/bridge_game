@@ -251,6 +251,8 @@ const resolveBlock = (state: GameState): GameState => {
   }
 
   switch (block.type) {
+    case "setup.deckPreview":
+      return advanceSetupGate(state);
     case "setup.capitalDraft":
       if (block.waitingFor.length === 0) {
         return advanceSetupGate(state);
@@ -754,6 +756,8 @@ const resolveBlockRandom = (state: GameState, picker: DecisionPicker): GameState
   }
 
   switch (block.type) {
+    case "setup.deckPreview":
+      return advanceSetupGate(state);
     case "setup.capitalDraft":
       if (block.waitingFor.length === 0) {
         return advanceSetupGate(state);

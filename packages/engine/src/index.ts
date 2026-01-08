@@ -9,6 +9,7 @@ export { CARD_DEFS, CARD_DEFS_BY_ID } from "./content/cards";
 export type { CardDef, CardDeck, CardType } from "./content/cards";
 export { MARKET_DECKS_BY_AGE } from "./content/market-decks";
 export { POWER_DECKS_BY_AGE } from "./content/power-decks";
+export { resolveStarterFactionCards } from "./content/starter-decks";
 export {
   countPlayersOnHex,
   getBridgeKey,

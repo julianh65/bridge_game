@@ -329,6 +329,10 @@ export type Modifier = {
 export type ModifierView = Omit<Modifier, "hooks">;
 
 export type BlockState = {
+  type: "setup.deckPreview";
+  waitingFor: PlayerID[];
+  payload: Record<string, never>;
+} | {
   type: "setup.capitalDraft";
   waitingFor: PlayerID[];
   payload: {
@@ -603,6 +607,10 @@ export type CombatRetreatPublicView = {
 };
 
 export type SetupPublicView =
+  | {
+      type: "setup.deckPreview";
+      waitingForPlayerIds: PlayerID[];
+    }
   | {
       type: "setup.capitalDraft";
       waitingForPlayerIds: PlayerID[];

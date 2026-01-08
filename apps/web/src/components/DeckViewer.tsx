@@ -14,6 +14,7 @@ type DeckViewerProps = {
   playerId: string | null;
   roomId: string | null;
   status: RoomConnectionStatus;
+  onReturnToGame?: () => void;
 };
 
 type CardGroup = {
@@ -45,7 +46,13 @@ const groupCards = (cards: CardInstance[]): CardGroup[] => {
   });
 };
 
-export const DeckViewer = ({ view, playerId, roomId, status }: DeckViewerProps) => {
+export const DeckViewer = ({
+  view,
+  playerId,
+  roomId,
+  status,
+  onReturnToGame
+}: DeckViewerProps) => {
   const privateView = view?.private ?? null;
   const playerName =
     view?.public.players.find((player) => player.id === playerId)?.name ?? null;
@@ -146,6 +153,11 @@ export const DeckViewer = ({ view, playerId, roomId, status }: DeckViewerProps) 
         <div className="cards-browser__summary">
           <span className="status-pill">{inDeckCount} cards in deck</span>
           <span className="status-pill">{privateView.deckCounts.scrapped} scrapped</span>
+          {onReturnToGame ? (
+            <button type="button" className="btn btn-secondary" onClick={onReturnToGame}>
+              Back to Game
+            </button>
+          ) : null}
         </div>
       </header>
 

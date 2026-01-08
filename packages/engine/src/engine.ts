@@ -12,6 +12,7 @@ import { createBaseBoard, getCapitalSlots } from "./board-generation";
 import {
   applySetupChoice,
   createCapitalDraftBlock,
+  createDeckPreviewBlock,
   createFreeStartingCardBlock,
   createStartingBridgesBlock,
   finalizeCapitalDraft,
@@ -404,14 +405,9 @@ export const runUntilBlocked = (state: GameState): GameState => {
     }
 
     if (!nextState.blocks) {
-      const capitalSlots = getCapitalSlots(
-        nextState.players.length,
-        nextState.board.radius,
-        nextState.config.capitalSlotsByPlayerCount
-      );
       return {
         ...nextState,
-        blocks: createCapitalDraftBlock(nextState.players, capitalSlots)
+        blocks: createDeckPreviewBlock()
       };
     }
 
@@ -430,6 +426,19 @@ export const runUntilBlocked = (state: GameState): GameState => {
         advanceRequested: false
       }
     };
+
+    if (advanceReadyState.blocks.type === "setup.deckPreview") {
+      const capitalSlots = getCapitalSlots(
+        advanceReadyState.players.length,
+        advanceReadyState.board.radius,
+        advanceReadyState.config.capitalSlotsByPlayerCount
+      );
+      nextState = {
+        ...advanceReadyState,
+        blocks: createCapitalDraftBlock(advanceReadyState.players, capitalSlots)
+      };
+      continue;
+    }
 
     if (advanceReadyState.blocks.type === "setup.capitalDraft") {
       const setupState = finalizeCapitalDraft(advanceReadyState);

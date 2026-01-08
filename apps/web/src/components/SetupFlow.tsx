@@ -6,6 +6,7 @@ import { BoardView } from "./BoardView";
 import { FactionSymbol } from "./FactionSymbol";
 import { RoomCodeCopy } from "./RoomCodeCopy";
 import { SetupCapitalDraft } from "./SetupCapitalDraft";
+import { SetupDeckPreview } from "./SetupDeckPreview";
 import { SetupFreeStartingCardPick } from "./SetupFreeStartingCardPick";
 import { SetupStartingBridges } from "./SetupStartingBridges";
 import { buildBoardPreview } from "../lib/board-preview";
@@ -67,7 +68,10 @@ export const SetupFlow = ({
 
   let phaseLabel = "Setup Lobby";
   let phaseSubtitle = "Waiting for the host to start setup.";
-  if (setup?.type === "setup.capitalDraft") {
+  if (setup?.type === "setup.deckPreview") {
+    phaseLabel = "Starter Deck";
+    phaseSubtitle = "Review your starter deck before drafting capitals.";
+  } else if (setup?.type === "setup.capitalDraft") {
     phaseLabel = "Capital Draft";
     phaseSubtitle = "Select a capital slot and lock it in before moving on.";
   } else if (setup?.type === "setup.startingBridges") {
@@ -167,6 +171,8 @@ export const SetupFlow = ({
           status={status}
           onSubmitChoice={onSubmitSetupChoice}
         />
+
+        <SetupDeckPreview view={view} playerId={playerId} />
 
         <SetupStartingBridges
           view={view}

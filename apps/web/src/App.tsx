@@ -77,6 +77,8 @@ export default function App() {
     view === "deck" ||
     view === "battle" ||
     view === "editor";
+  const handleOpenDeck = () => setView("deck");
+  const handleReturnToGame = () => setView("play");
 
   useEffect(() => {
     document.body.classList.toggle("is-game", isThemeView);
@@ -167,6 +169,7 @@ export default function App() {
           playerId={room.playerId}
           roomId={roomConfig?.roomId ?? null}
           status={room.status}
+          onReturnToGame={handleReturnToGame}
         />
       ) : null}
       {view === "battle" ? <BattleDebug /> : null}
@@ -280,6 +283,7 @@ export default function App() {
           }
           onResetGame={() => room.sendDebugCommand({ command: "resetGame" })}
           onLeave={handleLeave}
+          onOpenDeck={handleOpenDeck}
         />
       ) : null}
     </main>

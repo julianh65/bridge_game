@@ -267,7 +267,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Faction selection screen with faction abilities visible; host advances once all lock.
     - [x] Add faction ability copy data (passive + starter spell/champion text) for UI display.
   - [ ] Starting deck preview screen (card components) showing faction abilities; all ready -> host advance.
-    - [ ] Show starter deck composition (counts) + champion/spell callouts.
+    - [x] Show starter deck composition (counts) + champion/spell callouts.
   - [x] Map screen with two sub-steps:
     - [x] Capital selection (simultaneous, no turn order).
     - [x] Initial bridge placement: secret selection of two bridges, reveal simultaneously.
@@ -340,7 +340,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] scout report still doesn’t let you choose which ones to draw or discard
 - [x] in the combat screen we should see what the champions as well as forces hit on (if there are modifiers it should reflect that as well)
 - [ ] tunnel network didn’t work
-- [ ] similar to the show / hide market floating button we also want a go to and forth your own deck button to see the deck and go back and forth
+- [x] similar to the show / hide market floating button we also want a go to and forth your own deck button to see the deck and go back and forth
 
 ### Mini Milestone For Me
 

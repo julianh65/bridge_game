@@ -17,14 +17,10 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent5
-  scope: add setup deck preview screen with starter deck composition counts and starter spell/champion callouts
-  files: apps/web/src/components/SetupFlow.tsx, apps/web/src/components/SetupDeckPreview.tsx, apps/web/src/styles.css, packages/engine/src/types.ts, packages/engine/src/view.ts, packages/engine/src/engine.ts, packages/engine/src/setup-flow.ts, packages/engine/src/index.ts, packages/engine/src/setup-flow.test.ts, packages/engine/src/smoke.test.ts, packages/engine/src/index.test.ts, progress.md, implementation_plan.md
-  status: in progress (overlap note: `apps/web/src/styles.css` also in agent3/agent1 scope)
-- owner: agent2
-  scope: add an in-game floating deck toggle and a return-to-game control in the deck viewer
-  files: apps/web/src/App.tsx, apps/web/src/components/GameScreen.tsx, apps/web/src/components/DeckViewer.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md
-  status: in progress (overlap note: `apps/web/src/styles.css` also in agent5 scope)
+- owner: agent4
+  scope: add missing Age II market card defs that use existing effects (recruitment, deckcraft, victory, synergy, set-to-skirmish)
+  files: packages/engine/src/content/cards/age2.ts, implementation_plan.md, progress.md
+  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -44,7 +40,9 @@
 - Made the collection overlay toggleable like the market and added a collection context summary + hex labels/notes for why each prompt appears; updated the plan checklist. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Lowered the mana orb stacking so it no longer covers the action panel during split/move selections; updated the plan checklist. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` is also in agent5 scope.)
 - Moved the mana orb into the actions panel so it no longer overlaps split/move controls. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`.) (Overlap note: `apps/web/src/styles.css` is also in agent5 scope.)
+- Added a floating in-game deck toggle and a deck-screen return-to-game action; updated the plan checklist. (Files: `apps/web/src/App.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/DeckViewer.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` is also in agent5 scope.)
 - Added setup host-advance gating in the engine (AdvanceSetup command + setup status view), updated setup/action/smoke tests plus server auto-setup + sample-game helpers, and added a host-only Advance Setup button in the lobby; updated the plan checklist. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/action-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/index.ts`, `apps/server/src/server.ts`, `apps/web/src/lib/sample-game.ts`, `apps/web/src/components/Lobby.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.)
+- Added a setup deck preview step before capital draft with starter deck counts plus starter spell/champion callouts, and updated setup tests + setup flow UI; marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/index.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/index.test.ts`, `apps/web/src/components/SetupDeckPreview.tsx`, `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Added per-faction starter deck mapping scaffold (defaults to the common deck), updated card registry coverage, and noted the remaining per-faction initiative work in the plan. (Files: `packages/engine/src/content/starter-decks.ts`, `packages/engine/src/content/cards/cards.test.ts`, `implementation_plan.md`.)
 - Added per-faction starter initiative variants for Quick Move/Zap/Scout Report and updated starter decks to use the faction-specific IDs; marked the plan item complete. (Files: `packages/engine/src/content/cards/starter.ts`, `packages/engine/src/content/starter-decks.ts`, `implementation_plan.md`.)
 - Added card art mappings for faction-specific starter variants (Quick Move/Zap/Scout Report) so art resolves for the new IDs. (File: `apps/web/src/data/card-art.json`.) (Overlap note: `apps/web/src/data/card-art.json` already had in-flight art mappings.)

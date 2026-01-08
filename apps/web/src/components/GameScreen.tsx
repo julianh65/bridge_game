@@ -529,6 +529,7 @@ type GameScreenProps = {
   onCombatRoll?: (sequenceId: string, roundIndex: number) => void;
   onResetGame?: () => void;
   onLeave: () => void;
+  onOpenDeck?: () => void;
 };
 
 export const GameScreen = ({
@@ -545,7 +546,8 @@ export const GameScreen = ({
   serverTimeOffset,
   onCombatRoll,
   onResetGame,
-  onLeave
+  onLeave,
+  onOpenDeck
 }: GameScreenProps) => {
   const hexRender = useMemo(() => buildHexRender(view.public.board), [view.public.board]);
   const hexLabels = useMemo(
@@ -2724,6 +2726,7 @@ export const GameScreen = ({
   ) : null;
 
   const showMarketOverlayToggle = isMarketPhase;
+  const showDeckToggle = Boolean(onOpenDeck && view.private);
   const marketToggleLabel = !canToggleMarketOverlay
     ? "Market Locked"
     : showMarketOverlay
@@ -2919,6 +2922,17 @@ export const GameScreen = ({
       />
 
       {marketOverlay}
+
+      {showDeckToggle ? (
+        <button
+          type="button"
+          className="btn btn-secondary deck-toggle"
+          data-sfx="soft"
+          onClick={onOpenDeck}
+        >
+          View Deck
+        </button>
+      ) : null}
 
       {collectionOverlay}
 

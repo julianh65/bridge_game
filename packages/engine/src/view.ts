@@ -15,15 +15,28 @@ import { getControlTotals } from "./round-flow";
 
 type SetupBlockState = Extract<
   BlockState,
-  { type: "setup.capitalDraft" | "setup.startingBridges" | "setup.freeStartingCardPick" }
+  {
+    type:
+      | "setup.deckPreview"
+      | "setup.capitalDraft"
+      | "setup.startingBridges"
+      | "setup.freeStartingCardPick";
+  }
 >;
 
 const isSetupBlock = (block: BlockState): block is SetupBlockState =>
+  block.type === "setup.deckPreview" ||
   block.type === "setup.capitalDraft" ||
   block.type === "setup.startingBridges" ||
   block.type === "setup.freeStartingCardPick";
 
 const buildSetupPublicView = (block: SetupBlockState): SetupPublicView => {
+  if (block.type === "setup.deckPreview") {
+    return {
+      type: block.type,
+      waitingForPlayerIds: block.waitingFor
+    };
+  }
   if (block.type === "setup.capitalDraft") {
     return {
       type: block.type,

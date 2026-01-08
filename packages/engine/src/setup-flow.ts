@@ -69,6 +69,12 @@ export const createCapitalDraftBlock = (players: PlayerState[], availableSlots: 
   }
 });
 
+export const createDeckPreviewBlock = (): BlockState => ({
+  type: "setup.deckPreview",
+  waitingFor: [],
+  payload: {}
+});
+
 export const createStartingBridgesBlock = (players: PlayerState[]): BlockState => ({
   type: "setup.startingBridges",
   waitingFor: players.map((player) => player.id),

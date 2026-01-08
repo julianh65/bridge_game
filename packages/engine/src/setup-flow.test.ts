@@ -56,6 +56,10 @@ describe("setup flow", () => {
     ]);
 
     state = runUntilBlocked(state);
+    expect(state.blocks?.type).toBe("setup.deckPreview");
+
+    state = advanceSetup(state);
+    state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.capitalDraft");
 
     const slots = state.blocks?.payload.availableSlots ?? [];
@@ -219,6 +223,10 @@ describe("setup flow", () => {
     ]);
 
     state = runUntilBlocked(state);
+    expect(state.blocks?.type).toBe("setup.deckPreview");
+
+    state = advanceSetup(state);
+    state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.capitalDraft");
 
     const slots = state.blocks?.payload.availableSlots ?? [];
@@ -272,6 +280,10 @@ describe("setup flow", () => {
       { id: "p2", name: "Player 2" }
     ]);
 
+    state = runUntilBlocked(state);
+    expect(state.blocks?.type).toBe("setup.deckPreview");
+
+    state = advanceSetup(state);
     state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.capitalDraft");
 
@@ -340,6 +352,8 @@ describe("setup flow", () => {
     ]);
 
     state = runUntilBlocked(state);
+    state = advanceSetup(state);
+    state = runUntilBlocked(state);
     const slots = state.blocks?.payload.availableSlots ?? [];
     const p1Slot = slots[0];
     const p2Slot = slots[1] ?? slots[0];
@@ -400,6 +414,8 @@ describe("setup flow", () => {
       { id: "p2", name: "Player 2" }
     ]);
 
+    state = runUntilBlocked(state);
+    state = advanceSetup(state);
     state = runUntilBlocked(state);
     const slots = state.blocks?.payload.availableSlots ?? [];
     const p1Slot = slots[0];

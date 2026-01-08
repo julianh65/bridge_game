@@ -861,6 +861,82 @@ body.is-game .setup-card-pick__player-row--active {
   gap: 12px;
 }
 
+.setup-deck-preview {
+  display: grid;
+  gap: 12px;
+}
+
+.setup-deck-preview__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(220px, 0.7fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.setup-deck-preview__main,
+.setup-deck-preview__aside {
+  display: grid;
+  gap: 12px;
+}
+
+.setup-deck-preview__faction {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.setup-deck-preview__callouts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.setup-deck-preview__callout {
+  display: grid;
+  gap: 8px;
+}
+
+.setup-deck-preview__callout-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.setup-deck-preview__deck {
+  display: grid;
+  gap: 12px;
+}
+
+.setup-deck-preview__deck-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.setup-deck-preview__deck-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.setup-deck-preview__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.setup-deck-preview__grid .game-card {
+  width: 100%;
+}
+
+.setup-deck-preview__summary {
+  display: grid;
+  gap: 8px;
+}
+
 .setup-flow__host-actions {
   align-self: flex-end;
   display: flex;
@@ -1051,6 +1127,10 @@ body.is-game .setup-bridges__suggestion:hover:not(:disabled) {
   .setup-flow__players {
     max-width: none;
     justify-self: stretch;
+  }
+
+  .setup-deck-preview__layout {
+    grid-template-columns: 1fr;
   }
 
   .setup-card-pick__layout {
@@ -4158,6 +4238,27 @@ body.is-game .market-overlay__panel {
 .market-overlay__toggle:hover:not(:disabled) {
   transform: translate(-50%, -1px);
   box-shadow: 0 14px 30px rgba(20, 12, 6, 0.4);
+}
+
+.deck-toggle {
+  position: fixed;
+  right: 24px;
+  bottom: 128px;
+  z-index: 65;
+  min-width: 140px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.02em;
+  box-shadow: 0 12px 24px rgba(20, 12, 6, 0.32);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.deck-toggle:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(20, 12, 6, 0.38);
 }
 
 .collection-overlay {
@@ -8059,6 +8160,12 @@ body.is-game .combat-outcome__auto {
     right: auto;
     bottom: 24px;
     min-width: 160px;
+  }
+
+  .deck-toggle {
+    right: 16px;
+    bottom: 120px;
+    min-width: 120px;
   }
 
   .collection-overlay__toggle {
