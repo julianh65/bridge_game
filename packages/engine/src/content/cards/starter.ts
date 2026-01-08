@@ -1,5 +1,15 @@
 import type { CardDef } from "./types";
 
+const createStarterVariant = (
+  base: CardDef,
+  id: string,
+  initiative: number
+): CardDef => ({
+  ...base,
+  id,
+  initiative
+});
+
 export const RECRUIT: CardDef = {
   id: "starter.recruit",
   name: "Recruit",
@@ -78,11 +88,37 @@ export const SCOUT_REPORT: CardDef = {
   deck: "starter",
   tags: ["starter"],
   cost: { mana: 1 },
-  initiative: 25,
+  initiative: 220,
   burn: false,
   targetSpec: { kind: "none" },
   effects: [{ kind: "scoutReport", lookCount: 3, keepCount: 1 }]
 };
+
+export const SCOUT_REPORT_VEIL: CardDef = createStarterVariant(
+  SCOUT_REPORT,
+  "starter.scout_report.veil",
+  215
+);
+export const SCOUT_REPORT_AERIAL: CardDef = createStarterVariant(
+  SCOUT_REPORT,
+  "starter.scout_report.aerial",
+  200
+);
+export const SCOUT_REPORT_PROSPECT: CardDef = createStarterVariant(
+  SCOUT_REPORT,
+  "starter.scout_report.prospect",
+  218
+);
+export const SCOUT_REPORT_CIPHER: CardDef = createStarterVariant(
+  SCOUT_REPORT,
+  "starter.scout_report.cipher",
+  217
+);
+export const SCOUT_REPORT_GATEWRIGHT: CardDef = createStarterVariant(
+  SCOUT_REPORT,
+  "starter.scout_report.gatewright",
+  210
+);
 
 export const BRIDGE_CREW: CardDef = {
   id: "starter.bridge_crew",
@@ -110,7 +146,7 @@ export const QUICK_MOVE: CardDef = {
   deck: "starter",
   tags: ["starter"],
   cost: { mana: 1 },
-  initiative: 20,
+  initiative: 120,
   burn: false,
   targetSpec: {
     kind: "stack",
@@ -121,6 +157,32 @@ export const QUICK_MOVE: CardDef = {
   effects: [{ kind: "moveStack", maxDistance: 1, forceCount: 1 }]
 };
 
+export const QUICK_MOVE_VEIL: CardDef = createStarterVariant(
+  QUICK_MOVE,
+  "starter.quick_move.veil",
+  115
+);
+export const QUICK_MOVE_AERIAL: CardDef = createStarterVariant(
+  QUICK_MOVE,
+  "starter.quick_move.aerial",
+  100
+);
+export const QUICK_MOVE_PROSPECT: CardDef = createStarterVariant(
+  QUICK_MOVE,
+  "starter.quick_move.prospect",
+  118
+);
+export const QUICK_MOVE_CIPHER: CardDef = createStarterVariant(
+  QUICK_MOVE,
+  "starter.quick_move.cipher",
+  117
+);
+export const QUICK_MOVE_GATEWRIGHT: CardDef = createStarterVariant(
+  QUICK_MOVE,
+  "starter.quick_move.gatewright",
+  110
+);
+
 export const ZAP: CardDef = {
   id: "starter.zap",
   name: "Zap",
@@ -129,7 +191,7 @@ export const ZAP: CardDef = {
   deck: "starter",
   tags: ["starter"],
   cost: { mana: 1 },
-  initiative: 20,
+  initiative: 220,
   burn: false,
   targetSpec: {
     kind: "champion",
@@ -138,13 +200,38 @@ export const ZAP: CardDef = {
   effects: [{ kind: "dealChampionDamage", amount: 1 }]
 };
 
+export const ZAP_VEIL: CardDef = createStarterVariant(ZAP, "starter.zap.veil", 215);
+export const ZAP_AERIAL: CardDef = createStarterVariant(ZAP, "starter.zap.aerial", 200);
+export const ZAP_PROSPECT: CardDef = createStarterVariant(ZAP, "starter.zap.prospect", 218);
+export const ZAP_CIPHER: CardDef = createStarterVariant(ZAP, "starter.zap.cipher", 217);
+export const ZAP_GATEWRIGHT: CardDef = createStarterVariant(
+  ZAP,
+  "starter.zap.gatewright",
+  210
+);
+
 export const STARTER_CARDS: CardDef[] = [
   RECRUIT,
   MARCH_ORDERS,
   SUPPLY_CACHE,
   FIELD_MEDIC,
   SCOUT_REPORT,
+  SCOUT_REPORT_VEIL,
+  SCOUT_REPORT_AERIAL,
+  SCOUT_REPORT_PROSPECT,
+  SCOUT_REPORT_CIPHER,
+  SCOUT_REPORT_GATEWRIGHT,
   BRIDGE_CREW,
   QUICK_MOVE,
-  ZAP
+  QUICK_MOVE_VEIL,
+  QUICK_MOVE_AERIAL,
+  QUICK_MOVE_PROSPECT,
+  QUICK_MOVE_CIPHER,
+  QUICK_MOVE_GATEWRIGHT,
+  ZAP,
+  ZAP_VEIL,
+  ZAP_AERIAL,
+  ZAP_PROSPECT,
+  ZAP_CIPHER,
+  ZAP_GATEWRIGHT
 ];

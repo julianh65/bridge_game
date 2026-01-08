@@ -14,13 +14,41 @@ export const COMMON_STARTER_DECK: CardDefId[] = [
 
 export const DEFAULT_FACTION_ID = "bastion";
 
+const QUICK_MOVE_ID = "starter.quick_move";
+const ZAP_ID = "starter.zap";
+const SCOUT_REPORT_ID = "starter.scout_report";
+
+const applyStarterOverrides = (
+  overrides: Partial<Record<CardDefId, CardDefId>>
+): CardDefId[] => COMMON_STARTER_DECK.map((cardId) => overrides[cardId] ?? cardId);
+
 export const FACTION_STARTER_DECKS: Record<string, CardDefId[]> = {
   bastion: [...COMMON_STARTER_DECK],
-  veil: [...COMMON_STARTER_DECK],
-  aerial: [...COMMON_STARTER_DECK],
-  prospect: [...COMMON_STARTER_DECK],
-  cipher: [...COMMON_STARTER_DECK],
-  gatewright: [...COMMON_STARTER_DECK]
+  veil: applyStarterOverrides({
+    [QUICK_MOVE_ID]: "starter.quick_move.veil",
+    [ZAP_ID]: "starter.zap.veil",
+    [SCOUT_REPORT_ID]: "starter.scout_report.veil"
+  }),
+  aerial: applyStarterOverrides({
+    [QUICK_MOVE_ID]: "starter.quick_move.aerial",
+    [ZAP_ID]: "starter.zap.aerial",
+    [SCOUT_REPORT_ID]: "starter.scout_report.aerial"
+  }),
+  prospect: applyStarterOverrides({
+    [QUICK_MOVE_ID]: "starter.quick_move.prospect",
+    [ZAP_ID]: "starter.zap.prospect",
+    [SCOUT_REPORT_ID]: "starter.scout_report.prospect"
+  }),
+  cipher: applyStarterOverrides({
+    [QUICK_MOVE_ID]: "starter.quick_move.cipher",
+    [ZAP_ID]: "starter.zap.cipher",
+    [SCOUT_REPORT_ID]: "starter.scout_report.cipher"
+  }),
+  gatewright: applyStarterOverrides({
+    [QUICK_MOVE_ID]: "starter.quick_move.gatewright",
+    [ZAP_ID]: "starter.zap.gatewright",
+    [SCOUT_REPORT_ID]: "starter.scout_report.gatewright"
+  })
 };
 
 export const FACTION_STARTER_SPELLS: Record<string, CardDefId> = {
