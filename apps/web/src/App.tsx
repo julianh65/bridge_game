@@ -157,6 +157,7 @@ export default function App() {
         />
       ) : null}
       {view === "battle" ? <BattleDebug /> : null}
+      {view === "editor" && showEditor ? <CardEditor /> : null}
 
       {view === "play" && !roomConfig ? <Home onJoin={setRoomConfig} /> : null}
 

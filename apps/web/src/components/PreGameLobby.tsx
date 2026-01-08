@@ -1,7 +1,8 @@
-import type { PlayerID } from "@bridgefront/engine";
+import { CARD_DEFS_BY_ID, type PlayerID } from "@bridgefront/engine";
 
+import { FactionSymbol } from "./FactionSymbol";
 import { RoomCodeCopy } from "./RoomCodeCopy";
-import { FACTIONS, getFactionName, getFactionSymbol } from "../lib/factions";
+import { FACTIONS, getFactionName } from "../lib/factions";
 import type { LobbyView, RoomConnectionStatus } from "../lib/room-client";
 
 type PreGameLobbyProps = {
@@ -23,6 +24,15 @@ export const PreGameLobby = ({
   onPickFaction,
   onLeave
 }: PreGameLobbyProps) => {
+  const formatRulesText = (text?: string) => text?.replace(/\s+/g, " ").trim() ?? "";
+  const formatCardSummary = (cardId: string) => {
+    const card = CARD_DEFS_BY_ID[cardId];
+    if (!card) {
+      return cardId;
+    }
+    const rules = formatRulesText(card.rulesText);
+    return rules ? `${card.name} — ${rules}` : card.name;
+  };
   const connectedCount = lobby.players.filter((player) => player.connected).length;
   const localFactionId =
     lobby.players.find((player) => player.id === playerId)?.factionId ?? null;
@@ -74,44 +84,36 @@ export const PreGameLobby = ({
         <section className="panel">
           <h2>Seats</h2>
           <ul className="seat-list">
-            {lobby.players.map((player) => {
-              const factionSymbol = getFactionSymbol(player.factionId);
-              return (
-                <li key={player.id} className={`seat ${player.connected ? "is-ready" : ""}`}>
-                  <div className="seat__info">
-                    <span className="seat__name">
-                      {player.name}
-                      {player.seatIndex === 0 ? (
-                        <span className="chip chip--host">Host</span>
-                      ) : null}
-                      {player.id === playerId ? (
-                        <span className="chip chip--local">You</span>
-                      ) : null}
+            {lobby.players.map((player) => (
+              <li key={player.id} className={`seat ${player.connected ? "is-ready" : ""}`}>
+                <div className="seat__info">
+                  <span className="seat__name">
+                    {player.name}
+                    {player.seatIndex === 0 ? <span className="chip chip--host">Host</span> : null}
+                    {player.id === playerId ? <span className="chip chip--local">You</span> : null}
+                  </span>
+                  <span className="seat__meta">Seat {player.seatIndex}</span>
+                  <span className="seat__meta">
+                    <span className="faction-inline">
+                      <FactionSymbol
+                        factionId={player.factionId}
+                        className="faction-symbol--small"
+                      />
+                      Faction {getFactionName(player.factionId)}
                     </span>
-                    <span className="seat__meta">Seat {player.seatIndex}</span>
-                    <span className="seat__meta">
-                      <span className="faction-inline">
-                        {factionSymbol ? (
-                          <span className="faction-symbol faction-symbol--small" aria-hidden="true">
-                            {factionSymbol}
-                          </span>
-                        ) : null}
-                        Faction {getFactionName(player.factionId)}
-                      </span>
-                    </span>
-                  </div>
-                  <div className="seat__status">
-                    <span
-                      className={`status-pill ${
-                        player.connected ? "status-pill--ready" : "status-pill--waiting"
-                      }`}
-                    >
-                      {player.connected ? "Connected" : "Offline"}
-                    </span>
-                  </div>
-                </li>
-              );
-            })}
+                  </span>
+                </div>
+                <div className="seat__status">
+                  <span
+                    className={`status-pill ${
+                      player.connected ? "status-pill--ready" : "status-pill--waiting"
+                    }`}
+                  >
+                    {player.connected ? "Connected" : "Offline"}
+                  </span>
+                </div>
+              </li>
+            ))}
           </ul>
         </section>
 
@@ -137,15 +139,29 @@ export const PreGameLobby = ({
                   title={isTaken && takenBy ? `Taken by ${takenBy.name}` : undefined}
                   onClick={() => onPickFaction(faction.id)}
                 >
-                  <span className="faction-card__meta">
+                  <div className="faction-card__meta">
                     <span className="faction-card__label">
-                      <span className="faction-symbol" aria-hidden="true">
-                        {faction.symbol}
-                      </span>
+                      <FactionSymbol factionId={faction.id} />
                       <span>{faction.name}</span>
                     </span>
-                    <span className="faction-card__desc">{faction.description}</span>
-                  </span>
+                    <div className="faction-card__desc">{faction.description}</div>
+                    <div className="faction-card__desc">
+                      <strong>Passives</strong>
+                      {faction.passives.map((passive) => (
+                        <div key={passive.name}>
+                          {passive.name} — {passive.description}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="faction-card__desc">
+                      <strong>Starter Spell</strong>
+                      <div>{formatCardSummary(faction.starterSpellId)}</div>
+                    </div>
+                    <div className="faction-card__desc">
+                      <strong>Starter Champion</strong>
+                      <div>{formatCardSummary(faction.starterChampionId)}</div>
+                    </div>
+                  </div>
                   {isSelected ? (
                     <span className="chip chip--local">Selected</span>
                   ) : (
