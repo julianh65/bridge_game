@@ -412,7 +412,7 @@ Start going through the rules_draft and adding the logic for the different types
   - [x] Smoke Screen: first battle this round enemy Forces hit on 1 only in combat round 1.
   - [x] Shock Drill: first battle this round your Forces hit on 1–5 in combat round 1.
   - [x] Frenzy: target friendly Champion rolls +2 dice this round and takes 2 damage immediately.
-  - [ ] Gold Plated Armor: prevent champion damage at gold cost for the round.
+  - [x] Gold Plated Armor: prevent champion damage at gold cost for the round.
 - [ ] Add cost overrides/free-play effects (Last Contract, A Hero Joins the Battle).
 - [ ] Add random card generation effects (Black Market Pull, Forge Miracle).
 - [ ] Add burn keyword enforcement for granted cards (Forge Miracle, power deck burn effects). and an animation on burn
@@ -657,6 +657,7 @@ Done
   - [x] Age I market: remaining orders (Quick March, Trade Caravan, Temporary Bridge, Patch Up, Quick Study).
   - [x] Age I market: Paid Volunteers / National Service recruit coverage.
   - [ ] Age II/III market + power deck card tests (as content lands).
+    - [x] Age II market: Deep Shaft Rig (mine value bump + force deploy).
   - [ ] Champion ability tests (on-deploy, on-death, on-battle-win, dice mods, VP aura).
     - [x] Bounty Hunter bonus gold on champion kill in battle.
     - [x] Ironclad Warden bodyguard hit assignment policy.

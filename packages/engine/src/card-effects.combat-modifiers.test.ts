@@ -367,6 +367,78 @@ describe("combat card effects", () => {
     expect(p1Gold).toBe(0);
   });
 
+  it("gold plated armor prevents only the damage the player can afford", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({ value: 1, next: rng }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 6, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: { p1: ["c1"], p2: ["c2"] }
+    };
+
+    board.units = {
+      c1: createChampion("c1", "p1", hexKey, 3),
+      c2: { ...createChampion("c2", "p2", hexKey, 1, 2), bounty: 0 }
+    };
+
+    let state: GameState = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(17),
+      board,
+      players: base.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              resources: {
+                ...player.resources,
+                gold: 2
+              }
+            }
+          : player
+      )
+    };
+
+    const armorCard: CardDef = {
+      id: "test.gold_plated_armor",
+      name: "Gold Plated Armor",
+      rulesText:
+        "Choose a friendly Champion. Each time it would take damage, lose 2 gold and prevent that damage this round.",
+      type: "Spell",
+      deck: "starter",
+      tags: [],
+      cost: { mana: 2 },
+      initiative: 10,
+      burn: false,
+      targetSpec: {
+        kind: "champion",
+        owner: "self"
+      },
+      effects: [{ kind: "goldPlatedArmor", costPerDamage: 2 }]
+    };
+
+    state = resolveCardEffects(state, "p1", armorCard, { unitId: "c1" });
+    state = resolveBattleAtHex(state, hexKey);
+
+    const protectedUnit = state.board.units["c1"];
+    if (!protectedUnit || protectedUnit.kind !== "champion") {
+      throw new Error("missing protected champion");
+    }
+    expect(protectedUnit.hp).toBe(2);
+    expect(state.board.units["c2"]).toBeUndefined();
+
+    const p1Gold = state.players.find((player) => player.id === "p1")?.resources.gold;
+    expect(p1Gold).toBe(0);
+  });
+
   it("focus fire assigns hits to champions in the next battle only", () => {
     vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({ value: 1, next: rng }));
 
