@@ -159,7 +159,7 @@ export const createNewGame = (
     powerDecks: { I: [], II: [], III: [] },
     logs: [],
     modifiers: [],
-    blocks: createCapitalDraftBlock(players, capitalSlots),
+    blocks: createDeckPreviewBlock(),
     cardsByInstanceId: {},
     winnerPlayerId: null
   };
