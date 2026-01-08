@@ -2708,7 +2708,7 @@ body.is-game .phase-cue--age .phase-cue__round {
 }
 
 .action-reveal__panel {
-  width: min(360px, 92vw);
+  width: min(620px, 94vw);
   padding: 18px 22px;
   border-radius: 20px;
   border: 1px solid rgba(180, 83, 9, 0.32);
@@ -2718,6 +2718,25 @@ body.is-game .phase-cue--age .phase-cue__round {
   gap: 10px;
   text-align: left;
   animation: actionRevealPop var(--action-reveal-duration, 2800ms) ease-in-out forwards;
+}
+
+.action-reveal__content {
+  display: grid;
+  gap: 12px;
+}
+
+.action-reveal__content--with-card {
+  grid-template-columns: minmax(0, 180px) minmax(0, 1fr);
+  align-items: start;
+}
+
+.action-reveal__preview {
+  display: flex;
+  justify-content: center;
+}
+
+.action-reveal__preview .game-card {
+  width: 180px;
 }
 
 .action-reveal__card {
@@ -2810,6 +2829,16 @@ body.is-game .action-reveal__targets--empty {
 .action-reveal__targets--empty {
   font-size: 12px;
   color: var(--muted);
+}
+
+@media (max-width: 720px) {
+  .action-reveal__content--with-card {
+    grid-template-columns: 1fr;
+  }
+
+  .action-reveal__preview .game-card {
+    width: min(220px, 70vw);
+  }
 }
 
 .game-screen__header {

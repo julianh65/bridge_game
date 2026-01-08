@@ -150,6 +150,23 @@ const getUnitGlyph = (unit: CombatUnitRoll, cardDefsById: Map<string, CardDef>) 
   return getNameGlyph(name);
 };
 
+const formatHitFacesLabel = (hitFaces: number) => {
+  if (!Number.isFinite(hitFaces)) {
+    return "Hit: --";
+  }
+  const capped = Math.max(0, Math.min(6, Math.floor(hitFaces)));
+  if (capped <= 0) {
+    return "Hit: --";
+  }
+  if (capped === 1) {
+    return "Hit: 1";
+  }
+  if (capped >= 6) {
+    return "Hit: 1-6";
+  }
+  return `Hit: 1-${capped}`;
+};
+
 const splitUnitsByKind = (units: CombatUnitRoll[]) => {
   const forces: CombatUnitRoll[] = [];
   const champions: CombatUnitRoll[] = [];
@@ -620,6 +637,7 @@ export const CombatOverlay = ({
         ? `HP ${unit.hp}/${unit.maxHp}`
         : "HP ?";
     const title = unit.kind === "champion" ? `${name} (${hpLabel})` : name;
+    const hitLabel = formatHitFacesLabel(unit.hitFaces);
     return (
       <div key={unit.unitId} className={`combat-unit combat-unit--${unit.kind}`}>
         <div className="combat-unit__token" title={title}>
@@ -628,6 +646,7 @@ export const CombatOverlay = ({
         {unit.kind === "champion" ? (
           <span className="combat-unit__hp">{hpLabel}</span>
         ) : null}
+        <span className="combat-unit__hit">{hitLabel}</span>
         <div className="combat-unit__dice">
           {renderDiceRack(
             unit.dice,

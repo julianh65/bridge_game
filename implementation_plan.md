@@ -331,7 +331,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] the show / hide market button should be bigger and easier to hit and toggle back and forth, like it should probably be floating and fixed position and be in the exact same position whether they are in show / hide so it’s easier to toggle between
 - [x] why is all the card art way zoomed in at market phase?
 - [x] the market dice roll is a bit weird for ties, like it seemed like it insta skipped and i didn’t get to see who won it, at the end of the rolls it needs to show who won the roll and pause
-- [ ] when the action phase flashes up also show the card that was played, like the art and all
+- [x] when the action phase flashes up also show the card that was played, like the art and all
 - [ ] right now the mana orb can sometimes cover up the action panel when it goes to split or move all
 - [x] for the collection phase modal that should be hid-able like the market, and it should have more detail as to who’s collecting what and why
 - [ ] need to add order of basic actions logic, different factions will always act before others, that should show in the faction selector and be configurable from the config and should also really impact the game
@@ -340,6 +340,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] scout report still doesn’t let you choose which ones to draw or discard
 - [x] in the combat screen we should see what the champions as well as forces hit on (if there are modifiers it should reflect that as well)
 - [ ] tunnel network didn’t work
+- [ ] similar to the show / hide market floating button we also want a go to and forth your own deck button to see the deck and go back and forth
 
 ### Mini Milestone For Me
 
