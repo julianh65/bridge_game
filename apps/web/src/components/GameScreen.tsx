@@ -2487,7 +2487,6 @@ export const GameScreen = ({
                 playerIndexById={playerColorIndexById}
                 playerFactionById={playerFactionById}
                 showCoords={false}
-                showTags
                 showMineValues={false}
                 labelByHex={hexLabels}
                 labelVariant="coords"

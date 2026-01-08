@@ -94,6 +94,7 @@
 - Overlap note: commit also picked up pre-staged changes in `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, and `implementation_plan.md`.
 - Increased bridge preview hitbox width to make edge selection easier. (Overlap note: touched `apps/web/src/styles.css` alongside agent3/agent4.)
 - Fixed duplicate `edgeKeys` variable name in `GameScreen` target reveal helper to resolve Vite compile error.
+- Removed duplicate `showTags` prop in `GameScreen` BoardView to fix Vite JSX warning.
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
 - Slimmed the action strip: moved Pass/Submit + deck counts into the hand footer, simplified basic actions, and added a command-center table with per-player gold/mana/hand counts.
 - Aligned action enablement with action-step waiting eligibility and added action-panel hints for disabled states (no mana/submitted/not action phase).
