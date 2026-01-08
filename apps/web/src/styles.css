@@ -958,16 +958,16 @@ body.is-game .setup-bridges__suggestion:hover:not(:disabled) {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
 .seat {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 8px 12px;
-  border-radius: 10px;
+  gap: 12px;
+  padding: 6px 10px;
+  border-radius: 9px;
   border: 1px solid var(--border);
   background: #fffdf6;
 }
@@ -998,21 +998,21 @@ body.is-game .seat.is-ready {
 }
 
 .seat__meta {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--muted);
 }
 
 .seat__status {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: wrap;
 }
 
 .lobby__start {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px dashed #d6c9b6;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed #d6c9b6;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1021,7 +1021,7 @@ body.is-game .seat.is-ready {
 }
 
 body.is-game .lobby__start {
-  border-top-color: rgba(245, 158, 11, 0.25);
+  border-bottom-color: rgba(245, 158, 11, 0.25);
 }
 
 .lobby__start-info {
@@ -1057,21 +1057,21 @@ body.is-game .seat__toggle {
 
 .faction-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 10px;
-  margin-top: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
 }
 
 .faction-card {
-  padding: 16px;
-  border-radius: 14px;
+  padding: 20px;
+  border-radius: 16px;
   border: 2px dashed #d6c9b6;
   background: #fff7ea;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 10px;
-  font-size: 14px;
+  gap: 12px;
+  font-size: 15px;
   color: var(--muted);
 }
 
@@ -1096,9 +1096,9 @@ body.is-game .faction-card {
 .faction-card__label {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 15px;
   color: #3b2a12;
 }
 
@@ -1107,7 +1107,7 @@ body.is-game .faction-card__label {
 }
 
 .faction-card__desc {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.35;
   color: inherit;
   opacity: 0.85;
@@ -1115,8 +1115,8 @@ body.is-game .faction-card__label {
 
 .faction-card__section {
   display: grid;
-  gap: 6px;
-  padding-top: 8px;
+  gap: 8px;
+  padding-top: 10px;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
@@ -1125,7 +1125,7 @@ body.is-game .faction-card__section {
 }
 
 .faction-card__section-title {
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   opacity: 0.7;
@@ -1136,12 +1136,12 @@ body.is-game .faction-card__section {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 6px;
+  gap: 8px;
 }
 
 .faction-card__passive-name {
   display: block;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: #3b2a12;
 }
@@ -1152,27 +1152,27 @@ body.is-game .faction-card__passive-name {
 
 .faction-card__passive-desc {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.35;
   opacity: 0.85;
 }
 
 .faction-card__starter {
   display: grid;
-  grid-template-columns: 70px 1fr;
-  gap: 8px;
+  grid-template-columns: 80px 1fr;
+  gap: 10px;
   align-items: start;
 }
 
 .faction-card__starter-label {
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   opacity: 0.7;
 }
 
 .faction-card__starter-value {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.35;
   opacity: 0.9;
   display: -webkit-box;
