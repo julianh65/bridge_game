@@ -24,13 +24,14 @@ import {
 
 import { type BasicActionIntent, type BoardPickMode } from "./ActionPanel";
 import { ActionRevealOverlay, type ActionRevealOverlayData } from "./ActionRevealOverlay";
-import { BoardView, type BoardActionAnimation } from "./BoardView";
+import { BoardView, type BoardActionAnimation, type BoardOverlayItem } from "./BoardView";
 import { CollectionPanel } from "./CollectionPanel";
 import { CombatOverlay } from "./CombatOverlay";
 import { CombatRetreatOverlay } from "./CombatRetreatOverlay";
 import { GameScreenHandPanel } from "./GameScreenHandPanel";
 import { GameScreenHeader } from "./GameScreenHeader";
 import { GameScreenSidebar } from "./GameScreenSidebar";
+import { ForceSplitPopover } from "./ForceSplitPopover";
 import { HandCardPickerModal } from "./HandCardPickerModal";
 import { MarketPanel } from "./MarketPanel";
 import { VictoryScreen } from "./VictoryScreen";
@@ -523,6 +524,7 @@ type GameScreenProps = {
   onSubmitMarketBid: (bid: Bid) => void;
   onSubmitCollectionChoices: (choices: CollectionChoice[]) => void;
   onSubmitQuietStudy: (cardInstanceIds: string[]) => void;
+  onSubmitScoutReportChoice: (cardInstanceIds: string[]) => void;
   onSubmitCombatRetreat?: (hexKey: string, edgeKey: string | null) => void;
   combatSync?: CombatSyncMap | null;
   serverTimeOffset?: number | null;
@@ -541,6 +543,7 @@ export const GameScreen = ({
   onSubmitMarketBid,
   onSubmitCollectionChoices,
   onSubmitQuietStudy,
+  onSubmitScoutReportChoice,
   onSubmitCombatRetreat,
   combatSync,
   serverTimeOffset,
@@ -592,6 +595,7 @@ export const GameScreen = ({
   const handCards = view.private?.handCards ?? [];
   const deckCounts = view.private?.deckCounts ?? null;
   const quietStudy = view.private?.quietStudy ?? null;
+  const scoutReport = view.private?.scoutReport ?? null;
   const phaseLabel = formatPhaseLabel(view.public.phase);
   const connectionLabel = status === "connected" ? "Live" : "Waiting";
   const connectionClass =
@@ -614,6 +618,7 @@ export const GameScreen = ({
   const [cardTargetsRaw, setCardTargetsRaw] = useState("");
   const [isHandPickerOpen, setIsHandPickerOpen] = useState(false);
   const [quietStudySelectedIds, setQuietStudySelectedIds] = useState<string[]>([]);
+  const [scoutReportSelectedIds, setScoutReportSelectedIds] = useState<string[]>([]);
   const [boardPickMode, setBoardPickMode] = useState<BoardPickMode>("none");
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -838,6 +843,10 @@ export const GameScreen = ({
   }, [cardInstanceId, handCards, targetRecord]);
   const quietStudyMaxDiscard = quietStudy?.maxDiscard ?? 0;
   const isQuietStudyActive = Boolean(quietStudy?.isWaiting);
+  const scoutReportKeepCount = scoutReport?.keepCount ?? 0;
+  const scoutReportOffers = scoutReport?.offers ?? [];
+  const isScoutReportActive =
+    Boolean(scoutReport?.isWaiting) && scoutReportKeepCount > 0 && scoutReportOffers.length > 0;
 
   useEffect(() => {
     if (!isQuietStudyActive) {
@@ -850,6 +859,25 @@ export const GameScreen = ({
       return base.filter((id) => available.has(id)).slice(0, quietStudyMaxDiscard);
     });
   }, [handCards, isQuietStudyActive, quietStudy?.selected, quietStudyMaxDiscard]);
+  useEffect(() => {
+    if (!isScoutReportActive) {
+      setScoutReportSelectedIds([]);
+      return;
+    }
+    const available = new Set(scoutReportOffers.map((card) => card.id));
+    const maxKeep = Math.min(scoutReportKeepCount, scoutReportOffers.length);
+    const base = scoutReport?.selected ?? [];
+    const filtered = base.filter((id) => available.has(id)).slice(0, maxKeep);
+    if (filtered.length > 0) {
+      setScoutReportSelectedIds(filtered);
+      return;
+    }
+    if (scoutReportOffers.length > 0) {
+      setScoutReportSelectedIds([scoutReportOffers[0].id]);
+      return;
+    }
+    setScoutReportSelectedIds([]);
+  }, [isScoutReportActive, scoutReport?.selected, scoutReportKeepCount, scoutReportOffers]);
   const championUnits = useMemo(() => {
     return Object.values(view.public.board.units)
       .map((unit) => {
@@ -2465,13 +2493,15 @@ export const GameScreen = ({
     : null;
   const showCardMoveSplitControls =
     cardMoveSupportsSplit && Boolean(cardMoveStartHex) && cardMoveForceMax > 1;
-  const currentCardMoveForceCount =
-    cardMoveForceCount === null
-      ? Math.min(1, cardMoveForceMax)
-      : cardMoveForceCount;
+  const showMarchSplitControls =
+    basicActionIntent === "march" && marchFrom.trim().length > 0 && marchForceMax > 1;
+  const marchFromLabel = marchFrom ? hexLabels[marchFrom] ?? marchFrom : null;
   const cardMoveMeta = cardMoveStartLabel
     ? `From ${cardMoveStartLabel} (${cardMoveForceMax} forces)`
     : `${cardMoveForceMax} forces`;
+  const marchMoveMeta = marchFromLabel
+    ? `From ${marchFromLabel} (${marchForceMax} forces)`
+    : `${marchForceMax} forces`;
   const championTargetScopeLabel =
     championTargetOwner === "self"
       ? "Your champions"
@@ -2529,70 +2559,41 @@ export const GameScreen = ({
         <strong>Move forces</strong>
         <span className="hand-targets__meta">{cardMoveMeta}</span>
       </div>
-      <p className="hand-targets__hint">Choose how many forces move with this card.</p>
-      <div className="action-panel__split">
-        <div className="action-panel__split-header">
-          <span>Forces to move</span>
-          <div className="action-panel__split-toggle">
-            <button
-              type="button"
-              className={`btn btn-tertiary ${
-                cardMoveForceCount === null ? "is-active" : ""
-              }`}
-              onClick={() => setCardForceCount(null)}
-            >
-              Move all
-            </button>
-            <button
-              type="button"
-              className={`btn btn-tertiary ${
-                cardMoveForceCount !== null ? "is-active" : ""
-              }`}
-              onClick={() =>
-                setCardForceCount(
-                  cardMoveForceCount === null
-                    ? Math.min(1, cardMoveForceMax)
-                    : cardMoveForceCount
-                )
-              }
-            >
-              Split
-            </button>
-          </div>
-        </div>
-        {cardMoveForceCount !== null ? (
-          <div className="action-panel__split-controls">
-            <button
-              type="button"
-              className="btn btn-tertiary"
-              disabled={currentCardMoveForceCount <= 1}
-              onClick={() =>
-                setCardForceCount(Math.max(1, currentCardMoveForceCount - 1))
-              }
-            >
-              -
-            </button>
-            <div className="action-panel__split-count">{currentCardMoveForceCount}</div>
-            <button
-              type="button"
-              className="btn btn-tertiary"
-              disabled={currentCardMoveForceCount >= cardMoveForceMax}
-              onClick={() =>
-                setCardForceCount(
-                  Math.min(cardMoveForceMax, currentCardMoveForceCount + 1)
-                )
-              }
-            >
-              +
-            </button>
-            <span className="action-panel__split-hint">of {cardMoveForceMax} forces</span>
-          </div>
-        ) : (
-          <p className="action-panel__split-note">Moves the full stack.</p>
-        )}
-      </div>
+      <p className="hand-targets__hint">
+        Adjust the split on the board near the start hex.
+      </p>
     </div>
   ) : null;
+  const forceSplitOverlays: BoardOverlayItem[] = [];
+  if (showCardMoveSplitControls && cardMoveStartHex) {
+    forceSplitOverlays.push({
+      id: "force-split-card",
+      hexKey: cardMoveStartHex,
+      content: (
+        <ForceSplitPopover
+          title="Move forces"
+          meta={cardMoveMeta}
+          forceCount={cardMoveForceCount}
+          forceMax={cardMoveForceMax}
+          onChange={setCardForceCount}
+        />
+      )
+    });
+  } else if (showMarchSplitControls) {
+    forceSplitOverlays.push({
+      id: "force-split-march",
+      hexKey: marchFrom,
+      content: (
+        <ForceSplitPopover
+          title="March forces"
+          meta={marchMoveMeta}
+          forceCount={marchForceCount}
+          forceMax={marchForceMax}
+          onChange={setMarchForceCount}
+        />
+      )
+    });
+  }
   const championTargetPanel =
     selectedCardDef && cardTargetKind === "champion" ? (
       <div className="hand-targets hand-targets--overlay">
@@ -2678,11 +2679,22 @@ export const GameScreen = ({
           quietStudyMaxDiscard === 1 ? "" : "s"
         }, then draw that many.`
       : null;
+  const scoutReportTitle = "Scout Report";
+  const scoutReportDescription =
+    scoutReportKeepCount > 0
+      ? `Choose ${scoutReportKeepCount} to keep. Discard the rest.`
+      : null;
   const handleSubmitQuietStudy = () => {
     if (!quietStudy?.isWaiting) {
       return;
     }
     onSubmitQuietStudy(quietStudySelectedIds);
+  };
+  const handleSubmitScoutReport = () => {
+    if (!scoutReport?.isWaiting) {
+      return;
+    }
+    onSubmitScoutReportChoice(scoutReportSelectedIds);
   };
 
   const showCollectionOverlayToggle = isCollectionPhase;
@@ -2896,6 +2908,17 @@ export const GameScreen = ({
         onClose={handleSubmitQuietStudy}
       />
       <HandCardPickerModal
+        isOpen={isScoutReportActive}
+        title={scoutReportTitle}
+        description={scoutReportDescription}
+        cards={scoutReportOffers}
+        cardDefsById={CARD_DEFS_BY_ID}
+        selectedIds={scoutReportSelectedIds}
+        maxSelect={Math.max(scoutReportKeepCount, 1)}
+        onSelectionChange={setScoutReportSelectedIds}
+        onClose={handleSubmitScoutReport}
+      />
+      <HandCardPickerModal
         isOpen={showHandPicker}
         title={handPickerTitle}
         description={handPickerDescription}
@@ -2966,6 +2989,7 @@ export const GameScreen = ({
                 validHexKeys={isEdgePickMode ? [] : validHexKeys}
                 previewEdgeKeys={previewEdgeKeys}
                 isTargeting={isBoardTargeting}
+                overlays={forceSplitOverlays}
                 onHexClick={isEdgePickMode ? undefined : handleBoardHexClick}
                 onEdgeClick={handleBoardEdgeClick}
                 showTags={false}
@@ -3040,14 +3064,12 @@ export const GameScreen = ({
         edgeKey={edgeKey}
         marchFrom={marchFrom}
         marchTo={marchTo}
-        marchForceCount={marchForceCount}
         marchForceMax={marchForceMax}
         reinforceHex={reinforceHex}
         reinforceOptions={reinforceOptions}
         boardPickMode={boardPickMode}
         basicActionIntent={basicActionIntent}
         onBasicActionIntentChange={handleBasicActionIntentChange}
-        onMarchForceCountChange={setMarchForceCount}
         onReinforceHexChange={setReinforceHex}
         onBoardPickModeChange={setBoardPickModeSafe}
         onSelectCard={handleSelectCard}

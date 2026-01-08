@@ -17,11 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- [agent5] In progress: move force-split controls to a board-adjacent popover near the selected hex (basic march + card move), with a small hint in the action/hand panels. Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/ForceSplitPopover.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`. (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
-- owner: agent1
-  scope: implement Scout Report choice prompt (draw-and-pick) with engine block + UI modal
-  files: packages/engine/src/types.ts, packages/engine/src/engine.ts, packages/engine/src/card-effects.ts, packages/engine/src/view.ts, packages/engine/src/action-flow.test.ts, packages/engine/src/smoke.test.ts, apps/web/src/components/GameScreen.tsx, apps/web/src/App.tsx, progress.md, implementation_plan.md
-  status: in progress (overlap note: engine types/view files may also be touched by other agents)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -37,6 +32,7 @@
 - Moved the floating market overlay toggle button toward the bottom-center to keep it away from the top-right HUD. (File: `apps/web/src/styles.css`.) (Overlap note: `apps/web/src/styles.css` is also in agent1 scope.)
 
 ## Milestone After Full Test Play and Thinking progress
+- Added Scout Report draw-and-pick choices with an action-phase block, selection command, private offers view, UI modal, and updated action/smoke tests; marked the plan checklist items complete. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/action-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.)
 - Added hover tooltips for basic action chips to explain bridge/march/reinforce costs; updated the plan checklist. (Files: `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Made the collection overlay toggleable like the market and added a collection context summary + hex labels/notes for why each prompt appears; updated the plan checklist. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Updated the center collection prompt copy to call out power deck picks; updated the plan checklist. (Files: `apps/web/src/components/CollectionPanel.tsx`, `implementation_plan.md`.)
@@ -88,6 +84,7 @@
 - Added a market roll-off overlay with faction symbols and synchronized dice timing; updated the plan checklist. (Files: `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.)
 - Held market roll-off winner highlights through the tie-break animation so the winner callout stays visible; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Persisted market winner banners on resolved cards so each won card keeps its callout. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/MarketPanel.tsx`.)
+- Moved force-split controls to a board-adjacent popover for march + card moves, added overlay rendering in BoardView, and left a small split hint in the action/hand panels; updated the plan checklist. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/ForceSplitPopover.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Added Burn the Bridges (Age II) with destroy-connected-bridges effect, movement-target validation, and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent2)
 
 ## Milestone 8 progress

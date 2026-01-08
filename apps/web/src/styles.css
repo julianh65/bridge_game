@@ -6153,6 +6153,51 @@ body.is-game .btn-secondary:active:not(:disabled) {
   align-items: center;
 }
 
+.board-overlay {
+  pointer-events: none;
+}
+
+.board-overlay__item {
+  overflow: visible;
+  pointer-events: auto;
+}
+
+.board-overlay__content {
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
+
+.force-split-popover {
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow: 0 16px 24px rgba(10, 6, 4, 0.35);
+}
+
+.force-split-popover__header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.force-split-popover__title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.force-split-popover__meta {
+  font-size: 10px;
+  color: var(--muted);
+}
+
 .board-svg--interactive {
   cursor: grab;
   touch-action: none;

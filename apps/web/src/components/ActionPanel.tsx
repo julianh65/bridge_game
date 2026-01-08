@@ -37,14 +37,12 @@ type ActionPanelProps = {
   edgeKey: string;
   marchFrom: string;
   marchTo: string;
-  marchForceCount: number | null;
   marchForceMax: number;
   reinforceHex: string;
   reinforceOptions: { key: string; label: string }[];
   boardPickMode: BoardPickMode;
   basicActionIntent: BasicActionIntent;
   onBasicActionIntentChange: (value: BasicActionIntent) => void;
-  onMarchForceCountChange: (value: number | null) => void;
   onReinforceHexChange: (value: string) => void;
   onBoardPickModeChange: (mode: BoardPickMode) => void;
 };
@@ -55,14 +53,12 @@ export const ActionPanel = ({
   edgeKey,
   marchFrom,
   marchTo,
-  marchForceCount,
   marchForceMax,
   reinforceHex,
   reinforceOptions,
   boardPickMode,
   basicActionIntent,
   onBasicActionIntentChange,
-  onMarchForceCountChange,
   onReinforceHexChange,
   onBoardPickModeChange
 }: ActionPanelProps) => {
@@ -77,9 +73,7 @@ export const ActionPanel = ({
     ? `${selectedReinforce.label} (${selectedReinforce.key})`
     : "Select a target";
   const canSplitForces = marchForceMax > 1;
-  const showSplitControls = basicActionIntent === "march" && canSplitForces && marchFrom;
-  const currentForceCount =
-    marchForceCount === null ? Math.min(1, marchForceMax) : marchForceCount;
+  const showSplitHint = basicActionIntent === "march" && canSplitForces && marchFrom;
 
   const renderCost = (cost: { mana: number; gold: number }) => (
     <span
@@ -198,68 +192,10 @@ export const ActionPanel = ({
               {marchTo.trim().length > 0 ? marchTo : "Pick a destination hex"}
             </button>
           </label>
-          {showSplitControls ? (
-            <div className="action-panel__split">
-              <div className="action-panel__split-header">
-                <span>Forces to move</span>
-                <div className="action-panel__split-toggle">
-                  <button
-                    type="button"
-                    className={`btn btn-tertiary ${
-                      marchForceCount === null ? "is-active" : ""
-                    }`}
-                    onClick={() => onMarchForceCountChange(null)}
-                  >
-                    Move all
-                  </button>
-                  <button
-                    type="button"
-                    className={`btn btn-tertiary ${
-                      marchForceCount !== null ? "is-active" : ""
-                    }`}
-                    onClick={() =>
-                      onMarchForceCountChange(
-                        marchForceCount === null ? Math.min(1, marchForceMax) : marchForceCount
-                      )
-                    }
-                  >
-                    Split
-                  </button>
-                </div>
-              </div>
-              {marchForceCount !== null ? (
-                <div className="action-panel__split-controls">
-                  <button
-                    type="button"
-                    className="btn btn-tertiary"
-                    disabled={currentForceCount <= 1}
-                    onClick={() =>
-                      onMarchForceCountChange(Math.max(1, currentForceCount - 1))
-                    }
-                  >
-                    −
-                  </button>
-                  <div className="action-panel__split-count">{currentForceCount}</div>
-                  <button
-                    type="button"
-                    className="btn btn-tertiary"
-                    disabled={currentForceCount >= marchForceMax}
-                    onClick={() =>
-                      onMarchForceCountChange(
-                        Math.min(marchForceMax, currentForceCount + 1)
-                      )
-                    }
-                  >
-                    +
-                  </button>
-                  <span className="action-panel__split-hint">
-                    of {marchForceMax} forces
-                  </span>
-                </div>
-              ) : (
-                <p className="action-panel__split-note">Moves the full stack.</p>
-              )}
-            </div>
+          {showSplitHint ? (
+            <p className="action-panel__hint">
+              Adjust the split on the board near the start hex.
+            </p>
           ) : null}
         </div>
       ) : null}

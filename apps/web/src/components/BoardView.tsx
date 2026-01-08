@@ -3,6 +3,7 @@ import type {
   CSSProperties,
   PointerEvent as ReactPointerEvent,
   PointerEventHandler,
+  ReactNode,
   WheelEventHandler
 } from "react";
 
@@ -36,6 +37,17 @@ export type BoardActionAnimation = {
   unitLabel?: string | null;
 };
 
+export type BoardOverlayItem = {
+  id: string;
+  hexKey: string;
+  width?: number;
+  height?: number;
+  offsetX?: number;
+  offsetY?: number;
+  className?: string;
+  content: ReactNode;
+};
+
 type BoardViewProps = {
   hexes: HexRender[];
   board?: BoardState;
@@ -60,6 +72,7 @@ type BoardViewProps = {
   isTargeting?: boolean;
   actionAnimations?: BoardActionAnimation[];
   actionAnimationDurationMs?: number;
+  overlays?: BoardOverlayItem[];
 };
 
 type TooltipTone = "title" | "label" | "body";
@@ -121,6 +134,9 @@ const BRIDGE_RAIL_OFFSET = BRIDGE_WIDTH * 0.38;
 const BRIDGE_PLANK_EDGE_PAD = BRIDGE_WIDTH * 0.6;
 const BRIDGE_PLANK_SPACING = HEX_DRAW_SIZE * 0.28;
 const BRIDGE_PLANK_LENGTH = BRIDGE_WIDTH * 0.85;
+const OVERLAY_DEFAULT_WIDTH = 180;
+const OVERLAY_DEFAULT_HEIGHT = 120;
+const OVERLAY_OFFSET_Y = HEX_SIZE * 0.6;
 const TOOLTIP_MIN_WIDTH = 118;
 const TOOLTIP_MAX_WIDTH = 210;
 const TOOLTIP_CHAR_WIDTH = 5.6;
@@ -390,7 +406,8 @@ export const BoardView = ({
   previewEdgeKeys = [],
   isTargeting = false,
   actionAnimations = [],
-  actionAnimationDurationMs
+  actionAnimationDurationMs,
+  overlays = []
 }: BoardViewProps) => {
   const baseViewBox = useMemo(() => boundsForHexes(hexes), [hexes]);
   const [viewBox, setViewBox] = useState(baseViewBox);
@@ -1152,6 +1169,34 @@ export const BoardView = ({
     onHexClick?.(hexKey);
   };
 
+  const overlayNodes = overlays.flatMap((overlay) => {
+    const center = hexCenters.get(overlay.hexKey);
+    if (!center) {
+      return [];
+    }
+    const width = overlay.width ?? OVERLAY_DEFAULT_WIDTH;
+    const height = overlay.height ?? OVERLAY_DEFAULT_HEIGHT;
+    const offsetX = overlay.offsetX ?? -width / 2;
+    const offsetY = overlay.offsetY ?? -height - OVERLAY_OFFSET_Y;
+    const x = center.x + offsetX;
+    const y = center.y + offsetY;
+    const className = ["board-overlay__content", overlay.className ?? ""]
+      .filter(Boolean)
+      .join(" ");
+    return [
+      <foreignObject
+        key={overlay.id}
+        className="board-overlay__item"
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+      >
+        <div className={className}>{overlay.content}</div>
+      </foreignObject>
+    ];
+  });
+
   return (
     <svg
       ref={svgRef}
@@ -1692,6 +1737,9 @@ export const BoardView = ({
             return null;
           })
         : null}
+      {overlayNodes.length > 0 ? (
+        <g className="board-overlay">{overlayNodes}</g>
+      ) : null}
       {tileTooltip ? (
         <g
           className="tile-tooltip"

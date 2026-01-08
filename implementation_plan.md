@@ -313,11 +313,11 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Board "chit" styling (units/champions/forces) aligns with dark fantasy theme.
 - [x] Champion target modal should not shift page layout; convert to overlay.
 - [x] Fix card hover stacking so hovered cards always render on top.
-- [ ] Force-split dialog appears near the clicked hex (not bottom of screen).
+- [x] Force-split dialog appears near the clicked hex (not bottom of screen).
 - [ ] Add an "active effects" view so players see ongoing effects.
 - [x] Gray out or mark cards that are unaffordable due to mana.
 - [ ] Fix phase progression after capital battles (ensure collection/market transitions).
-- [ ] Add UI for scout orders and "draw and pick" effects.
+- [x] Add UI for scout orders and "draw and pick" effects.
 - [x] Fix card aspect ratios on large screens (avoid stretched/fat cards).
 - [x] Add a battle debug tab to simulate combat with custom forces/champions.
 - [x] Need a something in UI to mark which cell is "my capital"
@@ -337,7 +337,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] need to add order of basic actions logic, different factions will always act before others, that should show in the faction selector and be configurable from the config and should also really impact the game
 - [x] hard: the forces should move around the board and bridges and things should happen in sync with the popup modal during the action phase
 - [ ] there’s still a bit of buginess between phase transitions where we go from action phase to collection phase like the collection modal will instantly pop up
-- [ ] scout report still doesn’t let you choose which ones to draw or discard
+- [x] scout report still doesn’t let you choose which ones to draw or discard
 - [x] in the combat screen we should see what the champions as well as forces hit on (if there are modifiers it should reflect that as well)
 - [ ] tunnel network didn’t work
 - [x] similar to the show / hide market floating button we also want a go to and forth your own deck button to see the deck and go back and forth
