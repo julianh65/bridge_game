@@ -42,6 +42,7 @@ type HitRollResult = {
   hits: number;
   nextState: GameState["rngState"];
   rolls: DiceRoll[];
+  unitRolls: CombatUnitRoll[];
 };
 
 type HitAssignmentResult = {
@@ -53,6 +54,17 @@ type HitAssignmentResult = {
 type DiceRoll = {
   value: number;
   isHit: boolean;
+};
+
+type CombatUnitRoll = {
+  unitId: UnitID;
+  kind: UnitState["kind"];
+  cardDefId?: string;
+  hp?: number;
+  maxHp?: number;
+  attackDice: number;
+  hitFaces: number;
+  dice: DiceRoll[];
 };
 
 type HitAssignmentSummary = {
@@ -199,6 +211,7 @@ const rollHitsForUnits = (
   let hits = 0;
   let nextState = rngState;
   const rolls: DiceRoll[] = [];
+  const unitRolls: CombatUnitRoll[] = [];
 
   for (const unitId of unitIds) {
     const unit = units[unitId];
@@ -214,7 +227,20 @@ const rollHitsForUnits = (
       unitId,
       unit
     );
+    const unitRoll: CombatUnitRoll = {
+      unitId,
+      kind: unit.kind,
+      attackDice,
+      hitFaces,
+      dice: []
+    };
+    if (unit.kind === "champion") {
+      unitRoll.cardDefId = unit.cardDefId;
+      unitRoll.hp = unit.hp;
+      unitRoll.maxHp = unit.maxHp;
+    }
     if (attackDice <= 0 || hitFaces <= 0) {
+      unitRolls.push(unitRoll);
       continue;
     }
 
@@ -222,14 +248,17 @@ const rollHitsForUnits = (
       const roll = rollDie(nextState);
       nextState = roll.next;
       const isHit = roll.value <= hitFaces;
-      rolls.push({ value: roll.value, isHit });
+      const entry = { value: roll.value, isHit };
+      rolls.push(entry);
+      unitRoll.dice.push(entry);
       if (isHit) {
         hits += 1;
       }
     }
+    unitRolls.push(unitRoll);
   }
 
-  return { hits, nextState, rolls };
+  return { hits, nextState, rolls, unitRolls };
 };
 
 const findTacticalHandSource = (
@@ -699,12 +728,14 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
       attackers: {
         playerId: participants[0],
         dice: attackerRoll.rolls,
-        hits: attackerRoll.hits
+        hits: attackerRoll.hits,
+        units: attackerRoll.unitRolls
       },
       defenders: {
         playerId: participants[1],
         dice: defenderRoll.rolls,
-        hits: defenderRoll.hits
+        hits: defenderRoll.hits,
+        units: defenderRoll.unitRolls
       }
     };
 

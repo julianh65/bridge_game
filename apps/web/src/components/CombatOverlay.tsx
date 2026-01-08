@@ -6,6 +6,7 @@ import { FactionSymbol } from "./FactionSymbol";
 import type {
   CombatSequence,
   CombatSideSummary,
+  CombatUnitRoll,
   HitAssignmentSummary
 } from "../lib/combat-log";
 
@@ -112,6 +113,45 @@ const buildBountyTotals = (
   });
 
   return { attackersBounty, defendersBounty };
+};
+
+const getUnitDisplayName = (
+  unit: CombatUnitRoll,
+  cardDefsById: Map<string, CardDef>
+) => {
+  if (unit.kind === "champion") {
+    if (unit.cardDefId) {
+      return cardDefsById.get(unit.cardDefId)?.name ?? "Champion";
+    }
+    return "Champion";
+  }
+  return "Force";
+};
+
+const getUnitGlyph = (unit: CombatUnitRoll, cardDefsById: Map<string, CardDef>) => {
+  if (unit.kind === "force") {
+    return "F";
+  }
+  const name = getUnitDisplayName(unit, cardDefsById);
+  const letters = name
+    .split(/\s+/)
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase();
+  return letters.slice(0, 2) || "C";
+};
+
+const splitUnitsByKind = (units: CombatUnitRoll[]) => {
+  const forces: CombatUnitRoll[] = [];
+  const champions: CombatUnitRoll[] = [];
+  units.forEach((unit) => {
+    if (unit.kind === "champion") {
+      champions.push(unit);
+    } else {
+      forces.push(unit);
+    }
+  });
+  return { forces, champions };
 };
 
 export const CombatOverlay = ({
@@ -242,11 +282,40 @@ export const CombatOverlay = ({
 
   const isResolving = Boolean(roundStage);
   const canAdvance = revealedRounds < sequence.rounds.length && !isResolving;
-  const displayRounds = sequence.rounds.slice(
-    0,
-    revealedRounds + (roundStage ? 1 : 0)
-  );
+  const currentRoundIndex = roundStage
+    ? roundStage.index
+    : revealedRounds > 0
+      ? Math.min(revealedRounds - 1, sequence.rounds.length - 1)
+      : null;
+  const currentRound =
+    currentRoundIndex !== null ? sequence.rounds[currentRoundIndex] : null;
   const isResolved = revealedRounds >= sequence.rounds.length && !roundStage;
+  const roundPhase =
+    currentRound && roundStage && currentRoundIndex === roundStage.index
+      ? roundStage.phase
+      : currentRound
+        ? "assigned"
+        : null;
+  const showHits = roundPhase ? roundPhase !== "rolling" : false;
+  const showAssignments = roundPhase === "assigned";
+  const stageLabel =
+    roundPhase === "rolling"
+      ? "Rolling"
+      : roundPhase === "locked"
+        ? "Locked"
+        : "Hit assignment";
+  const roundBountyAttackers = currentRound
+    ? getSummaryBounty(currentRound.hitsToDefenders, cardDefsById)
+    : 0;
+  const roundBountyDefenders = currentRound
+    ? getSummaryBounty(currentRound.hitsToAttackers, cardDefsById)
+    : 0;
+  const attackersHaveUnits = Boolean(
+    currentRound?.attackers.units && currentRound.attackers.units.length > 0
+  );
+  const defendersHaveUnits = Boolean(
+    currentRound?.defenders.units && currentRound.defenders.units.length > 0
+  );
   const winnerLabel = sequence.end.winnerPlayerId
     ? formatPlayer(sequence.end.winnerPlayerId, playersById)
     : "No winner";
@@ -316,10 +385,10 @@ export const CombatOverlay = ({
     );
   };
 
-  const renderDice = (dice: { value: number; isHit: boolean }[], phase: RoundPhase) => {
-    if (dice.length === 0) {
-      return <span className="combat-dice__empty">No dice</span>;
-    }
+  const renderDiceFaces = (
+    dice: { value: number; isHit: boolean }[],
+    phase: RoundPhase
+  ) => {
     return dice.map((roll, dieIndex) => (
       <span
         key={`d-${dieIndex}-${roll.value}`}
@@ -330,6 +399,99 @@ export const CombatOverlay = ({
         {phase === "rolling" ? "?" : roll.value}
       </span>
     ));
+  };
+
+  const renderDiceRack = (
+    dice: { value: number; isHit: boolean }[],
+    phase: RoundPhase,
+    className?: string,
+    emptyLabel = "No dice",
+    emptyClassName?: string
+  ) => {
+    if (dice.length === 0) {
+      return (
+        <span
+          className={`combat-dice__empty${emptyClassName ? ` ${emptyClassName}` : ""}`}
+        >
+          {emptyLabel}
+        </span>
+      );
+    }
+    return (
+      <div className={`combat-dice${className ? ` ${className}` : ""}`}>
+        {renderDiceFaces(dice, phase)}
+      </div>
+    );
+  };
+
+  const renderUnitToken = (unit: CombatUnitRoll, phase: RoundPhase) => {
+    const name = getUnitDisplayName(unit, cardDefsById);
+    const glyph = getUnitGlyph(unit, cardDefsById);
+    const hpLabel =
+      unit.kind === "champion" && unit.hp !== undefined && unit.maxHp !== undefined
+        ? `HP ${unit.hp}/${unit.maxHp}`
+        : "HP ?";
+    const title = unit.kind === "champion" ? `${name} (${hpLabel})` : name;
+    return (
+      <div key={unit.unitId} className={`combat-unit combat-unit--${unit.kind}`}>
+        <div className="combat-unit__token" title={title}>
+          <span className="combat-unit__glyph">{glyph}</span>
+        </div>
+        {unit.kind === "champion" ? (
+          <span className="combat-unit__hp">{hpLabel}</span>
+        ) : null}
+        <div className="combat-unit__dice">
+          {renderDiceRack(
+            unit.dice,
+            phase,
+            "combat-dice--mini",
+            "0",
+            "combat-dice__empty--mini"
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const renderUnitGroup = (
+    label: string,
+    units: CombatUnitRoll[],
+    phase: RoundPhase
+  ) => {
+    if (units.length === 0) {
+      return (
+        <div className="combat-unit-group">
+          <span className="combat-unit-group__label">{label}</span>
+          <span className="combat-unit-group__empty">None</span>
+        </div>
+      );
+    }
+    return (
+      <div className="combat-unit-group">
+        <span className="combat-unit-group__label">{label}</span>
+        <div className="combat-unit-group__list">
+          {units.map((unit) => renderUnitToken(unit, phase))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderUnitBreakdown = (
+    units: CombatUnitRoll[] | undefined,
+    phase: RoundPhase
+  ) => {
+    if (!units || units.length === 0) {
+      return (
+        <span className="combat-units__empty">Unit details unavailable.</span>
+      );
+    }
+    const { forces, champions } = splitUnitsByKind(units);
+    return (
+      <div className="combat-units">
+        {renderUnitGroup("Forces", forces, phase)}
+        {renderUnitGroup("Champions", champions, phase)}
+      </div>
+    );
   };
 
   const renderSideSummary = (
@@ -464,117 +626,108 @@ export const CombatOverlay = ({
         </div>
 
         <div className="combat-overlay__rounds">
-          {displayRounds.length === 0 ? (
+          {!currentRound ? (
             <p className="combat-overlay__hint">Click roll to reveal dice.</p>
-          ) : null}
-          {displayRounds.map((round, index) => {
-            const phase =
-              roundStage && roundStage.index === index
-                ? roundStage.phase
-                : "assigned";
-            const showHits = phase !== "rolling";
-            const showAssignments = phase === "assigned";
-            const roundBountyAttackers = getSummaryBounty(
-              round.hitsToDefenders,
-              cardDefsById
-            );
-            const roundBountyDefenders = getSummaryBounty(
-              round.hitsToAttackers,
-              cardDefsById
-            );
-            const stageLabel =
-              phase === "rolling"
-                ? "Rolling"
-                : phase === "locked"
-                  ? "Locked"
-                  : "Hit assignment";
-            return (
-              <div
-                key={`round-${round.round}`}
-                className={`combat-round combat-round--${phase}`}
-              >
-                <div className="combat-round__header">
-                  <div>
-                    <strong>Round {round.round}</strong>
-                    <span className="combat-round__stage">{stageLabel}</span>
-                  </div>
-                  <span className="combat-round__meta">{round.hexKey}</span>
+          ) : (
+            <div
+              key={`round-${currentRound.round}`}
+              className={`combat-round combat-round--${roundPhase ?? "assigned"}`}
+            >
+              <div className="combat-round__header">
+                <div>
+                  <strong>Round {currentRound.round}</strong>
+                  <span className="combat-round__stage">{stageLabel}</span>
                 </div>
-                <div className="combat-round__sides">
-                  <div className="combat-round__side">
-                    <div className="combat-round__side-header">
-                      <span className="combat-round__side-role">Attackers</span>
-                      <span className="combat-round__side-name">
-                        <FactionSymbol
-                          factionId={playerFactionsById?.get(
-                            round.attackers.playerId
-                          )}
-                          className="faction-symbol--mini"
-                        />
-                        {formatPlayer(round.attackers.playerId, playersById)}
-                      </span>
-                    </div>
-                    <div className="combat-dice">
-                      {renderDice(round.attackers.dice, phase)}
-                    </div>
-                    <div className="combat-round__stats">
-                      <span>Dice {round.attackers.dice.length}</span>
-                      {showHits ? (
-                        <span>Hits {round.attackers.hits}</span>
-                      ) : (
-                        <span>Rolling...</span>
-                      )}
-                    </div>
+                <span className="combat-round__meta">{currentRound.hexKey}</span>
+              </div>
+              <div className="combat-round__sides">
+                <div className="combat-round__side">
+                  <div className="combat-round__side-header">
+                    <span className="combat-round__side-role">Attackers</span>
+                    <span className="combat-round__side-name">
+                      <FactionSymbol
+                        factionId={playerFactionsById?.get(
+                          currentRound.attackers.playerId
+                        )}
+                        className="faction-symbol--mini"
+                      />
+                      {formatPlayer(currentRound.attackers.playerId, playersById)}
+                    </span>
                   </div>
-                  <div className="combat-round__side">
-                    <div className="combat-round__side-header">
-                      <span className="combat-round__side-role">Defenders</span>
-                      <span className="combat-round__side-name">
-                        <FactionSymbol
-                          factionId={playerFactionsById?.get(
-                            round.defenders.playerId
-                          )}
-                          className="faction-symbol--mini"
-                        />
-                        {formatPlayer(round.defenders.playerId, playersById)}
+                  {attackersHaveUnits
+                    ? renderUnitBreakdown(
+                        currentRound.attackers.units,
+                        roundPhase ?? "assigned"
+                      )
+                    : renderDiceRack(currentRound.attackers.dice, roundPhase ?? "assigned")}
+                  <div className="combat-round__stats">
+                    <span className="combat-round__stat">
+                      Dice {currentRound.attackers.dice.length}
+                    </span>
+                    {showHits ? (
+                      <span className="combat-round__stat combat-round__stat--hits">
+                        Hits {currentRound.attackers.hits}
                       </span>
-                    </div>
-                    <div className="combat-dice">
-                      {renderDice(round.defenders.dice, phase)}
-                    </div>
-                    <div className="combat-round__stats">
-                      <span>Dice {round.defenders.dice.length}</span>
-                      {showHits ? (
-                        <span>Hits {round.defenders.hits}</span>
-                      ) : (
-                        <span>Rolling...</span>
-                      )}
-                    </div>
+                    ) : (
+                      <span className="combat-round__stat">Rolling...</span>
+                    )}
                   </div>
                 </div>
-                <div className="combat-round__assignments">
-                  <div className="combat-round__assign">
-                    <span className="combat-round__label">Hits to defenders</span>
-                    {renderHitSummary(round.hitsToDefenders, showAssignments)}
-                    {showAssignments && roundBountyAttackers > 0 ? (
-                      <span className="combat-round__bounty">
-                        Bounty +{roundBountyAttackers}g
-                      </span>
-                    ) : null}
+                <div className="combat-round__side">
+                  <div className="combat-round__side-header">
+                    <span className="combat-round__side-role">Defenders</span>
+                    <span className="combat-round__side-name">
+                      <FactionSymbol
+                        factionId={playerFactionsById?.get(
+                          currentRound.defenders.playerId
+                        )}
+                        className="faction-symbol--mini"
+                      />
+                      {formatPlayer(currentRound.defenders.playerId, playersById)}
+                    </span>
                   </div>
-                  <div className="combat-round__assign">
-                    <span className="combat-round__label">Hits to attackers</span>
-                    {renderHitSummary(round.hitsToAttackers, showAssignments)}
-                    {showAssignments && roundBountyDefenders > 0 ? (
-                      <span className="combat-round__bounty">
-                        Bounty +{roundBountyDefenders}g
+                  {defendersHaveUnits
+                    ? renderUnitBreakdown(
+                        currentRound.defenders.units,
+                        roundPhase ?? "assigned"
+                      )
+                    : renderDiceRack(currentRound.defenders.dice, roundPhase ?? "assigned")}
+                  <div className="combat-round__stats">
+                    <span className="combat-round__stat">
+                      Dice {currentRound.defenders.dice.length}
+                    </span>
+                    {showHits ? (
+                      <span className="combat-round__stat combat-round__stat--hits">
+                        Hits {currentRound.defenders.hits}
                       </span>
-                    ) : null}
+                    ) : (
+                      <span className="combat-round__stat">Rolling...</span>
+                    )}
                   </div>
                 </div>
               </div>
-            );
-          })}
+              <div className="combat-round__assignments">
+                <div className="combat-round__assign">
+                  <span className="combat-round__label">Hits to defenders</span>
+                  {renderHitSummary(currentRound.hitsToDefenders, showAssignments)}
+                  {showAssignments && roundBountyAttackers > 0 ? (
+                    <span className="combat-round__bounty">
+                      Bounty +{roundBountyAttackers}g
+                    </span>
+                  ) : null}
+                </div>
+                <div className="combat-round__assign">
+                  <span className="combat-round__label">Hits to attackers</span>
+                  {renderHitSummary(currentRound.hitsToAttackers, showAssignments)}
+                  {showAssignments && roundBountyDefenders > 0 ? (
+                    <span className="combat-round__bounty">
+                      Bounty +{roundBountyDefenders}g
+                    </span>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {isResolved ? (

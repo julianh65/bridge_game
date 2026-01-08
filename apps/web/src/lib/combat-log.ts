@@ -5,6 +5,17 @@ type DiceRoll = {
   isHit: boolean;
 };
 
+export type CombatUnitRoll = {
+  unitId: string;
+  kind: "force" | "champion";
+  cardDefId?: string;
+  hp?: number;
+  maxHp?: number;
+  attackDice: number;
+  hitFaces: number;
+  dice: DiceRoll[];
+};
+
 type HitChampionSummary = {
   unitId: string;
   cardDefId: string;
@@ -22,6 +33,7 @@ export type CombatSideRoll = {
   playerId: string;
   dice: DiceRoll[];
   hits: number;
+  units?: CombatUnitRoll[];
 };
 
 export type CombatRoundData = {
@@ -75,6 +87,13 @@ const readBoolean = (value: unknown): boolean | null => {
   return typeof value === "boolean" ? value : null;
 };
 
+const readUnitKind = (value: unknown): CombatUnitRoll["kind"] | null => {
+  if (value === "force" || value === "champion") {
+    return value;
+  }
+  return null;
+};
+
 const readRecord = (value: unknown): Record<string, unknown> | null => {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     return null;
@@ -104,6 +123,48 @@ const parseDiceRolls = (value: unknown): DiceRoll[] => {
   return rolls;
 };
 
+const parseUnitRolls = (value: unknown): CombatUnitRoll[] => {
+  const entries = readArray(value);
+  if (!entries) {
+    return [];
+  }
+  const units: CombatUnitRoll[] = [];
+  for (const entry of entries) {
+    const record = readRecord(entry);
+    const unitId = readString(record?.unitId);
+    const kind = readUnitKind(record?.kind);
+    if (!unitId || !kind) {
+      continue;
+    }
+    const attackDice = readNumber(record?.attackDice) ?? 0;
+    const hitFaces = readNumber(record?.hitFaces) ?? 0;
+    const dice = parseDiceRolls(record?.dice);
+    const unit: CombatUnitRoll = {
+      unitId,
+      kind,
+      attackDice,
+      hitFaces,
+      dice
+    };
+    if (kind === "champion") {
+      const cardDefId = readString(record?.cardDefId);
+      const hp = readNumber(record?.hp);
+      const maxHp = readNumber(record?.maxHp);
+      if (cardDefId) {
+        unit.cardDefId = cardDefId;
+      }
+      if (hp !== null) {
+        unit.hp = hp;
+      }
+      if (maxHp !== null) {
+        unit.maxHp = maxHp;
+      }
+    }
+    units.push(unit);
+  }
+  return units;
+};
+
 const parseSideSummary = (value: unknown): CombatSideSummary | null => {
   const record = readRecord(value);
   const playerId = readString(record?.playerId);
@@ -129,10 +190,12 @@ const parseSideRoll = (value: unknown): CombatSideRoll | null => {
   }
   const hits = readNumber(record?.hits) ?? 0;
   const dice = parseDiceRolls(record?.dice);
+  const units = parseUnitRolls(record?.units);
   return {
     playerId,
     hits,
-    dice
+    dice,
+    units: units.length > 0 ? units : undefined
   };
 };
 
