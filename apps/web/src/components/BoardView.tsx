@@ -157,6 +157,33 @@ const UNIT_MOVE_PULSE_MS = 720;
 const EFFECT_BADGE_RADIUS = HEX_DRAW_SIZE * 0.12;
 const EFFECT_BADGE_OFFSET = HEX_DRAW_SIZE * 0.3;
 const HOME_CAPITAL_RING_SIZE = HEX_DRAW_SIZE * 1.06;
+const TILE_TEXTURES = [
+  {
+    id: "normal",
+    src: "/tile-textures/standard_tile.png",
+    base: "var(--normal)"
+  },
+  {
+    id: "capital",
+    src: "/tile-textures/capital.png",
+    base: "var(--capital)"
+  },
+  {
+    id: "forge",
+    src: "/tile-textures/forge.png",
+    base: "var(--forge)"
+  },
+  {
+    id: "mine",
+    src: "/tile-textures/mine.png",
+    base: "var(--mine)"
+  },
+  {
+    id: "center",
+    src: "/tile-textures/center.png",
+    base: "var(--center)"
+  }
+] as const;
 
 const shortenSegment = (
   from: { x: number; y: number },
@@ -1210,6 +1237,40 @@ export const BoardView = ({
       onPointerCancel={handlePointerCancel}
       onPointerLeave={handlePointerLeave}
     >
+      <defs>
+        <filter id="tile-texture-filter" colorInterpolationFilters="sRGB">
+          <feColorMatrix type="saturate" values="0.7" />
+          <feComponentTransfer>
+            <feFuncR type="linear" slope="0.85" />
+            <feFuncG type="linear" slope="0.85" />
+            <feFuncB type="linear" slope="0.85" />
+          </feComponentTransfer>
+        </filter>
+        <radialGradient id="hex-vignette" cx="50%" cy="45%" r="65%">
+          <stop offset="0%" stopColor="#000" stopOpacity="0" />
+          <stop offset="70%" stopColor="#000" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#000" stopOpacity="0.45" />
+        </radialGradient>
+        {TILE_TEXTURES.map((texture) => (
+          <pattern
+            key={texture.id}
+            id={`tile-texture-${texture.id}`}
+            width="1"
+            height="1"
+            patternUnits="objectBoundingBox"
+            patternContentUnits="objectBoundingBox"
+          >
+            <rect width="1" height="1" fill={texture.base} />
+            <image
+              href={texture.src}
+              width="1"
+              height="1"
+              preserveAspectRatio="xMidYMid slice"
+              filter="url(#tile-texture-filter)"
+            />
+          </pattern>
+        ))}
+      </defs>
       {hexes.map((hex) => {
         const tag = showTags ? tileTag(hex.tile) : "";
         const tileLabelText = tileLabel(hex.tile);
@@ -1230,6 +1291,10 @@ export const BoardView = ({
         const isHomeCapital = homeCapitalHexKey === hex.key;
         const isInactive =
           clickable && hasValidTargets && !isValidTarget && !isSelected && !isHighlighted;
+        const hexPointsString = hexPoints(hex.x, hex.y, HEX_DRAW_SIZE);
+        const vignetteClassName = isInactive
+          ? "hex__vignette hex__vignette--inactive"
+          : "hex__vignette";
         const occupantCount = board
           ? Object.values(board.hexes[hex.key]?.occupants ?? {}).filter(
               (unitIds) => unitIds.length > 0
@@ -1281,7 +1346,7 @@ export const BoardView = ({
             ) : null}
             <polygon
               className={polygonClasses}
-              points={hexPoints(hex.x, hex.y, HEX_DRAW_SIZE)}
+              points={hexPointsString}
               onClick={() => {
                 if (didDragRef.current) {
                   return;
@@ -1289,6 +1354,7 @@ export const BoardView = ({
                 onHexClick?.(hex.key);
               }}
             />
+            <polygon className={vignetteClassName} points={hexPointsString} />
             {tag ? (
               <text x={hex.x} y={hex.y - 6} className="hex__tag">
                 {tag}
@@ -1310,7 +1376,7 @@ export const BoardView = ({
             ) : null}
             {showMineValues && hex.tile === "mine" && hex.mineValue ? (
               <text x={hex.x} y={valueY} className="hex__value">
-                {hex.mineValue}
+                +{hex.mineValue}💰
               </text>
             ) : null}
           </g>

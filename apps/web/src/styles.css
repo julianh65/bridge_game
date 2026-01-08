@@ -67,6 +67,10 @@
   --card-cost-gold-bg: linear-gradient(135deg, #fef3c7 0%, #f5c542 100%);
   --card-cost-gold-border: rgba(217, 119, 6, 0.45);
   --card-cost-gold-text: #92400e;
+  --card-width: clamp(220px, 24vw, 270px);
+  --card-height: calc(var(--card-width) * 1.5);
+  --card-art-height: calc(var(--card-width) * 0.6);
+  --hand-card-overlap: calc(var(--card-width) * -0.18);
   --board-glow-1: rgba(255, 248, 235, 0.9);
   --board-glow-2: rgba(214, 193, 162, 0.45);
   --board-base: linear-gradient(140deg, #efe0c9, #e1cdb2);
@@ -948,7 +952,7 @@ body.is-game .setup-card-pick__player-row--active {
 
 .setup-deck-preview__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--card-width), 1fr));
   gap: 12px;
 }
 
@@ -1123,14 +1127,14 @@ body.is-game .setup-bridges__suggestion:hover:not(:disabled) {
   border: none;
   background: transparent;
   cursor: pointer;
-  width: clamp(160px, 18vw, 220px);
-  flex: 0 0 auto;
+  width: var(--card-width);
+  flex: 0 0 var(--card-width);
 }
 
 .setup-card-pick__offer .game-card {
   width: 100%;
-  min-height: 320px;
-  aspect-ratio: 2 / 3.2;
+  min-height: var(--card-height);
+  height: var(--card-height);
 }
 
 .setup-card-pick__offer.is-selected .game-card {
@@ -1704,7 +1708,7 @@ body.is-game .card-editor__filters {
 }
 
 .card-editor__preview {
-  max-width: 280px;
+  max-width: var(--card-width);
 }
 
 .card-editor__fields {
@@ -2248,7 +2252,7 @@ body.is-game .filter-pill.is-active {
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 280px));
+  grid-template-columns: repeat(auto-fill, minmax(var(--card-width), 1fr));
   gap: 12px;
   justify-content: start;
   align-items: start;
@@ -2277,6 +2281,12 @@ body.is-game .filter-pill.is-active {
   border-radius: 18px;
   border: 1px solid var(--card-border);
   background: var(--card-bg);
+  width: 100%;
+  max-width: var(--card-width);
+  height: var(--card-height);
+  min-height: var(--card-height);
+  max-height: var(--card-height);
+  --card-rules-lines: 5;
   padding: 14px;
   display: flex;
   flex-direction: column;
@@ -2292,15 +2302,11 @@ body.is-game .filter-pill.is-active {
 
 .game-card--grid {
   width: 100%;
-  max-width: 280px;
   justify-self: start;
-  min-width: 220px;
-  min-height: 360px;
 }
 
 .game-card--detail {
-  min-width: 220px;
-  min-height: 360px;
+  width: 100%;
 }
 
 .game-card[data-type="Champion"] {
@@ -2358,7 +2364,7 @@ body.is-game .game-card[data-type="Order"] {
 }
 
 .game-card__art {
-  height: 150px;
+  height: var(--card-art-height);
   border-radius: 12px;
   border: 1px solid var(--card-art-border);
   background: var(--card-art-bg);
@@ -2481,6 +2487,10 @@ body.is-game .game-card[data-type="Order"] {
   color: var(--ink);
   line-height: 1.4;
   text-align: center;
+  display: -webkit-box;
+  -webkit-line-clamp: var(--card-rules-lines);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .game-card__rules--hidden {
@@ -2872,7 +2882,7 @@ body.is-game .phase-cue--age .phase-cue__round {
 }
 
 .action-reveal__content--with-card {
-  grid-template-columns: minmax(0, 180px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, var(--card-width)) minmax(0, 1fr);
   align-items: start;
 }
 
@@ -2882,7 +2892,7 @@ body.is-game .phase-cue--age .phase-cue__round {
 }
 
 .action-reveal__preview .game-card {
-  width: 180px;
+  width: var(--card-width);
 }
 
 .action-reveal__card {
@@ -2983,7 +2993,7 @@ body.is-game .action-reveal__targets--empty {
   }
 
   .action-reveal__preview .game-card {
-    width: min(220px, 70vw);
+    width: min(var(--card-width), 70vw);
   }
 }
 
@@ -3999,7 +4009,9 @@ body.is-game .log-empty {
   background: transparent;
   padding: 0;
   cursor: pointer;
-  width: clamp(130px, 30vw, 190px);
+  width: var(--card-width);
+  height: var(--card-height);
+  flex: 0 0 var(--card-width);
   transform: translateY(var(--hand-lift, 0px)) rotate(var(--hand-rotate, 0deg));
   transform-origin: bottom center;
   transition: transform 0.2s ease;
@@ -4023,12 +4035,12 @@ body.is-game .log-empty {
 }
 
 .hand-card + .hand-card {
-  margin-left: -42px;
+  margin-left: var(--hand-card-overlap);
 }
 
 .hand-card__face {
   width: 100%;
-  aspect-ratio: 5 / 7;
+  height: 100%;
   border-radius: 14px;
   border: 1px solid var(--border);
   background: var(--card-bg-hand);
@@ -4040,97 +4052,9 @@ body.is-game .log-empty {
 }
 
 .game-card--hand {
-  border-radius: 16px;
   background: var(--card-bg-hand);
   box-shadow: var(--card-shadow-hand);
-  padding: 10px;
-  gap: 6px;
-  text-align: center;
-  aspect-ratio: 5 / 9;
-}
-
-.game-card--hand .game-card__art {
-  height: 110px;
-  font-size: 9px;
-  letter-spacing: 0.18em;
-}
-
-.game-card--hand .game-card__name {
-  font-size: 14px;
-}
-
-.game-card--hand .game-card__type {
-  font-size: 12px;
-  padding: 1px 8px;
-  letter-spacing: 0.06em;
-}
-
-.game-card--hand .game-card__rules {
-  font-size: 11px;
-  color: var(--muted);
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.game-card--hand .game-card__champion {
-  gap: 4px;
-}
-
-.game-card--hand .game-card__champion-stat {
-  padding: 4px 6px;
-  font-size: 9px;
-}
-
-.game-card--hand .game-card__champion-stat strong {
-  font-size: 10px;
-}
-
-.game-card--hand .game-card__champion-icon {
-  font-size: 11px;
-}
-
-.game-card--hand .game-card__champion-label {
-  font-size: 8px;
-}
-
-.game-card--hand .game-card__champion-scale {
-  font-size: 9px;
-}
-
-.game-card--hand .game-card__age {
-  font-size: 10px;
-  letter-spacing: 0.16em;
-}
-
-.game-card--hand .game-card__initiative {
-  width: 22px;
-  height: 22px;
-  font-size: 10px;
-}
-
-.game-card--hand .game-card__count {
-  padding: 1px 6px;
-  font-size: 9px;
-}
-
-.game-card--hand .game-card__cost {
-  padding: 4px 0 0;
-}
-
-.game-card--hand .game-card__cost-chip {
-  padding: 6px 12px;
-  font-size: 14px;
-  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.18);
-}
-
-.game-card--hand .game-card__cost-icon {
-  font-size: 15px;
-}
-
-.game-card--hand .game-card__cost-number {
-  font-size: 16px;
+  height: 100%;
 }
 
 .game-card--market .game-card__age {
@@ -4536,16 +4460,12 @@ body.is-game .market-order__step.is-winner {
 
 .market-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 270px));
+  grid-template-columns: repeat(auto-fit, minmax(var(--card-width), 1fr));
   gap: 20px;
   justify-content: start;
 }
 
 .game-card--market {
-  width: 100%;
-  max-width: 270px;
-  min-height: 370px;
-  aspect-ratio: 2 / 3.2;
   padding: 16px;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -4576,7 +4496,7 @@ body.is-game .market-order__step.is-winner {
 
 .market-card__art,
 .game-card--market .game-card__art {
-  height: 180px;
+  height: var(--card-art-height);
   border-radius: 12px;
   border: 1px solid var(--card-art-border);
   background: var(--card-art-bg);
@@ -5253,7 +5173,7 @@ body.is-game .collection-roll {
 
 .collection-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--card-width), 1fr));
   gap: 10px;
 }
 
@@ -5282,47 +5202,10 @@ body.is-game .collection-roll {
 
 .collection-card {
   width: 100%;
-  min-height: 260px;
+  min-height: var(--card-height);
+  height: var(--card-height);
   padding: 12px;
-}
-
-.collection-card .game-card__art {
-  height: 122px;
-}
-
-.collection-card .game-card__name {
-  font-size: 16px;
-}
-
-.collection-card .game-card__rules {
-  font-size: 12px;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.collection-card .game-card__initiative {
-  width: 24px;
-  height: 24px;
-  font-size: 11px;
-}
-
-.collection-card .game-card__cost {
-  padding: 2px 0 0;
-}
-
-.collection-card .game-card__cost-chip {
-  padding: 3px 8px;
-  font-size: 11px;
-}
-
-.collection-card .game-card__cost-icon {
-  font-size: 12px;
-}
-
-.collection-card .game-card__cost-number {
-  font-size: 12px;
+  --card-rules-lines: 4;
 }
 
 .collection-prompt__label {
@@ -6375,20 +6258,33 @@ body.is-game .btn-secondary:active:not(:disabled) {
   pointer-events: none;
 }
 
+.hex--normal {
+  fill: url(#tile-texture-normal);
+}
+
 .hex--capital {
-  fill: rgba(159, 18, 57, 0.9);
+  fill: url(#tile-texture-capital);
 }
 
 .hex--forge {
-  fill: rgba(217, 119, 6, 0.85);
+  fill: url(#tile-texture-forge);
 }
 
 .hex--mine {
-  fill: rgba(21, 128, 61, 0.85);
+  fill: url(#tile-texture-mine);
 }
 
 .hex--center {
-  fill: rgba(15, 118, 110, 0.9);
+  fill: url(#tile-texture-center);
+}
+
+.hex__vignette {
+  fill: url(#hex-vignette);
+  pointer-events: none;
+}
+
+.hex__vignette--inactive {
+  opacity: 0.45;
 }
 
 .hex__label,
@@ -6396,10 +6292,13 @@ body.is-game .btn-secondary:active:not(:disabled) {
 .hex__coords,
 .hex__slot,
 .hex__value {
+  font-family: var(--display-font);
   text-anchor: middle;
   pointer-events: none;
   paint-order: stroke;
   stroke: rgba(27, 23, 18, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .hex__label {
@@ -6421,6 +6320,7 @@ body.is-game .btn-secondary:active:not(:disabled) {
   font-weight: 600;
   fill: rgba(255, 248, 236, 0.85);
   stroke-width: 1.4;
+  letter-spacing: 0.02em;
 }
 
 .hex__slot {
@@ -6431,10 +6331,13 @@ body.is-game .btn-secondary:active:not(:disabled) {
 }
 
 .hex__value {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  fill: #fff7e6;
-  stroke-width: 1.6;
+  fill: #f9d47a;
+  stroke: rgba(40, 24, 8, 0.7);
+  stroke-width: 2;
+  letter-spacing: 0.02em;
+  text-transform: none;
 }
 
 .bridge {
@@ -7131,7 +7034,7 @@ body.is-game .hand-picker__meta {
 .hand-picker__grid {
   display: grid;
   gap: 14px;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--card-width), 1fr));
   align-items: stretch;
 }
 
@@ -7147,7 +7050,6 @@ body.is-game .hand-picker__meta {
 
 .hand-picker__card .game-card {
   width: 100%;
-  height: 100%;
 }
 
 .hand-picker__card.is-selected .game-card {

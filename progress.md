@@ -17,6 +17,8 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- [ ] (owner: agent1) Standardize card sizing across UI to a single champion-sized baseline (hand/market/collection/setup). Files: `apps/web/src/styles.css`.
+- [agent4] Add discard/burn-from-hand card effects + hand picker support; add Age II Conscription Drive + Clean Cuts card defs. Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`. Status: in progress.
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -39,6 +41,7 @@
 - Moved combat hit totals above the attacker/defender panels and marked hit assignments directly on unit tokens (forces show red X, champions get hit badges). (Files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`.)
 - Limited combat hit markers to the assignment step and made champion badges show per-hit counts (xN). (File: `apps/web/src/components/CombatOverlay.tsx`.)
 - Refreshed board unit/champion chits with rim + glow styling for a darker fantasy feel; marked the plan checklist item complete. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.)
+- Added textured hex tiles with an SVG pattern filter (darken/desaturate) plus vignette overlay, and moved PNGs into public tile-texture assets. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `apps/web/public/tile-textures/*`.) (Overlap note: `apps/web/src/styles.css` is in agent1 scope.)
 - Added hover tooltips for basic action chips to explain bridge/march/reinforce costs; updated the plan checklist. (Files: `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Made the collection overlay toggleable like the market and added a collection context summary + hex labels/notes for why each prompt appears; updated the plan checklist. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Updated the center collection prompt copy to call out power deck picks; updated the plan checklist. (Files: `apps/web/src/components/CollectionPanel.tsx`, `implementation_plan.md`.)
@@ -60,6 +63,7 @@
 - Added Patch Up card-effect test for base vs capital bonus healing. (File: `packages/engine/src/card-effects.patch-up.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.patch-up.test.ts`.) (owner: agent2)
 - Added action reveal target lines for hex-pair targets (`hexKeys` arrays) so the overlay uses A1-style labels for multi-hex targets; marked the plan item complete. (File: `apps/web/src/components/GameScreen.tsx`.) (owner: agent2)
 - Enabled mine yield labels on the in-game board; marked the plan item complete. (File: `apps/web/src/components/GameScreen.tsx`.) (owner: agent2)
+- Updated board label typography and mine value markers (+gold icon) to better match the game styling. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.) (owner: agent2) (Overlap note: `apps/web/src/styles.css` is also in agent1 scope.)
 - Added per-faction starter deck mapping scaffold (defaults to the common deck), updated card registry coverage, and noted the remaining per-faction initiative work in the plan. (Files: `packages/engine/src/content/starter-decks.ts`, `packages/engine/src/content/cards/cards.test.ts`, `implementation_plan.md`.)
 - Added per-faction starter initiative variants for Quick Move/Zap/Scout Report and updated starter decks to use the faction-specific IDs; marked the plan item complete. (Files: `packages/engine/src/content/cards/starter.ts`, `packages/engine/src/content/starter-decks.ts`, `implementation_plan.md`.)
 - Added card art mappings for faction-specific starter variants (Quick Move/Zap/Scout Report) so art resolves for the new IDs. (File: `apps/web/src/data/card-art.json`.) (Overlap note: `apps/web/src/data/card-art.json` already had in-flight art mappings.)
