@@ -17,14 +17,10 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent1
-  scope: add unit test coverage for basic-action faction order resolution.
-  files: packages/engine/src/basic-action-order.test.ts, progress.md
+- owner: agent3
+  scope: add targeted Stall card-effect test (no-op validation).
+  files: packages/engine/src/card-effects.stall.test.ts, implementation_plan.md, progress.md
   status: in progress
-- owner: agent2
-  scope: tighten setup layout so players panel stays thin and main panels get more width.
-  files: apps/web/src/styles.css, progress.md
-  status: in progress (overlap: apps/web/src/styles.css with other agents)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -111,6 +107,7 @@
 - Removed rules text truncation on large card variants while keeping clamps on compact hand/market/collection cards; updated the plan checklist. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Enabled optional move selection for edge-target bridge cards (Bridge Crew) by preserving edge targets and allowing a follow-on stack/path pick; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Added faction-ordered basic action resolution (config-driven) and surfaced basic-action order on faction cards; updated config/spec docs and marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/config.ts`, `packages/engine/src/action-flow.ts`, `apps/web/src/lib/factions.ts`, `apps/web/src/components/PreGameLobby.tsx`, `docs/configuration.md`, `technical_spec.md`, `implementation_plan.md`.) (Overlap note: `packages/engine/src/config.ts` already had in-flight duration/tile-count edits.) (Test: `npm run -w @bridgefront/engine test -- action-flow.test.ts` failed: `capitals were not assigned` in `setupToActionPhase`.)
+- Added a focused basic-action order unit test to validate faction-priority resolution. (File: `packages/engine/src/basic-action-order.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- basic-action-order.test.ts`.)
 
 ## Milestone 8 progress
 - Added Age II market card defs (Set to Skirmish, Battalion Contract, Rally Where You Stand, Insight, Stall, Deep Shaft Rig, Strategic Triumph, Banner of Resolve) using existing effects; updated the plan checklist. (Files: `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.) (owner: agent4) (Overlap note: included a pre-staged `implementation_plan.md` edit about burn animation.)
