@@ -95,6 +95,26 @@ export const PreGameLobby = ({
       <div className="lobby__grid">
         <section className="panel">
           <h2>Seats</h2>
+          <div className="lobby__start">
+            <div className="lobby__start-info">
+              <div className="lobby__start-title">Start Game</div>
+              <p className="muted">
+                Host starts the match once {lobby.minPlayers}+ players are connected and factions
+                are chosen.
+              </p>
+              <p className="muted">{startStatus}</p>
+            </div>
+            {isHost ? (
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={onStartGame}
+                disabled={!canStart}
+              >
+                Start Game
+              </button>
+            ) : null}
+          </div>
           <ul className="seat-list">
             {lobby.players.map((player) => (
               <li key={player.id} className={`seat ${player.connected ? "is-ready" : ""}`}>
@@ -127,26 +147,6 @@ export const PreGameLobby = ({
               </li>
             ))}
           </ul>
-          <div className="lobby__start">
-            <div className="lobby__start-info">
-              <div className="lobby__start-title">Start Game</div>
-              <p className="muted">
-                Host starts the match once {lobby.minPlayers}+ players are connected and factions
-                are chosen.
-              </p>
-              <p className="muted">{startStatus}</p>
-            </div>
-            {isHost ? (
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={onStartGame}
-                disabled={!canStart}
-              >
-                Start Game
-              </button>
-            ) : null}
-          </div>
         </section>
 
         <section className="panel">

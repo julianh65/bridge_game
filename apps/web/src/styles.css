@@ -958,7 +958,7 @@ body.is-game .setup-bridges__suggestion:hover:not(:disabled) {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
 
 .seat {
@@ -966,8 +966,8 @@ body.is-game .setup-bridges__suggestion:hover:not(:disabled) {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 12px 14px;
-  border-radius: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
   border: 1px solid var(--border);
   background: #fffdf6;
 }
@@ -998,14 +998,14 @@ body.is-game .seat.is-ready {
 }
 
 .seat__meta {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted);
 }
 
 .seat__status {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
@@ -1057,21 +1057,21 @@ body.is-game .seat__toggle {
 
 .faction-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 10px;
   margin-top: 12px;
 }
 
 .faction-card {
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px dashed #d6c9b6;
+  padding: 16px;
+  border-radius: 14px;
+  border: 2px dashed #d6c9b6;
   background: #fff7ea;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 10px;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
 }
 
@@ -1098,6 +1098,7 @@ body.is-game .faction-card {
   align-items: center;
   gap: 8px;
   font-weight: 600;
+  font-size: 14px;
   color: #3b2a12;
 }
 
@@ -1106,7 +1107,7 @@ body.is-game .faction-card__label {
 }
 
 .faction-card__desc {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.35;
   color: inherit;
   opacity: 0.85;
@@ -1124,7 +1125,7 @@ body.is-game .faction-card__section {
 }
 
 .faction-card__section-title {
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   opacity: 0.7;
@@ -1140,7 +1141,7 @@ body.is-game .faction-card__section {
 
 .faction-card__passive-name {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #3b2a12;
 }
@@ -1151,7 +1152,7 @@ body.is-game .faction-card__passive-name {
 
 .faction-card__passive-desc {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.35;
   opacity: 0.85;
 }
@@ -1164,14 +1165,14 @@ body.is-game .faction-card__passive-name {
 }
 
 .faction-card__starter-label {
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   opacity: 0.7;
 }
 
 .faction-card__starter-value {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.35;
   opacity: 0.9;
   display: -webkit-box;
@@ -1321,6 +1322,302 @@ body.is-game .settings-row {
   gap: 10px;
   align-items: center;
   flex-wrap: wrap;
+}
+
+.card-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-editor__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.card-editor__summary {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.card-editor__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+  gap: 16px;
+}
+
+@media (max-width: 1200px) {
+  .card-editor__layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card-editor__filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px 16px;
+  background: #fff8ee;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+body.is-game .card-editor__filters {
+  background: linear-gradient(135deg, rgba(40, 30, 22, 0.92), rgba(28, 20, 14, 0.96));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1px rgba(255, 214, 170, 0.08);
+}
+
+.card-editor__filters h2 {
+  margin: 0;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  grid-column: 1 / -1;
+}
+
+.card-editor__list h2,
+.card-editor__editor h2 {
+  margin-top: 0;
+}
+
+.card-editor__card {
+  border: none;
+  padding: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.card-editor__card .game-card {
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.card-editor__card:hover .game-card,
+.card-editor__card:focus-visible .game-card {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(46, 36, 20, 0.2);
+}
+
+.card-editor__card.is-selected .game-card {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  box-shadow: 0 18px 36px rgba(217, 119, 6, 0.25);
+}
+
+.card-editor__card-badges {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+
+.card-editor__editor {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+.card-editor__editor-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.card-editor__editor-header h3 {
+  margin: 0 0 4px;
+}
+
+.card-editor__editor-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.card-editor__preview {
+  max-width: 280px;
+}
+
+.card-editor__fields {
+  display: grid;
+  gap: 12px;
+}
+
+.card-editor__field {
+  display: grid;
+  gap: 6px;
+}
+
+.card-editor__field label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.card-editor__field input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.card-editor__hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.card-editor__champion {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.card-editor__champion h4,
+.card-editor__tools h4,
+.card-editor__export h4 {
+  margin: 0;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.card-editor__list-input input {
+  width: 100%;
+}
+
+.card-editor__error {
+  font-size: 11px;
+  color: #b91c1c;
+}
+
+.card-editor__tools {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.card-editor__tool-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card-editor__collisions {
+  display: grid;
+  gap: 8px;
+}
+
+.card-editor__collision-group h5 {
+  margin: 0 0 4px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.card-editor__export {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.card-editor__export textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.card-editor__export pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 12px;
+  max-height: 240px;
+  overflow: auto;
+}
+
+.battle-debug {
+  display: grid;
+  gap: 20px;
+}
+
+.battle-debug__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.battle-debug__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.battle-debug__panel {
+  display: grid;
+  gap: 16px;
+}
+
+.battle-debug__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.battle-debug__column {
+  display: grid;
+  gap: 12px;
+}
+
+.battle-debug__column h2 {
+  margin-bottom: 2px;
+}
+
+.battle-debug__column label {
+  display: grid;
+  gap: 6px;
+}
+
+.battle-debug__slots {
+  display: grid;
+  gap: 10px;
+}
+
+.battle-debug__slots-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.battle-debug__slot {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .deck-flow {
@@ -3564,6 +3861,7 @@ body.is-game .market-pill {
   grid-template-columns: minmax(0, 1.7fr) minmax(240px, 320px);
   gap: 18px;
   align-items: start;
+  position: relative;
 }
 
 .market-panel__cards {
@@ -3876,6 +4174,30 @@ body.is-game .market-bid__pill {
   gap: 10px;
 }
 
+.market-rolloff-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 16px;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.market-rolloff-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  background: rgba(255, 245, 231, 0.75);
+  backdrop-filter: blur(2px);
+}
+
+body.is-game .market-rolloff-overlay::before {
+  background: rgba(16, 12, 9, 0.65);
+}
+
 .market-rolloff-panel {
   display: grid;
   gap: 10px;
@@ -3883,14 +4205,18 @@ body.is-game .market-bid__pill {
   border-radius: 16px;
   border: 1px solid rgba(111, 90, 70, 0.22);
   background: #fff4df;
-  grid-column: 1 / -1;
   justify-items: center;
   text-align: center;
+  position: relative;
+  z-index: 1;
+  width: min(460px, 100%);
+  box-shadow: 0 18px 36px rgba(64, 37, 18, 0.22);
 }
 
 body.is-game .market-rolloff-panel {
   border-color: #4a3627;
   background: #201610;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.4);
 }
 
 .market-rolloff--center {
