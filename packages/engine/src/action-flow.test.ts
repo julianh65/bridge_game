@@ -1699,7 +1699,7 @@ describe("action flow", () => {
     expect(toHex.occupants["p1"]?.length ?? 0).toBe(1);
   });
 
-  it("plays scout report to keep the top card and discard the rest", () => {
+  it("plays scout report to choose a card from the top and discard the rest", () => {
     let { state } = setupToActionPhase();
     const injected = addCardToHand(state, "p1", "starter.scout_report");
     state = injected.state;
@@ -1738,14 +1738,29 @@ describe("action flow", () => {
     const beforeDiscards = getCardsDiscardedThisRound(state, "p1");
     state = runUntilBlocked(state);
 
+    const block = state.blocks;
+    if (!block || block.type !== "action.scoutReport") {
+      throw new Error("missing scout report block");
+    }
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitScoutReportChoice",
+        payload: { cardInstanceIds: [created.instanceIds[1]] }
+      },
+      "p1"
+    );
+    state = runUntilBlocked(state);
+
     const p1After = state.players.find((player) => player.id === "p1");
     if (!p1After) {
       throw new Error("missing p1 state");
     }
 
-    expect(p1After.deck.hand).toEqual([created.instanceIds[0]]);
+    expect(p1After.deck.hand).toEqual([created.instanceIds[1]]);
     expect(p1After.deck.drawPile).toEqual([]);
-    const expectedDiscard = [injected.instanceId, ...created.instanceIds.slice(1)].sort();
+    const expectedDiscard = [injected.instanceId, created.instanceIds[0], created.instanceIds[2]].sort();
     expect([...p1After.deck.discardPile].sort()).toEqual(expectedDiscard);
     expect(getCardsDiscardedThisRound(state, "p1")).toBe(beforeDiscards + 2);
   });

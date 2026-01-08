@@ -181,6 +181,17 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
           isWaiting: state.blocks.waitingFor.includes(viewer.id)
         }
       : null;
+  const scoutReportPrivate =
+    viewer &&
+    state.blocks?.type === "action.scoutReport" &&
+    state.blocks.payload.playerId === viewer.id
+      ? {
+          offers: mapCardInstances(state, state.blocks.payload.offers),
+          keepCount: state.blocks.payload.keepCount,
+          selected: state.blocks.payload.chosen ?? null,
+          isWaiting: state.blocks.waitingFor.includes(viewer.id)
+        }
+      : null;
   const setupStatus = buildSetupStatusView(state);
   const combatPublic =
     state.blocks?.type === "combat.retreat" ? buildCombatRetreatView(state.blocks) : null;
@@ -234,7 +245,8 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
           vp: viewerVp,
           setup: setupPrivate,
           collection: collectionPrivate,
-          quietStudy: quietStudyPrivate
+          quietStudy: quietStudyPrivate,
+          scoutReport: scoutReportPrivate
         }
       : null
   };

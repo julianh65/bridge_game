@@ -169,6 +169,24 @@ const resolveCombatRetreatBlock = (state: GameState): GameState => {
   return nextState;
 };
 
+const resolveScoutReportBlock = (state: GameState): GameState => {
+  let nextState = state;
+  const block = nextState.blocks;
+  if (!block || block.type !== "action.scoutReport") {
+    return nextState;
+  }
+
+  const keepCount = Math.min(block.payload.keepCount, block.payload.offers.length);
+  const selected = keepCount > 0 ? block.payload.offers.slice(0, keepCount) : [];
+  nextState = applyCommand(
+    nextState,
+    { type: "SubmitScoutReportChoice", payload: { cardInstanceIds: selected } },
+    block.payload.playerId
+  );
+
+  return nextState;
+};
+
 const buildCollectionChoices = (
   state: GameState,
   playerId: PlayerID,
@@ -272,6 +290,8 @@ const resolveBlock = (state: GameState): GameState => {
       return resolveMarketBidBlock(state);
     case "actionStep.declarations":
       return resolveActionStepBlock(state);
+    case "action.scoutReport":
+      return resolveScoutReportBlock(state);
     case "combat.retreat":
       return resolveCombatRetreatBlock(state);
     case "collection.choices":
@@ -742,6 +762,32 @@ const resolveQuietStudyBlockRandom = (state: GameState, picker: DecisionPicker):
   return nextState;
 };
 
+const resolveScoutReportBlockRandom = (state: GameState, picker: DecisionPicker): GameState => {
+  let nextState = state;
+  const block = nextState.blocks;
+  if (!block || block.type !== "action.scoutReport") {
+    return nextState;
+  }
+  const maxKeep = Math.min(block.payload.keepCount, block.payload.offers.length);
+  const picks: string[] = [];
+  const remaining = [...block.payload.offers];
+  const pickCount = maxKeep > 0 ? picker.pickInt(1, maxKeep) : 0;
+  for (let i = 0; i < pickCount && remaining.length > 0; i += 1) {
+    const index = picker.pickInt(0, remaining.length - 1);
+    const [picked] = remaining.splice(index, 1);
+    if (picked) {
+      picks.push(picked);
+    }
+  }
+  nextState = applyCommandOrThrow(
+    nextState,
+    { type: "SubmitScoutReportChoice", payload: { cardInstanceIds: picks } },
+    block.payload.playerId,
+    "scout report"
+  );
+  return nextState;
+};
+
 const resolveCombatRetreatBlockRandom = (
   state: GameState,
   _picker: DecisionPicker
@@ -777,6 +823,8 @@ const resolveBlockRandom = (state: GameState, picker: DecisionPicker): GameState
       return resolveMarketBidBlockRandom(state, picker);
     case "actionStep.declarations":
       return resolveActionStepBlockRandom(state, picker);
+    case "action.scoutReport":
+      return resolveScoutReportBlockRandom(state, picker);
     case "combat.retreat":
       return resolveCombatRetreatBlockRandom(state, picker);
     case "round.quietStudy":

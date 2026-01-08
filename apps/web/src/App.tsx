@@ -273,6 +273,12 @@ export default function App() {
           onSubmitQuietStudy={(cardInstanceIds) =>
             room.sendCommand({ type: "SubmitQuietStudy", payload: { cardInstanceIds } })
           }
+          onSubmitScoutReportChoice={(cardInstanceIds) =>
+            room.sendCommand({
+              type: "SubmitScoutReportChoice",
+              payload: { cardInstanceIds }
+            })
+          }
           onSubmitCombatRetreat={(hexKey, edgeKey) =>
             room.sendCommand({ type: "SubmitCombatRetreat", payload: { hexKey, edgeKey } })
           }

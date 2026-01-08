@@ -518,8 +518,8 @@ Done
       - [ ] Conscription Drive.
       - [ ] Miner Army.
     - [ ] Age II Economy card defs (5).
-      - [x] War Taxes.
-      - [ ] Smuggling Ring.
+    - [x] War Taxes.
+    - [x] Smuggling Ring.
       - [x] Refined Ingots.
       - [x] Guild Favor.
       - [ ] TBD: missing Age II economy entry after rules audit.

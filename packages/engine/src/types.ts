@@ -381,6 +381,15 @@ export type BlockState = {
     declarations: Record<PlayerID, ActionDeclaration | null>;
   };
 } | {
+  type: "action.scoutReport";
+  waitingFor: PlayerID[];
+  payload: {
+    playerId: PlayerID;
+    offers: CardInstanceID[];
+    keepCount: number;
+    chosen: CardInstanceID[] | null;
+  };
+} | {
   type: "combat.retreat";
   waitingFor: PlayerID[];
   payload: {
@@ -483,6 +492,9 @@ export type Command = {
   type: "SubmitQuietStudy";
   payload: { cardInstanceIds: CardInstanceID[] };
 } | {
+  type: "SubmitScoutReportChoice";
+  payload: { cardInstanceIds: CardInstanceID[] };
+} | {
   type: "SubmitAction";
   payload: ActionDeclaration;
 } | {
@@ -528,6 +540,7 @@ export type PlayerPrivateView = {
   setup: SetupPrivateView | null;
   collection: CollectionPrivateView | null;
   quietStudy: QuietStudyPrivateView | null;
+  scoutReport: ScoutReportPrivateView | null;
 };
 
 export type ActionStepPublicView = {
@@ -594,6 +607,13 @@ export type QuietStudyPublicView = {
 
 export type QuietStudyPrivateView = {
   maxDiscard: number;
+  selected: CardInstanceID[] | null;
+  isWaiting: boolean;
+};
+
+export type ScoutReportPrivateView = {
+  offers: CardInstance[];
+  keepCount: number;
   selected: CardInstanceID[] | null;
   isWaiting: boolean;
 };

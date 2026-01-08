@@ -8,7 +8,15 @@ import {
   randInt
 } from "@bridgefront/shared";
 
-import type { CardPlayTargets, GameState, Modifier, PlayerID, TileType } from "./types";
+import type {
+  BlockState,
+  CardInstanceID,
+  CardPlayTargets,
+  GameState,
+  Modifier,
+  PlayerID,
+  TileType
+} from "./types";
 import {
   countPlayersOnHex,
   getCenterHexKey,
@@ -68,6 +76,7 @@ const SUPPORTED_EFFECTS = new Set([
   "drawCardsIfHandEmpty",
   "scoutReport",
   "prospecting",
+  "gainGoldIfEnemyCapital",
   "buildBridge",
   "moveStack",
   "moveStacks",
@@ -1495,6 +1504,18 @@ const playerOccupiesTile = (
   );
 };
 
+const playerOccupiesEnemyCapital = (state: GameState, playerId: PlayerID): boolean => {
+  return Object.values(state.board.hexes).some((hex) => {
+    if (hex.tile !== "capital") {
+      return false;
+    }
+    if (!hex.ownerPlayerId || hex.ownerPlayerId === playerId) {
+      return false;
+    }
+    return (hex.occupants[playerId]?.length ?? 0) > 0;
+  });
+};
+
 export const resolveCardEffects = (
   state: GameState,
   playerId: PlayerID,
@@ -1530,6 +1551,17 @@ export const resolveCardEffects = (
     switch (effect.kind) {
       case "gainGold": {
         const amount = typeof effect.amount === "number" ? effect.amount : 0;
+        nextState = addGold(nextState, playerId, amount);
+        break;
+      }
+      case "gainGoldIfEnemyCapital": {
+        const amount = typeof effect.amount === "number" ? effect.amount : 0;
+        if (amount <= 0) {
+          break;
+        }
+        if (!playerOccupiesEnemyCapital(nextState, playerId)) {
+          break;
+        }
         nextState = addGold(nextState, playerId, amount);
         break;
       }
@@ -1588,16 +1620,41 @@ export const resolveCardEffects = (
         }
         const taken = takeTopCards(nextState, playerId, lookCount);
         nextState = taken.state;
-        const keep = taken.cards.slice(0, keepCount);
-        const discard = taken.cards.slice(keepCount);
-        for (const cardId of keep) {
-          nextState = addCardToHandWithOverflow(nextState, playerId, cardId);
+        const maxKeep = Math.min(keepCount, taken.cards.length);
+        if (maxKeep <= 0) {
+          for (const cardId of taken.cards) {
+            nextState = addCardToDiscardPile(nextState, playerId, cardId, {
+              countAsDiscard: true
+            });
+          }
+          break;
         }
-        for (const cardId of discard) {
-          nextState = addCardToDiscardPile(nextState, playerId, cardId, {
-            countAsDiscard: true
-          });
+        if (maxKeep >= taken.cards.length || nextState.blocks) {
+          const keep = taken.cards.slice(0, maxKeep);
+          const discard = taken.cards.filter((cardId) => !keep.includes(cardId));
+          for (const cardId of keep) {
+            nextState = addCardToHandWithOverflow(nextState, playerId, cardId);
+          }
+          for (const cardId of discard) {
+            nextState = addCardToDiscardPile(nextState, playerId, cardId, {
+              countAsDiscard: true
+            });
+          }
+          break;
         }
+        nextState = {
+          ...nextState,
+          blocks: {
+            type: "action.scoutReport",
+            waitingFor: [playerId],
+            payload: {
+              playerId,
+              offers: taken.cards,
+              keepCount: maxKeep,
+              chosen: null
+            }
+          }
+        };
         break;
       }
       case "prospecting": {
@@ -3005,5 +3062,101 @@ export const resolveCardEffects = (
     }
   }
 
+  return nextState;
+};
+
+const isScoutReportChoiceValid = (
+  state: GameState,
+  block: Extract<BlockState, { type: "action.scoutReport" }>,
+  playerId: PlayerID,
+  cardInstanceIds: CardInstanceID[]
+): boolean => {
+  if (block.payload.playerId !== playerId) {
+    return false;
+  }
+  const maxKeep = Math.min(block.payload.keepCount, block.payload.offers.length);
+  if (cardInstanceIds.length > maxKeep) {
+    return false;
+  }
+  const unique = new Set(cardInstanceIds);
+  if (unique.size !== cardInstanceIds.length) {
+    return false;
+  }
+  const offerSet = new Set(block.payload.offers);
+  if (!cardInstanceIds.every((id) => offerSet.has(id))) {
+    return false;
+  }
+  const player = state.players.find((entry) => entry.id === playerId);
+  return Boolean(player);
+};
+
+const resolveScoutReportSelection = (
+  block: Extract<BlockState, { type: "action.scoutReport" }>
+): CardInstanceID[] => {
+  const offers = block.payload.offers;
+  const maxKeep = Math.min(block.payload.keepCount, offers.length);
+  if (maxKeep <= 0) {
+    return [];
+  }
+  const rawChosen = block.payload.chosen ?? [];
+  const offerSet = new Set(offers);
+  const filtered = rawChosen.filter((id) => offerSet.has(id));
+  const unique = Array.from(new Set(filtered)).slice(0, maxKeep);
+  if (unique.length > 0) {
+    return unique;
+  }
+  return offers.slice(0, maxKeep);
+};
+
+export const applyScoutReportChoice = (
+  state: GameState,
+  cardInstanceIds: CardInstanceID[],
+  playerId: PlayerID
+): GameState => {
+  const block = state.blocks;
+  if (!block || block.type !== "action.scoutReport") {
+    return state;
+  }
+  if (!block.waitingFor.includes(playerId)) {
+    return state;
+  }
+  if (block.payload.chosen) {
+    return state;
+  }
+  if (!isScoutReportChoiceValid(state, block, playerId, cardInstanceIds)) {
+    return state;
+  }
+
+  return {
+    ...state,
+    blocks: {
+      ...block,
+      waitingFor: block.waitingFor.filter((id) => id !== playerId),
+      payload: {
+        ...block.payload,
+        chosen: cardInstanceIds
+      }
+    }
+  };
+};
+
+export const resolveScoutReportBlock = (
+  state: GameState,
+  block: Extract<BlockState, { type: "action.scoutReport" }>
+): GameState => {
+  const selected = resolveScoutReportSelection(block);
+  const selectedSet = new Set(selected);
+  let nextState = state;
+  for (const cardId of selected) {
+    nextState = addCardToHandWithOverflow(nextState, block.payload.playerId, cardId);
+  }
+  for (const cardId of block.payload.offers) {
+    if (selectedSet.has(cardId)) {
+      continue;
+    }
+    nextState = addCardToDiscardPile(nextState, block.payload.playerId, cardId, {
+      countAsDiscard: true
+    });
+  }
   return nextState;
 };

@@ -37,6 +37,7 @@ import {
   createActionStepBlock,
   resolveNextActionEntry
 } from "./action-flow";
+import { applyScoutReportChoice, resolveScoutReportBlock } from "./card-effects";
 import { applyCombatRetreatChoice, resolveCombatRetreatBlock, resolveSieges } from "./combat";
 import { emit } from "./events";
 import {
@@ -185,6 +186,10 @@ export const applyCommand = (
     return applyQuietStudyChoice(state, _command.payload.cardInstanceIds, _playerId);
   }
 
+  if (_command.type === "SubmitScoutReportChoice") {
+    return applyScoutReportChoice(state, _command.payload.cardInstanceIds, _playerId);
+  }
+
   if (_command.type === "SubmitAction") {
     return applyActionDeclaration(state, _command.payload, _playerId);
   }
@@ -217,6 +222,18 @@ export const runUntilBlocked = (state: GameState): GameState => {
         return nextState;
       }
       nextState = resolveCombatRetreatBlock(nextState, nextState.blocks);
+      nextState = {
+        ...nextState,
+        blocks: undefined
+      };
+      continue;
+    }
+
+    if (nextState.blocks?.type === "action.scoutReport") {
+      if (nextState.blocks.waitingFor.length > 0) {
+        return nextState;
+      }
+      nextState = resolveScoutReportBlock(nextState, nextState.blocks);
       nextState = {
         ...nextState,
         blocks: undefined
