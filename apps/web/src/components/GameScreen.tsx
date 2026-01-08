@@ -696,6 +696,15 @@ export const GameScreen = ({
     () => new Map(view.public.players.map((player) => [player.id, player.name])),
     [view.public.players]
   );
+  const capitalOwnerByHex = useMemo(() => {
+    const mapping: Record<string, string> = {};
+    for (const player of view.public.players) {
+      if (player.capitalHex) {
+        mapping[player.capitalHex] = player.name ?? player.id;
+      }
+    }
+    return mapping;
+  }, [view.public.players]);
   const activeEffects = useMemo(
     () => buildActiveEffects(view.public.modifiers, playerNames),
     [playerNames, view.public.modifiers]
@@ -3511,6 +3520,7 @@ export const GameScreen = ({
                 modifiers={view.public.modifiers}
                 playerIndexById={playerColorIndexById}
                 playerFactionById={playerFactionById}
+                capitalOwnerByHex={capitalOwnerByHex}
                 homeCapitalHexKey={localCapitalHexKey}
                 showCoords={false}
                 showMineValues
