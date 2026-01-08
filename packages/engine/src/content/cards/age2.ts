@@ -432,6 +432,20 @@ export const DEEP_SHAFT_RIG: CardDef = {
   ]
 };
 
+export const WAR_PROFITEERS: CardDef = {
+  id: "age2.war_profiteers",
+  name: "Dice: War Profiteers",
+  rulesText: "Roll 1 die. 1-4: Gain 1 gold. 5-6: Gain 6 gold.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 45,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "rollGold", sides: 6, highMin: 5, lowGain: 1, highGain: 6 }]
+};
+
 export const STRATEGIC_TRIUMPH: CardDef = {
   id: "age2.strategic_triumph",
   name: "Strategic Triumph",
@@ -705,6 +719,7 @@ export const AGE2_CARDS: CardDef[] = [
   BRIDGE_NETWORK,
   WORMHOLE_LINK,
   DEEP_SHAFT_RIG,
+  WAR_PROFITEERS,
   STRATEGIC_TRIUMPH,
   CENTER_DISPATCH,
   BANNER_OF_RESOLVE,

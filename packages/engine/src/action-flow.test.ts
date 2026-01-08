@@ -3,7 +3,8 @@ import {
   axialDistance,
   neighborHexKeys,
   parseEdgeKey,
-  parseHexKey
+  parseHexKey,
+  randInt
 } from "@bridgefront/shared";
 import { describe, expect, it } from "vitest";
 
@@ -2542,6 +2543,35 @@ describe("action flow", () => {
     }
     expect(p1After.deck.hand).toEqual(drawCards.instanceIds);
     expect(p1After.deck.discardPile).toContain(playCard.instanceId);
+  });
+
+  it("plays war profiteers to gain gold based on a die roll", () => {
+    let { state } = setupToActionPhase();
+    const injected = addCardToHand(state, "p1", "age2.war_profiteers");
+    state = injected.state;
+
+    const roll = randInt(state.rngState, 1, 6);
+    const expectedGain = roll.value >= 5 ? 6 : 1;
+
+    const p1Before = state.players.find((player) => player.id === "p1");
+    if (!p1Before) {
+      throw new Error("missing p1 state");
+    }
+
+    state = applyCommand(
+      state,
+      { type: "SubmitAction", payload: { kind: "card", cardInstanceId: injected.instanceId } },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state");
+    }
+    expect(p1After.resources.gold).toBe(p1Before.resources.gold + expectedGain);
   });
 
   it("plays zap to damage a champion, remove it, and award bounty", () => {

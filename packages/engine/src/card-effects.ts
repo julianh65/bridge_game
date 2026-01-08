@@ -73,6 +73,7 @@ const SUPPORTED_EFFECTS = new Set([
   "gainGold",
   "gainMana",
   "drawCards",
+  "rollGold",
   "drawCardsIfTile",
   "drawCardsIfHandEmpty",
   "scoutReport",
@@ -1574,6 +1575,26 @@ export const resolveCardEffects = (
       case "drawCards": {
         const count = typeof effect.count === "number" ? effect.count : 0;
         nextState = drawCards(nextState, playerId, count);
+        break;
+      }
+      case "rollGold": {
+        const sides = Number.isFinite(effect.sides) ? Math.max(1, Math.floor(effect.sides)) : 6;
+        const highMin =
+          Number.isFinite(effect.highMin) && Number(effect.highMin) >= 1
+            ? Math.floor(effect.highMin)
+            : 5;
+        const lowGain = typeof effect.lowGain === "number" ? effect.lowGain : 0;
+        const highGain = typeof effect.highGain === "number" ? effect.highGain : 0;
+        if (sides <= 0 || (lowGain <= 0 && highGain <= 0)) {
+          break;
+        }
+        const threshold = Math.min(highMin, sides);
+        const roll = randInt(nextState.rngState, 1, sides);
+        nextState = { ...nextState, rngState: roll.next };
+        const amount = roll.value >= threshold ? highGain : lowGain;
+        if (amount > 0) {
+          nextState = addGold(nextState, playerId, amount);
+        }
         break;
       }
       case "drawCardsIfTile": {

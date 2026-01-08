@@ -562,7 +562,7 @@ Done
     - [ ] Age II Synergy/Gambits card defs (4).
       - [ ] Foundry Heist.
       - [x] Deep Shaft Rig.
-      - [ ] Dice: War Profiteers.
+      - [x] Dice: War Profiteers.
       - [ ] Encirclement.
     - [ ] Age II Victory card defs (4).
       - [x] Strategic Triumph.

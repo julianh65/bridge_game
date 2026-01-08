@@ -17,10 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent4
-  scope: add Age II War Profiteers card with roll-for-gold effect and test coverage.
-  files: packages/engine/src/card-effects.ts, packages/engine/src/content/cards/age2.ts, packages/engine/src/action-flow.test.ts, implementation_plan.md, progress.md
-  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -123,6 +119,7 @@
 - Added Age III market card defs using existing effects (Grand Maneuver, Ghost Step, Deep Reserves, Forward Legion, Royal Mint, Tome of Orders, Last Lecture, Execution Order) and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (Overlap note: commit also picked up pre-staged changes in `apps/web/src/components/GameCard.tsx`.)
 - Added Age II Repair Orders with a heal-all-champions effect and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.)
 - Added Age II Center Dispatch victory card with conditional center draw (`drawCardsIfTile`) and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent4)
+- Added Age II Dice: War Profiteers with a roll-for-gold effect and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added Age II Gold Plated Armor with gold-for-damage prevention, combat integration, and tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/champions.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.) (Overlap note: touched `packages/engine/src/card-effects.combat-modifiers.test.ts` while agent3 active.)
 - Added partial-damage coverage for Gold Plated Armor (only affordable hits prevented) and marked the combat modifier checklist complete in `implementation_plan.md`. (Files: `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.) (owner: agent2) (Test: `npm run -w @bridgefront/engine test -- card-effects.combat-modifiers.test.ts`.)
 - Added Age II Slow combat modifier (target champion rolls 1 die next battle) with tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.)
