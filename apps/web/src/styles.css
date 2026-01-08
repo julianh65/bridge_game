@@ -1798,6 +1798,34 @@ body.is-game .game-card[data-type="Order"] {
   animation-duration: 3.2s;
 }
 
+body.is-game .phase-cue {
+  background: radial-gradient(
+    circle at center,
+    rgba(143, 83, 41, 0.55),
+    rgba(11, 8, 6, 0) 62%
+  );
+}
+
+body.is-game .phase-cue--age {
+  background: radial-gradient(
+    circle at center,
+    rgba(30, 81, 122, 0.55),
+    rgba(11, 8, 6, 0) 62%
+  );
+}
+
+body.is-game .phase-cue__panel {
+  border-color: rgba(245, 158, 11, 0.45);
+  background: rgba(28, 20, 14, 0.96);
+  box-shadow: 0 20px 48px rgba(6, 4, 3, 0.65);
+}
+
+body.is-game .phase-cue--age .phase-cue__panel {
+  border-color: rgba(125, 211, 252, 0.45);
+  background: rgba(16, 20, 28, 0.96);
+  box-shadow: 0 20px 46px rgba(6, 10, 18, 0.6);
+}
+
 .phase-cue__eyebrow {
   font-size: 10px;
   letter-spacing: 0.28em;
@@ -1829,6 +1857,31 @@ body.is-game .game-card[data-type="Order"] {
   color: #0f172a;
 }
 
+body.is-game .phase-cue__eyebrow {
+  color: rgba(253, 230, 200, 0.7);
+}
+
+body.is-game .phase-cue--age .phase-cue__eyebrow {
+  color: rgba(147, 197, 253, 0.9);
+}
+
+body.is-game .phase-cue__label {
+  color: #ffe7c7;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+}
+
+body.is-game .phase-cue--age .phase-cue__label {
+  color: #e0f2fe;
+}
+
+body.is-game .phase-cue__round {
+  color: rgba(253, 230, 200, 0.65);
+}
+
+body.is-game .phase-cue--age .phase-cue__round {
+  color: rgba(186, 230, 253, 0.8);
+}
+
 .action-reveal {
   --action-reveal-duration: 2800ms;
   position: fixed;
@@ -1858,6 +1911,55 @@ body.is-game .game-card[data-type="Order"] {
   animation: actionRevealPop var(--action-reveal-duration, 2800ms) ease-in-out forwards;
 }
 
+.action-reveal__card {
+  border-radius: 16px;
+  padding: 12px 14px;
+  border: 1px solid rgba(180, 83, 9, 0.2);
+  background: rgba(250, 244, 232, 0.9);
+  display: grid;
+  gap: 6px;
+}
+
+body.is-game .action-reveal {
+  background: radial-gradient(
+    circle at center,
+    rgba(217, 119, 6, 0.4),
+    rgba(10, 7, 5, 0) 60%
+  );
+}
+
+body.is-game .action-reveal__panel {
+  border-color: rgba(245, 158, 11, 0.45);
+  background: rgba(28, 20, 14, 0.96);
+  box-shadow: 0 20px 40px rgba(6, 4, 3, 0.65);
+}
+
+body.is-game .action-reveal__eyebrow {
+  color: rgba(253, 230, 200, 0.7);
+}
+
+body.is-game .action-reveal__player {
+  color: #ffe7c7;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+body.is-game .action-reveal__card {
+  border-color: rgba(245, 158, 11, 0.3);
+  background: rgba(46, 32, 23, 0.88);
+}
+
+body.is-game .action-reveal__meta {
+  color: rgba(248, 227, 199, 0.7);
+}
+
+body.is-game .action-reveal__targets {
+  color: rgba(255, 236, 214, 0.92);
+}
+
+body.is-game .action-reveal__targets--empty {
+  color: rgba(253, 230, 200, 0.6);
+}
+
 .action-reveal__eyebrow {
   font-size: 10px;
   letter-spacing: 0.28em;
@@ -1871,15 +1973,6 @@ body.is-game .game-card[data-type="Order"] {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink);
-}
-
-.action-reveal__card {
-  border-radius: 16px;
-  padding: 12px 14px;
-  border: 1px solid rgba(180, 83, 9, 0.2);
-  background: rgba(250, 244, 232, 0.9);
-  display: grid;
-  gap: 6px;
 }
 
 .action-reveal__card-header {
