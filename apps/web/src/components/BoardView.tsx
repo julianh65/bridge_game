@@ -1449,6 +1449,7 @@ export const BoardView = ({
 
       {unitStacks.map((stack) => {
         const colorIndex = normalizeColorIndex(playerIndex.get(stack.ownerPlayerId));
+        const unitColorClass = colorIndex !== undefined ? ` unit--p${colorIndex}` : "";
         const factionSymbol = getFactionSymbol(playerFactionById?.[stack.ownerPlayerId]);
         const factionIconUrl = getFactionIconUrl(playerFactionById?.[stack.ownerPlayerId]);
         const offsets =
@@ -1506,15 +1507,15 @@ export const BoardView = ({
             style={{ transition: "transform 320ms ease" }}
             onClick={() => handleStackClick(stack.hexKey)}
           >
-            <g className="unit-stack__body">
+            <g className={`unit-stack__body${unitColorClass}`}>
+              <circle className="unit__rim" cx={0} cy={0} r={11} />
               <circle
-                className={
-                  colorIndex !== undefined ? `unit unit--p${colorIndex}` : "unit"
-                }
+                className="unit unit__core"
                 cx={0}
                 cy={0}
                 r={10}
               />
+              <circle className="unit__glow" cx={-2} cy={-2} r={4} />
               {stack.forceCount > 0 ? (
                 <text x={0} y={3} className="unit__count">
                   {stack.forceCount}

@@ -310,7 +310,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Fix phantom/ghost battle overlay state leaks when moving between screens.
 - [x] Collection phase sequence highlights per-source payouts one by one (mines, forge, center).
 - [x] Add gold + VP to the hand panel header area (near Hand label).
-- [ ] Board "chit" styling (units/champions/forces) aligns with dark fantasy theme.
+- [x] Board "chit" styling (units/champions/forces) aligns with dark fantasy theme.
 - [x] Champion target modal should not shift page layout; convert to overlay.
 - [x] Fix card hover stacking so hovered cards always render on top.
 - [x] Force-split dialog appears near the clicked hex (not bottom of screen).

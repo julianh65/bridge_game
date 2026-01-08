@@ -6648,10 +6648,27 @@ body.is-game .btn-secondary:active:not(:disabled) {
 }
 
 .unit {
-  fill: var(--player-color-0);
-  stroke: rgba(25, 20, 14, 0.65);
-  stroke-width: 1.2;
-  filter: drop-shadow(0 1px 2px rgba(25, 18, 10, 0.35));
+  fill: var(--unit-color, var(--player-color-0));
+  stroke: rgba(28, 20, 12, 0.85);
+  stroke-width: 1.4;
+  filter: drop-shadow(0 2px 3px rgba(12, 8, 5, 0.55));
+}
+
+.unit__rim {
+  fill: rgba(18, 12, 8, 0.95);
+  stroke: var(--unit-color, var(--player-color-0));
+  stroke-width: 1.6;
+  stroke-opacity: 0.55;
+  filter: drop-shadow(0 2px 4px rgba(10, 6, 4, 0.55));
+}
+
+.unit__core {
+  filter: drop-shadow(0 1px 2px rgba(6, 4, 3, 0.5));
+}
+
+.unit__glow {
+  fill: rgba(255, 248, 220, 0.18);
+  opacity: 0.6;
 }
 
 .unit-stack__body {
@@ -6664,27 +6681,27 @@ body.is-game .btn-secondary:active:not(:disabled) {
 }
 
 .unit--p0 {
-  fill: var(--player-color-0);
+  --unit-color: var(--player-color-0);
 }
 
 .unit--p1 {
-  fill: var(--player-color-1);
+  --unit-color: var(--player-color-1);
 }
 
 .unit--p2 {
-  fill: var(--player-color-2);
+  --unit-color: var(--player-color-2);
 }
 
 .unit--p3 {
-  fill: var(--player-color-3);
+  --unit-color: var(--player-color-3);
 }
 
 .unit--p4 {
-  fill: var(--player-color-4);
+  --unit-color: var(--player-color-4);
 }
 
 .unit--p5 {
-  fill: var(--player-color-5);
+  --unit-color: var(--player-color-5);
 }
 
 .unit__count,
@@ -6692,13 +6709,13 @@ body.is-game .btn-secondary:active:not(:disabled) {
   text-anchor: middle;
   font-weight: 700;
   paint-order: stroke;
-  stroke: rgba(25, 20, 14, 0.4);
+  stroke: rgba(24, 16, 10, 0.65);
 }
 
 .unit__count {
   font-size: 9px;
-  fill: #fff7e6;
-  stroke-width: 1.4;
+  fill: #fdf2d1;
+  stroke-width: 1.6;
 }
 
 .unit__champion {
@@ -6708,10 +6725,10 @@ body.is-game .btn-secondary:active:not(:disabled) {
 }
 
 .unit__champion-crest-shape {
-  fill: #f7e2a6;
-  stroke: rgba(120, 86, 20, 0.9);
-  stroke-width: 0.9;
-  filter: drop-shadow(0 1px 2px rgba(40, 26, 12, 0.4));
+  fill: #cdb07a;
+  stroke: rgba(24, 16, 10, 0.85);
+  stroke-width: 1;
+  filter: drop-shadow(0 2px 3px rgba(14, 10, 7, 0.5));
 }
 
 .unit__champion-crest-text {
@@ -6730,9 +6747,10 @@ body.is-game .btn-secondary:active:not(:disabled) {
 }
 
 .unit-faction__ring {
-  fill: #1b140d;
-  stroke: rgba(255, 236, 198, 0.7);
-  stroke-width: 0.8;
+  fill: #140e09;
+  stroke: rgba(245, 217, 165, 0.7);
+  stroke-width: 0.9;
+  filter: drop-shadow(0 1px 2px rgba(10, 7, 5, 0.6));
 }
 
 .unit-faction__text {
@@ -6766,24 +6784,24 @@ body.is-game .btn-secondary:active:not(:disabled) {
 }
 
 .champion-token__ring {
-  fill: #f7e2a6;
-  stroke: rgba(120, 86, 20, 0.9);
-  stroke-width: 1;
-  filter: drop-shadow(0 1px 2px rgba(40, 26, 12, 0.45));
+  fill: #d1b079;
+  stroke: rgba(27, 18, 11, 0.9);
+  stroke-width: 1.2;
+  filter: drop-shadow(0 2px 4px rgba(12, 8, 5, 0.6));
 }
 
 .champion-token__ring--extra {
-  fill: #f1d4a6;
+  fill: #b48a5b;
 }
 
 .champion-token__text {
   font-size: 6.5px;
   font-weight: 700;
-  fill: #3b2a12;
+  fill: #2a1a0c;
   text-anchor: middle;
   dominant-baseline: middle;
   paint-order: stroke;
-  stroke: rgba(255, 255, 255, 0.6);
+  stroke: rgba(255, 246, 224, 0.7);
   stroke-width: 1;
   letter-spacing: 0.2px;
 }
@@ -6817,23 +6835,23 @@ body.is-game .btn-secondary:active:not(:disabled) {
 }
 
 .champion-token__hp-dot {
-  fill: #2f2014;
-  stroke: rgba(246, 214, 132, 0.9);
-  stroke-width: 0.7;
+  fill: #26180f;
+  stroke: rgba(239, 200, 114, 0.9);
+  stroke-width: 0.8;
 }
 
 .champion-token__hp-text {
   font-size: 5.5px;
   font-weight: 700;
-  fill: #f7e2a6;
+  fill: #f7e1b7;
   text-anchor: middle;
   dominant-baseline: middle;
 }
 
 .champion-token__uses-dot {
-  fill: #1e3a8a;
-  stroke: rgba(219, 234, 254, 0.9);
-  stroke-width: 0.7;
+  fill: #0f2438;
+  stroke: rgba(191, 221, 255, 0.85);
+  stroke-width: 0.8;
 }
 
 .champion-token__uses-text {
