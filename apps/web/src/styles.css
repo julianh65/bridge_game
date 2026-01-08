@@ -854,6 +854,23 @@ body.is-game .setup-card-pick__player-row--active {
   width: 100%;
 }
 
+.setup-flow__players .seat {
+  align-items: flex-start;
+}
+
+.setup-flow__players .seat__info {
+  min-width: 0;
+}
+
+.setup-flow__players .seat__name,
+.setup-flow__players .seat__meta {
+  overflow-wrap: anywhere;
+}
+
+.setup-flow__players .seat__status {
+  flex-shrink: 0;
+}
+
 .setup-card-pick__layout {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr);

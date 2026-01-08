@@ -22,6 +22,10 @@
   scope: animate action-phase move/bridge effects on the board in sync with the action reveal overlay
   files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/BoardView.tsx, apps/web/src/styles.css, implementation_plan.md
   status: in progress
+- owner: agent3
+  scope: add `scripts/card-tools.js` CLI for initiative collisions/decollide/compress with deck filters (dry-run)
+  files: scripts/card-tools.js, package.json, docs/cards.md, implementation_plan.md, progress.md
+  status: in progress
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -37,6 +41,7 @@
 - Added per-faction starter deck mapping scaffold (defaults to the common deck), updated card registry coverage, and noted the remaining per-faction initiative work in the plan. (Files: `packages/engine/src/content/starter-decks.ts`, `packages/engine/src/content/cards/cards.test.ts`, `implementation_plan.md`.)
 - Added per-faction starter initiative variants for Quick Move/Zap/Scout Report and updated starter decks to use the faction-specific IDs; marked the plan item complete. (Files: `packages/engine/src/content/cards/starter.ts`, `packages/engine/src/content/starter-decks.ts`, `implementation_plan.md`.)
 - Added a phase tracker with arrow-separated steps highlighting the active phase in the game HUD; updated the plan checklist. (Files: `apps/web/src/components/GameScreenHeader.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreen.tsx` + `apps/web/src/styles.css` are in agent1’s active scope.)
+- Fixed setup sidebar player rows to wrap long names and prevent overflow in the setup flow panel. (File: `apps/web/src/styles.css`.) (Overlap note: `apps/web/src/styles.css` is in agent1’s active scope.)
 - Added a setup flow screen focused on map steps (capital draft + starting bridges) and free starting card, replacing the setup lobby view; marked the map screen + secret bridge reveal plan items complete. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.) (Overlap note: `apps/web/src/App.tsx` already in-flight.)
 - Tweaked setup flow layout with floating host controls, a slimmer players panel, and a left-to-right free-card offer row with the waiting/status column on the right. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `apps/web/src/styles.css`.)
 - Added unselect/change support for starting bridges and free starting card picks (UI + engine) with setup-flow tests. (Files: `apps/web/src/components/SetupStartingBridges.tsx`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `apps/web/src/styles.css`, `packages/engine/src/types.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/setup-flow.test.ts`.)
