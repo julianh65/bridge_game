@@ -800,7 +800,7 @@ export const GameScreen = ({
   const isCollectionPhase = view.public.phase === "round.collection";
   const isInteractivePhase =
     isActionPhase || isStudyPhase || isMarketPhase || isCollectionPhase;
-  const showPhaseFocus = isCollectionPhase;
+  const showPhaseFocus = false;
   const marketOutroHoldMs = Math.max(
     1200,
     view.public.config.MARKET_ROLLOFF_DURATION_MS + 400
@@ -2356,9 +2356,10 @@ export const GameScreen = ({
     onSubmitQuietStudy(quietStudySelectedIds);
   };
 
-  const phaseFocusPanel = showPhaseFocus ? (
-    <div className="game-screen__focus">
-      {isCollectionPhase ? (
+  const collectionOverlay = isCollectionPhase ? (
+    <div className="collection-overlay" role="dialog" aria-modal="true">
+      <div className="collection-overlay__scrim" />
+      <div className="collection-overlay__panel">
         <CollectionPanel
           phase={view.public.phase}
           player={localPlayer ?? null}
@@ -2369,7 +2370,7 @@ export const GameScreen = ({
           collectionPrivate={view.private?.collection ?? null}
           onSubmitChoices={onSubmitCollectionChoices}
         />
-      ) : null}
+      </div>
     </div>
   ) : null;
 
@@ -2546,7 +2547,7 @@ export const GameScreen = ({
 
       {marketOverlay}
 
-      {phaseFocusPanel}
+      {collectionOverlay}
 
       {sidebarToggle}
       <div
