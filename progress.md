@@ -18,8 +18,8 @@
 
 ## Active tasks
 - owner: agent1
-  scope: fix phase progression after capital battles (ensure collection/market transitions).
-  files: packages/engine/src/engine.ts, packages/engine/src/combat.ts, packages/engine/src/action-flow.ts, packages/engine/src/types.ts, packages/engine/src/action-flow.test.ts, packages/engine/src/smoke.test.ts, packages/engine/src/combat.test.ts, progress.md, implementation_plan.md
+  scope: smooth phase transitions after capital battles by deferring auto-open of collection/market overlays while combat/action reveals are active.
+  files: apps/web/src/components/GameScreen.tsx, progress.md, implementation_plan.md
   status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
