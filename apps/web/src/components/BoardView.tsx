@@ -1275,7 +1275,10 @@ export const BoardView = ({
       </defs>
       {hexes.map((hex) => {
         const tag = showTags ? tileTag(hex.tile) : "";
-        const tileLabelText = tileLabel(hex.tile);
+        const capitalOwner = hex.tile === "capital" ? capitalOwnerByHex?.[hex.key] : null;
+        const tileLabelText = capitalOwner
+          ? `Capital: ${capitalOwner}`
+          : tileLabel(hex.tile);
         const labelText = labelByHex?.[hex.key];
         const labelClassName =
           labelVariant === "coords"
