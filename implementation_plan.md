@@ -666,6 +666,7 @@ Done
     - [x] Age II market: Rally Where You Stand (deploy to champion hex).
     - [x] Age II market: Smuggling Ring (enemy capital bonus gold).
     - [x] Age II market: Guild Favor (gold + draw).
+    - [x] Age II market: Insight (draw 2).
     - [x] Age II market: Refined Ingots (mine bonus gold).
     - [x] Age II market: War Taxes (gain gold).
   - [ ] Champion ability tests (on-deploy, on-death, on-battle-win, dice mods, VP aura).

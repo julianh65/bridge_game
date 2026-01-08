@@ -1,0 +1,47 @@
+import { describe, expect, it } from "vitest";
+
+import { resolveCardEffects } from "./card-effects";
+import { createCardInstance } from "./cards";
+import { INSIGHT } from "./content/cards/age2";
+import { DEFAULT_CONFIG } from "./config";
+import { createNewGame } from "./engine";
+
+describe("Insight", () => {
+  it("draws two cards", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 14, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const first = createCardInstance(base, "starter.quick_march");
+    const second = createCardInstance(first.state, "starter.quick_march");
+
+    const state = {
+      ...second.state,
+      phase: "round.action",
+      blocks: undefined,
+      players: second.state.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              deck: {
+                ...player.deck,
+                drawPile: [first.instanceId, second.instanceId],
+                discardPile: [],
+                hand: []
+              }
+            }
+          : player
+      )
+    };
+
+    const resolved = resolveCardEffects(state, "p1", INSIGHT);
+    const p1 = resolved.players.find((player) => player.id === "p1");
+    if (!p1) {
+      throw new Error("missing player");
+    }
+
+    expect(p1.deck.hand).toEqual([first.instanceId, second.instanceId]);
+    expect(p1.deck.drawPile).toHaveLength(0);
+  });
+});
