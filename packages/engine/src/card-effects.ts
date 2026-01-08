@@ -93,6 +93,7 @@ const SUPPORTED_EFFECTS = new Set([
   "frenzy",
   "shockDrill",
   "focusFire",
+  "mortarShot",
   "setToSkirmish",
   "evacuateChampion",
   "recallChampion"
@@ -292,6 +293,20 @@ const hasFriendlyChampionWithinRange = (
   return Object.values(state.board.units).some(
     (unit) =>
       unit.kind === "champion" &&
+      unit.ownerPlayerId === playerId &&
+      isWithinDistance(unit.hex, targetHex, maxDistance)
+  );
+};
+
+const hasFriendlyForceWithinRange = (
+  state: GameState,
+  playerId: PlayerID,
+  targetHex: string,
+  maxDistance: number
+): boolean => {
+  return Object.values(state.board.units).some(
+    (unit) =>
+      unit.kind === "force" &&
       unit.ownerPlayerId === playerId &&
       isWithinDistance(unit.hex, targetHex, maxDistance)
   );
@@ -1077,6 +1092,16 @@ export const isCardPlayable = (
     if (!target) {
       return false;
     }
+    const mortarEffect = card.effects?.find(
+      (effect) => effect.kind === "mortarShot"
+    ) as TargetRecord | undefined;
+    if (mortarEffect) {
+      const maxDistance =
+        typeof mortarEffect.maxDistance === "number" ? mortarEffect.maxDistance : 2;
+      if (!hasFriendlyForceWithinRange(state, playerId, target.hexKey, maxDistance)) {
+        return false;
+      }
+    }
     if (card.effects?.some((effect) => effect.kind === "deployForces")) {
       return !wouldExceedTwoPlayers(target.hex, playerId);
     }
@@ -1742,6 +1767,77 @@ export const resolveCardEffects = (
         }
         const amount = typeof effect.amount === "number" ? effect.amount : 0;
         nextState = dealChampionDamage(nextState, playerId, target.unitId, amount);
+        break;
+      }
+      case "mortarShot": {
+        const target = getHexTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null
+        );
+        if (!target) {
+          break;
+        }
+        const maxDistance =
+          typeof effect.maxDistance === "number" ? effect.maxDistance : 2;
+        if (!hasFriendlyForceWithinRange(nextState, playerId, target.hexKey, maxDistance)) {
+          break;
+        }
+
+        const neighbors = neighborHexKeys(target.hexKey).filter(
+          (hexKey) => Boolean(nextState.board.hexes[hexKey])
+        );
+        const roll = randInt(nextState.rngState, 0, 99);
+        nextState = { ...nextState, rngState: roll.next };
+
+        let strikeHexKey = target.hexKey;
+        if (neighbors.length > 0 && roll.value >= 50) {
+          const pick = randInt(nextState.rngState, 0, neighbors.length - 1);
+          nextState = { ...nextState, rngState: pick.next };
+          strikeHexKey = neighbors[pick.value] ?? neighbors[0];
+        }
+
+        const forceLoss = typeof effect.forceLoss === "number" ? effect.forceLoss : 4;
+        let remainingLoss = Math.max(0, Math.floor(forceLoss));
+        for (const player of nextState.players) {
+          if (remainingLoss <= 0) {
+            break;
+          }
+          const hex = nextState.board.hexes[strikeHexKey];
+          if (!hex) {
+            break;
+          }
+          const occupants = hex.occupants[player.id] ?? [];
+          const available = occupants.filter(
+            (unitId) => nextState.board.units[unitId]?.kind === "force"
+          ).length;
+          if (available <= 0) {
+            continue;
+          }
+          const removeCount = Math.min(remainingLoss, available);
+          nextState = removeForcesFromHex(
+            nextState,
+            player.id,
+            strikeHexKey,
+            occupants,
+            removeCount
+          );
+          remainingLoss -= removeCount;
+        }
+
+        const damage = typeof effect.damage === "number" ? effect.damage : 2;
+        if (damage > 0) {
+          for (const unit of Object.values(nextState.board.units)) {
+            if (unit.kind !== "champion") {
+              continue;
+            }
+            if (unit.hex !== strikeHexKey) {
+              continue;
+            }
+            nextState = dealChampionDamage(nextState, playerId, unit.id, damage);
+          }
+        }
         break;
       }
       case "patchUp": {

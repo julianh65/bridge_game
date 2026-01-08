@@ -441,7 +441,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
       - [x] Slow.
       - [x] Repair Orders.
       - [x] Gold Plated Armor.
-      - [ ] Mortar Shot.
+      - [x] Mortar Shot.
       - [x] Champion Recall.
     - [ ] Age II Bridges/Terrain card defs (4).
     - [ ] Age II Synergy/Gambits card defs (4).

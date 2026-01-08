@@ -98,6 +98,25 @@ export const GOLD_PLATED_ARMOR: CardDef = {
   effects: [{ kind: "goldPlatedArmor", costPerDamage: 2 }]
 };
 
+export const MORTAR_SHOT: CardDef = {
+  id: "age2.mortar_shot",
+  name: "Mortar Shot",
+  rulesText:
+    "Target a hex within distance 2 of your forces. 50% chance it hits that hex, otherwise it hits an adjacent hex. Destroy 4 forces and deal 2 damage to any champions in the hit hex.",
+  type: "Spell",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 2 },
+  initiative: 300,
+  burn: false,
+  targetSpec: {
+    kind: "hex",
+    owner: "any",
+    allowEmpty: true
+  },
+  effects: [{ kind: "mortarShot", maxDistance: 2, forceLoss: 4, damage: 2 }]
+};
+
 export const CHAMPION_RECALL: CardDef = {
   id: "age2.champion_recall",
   name: "Champion Recall",
@@ -318,6 +337,7 @@ export const AGE2_CARDS: CardDef[] = [
   FRENZY,
   REPAIR_ORDERS,
   GOLD_PLATED_ARMOR,
+  MORTAR_SHOT,
   CHAMPION_RECALL,
   JET_STRIKER,
   GUERILLA_NATIVE_MERCENARY,

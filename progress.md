@@ -17,6 +17,7 @@
 
 ## Active tasks
 - none
+- owner: agent2; scope: dark-theme remaining light surfaces for sidebar/intel/player list/empty states; files: `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in progress
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -41,6 +42,7 @@
 - Added Age II Gold Plated Armor with gold-for-damage prevention, combat integration, and tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/champions.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.) (Overlap note: touched `packages/engine/src/card-effects.combat-modifiers.test.ts` while agent3 active.)
 - Added Age II Slow combat modifier (target champion rolls 1 die next battle) with tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.)
 - Added Age II Champion Recall (return champion from board to hand via burn pile) with tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.champion-recall.test.ts`, `implementation_plan.md`.) (Overlap note: touched `packages/engine/src/card-effects.ts` + `packages/engine/src/content/cards/age2.ts` alongside other in-flight edits.)
+- Added Age II Mortar Shot (scatter AoE with force destruction + champion damage) with tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.mortar-shot.test.ts`, `implementation_plan.md`.) (Overlap note: touched `packages/engine/src/card-effects.ts` + `packages/engine/src/content/cards/age2.ts` alongside other in-flight edits.)
 - Added Age III Wormhole Gate card def (link-hexes) and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added Age III victory card defs (Conquest Record, Final Oath) using gain-gold/heal effects and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (owner: agent4)
 
