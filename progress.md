@@ -110,7 +110,7 @@
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
-- Added Mortar Shot target hint text explaining scatter/aoe in the hand target UI. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.)
+- Added Mortar Shot target hint text explaining scatter/aoe in the hand target UI. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.) (Overlap note: commit also picked up pre-staged Age II movement card work in `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, and `packages/engine/src/card-effects.breakthrough-line.test.ts`.)
 - Limited Mortar Shot card hex highlights to tiles within range of friendly forces. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Added collection draw roll reveal animations (mine/forge/center) with `NumberRoll` styling and plan subtask updates. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 - Thickened power/champion GameCard borders for clearer differentiation and marked the plan item complete. (Overlap note: `apps/web/src/styles.css` touched.)
