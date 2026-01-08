@@ -394,7 +394,6 @@ export const CombatOverlay = ({
     };
   }, [onClose, isResolved, sequence.rounds.length]);
   const showHits = roundPhase === "locked" || roundPhase === "assigned";
-  const showAssignments = roundPhase === "assigned";
   const stageLabel =
     roundPhase === "waiting"
       ? "Awaiting rolls"
@@ -404,12 +403,6 @@ export const CombatOverlay = ({
           ? "Locked"
           : "Hit assignment";
   const pendingHitsLabel = roundPhase === "waiting" ? "Awaiting roll" : "Rolling...";
-  const roundBountyAttackers = currentRound
-    ? getSummaryBounty(currentRound.hitsToDefenders, cardDefsById)
-    : 0;
-  const roundBountyDefenders = currentRound
-    ? getSummaryBounty(currentRound.hitsToAttackers, cardDefsById)
-    : 0;
   const attackersHaveUnits = Boolean(
     currentRound?.attackers.units && currentRound.attackers.units.length > 0
   );
@@ -484,111 +477,6 @@ export const CombatOverlay = ({
     rollLabel = "Close";
   }
 
-  const renderHitSummary = (
-    summary: HitAssignmentSummary,
-    isVisible: boolean
-  ) => {
-    if (!isVisible) {
-      return <p className="combat-hits__pending">Awaiting assignment...</p>;
-    }
-    if (summary.forces === 0 && summary.champions.length === 0) {
-      return <p className="combat-hits__empty">No hits.</p>;
-    }
-    return (
-      <ul className="combat-hits__list">
-        {summary.forces > 0 ? (
-          <li className="combat-hits__item">Forces: {summary.forces}</li>
-        ) : null}
-        {summary.champions.map((champion) => {
-          const def = cardDefsById.get(champion.cardDefId);
-          const name = def?.name ?? champion.cardDefId;
-          const bounty = def?.champion?.bounty ?? 0;
-          const isKill = champion.hits >= champion.hp;
-          const bountyLabel = isKill && bounty > 0 ? `Bounty ${bounty}g` : null;
-          return (
-            <li
-              key={champion.unitId}
-              className={`combat-hits__item${isKill ? " is-kill" : ""}`}
-            >
-              <span className="combat-hits__name">{name}</span>
-              <span className="combat-hits__detail">
-                Hits {champion.hits}
-              </span>
-              <span className="combat-hits__detail">
-                HP {champion.hp}/{champion.maxHp}
-              </span>
-              {isKill ? (
-                <span className="combat-hits__detail combat-hits__detail--bounty">
-                  {bountyLabel ?? "KO"}
-                </span>
-              ) : null}
-            </li>
-          );
-        })}
-      </ul>
-    );
-  };
-
-  const renderHitPips = (summary: HitAssignmentSummary, isVisible: boolean) => {
-    if (!isVisible) {
-      return null;
-    }
-    const forceHits = summary.forces;
-    const forcePips = Math.min(forceHits, 8);
-    const forceOverflow = forceHits - forcePips;
-    return (
-      <div className="combat-hit-pips">
-        <div className="combat-hit-pips__section">
-          <span className="combat-hit-pips__label">Forces</span>
-          <div className="combat-hit-pips__row">
-            {forceHits === 0 ? (
-              <span className="combat-hit-pips__empty">None</span>
-            ) : (
-              <>
-                {Array.from({ length: forcePips }).map((_, index) => (
-                  <span
-                    key={`force-${index}`}
-                    className="combat-hit-pip combat-hit-pip--force"
-                  >
-                    x
-                  </span>
-                ))}
-                {forceOverflow > 0 ? (
-                  <span className="combat-hit-pip combat-hit-pip--force combat-hit-pip--overflow">
-                    +{forceOverflow}
-                  </span>
-                ) : null}
-              </>
-            )}
-          </div>
-        </div>
-        <div className="combat-hit-pips__section">
-          <span className="combat-hit-pips__label">Champions</span>
-          <div className="combat-hit-pips__row">
-            {summary.champions.length === 0 ? (
-              <span className="combat-hit-pips__empty">None</span>
-            ) : (
-              summary.champions.map((champion) => {
-                const name =
-                  cardDefsById.get(champion.cardDefId)?.name ?? champion.cardDefId;
-                const glyph = getNameGlyph(name);
-                return (
-                  <span
-                    key={champion.unitId}
-                    className="combat-hit-pip combat-hit-pip--champion"
-                    title={`${name} hits ${champion.hits}`}
-                  >
-                    <span className="combat-hit-pip__glyph">{glyph}</span>
-                    <span className="combat-hit-pip__count">x{champion.hits}</span>
-                  </span>
-                );
-              })
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   const renderDiceFaces = (
     dice: { value: number; isHit: boolean }[],
@@ -629,9 +517,16 @@ export const CombatOverlay = ({
     );
   };
 
-  const renderUnitToken = (unit: CombatUnitRoll, phase: RoundPhase) => {
+  const renderUnitToken = (
+    unit: CombatUnitRoll,
+    phase: RoundPhase,
+    hitCount: number
+  ) => {
     const name = getUnitDisplayName(unit, cardDefsById);
     const glyph = getUnitGlyph(unit, cardDefsById);
+    const showHit = hitCount > 0;
+    const displayGlyph =
+      showHit && unit.kind === "force" ? "X" : glyph;
     const hpLabel =
       unit.kind === "champion" && unit.hp !== undefined && unit.maxHp !== undefined
         ? `HP ${unit.hp}/${unit.maxHp}`
@@ -640,8 +535,16 @@ export const CombatOverlay = ({
     const hitLabel = formatHitFacesLabel(unit.hitFaces);
     return (
       <div key={unit.unitId} className={`combat-unit combat-unit--${unit.kind}`}>
-        <div className="combat-unit__token" title={title}>
-          <span className="combat-unit__glyph">{glyph}</span>
+        <div
+          className={`combat-unit__token${showHit ? " is-hit" : ""}`}
+          title={title}
+        >
+          <span className="combat-unit__glyph">{displayGlyph}</span>
+          {showHit && unit.kind === "champion" ? (
+            <span className="combat-unit__hit-marker">
+              {hitCount > 1 ? `x${hitCount}` : "X"}
+            </span>
+          ) : null}
         </div>
         {unit.kind === "champion" ? (
           <span className="combat-unit__hp">{hpLabel}</span>
@@ -663,7 +566,8 @@ export const CombatOverlay = ({
   const renderUnitGroup = (
     label: string,
     units: CombatUnitRoll[],
-    phase: RoundPhase
+    phase: RoundPhase,
+    hitCounts: Map<string, number>
   ) => {
     if (units.length === 0) {
       return (
@@ -677,7 +581,9 @@ export const CombatOverlay = ({
       <div className="combat-unit-group">
         <span className="combat-unit-group__label">{label}</span>
         <div className="combat-unit-group__list">
-          {units.map((unit) => renderUnitToken(unit, phase))}
+          {units.map((unit) =>
+            renderUnitToken(unit, phase, hitCounts.get(unit.unitId) ?? 0)
+          )}
         </div>
       </div>
     );
@@ -685,7 +591,8 @@ export const CombatOverlay = ({
 
   const renderUnitBreakdown = (
     units: CombatUnitRoll[] | undefined,
-    phase: RoundPhase
+    phase: RoundPhase,
+    hits: HitAssignmentSummary
   ) => {
     if (!units || units.length === 0) {
       return (
@@ -693,10 +600,20 @@ export const CombatOverlay = ({
       );
     }
     const { forces, champions } = splitUnitsByKind(units);
+    const forceHits = Math.max(0, hits.forces);
+    const championHits = new Map(
+      hits.champions.map((champion) => [champion.unitId, champion.hits])
+    );
+    const forceHitCounts = new Map<string, number>();
+    forces.forEach((unit, index) => {
+      if (index < forceHits) {
+        forceHitCounts.set(unit.unitId, 1);
+      }
+    });
     return (
       <div className="combat-units">
-        {renderUnitGroup("Forces", forces, phase)}
-        {renderUnitGroup("Champions", champions, phase)}
+        {renderUnitGroup("Forces", forces, phase, forceHitCounts)}
+        {renderUnitGroup("Champions", champions, phase, championHits)}
       </div>
     );
   };
@@ -848,6 +765,22 @@ export const CombatOverlay = ({
                 </div>
                 <span className="combat-round__meta">{currentRound.hexKey}</span>
               </div>
+              {showHits ? (
+                <div className="combat-round__totals">
+                  <div className="combat-round__total">
+                    <span className="combat-round__total-label">Attackers hits</span>
+                    <strong className="combat-round__total-value">
+                      {currentRound.attackers.hits}
+                    </strong>
+                  </div>
+                  <div className="combat-round__total">
+                    <span className="combat-round__total-label">Defenders hits</span>
+                    <strong className="combat-round__total-value">
+                      {currentRound.defenders.hits}
+                    </strong>
+                  </div>
+                </div>
+              ) : null}
               <div className="combat-round__sides">
                 <div className="combat-round__side">
                 <div className="combat-round__side-header">
@@ -866,7 +799,8 @@ export const CombatOverlay = ({
                   {attackersHaveUnits
                     ? renderUnitBreakdown(
                         currentRound.attackers.units,
-                        roundPhase ?? "assigned"
+                        roundPhase ?? "assigned",
+                        currentRound.hitsToAttackers
                       )
                     : renderDiceRack(currentRound.attackers.dice, roundPhase ?? "assigned")}
                   <div className="combat-round__stats">
@@ -899,7 +833,8 @@ export const CombatOverlay = ({
                   {defendersHaveUnits
                     ? renderUnitBreakdown(
                         currentRound.defenders.units,
-                        roundPhase ?? "assigned"
+                        roundPhase ?? "assigned",
+                        currentRound.hitsToDefenders
                       )
                     : renderDiceRack(currentRound.defenders.dice, roundPhase ?? "assigned")}
                   <div className="combat-round__stats">
@@ -916,44 +851,6 @@ export const CombatOverlay = ({
                   </div>
                 </div>
               </div>
-              <div className="combat-round__assignments">
-                <div className="combat-round__assign">
-                  <span className="combat-round__label">Hits to defenders</span>
-                  {renderHitPips(currentRound.hitsToDefenders, showAssignments)}
-                  {renderHitSummary(currentRound.hitsToDefenders, showAssignments)}
-                  {showAssignments && roundBountyAttackers > 0 ? (
-                    <span className="combat-round__bounty">
-                      Bounty +{roundBountyAttackers}g
-                    </span>
-                  ) : null}
-                </div>
-                <div className="combat-round__assign">
-                  <span className="combat-round__label">Hits to attackers</span>
-                  {renderHitPips(currentRound.hitsToAttackers, showAssignments)}
-                  {renderHitSummary(currentRound.hitsToAttackers, showAssignments)}
-                  {showAssignments && roundBountyDefenders > 0 ? (
-                    <span className="combat-round__bounty">
-                      Bounty +{roundBountyDefenders}g
-                    </span>
-                  ) : null}
-                </div>
-              </div>
-              {showHits ? (
-                <div className="combat-round__totals">
-                  <div className="combat-round__total">
-                    <span className="combat-round__total-label">Attackers hits</span>
-                    <strong className="combat-round__total-value">
-                      {currentRound.attackers.hits}
-                    </strong>
-                  </div>
-                  <div className="combat-round__total">
-                    <span className="combat-round__total-label">Defenders hits</span>
-                    <strong className="combat-round__total-value">
-                      {currentRound.defenders.hits}
-                    </strong>
-                  </div>
-                </div>
-              ) : null}
             </div>
           )}
         </div>
