@@ -57,7 +57,20 @@ type DebugCommandMessage = {
   value?: unknown;
 };
 
-type ClientMessage = JoinMessage | CommandMessage | LobbyCommandMessage | DebugCommandMessage;
+type CombatCommandMessage = {
+  type: "combatCommand";
+  playerId: PlayerID;
+  command: "roll";
+  sequenceId: string;
+  roundIndex: number;
+};
+
+type ClientMessage =
+  | JoinMessage
+  | CommandMessage
+  | LobbyCommandMessage
+  | DebugCommandMessage
+  | CombatCommandMessage;
 
 type LobbyPlayerView = {
   id: PlayerID;
@@ -73,8 +86,18 @@ type LobbySnapshot = {
   maxPlayers: number;
 };
 
+type CombatSyncState = {
+  sequenceId: string;
+  playerIds: PlayerID[];
+  roundIndex: number;
+  readyByPlayerId: Record<PlayerID, boolean>;
+  phaseStartAt: number | null;
+};
+
 const MIN_PLAYERS = 2;
 const MAX_PLAYERS = 6;
+const MAX_COMBAT_SYNC = 12;
+const COMBAT_ROLL_DONE_MS = 1900;
 const FACTION_IDS = new Set([
   "bastion",
   "veil",
@@ -453,6 +476,20 @@ const applyStatePatch = (
   return nextState as GameState;
 };
 
+const readRecord = (value: unknown): Record<string, unknown> | null => {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+  return value as Record<string, unknown>;
+};
+
+const readString = (value: unknown): string | null => {
+  return typeof value === "string" ? value : null;
+};
+
+const buildCombatSequenceId = (hexKey: string, startIndex: number) =>
+  `${hexKey}-${startIndex}`;
+
 const safeParseMessage = (message: string): ClientMessage | null => {
   try {
     const parsed = JSON.parse(message);
@@ -463,7 +500,8 @@ const safeParseMessage = (message: string): ClientMessage | null => {
       parsed.type === "join" ||
       parsed.type === "command" ||
       parsed.type === "lobbyCommand" ||
-      parsed.type === "debugCommand"
+      parsed.type === "debugCommand" ||
+      parsed.type === "combatCommand"
     ) {
       return parsed as ClientMessage;
     }
@@ -486,6 +524,8 @@ export default class Server implements Party.Server {
   private lastLogCount = 0;
   private rejoinTokens = new Map<string, PlayerID>();
   private playerConnections = new Map<PlayerID, number>();
+  private combatSyncById = new Map<string, CombatSyncState>();
+  private combatSyncOrder: string[] = [];
 
   constructor(readonly room: Party.Room) {}
 
@@ -495,6 +535,56 @@ export default class Server implements Party.Server {
 
   private sendError(connection: Party.Connection, message: string) {
     this.send(connection, { type: "error", message });
+  }
+
+  private resetCombatSync(): void {
+    this.combatSyncById.clear();
+    this.combatSyncOrder = [];
+  }
+
+  private getCombatSyncSnapshot(): Record<string, CombatSyncState> {
+    return Object.fromEntries(this.combatSyncById.entries());
+  }
+
+  private trackCombatEvents(events: GameEvent[], startIndex: number): void {
+    for (let index = 0; index < events.length; index += 1) {
+      const event = events[index];
+      if (event.type !== "combat.start") {
+        continue;
+      }
+      const payload = readRecord(event.payload) ?? {};
+      const hexKey = readString(payload.hexKey);
+      const attackers = readRecord(payload.attackers);
+      const defenders = readRecord(payload.defenders);
+      const attackerId = readString(attackers?.playerId);
+      const defenderId = readString(defenders?.playerId);
+      if (!hexKey || !attackerId || !defenderId) {
+        continue;
+      }
+      const sequenceId = buildCombatSequenceId(hexKey, startIndex + index);
+      if (this.combatSyncById.has(sequenceId)) {
+        continue;
+      }
+      const playerIds = [attackerId, defenderId];
+      const readyByPlayerId = Object.fromEntries(
+        playerIds.map((playerId) => [playerId, false])
+      );
+      const sync: CombatSyncState = {
+        sequenceId,
+        playerIds,
+        roundIndex: 0,
+        readyByPlayerId,
+        phaseStartAt: null
+      };
+      this.combatSyncById.set(sequenceId, sync);
+      this.combatSyncOrder.push(sequenceId);
+      if (this.combatSyncOrder.length > MAX_COMBAT_SYNC) {
+        const removed = this.combatSyncOrder.shift();
+        if (removed) {
+          this.combatSyncById.delete(removed);
+        }
+      }
+    }
   }
 
   private getConnectionState(connection: Party.Connection): ConnectionState | null {
@@ -560,16 +650,21 @@ export default class Server implements Party.Server {
       return [];
     }
     const logs = this.state.logs;
-    if (this.lastLogCount === 0) {
-      this.lastLogCount = logs.length;
-      return logs;
+    const logsShrunk = logs.length < this.lastLogCount;
+    const startIndex = logsShrunk ? 0 : this.lastLogCount;
+    let events: GameEvent[] = [];
+    if (this.lastLogCount === 0 || logsShrunk) {
+      events = logs;
+    } else {
+      events = logs.slice(this.lastLogCount);
     }
-    if (logs.length < this.lastLogCount) {
-      this.lastLogCount = logs.length;
-      return logs;
-    }
-    const events = logs.slice(this.lastLogCount);
     this.lastLogCount = logs.length;
+    if (logsShrunk) {
+      this.resetCombatSync();
+    }
+    if (events.length > 0) {
+      this.trackCombatEvents(events, startIndex);
+    }
     return events;
   }
 
@@ -577,6 +672,8 @@ export default class Server implements Party.Server {
     if (!this.state) {
       return;
     }
+    const serverTime = Date.now();
+    const combatSync = this.getCombatSyncSnapshot();
     for (const connection of this.room.getConnections()) {
       const meta = this.getConnectionState(connection);
       const viewerId = meta && !meta.spectator ? meta.playerId : null;
@@ -585,7 +682,9 @@ export default class Server implements Party.Server {
         type: "update",
         revision: this.state.revision,
         events,
-        view
+        view,
+        serverTime,
+        combatSync
       });
     }
   }
@@ -705,6 +804,7 @@ export default class Server implements Party.Server {
     this.state = nextState;
     this.bumpRevision();
     this.lastLogCount = this.state.logs.length;
+    this.resetCombatSync();
   }
 
   private registerPlayerConnection(playerId: PlayerID): void {
@@ -822,7 +922,9 @@ export default class Server implements Party.Server {
       playerId,
       seatIndex,
       rejoinToken: token,
-      view
+      view,
+      serverTime: Date.now(),
+      combatSync: this.getCombatSyncSnapshot()
     });
     if (this.state) {
       this.broadcastUpdate();
@@ -859,6 +961,74 @@ export default class Server implements Party.Server {
       const reason = error instanceof Error ? error.message : "command rejected";
       this.sendError(connection, reason);
     }
+  }
+
+  private handleCombatCommand(
+    message: CombatCommandMessage,
+    connection: Party.Connection
+  ): void {
+    if (!this.state) {
+      this.sendError(connection, "game has not started");
+      return;
+    }
+    const meta = this.getConnectionState(connection);
+    if (!meta || meta.spectator) {
+      this.sendError(connection, "spectators cannot send combat commands");
+      return;
+    }
+    if (message.playerId !== meta.playerId) {
+      this.sendError(connection, "player id does not match connection");
+      return;
+    }
+
+    const sequenceId =
+      typeof message.sequenceId === "string" ? message.sequenceId.trim() : "";
+    const roundIndex =
+      typeof message.roundIndex === "number" && Number.isFinite(message.roundIndex)
+        ? message.roundIndex
+        : -1;
+    if (!sequenceId || roundIndex < 0) {
+      this.sendError(connection, "invalid combat command");
+      return;
+    }
+    const sync = this.combatSyncById.get(sequenceId);
+    if (!sync) {
+      this.sendError(connection, "combat sequence not found");
+      return;
+    }
+    if (!sync.playerIds.includes(meta.playerId)) {
+      this.sendError(connection, "player not in this combat");
+      return;
+    }
+
+    const now = Date.now();
+    if (roundIndex > sync.roundIndex) {
+      if (!sync.phaseStartAt || now - sync.phaseStartAt < COMBAT_ROLL_DONE_MS) {
+        this.sendError(connection, "combat round is still resolving");
+        return;
+      }
+      sync.roundIndex = roundIndex;
+      sync.phaseStartAt = null;
+      sync.readyByPlayerId = Object.fromEntries(
+        sync.playerIds.map((playerId) => [playerId, false])
+      );
+    } else if (roundIndex < sync.roundIndex) {
+      this.sendError(connection, "combat round already resolved");
+      return;
+    }
+
+    if (!sync.phaseStartAt) {
+      sync.readyByPlayerId[meta.playerId] = true;
+      const allReady = sync.playerIds.every(
+        (playerId) => sync.readyByPlayerId[playerId]
+      );
+      if (allReady) {
+        sync.phaseStartAt = now;
+      }
+    }
+
+    this.combatSyncById.set(sequenceId, sync);
+    this.broadcastUpdate();
   }
 
   private handleLobbyCommand(
@@ -985,6 +1155,7 @@ export default class Server implements Party.Server {
       const nextRevision = (this.state?.revision ?? 0) + 1;
       this.state = { ...nextState, revision: nextRevision };
       this.lastLogCount = this.state.logs.length;
+      this.resetCombatSync();
       this.broadcastUpdate();
       return;
     }
@@ -1218,6 +1389,7 @@ export default class Server implements Party.Server {
     const nextRevision = this.state.revision + 1;
     this.state = { ...nextState, revision: nextRevision };
     this.lastLogCount = this.state.logs.length;
+    this.resetCombatSync();
     this.broadcastUpdate();
   }
 
@@ -1252,6 +1424,11 @@ export default class Server implements Party.Server {
     }
     if (parsed.type === "debugCommand") {
       this.handleDebugCommand(parsed, sender);
+      return;
+    }
+    if (parsed.type === "combatCommand") {
+      this.handleCombatCommand(parsed, sender);
+      return;
     }
   }
 

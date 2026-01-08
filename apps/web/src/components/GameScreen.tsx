@@ -36,7 +36,7 @@ import { VictoryScreen } from "./VictoryScreen";
 import { buildHexRender } from "../lib/board-preview";
 import { extractCombatSequences, type CombatSequence } from "../lib/combat-log";
 import { formatGameEvent } from "../lib/event-format";
-import type { RoomConnectionStatus } from "../lib/room-client";
+import type { CombatSyncMap, RoomConnectionStatus } from "../lib/room-client";
 import { playSfx } from "../lib/sfx";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
@@ -436,6 +436,9 @@ type GameScreenProps = {
   onSubmitMarketBid: (bid: Bid) => void;
   onSubmitCollectionChoices: (choices: CollectionChoice[]) => void;
   onSubmitQuietStudy: (cardInstanceIds: string[]) => void;
+  combatSync?: CombatSyncMap | null;
+  serverTimeOffset?: number | null;
+  onCombatRoll?: (sequenceId: string, roundIndex: number) => void;
   onResetGame?: () => void;
   onLeave: () => void;
 };
@@ -449,6 +452,9 @@ export const GameScreen = ({
   onSubmitMarketBid,
   onSubmitCollectionChoices,
   onSubmitQuietStudy,
+  combatSync,
+  serverTimeOffset,
+  onCombatRoll,
   onResetGame,
   onLeave
 }: GameScreenProps) => {
@@ -802,6 +808,8 @@ export const GameScreen = ({
     ? formatGameEvent(lastLogEntry, playerNames, hexLabels, CARD_DEFS_BY_ID)
     : null;
   const activeCombat = combatQueue[0] ?? null;
+  const activeCombatSync =
+    activeCombat && combatSync ? combatSync[activeCombat.id] ?? null : null;
   const activeCombatHex = activeCombat
     ? view.public.board.hexes[activeCombat.start.hexKey] ?? null
     : null;
@@ -955,6 +963,12 @@ export const GameScreen = ({
   };
   const handleCombatClose = () => {
     setCombatQueue((queue) => queue.slice(1));
+  };
+  const handleCombatRoll = (roundIndex: number) => {
+    if (!activeCombat || !onCombatRoll) {
+      return;
+    }
+    onCombatRoll(activeCombat.id, roundIndex);
   };
   const clearCardSelection = () => {
     setCardInstanceId("");
@@ -2577,6 +2591,10 @@ export const GameScreen = ({
           modifiers={view.public.modifiers}
           hexLabel={activeCombatLabel}
           isCapitalBattle={isCapitalBattle}
+          viewerId={playerId}
+          combatSync={activeCombatSync}
+          serverTimeOffset={serverTimeOffset}
+          onRequestRoll={handleCombatRoll}
           onClose={handleCombatClose}
         />
       ) : null}

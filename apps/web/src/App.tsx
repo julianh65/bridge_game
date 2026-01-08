@@ -270,6 +270,11 @@ export default function App() {
           onSubmitQuietStudy={(cardInstanceIds) =>
             room.sendCommand({ type: "SubmitQuietStudy", payload: { cardInstanceIds } })
           }
+          combatSync={room.combatSync}
+          serverTimeOffset={room.serverTimeOffset}
+          onCombatRoll={(sequenceId, roundIndex) =>
+            room.sendCombatCommand({ command: "roll", sequenceId, roundIndex })
+          }
           onResetGame={() => room.sendDebugCommand({ command: "resetGame" })}
           onLeave={handleLeave}
         />

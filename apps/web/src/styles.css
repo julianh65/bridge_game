@@ -6636,6 +6636,35 @@ body.is-game .combat-round__side-name {
   color: rgba(255, 236, 214, 0.9);
 }
 
+.combat-ready {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(120, 82, 50, 0.25);
+  color: rgba(88, 60, 34, 0.7);
+  background: rgba(255, 248, 238, 0.6);
+}
+
+body.is-game .combat-ready {
+  border-color: rgba(245, 158, 11, 0.25);
+  color: rgba(248, 227, 199, 0.7);
+  background: rgba(27, 20, 15, 0.5);
+}
+
+.combat-ready--ready {
+  border-color: rgba(123, 75, 28, 0.4);
+  color: rgba(92, 52, 18, 0.9);
+  background: rgba(244, 214, 150, 0.65);
+}
+
+body.is-game .combat-ready--ready {
+  border-color: rgba(245, 158, 11, 0.55);
+  color: rgba(255, 231, 199, 0.95);
+  background: rgba(245, 158, 11, 0.22);
+}
+
 .combat-round__stats {
   display: flex;
   gap: 12px;

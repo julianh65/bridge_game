@@ -290,12 +290,12 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
  - [ ] Make it more visual and less number based, this should be exciting and look nice and visually intuitive
    - [x] Each force alive should be represented by a circle and should have a die under it (unrolled)
    - [x] Each champion should also be represented by a circle and should have their stats and dice under them (unrolled) it should be obvious their health
-   - [ ] Then each player clicks roll and all the dice roll
+   - [x] Then each player clicks roll and all the dice roll
    - [ ] at the bottom it shows the cumulative hits each side did
    - [ ] then both players hit like “next” and the engine randomly assigns hits, putting x’s over forces and displaying how many hits were assigned to the champions
    - [ ] then players hit next again and the forces that were hit are removed and the champions take damage and the loop continues again where they roll again
  - [x] Each consecutive round shouldn’t be like a new div / container appended to the bottom, the UI should just update to reflect the changes
- - [ ] Right now there are issues with syncing, it should show who has rolled and who hasn’t and the outcomes should only show after both players hit roll and they should be synchronized in terms of going to the next round of the battle or retreating for all players
+ - [x] Right now there are issues with syncing, it should show who has rolled and who hasn’t and the outcomes should only show after both players hit roll and they should be synchronized in terms of going to the next round of the battle or retreating for all players
 - [x] Draw/discard UI clarity: show piles clearly and add draw animations in hand area.
 - [ ] Retreat rules implementation:
   - [ ] If a bridge is adjacent and player has 1 mana, allow retreat selection.

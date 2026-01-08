@@ -37,6 +37,22 @@ export type DebugCommand =
   | { command: "resetGame"; seed?: number }
   | { command: "patchState"; path: string; value: unknown };
 
+export type CombatSyncState = {
+  sequenceId: string;
+  playerIds: PlayerID[];
+  roundIndex: number;
+  readyByPlayerId: Record<PlayerID, boolean>;
+  phaseStartAt: number | null;
+};
+
+export type CombatSyncMap = Record<string, CombatSyncState>;
+
+export type CombatCommand = {
+  command: "roll";
+  sequenceId: string;
+  roundIndex: number;
+};
+
 type RoomMessage =
   | {
       type: "welcome";
@@ -45,6 +61,8 @@ type RoomMessage =
       rejoinToken?: string | null;
       view?: GameView | null;
       revision?: number;
+      serverTime?: number;
+      combatSync?: CombatSyncMap;
     }
   | {
       type: "lobby";
@@ -55,6 +73,8 @@ type RoomMessage =
       revision: number;
       events?: unknown[];
       view: GameView;
+      serverTime?: number;
+      combatSync?: CombatSyncMap;
     }
   | {
       type: "debugState";
@@ -75,6 +95,8 @@ type RoomState = {
   error: string | null;
   revision: number | null;
   debugState: GameState | null;
+  combatSync: CombatSyncMap | null;
+  serverTimeOffset: number | null;
 };
 
 const DEFAULT_STATE: RoomState = {
@@ -87,7 +109,9 @@ const DEFAULT_STATE: RoomState = {
   host: null,
   error: null,
   revision: null,
-  debugState: null
+  debugState: null,
+  combatSync: null,
+  serverTimeOffset: null
 };
 
 const storageKeyForRoom = (roomId: string) => `bridgefront:room:${roomId}:rejoinToken`;
@@ -184,6 +208,8 @@ export const useRoom = (options: RoomOptions | null) => {
         if (typeof parsed.rejoinToken === "string" && parsed.rejoinToken.length > 0) {
           storeRejoinToken(options.roomId, parsed.rejoinToken);
         }
+        const serverTime =
+          typeof parsed.serverTime === "number" ? parsed.serverTime : null;
         setState((prev) => ({
           ...prev,
           status: "connected",
@@ -192,6 +218,9 @@ export const useRoom = (options: RoomOptions | null) => {
           view: parsed.view ?? null,
           lobby: parsed.view ? null : prev.lobby,
           revision: parsed.revision ?? prev.revision,
+          combatSync: parsed.combatSync ?? prev.combatSync,
+          serverTimeOffset:
+            serverTime !== null ? serverTime - Date.now() : prev.serverTimeOffset,
           debugState: null,
           error: null
         }));
@@ -208,12 +237,17 @@ export const useRoom = (options: RoomOptions | null) => {
       }
 
       if (parsed.type === "update") {
+        const serverTime =
+          typeof parsed.serverTime === "number" ? parsed.serverTime : null;
         setState((prev) => ({
           ...prev,
           status: "connected",
           view: parsed.view,
           lobby: null,
           revision: parsed.revision,
+          combatSync: parsed.combatSync ?? prev.combatSync,
+          serverTimeOffset:
+            serverTime !== null ? serverTime - Date.now() : prev.serverTimeOffset,
           error: null
         }));
         return;
@@ -321,6 +355,23 @@ export const useRoom = (options: RoomOptions | null) => {
     [state.playerId]
   );
 
+  const sendCombatCommand = useCallback(
+    (command: CombatCommand) => {
+      const socket = socketRef.current;
+      if (!socket || socket.readyState !== WebSocket.OPEN || !state.playerId) {
+        return false;
+      }
+      const payload = {
+        type: "combatCommand",
+        playerId: state.playerId,
+        ...command
+      };
+      socket.send(JSON.stringify(payload));
+      return true;
+    },
+    [state.playerId]
+  );
+
   const disconnect = useCallback(() => {
     if (socketRef.current) {
       socketRef.current.close();
@@ -334,9 +385,10 @@ export const useRoom = (options: RoomOptions | null) => {
       sendCommand,
       sendLobbyCommand,
       sendDebugCommand,
+      sendCombatCommand,
       disconnect
     }),
-    [state, sendCommand, sendLobbyCommand, sendDebugCommand, disconnect]
+    [state, sendCommand, sendLobbyCommand, sendDebugCommand, sendCombatCommand, disconnect]
   );
 };
 

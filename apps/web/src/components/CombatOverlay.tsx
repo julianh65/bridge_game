@@ -9,8 +9,9 @@ import type {
   CombatUnitRoll,
   HitAssignmentSummary
 } from "../lib/combat-log";
+import type { CombatSyncState } from "../lib/room-client";
 
-type RoundPhase = "rolling" | "locked" | "assigned";
+type RoundPhase = "waiting" | "rolling" | "locked" | "assigned";
 
 type CombatOverlayProps = {
   sequence: CombatSequence;
@@ -20,6 +21,10 @@ type CombatOverlayProps = {
   modifiers?: ModifierView[];
   hexLabel?: string | null;
   isCapitalBattle?: boolean;
+  viewerId?: string | null;
+  combatSync?: CombatSyncState | null;
+  serverTimeOffset?: number | null;
+  onRequestRoll?: (roundIndex: number) => void;
   onClose: () => void;
 };
 
@@ -162,6 +167,10 @@ export const CombatOverlay = ({
   modifiers,
   hexLabel,
   isCapitalBattle,
+  viewerId,
+  combatSync,
+  serverTimeOffset,
+  onRequestRoll,
   onClose
 }: CombatOverlayProps) => {
   const [revealedRounds, setRevealedRounds] = useState(0);
@@ -173,6 +182,7 @@ export const CombatOverlay = ({
     | null
   >(null);
   const [autoClosePending, setAutoClosePending] = useState(false);
+  const [syncTick, setSyncTick] = useState(0);
   const rollTimers = useRef<number[]>([]);
   const autoCloseTimer = useRef<number | null>(null);
 
@@ -208,8 +218,26 @@ export const CombatOverlay = ({
   }, []);
 
   useEffect(() => {
-    const isResolved =
-      revealedRounds >= sequence.rounds.length && roundStage === null;
+    if (!combatSync || combatSync.sequenceId !== sequence.id || !combatSync.phaseStartAt) {
+      return undefined;
+    }
+    let timer: number | null = null;
+    const tick = () => {
+      setSyncTick((value) => value + 1);
+      const elapsed = Date.now() - combatSync.phaseStartAt;
+      if (elapsed < ROLL_DONE_MS + 120) {
+        timer = window.setTimeout(tick, 120);
+      }
+    };
+    tick();
+    return () => {
+      if (timer) {
+        window.clearTimeout(timer);
+      }
+    };
+  }, [combatSync, sequence.id]);
+
+  useEffect(() => {
     clearAutoClose();
     if (!isResolved || sequence.rounds.length === 0) {
       return;
@@ -222,7 +250,7 @@ export const CombatOverlay = ({
     return () => {
       clearAutoCloseTimer();
     };
-  }, [onClose, revealedRounds, roundStage, sequence.rounds.length]);
+  }, [onClose, isResolved, sequence.rounds.length]);
 
   const { attackersBounty, defendersBounty } = useMemo(
     () => buildBountyTotals(sequence.rounds, cardDefsById),
@@ -239,6 +267,12 @@ export const CombatOverlay = ({
   }, [modifiers, sequence.start.hexKey]);
 
   const handleRoll = () => {
+    if (combatSync && combatSync.sequenceId === sequence.id) {
+      if (onRequestRoll && combatSync.roundIndex < sequence.rounds.length) {
+        onRequestRoll(combatSync.roundIndex);
+      }
+      return;
+    }
     if (roundStage) {
       return;
     }
@@ -280,30 +314,73 @@ export const CombatOverlay = ({
     onClose();
   };
 
-  const isResolving = Boolean(roundStage);
-  const canAdvance = revealedRounds < sequence.rounds.length && !isResolving;
-  const currentRoundIndex = roundStage
-    ? roundStage.index
-    : revealedRounds > 0
-      ? Math.min(revealedRounds - 1, sequence.rounds.length - 1)
+  const syncNow = useMemo(() => {
+    if (typeof serverTimeOffset === "number") {
+      return Date.now() + serverTimeOffset;
+    }
+    return Date.now();
+  }, [serverTimeOffset, syncTick]);
+  const hasSync = Boolean(combatSync && combatSync.sequenceId === sequence.id);
+  const syncInfo = hasSync ? combatSync : null;
+  const maxRoundIndex = sequence.rounds.length - 1;
+  const syncRoundIndexRaw = syncInfo ? syncInfo.roundIndex : null;
+  const syncRoundIndex =
+    syncInfo && maxRoundIndex >= 0
+      ? Math.min(syncRoundIndexRaw ?? 0, maxRoundIndex)
       : null;
+  const syncElapsed =
+    syncInfo && syncInfo.phaseStartAt !== null
+      ? Math.max(0, syncNow - syncInfo.phaseStartAt)
+      : null;
+  const syncPhase =
+    syncElapsed === null
+      ? null
+      : syncElapsed < ROLL_LOCK_MS
+        ? "rolling"
+        : syncElapsed < ROLL_ASSIGN_MS
+          ? "locked"
+          : "assigned";
+  const syncRoundDone = syncElapsed !== null && syncElapsed >= ROLL_DONE_MS;
+  const isResolving = hasSync
+    ? Boolean(syncPhase) && !syncRoundDone
+    : Boolean(roundStage);
+  const canAdvance = hasSync
+    ? Boolean(syncInfo && syncInfo.roundIndex < sequence.rounds.length) && !isResolving
+    : revealedRounds < sequence.rounds.length && !isResolving;
+  const currentRoundIndex = hasSync
+    ? syncRoundIndex
+    : roundStage
+      ? roundStage.index
+      : revealedRounds > 0
+        ? Math.min(revealedRounds - 1, sequence.rounds.length - 1)
+        : null;
   const currentRound =
     currentRoundIndex !== null ? sequence.rounds[currentRoundIndex] : null;
-  const isResolved = revealedRounds >= sequence.rounds.length && !roundStage;
-  const roundPhase =
-    currentRound && roundStage && currentRoundIndex === roundStage.index
+  const isResolved = hasSync
+    ? Boolean(
+        syncRoundDone &&
+          currentRoundIndex !== null &&
+          currentRoundIndex >= sequence.rounds.length - 1
+      )
+    : revealedRounds >= sequence.rounds.length && !roundStage;
+  const roundPhase = hasSync
+    ? syncPhase ?? (currentRound ? "waiting" : null)
+    : currentRound && roundStage && currentRoundIndex === roundStage.index
       ? roundStage.phase
       : currentRound
         ? "assigned"
         : null;
-  const showHits = roundPhase ? roundPhase !== "rolling" : false;
+  const showHits = roundPhase === "locked" || roundPhase === "assigned";
   const showAssignments = roundPhase === "assigned";
   const stageLabel =
-    roundPhase === "rolling"
-      ? "Rolling"
-      : roundPhase === "locked"
-        ? "Locked"
-        : "Hit assignment";
+    roundPhase === "waiting"
+      ? "Awaiting rolls"
+      : roundPhase === "rolling"
+        ? "Rolling"
+        : roundPhase === "locked"
+          ? "Locked"
+          : "Hit assignment";
+  const pendingHitsLabel = roundPhase === "waiting" ? "Awaiting roll" : "Rolling...";
   const roundBountyAttackers = currentRound
     ? getSummaryBounty(currentRound.hitsToDefenders, cardDefsById)
     : 0;
@@ -327,13 +404,49 @@ export const CombatOverlay = ({
       ? `Rounds ${sequence.rounds.length}`
       : "No rounds logged";
 
+  const syncParticipants = syncInfo?.playerIds ?? [];
+  const isLocalParticipant = Boolean(viewerId && syncParticipants.includes(viewerId));
+  const localReady = Boolean(
+    viewerId && syncInfo?.readyByPlayerId && syncInfo.readyByPlayerId[viewerId]
+  );
+  const canRequestRoll =
+    Boolean(syncInfo) &&
+    isLocalParticipant &&
+    !localReady &&
+    (!syncInfo?.phaseStartAt || syncRoundDone) &&
+    syncInfo.roundIndex < sequence.rounds.length;
+
   let rollLabel = "Roll dice";
-  if (isResolving) {
-    rollLabel = roundStage?.phase === "rolling"
-      ? "Rolling..."
-      : roundStage?.phase === "locked"
-        ? "Locking..."
-        : "Assigning...";
+  let rollDisabled = false;
+  if (hasSync) {
+    if (!isLocalParticipant) {
+      rollLabel = "Spectating";
+      rollDisabled = true;
+    } else if (syncInfo && syncInfo.roundIndex >= sequence.rounds.length) {
+      rollLabel = "Combat complete";
+      rollDisabled = true;
+    } else if (syncInfo?.phaseStartAt && !syncRoundDone) {
+      rollLabel =
+        syncPhase === "rolling"
+          ? "Rolling..."
+          : syncPhase === "locked"
+            ? "Locking..."
+            : "Assigning...";
+      rollDisabled = true;
+    } else if (localReady) {
+      rollLabel = "Waiting for opponent";
+      rollDisabled = true;
+    } else if (syncInfo) {
+      rollLabel = `Roll round ${syncInfo.roundIndex + 1}`;
+      rollDisabled = !canRequestRoll;
+    }
+  } else if (isResolving) {
+    rollLabel =
+      roundStage?.phase === "rolling"
+        ? "Rolling..."
+        : roundStage?.phase === "locked"
+          ? "Locking..."
+          : "Assigning...";
   } else if (canAdvance) {
     rollLabel = `Roll round ${revealedRounds + 1}`;
   } else {
@@ -393,10 +506,10 @@ export const CombatOverlay = ({
       <span
         key={`d-${dieIndex}-${roll.value}`}
         className={`combat-dice__die${phase === "rolling" ? " is-rolling" : ""}${
-          roll.isHit && phase !== "rolling" ? " is-hit" : ""
+          roll.isHit && phase !== "rolling" && phase !== "waiting" ? " is-hit" : ""
         }`}
       >
-        {phase === "rolling" ? "?" : roll.value}
+        {phase === "rolling" || phase === "waiting" ? "?" : roll.value}
       </span>
     ));
   };
@@ -538,6 +651,18 @@ export const CombatOverlay = ({
     );
   };
 
+  const renderReadyPill = (playerId: string) => {
+    if (!syncInfo) {
+      return null;
+    }
+    const ready = Boolean(syncInfo.readyByPlayerId[playerId]);
+    return (
+      <span className={`combat-ready${ready ? " combat-ready--ready" : ""}`}>
+        {ready ? "Rolled" : "Waiting"}
+      </span>
+    );
+  };
+
   return (
     <section className="combat-overlay" role="dialog" aria-live="polite" aria-modal="true">
       <div className="combat-overlay__scrim" />
@@ -578,7 +703,7 @@ export const CombatOverlay = ({
               type="button"
               className="btn btn-primary"
               onClick={handleRoll}
-              disabled={isResolving}
+              disabled={hasSync ? rollDisabled : isResolving}
             >
               {rollLabel}
             </button>
@@ -642,18 +767,19 @@ export const CombatOverlay = ({
               </div>
               <div className="combat-round__sides">
                 <div className="combat-round__side">
-                  <div className="combat-round__side-header">
-                    <span className="combat-round__side-role">Attackers</span>
-                    <span className="combat-round__side-name">
-                      <FactionSymbol
-                        factionId={playerFactionsById?.get(
-                          currentRound.attackers.playerId
-                        )}
-                        className="faction-symbol--mini"
-                      />
-                      {formatPlayer(currentRound.attackers.playerId, playersById)}
-                    </span>
-                  </div>
+                <div className="combat-round__side-header">
+                  <span className="combat-round__side-role">Attackers</span>
+                  <span className="combat-round__side-name">
+                    <FactionSymbol
+                      factionId={playerFactionsById?.get(
+                        currentRound.attackers.playerId
+                      )}
+                      className="faction-symbol--mini"
+                    />
+                    {formatPlayer(currentRound.attackers.playerId, playersById)}
+                  </span>
+                  {renderReadyPill(currentRound.attackers.playerId)}
+                </div>
                   {attackersHaveUnits
                     ? renderUnitBreakdown(
                         currentRound.attackers.units,
@@ -669,23 +795,24 @@ export const CombatOverlay = ({
                         Hits {currentRound.attackers.hits}
                       </span>
                     ) : (
-                      <span className="combat-round__stat">Rolling...</span>
+                      <span className="combat-round__stat">{pendingHitsLabel}</span>
                     )}
                   </div>
                 </div>
                 <div className="combat-round__side">
-                  <div className="combat-round__side-header">
-                    <span className="combat-round__side-role">Defenders</span>
-                    <span className="combat-round__side-name">
-                      <FactionSymbol
-                        factionId={playerFactionsById?.get(
-                          currentRound.defenders.playerId
-                        )}
-                        className="faction-symbol--mini"
-                      />
-                      {formatPlayer(currentRound.defenders.playerId, playersById)}
-                    </span>
-                  </div>
+                <div className="combat-round__side-header">
+                  <span className="combat-round__side-role">Defenders</span>
+                  <span className="combat-round__side-name">
+                    <FactionSymbol
+                      factionId={playerFactionsById?.get(
+                        currentRound.defenders.playerId
+                      )}
+                      className="faction-symbol--mini"
+                    />
+                    {formatPlayer(currentRound.defenders.playerId, playersById)}
+                  </span>
+                  {renderReadyPill(currentRound.defenders.playerId)}
+                </div>
                   {defendersHaveUnits
                     ? renderUnitBreakdown(
                         currentRound.defenders.units,
@@ -701,7 +828,7 @@ export const CombatOverlay = ({
                         Hits {currentRound.defenders.hits}
                       </span>
                     ) : (
-                      <span className="combat-round__stat">Rolling...</span>
+                      <span className="combat-round__stat">{pendingHitsLabel}</span>
                     )}
                   </div>
                 </div>
