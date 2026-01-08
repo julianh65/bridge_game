@@ -17,7 +17,10 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-
+- owner: agent3
+  scope: add per-faction starter initiative variants for Quick Move/Zap/Scout Report and update starter deck mapping
+  files: packages/engine/src/content/cards/starter.ts, packages/engine/src/content/starter-decks.ts, packages/engine/src/content/cards/cards.test.ts, implementation_plan.md
+  status: in progress
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -111,6 +114,7 @@
 - Lifted hovered card grid items above neighbors in cards/market/collection/hand-picker views; updated the plan checklist. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
 - Clarified draw/discard/scrapped pile pills with delta badges and pulse animation in the hand panel; marked the plan checklist item complete. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreenHandPanel.tsx` also in agent3 scope.)
 - Updated the private view VP totals to recompute control points live from board occupation changes; marked the plan checklist item complete. (Files: `packages/engine/src/round-flow.ts`, `packages/engine/src/view.ts`, `implementation_plan.md`.)
+- Highlighted Burn tags with distinct styling + subtle animation and split the burn UX checklist into clearer sub-items. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.

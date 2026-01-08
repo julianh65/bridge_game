@@ -218,11 +218,16 @@ export const GameCard = ({
       ) : null}
       {showTags && !isHidden && tags.length > 0 ? (
         <div className="game-card__tags">
-          {tags.map((tag) => (
-            <span key={`${cardId}-${tag}`} className="card-tag">
-              {tag}
-            </span>
-          ))}
+          {tags.map((tag) => {
+            const normalizedTag = tag.trim().toLowerCase();
+            const tagClass =
+              normalizedTag === "burn" ? "card-tag card-tag--burn" : "card-tag";
+            return (
+              <span key={`${cardId}-${tag}`} className={tagClass}>
+                {tag}
+              </span>
+            );
+          })}
         </div>
       ) : null}
       {showStats ? (

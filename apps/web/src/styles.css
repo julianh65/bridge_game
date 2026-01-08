@@ -4499,9 +4499,26 @@ body.is-game .market-rolloff__entry.is-winner .market-rolloff__name {
   color: var(--ink);
 }
 
+.card-tag--burn {
+  border-color: #c2410c;
+  background: linear-gradient(135deg, #fed7aa, #f97316);
+  color: #7c2d12;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 12px rgba(234, 88, 12, 0.25);
+  animation: burnPulse 1.8s ease-in-out infinite;
+}
+
 body.is-game .card-tag {
   background: #241810;
   border-color: #4a3627;
+}
+
+body.is-game .card-tag--burn {
+  background: linear-gradient(135deg, #3b120b, #b45309);
+  border-color: #f97316;
+  color: #ffedd5;
+  box-shadow: 0 8px 14px rgba(249, 115, 22, 0.3);
 }
 
 .card-tag--clickable {
@@ -4530,6 +4547,18 @@ body.is-game .card-tag--clickable.is-selected {
   background: #3a2814;
   border-color: #d97706;
   color: #fbd38d;
+}
+
+@keyframes burnPulse {
+  0%,
+  100% {
+    transform: translateY(0);
+    box-shadow: 0 6px 12px rgba(234, 88, 12, 0.25);
+  }
+  50% {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 18px rgba(234, 88, 12, 0.35);
+  }
 }
 
 @keyframes detailFade {
