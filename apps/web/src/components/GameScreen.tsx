@@ -553,6 +553,7 @@ type GameScreenProps = {
   playerId: string | null;
   roomId: string;
   status: RoomConnectionStatus;
+  suppressEntryCues?: boolean;
   onSubmitAction: (declaration: ActionDeclaration) => void;
   onSubmitMarketBid: (bid: Bid) => void;
   onSubmitCollectionChoices: (choices: CollectionChoice[]) => void;
@@ -572,6 +573,7 @@ export const GameScreen = ({
   playerId,
   roomId,
   status,
+  suppressEntryCues = false,
   onSubmitAction,
   onSubmitMarketBid,
   onSubmitCollectionChoices,
@@ -807,10 +809,12 @@ export const GameScreen = ({
   const hasMarketLogBaseline = useRef(false);
   const hasCardRevealBaseline = useRef(false);
   const hasPhaseCueBaseline = useRef(false);
-  const hasAgeIntroShown = useRef(Boolean(storedAgeCue));
+  const hasAgeIntroShown = useRef(Boolean(storedAgeCue) || suppressEntryCues);
   const lastPhaseRef = useRef(view.public.phase);
   const lastRoundRef = useRef(view.public.round);
-  const lastAgeRef = useRef(storedAgeCue ?? view.public.market.age);
+  const lastAgeRef = useRef(
+    suppressEntryCues ? view.public.market.age : storedAgeCue ?? view.public.market.age
+  );
   const targetRecord = useMemo(() => parseTargets(cardTargetsRaw), [cardTargetsRaw]);
   const selectedChampionId =
     getTargetString(targetRecord, "unitId") ?? getTargetString(targetRecord, "championId");
@@ -2656,11 +2660,15 @@ export const GameScreen = ({
       </p>
     </div>
   ) : null;
+  const forceSplitOverlayWidth = 160;
+  const forceSplitOverlayHeight = 104;
   const forceSplitOverlays: BoardOverlayItem[] = [];
   if (showCardMoveSplitControls && cardMoveStartHex) {
     forceSplitOverlays.push({
       id: "force-split-card",
       hexKey: cardMoveStartHex,
+      width: forceSplitOverlayWidth,
+      height: forceSplitOverlayHeight,
       content: (
         <ForceSplitPopover
           title="Move forces"
@@ -2675,6 +2683,8 @@ export const GameScreen = ({
     forceSplitOverlays.push({
       id: "force-split-march",
       hexKey: marchFrom,
+      width: forceSplitOverlayWidth,
+      height: forceSplitOverlayHeight,
       content: (
         <ForceSplitPopover
           title="March forces"
