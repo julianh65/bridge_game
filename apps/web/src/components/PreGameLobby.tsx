@@ -2,7 +2,7 @@ import type { PlayerID } from "@bridgefront/engine";
 
 import { FactionSymbol } from "./FactionSymbol";
 import { RoomCodeCopy } from "./RoomCodeCopy";
-import { FACTIONS, getFactionName } from "../lib/factions";
+import { FACTIONS, getFactionBasicActionOrderLabel, getFactionName } from "../lib/factions";
 import type { LobbyView, RoomConnectionStatus } from "../lib/room-client";
 
 type PreGameLobbyProps = {
@@ -185,6 +185,15 @@ export const PreGameLobby = ({
                           </li>
                         ))}
                       </ul>
+                    </div>
+                    <div className="faction-card__section">
+                      <span className="faction-card__section-title">Basic actions</span>
+                      <div className="faction-card__starter">
+                        <span className="faction-card__starter-label">Order</span>
+                        <span className="faction-card__starter-value">
+                          {getFactionBasicActionOrderLabel(faction.id)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                   <span className={tagClass}>{tagLabel}</span>

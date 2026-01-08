@@ -1,15 +1,16 @@
 import type { GameConfig } from "./types";
 
 export const DEFAULT_CONFIG: GameConfig = {
-  MAX_MANA: 5,
+  MAX_MANA: 6,
   START_GOLD: 4,
   BASE_INCOME: 1,
   HAND_LIMIT: 10,
   CHAMPION_LIMIT: 4,
   ROUNDS_MAX: 10,
   VP_TO_WIN: 10,
-  ACTION_REVEAL_DURATION_MS: 6000,
-  MARKET_ROLLOFF_DURATION_MS: 2500,
+  ACTION_REVEAL_DURATION_MS: 2000,
+  MARKET_ROLLOFF_DURATION_MS: 1500,
+  basicActionFactionOrder: ["bastion", "veil", "aerial", "prospect", "cipher", "gatewright"],
   boardRadiusByPlayerCount: {
     2: 3,
     3: 4,
@@ -18,11 +19,11 @@ export const DEFAULT_CONFIG: GameConfig = {
     6: 4
   },
   tileCountsByPlayerCount: {
-    2: { mines: 4, forges: 1, center: 1, randomBridges: 6 },
-    3: { mines: 5, forges: 2, center: 1, randomBridges: 6 },
-    4: { mines: 6, forges: 2, center: 1, randomBridges: 10 },
-    5: { mines: 7, forges: 3, center: 1, randomBridges: 10 },
-    6: { mines: 8, forges: 3, center: 1, randomBridges: 10 }
+    2: { mines: 3, forges: 1, center: 1, randomBridges: 7 },
+    3: { mines: 4, forges: 2, center: 1, randomBridges: 7 },
+    4: { mines: 5, forges: 2, center: 1, randomBridges: 10 },
+    5: { mines: 6, forges: 2, center: 1, randomBridges: 10 },
+    6: { mines: 7, forges: 3, center: 1, randomBridges: 10 }
   },
   capitalSlotsByPlayerCount: {
     2: ["3,0", "-3,0"],

@@ -428,7 +428,7 @@ Lead order:
 - `leadSeatIndex` starts at 0 in Round 1 and rotates clockwise each round
 - `leadSeatIndex = (round - 1) % playerCount`
 1. Resolve all played cards in ascending initiative (lower first)
-2. Resolve all basic actions in seat order starting from `leadSeatIndex`
+2. Resolve all basic actions in configured faction order (`basicActionFactionOrder`), tie-breaking with lead seat order
 
 After each individual action resolves:
 - If any non-capital hex contains units from exactly 2 players, resolve battle immediately.

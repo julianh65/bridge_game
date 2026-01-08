@@ -14,6 +14,15 @@ Edit that file to adjust rules and regenerate the board in the debug UI.
 ### Market roll-off timing
 - `MARKET_ROLLOFF_DURATION_MS`: how long each roll-off die roll animates in the market overlay (milliseconds).
 
+### Basic action order
+- `basicActionFactionOrder`: faction IDs in the order their basic actions resolve (earlier = faster).
+  - Factions not listed resolve after the listed ones, using lead order as the tie-break.
+
+Example:
+```ts
+basicActionFactionOrder: ["bastion", "veil", "aerial", "prospect", "cipher", "gatewright"]
+```
+
 ### Board size and capitals
 - `boardRadiusByPlayerCount`: radius per player count.
 - `capitalSlotsByPlayerCount`: explicit `HexKey` lists for each player count.

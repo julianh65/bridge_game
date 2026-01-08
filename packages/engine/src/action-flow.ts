@@ -241,6 +241,30 @@ const getLeadOrderedPlayers = (players: PlayerState[], leadSeatIndex: number): P
   return [...ordered.slice(leadIndex), ...ordered.slice(0, leadIndex)];
 };
 
+const getBasicActionOrderedPlayers = (
+  state: GameState,
+  leadOrderedPlayers: PlayerState[]
+): PlayerState[] => {
+  const factionOrder = state.config.basicActionFactionOrder;
+  if (!Array.isArray(factionOrder) || factionOrder.length === 0) {
+    return leadOrderedPlayers;
+  }
+
+  const factionPriority = new Map(
+    factionOrder.map((factionId, index) => [factionId, index])
+  );
+  const leadIndex = new Map(leadOrderedPlayers.map((player, index) => [player.id, index]));
+
+  return [...leadOrderedPlayers].sort((a, b) => {
+    const aPriority = factionPriority.get(a.factionId) ?? Number.MAX_SAFE_INTEGER;
+    const bPriority = factionPriority.get(b.factionId) ?? Number.MAX_SAFE_INTEGER;
+    if (aPriority !== bPriority) {
+      return aPriority - bPriority;
+    }
+    return (leadIndex.get(a.id) ?? 0) - (leadIndex.get(b.id) ?? 0);
+  });
+};
+
 const finalizeCardPlay = (
   state: GameState,
   playerId: PlayerID,
@@ -276,6 +300,7 @@ const buildActionResolutionEntries = (
   declarations: Record<PlayerID, ActionDeclaration | null>
 ): ActionResolutionEntry[] => {
   const orderedPlayers = getLeadOrderedPlayers(state.players, state.leadSeatIndex);
+  const basicActionOrder = getBasicActionOrderedPlayers(state, orderedPlayers);
   const leadOrderIndex = new Map(
     orderedPlayers.map((player, index) => [player.id, index])
   );
@@ -316,7 +341,7 @@ const buildActionResolutionEntries = (
     });
   }
 
-  for (const player of orderedPlayers) {
+  for (const player of basicActionOrder) {
     const declaration = declarations[player.id];
     if (declaration?.kind === "basic") {
       entries.push({ kind: "basic", playerId: player.id, action: declaration.action });

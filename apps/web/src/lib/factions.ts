@@ -1,3 +1,5 @@
+import { DEFAULT_CONFIG } from "@bridgefront/engine";
+
 import aerialIconUrl from "../assets/factions/aerial.svg";
 import bastionIconUrl from "../assets/factions/bastion.svg";
 import cipherIconUrl from "../assets/factions/cipher.svg";
@@ -145,12 +147,47 @@ export const FACTIONS: FactionOption[] = [
 ];
 
 const factionById = new Map(FACTIONS.map((faction) => [faction.id, faction]));
+const basicActionOrderByFaction = new Map(
+  DEFAULT_CONFIG.basicActionFactionOrder.map((factionId, index) => [factionId, index + 1])
+);
+
+const formatOrdinal = (value: number): string => {
+  const mod100 = value % 100;
+  if (mod100 >= 11 && mod100 <= 13) {
+    return `${value}th`;
+  }
+  switch (value % 10) {
+    case 1:
+      return `${value}st`;
+    case 2:
+      return `${value}nd`;
+    case 3:
+      return `${value}rd`;
+    default:
+      return `${value}th`;
+  }
+};
 
 export const getFactionName = (id?: string | null): string => {
   if (!id) {
     return "Unassigned";
   }
   return factionById.get(id)?.name ?? id;
+};
+
+export const getFactionBasicActionOrder = (id?: string | null): number | null => {
+  if (!id) {
+    return null;
+  }
+  return basicActionOrderByFaction.get(id) ?? null;
+};
+
+export const getFactionBasicActionOrderLabel = (id?: string | null): string => {
+  const order = getFactionBasicActionOrder(id);
+  if (!order) {
+    return "Lead order";
+  }
+  return formatOrdinal(order);
 };
 
 export const getFactionSymbol = (id?: string | null): string | null => {

@@ -17,10 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent1
-  scope: implement faction-ordered basic action resolution (config-driven) and surface order in faction selector UI.
-  files: packages/engine/src/types.ts, packages/engine/src/config.ts, packages/engine/src/action-flow.ts, packages/engine/src/action-flow.test.ts, apps/web/src/lib/factions.ts, apps/web/src/components/PreGameLobby.tsx, docs/configuration.md, technical_spec.md, implementation_plan.md, progress.md
-  status: in progress
 - owner: agent5
   scope: allow edge-target bridge cards (Bridge Crew) to optionally select a move path after building the bridge.
   files: apps/web/src/components/GameScreen.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md

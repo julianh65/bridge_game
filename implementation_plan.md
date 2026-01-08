@@ -334,7 +334,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] when the action phase flashes up also show the card that was played, like the art and all
 - [x] right now the mana orb can sometimes cover up the action panel when it goes to split or move all
 - [x] for the collection phase modal that should be hid-able like the market, and it should have more detail as to who’s collecting what and why
-- [ ] need to add order of basic actions logic, different factions will always act before others, that should show in the faction selector and be configurable from the config and should also really impact the game
+- [x] need to add order of basic actions logic, different factions will always act before others, that should show in the faction selector and be configurable from the config and should also really impact the game
 - [x] hard: the forces should move around the board and bridges and things should happen in sync with the popup modal during the action phase
 - [ ] there’s still a bit of buginess between phase transitions where we go from action phase to collection phase like the collection modal will instantly pop up
 - [x] scout report still doesn’t let you choose which ones to draw or discard
@@ -346,6 +346,8 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] sometimes the texts on cards are cut off and turn into ...
 - [ ] the bridge card didn't give me the option to move 1 stack 1 hex
 - [ ] needs to be a way for me to test different cards in different board states, like a debug play game where i straight launch to age n with whatever cards in my hand i want
+- [ ] The UI in the cards for mana and gold needs to be slightly larger and more readable, background gradient makes it hard to read slightly
+- [ ] The cards across different parts of the game can be different sizes, I want them to all be a standard size, big enough to fit everything, it's fine if there's empty space on some. they should be the size of the champion cards fitting those stats + their description
 
 
 ### Mini Milestone For Me
@@ -688,6 +690,7 @@ Done
     - [x] Age II market: Strategic Triumph (gain gold).
     - [x] Age II market: Bridge Lockdown (lock bridge modifier).
     - [x] Age II market: Battalion Contract (deploy to capital).
+    - [x] Age II market: Triple March (move up to 3 along bridges).
     - [x] Age II market: Burn the Bridges (destroy connected bridges).
     - [x] Age II market: Center Dispatch (draw if you occupy center).
   - [ ] Champion ability tests (on-deploy, on-death, on-battle-win, dice mods, VP aura).
