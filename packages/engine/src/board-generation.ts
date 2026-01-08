@@ -1,7 +1,9 @@
 import {
   axialDistance,
+  canonicalEdgeKey,
   compareHexKeys,
   generateHexKeys,
+  neighborHexKeys,
   parseHexKey,
   randInt,
   shuffle,
@@ -12,6 +14,7 @@ import {
 import type {
   BoardGenerationRules,
   BoardState,
+  EdgeKey,
   HexKey,
   HexState,
   TileType
@@ -109,6 +112,17 @@ type SpecialTilePlacementOptions = {
   forgeCount: number;
   mineCount: number;
   rules: BoardGenerationRules;
+};
+
+type RandomBridgePlacementOptions = {
+  capitalHexes: HexKey[];
+  count: number;
+};
+
+type RandomBridgePlacementResult = {
+  board: BoardState;
+  rngState: RNGState;
+  edgeKeys: EdgeKey[];
 };
 
 const CENTER_KEY = "0,0";
@@ -512,4 +526,67 @@ export const placeSpecialTiles = (
   }
 
   throw new Error("Failed to place special tiles within maxAttempts");
+};
+
+export const placeRandomBridges = (
+  board: BoardState,
+  rngState: RNGState,
+  options: RandomBridgePlacementOptions
+): RandomBridgePlacementResult => {
+  const { capitalHexes, count } = options;
+  if (!Number.isInteger(count) || count < 0) {
+    throw new Error("random bridge count must be a non-negative integer");
+  }
+
+  const capitalSet = new Set(capitalHexes);
+  for (const capital of capitalHexes) {
+    if (!board.hexes[capital]) {
+      throw new Error(`capital hex ${capital} not on board`);
+    }
+  }
+
+  if (count === 0) {
+    return { board, rngState, edgeKeys: [] };
+  }
+
+  const seenEdges = new Set<EdgeKey>();
+  const candidates: Array<{ key: EdgeKey; from: HexKey; to: HexKey }> = [];
+  for (const key of Object.keys(board.hexes)) {
+    const from = key as HexKey;
+    for (const neighbor of neighborHexKeys(from)) {
+      if (!board.hexes[neighbor]) {
+        continue;
+      }
+      if (capitalSet.has(from) || capitalSet.has(neighbor)) {
+        continue;
+      }
+      const edgeKey = canonicalEdgeKey(from, neighbor);
+      if (seenEdges.has(edgeKey) || board.bridges[edgeKey]) {
+        continue;
+      }
+      seenEdges.add(edgeKey);
+      candidates.push({ key: edgeKey, from, to: neighbor });
+    }
+  }
+
+  if (count > candidates.length) {
+    throw new Error("random bridge count exceeds available edges");
+  }
+
+  const { value: shuffled, next } = shuffle(rngState, candidates);
+  const selected = shuffled.slice(0, count);
+  const bridges = { ...board.bridges };
+  for (const edge of selected) {
+    bridges[edge.key] = {
+      key: edge.key,
+      from: edge.from,
+      to: edge.to
+    };
+  }
+
+  return {
+    board: { ...board, bridges },
+    rngState: next,
+    edgeKeys: selected.map((edge) => edge.key)
+  };
 };

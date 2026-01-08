@@ -278,15 +278,15 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Collection UI becomes a modal overlay (no top-bar layout shift).
 - [ ] Center collection offers power picks (not normal card draft).
 - [ ] Market dice roll animation feels smoother and more synchronized.
-- [ ] Board generation spawns a fixed number of random bridges at setup (per updated rules).
+- [x] Board generation spawns a fixed number of random bridges at setup (per updated rules).
 - [ ] Combat overlay redesign:
-  - [ ] Show forces per side, per-unit rolls, champion rolls/HP, and clear totals.
-  - [ ] Synchronized dice roll flow: spin -> lock in -> hit assignment -> next round.
-  - [ ] Show faction symbols in combat.
-  - [ ] Show bounty rewards and battle results clearly.
-  - [ ] Auto-close combat for all players when resolved.
-  - [ ] Show combat modifiers (buffs/debuffs) explicitly.
-  - [ ] Label capital battles in the modal.
+  - [x] Show forces per side, per-unit rolls, champion rolls/HP, and clear totals.
+  - [x] Synchronized dice roll flow: spin -> lock in -> hit assignment -> next round.
+  - [x] Show faction symbols in combat.
+  - [x] Show bounty rewards and battle results clearly.
+  - [x] Auto-close combat for all players when resolved.
+  - [x] Show combat modifiers (buffs/debuffs) explicitly.
+  - [x] Label capital battles in the modal.
 - [ ] Draw/discard UI clarity: show piles clearly and add draw animations in hand area.
 - [ ] Retreat rules implementation:
   - [ ] If a bridge is adjacent and player has 1 mana, allow retreat selection.
@@ -296,9 +296,9 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Basic actions show a short hover tooltip explanation.
 - [x] Basic actions show mana/gold costs on the buttons.
 - [ ] Center card text alignment (titles/lines) on card faces.
-- [ ] Market show/hide has a hotkey; overlay background slightly transparent.
+- [x] Market show/hide has a hotkey; overlay background slightly transparent.
 - [ ] Market dice overlay includes faction symbols and uses an overlay (not a new stacked container).
-- [ ] Special tiles show a small hover label with type (Mine, Forge, etc).
+- [x] Special tiles show a small hover label with type (Mine, Forge, etc).
 - [ ] Fix phantom/ghost battle overlay state leaks when moving between screens.
 - [ ] Collection phase sequence highlights per-source payouts one by one (mines, forge, center).
 - [ ] Add gold + VP to the hand panel header area (near Hand label).
@@ -308,7 +308,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Fix card hover stacking so hovered cards always render on top.
 - [ ] Force-split dialog appears near the clicked hex (not bottom of screen).
 - [ ] Add an "active effects" view so players see ongoing effects.
-- [ ] Gray out or mark cards that are unaffordable due to mana.
+- [x] Gray out or mark cards that are unaffordable due to mana.
 - [ ] Fix phase progression after capital battles (ensure collection/market transitions).
 - [ ] Add UI for scout orders and "draw and pick" effects.
 - [ ] Fix card aspect ratios on large screens (avoid stretched/fat cards).

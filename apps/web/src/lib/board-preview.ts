@@ -2,6 +2,7 @@ import {
   DEFAULT_CONFIG,
   createBaseBoard,
   getCapitalSlots,
+  placeRandomBridges,
   placeSpecialTiles,
   type BoardState
 } from "@bridgefront/engine";
@@ -62,7 +63,7 @@ export const buildBoardPreview = (playerCount: number, seedInput: string): Board
   }
 
   const boardWithCapitals = { ...board, hexes };
-  const { board: placedBoard, forgeKeys, homeMineKeys, mineKeys } = placeSpecialTiles(
+  const { board: placedBoard, forgeKeys, homeMineKeys, mineKeys, rngState } = placeSpecialTiles(
     boardWithCapitals,
     createRngState(seedValue),
     {
@@ -73,12 +74,16 @@ export const buildBoardPreview = (playerCount: number, seedInput: string): Board
     }
   );
 
-  const hexRender = buildHexRender(placedBoard);
+  const { board: bridgedBoard } = placeRandomBridges(placedBoard, rngState, {
+    capitalHexes: capitals,
+    count: DEFAULT_CONFIG.tileCountsByPlayerCount[playerCount].randomBridges
+  });
+  const hexRender = buildHexRender(bridgedBoard);
 
   return {
     seedValue,
     radius,
-    board: placedBoard,
+    board: bridgedBoard,
     hexRender,
     capitals,
     forgeKeys,

@@ -69,6 +69,9 @@ describe("setup flow", () => {
     );
     state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.startingBridges");
+    expect(Object.keys(state.board.bridges)).toHaveLength(
+      DEFAULT_CONFIG.tileCountsByPlayerCount[2].randomBridges
+    );
 
     const p1Capital = state.players.find((player) => player.id === "p1")?.capitalHex;
     const p2Capital = state.players.find((player) => player.id === "p2")?.capitalHex;

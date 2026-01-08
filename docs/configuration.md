@@ -29,6 +29,17 @@ capitalSlotsByPlayerCount: {
 }
 ```
 
+### Tile counts
+- `tileCountsByPlayerCount`: per-player counts for mines, forges, center, and random bridges.
+- `randomBridges`: number of neutral bridges placed after special tiles are generated.
+
+Example:
+```ts
+tileCountsByPlayerCount: {
+  2: { mines: 4, forges: 1, center: 1, randomBridges: 6 }
+}
+```
+
 ### Special tile placement rules
 `boardGenerationRules` controls how forges and mines are placed:
 - `minDistanceFromCapital`: minimum distance from any capital for special tiles.

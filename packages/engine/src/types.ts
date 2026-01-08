@@ -27,6 +27,7 @@ export type TileCounts = {
   mines: number;
   forges: number;
   center: number;
+  randomBridges: number;
 };
 
 export type MineValueWeight = {

@@ -1,8 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { axialDistance, createRngState, parseHexKey } from "@bridgefront/shared";
+import { axialDistance, createRngState, parseEdgeKey, parseHexKey } from "@bridgefront/shared";
 
-import { createBaseBoard, getCapitalSlots, placeSpecialTiles } from "./board-generation";
+import {
+  createBaseBoard,
+  getCapitalSlots,
+  placeRandomBridges,
+  placeSpecialTiles
+} from "./board-generation";
 import { DEFAULT_CONFIG } from "./config";
 
 const withCapitals = (playerCount: number) => {
@@ -131,6 +136,27 @@ describe("board generation", () => {
       expect(rules.mineValueWeights.map((entry) => entry.value)).toContain(
         first.board.hexes[key].mineValue
       );
+    }
+  });
+
+  it("places random bridges away from capitals deterministically", () => {
+    const { board, capitals } = withCapitals(3);
+    const rng = createRngState(777);
+    const count = DEFAULT_CONFIG.tileCountsByPlayerCount[3].randomBridges;
+
+    const first = placeRandomBridges(board, rng, { capitalHexes: capitals, count });
+    const second = placeRandomBridges(board, createRngState(777), {
+      capitalHexes: capitals,
+      count
+    });
+
+    expect(first.edgeKeys).toHaveLength(count);
+    expect([...first.edgeKeys].sort()).toEqual([...second.edgeKeys].sort());
+
+    for (const edgeKey of first.edgeKeys) {
+      const [a, b] = parseEdgeKey(edgeKey);
+      expect(capitals).not.toContain(a);
+      expect(capitals).not.toContain(b);
     }
   });
 });

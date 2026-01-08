@@ -15,7 +15,7 @@ import type {
   SetupChoice
 } from "./types";
 import { getBridgeKey } from "./board";
-import { placeSpecialTiles } from "./board-generation";
+import { placeRandomBridges, placeSpecialTiles } from "./board-generation";
 import {
   createCardInstance,
   createCardInstances,
@@ -200,10 +200,15 @@ export const finalizeCapitalDraft = (state: GameState): GameState => {
     rules: state.config.boardGenerationRules
   });
 
+  const bridged = placeRandomBridges(placement.board, placement.rngState, {
+    capitalHexes,
+    count: tileCounts.randomBridges
+  });
+
   const nextState = {
     ...state,
-    board: placement.board,
-    rngState: placement.rngState
+    board: bridged.board,
+    rngState: bridged.rngState
   };
 
   return initializeStartingAssets(nextState);
