@@ -24,7 +24,7 @@ import {
 
 import { type BasicActionIntent, type BoardPickMode } from "./ActionPanel";
 import { ActionRevealOverlay, type ActionRevealOverlayData } from "./ActionRevealOverlay";
-import { BoardView } from "./BoardView";
+import { BoardView, type BoardActionAnimation } from "./BoardView";
 import { CollectionPanel } from "./CollectionPanel";
 import { CombatOverlay } from "./CombatOverlay";
 import { GameScreenHandPanel } from "./GameScreenHandPanel";
@@ -73,8 +73,10 @@ type CardRevealTargetInfo = {
 
 type ActionCardReveal = ActionRevealOverlayData & {
   key: string;
+  playerId: string | null;
   targetHexKeys: string[];
   targetEdgeKeys: string[];
+  movePaths: string[][];
 };
 
 type AgeCue = {
@@ -199,6 +201,54 @@ const getTargetStringArray = (
     return [];
   }
   return value.filter((entry) => typeof entry === "string" && entry.length > 0);
+};
+
+const normalizePathTarget = (value: unknown): string[] | null => {
+  if (!Array.isArray(value)) {
+    return null;
+  }
+  const path = value.filter(
+    (entry): entry is string => typeof entry === "string" && entry.length > 0
+  );
+  return path.length >= 2 ? path : null;
+};
+
+const getTargetPaths = (record: Record<string, unknown> | null): string[][] => {
+  if (!record) {
+    return [];
+  }
+  const paths: string[][] = [];
+  const seen = new Set<string>();
+  const pushPath = (path: string[]) => {
+    const key = path.join("|");
+    if (seen.has(key)) {
+      return;
+    }
+    seen.add(key);
+    paths.push(path);
+  };
+  const raw = record.paths ?? record.path;
+  if (Array.isArray(raw)) {
+    if (raw.length > 0 && raw.every((entry) => typeof entry === "string")) {
+      const normalized = normalizePathTarget(raw);
+      if (normalized) {
+        pushPath(normalized);
+      }
+    } else {
+      raw.forEach((entry) => {
+        const normalized = normalizePathTarget(entry);
+        if (normalized) {
+          pushPath(normalized);
+        }
+      });
+    }
+  }
+  const from = getTargetString(record, "from");
+  const to = getTargetString(record, "to");
+  if (paths.length === 0 && from && to) {
+    pushPath([from, to]);
+  }
+  return paths;
 };
 
 const getTargetCardInstanceIds = (record: Record<string, unknown> | null): string[] => {
@@ -1342,8 +1392,10 @@ export const GameScreen = ({
           view.public.board,
           hexLabels
         );
+        const movePaths = getTargetPaths(targetRecord);
         newReveals.push({
           key: `${i}-${cardId}`,
+          playerId,
           playerName: playerId ? playerNames.get(playerId) ?? playerId : "Unknown player",
           cardName: cardDef?.name ?? cardId,
           cardId,
@@ -1352,7 +1404,8 @@ export const GameScreen = ({
           costLabel: buildCardCostLabel(cardDef),
           targetLines: targetInfo.targetLines,
           targetHexKeys: targetInfo.targetHexKeys,
-          targetEdgeKeys: targetInfo.targetEdgeKeys
+          targetEdgeKeys: targetInfo.targetEdgeKeys,
+          movePaths
         });
         continue;
       }
@@ -1369,8 +1422,10 @@ export const GameScreen = ({
         }
         const action = actionRaw as BasicAction;
         const basicReveal = describeBasicAction(action, hexLabels);
+        const movePaths = action.kind === "march" ? [[action.from, action.to]] : [];
         newReveals.push({
           key: `${i}-${event.type}`,
+          playerId,
           playerName: playerId ? playerNames.get(playerId) ?? playerId : "Unknown player",
           cardName: basicReveal.label,
           cardId: event.type,
@@ -1379,7 +1434,8 @@ export const GameScreen = ({
           costLabel: null,
           targetLines: basicReveal.targets.targetLines,
           targetHexKeys: basicReveal.targets.targetHexKeys,
-          targetEdgeKeys: basicReveal.targets.targetEdgeKeys
+          targetEdgeKeys: basicReveal.targets.targetEdgeKeys,
+          movePaths
         });
       }
     }
@@ -1451,6 +1507,40 @@ export const GameScreen = ({
       window.clearTimeout(timeout);
     };
   }, [activeCardReveal, actionRevealDurationMs, cardRevealKey]);
+
+  const actionAnimations = useMemo<BoardActionAnimation[]>(() => {
+    if (!activeCardReveal) {
+      return [];
+    }
+    const animations: BoardActionAnimation[] = [];
+    activeCardReveal.movePaths.forEach((path, index) => {
+      animations.push({
+        id: `${activeCardReveal.key}-move-${index}`,
+        kind: "move",
+        path,
+        playerId: activeCardReveal.playerId
+      });
+    });
+    activeCardReveal.targetEdgeKeys.forEach((edgeKey, index) => {
+      animations.push({
+        id: `${activeCardReveal.key}-edge-${index}`,
+        kind: "edge",
+        edgeKey,
+        playerId: activeCardReveal.playerId
+      });
+    });
+    if (animations.length === 0) {
+      activeCardReveal.targetHexKeys.forEach((hexKey, index) => {
+        animations.push({
+          id: `${activeCardReveal.key}-hex-${index}`,
+          kind: "hex",
+          hexKey,
+          playerId: activeCardReveal.playerId
+        });
+      });
+    }
+    return animations;
+  }, [activeCardReveal]);
 
   const applyCardMoveForceCount = (targets: Record<string, unknown>) => {
     if (!cardMoveSupportsSplit || cardMoveForceCount === null) {
@@ -2471,8 +2561,12 @@ export const GameScreen = ({
     </div>
   ) : null;
 
-  const showMarketOverlayToggle =
-    isMarketPhase && !isMarketOverlayOpen && !shouldForceMarketOverlay;
+  const showMarketOverlayToggle = isMarketPhase;
+  const marketToggleLabel = !canToggleMarketOverlay
+    ? "Market Locked"
+    : showMarketOverlay
+      ? "Hide Market"
+      : "Show Market";
   const marketOverlay = isMarketPhase || shouldHoldMarketOverlay ? (
     <>
       {showMarketOverlay ? (
@@ -2497,11 +2591,15 @@ export const GameScreen = ({
       {showMarketOverlayToggle ? (
         <button
           type="button"
-          className="btn btn-primary market-overlay__toggle"
+          className={`btn btn-primary market-overlay__toggle${
+            showMarketOverlay ? " is-active" : ""
+          }`}
           data-sfx="soft"
-          onClick={() => setIsMarketOverlayOpen(true)}
+          aria-pressed={showMarketOverlay}
+          onClick={() => setIsMarketOverlayOpen((current) => !current)}
+          disabled={!canToggleMarketOverlay}
         >
-          Show Market
+          {marketToggleLabel}
         </button>
       ) : null}
     </>
@@ -2684,6 +2782,8 @@ export const GameScreen = ({
                 onHexClick={isEdgePickMode ? undefined : handleBoardHexClick}
                 onEdgeClick={handleBoardEdgeClick}
                 showTags={false}
+                actionAnimations={actionAnimations}
+                actionAnimationDurationMs={actionRevealDurationMs}
               />
               <div
                 className={`board-tools board-tools--overlay ${

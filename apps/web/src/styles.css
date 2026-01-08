@@ -3976,8 +3976,27 @@ body.is-game .market-overlay__panel {
 .market-overlay__toggle {
   position: fixed;
   right: 24px;
-  top: 132px;
-  z-index: 40;
+  top: 120px;
+  z-index: 65;
+  min-width: 180px;
+  padding: 12px 20px;
+  font-size: 14px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.02em;
+  box-shadow: 0 12px 24px rgba(20, 12, 6, 0.35);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.market-overlay__toggle.is-active {
+  box-shadow: 0 12px 26px rgba(20, 12, 6, 0.4);
+}
+
+.market-overlay__toggle:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(20, 12, 6, 0.4);
 }
 
 .collection-overlay {
@@ -5895,6 +5914,139 @@ body.is-game .btn-secondary:active:not(:disabled) {
   stroke-width: 1.6;
 }
 
+.action-anim {
+  --action-anim-color: var(--accent-strong);
+  --action-anim-duration: 2000ms;
+  pointer-events: none;
+}
+
+.action-anim--p0 {
+  --action-anim-color: var(--player-color-0);
+}
+
+.action-anim--p1 {
+  --action-anim-color: var(--player-color-1);
+}
+
+.action-anim--p2 {
+  --action-anim-color: var(--player-color-2);
+}
+
+.action-anim--p3 {
+  --action-anim-color: var(--player-color-3);
+}
+
+.action-anim--p4 {
+  --action-anim-color: var(--player-color-4);
+}
+
+.action-anim--p5 {
+  --action-anim-color: var(--player-color-5);
+}
+
+.action-anim__path {
+  fill: none;
+  stroke: var(--action-anim-color);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 8 6;
+  opacity: 0;
+  animation: action-anim-path var(--action-anim-duration) ease-out forwards;
+  filter: drop-shadow(0 0 6px rgba(15, 9, 4, 0.45));
+}
+
+.action-anim__token {
+  fill: var(--action-anim-color);
+  stroke: rgba(25, 18, 10, 0.65);
+  stroke-width: 1;
+  opacity: 0;
+  filter: drop-shadow(0 0 8px rgba(15, 9, 4, 0.5));
+  animation: action-anim-token var(--action-anim-duration) ease-out forwards;
+}
+
+.action-anim__edge {
+  stroke: var(--action-anim-color);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 10 6;
+  opacity: 0;
+  animation: action-anim-edge var(--action-anim-duration) ease-out forwards;
+  filter: drop-shadow(0 0 8px rgba(15, 9, 4, 0.5));
+}
+
+.action-anim__pulse {
+  fill: none;
+  stroke: var(--action-anim-color);
+  stroke-width: 2.2;
+  opacity: 0;
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: action-anim-pulse var(--action-anim-duration) ease-out forwards;
+  filter: drop-shadow(0 0 6px rgba(15, 9, 4, 0.4));
+}
+
+@keyframes action-anim-path {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 24;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes action-anim-token {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  15% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
+@keyframes action-anim-edge {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 24;
+  }
+  25% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes action-anim-pulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  20% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
 .board-svg--interactive .bridge:hover {
   opacity: 1;
   filter: drop-shadow(0 1px 3px rgba(34, 26, 18, 0.55));
@@ -7468,6 +7620,7 @@ body.is-game .combat-outcome__auto {
     top: auto;
     bottom: 24px;
     right: 16px;
+    min-width: 160px;
   }
 
   .champion-target-overlay {

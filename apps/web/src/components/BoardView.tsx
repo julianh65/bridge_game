@@ -25,6 +25,15 @@ type ViewBox = {
   height: number;
 };
 
+export type BoardActionAnimation = {
+  id: string;
+  kind: "move" | "edge" | "hex";
+  path?: string[];
+  edgeKey?: string;
+  hexKey?: string;
+  playerId?: string | null;
+};
+
 type BoardViewProps = {
   hexes: HexRender[];
   board?: BoardState;
@@ -47,6 +56,8 @@ type BoardViewProps = {
   validHexKeys?: string[];
   previewEdgeKeys?: string[];
   isTargeting?: boolean;
+  actionAnimations?: BoardActionAnimation[];
+  actionAnimationDurationMs?: number;
 };
 
 type TooltipTone = "title" | "label" | "body";
@@ -146,6 +157,15 @@ const shortenSegment = (
     from: { x: from.x + nx * inset, y: from.y + ny * inset },
     to: { x: to.x - nx * inset, y: to.y - ny * inset }
   };
+};
+
+const buildPathD = (points: Array<{ x: number; y: number }>): string | null => {
+  if (points.length < 2) {
+    return null;
+  }
+  const [start, ...rest] = points;
+  const segments = rest.map((point) => `L ${point.x} ${point.y}`).join(" ");
+  return `M ${start.x} ${start.y} ${segments}`;
 };
 
 const tileTag = (tile: string) => {
@@ -366,7 +386,9 @@ export const BoardView = ({
   highlightHexKeys = [],
   validHexKeys = [],
   previewEdgeKeys = [],
-  isTargeting = false
+  isTargeting = false,
+  actionAnimations = [],
+  actionAnimationDurationMs
 }: BoardViewProps) => {
   const baseViewBox = useMemo(() => boundsForHexes(hexes), [hexes]);
   const [viewBox, setViewBox] = useState(baseViewBox);
@@ -748,6 +770,46 @@ export const BoardView = ({
     const index = playerIndex.get(playerId);
     return index !== undefined ? `P${index + 1}` : playerId;
   };
+
+  const resolvePathPoints = (path: string[] | undefined) => {
+    if (!path || path.length < 2) {
+      return null;
+    }
+    const points = path
+      .map((hexKey) => hexCenters.get(hexKey))
+      .filter((point): point is { x: number; y: number } => Boolean(point));
+    return points.length >= 2 ? points : null;
+  };
+
+  const resolveEdgeSegment = (edgeKey: string | undefined) => {
+    if (!edgeKey) {
+      return null;
+    }
+    try {
+      const [fromKey, toKey] = parseEdgeKey(edgeKey);
+      const from = hexCenters.get(fromKey);
+      const to = hexCenters.get(toKey);
+      if (!from || !to) {
+        return null;
+      }
+      return shortenSegment(from, to, BRIDGE_INSET);
+    } catch {
+      return null;
+    }
+  };
+
+  const resolveHexCenter = (hexKey: string | undefined) => {
+    if (!hexKey) {
+      return null;
+    }
+    return hexCenters.get(hexKey) ?? null;
+  };
+
+  const actionAnimationDuration = actionAnimationDurationMs ?? 0;
+  const actionAnimationStyle = actionAnimationDuration
+    ? ({ ["--action-anim-duration" as string]: `${actionAnimationDuration}ms` } as CSSProperties)
+    : undefined;
+  const actionAnimationsActive = actionAnimations.length > 0 && actionAnimationDuration > 0;
 
   const toSvgPoint = (clientX: number, clientY: number) => {
     const svg = svgRef.current;
@@ -1535,6 +1597,76 @@ export const BoardView = ({
           </g>
         );
       })}
+      {actionAnimationsActive
+        ? actionAnimations.map((animation) => {
+            const colorIndex = normalizeColorIndex(
+              animation.playerId ? playerIndex.get(animation.playerId) : undefined
+            );
+            const colorClass =
+              colorIndex !== undefined ? `action-anim--p${colorIndex}` : "";
+            const className = [
+              "action-anim",
+              `action-anim--${animation.kind}`,
+              colorClass
+            ]
+              .filter(Boolean)
+              .join(" ");
+            if (animation.kind === "move") {
+              const points = resolvePathPoints(animation.path);
+              const pathD = points ? buildPathD(points) : null;
+              if (!pathD) {
+                return null;
+              }
+              return (
+                <g key={animation.id} className={className} style={actionAnimationStyle}>
+                  <path className="action-anim__path" d={pathD} />
+                  <circle className="action-anim__token" r={6}>
+                    <animateMotion
+                      dur={`${actionAnimationDuration}ms`}
+                      path={pathD}
+                      keyTimes="0;1"
+                      calcMode="linear"
+                    />
+                  </circle>
+                </g>
+              );
+            }
+            if (animation.kind === "edge") {
+              const segment = resolveEdgeSegment(animation.edgeKey);
+              if (!segment) {
+                return null;
+              }
+              return (
+                <g key={animation.id} className={className} style={actionAnimationStyle}>
+                  <line
+                    className="action-anim__edge"
+                    x1={segment.from.x}
+                    y1={segment.from.y}
+                    x2={segment.to.x}
+                    y2={segment.to.y}
+                  />
+                </g>
+              );
+            }
+            if (animation.kind === "hex") {
+              const center = resolveHexCenter(animation.hexKey);
+              if (!center) {
+                return null;
+              }
+              return (
+                <g key={animation.id} className={className} style={actionAnimationStyle}>
+                  <circle
+                    className="action-anim__pulse"
+                    cx={center.x}
+                    cy={center.y}
+                    r={14}
+                  />
+                </g>
+              );
+            }
+            return null;
+          })
+        : null}
       {tileTooltip ? (
         <g
           className="tile-tooltip"
