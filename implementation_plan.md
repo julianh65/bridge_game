@@ -268,13 +268,13 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
     - [x] Add faction ability copy data (passive + starter spell/champion text) for UI display.
   - [ ] Starting deck preview screen (card components) showing faction abilities; all ready -> host advance.
     - [ ] Show starter deck composition (counts) + champion/spell callouts.
-  - [ ] Map screen with two sub-steps:
-    - [ ] Capital selection (simultaneous, no turn order).
-    - [ ] Initial bridge placement: secret selection of two bridges, reveal simultaneously.
+  - [x] Map screen with two sub-steps:
+    - [x] Capital selection (simultaneous, no turn order).
+    - [x] Initial bridge placement: secret selection of two bridges, reveal simultaneously.
   - [ ] Free starting card draft screen with improved presentation.
   - [ ] Transition to main game after all setup steps complete.
   - [x] Engine: add setup host-advance gate + setup status view (AdvanceSetup + readiness), update setup tests.
-  - [ ] Engine: add secret starting-bridge selection + reveal flow, with setup tests.
+  - [x] Engine: add secret starting-bridge selection + reveal flow, with setup tests.
   - [ ] UI smoke coverage for setup gating/bridge reveal if feasible.
 - [x] Champion card UI shows iconography for health, dice, hits, and bounty.
 - [x] Market HUD shows current gold with the same emoji/visual language used elsewhere.
@@ -282,7 +282,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Action reveal popup uses A1-style board labels (not axial coords).
 - [x] Collection UI becomes a modal overlay (no top-bar layout shift).
 - [ ] Center collection offers power picks (not normal card draft).
-- [ ] Market dice roll animation feels smoother and more synchronized.
+- [x] Market dice roll animation feels smoother and more synchronized.
 - [x] Board generation spawns a fixed number of random bridges at setup (per updated rules).
 - [ ] Combat and combat overlay redesign:
  - [x] Change the coords to the tile type and our labelling system e.g. Battle at A1 Mine
@@ -306,7 +306,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Basic actions show mana/gold costs on the buttons.
 - [x] Center card text alignment (titles/lines) on card faces.
 - [x] Market show/hide has a hotkey; overlay background slightly transparent.
-- [ ] Market dice overlay includes faction symbols and uses an overlay (not a new stacked container).
+- [x] Market dice overlay includes faction symbols and uses an overlay (not a new stacked container).
 - [x] Special tiles show a small hover label with type (Mine, Forge, etc).
 - [x] Fix phantom/ghost battle overlay state leaks when moving between screens.
 - [ ] Collection phase sequence highlights per-source payouts one by one (mines, forge, center).
@@ -314,7 +314,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Board "chit" styling (units/champions/forces) aligns with dark fantasy theme.
 - [x] Champion target modal should not shift page layout; convert to overlay.
 - [ ] Add stats tracking TODO (battles won, other metrics) for later.
-- [ ] Fix card hover stacking so hovered cards always render on top.
+- [x] Fix card hover stacking so hovered cards always render on top.
 - [ ] Force-split dialog appears near the clicked hex (not bottom of screen).
 - [ ] Add an "active effects" view so players see ongoing effects.
 - [x] Gray out or mark cards that are unaffordable due to mana.

@@ -1,21 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
+import { CardEditor } from "./components/CardEditor";
 import { CardsBrowser } from "./components/CardsBrowser";
 import { DeckViewer } from "./components/DeckViewer";
 import { DebugBoard } from "./components/DebugBoard";
 import { BattleDebug } from "./components/BattleDebug";
 import { GameScreen } from "./components/GameScreen";
 import { Home, type RoomJoinParams } from "./components/Home";
-import { Lobby } from "./components/Lobby";
 import { LobbyDice } from "./components/LobbyDice";
 import { PreGameLobby } from "./components/PreGameLobby";
+import { SetupFlow } from "./components/SetupFlow";
 import { RoomDebugPanel } from "./components/RoomDebugPanel";
 import { RoomCodeCopy } from "./components/RoomCodeCopy";
 import { useRoom } from "./lib/room-client";
 import { armSfx, getSfxForTarget, playSfx } from "./lib/sfx";
 
-type AppView = "play" | "debug" | "cards" | "deck" | "battle";
+type AppView = "play" | "debug" | "cards" | "deck" | "battle" | "editor";
 
 const statusLabels: Record<string, string> = {
   idle: "Idle",
@@ -69,10 +70,12 @@ export default function App() {
   const showGame = Boolean(room.view && room.view.public.phase !== "setup");
   const isGameLayout = view === "play" && showGame;
   const showPreGameLobby = Boolean(room.lobby && !room.view);
+  const showEditor = import.meta.env.DEV;
   const isThemeView =
     view === "cards" ||
     view === "deck" ||
     view === "battle" ||
+    view === "editor" ||
     (view === "play" && Boolean(roomConfig));
 
   useEffect(() => {
@@ -138,6 +141,16 @@ export default function App() {
           >
             Battle Debug
           </button>
+          {showEditor ? (
+            <button
+              type="button"
+              className={view === "editor" ? "is-active" : ""}
+              data-sfx="soft"
+              onClick={() => setView("editor")}
+            >
+              Card Editor
+            </button>
+          ) : null}
         </div>
       </nav>
 
@@ -223,7 +236,7 @@ export default function App() {
             status={room.status}
             onRoll={() => room.sendLobbyCommand("rollDice")}
           />
-          <Lobby
+          <SetupFlow
             view={room.view}
             playerId={room.playerId}
             roomId={roomConfig.roomId}

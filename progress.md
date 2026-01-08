@@ -17,10 +17,8 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
- - owner: agent1; scope: setup flow UI phase shell for capital draft + starting bridges (map-focused layout with host advance); files: `apps/web/src/App.tsx`, `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/lib/board-preview.ts`, `implementation_plan.md`, `progress.md`; status: in progress (overlap note: `apps/web/src/App.tsx` already modified by other agents)
- - owner: agent5; scope: market roll-off overlay + faction symbols + smoother roll timing; files: `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in progress
+ - owner: agent5; scope: combat overlay visual tokens + single-round view (no stacked rounds); files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in progress (overlap note: `apps/web/src/styles.css` already has other in-flight edits)
 
- 
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -33,8 +31,10 @@
 
 ## Milestone After Full Test Play and Thinking progress
 - Added setup host-advance gating in the engine (AdvanceSetup command + setup status view), updated setup/action/smoke tests plus server auto-setup + sample-game helpers, and added a host-only Advance Setup button in the lobby; updated the plan checklist. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/action-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/index.ts`, `apps/server/src/server.ts`, `apps/web/src/lib/sample-game.ts`, `apps/web/src/components/Lobby.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.)
+- Added a setup flow screen focused on map steps (capital draft + starting bridges) and free starting card, replacing the setup lobby view; marked the map screen + secret bridge reveal plan items complete. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.) (Overlap note: `apps/web/src/App.tsx` already in-flight.)
 - Added faction ability copy data (passives + starter spell/champion text) and surfaced it in the faction selection UI. (Files: `apps/web/src/lib/factions.ts`, `apps/web/src/components/PreGameLobby.tsx`, `implementation_plan.md`.)
 - Refined the pre-game lobby layout by moving start controls into the seats panel and restyling faction cards into sectioned passives/starter kit blocks. (Files: `apps/web/src/components/PreGameLobby.tsx`, `apps/web/src/styles.css`.)
+- Thinned seat rows, thickened faction cards, and shifted the start block above the seat list in the pre-game lobby. (Files: `apps/web/src/components/PreGameLobby.tsx`, `apps/web/src/styles.css`.)
 - Tweaked pre-game lobby layout with the start block above seats, slimmer seat rows, and thicker faction cards for readability. (Files: `apps/web/src/components/PreGameLobby.tsx`, `apps/web/src/styles.css`.)
 - Made capital draft simultaneous with lock/unlock support, updated setup draft UI + event formatting, and added unlock test coverage; marked the plan item complete. (Files: `packages/engine/src/setup-flow.ts`, `packages/engine/src/types.ts`, `packages/engine/src/setup-flow.test.ts`, `apps/web/src/components/SetupCapitalDraft.tsx`, `apps/web/src/lib/event-format.ts`, `implementation_plan.md`.)
 - Added random bridge placement after special tiles in setup with config support, board preview integration, and engine tests; marked the plan item complete. (Files: `packages/engine/src/board-generation.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/types.ts`, `packages/engine/src/config.ts`, `packages/engine/src/board-generation.test.ts`, `packages/engine/src/setup-flow.test.ts`, `apps/web/src/lib/board-preview.ts`, `docs/configuration.md`, `implementation_plan.md`.) (Overlap note: `packages/engine/src/config.ts` already had action/market duration tweaks in the working tree.)
@@ -47,6 +47,7 @@
 - Added a battle debug tab to simulate combat with custom forces/champions, reusing the combat overlay for playback. (Files: `apps/web/src/App.tsx`, `apps/web/src/components/BattleDebug.tsx`, `apps/web/src/styles.css`, `packages/engine/src/index.ts`, `implementation_plan.md`.) (Overlap note: `apps/web/src/App.tsx` also in agent3 scope.)
 - Added champion stat iconography (HP/dice/hits/bounty) and a gold cost scaling hint on champion cards; updated the plan checklist. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4) (Overlap note: `apps/web/src/styles.css` overlaps agent2 scope.)
 - Fixed combat overlay log baseline so old combat sequences don’t replay on view changes; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
+- Added a market roll-off overlay with faction symbols and synchronized dice timing; updated the plan checklist. (Files: `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.)
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -95,6 +96,7 @@
 - Converted the collection UI into a modal overlay with scrim/panel styling to avoid layout shifts; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
 - Converted champion target selection into a floating overlay panel to avoid layout shifts; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
 - Marked the local player's capital with a ring indicator on the board view; updated the plan checklist. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3) (Overlap note: `implementation_plan.md` included a pre-existing burn test TODO; `progress.md` picked up an agent5 active-task entry.)
+- Lifted hovered card grid items above neighbors in cards/market/collection/hand-picker views; updated the plan checklist. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
