@@ -21,10 +21,6 @@
   scope: implement faction-ordered basic action resolution (config-driven) and surface order in faction selector UI.
   files: packages/engine/src/types.ts, packages/engine/src/config.ts, packages/engine/src/action-flow.ts, packages/engine/src/action-flow.test.ts, apps/web/src/lib/factions.ts, apps/web/src/components/PreGameLobby.tsx, docs/configuration.md, technical_spec.md, implementation_plan.md, progress.md
   status: in progress
-- owner: agent3
-  scope: add targeted Burn the Bridges card-effect test (destroy connected bridges after moving).
-  files: packages/engine/src/card-effects.burn-the-bridges.test.ts, implementation_plan.md, progress.md
-  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -150,6 +146,7 @@
 - Added Temporary Bridge card-effect test for temporary bridge placement without occupied endpoints and updated the plan checklist. (Files: `packages/engine/src/card-effects.temporary-bridge.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.temporary-bridge.test.ts`.) (owner: agent3)
 - Confirmed Temporary Bridge coverage includes temporary flag + no-occupancy validation in engine tests. (owner: agent3)
 - Added Battalion Contract card-effect test for capital deployment (10 forces) and updated the plan checklist. (Files: `packages/engine/src/card-effects.battalion-contract.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.battalion-contract.test.ts`.) (owner: agent3)
+- Added Burn the Bridges card-effect test for move + destroy connected bridges and updated the plan checklist. (Files: `packages/engine/src/card-effects.burn-the-bridges.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.burn-the-bridges.test.ts`.) (owner: agent3)
 - Added Strategic Triumph card-effect test for gold gain and updated the plan checklist. (Files: `packages/engine/src/card-effects.strategic-triumph.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.strategic-triumph.test.ts`.) (owner: agent2)
 - Added Small Hands card-effect test for draw-if-empty hand (plan already tracked). (File: `packages/engine/src/card-effects.small-hands.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.small-hands.test.ts`.) (owner: agent2)
 - Added Center Dispatch card-effect test for center-conditional draw and updated the plan checklist. (Files: `packages/engine/src/card-effects.center-dispatch.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.center-dispatch.test.ts`.) (owner: agent2)

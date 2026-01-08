@@ -688,6 +688,7 @@ Done
     - [x] Age II market: Strategic Triumph (gain gold).
     - [x] Age II market: Bridge Lockdown (lock bridge modifier).
     - [x] Age II market: Battalion Contract (deploy to capital).
+    - [x] Age II market: Burn the Bridges (destroy connected bridges).
     - [x] Age II market: Center Dispatch (draw if you occupy center).
   - [ ] Champion ability tests (on-deploy, on-death, on-battle-win, dice mods, VP aura).
     - [x] Bounty Hunter bonus gold on champion kill in battle.
