@@ -591,11 +591,11 @@ export const CollectionPanel = ({
                     }`}
                   >
                     <div className="collection-prompt__header">
-                      <span className="collection-prompt__title">Center</span>
+                      <span className="collection-prompt__title">Center Power</span>
                       <span className="collection-prompt__meta">{hexLabel}</span>
                     </div>
                     <div className="collection-prompt__section">
-                      <span className="collection-prompt__label">Pick 1 card</span>
+                      <span className="collection-prompt__label">Power pick</span>
                       <p className="collection-prompt__note">
                         {revealCount > 0
                           ? `Pick 1 power card from ${revealLabel}.`
@@ -613,10 +613,10 @@ export const CollectionPanel = ({
                             durationMs={COLLECTION_ROLL_DURATION_MS}
                             rollKey={rollState?.rollKey}
                             className="number-roll--lg"
-                            label="Center draw roll"
+                            label="Power draw roll"
                           />
                           <span className="collection-roll__label">
-                            Revealing center draw...
+                            Revealing power deck...
                           </span>
                         </div>
                       ) : (
