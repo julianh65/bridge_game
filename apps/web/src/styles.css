@@ -3472,7 +3472,7 @@ body.is-game .action-reveal__targets--empty {
   right: 16px;
   bottom: 12px;
   pointer-events: none;
-  z-index: 52;
+  z-index: 0;
 }
 
 .game-hand__actions-header {

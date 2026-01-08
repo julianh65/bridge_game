@@ -332,7 +332,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] why is all the card art way zoomed in at market phase?
 - [x] the market dice roll is a bit weird for ties, like it seemed like it insta skipped and i didn’t get to see who won it, at the end of the rolls it needs to show who won the roll and pause
 - [x] when the action phase flashes up also show the card that was played, like the art and all
-- [ ] right now the mana orb can sometimes cover up the action panel when it goes to split or move all
+- [x] right now the mana orb can sometimes cover up the action panel when it goes to split or move all
 - [x] for the collection phase modal that should be hid-able like the market, and it should have more detail as to who’s collecting what and why
 - [ ] need to add order of basic actions logic, different factions will always act before others, that should show in the faction selector and be configurable from the config and should also really impact the game
 - [x] hard: the forces should move around the board and bridges and things should happen in sync with the popup modal during the action phase
