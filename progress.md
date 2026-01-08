@@ -17,6 +17,10 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- owner: agent5
+  scope: improve mana/gold cost chip readability (larger text, clearer backgrounds).
+  files: apps/web/src/styles.css, progress.md, implementation_plan.md
+  status: in progress (overlap: apps/web/src/styles.css with agent2)
 - owner: agent3
   scope: add targeted Stall card-effect test (no-op validation).
   files: packages/engine/src/card-effects.stall.test.ts, implementation_plan.md, progress.md
@@ -56,6 +60,7 @@
 - Restored setup deck preview as the initial setup block (createNewGame now starts at `setup.deckPreview`) and verified setup/index tests. (Files: `packages/engine/src/engine.ts`.) (Test: `npm run -w @bridgefront/engine test -- setup-flow.test.ts index.test.ts`.) (owner: agent2)
 - Updated action-flow test setup to advance past deck preview before capital draft; action-flow suite passes again. (File: `packages/engine/src/action-flow.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- action-flow.test.ts`.) (owner: agent2)
 - Widened setup layout so the players panel fills its grid column beside deck preview/capital draft instead of hugging the far edge. (File: `apps/web/src/styles.css`.) (owner: agent2)
+- Rebalanced setup layout so the players panel stays narrow on the right while setup panels get the main column width. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Added per-faction starter deck mapping scaffold (defaults to the common deck), updated card registry coverage, and noted the remaining per-faction initiative work in the plan. (Files: `packages/engine/src/content/starter-decks.ts`, `packages/engine/src/content/cards/cards.test.ts`, `implementation_plan.md`.)
 - Added per-faction starter initiative variants for Quick Move/Zap/Scout Report and updated starter decks to use the faction-specific IDs; marked the plan item complete. (Files: `packages/engine/src/content/cards/starter.ts`, `packages/engine/src/content/starter-decks.ts`, `implementation_plan.md`.)
 - Added card art mappings for faction-specific starter variants (Quick Move/Zap/Scout Report) so art resolves for the new IDs. (File: `apps/web/src/data/card-art.json`.) (Overlap note: `apps/web/src/data/card-art.json` already had in-flight art mappings.)

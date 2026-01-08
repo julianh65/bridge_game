@@ -791,6 +791,21 @@ body.is-game .status-pill--idle {
   .lobby__grid--pre-game {
     grid-template-columns: 1fr;
   }
+
+  .setup-flow .lobby__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .setup-flow .lobby__grid > .panel:not(.setup-flow__players) {
+    grid-column: auto;
+  }
+
+  .setup-flow__players {
+    grid-column: auto;
+    grid-row: auto;
+    max-width: none;
+    justify-self: stretch;
+  }
 }
 
 .lobby__map-preview {
@@ -799,6 +814,15 @@ body.is-game .status-pill--idle {
 
 .lobby__map-preview .board-svg {
   height: clamp(220px, 32vh, 360px);
+}
+
+.setup-flow .lobby__grid {
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 260px);
+  align-items: start;
+}
+
+.setup-flow .lobby__grid > .panel:not(.setup-flow__players) {
+  grid-column: 1;
 }
 
 .setup-draft {
@@ -950,8 +974,10 @@ body.is-game .setup-card-pick__player-row--active {
 }
 
 .setup-flow__players {
-  max-width: none;
-  justify-self: stretch;
+  grid-column: 2;
+  grid-row: 1 / span 99;
+  max-width: 260px;
+  justify-self: end;
   width: 100%;
 }
 
