@@ -29,6 +29,7 @@ type MarketPanelProps = {
   status: RoomConnectionStatus;
   onSubmitBid: (bid: Bid) => void;
   winnerHighlight?: MarketWinnerHighlight | null;
+  winnerHistory?: Record<number, MarketWinnerHighlight> | null;
   rollDurationMs?: number;
   layout?: "sidebar" | "overlay";
   onClose?: () => void;
@@ -42,6 +43,7 @@ export const MarketPanel = ({
   status,
   onSubmitBid,
   winnerHighlight,
+  winnerHistory = null,
   rollDurationMs: rollDurationOverride,
   layout = "sidebar",
   onClose
@@ -131,19 +133,17 @@ export const MarketPanel = ({
       : `Pass ${playerBid.amount}`
     : null;
 
-  const winnerAnnouncement = showWinner && winnerHighlight
-    ? {
-        title: `${winnerHighlight.playerName} won`,
-        detail:
-          winnerHighlight.kind === "buy"
-            ? winnerHighlight.amount !== null
-              ? `Bought for ${winnerHighlight.amount}g`
-              : "Bought"
-            : winnerHighlight.passPot && winnerHighlight.passPot > 0
-              ? `Pass pot ${winnerHighlight.passPot}g`
-              : "Won on pass"
-      }
-    : null;
+  const formatWinnerAnnouncement = (winner: MarketWinnerHighlight) => ({
+    title: `${winner.playerName} won`,
+    detail:
+      winner.kind === "buy"
+        ? winner.amount !== null
+          ? `Bought for ${winner.amount}g`
+          : "Bought"
+        : winner.passPot && winner.passPot > 0
+          ? `Pass pot ${winner.passPot}g`
+          : "Won on pass"
+  });
 
   const isWinnerCard = (index: number, cardId: string) => {
     if (!winnerHighlight) {
@@ -161,8 +161,24 @@ export const MarketPanel = ({
     const isActive = index === rowIndexResolving;
     const isResolved = index < rowIndexResolving;
     const label = isHidden ? "Face down" : def?.name ?? card.cardId;
-    const isWinner = showWinner && isWinnerCard(index, card.cardId);
-    return { card, def, index, isHidden, isActive, isResolved, isWinner, label };
+    const isHighlight = Boolean(winnerHighlight) && isWinnerCard(index, card.cardId);
+    const historyWinner =
+      winnerHistory && Object.prototype.hasOwnProperty.call(winnerHistory, index)
+        ? winnerHistory[index]
+        : null;
+    const winnerInfo = isHighlight ? (showWinner ? winnerHighlight : null) : historyWinner;
+    const isWinner = Boolean(winnerInfo);
+    return {
+      card,
+      def,
+      index,
+      isHidden,
+      isActive,
+      isResolved,
+      isWinner,
+      label,
+      winnerInfo
+    };
   });
   const showOrderRail = isOverlay && currentRow.length > 0;
   const rollDurationMs = Math.max(0, rollDurationOverride ?? 1000);
@@ -422,17 +438,19 @@ export const MarketPanel = ({
               ) : null}
               <div className="market-card-grid">
                 {cardOrder.map((entry) => {
-                  const winnerOverlay =
-                    entry.isWinner && winnerAnnouncement ? (
-                      <div className="game-card__winner" role="status" aria-live="polite">
-                        <span className="game-card__winner-title">
-                          {winnerAnnouncement.title}
-                        </span>
-                        <span className="game-card__winner-detail">
-                          {winnerAnnouncement.detail}
-                        </span>
-                      </div>
-                    ) : null;
+                  const winnerAnnouncement = entry.winnerInfo
+                    ? formatWinnerAnnouncement(entry.winnerInfo)
+                    : null;
+                  const winnerOverlay = winnerAnnouncement ? (
+                    <div className="game-card__winner" role="status" aria-live="polite">
+                      <span className="game-card__winner-title">
+                        {winnerAnnouncement.title}
+                      </span>
+                      <span className="game-card__winner-detail">
+                        {winnerAnnouncement.detail}
+                      </span>
+                    </div>
+                  ) : null;
 
                   return (
                     <GameCard

@@ -618,6 +618,9 @@ export const GameScreen = ({
   const [isMarketOverlayOpen, setIsMarketOverlayOpen] = useState(false);
   const [marketOutroHold, setMarketOutroHold] = useState(false);
   const [marketWinner, setMarketWinner] = useState<MarketWinnerHighlight | null>(null);
+  const [marketWinnerHistory, setMarketWinnerHistory] = useState<
+    Record<number, MarketWinnerHighlight>
+  >({});
   const [cardRevealQueue, setCardRevealQueue] = useState<ActionCardReveal[]>([]);
   const [activeCardReveal, setActiveCardReveal] = useState<ActionCardReveal | null>(null);
   const [cardRevealKey, setCardRevealKey] = useState(0);
@@ -641,6 +644,11 @@ export const GameScreen = ({
   const lastCardRevealIndex = useRef(-1);
   const marketOverlayHoldTimeout = useRef<number | null>(null);
   const wasMarketPhaseRef = useRef(false);
+  const marketRowKey = useMemo(() => {
+    const cardIds = view.public.market.currentRow.map((card) => card.cardId).join("|");
+    return `${view.public.market.age}:${view.public.round}:${cardIds}`;
+  }, [view.public.market.age, view.public.market.currentRow, view.public.round]);
+  const marketRowKeyRef = useRef(marketRowKey);
 
   const localCapitalHexKey = useMemo(() => {
     if (!localPlayerId) {
@@ -1348,6 +1356,14 @@ export const GameScreen = ({
   }, [ageCue, ageCueKey]);
 
   useEffect(() => {
+    if (marketRowKeyRef.current === marketRowKey) {
+      return;
+    }
+    marketRowKeyRef.current = marketRowKey;
+    setMarketWinnerHistory({});
+  }, [marketRowKey]);
+
+  useEffect(() => {
     const logs = view.public.logs;
     if (!hasMarketLogBaseline.current) {
       hasMarketLogBaseline.current = true;
@@ -1357,56 +1373,63 @@ export const GameScreen = ({
       }
     }
     if (logs.length === 0) {
+      lastMarketEventIndex.current = -1;
       return;
     }
     if (logs.length - 1 < lastMarketEventIndex.current) {
       lastMarketEventIndex.current = logs.length - 1;
       return;
     }
-    let foundIndex = -1;
-    for (let i = logs.length - 1; i > lastMarketEventIndex.current; i -= 1) {
+    let latestWinner: MarketWinnerHighlight | null = null;
+    const historyUpdates: Record<number, MarketWinnerHighlight> = {};
+    for (let i = lastMarketEventIndex.current + 1; i < logs.length; i += 1) {
       const event = logs[i];
-      if (event.type === "market.buy" || event.type === "market.pass") {
-        foundIndex = i;
-        break;
+      if (event.type !== "market.buy" && event.type !== "market.pass") {
+        continue;
+      }
+      const payload = event.payload ?? {};
+      const cardId = typeof payload.cardId === "string" ? payload.cardId : "unknown";
+      const cardIndex = typeof payload.cardIndex === "number" ? payload.cardIndex : null;
+      const playerId = typeof payload.playerId === "string" ? payload.playerId : null;
+      const playerName = playerId ? playerNames.get(playerId) ?? playerId : "Unknown";
+      const amount = typeof payload.amount === "number" ? payload.amount : null;
+      const passPot = typeof payload.passPot === "number" ? payload.passPot : null;
+      const rollOffRaw = Array.isArray(payload.rollOff) ? payload.rollOff : null;
+      const rollOff =
+        rollOffRaw
+          ?.map((round) => {
+            if (!round || typeof round !== "object" || Array.isArray(round)) {
+              return null;
+            }
+            const cleaned = Object.fromEntries(
+              Object.entries(round).filter(([, value]) => typeof value === "number")
+            ) as Record<string, number>;
+            return Object.keys(cleaned).length > 0 ? cleaned : null;
+          })
+          .filter((round): round is Record<string, number> => Boolean(round)) ?? null;
+      const winner: MarketWinnerHighlight = {
+        cardId,
+        cardIndex,
+        playerId,
+        playerName,
+        kind: event.type === "market.buy" ? "buy" : "pass",
+        amount,
+        passPot,
+        rollOff: rollOff && rollOff.length > 0 ? rollOff : null,
+        rollOffKey: i
+      };
+      latestWinner = winner;
+      if (typeof cardIndex === "number") {
+        historyUpdates[cardIndex] = winner;
       }
     }
-    if (foundIndex < 0) {
-      return;
+    if (Object.keys(historyUpdates).length > 0) {
+      setMarketWinnerHistory((current) => ({ ...current, ...historyUpdates }));
     }
-    const event = logs[foundIndex];
-    const payload = event.payload ?? {};
-    const cardId = typeof payload.cardId === "string" ? payload.cardId : "unknown";
-    const cardIndex = typeof payload.cardIndex === "number" ? payload.cardIndex : null;
-    const playerId = typeof payload.playerId === "string" ? payload.playerId : null;
-    const playerName = playerId ? playerNames.get(playerId) ?? playerId : "Unknown";
-    const amount = typeof payload.amount === "number" ? payload.amount : null;
-    const passPot = typeof payload.passPot === "number" ? payload.passPot : null;
-    const rollOffRaw = Array.isArray(payload.rollOff) ? payload.rollOff : null;
-    const rollOff =
-      rollOffRaw
-        ?.map((round) => {
-          if (!round || typeof round !== "object" || Array.isArray(round)) {
-            return null;
-          }
-          const cleaned = Object.fromEntries(
-            Object.entries(round).filter(([, value]) => typeof value === "number")
-          ) as Record<string, number>;
-          return Object.keys(cleaned).length > 0 ? cleaned : null;
-        })
-        .filter((round): round is Record<string, number> => Boolean(round)) ?? null;
-    lastMarketEventIndex.current = foundIndex;
-    setMarketWinner({
-      cardId,
-      cardIndex,
-      playerId,
-      playerName,
-      kind: event.type === "market.buy" ? "buy" : "pass",
-      amount,
-      passPot,
-      rollOff: rollOff && rollOff.length > 0 ? rollOff : null,
-      rollOffKey: foundIndex
-    });
+    if (latestWinner) {
+      setMarketWinner(latestWinner);
+    }
+    lastMarketEventIndex.current = logs.length - 1;
   }, [view.public.logs, playerNames]);
 
   useEffect(() => {
@@ -2680,6 +2703,7 @@ export const GameScreen = ({
               status={status}
               onSubmitBid={onSubmitMarketBid}
               winnerHighlight={marketWinner}
+              winnerHistory={marketWinnerHistory}
               rollDurationMs={view.public.config.MARKET_ROLLOFF_DURATION_MS}
               onClose={isMarketPhase ? () => setIsMarketOverlayOpen(false) : undefined}
             />
