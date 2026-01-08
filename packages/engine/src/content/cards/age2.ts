@@ -113,6 +113,27 @@ export const RALLY_WHERE_YOU_STAND: CardDef = {
   effects: [{ kind: "deployForces", count: 3 }]
 };
 
+export const FORWARD_BARRACKS: CardDef = {
+  id: "age2.forward_barracks",
+  name: "Forward Barracks",
+  rulesText: "Deploy 4 Forces to a Mine/Forge you occupy or your Capital.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1, gold: 2 },
+  initiative: 65,
+  burn: false,
+  targetSpec: {
+    kind: "choice",
+    options: [
+      { kind: "capital" },
+      { kind: "occupiedHex", tile: "mine" },
+      { kind: "occupiedHex", tile: "forge" }
+    ]
+  },
+  effects: [{ kind: "recruit", capitalCount: 4, occupiedCount: 4 }]
+};
+
 export const FOCUS_FIRE: CardDef = {
   id: "age2.focus_fire",
   name: "Focus Fire",
@@ -718,6 +739,7 @@ export const AGE2_CARDS: CardDef[] = [
   SET_TO_SKIRMISH,
   BATTALION_CONTRACT,
   RALLY_WHERE_YOU_STAND,
+  FORWARD_BARRACKS,
   FOCUS_FIRE,
   SLOW,
   WARD,

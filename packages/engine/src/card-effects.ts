@@ -1432,7 +1432,8 @@ export const isCardPlayable = (
     const options = Array.isArray(card.targetSpec.options)
       ? (card.targetSpec.options as TargetRecord[])
       : [];
-    if (!options.some((option) => option.kind === choice.kind)) {
+    const matchingOptions = options.filter((option) => option.kind === choice.kind);
+    if (matchingOptions.length === 0) {
       return false;
     }
 
@@ -1446,6 +1447,13 @@ export const isCardPlayable = (
         return false;
       }
       if (!isOccupiedByPlayer(hex, playerId)) {
+        return false;
+      }
+      const tileAllowed = matchingOptions.some((option) => {
+        const tile = typeof option.tile === "string" ? option.tile : null;
+        return !tile || tile === hex.tile;
+      });
+      if (!tileAllowed) {
         return false;
       }
       return !wouldExceedTwoPlayers(hex, playerId);
@@ -1707,6 +1715,9 @@ export const resolveCardEffects = (
         if (!choice) {
           break;
         }
+        const options = Array.isArray(card.targetSpec.options)
+          ? (card.targetSpec.options as TargetRecord[])
+          : [];
         const capitalCountRaw =
           typeof effect.capitalCount === "number" ? effect.capitalCount : 2;
         const occupiedCountRaw =
@@ -1714,6 +1725,9 @@ export const resolveCardEffects = (
         const capitalCount = Math.max(0, Math.floor(capitalCountRaw));
         const occupiedCount = Math.max(0, Math.floor(occupiedCountRaw));
         if (choice.kind === "capital") {
+          if (!options.some((option) => option.kind === "capital")) {
+            break;
+          }
           const deployHex = resolveCapitalDeployHex(nextState, playerId, choice.hexKey ?? null);
           if (!deployHex) {
             break;
@@ -1736,6 +1750,16 @@ export const resolveCardEffects = (
             break;
           }
           if (!isOccupiedByPlayer(hex, playerId)) {
+            break;
+          }
+          const tileAllowed = options.some((option) => {
+            if (option.kind !== "occupiedHex") {
+              return false;
+            }
+            const tile = typeof option.tile === "string" ? option.tile : null;
+            return !tile || tile === hex.tile;
+          });
+          if (!tileAllowed) {
             break;
           }
           if (wouldExceedTwoPlayers(hex, playerId)) {

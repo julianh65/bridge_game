@@ -2574,6 +2574,48 @@ describe("action flow", () => {
     expect(p1After.resources.gold).toBe(p1Before.resources.gold + expectedGain);
   });
 
+  it("plays forward barracks to deploy forces to an occupied mine", () => {
+    let { state } = setupToActionPhase();
+    const mineHex = Object.values(state.board.hexes).find((hex) => hex.tile === "mine");
+    if (!mineHex) {
+      throw new Error("missing mine hex");
+    }
+
+    state = { ...state, board: addForcesToHex(state.board, "p1", mineHex.key, 1) };
+
+    const countForces = (input: GameState, hexKey: HexKey, playerId: string): number => {
+      const hex = input.board.hexes[hexKey];
+      if (!hex) {
+        return 0;
+      }
+      const occupants = hex.occupants[playerId] ?? [];
+      return occupants.filter((unitId) => input.board.units[unitId]?.kind === "force").length;
+    };
+
+    const before = countForces(state, mineHex.key, "p1");
+    const injected = addCardToHand(state, "p1", "age2.forward_barracks");
+    state = injected.state;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { choice: "occupiedHex", hexKey: mineHex.key }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const after = countForces(state, mineHex.key, "p1");
+    expect(after).toBe(before + 4);
+  });
+
   it("plays encirclement to destroy enemy forces when surrounded", () => {
     let { state } = setupToActionPhase();
     const p2Capital = state.players.find((player) => player.id === "p2")?.capitalHex;

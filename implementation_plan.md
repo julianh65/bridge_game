@@ -532,7 +532,7 @@ Done
     - [ ] Age II Recruitment card defs (5).
       - [x] Battalion Contract.
       - [x] Rally Where You Stand.
-      - [ ] Forward Barracks.
+      - [x] Forward Barracks.
       - [ ] Conscription Drive.
       - [ ] Miner Army.
     - [ ] Age II Economy card defs (5).
