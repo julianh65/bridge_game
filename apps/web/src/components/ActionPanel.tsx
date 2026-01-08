@@ -120,7 +120,7 @@ export const ActionPanel = ({
           type="button"
           className={`action-chip ${basicActionIntent === "bridge" ? "is-active" : ""}`}
           disabled={!canSubmitAction}
-          title={BASIC_ACTION_TOOLTIPS.bridge}
+          data-tooltip={BASIC_ACTION_TOOLTIPS.bridge}
           onClick={() => toggleIntent("bridge")}
         >
           <span className="action-chip__label">Bridge</span>
@@ -130,7 +130,7 @@ export const ActionPanel = ({
           type="button"
           className={`action-chip ${basicActionIntent === "march" ? "is-active" : ""}`}
           disabled={!canSubmitAction}
-          title={BASIC_ACTION_TOOLTIPS.march}
+          data-tooltip={BASIC_ACTION_TOOLTIPS.march}
           onClick={() => toggleIntent("march")}
         >
           <span className="action-chip__label">March</span>
@@ -140,7 +140,7 @@ export const ActionPanel = ({
           type="button"
           className={`action-chip ${basicActionIntent === "reinforce" ? "is-active" : ""}`}
           disabled={!canReinforce}
-          title={BASIC_ACTION_TOOLTIPS.reinforce}
+          data-tooltip={BASIC_ACTION_TOOLTIPS.reinforce}
           onClick={() => toggleIntent("reinforce")}
         >
           <span className="action-chip__label">Reinforce</span>

@@ -21,6 +21,10 @@
   scope: add setup deck preview screen with starter deck composition counts and starter spell/champion callouts
   files: apps/web/src/components/SetupFlow.tsx, apps/web/src/components/SetupDeckPreview.tsx, apps/web/src/styles.css, packages/engine/src/types.ts, packages/engine/src/view.ts, packages/engine/src/engine.ts, packages/engine/src/setup-flow.ts, packages/engine/src/index.ts, packages/engine/src/setup-flow.test.ts, packages/engine/src/smoke.test.ts, packages/engine/src/index.test.ts, progress.md, implementation_plan.md
   status: in progress (overlap note: `apps/web/src/styles.css` also in agent3/agent1 scope)
+- owner: agent2
+  scope: add an in-game floating deck toggle and a return-to-game control in the deck viewer
+  files: apps/web/src/App.tsx, apps/web/src/components/GameScreen.tsx, apps/web/src/components/DeckViewer.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md
+  status: in progress (overlap note: `apps/web/src/styles.css` also in agent5 scope)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -36,6 +40,7 @@
 - Moved the floating market overlay toggle button toward the bottom-center to keep it away from the top-right HUD. (File: `apps/web/src/styles.css`.) (Overlap note: `apps/web/src/styles.css` is also in agent1 scope.)
 
 ## Milestone After Full Test Play and Thinking progress
+- Added hover tooltips for basic action chips to explain bridge/march/reinforce costs; updated the plan checklist. (Files: `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Made the collection overlay toggleable like the market and added a collection context summary + hex labels/notes for why each prompt appears; updated the plan checklist. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Lowered the mana orb stacking so it no longer covers the action panel during split/move selections; updated the plan checklist. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` is also in agent5 scope.)
 - Moved the mana orb into the actions panel so it no longer overlaps split/move controls. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`.) (Overlap note: `apps/web/src/styles.css` is also in agent5 scope.)

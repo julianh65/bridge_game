@@ -5430,6 +5430,56 @@ body.is-game .player-row--idle {
     box-shadow 0.2s ease;
 }
 
+.action-chip[data-tooltip] {
+  position: relative;
+}
+
+.action-chip[data-tooltip]::before,
+.action-chip[data-tooltip]::after {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.action-chip[data-tooltip]::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 2px);
+  transform: translateX(-50%) translateY(4px);
+  border-width: 6px;
+  border-style: solid;
+  border-color: var(--panel-inset) transparent transparent transparent;
+}
+
+.action-chip[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%) translateY(4px);
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--panel-inset-border);
+  background: var(--panel-inset);
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  max-width: 220px;
+  white-space: normal;
+  box-shadow: 0 6px 16px rgba(12, 10, 8, 0.25);
+  z-index: 20;
+}
+
+.action-chip[data-tooltip]:hover::before,
+.action-chip[data-tooltip]:hover::after,
+.action-chip[data-tooltip]:focus-visible::before,
+.action-chip[data-tooltip]:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 .action-chip__label {
   flex: 1;
   min-width: 0;

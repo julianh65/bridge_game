@@ -301,7 +301,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] On retreat, resolve one final combat round, then move all forces across chosen bridge and end combat.
 - [x] Add "Burn the Bridges" card (rules-aligned effect + UI + tests).
 - [x] Live VP updates immediately on occupation changes.
-- [ ] Basic actions show a short hover tooltip explanation.
+- [x] Basic actions show a short hover tooltip explanation.
 - [x] Basic actions show mana/gold costs on the buttons.
 - [x] Center card text alignment (titles/lines) on card faces.
 - [x] Market show/hide has a hotkey; overlay background slightly transparent.
