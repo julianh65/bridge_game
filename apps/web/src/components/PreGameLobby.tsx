@@ -31,7 +31,7 @@ export const PreGameLobby = ({
       return cardId;
     }
     const rules = formatRulesText(card.rulesText);
-    return rules ? `${card.name} — ${rules}` : card.name;
+    return rules ? `${card.name} - ${rules}` : card.name;
   };
   const connectedCount = lobby.players.filter((player) => player.connected).length;
   const localFactionId =
