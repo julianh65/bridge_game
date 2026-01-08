@@ -446,6 +446,24 @@ export const WAR_PROFITEERS: CardDef = {
   effects: [{ kind: "rollGold", sides: 6, highMin: 5, lowGain: 1, highGain: 6 }]
 };
 
+export const ENCIRCLEMENT: CardDef = {
+  id: "age2.encirclement",
+  name: "Encirclement",
+  rulesText:
+    "Choose an enemy-occupied hex. If you occupy at least three adjacent hexes, destroy up to 6 enemy Forces there.",
+  type: "Spell",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 70,
+  burn: false,
+  targetSpec: {
+    kind: "hex",
+    owner: "enemy"
+  },
+  effects: [{ kind: "encirclement", minAdjacent: 3, maxForces: 6 }]
+};
+
 export const STRATEGIC_TRIUMPH: CardDef = {
   id: "age2.strategic_triumph",
   name: "Strategic Triumph",
@@ -720,6 +738,7 @@ export const AGE2_CARDS: CardDef[] = [
   WORMHOLE_LINK,
   DEEP_SHAFT_RIG,
   WAR_PROFITEERS,
+  ENCIRCLEMENT,
   STRATEGIC_TRIUMPH,
   CENTER_DISPATCH,
   BANNER_OF_RESOLVE,

@@ -2574,6 +2574,59 @@ describe("action flow", () => {
     expect(p1After.resources.gold).toBe(p1Before.resources.gold + expectedGain);
   });
 
+  it("plays encirclement to destroy enemy forces when surrounded", () => {
+    let { state } = setupToActionPhase();
+    const p2Capital = state.players.find((player) => player.id === "p2")?.capitalHex;
+    if (!p2Capital) {
+      throw new Error("missing p2 capital");
+    }
+
+    const neighbors = neighborHexKeys(p2Capital).filter((key) => Boolean(state.board.hexes[key]));
+    const surround = neighbors
+      .filter((key) => countPlayersOnHex(state.board.hexes[key]) === 0)
+      .slice(0, 3);
+    if (surround.length < 3) {
+      throw new Error("missing adjacent hexes for encirclement");
+    }
+
+    for (const hexKey of surround) {
+      state = { ...state, board: addForcesToHex(state.board, "p1", hexKey, 1) };
+    }
+    state = { ...state, board: addForcesToHex(state.board, "p2", p2Capital, 6) };
+
+    const countForces = (input: GameState): number => {
+      const hex = input.board.hexes[p2Capital];
+      if (!hex) {
+        return 0;
+      }
+      const occupants = hex.occupants["p2"] ?? [];
+      return occupants.filter((unitId) => input.board.units[unitId]?.kind === "force").length;
+    };
+
+    const before = countForces(state);
+    const injected = addCardToHand(state, "p1", "age2.encirclement");
+    state = injected.state;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: {
+          kind: "card",
+          cardInstanceId: injected.instanceId,
+          targets: { hexKey: p2Capital }
+        }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const after = countForces(state);
+    expect(after).toBe(before - 6);
+  });
+
   it("plays zap to damage a champion, remove it, and award bounty", () => {
     let { state } = setupToActionPhase();
     const p2Capital = state.players.find((player) => player.id === "p2")?.capitalHex;

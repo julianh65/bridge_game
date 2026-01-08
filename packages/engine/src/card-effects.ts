@@ -107,6 +107,7 @@ const SUPPORTED_EFFECTS = new Set([
   "frenzy",
   "shockDrill",
   "focusFire",
+  "encirclement",
   "mortarShot",
   "setToSkirmish",
   "evacuateChampion",
@@ -1967,6 +1968,57 @@ export const resolveCardEffects = (
         }
         const amount = typeof effect.amount === "number" ? effect.amount : 0;
         nextState = dealChampionDamage(nextState, playerId, target.unitId, amount);
+        break;
+      }
+      case "encirclement": {
+        const target = getHexTarget(
+          nextState,
+          playerId,
+          card.targetSpec as TargetRecord,
+          targets ?? null
+        );
+        if (!target) {
+          break;
+        }
+        const minAdjacent =
+          typeof effect.minAdjacent === "number" ? Math.max(0, Math.floor(effect.minAdjacent)) : 3;
+        const maxForces =
+          typeof effect.maxForces === "number" ? Math.max(0, Math.floor(effect.maxForces)) : 6;
+        if (maxForces <= 0) {
+          break;
+        }
+        const neighbors = neighborHexKeys(target.hexKey).filter(
+          (hexKey) => Boolean(nextState.board.hexes[hexKey])
+        );
+        const adjacentCount = neighbors.reduce((count, hexKey) => {
+          const hex = nextState.board.hexes[hexKey];
+          if (!hex) {
+            return count;
+          }
+          return isOccupiedByPlayer(hex, playerId) ? count + 1 : count;
+        }, 0);
+        if (adjacentCount < minAdjacent) {
+          break;
+        }
+        const hex = nextState.board.hexes[target.hexKey];
+        if (!hex) {
+          break;
+        }
+        const enemyEntry = Object.entries(hex.occupants).find(
+          ([occupantId, units]) => occupantId !== playerId && units.length > 0
+        );
+        if (!enemyEntry) {
+          break;
+        }
+        const [enemyId, unitIds] = enemyEntry;
+        const enemyForces = unitIds.filter(
+          (unitId) => nextState.board.units[unitId]?.kind === "force"
+        );
+        if (enemyForces.length === 0) {
+          break;
+        }
+        const removeCount = Math.min(maxForces, enemyForces.length);
+        nextState = removeForcesFromHex(nextState, enemyId, target.hexKey, unitIds, removeCount);
         break;
       }
       case "mortarShot": {

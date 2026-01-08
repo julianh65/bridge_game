@@ -345,6 +345,8 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] for the bridges that generate and randomly get placed try to wire it up so it's a bit more "intelligent" in that it balances out the board, place bridges not conected to the center and try to place them on more empty parts of the board
 - [ ] sometimes the texts on cards are cut off and turn into ...
 - [ ] the bridge card didn't give me the option to move 1 stack 1 hex
+- [ ] needs to be a way for me to test different cards in different board states, like a debug play game where i straight launch to age n with whatever cards in my hand i want
+
 
 ### Mini Milestone For Me
 ### Mini Milestone For Me
@@ -563,7 +565,7 @@ Done
       - [ ] Foundry Heist.
       - [x] Deep Shaft Rig.
       - [x] Dice: War Profiteers.
-      - [ ] Encirclement.
+      - [x] Encirclement.
     - [ ] Age II Victory card defs (4).
       - [x] Strategic Triumph.
       - [x] Center Dispatch.
@@ -672,6 +674,7 @@ Done
   - [x] Age I market: Supply Ledger / Patrol Record / Banner Claim coverage.
   - [x] Age I market: remaining orders (Quick March, Trade Caravan, Temporary Bridge, Patch Up, Quick Study).
   - [x] Age I market: Sabotage Bridge (destroy bridge).
+  - [x] Age I market: Temporary Bridge (temporary flag on bridge).
   - [x] Age I market: Paid Volunteers / National Service recruit coverage.
   - [x] Age I market: Small Hands (draw 3 if last card).
   - [ ] Age II/III market + power deck card tests (as content lands).
@@ -684,6 +687,7 @@ Done
     - [x] Age II market: War Taxes (gain gold).
     - [x] Age II market: Strategic Triumph (gain gold).
     - [x] Age II market: Bridge Lockdown (lock bridge modifier).
+    - [x] Age II market: Center Dispatch (draw if you occupy center).
   - [ ] Champion ability tests (on-deploy, on-death, on-battle-win, dice mods, VP aura).
     - [x] Bounty Hunter bonus gold on champion kill in battle.
     - [x] Ironclad Warden bodyguard hit assignment policy.
