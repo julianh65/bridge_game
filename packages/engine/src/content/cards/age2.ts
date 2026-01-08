@@ -134,6 +134,29 @@ export const CHAMPION_RECALL: CardDef = {
   effects: [{ kind: "recallChampion" }]
 };
 
+export const BURN_THE_BRIDGES: CardDef = {
+  id: "age2.burn_the_bridges",
+  name: "Burn the Bridges",
+  rulesText:
+    "Move 1 stack up to 1 along Bridges. After moving destroy every bridge connected to the hex you selected. Burn.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 2 },
+  initiative: 75,
+  burn: true,
+  targetSpec: {
+    kind: "path",
+    owner: "self",
+    maxDistance: 1,
+    requiresBridge: true
+  },
+  effects: [
+    { kind: "moveStack", maxDistance: 1 },
+    { kind: "destroyConnectedBridges" }
+  ]
+};
+
 export const WAR_TAXES: CardDef = {
   id: "age2.war_taxes",
   name: "War Taxes",
@@ -416,6 +439,7 @@ export const AGE2_CARDS: CardDef[] = [
   GOLD_PLATED_ARMOR,
   MORTAR_SHOT,
   CHAMPION_RECALL,
+  BURN_THE_BRIDGES,
   WAR_TAXES,
   REFINED_INGOTS,
   GUILD_FAVOR,

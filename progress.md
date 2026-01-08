@@ -18,7 +18,7 @@
 
 ## Active tasks
  - owner: agent1; scope: allow unselect/change in setup bridge + free-card picks; files: `apps/web/src/components/SetupStartingBridges.tsx`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `packages/engine/src/types.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/setup-flow.test.ts`, `apps/web/src/styles.css`, `progress.md`; status: in progress (overlap note: `apps/web/src/styles.css` already has other in-flight edits)
- - owner: agent2; scope: add Burn the Bridges Age II card effect (move + destroy connected bridges) with tests; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md`; status: in progress
+ - owner: agent5; scope: collection phase prompt sequencing highlights (mine -> forge -> center); files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in progress (overlap note: `apps/web/src/styles.css` has other in-flight edits)
 
 
 ## Planning updates
@@ -52,6 +52,7 @@
 - Added champion stat iconography (HP/dice/hits/bounty) and a gold cost scaling hint on champion cards; updated the plan checklist. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4) (Overlap note: `apps/web/src/styles.css` overlaps agent2 scope.)
 - Fixed combat overlay log baseline so old combat sequences don’t replay on view changes; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Added a market roll-off overlay with faction symbols and synchronized dice timing; updated the plan checklist. (Files: `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.)
+- Added Burn the Bridges (Age II) with destroy-connected-bridges effect, movement-target validation, and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent2)
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)

@@ -87,6 +87,7 @@ const SUPPORTED_EFFECTS = new Set([
   "lockBridge",
   "trapBridge",
   "destroyBridge",
+  "destroyConnectedBridges",
   "linkHexes",
   "linkCapitalToCenter",
   "battleCry",
@@ -2690,6 +2691,26 @@ export const resolveCardEffects = (
           break;
         }
         const { [plan.key]: _removed, ...bridges } = nextState.board.bridges;
+        nextState = {
+          ...nextState,
+          board: {
+            ...nextState.board,
+            bridges
+          }
+        };
+        break;
+      }
+      case "destroyConnectedBridges": {
+        const movePath = targets ? getMovePathTarget(targets) : null;
+        const targetHex = movePath ? movePath[movePath.length - 1] : getHexKeyTarget(targets ?? null);
+        if (!targetHex) {
+          break;
+        }
+        const bridges = Object.fromEntries(
+          Object.entries(nextState.board.bridges).filter(
+            ([, bridge]) => bridge.from !== targetHex && bridge.to !== targetHex
+          )
+        );
         nextState = {
           ...nextState,
           board: {

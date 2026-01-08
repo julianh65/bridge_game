@@ -300,7 +300,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Retreat rules implementation:
   - [ ] If a bridge is adjacent and player has 1 mana, allow retreat selection.
   - [ ] On retreat, resolve one final combat round, then move all forces across chosen bridge and end combat.
-- [ ] Add "Burn the Bridges" card (rules-aligned effect + UI + tests).
+- [x] Add "Burn the Bridges" card (rules-aligned effect + UI + tests).
 - [ ] Live VP updates immediately on occupation changes.
 - [ ] Basic actions show a short hover tooltip explanation.
 - [x] Basic actions show mana/gold costs on the buttons.
@@ -449,6 +449,7 @@ Done
   - [ ] Add power deck card tests (at least one per unique effect).
   - [ ] Define Age II card defs by category (movement/recruit/economy/deckcraft/combat/bridges/victory/champions).
     - [ ] Age II Movement card defs (5).
+      - [x] Burn the Bridges.
     - [ ] Age II Recruitment card defs (5).
     - [ ] Age II Economy card defs (5).
       - [x] War Taxes.

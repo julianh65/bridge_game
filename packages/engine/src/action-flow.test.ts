@@ -766,6 +766,78 @@ describe("action flow", () => {
     expect(state.board.bridges[edgeB]).toBeUndefined();
   });
 
+  it("destroys all bridges connected to the moved-to hex", () => {
+    let { state, p1Capital, p1Edges } = setupToActionPhase();
+    const [edge, otherEdge] = p1Edges;
+    if (!edge) {
+      throw new Error("expected a starting bridge for burn test");
+    }
+    const [a, b] = parseEdgeKey(edge);
+    const to = a === p1Capital ? b : a;
+
+    const neighbors = neighborHexKeys(to).filter(
+      (key) => key !== p1Capital && Boolean(state.board.hexes[key])
+    );
+    const extraNeighbor = neighbors[0];
+    if (!extraNeighbor) {
+      throw new Error("missing neighbor to add bridge for burn test");
+    }
+    const extraEdge = getBridgeKey(to, extraNeighbor);
+
+    state = {
+      ...state,
+      board: {
+        ...state.board,
+        bridges: {
+          ...state.board.bridges,
+          [extraEdge]: {
+            key: extraEdge,
+            from: to,
+            to: extraNeighbor
+          }
+        }
+      }
+    };
+
+    const burnBridgesCard: CardDef = {
+      id: "test.burn_bridges",
+      name: "Burn the Bridges",
+      rulesText:
+        "Move 1 stack up to 1 along Bridges. After moving destroy every bridge connected to the hex you have selected.",
+      type: "Order",
+      deck: "starter",
+      tags: [],
+      cost: { mana: 0 },
+      initiative: 1,
+      burn: true,
+      targetSpec: {
+        kind: "path",
+        owner: "self",
+        maxDistance: 1,
+        requiresBridge: true
+      },
+      effects: [
+        { kind: "moveStack", maxDistance: 1 },
+        { kind: "destroyConnectedBridges" }
+      ]
+    };
+
+    const beforeFromCount = state.board.hexes[p1Capital].occupants["p1"]?.length ?? 0;
+
+    state = resolveCardEffects(state, "p1", burnBridgesCard, { path: [p1Capital, to] });
+
+    expect(state.board.bridges[edge]).toBeUndefined();
+    expect(state.board.bridges[extraEdge]).toBeUndefined();
+    if (otherEdge && otherEdge !== edge && otherEdge !== extraEdge) {
+      expect(state.board.bridges[otherEdge]).toBeDefined();
+    }
+
+    const afterFromCount = state.board.hexes[p1Capital].occupants["p1"]?.length ?? 0;
+    const toCount = state.board.hexes[to].occupants["p1"]?.length ?? 0;
+    expect(toCount).toBeGreaterThan(0);
+    expect(afterFromCount).toBeLessThan(beforeFromCount);
+  });
+
   it("moves part of a stack when forceCount is set", () => {
     let { state, p1Capital, p1Edges } = setupToActionPhase();
     const [edge] = p1Edges;
