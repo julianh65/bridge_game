@@ -18,7 +18,6 @@
 
 ## Active tasks
  - owner: agent1; scope: allow unselect/change in setup bridge + free-card picks; files: `apps/web/src/components/SetupStartingBridges.tsx`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `packages/engine/src/types.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/setup-flow.test.ts`, `apps/web/src/styles.css`, `progress.md`; status: in progress (overlap note: `apps/web/src/styles.css` already has other in-flight edits)
- - owner: agent5; scope: collection phase prompt sequencing highlights (mine -> forge -> center); files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in progress (overlap note: `apps/web/src/styles.css` has other in-flight edits)
 
 
 ## Planning updates
@@ -99,6 +98,7 @@
 - Added the gold emoji chip in the market bid HUD to match the resource iconography used elsewhere; updated the plan checklist. (Files: `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.) (owner: agent4) (Overlap note: `progress.md` includes agent2 active-task update.)
 - Added mana/gold cost chips to the basic action buttons in the hand panel; updated the plan checklist. (Files: `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
 - Converted the collection UI into a modal overlay with scrim/panel styling to avoid layout shifts; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
+- Sequenced collection prompts to highlight mines, then forges, then center choices with a subtle dim/pulse; updated the plan checklist. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Converted champion target selection into a floating overlay panel to avoid layout shifts; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
 - Marked the local player's capital with a ring indicator on the board view; updated the plan checklist. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3) (Overlap note: `implementation_plan.md` included a pre-existing burn test TODO; `progress.md` picked up an agent5 active-task entry.)
 - Lifted hovered card grid items above neighbors in cards/market/collection/hand-picker views; updated the plan checklist. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)

@@ -4614,10 +4614,23 @@ body.is-game .card-detail {
   border-radius: 10px;
   border: 1px solid var(--border);
   background: #fff7e6;
+  transition: opacity 0.2s ease, transform 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 body.is-game .collection-prompt {
   background: rgba(28, 20, 15, 0.9);
+}
+
+.collection-prompt.is-highlighted {
+  border-color: rgba(217, 119, 6, 0.55);
+  background: var(--panel-soft-active);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.2);
+  transform: translateY(-2px);
+}
+
+.collection-prompt.is-dimmed {
+  opacity: 0.6;
 }
 
 .collection-prompt__header {

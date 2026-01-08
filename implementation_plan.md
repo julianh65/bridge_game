@@ -309,7 +309,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Market dice overlay includes faction symbols and uses an overlay (not a new stacked container).
 - [x] Special tiles show a small hover label with type (Mine, Forge, etc).
 - [x] Fix phantom/ghost battle overlay state leaks when moving between screens.
-- [ ] Collection phase sequence highlights per-source payouts one by one (mines, forge, center).
+- [x] Collection phase sequence highlights per-source payouts one by one (mines, forge, center).
 - [x] Add gold + VP to the hand panel header area (near Hand label).
 - [ ] Board "chit" styling (units/champions/forces) aligns with dark fantasy theme.
 - [x] Champion target modal should not shift page layout; convert to overlay.

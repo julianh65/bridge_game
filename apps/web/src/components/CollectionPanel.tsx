@@ -16,6 +16,7 @@ const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 
 const COLLECTION_ROLL_SIDES = 6;
 const COLLECTION_ROLL_DURATION_MS = 900;
+const COLLECTION_HIGHLIGHT_STEP_MS = 1200;
 
 type CollectionPanelProps = {
   phase: GameView["public"]["phase"];
@@ -126,10 +127,15 @@ export const CollectionPanel = ({
     () => prompts.map(getPromptSignature).join("|"),
     [prompts]
   );
+  const promptKeySignature = useMemo(
+    () => prompts.map((prompt) => getPromptKey(prompt.kind, prompt.hexKey)).join("|"),
+    [prompts]
+  );
   const [selections, setSelections] = useState<Record<string, CollectionChoice | null>>({});
   const [promptRolls, setPromptRolls] = useState<
     Record<string, { revealed: boolean; roll: number; rollKey: string }>
   >({});
+  const [highlightStage, setHighlightStage] = useState<CollectionPrompt["kind"] | null>(null);
   const handCardIds = useMemo(() => new Set(handCards.map((card) => card.id)), [handCards]);
   const playerNames = useMemo(
     () => new Map(players.map((entry) => [entry.id, entry.name])),
@@ -151,6 +157,39 @@ export const CollectionPanel = ({
     });
     setPromptRolls(next);
   }, [promptSignature, prompts]);
+
+  useEffect(() => {
+    if (prompts.length === 0) {
+      setHighlightStage(null);
+      return;
+    }
+    const stageOrder: CollectionPrompt["kind"][] = [];
+    (["mine", "forge", "center"] as const).forEach((kind) => {
+      if (prompts.some((prompt) => prompt.kind === kind)) {
+        stageOrder.push(kind);
+      }
+    });
+    if (stageOrder.length === 0) {
+      setHighlightStage(null);
+      return;
+    }
+    const timers: number[] = [];
+    stageOrder.forEach((kind, index) => {
+      timers.push(
+        window.setTimeout(() => {
+          setHighlightStage(kind);
+        }, index * COLLECTION_HIGHLIGHT_STEP_MS)
+      );
+    });
+    timers.push(
+      window.setTimeout(() => {
+        setHighlightStage(null);
+      }, stageOrder.length * COLLECTION_HIGHLIGHT_STEP_MS)
+    );
+    return () => {
+      timers.forEach((timer) => window.clearTimeout(timer));
+    };
+  }, [promptKeySignature, prompts]);
 
   useEffect(() => {
     if (prompts.length === 0) {
@@ -261,6 +300,8 @@ export const CollectionPanel = ({
               const isRevealPending = Boolean(
                 rollState && !rollState.revealed && prompt.revealed.length > 0
               );
+              const isStageActive = highlightStage === prompt.kind;
+              const isStageDimmed = highlightStage !== null && !isStageActive;
 
               if (prompt.kind === "mine") {
                 const selectedGold = selection?.kind === "mine" && selection.choice === "gold";
@@ -275,7 +316,12 @@ export const CollectionPanel = ({
                   selection.choice === "draft" &&
                   selection.gainCard === false;
                 return (
-                  <div key={key} className="collection-prompt">
+                  <div
+                    key={key}
+                    className={`collection-prompt ${isStageActive ? "is-highlighted" : ""} ${
+                      isStageDimmed ? "is-dimmed" : ""
+                    }`}
+                  >
                     <div className="collection-prompt__header">
                       <span className="collection-prompt__title">Mine</span>
                       <span className="collection-prompt__meta">
@@ -383,7 +429,12 @@ export const CollectionPanel = ({
                     ? selection.cardId
                     : null;
                 return (
-                  <div key={key} className="collection-prompt">
+                  <div
+                    key={key}
+                    className={`collection-prompt ${isStageActive ? "is-highlighted" : ""} ${
+                      isStageDimmed ? "is-dimmed" : ""
+                    }`}
+                  >
                     <div className="collection-prompt__header">
                       <span className="collection-prompt__title">Forge</span>
                       <span className="collection-prompt__meta">
@@ -483,7 +534,12 @@ export const CollectionPanel = ({
                 const selectedCardId =
                   selection?.kind === "center" ? selection.cardId : null;
                 return (
-                  <div key={key} className="collection-prompt">
+                  <div
+                    key={key}
+                    className={`collection-prompt ${isStageActive ? "is-highlighted" : ""} ${
+                      isStageDimmed ? "is-dimmed" : ""
+                    }`}
+                  >
                     <div className="collection-prompt__header">
                       <span className="collection-prompt__title">Center</span>
                       <span className="collection-prompt__meta">
