@@ -6118,6 +6118,13 @@ body.is-game .btn-secondary:active:not(:disabled) {
   box-shadow: 0 12px 24px rgba(35, 28, 19, 0.14);
 }
 
+.board-tools--split {
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
 .board-tools--overlay .board-tools__meta {
   gap: 4px;
 }
@@ -6179,9 +6186,9 @@ body.is-game .btn-secondary:active:not(:disabled) {
 
 .force-split-popover {
   display: grid;
-  gap: 6px;
-  padding: 10px;
-  border-radius: 12px;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 10px;
   border: 1px solid var(--border);
   background: var(--panel);
   color: var(--ink);

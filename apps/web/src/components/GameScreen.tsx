@@ -24,7 +24,7 @@ import {
 
 import { type BasicActionIntent, type BoardPickMode } from "./ActionPanel";
 import { ActionRevealOverlay, type ActionRevealOverlayData } from "./ActionRevealOverlay";
-import { BoardView, type BoardActionAnimation, type BoardOverlayItem } from "./BoardView";
+import { BoardView, type BoardActionAnimation } from "./BoardView";
 import { CollectionPanel } from "./CollectionPanel";
 import { CombatOverlay } from "./CombatOverlay";
 import { CombatRetreatOverlay } from "./CombatRetreatOverlay";
@@ -679,7 +679,6 @@ export const GameScreen = ({
   const [pendingEdgeStart, setPendingEdgeStart] = useState<string | null>(null);
   const [pendingStackFrom, setPendingStackFrom] = useState<string | null>(null);
   const [pendingPath, setPendingPath] = useState<string[]>([]);
-  const [resetViewToken, setResetViewToken] = useState(0);
   const [isInfoDockOpen, setIsInfoDockOpen] = useState(false);
   const [isHandPanelOpen, setIsHandPanelOpen] = useState(true);
   const [basicActionIntent, setBasicActionIntent] = useState<BasicActionIntent>("none");
@@ -2573,12 +2572,6 @@ export const GameScreen = ({
   };
   const localGold = view.private ? availableGold : null;
   const localVpTotal = view.private?.vp ? view.private.vp.total : null;
-  const selectedHexLabel = selectedHexKey ? hexLabels[selectedHexKey] ?? null : null;
-  const selectedLabelText = selectedHexKey
-    ? selectedHexLabel
-      ? `Selected ${selectedHexLabel}`
-      : "Selected tile"
-    : "No tile selected";
   const handPickerCards = handCards.filter((card) => card.id !== cardInstanceId);
   const selectedHandLabels = selectedHandCardIds.map(
     (cardId) => handCardLabels.get(cardId) ?? cardId
@@ -2660,42 +2653,24 @@ export const GameScreen = ({
       </p>
     </div>
   ) : null;
-  const forceSplitOverlayWidth = 160;
-  const forceSplitOverlayHeight = 104;
-  const forceSplitOverlays: BoardOverlayItem[] = [];
-  if (showCardMoveSplitControls && cardMoveStartHex) {
-    forceSplitOverlays.push({
-      id: "force-split-card",
-      hexKey: cardMoveStartHex,
-      width: forceSplitOverlayWidth,
-      height: forceSplitOverlayHeight,
-      content: (
-        <ForceSplitPopover
-          title="Move forces"
-          meta={cardMoveMeta}
-          forceCount={cardMoveForceCount}
-          forceMax={cardMoveForceMax}
-          onChange={setCardForceCount}
-        />
-      )
-    });
-  } else if (showMarchSplitControls) {
-    forceSplitOverlays.push({
-      id: "force-split-march",
-      hexKey: marchFrom,
-      width: forceSplitOverlayWidth,
-      height: forceSplitOverlayHeight,
-      content: (
-        <ForceSplitPopover
-          title="March forces"
-          meta={marchMoveMeta}
-          forceCount={marchForceCount}
-          forceMax={marchForceMax}
-          onChange={setMarchForceCount}
-        />
-      )
-    });
-  }
+  const forceSplitPanel =
+    showCardMoveSplitControls && cardMoveStartHex ? (
+      <ForceSplitPopover
+        title="Move forces"
+        meta={cardMoveMeta}
+        forceCount={cardMoveForceCount}
+        forceMax={cardMoveForceMax}
+        onChange={setCardForceCount}
+      />
+    ) : showMarchSplitControls ? (
+      <ForceSplitPopover
+        title="March forces"
+        meta={marchMoveMeta}
+        forceCount={marchForceCount}
+        forceMax={marchForceMax}
+        onChange={setMarchForceCount}
+      />
+    ) : null;
   const championTargetPanel =
     selectedCardDef && cardTargetKind === "champion" ? (
       <div className="hand-targets hand-targets--overlay">
@@ -3085,35 +3060,22 @@ export const GameScreen = ({
                 labelVariant="coords"
                 className="board-svg board-svg--game"
                 enablePanZoom
-                resetViewToken={resetViewToken}
                 selectedHexKey={selectedHexKey}
                 highlightHexKeys={highlightHexKeys}
                 validHexKeys={isEdgePickMode ? [] : validHexKeys}
                 previewEdgeKeys={previewEdgeKeys}
                 isTargeting={isBoardTargeting}
-                overlays={forceSplitOverlays}
                 onHexClick={isEdgePickMode ? undefined : handleBoardHexClick}
                 onEdgeClick={handleBoardEdgeClick}
                 showTags={false}
                 actionAnimations={actionAnimations}
                 actionAnimationDurationMs={actionRevealDurationMs}
               />
-              <div
-                className={`board-tools board-tools--overlay ${
-                  isBoardTargeting ? "is-targeting" : ""
-                }`}
-              >
-                <div className="board-tools__meta">
-                  <span className="chip board-tools__chip">{selectedLabelText}</span>
-                  <button
-                    type="button"
-                    className="btn btn-tertiary"
-                    onClick={() => setResetViewToken((value) => value + 1)}
-                  >
-                    Reset view
-                  </button>
+              {forceSplitPanel ? (
+                <div className="board-tools board-tools--overlay board-tools--split">
+                  {forceSplitPanel}
                 </div>
-              </div>
+              ) : null}
             </div>
             <div className="legend legend--compact game-board__legend">
               <div className="legend__item legend__item--capital">Capital</div>
