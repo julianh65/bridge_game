@@ -17,7 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
- - owner: agent2; scope: add Age II movement cards (Triple March, Coordinated Advance, Breakthrough Line) and battle-win cleanup draw effect with tests; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.breakthrough-line.test.ts`, `implementation_plan.md`, `progress.md`; status: in progress
  - owner: agent5; scope: combat overlay sync (shared roll readiness + synchronized reveal timing) for combat redesign; files: `apps/server/src/server.ts`, `apps/web/src/lib/room-client.ts`, `apps/web/src/App.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in progress (overlap note: `apps/web/src/components/GameScreen.tsx` also in agent3 scope)
 
 
@@ -81,6 +80,7 @@
 - Added Age II Champion Recall (return champion from board to hand via burn pile) with tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.champion-recall.test.ts`, `implementation_plan.md`.) (Overlap note: touched `packages/engine/src/card-effects.ts` + `packages/engine/src/content/cards/age2.ts` alongside other in-flight edits.)
 - Added Age II Mortar Shot (scatter AoE with force destruction + champion damage) with tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.mortar-shot.test.ts`, `implementation_plan.md`.) (Overlap note: touched `packages/engine/src/card-effects.ts` + `packages/engine/src/content/cards/age2.ts` alongside other in-flight edits.)
 - Added Age II economy card defs (War Taxes, Refined Ingots, Guild Favor) and bridges/terrain card defs (Bridge Lockdown, Wormhole Link); updated the plan checklist. (Files: `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.)
+- Added Age II movement card defs (Triple March, Coordinated Advance, Breakthrough Line) plus a battle-win cleanup draw modifier and tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.breakthrough-line.test.ts`, `implementation_plan.md`.) (owner: agent2)
 - Added Age III Wormhole Gate card def (link-hexes) and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added Age III Ruin the Span (destroy 2 bridges) with multi-edge targeting support, edge-selection UI updates for existing bridges, and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/action-flow.test.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Added Age III victory card defs (Conquest Record, Final Oath) using gain-gold/heal effects and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (owner: agent4)
@@ -110,7 +110,7 @@
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
-- TODO: add Mortar Shot targeting hint (scatter/aoe text) in the card target UI (tracked in `implementation_plan.md`).
+- Added Mortar Shot target hint text explaining scatter/aoe in the hand target UI. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.)
 - Limited Mortar Shot card hex highlights to tiles within range of friendly forces. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Added collection draw roll reveal animations (mine/forge/center) with `NumberRoll` styling and plan subtask updates. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 - Thickened power/champion GameCard borders for clearer differentiation and marked the plan item complete. (Overlap note: `apps/web/src/styles.css` touched.)

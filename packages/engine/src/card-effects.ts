@@ -87,6 +87,7 @@ const SUPPORTED_EFFECTS = new Set([
   "lockBridge",
   "trapBridge",
   "destroyBridge",
+  "battleWinDraw",
   "destroyConnectedBridges",
   "linkHexes",
   "linkCapitalToCenter",
@@ -2443,6 +2444,101 @@ export const resolveCardEffects = (
                   };
                   const cleaned = removeModifierById(state, modifier.id);
                   return { ...cleaned, modifiers: [...cleaned.modifiers, tempModifier] };
+                }
+              }
+            }
+          ]
+        };
+        break;
+      }
+      case "battleWinDraw": {
+        const drawCountRaw = typeof effect.drawCount === "number" ? effect.drawCount : 0;
+        const drawCount = Math.max(0, Math.floor(drawCountRaw));
+        if (drawCount <= 0) {
+          break;
+        }
+        const movePath = getMovePathTarget(targets ?? null);
+        if (!movePath) {
+          break;
+        }
+        const moveEffect = card.effects?.find(
+          (entry) => entry.kind === "moveStack"
+        ) as TargetRecord | undefined;
+        const forceCount = getMoveStackForceCount(card, moveEffect, targets ?? null);
+        const movingUnitIds = selectMovingUnits(
+          nextState.board,
+          playerId,
+          movePath[0],
+          forceCount
+        );
+        if (movingUnitIds.length === 0) {
+          break;
+        }
+        const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.battle_win_draw`;
+        nextState = {
+          ...nextState,
+          modifiers: [
+            ...nextState.modifiers,
+            {
+              id: modifierId,
+              source: { type: "card", sourceId: card.id },
+              ownerPlayerId: playerId,
+              duration: { type: "endOfRound" },
+              data: { trackedUnitIds: movingUnitIds, drawCount },
+              hooks: {
+                afterBattle: ({
+                  state,
+                  modifier,
+                  winnerPlayerId,
+                  attackerPlayerId,
+                  defenderPlayerId,
+                  attackers,
+                  defenders
+                }) => {
+                  const ownerId = modifier.ownerPlayerId;
+                  if (!ownerId || winnerPlayerId !== ownerId) {
+                    return state;
+                  }
+                  const trackedRaw = modifier.data?.trackedUnitIds;
+                  if (!Array.isArray(trackedRaw) || trackedRaw.length === 0) {
+                    return state;
+                  }
+                  const tracked = trackedRaw.filter((id) => typeof id === "string");
+                  const survivors =
+                    winnerPlayerId === attackerPlayerId
+                      ? attackers
+                      : winnerPlayerId === defenderPlayerId
+                        ? defenders
+                        : [];
+                  if (
+                    tracked.length === 0 ||
+                    survivors.length === 0 ||
+                    !tracked.some((id) => survivors.includes(id))
+                  ) {
+                    return state;
+                  }
+                  const countRaw =
+                    typeof modifier.data?.drawCount === "number" ? modifier.data.drawCount : 0;
+                  const count = Math.max(0, Math.floor(countRaw));
+                  if (count <= 0) {
+                    return state;
+                  }
+                  const cleaned = removeModifierById(state, modifier.id);
+                  return {
+                    ...cleaned,
+                    modifiers: [
+                      ...cleaned.modifiers,
+                      {
+                        id: `${modifier.id}.cleanup`,
+                        source: modifier.source,
+                        ownerPlayerId: ownerId,
+                        duration: { type: "uses", remaining: 1 },
+                        hooks: {
+                          onRoundEnd: ({ state }) => drawCards(state, ownerId, count)
+                        }
+                      }
+                    ]
+                  };
                 }
               }
             }

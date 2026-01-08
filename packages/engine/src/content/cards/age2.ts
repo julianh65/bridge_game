@@ -1,5 +1,65 @@
 import type { CardDef } from "./types";
 
+export const TRIPLE_MARCH: CardDef = {
+  id: "age2.triple_march",
+  name: "Triple March",
+  rulesText: "Move 1 stack up to 3 along Bridges.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 40,
+  burn: false,
+  targetSpec: {
+    kind: "path",
+    owner: "self",
+    maxDistance: 3,
+    requiresBridge: true
+  },
+  effects: [{ kind: "moveStack", maxDistance: 3 }]
+};
+
+export const COORDINATED_ADVANCE: CardDef = {
+  id: "age2.coordinated_advance",
+  name: "Coordinated Advance",
+  rulesText: "Move 2 stacks up to 2 along Bridges each.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 2 },
+  initiative: 55,
+  burn: false,
+  targetSpec: {
+    kind: "multiPath",
+    owner: "self",
+    maxDistance: 2,
+    minPaths: 2,
+    maxPaths: 2,
+    requiresBridge: true
+  },
+  effects: [{ kind: "moveStacks", maxDistance: 2 }]
+};
+
+export const BREAKTHROUGH_LINE: CardDef = {
+  id: "age2.breakthrough_line",
+  name: "Breakthrough Line",
+  rulesText:
+    "Move 1 stack up to 2 along Bridges. If it wins a battle this round, draw 2 at Cleanup.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 2 },
+  initiative: 75,
+  burn: false,
+  targetSpec: {
+    kind: "path",
+    owner: "self",
+    maxDistance: 2,
+    requiresBridge: true
+  },
+  effects: [{ kind: "battleWinDraw", drawCount: 2 }, { kind: "moveStack", maxDistance: 2 }]
+};
+
 export const FOCUS_FIRE: CardDef = {
   id: "age2.focus_fire",
   name: "Focus Fire",
@@ -431,6 +491,9 @@ export const CAPTURER: CardDef = {
 };
 
 export const AGE2_CARDS: CardDef[] = [
+  TRIPLE_MARCH,
+  COORDINATED_ADVANCE,
+  BREAKTHROUGH_LINE,
   FOCUS_FIRE,
   SLOW,
   WARD,

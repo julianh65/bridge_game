@@ -450,6 +450,9 @@ Done
   - [ ] Add power deck card tests (at least one per unique effect).
   - [ ] Define Age II card defs by category (movement/recruit/economy/deckcraft/combat/bridges/victory/champions).
     - [ ] Age II Movement card defs (5).
+      - [x] Triple March.
+      - [x] Coordinated Advance.
+      - [x] Breakthrough Line.
       - [x] Burn the Bridges.
     - [ ] Age II Recruitment card defs (5).
     - [ ] Age II Economy card defs (5).
@@ -547,7 +550,7 @@ Done
 - [x] Fix hex selection for Bridge Crew and Build Bridge edge picking.
 - [x] Add board-pick mode + valid target highlights for champion-targeted cards (ex: Emergency Evac).
 - [x] Add Mortar Shot targeting helpers: highlight only hexes within range of friendly forces.
-- [ ] Add Mortar Shot targeting helper: show scatter/aoe hint in the card target UI.
+- [x] Add Mortar Shot targeting helper: show scatter/aoe hint in the card target UI.
 
 ### Tasks UI
 - [x] The basic actions in the card hand panel below needs to be reworked, it's taking up too much horizontal space, The bridge march reinforce buttons should be stacked and be thinner and we can probably streamline the whole UI of each when they're expanded

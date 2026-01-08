@@ -27,6 +27,14 @@ const getCardTargetHint = (cardDef: CardDef | null): string | null => {
   if (!cardDef) {
     return null;
   }
+  const mortarEffect = cardDef.effects?.find((effect) => effect.kind === "mortarShot") as
+    | { maxDistance?: number }
+    | undefined;
+  if (mortarEffect) {
+    const maxDistance =
+      typeof mortarEffect.maxDistance === "number" ? mortarEffect.maxDistance : 2;
+    return `Pick a hex within ${maxDistance} of your forces. Impact may scatter to adjacent hexes.`;
+  }
   switch (cardDef.targetSpec.kind) {
     case "edge":
       return "Pick an edge on the board.";
