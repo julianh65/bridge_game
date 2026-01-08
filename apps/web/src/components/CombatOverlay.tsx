@@ -394,6 +394,7 @@ export const CombatOverlay = ({
     };
   }, [onClose, isResolved, sequence.rounds.length]);
   const showHits = roundPhase === "locked" || roundPhase === "assigned";
+  const showHitMarkers = roundPhase === "assigned";
   const stageLabel =
     roundPhase === "waiting"
       ? "Awaiting rolls"
@@ -520,13 +521,13 @@ export const CombatOverlay = ({
   const renderUnitToken = (
     unit: CombatUnitRoll,
     phase: RoundPhase,
-    hitCount: number
+    hitCount: number,
+    showMarkers: boolean
   ) => {
     const name = getUnitDisplayName(unit, cardDefsById);
     const glyph = getUnitGlyph(unit, cardDefsById);
-    const showHit = hitCount > 0;
-    const displayGlyph =
-      showHit && unit.kind === "force" ? "X" : glyph;
+    const showHit = showMarkers && hitCount > 0;
+    const displayGlyph = showHit && unit.kind === "force" ? "X" : glyph;
     const hpLabel =
       unit.kind === "champion" && unit.hp !== undefined && unit.maxHp !== undefined
         ? `HP ${unit.hp}/${unit.maxHp}`
@@ -542,7 +543,7 @@ export const CombatOverlay = ({
           <span className="combat-unit__glyph">{displayGlyph}</span>
           {showHit && unit.kind === "champion" ? (
             <span className="combat-unit__hit-marker">
-              {hitCount > 1 ? `x${hitCount}` : "X"}
+              {`x${hitCount}`}
             </span>
           ) : null}
         </div>
@@ -567,7 +568,8 @@ export const CombatOverlay = ({
     label: string,
     units: CombatUnitRoll[],
     phase: RoundPhase,
-    hitCounts: Map<string, number>
+    hitCounts: Map<string, number>,
+    showMarkers: boolean
   ) => {
     if (units.length === 0) {
       return (
@@ -582,7 +584,12 @@ export const CombatOverlay = ({
         <span className="combat-unit-group__label">{label}</span>
         <div className="combat-unit-group__list">
           {units.map((unit) =>
-            renderUnitToken(unit, phase, hitCounts.get(unit.unitId) ?? 0)
+            renderUnitToken(
+              unit,
+              phase,
+              hitCounts.get(unit.unitId) ?? 0,
+              showMarkers
+            )
           )}
         </div>
       </div>
@@ -592,7 +599,8 @@ export const CombatOverlay = ({
   const renderUnitBreakdown = (
     units: CombatUnitRoll[] | undefined,
     phase: RoundPhase,
-    hits: HitAssignmentSummary
+    hits: HitAssignmentSummary,
+    showMarkers: boolean
   ) => {
     if (!units || units.length === 0) {
       return (
@@ -612,8 +620,8 @@ export const CombatOverlay = ({
     });
     return (
       <div className="combat-units">
-        {renderUnitGroup("Forces", forces, phase, forceHitCounts)}
-        {renderUnitGroup("Champions", champions, phase, championHits)}
+        {renderUnitGroup("Forces", forces, phase, forceHitCounts, showMarkers)}
+        {renderUnitGroup("Champions", champions, phase, championHits, showMarkers)}
       </div>
     );
   };
@@ -800,7 +808,8 @@ export const CombatOverlay = ({
                     ? renderUnitBreakdown(
                         currentRound.attackers.units,
                         roundPhase ?? "assigned",
-                        currentRound.hitsToAttackers
+                        currentRound.hitsToAttackers,
+                        showHitMarkers
                       )
                     : renderDiceRack(currentRound.attackers.dice, roundPhase ?? "assigned")}
                   <div className="combat-round__stats">
@@ -834,7 +843,8 @@ export const CombatOverlay = ({
                     ? renderUnitBreakdown(
                         currentRound.defenders.units,
                         roundPhase ?? "assigned",
-                        currentRound.hitsToDefenders
+                        currentRound.hitsToDefenders,
+                        showHitMarkers
                       )
                     : renderDiceRack(currentRound.defenders.dice, roundPhase ?? "assigned")}
                   <div className="combat-round__stats">

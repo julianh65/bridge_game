@@ -17,6 +17,18 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- owner: agent5
+  scope: add an active effects view in the info dock (with an Effects tab) and wire a sidebar button.
+  files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/GameScreenSidebar.tsx, apps/web/src/styles.css, progress.md
+  status: in progress (overlap: apps/web/src/styles.css with other agents)
+- owner: agent2
+  scope: add Small Hands draw-if-last-card effect test + plan update.
+  files: packages/engine/src/card-effects.small-hands.test.ts, implementation_plan.md, progress.md
+  status: in progress
+- owner: agent3
+  scope: add targeted Sabotage Bridge (destroy bridge) card effect test.
+  files: packages/engine/src/card-effects.sabotage-bridge.test.ts, implementation_plan.md, progress.md
+  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -36,6 +48,7 @@
 - Added Scout Report draw-and-pick choices with an action-phase block, selection command, private offers view, UI modal, and updated action/smoke tests; marked the plan checklist items complete. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/action-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.)
 - Added combat overlay cumulative hits row markup (paired with existing styles); marked the plan checklist item complete. (Files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Moved combat hit totals above the attacker/defender panels and marked hit assignments directly on unit tokens (forces show red X, champions get hit badges). (Files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`.)
+- Limited combat hit markers to the assignment step and made champion badges show per-hit counts (xN). (File: `apps/web/src/components/CombatOverlay.tsx`.)
 - Refreshed board unit/champion chits with rim + glow styling for a darker fantasy feel; marked the plan checklist item complete. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Added hover tooltips for basic action chips to explain bridge/march/reinforce costs; updated the plan checklist. (Files: `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Made the collection overlay toggleable like the market and added a collection context summary + hex labels/notes for why each prompt appears; updated the plan checklist. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
