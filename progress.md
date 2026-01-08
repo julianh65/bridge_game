@@ -17,13 +17,21 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent3; scope: implement dev-only Card Editor MVP (editable numeric fields + patch export) and wire into app nav; files: `apps/web/src/App.tsx`, `apps/web/src/components/CardEditor.tsx`, `apps/web/src/components/CardsBrowser.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in progress
+none
+ 
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
 
+## Mini Milestone For Me progress
+- Added a dev-only Card Editor view with inline numeric edits, copy flow, initiative tools (collision listing + decollide/compress), and patch export; wired into the app nav and documented in the plan checklist. (Files: `apps/web/src/components/CardEditor.tsx`, `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` overlaps agent2/agent4 scope.)
+- Moved Card Editor filters to the top layout and adjusted the editor grid to keep the tool panel separate from gameplay views. (Files: `apps/web/src/components/CardEditor.tsx`, `apps/web/src/styles.css`.) (Overlap note: `apps/web/src/styles.css` overlaps agent2/agent4 scope.)
+- Added a local patch-apply script for Card Editor exports (edits only; clone entries are manual) and exposed it as `npm run cards:apply`; marked the plan item complete. (Files: `scripts/apply-card-patch.js`, `package.json`, `implementation_plan.md`.)
+
 ## Milestone After Full Test Play and Thinking progress
+- Added setup host-advance gating in the engine (AdvanceSetup command + setup status view), updated setup/action/smoke tests plus server auto-setup + sample-game helpers, and added a host-only Advance Setup button in the lobby; updated the plan checklist. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/action-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/index.ts`, `apps/server/src/server.ts`, `apps/web/src/lib/sample-game.ts`, `apps/web/src/components/Lobby.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.)
+- Added faction ability copy data (passives + starter spell/champion text) and surfaced it in the faction selection UI. (Files: `apps/web/src/lib/factions.ts`, `apps/web/src/components/PreGameLobby.tsx`, `implementation_plan.md`.)
 - Made capital draft simultaneous with lock/unlock support, updated setup draft UI + event formatting, and added unlock test coverage; marked the plan item complete. (Files: `packages/engine/src/setup-flow.ts`, `packages/engine/src/types.ts`, `packages/engine/src/setup-flow.test.ts`, `apps/web/src/components/SetupCapitalDraft.tsx`, `apps/web/src/lib/event-format.ts`, `implementation_plan.md`.)
 - Added random bridge placement after special tiles in setup with config support, board preview integration, and engine tests; marked the plan item complete. (Files: `packages/engine/src/board-generation.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/types.ts`, `packages/engine/src/config.ts`, `packages/engine/src/board-generation.test.ts`, `packages/engine/src/setup-flow.test.ts`, `apps/web/src/lib/board-preview.ts`, `docs/configuration.md`, `implementation_plan.md`.) (Overlap note: `packages/engine/src/config.ts` already had action/market duration tweaks in the working tree.)
 - Exported `placeRandomBridges` from the engine index to resolve the board preview import error. (File: `packages/engine/src/index.ts`.)
@@ -31,6 +39,9 @@
 - Centered card face text, added gold/VP chips to the hand header, and constrained grid card sizing to avoid stretched cards on large screens; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4) (Overlap note: `apps/web/src/styles.css` overlaps agent2 scope.)
 - Redesigned the combat overlay with side summaries, staged dice flow, faction symbols, active effects list, bounty callouts, capital battle labeling, auto-close, and retreat placeholders. (Files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` also in agent4 scope.)
 - Switched action reveal target labels to A1-style board labels, added basic action hover tooltips, and added an active effects intel list; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenSidebar.tsx`, `apps/web/src/components/ActionPanel.tsx`, `implementation_plan.md`.)
+- Added a battle debug tab to simulate combat with custom forces/champions, reusing the combat overlay for playback. (Files: `apps/web/src/App.tsx`, `apps/web/src/components/BattleDebug.tsx`, `apps/web/src/styles.css`, `packages/engine/src/index.ts`, `implementation_plan.md`.) (Overlap note: `apps/web/src/App.tsx` also in agent3 scope.)
+- Added champion stat iconography (HP/dice/hits/bounty) and a gold cost scaling hint on champion cards; updated the plan checklist. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4) (Overlap note: `apps/web/src/styles.css` overlaps agent2 scope.)
+- Fixed combat overlay log baseline so old combat sequences don’t replay on view changes; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
