@@ -4246,6 +4246,8 @@ body.is-game .market-order__step.is-winner {
   border-radius: 12px;
   border: 1px solid var(--card-art-border);
   background: var(--card-art-bg);
+  background-size: 100%;
+  background-position: 50% 50%;
   display: flex;
   align-items: center;
   justify-content: center;
