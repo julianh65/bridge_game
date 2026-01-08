@@ -90,6 +90,8 @@ type AgeCue = {
   kind: "start" | "shift";
 };
 
+type HandPickerMode = "none" | "topdeck" | "discard" | "burn";
+
 type ModifierView = GameView["public"]["modifiers"][number];
 
 type ActiveEffectEntry = {
@@ -753,7 +755,7 @@ export const GameScreen = ({
   const [reinforceHex, setReinforceHex] = useState("");
   const [cardInstanceId, setCardInstanceId] = useState("");
   const [cardTargetsRaw, setCardTargetsRaw] = useState("");
-  const [isHandPickerOpen, setIsHandPickerOpen] = useState(false);
+  const [handPickerMode, setHandPickerMode] = useState<HandPickerMode>("none");
   const [quietStudySelectedIds, setQuietStudySelectedIds] = useState<string[]>([]);
   const [scoutReportSelectedIds, setScoutReportSelectedIds] = useState<string[]>([]);
   const [boardPickMode, setBoardPickMode] = useState<BoardPickMode>("none");
@@ -1011,6 +1013,24 @@ export const GameScreen = ({
       : topdeckEffect
         ? 1
         : 0;
+  const discardFromHandEffect = selectedCardDef?.effects?.find(
+    (effect) => effect.kind === "discardFromHand"
+  );
+  const discardFromHandCount =
+    typeof discardFromHandEffect?.count === "number"
+      ? Math.max(0, Math.floor(discardFromHandEffect.count))
+      : discardFromHandEffect
+        ? 1
+        : 0;
+  const burnFromHandEffect = selectedCardDef?.effects?.find(
+    (effect) => effect.kind === "burnFromHand"
+  );
+  const burnFromHandCount =
+    typeof burnFromHandEffect?.count === "number"
+      ? Math.max(0, Math.floor(burnFromHandEffect.count))
+      : burnFromHandEffect
+        ? 1
+        : 0;
   const handCardLabels = useMemo(() => {
     const mapping = new Map<string, string>();
     for (const card of handCards) {
@@ -1238,7 +1258,15 @@ export const GameScreen = ({
   const canBuildBridge = canSubmitAction && edgeKey.trim().length > 0;
   const canMarch =
     canSubmitAction && marchFrom.trim().length > 0 && marchTo.trim().length > 0;
-  const canPlayCard = canSubmitAction && trimmedCardId.length > 0 && targetsError === null;
+  const requiredHandSelectionCount = Math.max(discardFromHandCount, burnFromHandCount);
+  const hasRequiredHandTargets =
+    requiredHandSelectionCount === 0 ||
+    selectedHandCardIds.length === requiredHandSelectionCount;
+  const canPlayCard =
+    canSubmitAction &&
+    trimmedCardId.length > 0 &&
+    targetsError === null &&
+    hasRequiredHandTargets;
   const cardDeclaration: ActionDeclaration | null = canPlayCard
     ? parsedTargets !== undefined
       ? {
@@ -1322,7 +1350,7 @@ export const GameScreen = ({
   const clearCardSelection = () => {
     setCardInstanceId("");
     setCardTargetsRaw("");
-    setIsHandPickerOpen(false);
+    setHandPickerMode("none");
     setBoardPickMode("none");
     setPendingEdgeStart(null);
     setPendingStackFrom(null);
@@ -1344,10 +1372,17 @@ export const GameScreen = ({
   }, [cardInstanceId, handCards]);
 
   useEffect(() => {
-    if (topdeckCount === 0) {
-      setIsHandPickerOpen(false);
+    if (handPickerMode === "none") {
+      return;
     }
-  }, [topdeckCount]);
+    const shouldClose =
+      (handPickerMode === "topdeck" && topdeckCount === 0) ||
+      (handPickerMode === "discard" && discardFromHandCount === 0) ||
+      (handPickerMode === "burn" && burnFromHandCount === 0);
+    if (shouldClose) {
+      setHandPickerMode("none");
+    }
+  }, [handPickerMode, topdeckCount, discardFromHandCount, burnFromHandCount]);
 
   useEffect(() => {
     if (reinforceHex.length === 0) {
@@ -1397,7 +1432,7 @@ export const GameScreen = ({
       setCardInstanceId("");
       setCardTargetsRaw("");
       setReinforceHex("");
-      setIsHandPickerOpen(false);
+      setHandPickerMode("none");
       setIsHandPanelOpen(true);
       setBasicActionIntent("none");
       setMarchForceCount(null);
@@ -2810,7 +2845,7 @@ export const GameScreen = ({
     setBasicActionIntent("none");
     setCardInstanceId(cardId);
     setCardTargetsRaw("");
-    setIsHandPickerOpen(false);
+    setHandPickerMode("none");
     setBoardPickModeSafe(getDefaultCardPickMode(cardDef));
   };
   const localGold = view.private ? availableGold : null;
@@ -2820,6 +2855,9 @@ export const GameScreen = ({
     (cardId) => handCardLabels.get(cardId) ?? cardId
   );
   const topdeckLimitLabel = topdeckCount === 1 ? "1 card" : `${topdeckCount} cards`;
+  const discardLimitLabel =
+    discardFromHandCount === 1 ? "1 card" : `${discardFromHandCount} cards`;
+  const burnLimitLabel = burnFromHandCount === 1 ? "1 card" : `${burnFromHandCount} cards`;
   const edgeMovePayload = edgeMoveMode ? buildEdgeTargetPayload(targetRecord) : null;
   const edgeMovePath =
     edgeMoveMode === "cardPath" ? getTargetStringArray(targetRecord, "path") : [];
@@ -2881,7 +2919,77 @@ export const GameScreen = ({
             type="button"
             className="btn btn-tertiary"
             disabled={handPickerCards.length === 0}
-            onClick={() => setIsHandPickerOpen(true)}
+            onClick={() => setHandPickerMode("topdeck")}
+          >
+            Choose cards
+          </button>
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={selectedHandCardIds.length === 0}
+            onClick={() => setCardInstanceTargets([])}
+          >
+            Clear
+          </button>
+        </div>
+        <p className="hand-targets__selected">
+          {selectedHandCardIds.length > 0
+            ? `Selected: ${selectedHandLabels.join(", ")}`
+            : "No cards selected."}
+        </p>
+      </div>
+    ) : null;
+  const handDiscardPanel =
+    selectedCardDef && discardFromHandCount > 0 ? (
+      <div className="hand-targets">
+        <div className="hand-targets__header">
+          <strong>Discard from hand</strong>
+          <span className="hand-targets__meta">
+            {selectedHandCardIds.length}/{discardFromHandCount}
+          </span>
+        </div>
+        <p className="hand-targets__hint">Select {discardLimitLabel} to discard.</p>
+        <div className="hand-targets__actions">
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={handPickerCards.length === 0}
+            onClick={() => setHandPickerMode("discard")}
+          >
+            Choose cards
+          </button>
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={selectedHandCardIds.length === 0}
+            onClick={() => setCardInstanceTargets([])}
+          >
+            Clear
+          </button>
+        </div>
+        <p className="hand-targets__selected">
+          {selectedHandCardIds.length > 0
+            ? `Selected: ${selectedHandLabels.join(", ")}`
+            : "No cards selected."}
+        </p>
+      </div>
+    ) : null;
+  const handBurnPanel =
+    selectedCardDef && burnFromHandCount > 0 ? (
+      <div className="hand-targets">
+        <div className="hand-targets__header">
+          <strong>Burn from hand</strong>
+          <span className="hand-targets__meta">
+            {selectedHandCardIds.length}/{burnFromHandCount}
+          </span>
+        </div>
+        <p className="hand-targets__hint">Select {burnLimitLabel} to burn.</p>
+        <div className="hand-targets__actions">
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={handPickerCards.length === 0}
+            onClick={() => setHandPickerMode("burn")}
           >
             Choose cards
           </button>
@@ -3019,9 +3127,11 @@ export const GameScreen = ({
       </div>
     ) : null;
   const handTargetsPanel =
-    topdeckPanel || edgeMovePanel || cardMovePanel ? (
+    topdeckPanel || handDiscardPanel || handBurnPanel || edgeMovePanel || cardMovePanel ? (
       <>
         {topdeckPanel}
+        {handDiscardPanel}
+        {handBurnPanel}
         {edgeMovePanel}
         {cardMovePanel}
       </>
@@ -3036,13 +3146,31 @@ export const GameScreen = ({
       <div className="champion-target-overlay__panel">{championTargetPanel}</div>
     </div>
   ) : null;
+  const handPickerCount =
+    handPickerMode === "topdeck"
+      ? topdeckCount
+      : handPickerMode === "discard"
+        ? discardFromHandCount
+        : handPickerMode === "burn"
+          ? burnFromHandCount
+          : 0;
+  const handPickerLimitLabel = handPickerCount === 1 ? "1 card" : `${handPickerCount} cards`;
   const showHandPicker =
-    isActionPhase && isHandPickerOpen && topdeckCount > 0 && Boolean(selectedCardDef);
-  const handPickerTitle = "Topdeck from hand";
+    isActionPhase && handPickerMode !== "none" && handPickerCount > 0 && Boolean(selectedCardDef);
+  const handPickerTitle =
+    handPickerMode === "discard"
+      ? "Discard from hand"
+      : handPickerMode === "burn"
+        ? "Burn from hand"
+        : "Topdeck from hand";
   const handPickerDescription =
-    topdeckCount > 0
-      ? `Pick up to ${topdeckLimitLabel} to place on top of your draw pile.`
-      : null;
+    handPickerMode === "discard"
+      ? `Select ${handPickerLimitLabel} to discard.`
+      : handPickerMode === "burn"
+        ? `Select ${handPickerLimitLabel} to burn.`
+        : handPickerCount > 0
+          ? `Pick up to ${handPickerLimitLabel} to place on top of your draw pile.`
+          : null;
   const showQuietStudyModal = isQuietStudyActive && quietStudyMaxDiscard > 0;
   const quietStudyTitle = "Quiet Study";
   const quietStudyDescription =
@@ -3332,9 +3460,9 @@ export const GameScreen = ({
         cards={handPickerCards}
         cardDefsById={CARD_DEFS_BY_ID}
         selectedIds={selectedHandCardIds}
-        maxSelect={Math.max(topdeckCount, 1)}
+        maxSelect={Math.max(handPickerCount, 1)}
         onSelectionChange={setCardInstanceTargets}
-        onClose={() => setIsHandPickerOpen(false)}
+        onClose={() => setHandPickerMode("none")}
       />
       <GameScreenHeader
         isCollapsed={isHeaderCollapsed}

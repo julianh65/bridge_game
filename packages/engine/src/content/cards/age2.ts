@@ -134,6 +134,26 @@ export const FORWARD_BARRACKS: CardDef = {
   effects: [{ kind: "recruit", capitalCount: 4, occupiedCount: 4 }]
 };
 
+export const CONSCRIPTION_DRIVE: CardDef = {
+  id: "age2.conscription_drive",
+  name: "Conscription Drive",
+  rulesText: "Deploy 4 Forces to your Capital, then discard 1 card.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1, gold: 1 },
+  initiative: 70,
+  burn: false,
+  targetSpec: {
+    kind: "choice",
+    options: [{ kind: "capital" }]
+  },
+  effects: [
+    { kind: "recruit", capitalCount: 4 },
+    { kind: "discardFromHand", count: 1 }
+  ]
+};
+
 export const MINER_ARMY: CardDef = {
   id: "age2.miner_army",
   name: "Miner Army",
@@ -379,6 +399,23 @@ export const INSIGHT: CardDef = {
   burn: true,
   targetSpec: { kind: "none" },
   effects: [{ kind: "drawCards", count: 2 }]
+};
+
+export const CLEAN_CUTS: CardDef = {
+  id: "age2.clean_cuts",
+  name: "Clean Cuts",
+  rulesText: "Burn 1 card from your hand. Draw 1.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 70,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [
+    { kind: "burnFromHand", count: 1 },
+    { kind: "drawCards", count: 1 }
+  ]
 };
 
 export const STALL: CardDef = {
@@ -790,6 +827,7 @@ export const AGE2_CARDS: CardDef[] = [
   BATTALION_CONTRACT,
   RALLY_WHERE_YOU_STAND,
   FORWARD_BARRACKS,
+  CONSCRIPTION_DRIVE,
   MINER_ARMY,
   FOCUS_FIRE,
   SLOW,
@@ -805,6 +843,7 @@ export const AGE2_CARDS: CardDef[] = [
   REFINED_INGOTS,
   GUILD_FAVOR,
   INSIGHT,
+  CLEAN_CUTS,
   STALL,
   INTERRUPT,
   BRIDGE_LOCKDOWN,

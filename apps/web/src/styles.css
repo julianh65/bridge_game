@@ -6375,11 +6375,11 @@ body.is-game .btn-secondary:active:not(:disabled) {
 }
 
 .hex__value {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   fill: #f9d47a;
   stroke: rgba(40, 24, 8, 0.7);
-  stroke-width: 1.6;
+  stroke-width: 1.4;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0;
 }

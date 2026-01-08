@@ -27,10 +27,13 @@ import {
   wouldExceedTwoPlayers
 } from "./board";
 import {
+  addCardToBurned,
   addCardToDiscardPile,
   addCardToHandWithOverflow,
   createCardInstance,
+  discardCardFromHand,
   drawCards,
+  removeCardFromHand,
   takeTopCards,
   topdeckCardFromHand
 } from "./cards";
@@ -77,6 +80,8 @@ const SUPPORTED_EFFECTS = new Set([
   "rollGold",
   "drawCardsIfTile",
   "drawCardsIfHandEmpty",
+  "discardFromHand",
+  "burnFromHand",
   "scoutReport",
   "prospecting",
   "gainGoldIfEnemyCapital",
@@ -1222,22 +1227,54 @@ export const isCardPlayable = (
   }
 
   if (card.targetSpec.kind === "none") {
+    const getHandEffectCount = (kind: string, defaultCount: number) => {
+      const effect = card.effects?.find((entry) => entry.kind === kind) as
+        | TargetRecord
+        | undefined;
+      if (!effect) {
+        return 0;
+      }
+      const rawCount = typeof effect.count === "number" ? effect.count : defaultCount;
+      return Math.max(0, Math.floor(rawCount));
+    };
+
+    const discardCount = getHandEffectCount("discardFromHand", 1);
+    const burnCount = getHandEffectCount("burnFromHand", 1);
+    const topdeckCount = getHandEffectCount("topdeckFromHand", 1);
+
     if (targets == null) {
+      if (discardCount > 0 || burnCount > 0) {
+        return false;
+      }
       return true;
     }
-    const canTopdeck = card.effects?.some((effect) => effect.kind === "topdeckFromHand");
-    if (!canTopdeck) {
+
+    if (discardCount === 0 && burnCount === 0 && topdeckCount === 0) {
       return false;
     }
+
     const player = state.players.find((entry) => entry.id === playerId);
     if (!player) {
       return false;
     }
+
     const targetIds = getCardInstanceTargets(targets);
     if (targetIds.length === 0) {
       return false;
     }
-    return targetIds.every((id) => player.deck.hand.includes(id));
+    const uniqueIds = new Set(targetIds);
+    if (uniqueIds.size !== targetIds.length) {
+      return false;
+    }
+    if (!targetIds.every((id) => player.deck.hand.includes(id))) {
+      return false;
+    }
+
+    const requiredCount = Math.max(discardCount, burnCount);
+    if (requiredCount > 0) {
+      return targetIds.length === requiredCount;
+    }
+    return targetIds.length <= topdeckCount;
   }
 
   if (card.targetSpec.kind === "hex") {
@@ -1664,6 +1701,55 @@ export const resolveCardEffects = (
       case "drawCards": {
         const count = typeof effect.count === "number" ? effect.count : 0;
         nextState = drawCards(nextState, playerId, count);
+        break;
+      }
+      case "discardFromHand": {
+        const count = typeof effect.count === "number" ? effect.count : 1;
+        if (count <= 0) {
+          break;
+        }
+        const targetIds = getCardInstanceTargets(targets ?? null);
+        if (targetIds.length === 0) {
+          break;
+        }
+        const player = nextState.players.find((entry) => entry.id === playerId);
+        if (!player) {
+          break;
+        }
+        const uniqueTargets = [...new Set(targetIds)];
+        const validTargets = uniqueTargets.filter((id) => player.deck.hand.includes(id));
+        if (validTargets.length < count) {
+          break;
+        }
+        for (const cardInstanceId of validTargets.slice(0, count)) {
+          nextState = discardCardFromHand(nextState, playerId, cardInstanceId, {
+            countAsDiscard: true
+          });
+        }
+        break;
+      }
+      case "burnFromHand": {
+        const count = typeof effect.count === "number" ? effect.count : 1;
+        if (count <= 0) {
+          break;
+        }
+        const targetIds = getCardInstanceTargets(targets ?? null);
+        if (targetIds.length === 0) {
+          break;
+        }
+        const player = nextState.players.find((entry) => entry.id === playerId);
+        if (!player) {
+          break;
+        }
+        const uniqueTargets = [...new Set(targetIds)];
+        const validTargets = uniqueTargets.filter((id) => player.deck.hand.includes(id));
+        if (validTargets.length < count) {
+          break;
+        }
+        for (const cardInstanceId of validTargets.slice(0, count)) {
+          const removed = removeCardFromHand(nextState, playerId, cardInstanceId);
+          nextState = addCardToBurned(removed, playerId, cardInstanceId);
+        }
         break;
       }
       case "drawCardsOtherPlayers": {
