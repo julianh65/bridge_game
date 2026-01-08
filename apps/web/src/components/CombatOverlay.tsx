@@ -1,78 +1,283 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import type { CardDef } from "@bridgefront/engine";
+import type { CardDef, ModifierView } from "@bridgefront/engine";
 
+import { FactionSymbol } from "./FactionSymbol";
 import type {
   CombatSequence,
   CombatSideSummary,
   HitAssignmentSummary
 } from "../lib/combat-log";
 
+type RoundPhase = "rolling" | "locked" | "assigned";
+
 type CombatOverlayProps = {
   sequence: CombatSequence;
   playersById: Map<string, string>;
+  playerFactionsById?: Map<string, string | null>;
   cardDefsById: Map<string, CardDef>;
+  modifiers?: ModifierView[];
+  hexLabel?: string | null;
+  isCapitalBattle?: boolean;
   onClose: () => void;
 };
+
+const ROLL_LOCK_MS = 650;
+const ROLL_ASSIGN_MS = 1300;
+const ROLL_DONE_MS = 1900;
+const AUTO_CLOSE_MS = 2200;
 
 const formatPlayer = (playerId: string, playersById: Map<string, string>) => {
   return playersById.get(playerId) ?? playerId;
 };
 
-const formatSideSummary = (
-  side: CombatSideSummary,
-  playersById: Map<string, string>
+const getTotal = (side: CombatSideSummary) => {
+  if (typeof side.total === "number") {
+    return side.total;
+  }
+  return side.forces + side.champions;
+};
+
+const formatEndReason = (reason: string | null) => {
+  if (!reason) {
+    return "";
+  }
+  switch (reason) {
+    case "eliminated":
+      return "Eliminated";
+    case "noHits":
+      return "No hits";
+    case "stale":
+      return "Stalemate";
+    default:
+      return reason;
+  }
+};
+
+const formatAbilityName = (abilityId: string) =>
+  abilityId.replace(/_/g, " ").replace(/([a-z0-9])([A-Z])/g, "$1 $2");
+
+const formatModifierLabel = (
+  modifier: ModifierView,
+  cardDefsById: Map<string, CardDef>
 ) => {
-  return `${formatPlayer(side.playerId, playersById)} (${side.forces}F/${side.champions}C)`;
+  if (modifier.source.type === "faction") {
+    return `Faction: ${formatAbilityName(modifier.source.sourceId)}`;
+  }
+  const card = cardDefsById.get(modifier.source.sourceId);
+  const name = card?.name ?? modifier.source.sourceId;
+  return modifier.source.type === "champion" ? `Champion: ${name}` : name;
+};
+
+const getChampionBounty = (cardDefId: string, cardDefsById: Map<string, CardDef>) => {
+  return cardDefsById.get(cardDefId)?.champion?.bounty ?? 0;
+};
+
+const getSummaryBounty = (
+  summary: HitAssignmentSummary,
+  cardDefsById: Map<string, CardDef>
+) => {
+  return summary.champions.reduce((total, champion) => {
+    if (champion.hits < champion.hp) {
+      return total;
+    }
+    return total + getChampionBounty(champion.cardDefId, cardDefsById);
+  }, 0);
+};
+
+const buildBountyTotals = (
+  rounds: CombatSequence["rounds"],
+  cardDefsById: Map<string, CardDef>
+) => {
+  const attackersKilled = new Set<string>();
+  const defendersKilled = new Set<string>();
+  let attackersBounty = 0;
+  let defendersBounty = 0;
+
+  rounds.forEach((round) => {
+    round.hitsToDefenders.champions.forEach((champion) => {
+      if (champion.hits < champion.hp || defendersKilled.has(champion.unitId)) {
+        return;
+      }
+      defendersKilled.add(champion.unitId);
+      attackersBounty += getChampionBounty(champion.cardDefId, cardDefsById);
+    });
+    round.hitsToAttackers.champions.forEach((champion) => {
+      if (champion.hits < champion.hp || attackersKilled.has(champion.unitId)) {
+        return;
+      }
+      attackersKilled.add(champion.unitId);
+      defendersBounty += getChampionBounty(champion.cardDefId, cardDefsById);
+    });
+  });
+
+  return { attackersBounty, defendersBounty };
 };
 
 export const CombatOverlay = ({
   sequence,
   playersById,
+  playerFactionsById,
   cardDefsById,
+  modifiers,
+  hexLabel,
+  isCapitalBattle,
   onClose
 }: CombatOverlayProps) => {
   const [revealedRounds, setRevealedRounds] = useState(0);
-  const [freshIndex, setFreshIndex] = useState<number | null>(null);
+  const [roundStage, setRoundStage] = useState<
+    | {
+        index: number;
+        phase: RoundPhase;
+      }
+    | null
+  >(null);
+  const [autoClosePending, setAutoClosePending] = useState(false);
+  const rollTimers = useRef<number[]>([]);
+  const autoCloseTimer = useRef<number | null>(null);
+
+  const clearRollTimers = () => {
+    rollTimers.current.forEach((timer) => window.clearTimeout(timer));
+    rollTimers.current = [];
+  };
+
+  const clearAutoCloseTimer = () => {
+    if (autoCloseTimer.current) {
+      window.clearTimeout(autoCloseTimer.current);
+    }
+    autoCloseTimer.current = null;
+  };
+
+  const clearAutoClose = () => {
+    clearAutoCloseTimer();
+    setAutoClosePending(false);
+  };
 
   useEffect(() => {
+    clearRollTimers();
+    clearAutoClose();
     setRevealedRounds(0);
-    setFreshIndex(null);
+    setRoundStage(null);
   }, [sequence.id]);
 
   useEffect(() => {
-    if (freshIndex === null) {
+    return () => {
+      clearRollTimers();
+      clearAutoCloseTimer();
+    };
+  }, []);
+
+  useEffect(() => {
+    const isResolved =
+      revealedRounds >= sequence.rounds.length && roundStage === null;
+    clearAutoClose();
+    if (!isResolved || sequence.rounds.length === 0) {
       return;
     }
-    const timeout = window.setTimeout(() => {
-      setFreshIndex(null);
-    }, 650);
+    setAutoClosePending(true);
+    autoCloseTimer.current = window.setTimeout(() => {
+      setAutoClosePending(false);
+      onClose();
+    }, AUTO_CLOSE_MS);
     return () => {
-      window.clearTimeout(timeout);
+      clearAutoCloseTimer();
     };
-  }, [freshIndex]);
+  }, [onClose, revealedRounds, roundStage, sequence.rounds.length]);
+
+  const { attackersBounty, defendersBounty } = useMemo(
+    () => buildBountyTotals(sequence.rounds, cardDefsById),
+    [sequence.rounds, cardDefsById]
+  );
+
+  const activeModifiers = useMemo(() => {
+    if (!modifiers) {
+      return [];
+    }
+    return modifiers.filter(
+      (modifier) => modifier.attachedHex === sequence.start.hexKey
+    );
+  }, [modifiers, sequence.start.hexKey]);
 
   const handleRoll = () => {
+    if (roundStage) {
+      return;
+    }
     if (revealedRounds >= sequence.rounds.length) {
+      clearRollTimers();
+      clearAutoClose();
       onClose();
       return;
     }
-    setFreshIndex(revealedRounds);
-    setRevealedRounds((value) => value + 1);
+    clearAutoClose();
+    const index = revealedRounds;
+    setRoundStage({ index, phase: "rolling" });
+    clearRollTimers();
+    rollTimers.current = [
+      window.setTimeout(() => {
+        setRoundStage((stage) =>
+          stage && stage.index === index
+            ? { ...stage, phase: "locked" }
+            : stage
+        );
+      }, ROLL_LOCK_MS),
+      window.setTimeout(() => {
+        setRoundStage((stage) =>
+          stage && stage.index === index
+            ? { ...stage, phase: "assigned" }
+            : stage
+        );
+      }, ROLL_ASSIGN_MS),
+      window.setTimeout(() => {
+        setRoundStage(null);
+        setRevealedRounds((value) => value + 1);
+      }, ROLL_DONE_MS)
+    ];
   };
 
   const handleSkip = () => {
+    clearRollTimers();
+    clearAutoClose();
     onClose();
   };
 
-  const visibleRounds = sequence.rounds.slice(0, revealedRounds);
-  const canRoll = revealedRounds < sequence.rounds.length;
+  const isResolving = Boolean(roundStage);
+  const canAdvance = revealedRounds < sequence.rounds.length && !isResolving;
+  const displayRounds = sequence.rounds.slice(
+    0,
+    revealedRounds + (roundStage ? 1 : 0)
+  );
+  const isResolved = revealedRounds >= sequence.rounds.length && !roundStage;
   const winnerLabel = sequence.end.winnerPlayerId
     ? formatPlayer(sequence.end.winnerPlayerId, playersById)
     : "No winner";
-  const endReason = sequence.end.reason ? `(${sequence.end.reason})` : "";
+  const endReason = formatEndReason(sequence.end.reason);
+  const displayHexLabel = hexLabel || sequence.start.hexKey;
+  const showHexKey = hexLabel && hexLabel !== sequence.start.hexKey;
+  const roundCountLabel =
+    sequence.rounds.length > 0
+      ? `Rounds ${sequence.rounds.length}`
+      : "No rounds logged";
 
-  const renderHitSummary = (summary: HitAssignmentSummary) => {
+  let rollLabel = "Roll dice";
+  if (isResolving) {
+    rollLabel = roundStage?.phase === "rolling"
+      ? "Rolling..."
+      : roundStage?.phase === "locked"
+        ? "Locking..."
+        : "Assigning...";
+  } else if (canAdvance) {
+    rollLabel = `Roll round ${revealedRounds + 1}`;
+  } else {
+    rollLabel = "Close";
+  }
+
+  const renderHitSummary = (
+    summary: HitAssignmentSummary,
+    isVisible: boolean
+  ) => {
+    if (!isVisible) {
+      return <p className="combat-hits__pending">Awaiting assignment...</p>;
+    }
     if (summary.forces === 0 && summary.champions.length === 0) {
       return <p className="combat-hits__empty">No hits.</p>;
     }
@@ -84,13 +289,90 @@ export const CombatOverlay = ({
         {summary.champions.map((champion) => {
           const def = cardDefsById.get(champion.cardDefId);
           const name = def?.name ?? champion.cardDefId;
+          const bounty = def?.champion?.bounty ?? 0;
+          const isKill = champion.hits >= champion.hp;
+          const bountyLabel = isKill && bounty > 0 ? `Bounty ${bounty}g` : null;
           return (
-            <li key={champion.unitId} className="combat-hits__item">
-              {name} -{champion.hits} (HP {champion.hp}/{champion.maxHp})
+            <li
+              key={champion.unitId}
+              className={`combat-hits__item${isKill ? " is-kill" : ""}`}
+            >
+              <span className="combat-hits__name">{name}</span>
+              <span className="combat-hits__detail">
+                Hits {champion.hits}
+              </span>
+              <span className="combat-hits__detail">
+                HP {champion.hp}/{champion.maxHp}
+              </span>
+              {isKill ? (
+                <span className="combat-hits__detail combat-hits__detail--bounty">
+                  {bountyLabel ?? "KO"}
+                </span>
+              ) : null}
             </li>
           );
         })}
       </ul>
+    );
+  };
+
+  const renderDice = (dice: { value: number; isHit: boolean }[], phase: RoundPhase) => {
+    if (dice.length === 0) {
+      return <span className="combat-dice__empty">No dice</span>;
+    }
+    return dice.map((roll, dieIndex) => (
+      <span
+        key={`d-${dieIndex}-${roll.value}`}
+        className={`combat-dice__die${phase === "rolling" ? " is-rolling" : ""}${
+          roll.isHit && phase !== "rolling" ? " is-hit" : ""
+        }`}
+      >
+        {phase === "rolling" ? "?" : roll.value}
+      </span>
+    ));
+  };
+
+  const renderSideSummary = (
+    label: string,
+    sideStart: CombatSideSummary,
+    sideEnd: CombatSideSummary,
+    bounty: number
+  ) => {
+    const playerName = formatPlayer(sideStart.playerId, playersById);
+    const factionId = playerFactionsById?.get(sideStart.playerId) ?? null;
+    const startTotal = getTotal(sideStart);
+    const endTotal = getTotal(sideEnd);
+    return (
+      <div className="combat-summary__side">
+        <div className="combat-summary__header">
+          <span className="combat-summary__role">{label}</span>
+          <div className="combat-summary__player">
+            <FactionSymbol
+              factionId={factionId}
+              className="faction-symbol--mini"
+            />
+            <strong className="combat-summary__name">{playerName}</strong>
+          </div>
+        </div>
+        <div className="combat-summary__stats">
+          <div className="combat-summary__stat">
+            <span className="combat-summary__label">Forces</span>
+            <span className="combat-summary__value">{sideStart.forces}</span>
+            <span className="combat-summary__delta">-&gt; {sideEnd.forces}</span>
+          </div>
+          <div className="combat-summary__stat">
+            <span className="combat-summary__label">Champions</span>
+            <span className="combat-summary__value">{sideStart.champions}</span>
+            <span className="combat-summary__delta">-&gt; {sideEnd.champions}</span>
+          </div>
+          <div className="combat-summary__stat">
+            <span className="combat-summary__label">Total</span>
+            <span className="combat-summary__value">{startTotal}</span>
+            <span className="combat-summary__delta">-&gt; {endTotal}</span>
+          </div>
+        </div>
+        <div className="combat-summary__bounty">Bounty earned: {bounty}g</div>
+      </div>
     );
   };
 
@@ -99,98 +381,195 @@ export const CombatOverlay = ({
       <div className="combat-overlay__scrim" />
       <div className="combat-overlay__panel">
         <header className="combat-overlay__header">
-          <div>
-            <p className="combat-overlay__eyebrow">Battle at</p>
-            <h2 className="combat-overlay__title">{sequence.start.hexKey}</h2>
+          <div className="combat-overlay__heading">
+            <p className="combat-overlay__eyebrow">
+              {isCapitalBattle ? "Capital siege" : "Battle at"}
+            </p>
+            <h2 className="combat-overlay__title">{displayHexLabel}</h2>
+            <div className="combat-overlay__meta">
+              <span className="combat-overlay__badge">{roundCountLabel}</span>
+              {showHexKey ? (
+                <span className="combat-overlay__badge">
+                  {sequence.start.hexKey}
+                </span>
+              ) : null}
+              {isCapitalBattle ? (
+                <span className="combat-overlay__badge combat-overlay__badge--alert">
+                  Capital battle
+                </span>
+              ) : null}
+            </div>
           </div>
           <div className="combat-overlay__actions">
+            <button
+              type="button"
+              className="btn btn-tertiary"
+              disabled
+              title="Retreat selection coming soon"
+            >
+              Retreat (1 mana)
+            </button>
             <button type="button" className="btn btn-tertiary" onClick={handleSkip}>
               Skip
             </button>
-            <button type="button" className="btn btn-primary" onClick={handleRoll}>
-              {canRoll ? "Roll dice" : "Close"}
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleRoll}
+              disabled={isResolving}
+            >
+              {rollLabel}
             </button>
           </div>
         </header>
 
-        <div className="combat-overlay__sides">
-          <div className="combat-side">
-            <span className="combat-side__role">Attackers</span>
-            <strong className="combat-side__name">
-              {formatSideSummary(sequence.start.attackers, playersById)}
-            </strong>
-          </div>
-          <div className="combat-side">
-            <span className="combat-side__role">Defenders</span>
-            <strong className="combat-side__name">
-              {formatSideSummary(sequence.start.defenders, playersById)}
-            </strong>
+        <div className="combat-summary">
+          {renderSideSummary(
+            "Attackers",
+            sequence.start.attackers,
+            sequence.end.attackers,
+            attackersBounty
+          )}
+          {renderSideSummary(
+            "Defenders",
+            sequence.start.defenders,
+            sequence.end.defenders,
+            defendersBounty
+          )}
+        </div>
+
+        <div className="combat-overlay__modifiers">
+          <span className="combat-overlay__label">Active effects</span>
+          <div className="combat-modifiers">
+            {activeModifiers.length === 0 ? (
+              <span className="combat-modifiers__empty">No active effects logged.</span>
+            ) : (
+              activeModifiers.map((modifier) => {
+                const label = formatModifierLabel(modifier, cardDefsById);
+                const owner = modifier.ownerPlayerId
+                  ? formatPlayer(modifier.ownerPlayerId, playersById)
+                  : null;
+                return (
+                  <span
+                    key={modifier.id}
+                    className="combat-modifier"
+                    title={owner ? `${label} (${owner})` : label}
+                  >
+                    {label}
+                  </span>
+                );
+              })
+            )}
           </div>
         </div>
 
         <div className="combat-overlay__rounds">
-          {visibleRounds.length === 0 ? (
+          {displayRounds.length === 0 ? (
             <p className="combat-overlay__hint">Click roll to reveal dice.</p>
           ) : null}
-          {visibleRounds.map((round, index) => {
-            const isFresh = freshIndex === index;
+          {displayRounds.map((round, index) => {
+            const phase =
+              roundStage && roundStage.index === index
+                ? roundStage.phase
+                : "assigned";
+            const showHits = phase !== "rolling";
+            const showAssignments = phase === "assigned";
+            const roundBountyAttackers = getSummaryBounty(
+              round.hitsToDefenders,
+              cardDefsById
+            );
+            const roundBountyDefenders = getSummaryBounty(
+              round.hitsToAttackers,
+              cardDefsById
+            );
+            const stageLabel =
+              phase === "rolling"
+                ? "Rolling"
+                : phase === "locked"
+                  ? "Locked"
+                  : "Hit assignment";
             return (
               <div
                 key={`round-${round.round}`}
-                className={`combat-round ${isFresh ? "combat-round--fresh" : ""}`}
+                className={`combat-round combat-round--${phase}`}
               >
                 <div className="combat-round__header">
-                  <strong>Round {round.round}</strong>
+                  <div>
+                    <strong>Round {round.round}</strong>
+                    <span className="combat-round__stage">{stageLabel}</span>
+                  </div>
                   <span className="combat-round__meta">{round.hexKey}</span>
                 </div>
-                <div className="combat-round__grid">
-                  <div className="combat-round__roll">
-                    <span className="combat-round__label">Attackers roll</span>
+                <div className="combat-round__sides">
+                  <div className="combat-round__side">
+                    <div className="combat-round__side-header">
+                      <span className="combat-round__side-role">Attackers</span>
+                      <span className="combat-round__side-name">
+                        <FactionSymbol
+                          factionId={playerFactionsById?.get(
+                            round.attackers.playerId
+                          )}
+                          className="faction-symbol--mini"
+                        />
+                        {formatPlayer(round.attackers.playerId, playersById)}
+                      </span>
+                    </div>
                     <div className="combat-dice">
-                      {round.attackers.dice.length === 0 ? (
-                        <span className="combat-dice__empty">No dice</span>
+                      {renderDice(round.attackers.dice, phase)}
+                    </div>
+                    <div className="combat-round__stats">
+                      <span>Dice {round.attackers.dice.length}</span>
+                      {showHits ? (
+                        <span>Hits {round.attackers.hits}</span>
                       ) : (
-                        round.attackers.dice.map((roll, dieIndex) => (
-                          <span
-                            key={`a-${dieIndex}-${roll.value}`}
-                            className={`combat-dice__die ${roll.isHit ? "is-hit" : ""}`}
-                          >
-                            {roll.value}
-                          </span>
-                        ))
+                        <span>Rolling...</span>
                       )}
                     </div>
-                    <span className="combat-round__hits">
-                      Hits: {round.attackers.hits}
-                    </span>
                   </div>
-                  <div className="combat-round__roll">
-                    <span className="combat-round__label">Defenders roll</span>
+                  <div className="combat-round__side">
+                    <div className="combat-round__side-header">
+                      <span className="combat-round__side-role">Defenders</span>
+                      <span className="combat-round__side-name">
+                        <FactionSymbol
+                          factionId={playerFactionsById?.get(
+                            round.defenders.playerId
+                          )}
+                          className="faction-symbol--mini"
+                        />
+                        {formatPlayer(round.defenders.playerId, playersById)}
+                      </span>
+                    </div>
                     <div className="combat-dice">
-                      {round.defenders.dice.length === 0 ? (
-                        <span className="combat-dice__empty">No dice</span>
+                      {renderDice(round.defenders.dice, phase)}
+                    </div>
+                    <div className="combat-round__stats">
+                      <span>Dice {round.defenders.dice.length}</span>
+                      {showHits ? (
+                        <span>Hits {round.defenders.hits}</span>
                       ) : (
-                        round.defenders.dice.map((roll, dieIndex) => (
-                          <span
-                            key={`d-${dieIndex}-${roll.value}`}
-                            className={`combat-dice__die ${roll.isHit ? "is-hit" : ""}`}
-                          >
-                            {roll.value}
-                          </span>
-                        ))
+                        <span>Rolling...</span>
                       )}
                     </div>
-                    <span className="combat-round__hits">
-                      Hits: {round.defenders.hits}
-                    </span>
                   </div>
+                </div>
+                <div className="combat-round__assignments">
                   <div className="combat-round__assign">
                     <span className="combat-round__label">Hits to defenders</span>
-                    {renderHitSummary(round.hitsToDefenders)}
+                    {renderHitSummary(round.hitsToDefenders, showAssignments)}
+                    {showAssignments && roundBountyAttackers > 0 ? (
+                      <span className="combat-round__bounty">
+                        Bounty +{roundBountyAttackers}g
+                      </span>
+                    ) : null}
                   </div>
                   <div className="combat-round__assign">
                     <span className="combat-round__label">Hits to attackers</span>
-                    {renderHitSummary(round.hitsToAttackers)}
+                    {renderHitSummary(round.hitsToAttackers, showAssignments)}
+                    {showAssignments && roundBountyDefenders > 0 ? (
+                      <span className="combat-round__bounty">
+                        Bounty +{roundBountyDefenders}g
+                      </span>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -198,9 +577,22 @@ export const CombatOverlay = ({
           })}
         </div>
 
-        {!canRoll ? (
+        {isResolved ? (
           <div className="combat-overlay__outcome">
-            Outcome: {winnerLabel} {endReason}
+            <div className="combat-outcome__result">
+              <span className="combat-outcome__label">Outcome</span>
+              <strong className="combat-outcome__winner">{winnerLabel}</strong>
+              {endReason ? (
+                <span className="combat-outcome__reason">{endReason}</span>
+              ) : null}
+            </div>
+            <div className="combat-outcome__bounties">
+              <span>Attackers bounty: {attackersBounty}g</span>
+              <span>Defenders bounty: {defendersBounty}g</span>
+            </div>
+            {autoClosePending ? (
+              <div className="combat-outcome__auto">Auto-closing...</div>
+            ) : null}
           </div>
         ) : null}
       </div>
