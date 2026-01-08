@@ -237,21 +237,6 @@ export const CombatOverlay = ({
     };
   }, [combatSync, sequence.id]);
 
-  useEffect(() => {
-    clearAutoClose();
-    if (!isResolved || sequence.rounds.length === 0) {
-      return;
-    }
-    setAutoClosePending(true);
-    autoCloseTimer.current = window.setTimeout(() => {
-      setAutoClosePending(false);
-      onClose();
-    }, AUTO_CLOSE_MS);
-    return () => {
-      clearAutoCloseTimer();
-    };
-  }, [onClose, isResolved, sequence.rounds.length]);
-
   const { attackersBounty, defendersBounty } = useMemo(
     () => buildBountyTotals(sequence.rounds, cardDefsById),
     [sequence.rounds, cardDefsById]
@@ -370,6 +355,21 @@ export const CombatOverlay = ({
       : currentRound
         ? "assigned"
         : null;
+
+  useEffect(() => {
+    clearAutoClose();
+    if (!isResolved || sequence.rounds.length === 0) {
+      return;
+    }
+    setAutoClosePending(true);
+    autoCloseTimer.current = window.setTimeout(() => {
+      setAutoClosePending(false);
+      onClose();
+    }, AUTO_CLOSE_MS);
+    return () => {
+      clearAutoCloseTimer();
+    };
+  }, [onClose, isResolved, sequence.rounds.length]);
   const showHits = roundPhase === "locked" || roundPhase === "assigned";
   const showAssignments = roundPhase === "assigned";
   const stageLabel =
