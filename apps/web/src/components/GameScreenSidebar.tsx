@@ -1,6 +1,10 @@
-import { useState, type CSSProperties } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 
-import type { GameView } from "@bridgefront/engine";
+import { CARD_DEFS, type GameView } from "@bridgefront/engine";
+
+import { getFactionName } from "../lib/factions";
+
+const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 
 type GameScreenSidebarProps = {
   connectionLabel: string;
@@ -9,6 +13,7 @@ type GameScreenSidebarProps = {
   round: number;
   leadPlayerName: string | null;
   players: GameView["public"]["players"];
+  modifiers: GameView["public"]["modifiers"];
   actionStep: GameView["public"]["actionStep"];
   actionEligible: Set<string>;
   actionWaiting: Set<string>;
@@ -20,6 +25,45 @@ type GameScreenSidebarProps = {
   onCollapse: () => void;
 };
 
+type ModifierView = GameView["public"]["modifiers"][number];
+
+const formatDurationLabel = (duration: ModifierView["duration"]) => {
+  switch (duration.type) {
+    case "permanent":
+      return "Permanent";
+    case "endOfRound":
+      return "Until round end";
+    case "endOfBattle":
+      return "Until battle ends";
+    case "uses":
+      return `${duration.remaining} use${duration.remaining === 1 ? "" : "s"}`;
+    default: {
+      const _exhaustive: never = duration;
+      return String(_exhaustive);
+    }
+  }
+};
+
+const formatSourceLabel = (modifier: ModifierView) => {
+  const sourceId = modifier.source.sourceId;
+  switch (modifier.source.type) {
+    case "faction": {
+      const factionName = getFactionName(sourceId);
+      return factionName ? `Faction ${factionName}` : `Faction ${sourceId}`;
+    }
+    case "champion": {
+      const name = CARD_DEFS_BY_ID.get(sourceId)?.name ?? sourceId;
+      return `Champion ${name}`;
+    }
+    case "card":
+      return CARD_DEFS_BY_ID.get(sourceId)?.name ?? sourceId;
+    default: {
+      const _exhaustive: never = modifier.source.type;
+      return String(_exhaustive);
+    }
+  }
+};
+
 export const GameScreenSidebar = ({
   connectionLabel,
   connectionClass,
@@ -27,6 +71,7 @@ export const GameScreenSidebar = ({
   round,
   leadPlayerName,
   players,
+  modifiers,
   actionStep,
   actionEligible,
   actionWaiting,
@@ -43,6 +88,38 @@ export const GameScreenSidebar = ({
     table: true,
     intel: true
   });
+  const playerNameById = useMemo(
+    () => new Map(players.map((player) => [player.id, player.name])),
+    [players]
+  );
+  const activeEffects = useMemo(
+    () =>
+      modifiers.map((modifier) => {
+        const ownerLabel = modifier.ownerPlayerId
+          ? playerNameById.get(modifier.ownerPlayerId) ?? modifier.ownerPlayerId
+          : null;
+        const attachment =
+          modifier.attachedHex
+            ? `Hex ${modifier.attachedHex}`
+            : modifier.attachedEdge
+              ? `Edge ${modifier.attachedEdge}`
+              : modifier.attachedUnitId
+                ? `Unit ${modifier.attachedUnitId}`
+                : "Global";
+        const durationLabel = formatDurationLabel(modifier.duration);
+        const detailParts = [
+          ownerLabel ? `Owner ${ownerLabel}` : null,
+          attachment,
+          durationLabel
+        ].filter(Boolean);
+        return {
+          id: modifier.id,
+          label: formatSourceLabel(modifier),
+          detail: detailParts.join(" · ")
+        };
+      }),
+    [modifiers, playerNameById]
+  );
 
   const toggleSection = (section: SectionKey) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -241,6 +318,23 @@ export const GameScreenSidebar = ({
                 <span className="intel-value intel-snippet">
                   {lastLogLabel ?? "No events yet."}
                 </span>
+              </div>
+              <div className="intel-card">
+                <span className="intel-label">Active effects</span>
+                {activeEffects.length > 0 ? (
+                  <ul className="log-list">
+                    {activeEffects.map((effect) => (
+                      <li key={effect.id}>
+                        <span className="intel-value">{effect.label}</span>
+                        {effect.detail ? (
+                          <span className="player-meta"> {effect.detail}</span>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <span className="intel-value">No active effects.</span>
+                )}
               </div>
             </div>
           </div>

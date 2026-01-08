@@ -13,6 +13,12 @@ const BASIC_ACTION_COSTS: Record<Exclude<BasicActionIntent, "none">, { mana: num
   reinforce: { mana: BASIC_ACTION_MANA_COST, gold: REINFORCE_GOLD_COST }
 };
 
+const BASIC_ACTION_TOOLTIPS: Record<Exclude<BasicActionIntent, "none">, string> = {
+  bridge: `Build a bridge between adjacent hexes you occupy. Cost: ${BASIC_ACTION_MANA_COST} mana.`,
+  march: `Move a stack across a bridge. Cost: ${BASIC_ACTION_MANA_COST} mana.`,
+  reinforce: `Add 1 force to your capital. Cost: ${BASIC_ACTION_MANA_COST} mana, ${REINFORCE_GOLD_COST} gold.`
+};
+
 export type BoardPickMode =
   | "none"
   | "marchFrom"
@@ -114,6 +120,7 @@ export const ActionPanel = ({
           type="button"
           className={`action-chip ${basicActionIntent === "bridge" ? "is-active" : ""}`}
           disabled={!canSubmitAction}
+          title={BASIC_ACTION_TOOLTIPS.bridge}
           onClick={() => toggleIntent("bridge")}
         >
           <span className="action-chip__label">Bridge</span>
@@ -123,6 +130,7 @@ export const ActionPanel = ({
           type="button"
           className={`action-chip ${basicActionIntent === "march" ? "is-active" : ""}`}
           disabled={!canSubmitAction}
+          title={BASIC_ACTION_TOOLTIPS.march}
           onClick={() => toggleIntent("march")}
         >
           <span className="action-chip__label">March</span>
@@ -132,6 +140,7 @@ export const ActionPanel = ({
           type="button"
           className={`action-chip ${basicActionIntent === "reinforce" ? "is-active" : ""}`}
           disabled={!canReinforce}
+          title={BASIC_ACTION_TOOLTIPS.reinforce}
           onClick={() => toggleIntent("reinforce")}
         >
           <span className="action-chip__label">Reinforce</span>

@@ -274,7 +274,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Champion card UI shows iconography for health, dice, hits, and bounty.
 - [x] Market HUD shows current gold with the same emoji/visual language used elsewhere.
 - [ ] Champion cards communicate gold cost scaling for the nth champion clearly.
-- [ ] Action reveal popup uses A1-style board labels (not axial coords).
+- [x] Action reveal popup uses A1-style board labels (not axial coords).
 - [ ] Collection UI becomes a modal overlay (no top-bar layout shift).
 - [ ] Center collection offers power picks (not normal card draft).
 - [ ] Market dice roll animation feels smoother and more synchronized.
@@ -293,7 +293,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [ ] On retreat, resolve one final combat round, then move all forces across chosen bridge and end combat.
 - [ ] Add "Burn the Bridges" card (rules-aligned effect + UI + tests).
 - [ ] Live VP updates immediately on occupation changes.
-- [ ] Basic actions show a short hover tooltip explanation.
+- [x] Basic actions show a short hover tooltip explanation.
 - [x] Basic actions show mana/gold costs on the buttons.
 - [ ] Center card text alignment (titles/lines) on card faces.
 - [x] Market show/hide has a hotkey; overlay background slightly transparent.
@@ -307,7 +307,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Add stats tracking TODO (battles won, other metrics) for later.
 - [ ] Fix card hover stacking so hovered cards always render on top.
 - [ ] Force-split dialog appears near the clicked hex (not bottom of screen).
-- [ ] Add an "active effects" view so players see ongoing effects.
+- [x] Add an "active effects" view so players see ongoing effects.
 - [x] Gray out or mark cards that are unaffordable due to mana.
 - [ ] Fix phase progression after capital battles (ensure collection/market transitions).
 - [ ] Add UI for scout orders and "draw and pick" effects.

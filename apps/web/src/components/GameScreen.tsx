@@ -99,6 +99,20 @@ const parseTargets = (raw: string): Record<string, unknown> | null => {
   }
 };
 
+const isEditableTarget = (target: EventTarget | null): boolean => {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+  if (target.isContentEditable) {
+    return true;
+  }
+  const tagName = target.tagName.toLowerCase();
+  if (tagName === "input" || tagName === "textarea" || tagName === "select") {
+    return true;
+  }
+  return Boolean(target.closest("input, textarea, select, [contenteditable='true']"));
+};
+
 const buildHexLabels = (hexKeys: string[]): Record<string, string> => {
   const rows = new Map<number, Array<{ key: string; q: number }>>();
   for (const key of hexKeys) {
@@ -114,7 +128,7 @@ const buildHexLabels = (hexKeys: string[]): Record<string, string> => {
   const sortedRows = Array.from(rows.entries()).sort(([a], [b]) => a - b);
   const labels: Record<string, string> = {};
   sortedRows.forEach(([, rowHexes], rowIndex) => {
-    const rowLabel = rowIndex < 26 ? String.fromCharCode(97 + rowIndex) : `r${rowIndex + 1}`;
+    const rowLabel = rowIndex < 26 ? String.fromCharCode(65 + rowIndex) : `R${rowIndex + 1}`;
     rowHexes.sort((a, b) => a.q - b.q);
     rowHexes.forEach((entry, colIndex) => {
       labels[entry.key] = `${rowLabel}${colIndex + 1}`;
@@ -125,6 +139,15 @@ const buildHexLabels = (hexKeys: string[]): Record<string, string> => {
 
 const formatHexLabel = (hexKey: string, labels: Record<string, string>): string => {
   return labels[hexKey] ?? hexKey;
+};
+
+const formatEdgeLabel = (edgeKey: string, labels: Record<string, string>): string => {
+  try {
+    const [a, b] = parseEdgeKey(edgeKey);
+    return `${formatHexLabel(a, labels)}-${formatHexLabel(b, labels)}`;
+  } catch {
+    return edgeKey;
+  }
 };
 
 const getTargetString = (
@@ -194,7 +217,8 @@ const buildCardCostLabel = (cardDef: CardDef | null): string | null => {
 
 const describeRevealTargets = (
   targets: Record<string, unknown> | null,
-  board: GameView["public"]["board"]
+  board: GameView["public"]["board"],
+  labels: Record<string, string>
 ): CardRevealTargetInfo => {
   if (!targets) {
     return { targetLines: [], targetHexKeys: [], targetEdgeKeys: [] };
@@ -226,23 +250,22 @@ const describeRevealTargets = (
   const edgeKeyList = getTargetStringArray(targets, "edgeKeys");
   if (edgeKeyList.length > 0) {
     edgeKeyList.forEach(addEdge);
+    const edgeLabels = edgeKeyList.map((edgeKey) => formatEdgeLabel(edgeKey, labels));
     pushLine(
-      edgeKeyList.length === 1
-        ? `Edge ${edgeKeyList[0]}`
-        : `Edges ${edgeKeyList.join(", ")}`
+      edgeLabels.length === 1 ? `Edge ${edgeLabels[0]}` : `Edges ${edgeLabels.join(", ")}`
     );
   } else {
     const edgeKey = getTargetString(targets, "edgeKey");
     if (edgeKey) {
       addEdge(edgeKey);
-      pushLine(`Edge ${edgeKey}`);
+      pushLine(`Edge ${formatEdgeLabel(edgeKey, labels)}`);
     }
   }
 
   const hexKey = getTargetString(targets, "hexKey");
   if (hexKey) {
     addHex(hexKey);
-    pushLine(`Hex ${hexKey}`);
+    pushLine(`Hex ${formatHexLabel(hexKey, labels)}`);
   }
 
   const path = targets.path;
@@ -252,7 +275,8 @@ const describeRevealTargets = (
     );
     if (filtered.length > 0) {
       filtered.forEach(addHex);
-      pushLine(`Path ${filtered.join(" → ")}`);
+      const labeledPath = filtered.map((hex) => formatHexLabel(hex, labels));
+      pushLine(`Path ${labeledPath.join(" → ")}`);
     }
   }
 
@@ -261,7 +285,7 @@ const describeRevealTargets = (
   if (from && to) {
     addHex(from);
     addHex(to);
-    pushLine(`Move ${from} → ${to}`);
+    pushLine(`Move ${formatHexLabel(from, labels)} → ${formatHexLabel(to, labels)}`);
   }
 
   const choice = getTargetString(targets, "choice") ?? getTargetString(targets, "kind");
@@ -270,7 +294,11 @@ const describeRevealTargets = (
   } else if (choice === "occupiedHex") {
     const occupiedHex = getTargetString(targets, "hexKey");
     addHex(occupiedHex);
-    pushLine(occupiedHex ? `Choice: Occupied ${occupiedHex}` : "Choice: Occupied hex");
+    pushLine(
+      occupiedHex
+        ? `Choice: Occupied ${formatHexLabel(occupiedHex, labels)}`
+        : "Choice: Occupied hex"
+    );
   }
 
   const unitId = getTargetString(targets, "unitId") ?? getTargetString(targets, "championId");
@@ -284,7 +312,7 @@ const describeRevealTargets = (
     }
     pushLine(
       unit?.hex
-        ? `Champion ${unitName ?? unitId} @ ${unit.hex}`
+        ? `Champion ${unitName ?? unitId} @ ${formatHexLabel(unit.hex, labels)}`
         : `Champion ${unitName ?? unitId}`
     );
   }
@@ -416,6 +444,13 @@ export const GameScreen = ({
   );
   const playerNames = useMemo(
     () => new Map(view.public.players.map((player) => [player.id, player.name])),
+    [view.public.players]
+  );
+  const playerFactions = useMemo(
+    () =>
+      new Map(
+        view.public.players.map((player) => [player.id, player.factionId ?? null])
+      ),
     [view.public.players]
   );
   const playerColorIndexById = useMemo(() => {
@@ -751,6 +786,13 @@ export const GameScreen = ({
     ? formatGameEvent(lastLogEntry, playerNames, hexLabels, CARD_DEFS_BY_ID)
     : null;
   const activeCombat = combatQueue[0] ?? null;
+  const activeCombatHex = activeCombat
+    ? view.public.board.hexes[activeCombat.start.hexKey] ?? null
+    : null;
+  const activeCombatLabel = activeCombat
+    ? hexLabels[activeCombat.start.hexKey] ?? null
+    : null;
+  const isCapitalBattle = activeCombatHex?.tile === "capital";
   const actionRevealDurationMs = view.public.config.ACTION_REVEAL_DURATION_MS;
   const isActionPhase = view.public.phase === "round.action";
   const isStudyPhase = view.public.phase === "round.study";
@@ -775,6 +817,7 @@ export const GameScreen = ({
   const showMarketOverlay =
     (isMarketPhase && (isMarketOverlayOpen || shouldForceMarketOverlay)) ||
     shouldHoldMarketOverlay;
+  const canToggleMarketOverlay = isMarketPhase && !shouldForceMarketOverlay;
   const canShowHandPanel =
     Boolean(view.private) && isActionPhase && !showMarketOverlay;
   const showVictoryScreen = Boolean(view.public.winnerPlayerId && isVictoryVisible);
@@ -1056,6 +1099,32 @@ export const GameScreen = ({
   }, [isMarketPhase, isMarketOverlayOpen, marketOutroHoldMs]);
 
   useEffect(() => {
+    if (!canToggleMarketOverlay) {
+      return;
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.repeat) {
+        return;
+      }
+      if (event.metaKey || event.ctrlKey || event.altKey) {
+        return;
+      }
+      if (isEditableTarget(event.target)) {
+        return;
+      }
+      if (event.key.toLowerCase() !== "m") {
+        return;
+      }
+      event.preventDefault();
+      setIsMarketOverlayOpen((current) => !current);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [canToggleMarketOverlay]);
+
+  useEffect(() => {
     if (view.public.winnerPlayerId) {
       setIsVictoryVisible(true);
     } else {
@@ -1233,7 +1302,11 @@ export const GameScreen = ({
           rawTargets && typeof rawTargets === "object" && !Array.isArray(rawTargets)
             ? (rawTargets as Record<string, unknown>)
             : null;
-        const targetInfo = describeRevealTargets(targetRecord, view.public.board);
+        const targetInfo = describeRevealTargets(
+          targetRecord,
+          view.public.board,
+          hexLabels
+        );
         newReveals.push({
           key: `${i}-${cardId}`,
           playerName: playerId ? playerNames.get(playerId) ?? playerId : "Unknown player",
@@ -2415,7 +2488,11 @@ export const GameScreen = ({
         <CombatOverlay
           sequence={activeCombat}
           playersById={playerNames}
+          playerFactionsById={playerFactions}
           cardDefsById={CARD_DEFS_BY_ID}
+          modifiers={view.public.modifiers}
+          hexLabel={activeCombatLabel}
+          isCapitalBattle={isCapitalBattle}
           onClose={handleCombatClose}
         />
       ) : null}
@@ -2536,6 +2613,7 @@ export const GameScreen = ({
             round={view.public.round}
             leadPlayerName={leadPlayer?.name ?? null}
             players={view.public.players}
+            modifiers={view.public.modifiers}
             actionStep={actionStep}
             actionEligible={actionEligible}
             actionWaiting={actionWaiting}
