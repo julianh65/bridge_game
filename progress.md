@@ -18,8 +18,16 @@
 
 ## Active tasks
 - owner: agent4
-  scope: add a bridge lockdown card-effect test and expand the plan's primitive test checklist.
-  files: packages/engine/src/card-effects.bridge-lockdown.test.ts, implementation_plan.md, progress.md
+  scope: add a War Profiteers dice-roll primitive test and mark the plan checklist item.
+  files: packages/engine/src/card-effects.war-profiteers.test.ts, implementation_plan.md, progress.md
+  status: in progress
+- owner: agent3
+  scope: add Encirclement card-effect test (adjacent requirement + force removal cap).
+  files: packages/engine/src/card-effects.encirclement.test.ts, implementation_plan.md, progress.md
+  status: in progress
+- owner: agent2
+  scope: add Patch Up card-effect test (capital bonus vs base heal).
+  files: packages/engine/src/card-effects.patch-up.test.ts, progress.md
   status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -51,7 +59,7 @@
 - Added burned pile details to the deck viewer flow/piles plus a view test verifying burned counts in the private view. (Files: `apps/web/src/components/DeckViewer.tsx`, `apps/web/src/styles.css`, `packages/engine/src/view.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- view.test.ts`.)
 - Added a floating in-game deck toggle and a deck-screen return-to-game action; updated the plan checklist. (Files: `apps/web/src/App.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/DeckViewer.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` is also in agent5 scope.)
 - Tweaked the floating deck toggle alignment, added a fixed Back to Game control in the deck viewer, and suppressed repeat age-cue bell/popup on deck return. (Files: `apps/web/src/App.tsx`, `apps/web/src/components/DeckViewer.tsx`, `apps/web/src/styles.css`.) (Overlap note: `apps/web/src/styles.css` is in agent3 scope.)
-- Deferred auto-opening market/collection overlays while combat/action reveals are active, so phase transitions after sieges wait for the battle/reveal overlays; marked related plan items complete. (File: `apps/web/src/components/GameScreen.tsx`.)
+- Deferred auto-opening market/collection overlays while combat/action reveals are active, so phase transitions after sieges wait for the battle/reveal overlays; marked related plan items complete. (File: `apps/web/src/components/GameScreen.tsx`.) (owner: agent1)
 - Added setup host-advance gating in the engine (AdvanceSetup command + setup status view), updated setup/action/smoke tests plus server auto-setup + sample-game helpers, and added a host-only Advance Setup button in the lobby; updated the plan checklist. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/action-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/index.ts`, `apps/server/src/server.ts`, `apps/web/src/lib/sample-game.ts`, `apps/web/src/components/Lobby.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.)
 - Added a setup deck preview step before capital draft with starter deck counts plus starter spell/champion callouts, and updated setup tests + setup flow UI; marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/index.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/index.test.ts`, `apps/web/src/components/SetupDeckPreview.tsx`, `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Restored setup deck preview as the initial setup block (createNewGame now starts at `setup.deckPreview`) and verified setup/index tests. (Files: `packages/engine/src/engine.ts`.) (Test: `npm run -w @bridgefront/engine test -- setup-flow.test.ts index.test.ts`.) (owner: agent2)
