@@ -458,6 +458,48 @@ Done
     - [ ] Age III power non-victory card defs (per rules_draft counts).
     - [ ] Age III power victory card defs (per rules_draft counts, +1 VP on gain).
     - [ ] Verify power/burn/victory tags on power cards.
+    - [ ] Power pick card checklist (rules_draft §24).
+      - [ ] Age I Power (12) — Non-victory (6).
+        - [ ] Command Surge.
+        - [ ] Instant Bridge Net.
+        - [ ] Secret Plans.
+        - [ ] Emergency Pay.
+        - [ ] Shock Drill.
+        - [ ] TBD: fill missing Age I non-victory entry after rules audit.
+      - [ ] Age I Power Victory (6).
+        - [ ] Bridge Deed.
+        - [ ] Mine Charter.
+        - [ ] Forge Sketch.
+        - [ ] Center Writ.
+        - [ ] Oathstone.
+        - [ ] Banner of Sparks.
+      - [ ] Age II Power (12) — Non-victory (6).
+        - [ ] Immunity Field.
+        - [ ] Rapid Reinforcements.
+        - [ ] A Hero Joins the Battle.
+        - [ ] TBD: fill missing Age II non-victory entries after rules audit (3).
+      - [ ] Age II Power Victory (6).
+        - [ ] Writ of Industry.
+        - [ ] Bridge Charter.
+        - [ ] Dispatch to Front.
+        - [ ] Chronicle of War.
+        - [ ] TBD: fill missing Age II power victory entries after rules audit (2).
+      - [ ] Age II Power Champions (verify deck size inclusion).
+        - [ ] Bannerman.
+      - [ ] Age III Power (12) — Non-victory (6).
+        - [ ] Cataclysm Core.
+        - [ ] Quick Mobilization.
+        - [ ] Forge Miracle.
+        - [ ] Final Funding.
+        - [ ] Last Stand.
+        - [ ] TBD: fill missing Age III non-victory entry after rules audit.
+      - [ ] Age III Power Victory (6).
+        - [ ] Imperial Warrant.
+        - [ ] Crown Coin.
+        - [ ] Deep Mine Charter.
+        - [ ] Center Relic.
+        - [ ] Forge Relic.
+        - [ ] Siege Chronicle.
   - [ ] Replace `packages/engine/src/content/power-decks.ts` with real power deck lists (no market clones).
   - [ ] Update deck list exports/tests for market + power counts/uniqueness.
   - [ ] Add power deck card tests (at least one per unique effect).

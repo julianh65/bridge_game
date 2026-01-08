@@ -21,13 +21,10 @@
   scope: add setup deck preview screen with starter deck composition counts and starter spell/champion callouts
   files: apps/web/src/components/SetupFlow.tsx, apps/web/src/components/SetupDeckPreview.tsx, apps/web/src/styles.css, packages/engine/src/types.ts, packages/engine/src/view.ts, packages/engine/src/engine.ts, packages/engine/src/setup-flow.ts, packages/engine/src/index.ts, packages/engine/src/setup-flow.test.ts, packages/engine/src/smoke.test.ts, packages/engine/src/index.test.ts, progress.md, implementation_plan.md
   status: in progress (overlap note: `apps/web/src/styles.css` also in agent3/agent1 scope)
-- owner: agent1
-  scope: add explicit power pick (power deck) card task lists from rules to the implementation plan
-  files: implementation_plan.md, progress.md
-  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
+- Added explicit power pick (power deck) card checklist tasks from `rules_draft.md` to `implementation_plan.md`, including missing-entry audit placeholders.
 
 ## Mini Milestone For Me progress
 - Added a dev-only Card Editor view with inline numeric edits, copy flow, initiative tools (collision listing + decollide/compress), and patch export; wired into the app nav and documented in the plan checklist. (Files: `apps/web/src/components/CardEditor.tsx`, `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` overlaps agent2/agent4 scope.)
