@@ -17,17 +17,9 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent5
-  scope: add an active effects view in the info dock (with an Effects tab) and wire a sidebar button.
-  files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/GameScreenSidebar.tsx, apps/web/src/styles.css, progress.md
-  status: in progress (overlap: apps/web/src/styles.css with other agents)
-- owner: agent2
-  scope: add Small Hands draw-if-last-card effect test + plan update.
-  files: packages/engine/src/card-effects.small-hands.test.ts, implementation_plan.md, progress.md
-  status: in progress
-- owner: agent3
-  scope: add targeted Sabotage Bridge (destroy bridge) card effect test.
-  files: packages/engine/src/card-effects.sabotage-bridge.test.ts, implementation_plan.md, progress.md
+- owner: agent4
+  scope: add Age II War Profiteers card with roll-for-gold effect and test coverage.
+  files: packages/engine/src/card-effects.ts, packages/engine/src/content/cards/age2.ts, packages/engine/src/action-flow.test.ts, implementation_plan.md, progress.md
   status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -105,6 +97,7 @@
 - Moved force-split controls to a board-adjacent popover for march + card moves, added overlay rendering in BoardView, and left a small split hint in the action/hand panels; updated the plan checklist. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/ForceSplitPopover.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Tightened the force-split popover sizing and buttons to reduce board coverage, and set explicit overlay dimensions so it blocks fewer hex clicks. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`.)
 - Moved the force-split popover to the top-left board overlay (removed selected/reset tools) so it no longer blocks hex picking. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`.)
+- Added an active effects view in the info dock with Log/Effects tabs plus a sidebar button to open it; marked the plan checklist item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenSidebar.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Enabled linked-hex movement (Tunnel Network/Wormhole Link) for board-pick march + card move paths by honoring link modifiers in UI targeting; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Added Burn the Bridges (Age II) with destroy-connected-bridges effect, movement-target validation, and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent2)
 
@@ -142,7 +135,9 @@
 - Added War Taxes card-effect test for flat gold gain and updated the plan checklist. (Files: `packages/engine/src/card-effects.war-taxes.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.war-taxes.test.ts`.) (owner: agent3)
 - Added Insight card-effect test for draw 2 (plan already marked complete). (File: `packages/engine/src/card-effects.insight.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.insight.test.ts`.) (owner: agent3)
 - Added Bridge Lockdown card-effect test to lock an existing bridge and updated the plan checklist. (Files: `packages/engine/src/card-effects.bridge-lockdown.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.bridge-lockdown.test.ts`.) (owner: agent3)
+- Added Sabotage Bridge card-effect test for destroy-bridge targeting and updated the plan checklist. (Files: `packages/engine/src/card-effects.sabotage-bridge.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.sabotage-bridge.test.ts`.) (owner: agent3)
 - Added Strategic Triumph card-effect test for gold gain and updated the plan checklist. (Files: `packages/engine/src/card-effects.strategic-triumph.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.strategic-triumph.test.ts`.) (owner: agent2)
+- Added Small Hands card-effect test for draw-if-empty hand and updated the plan checklist. (Files: `packages/engine/src/card-effects.small-hands.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.small-hands.test.ts`.) (owner: agent2)
 - Added Age II movement card defs (Triple March, Coordinated Advance, Breakthrough Line) plus a battle-win cleanup draw modifier and tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.breakthrough-line.test.ts`, `implementation_plan.md`.) (owner: agent2)
 - Added Age II Bridge Network with multi-edge build-bridge support and tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.bridge-network.test.ts`, `implementation_plan.md`.) (owner: agent2)
 - Added Age III Wormhole Gate card def (link-hexes) and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (owner: agent4)

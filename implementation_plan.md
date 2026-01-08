@@ -314,7 +314,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Champion target modal should not shift page layout; convert to overlay.
 - [x] Fix card hover stacking so hovered cards always render on top.
 - [x] Force-split dialog appears near the clicked hex (not bottom of screen).
-- [ ] Add an "active effects" view so players see ongoing effects.
+- [x] Add an "active effects" view so players see ongoing effects.
 - [x] Gray out or mark cards that are unaffordable due to mana.
 - [ ] Fix phase progression after capital battles (ensure collection/market transitions).
 - [x] Add UI for scout orders and "draw and pick" effects.
@@ -671,7 +671,9 @@ Done
   - [x] Age I market: Scavenger's Market gold + draw.
   - [x] Age I market: Supply Ledger / Patrol Record / Banner Claim coverage.
   - [x] Age I market: remaining orders (Quick March, Trade Caravan, Temporary Bridge, Patch Up, Quick Study).
+  - [x] Age I market: Sabotage Bridge (destroy bridge).
   - [x] Age I market: Paid Volunteers / National Service recruit coverage.
+  - [x] Age I market: Small Hands (draw 3 if last card).
   - [ ] Age II/III market + power deck card tests (as content lands).
     - [x] Age II market: Deep Shaft Rig (mine value bump + force deploy).
     - [x] Age II market: Rally Where You Stand (deploy to champion hex).
