@@ -17,13 +17,9 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent5
-  scope: improve mana/gold cost chip readability (larger text, clearer backgrounds).
-  files: apps/web/src/styles.css, progress.md, implementation_plan.md
-  status: in progress (overlap: apps/web/src/styles.css with agent2)
-- owner: agent3
-  scope: add targeted Stall card-effect test (no-op validation).
-  files: packages/engine/src/card-effects.stall.test.ts, implementation_plan.md, progress.md
+- owner: agent1
+  scope: fix phase progression after capital battles (ensure collection/market transitions).
+  files: packages/engine/src/engine.ts, packages/engine/src/combat.ts, packages/engine/src/action-flow.ts, packages/engine/src/types.ts, packages/engine/src/action-flow.test.ts, packages/engine/src/smoke.test.ts, packages/engine/src/combat.test.ts, progress.md, implementation_plan.md
   status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -111,6 +107,7 @@
 - Added Burn the Bridges (Age II) with destroy-connected-bridges effect, movement-target validation, and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent2)
 - Removed rules text truncation on large card variants while keeping clamps on compact hand/market/collection cards; updated the plan checklist. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Enabled optional move selection for edge-target bridge cards (Bridge Crew) by preserving edge targets and allowing a follow-on stack/path pick; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
+- Increased mana/gold cost chip readability by enlarging text and softening gradients; updated the plan checklist. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Added faction-ordered basic action resolution (config-driven) and surfaced basic-action order on faction cards; updated config/spec docs and marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/config.ts`, `packages/engine/src/action-flow.ts`, `apps/web/src/lib/factions.ts`, `apps/web/src/components/PreGameLobby.tsx`, `docs/configuration.md`, `technical_spec.md`, `implementation_plan.md`.) (Overlap note: `packages/engine/src/config.ts` already had in-flight duration/tile-count edits.) (Test: `npm run -w @bridgefront/engine test -- action-flow.test.ts` failed: `capitals were not assigned` in `setupToActionPhase`.)
 - Added a focused basic-action order unit test to validate faction-priority resolution. (File: `packages/engine/src/basic-action-order.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- basic-action-order.test.ts`.)
 
@@ -159,6 +156,7 @@
 - Added Battalion Contract card-effect test for capital deployment (10 forces) and updated the plan checklist. (Files: `packages/engine/src/card-effects.battalion-contract.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.battalion-contract.test.ts`.) (owner: agent3)
 - Added Burn the Bridges card-effect test for move + destroy connected bridges and updated the plan checklist. (Files: `packages/engine/src/card-effects.burn-the-bridges.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.burn-the-bridges.test.ts`.) (owner: agent3)
 - Added Triple March card-effect test for max-distance validation and movement along bridges; updated the plan checklist. (Files: `packages/engine/src/card-effects.triple-march.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.triple-march.test.ts`.) (owner: agent3)
+- Added Stall card-effect test confirming no-op orders are currently not playable and updated the plan checklist. (Files: `packages/engine/src/card-effects.stall.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.stall.test.ts`.) (owner: agent3)
 - Added Strategic Triumph card-effect test for gold gain and updated the plan checklist. (Files: `packages/engine/src/card-effects.strategic-triumph.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.strategic-triumph.test.ts`.) (owner: agent2)
 - Added Small Hands card-effect test for draw-if-empty hand (plan already tracked). (File: `packages/engine/src/card-effects.small-hands.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.small-hands.test.ts`.) (owner: agent2)
 - Added Center Dispatch card-effect test for center-conditional draw and updated the plan checklist. (Files: `packages/engine/src/card-effects.center-dispatch.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.center-dispatch.test.ts`.) (owner: agent2)

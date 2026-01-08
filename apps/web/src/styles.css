@@ -61,10 +61,10 @@
   --card-cost-border: rgba(148, 163, 184, 0.5);
   --card-cost-text: #3f2a16;
   --card-cost-shadow: 0 6px 12px rgba(15, 23, 42, 0.12);
-  --card-cost-mana-bg: radial-gradient(circle at 30% 30%, #dbeafe, #93c5fd 75%);
+  --card-cost-mana-bg: linear-gradient(135deg, #e0f2fe 0%, #9bbcf3 100%);
   --card-cost-mana-border: rgba(59, 130, 246, 0.45);
   --card-cost-mana-text: #1e3a8a;
-  --card-cost-gold-bg: radial-gradient(circle at 30% 30%, #fef3c7, #facc15 80%);
+  --card-cost-gold-bg: linear-gradient(135deg, #fef3c7 0%, #f5c542 100%);
   --card-cost-gold-border: rgba(217, 119, 6, 0.45);
   --card-cost-gold-text: #92400e;
   --board-glow-1: rgba(255, 248, 235, 0.9);
@@ -151,10 +151,10 @@ body.is-game {
   --card-cost-border: rgba(218, 173, 125, 0.4);
   --card-cost-text: #ffe8cf;
   --card-cost-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
-  --card-cost-mana-bg: radial-gradient(circle at 30% 30%, #7dd3fc, #1e3a8a 75%);
+  --card-cost-mana-bg: linear-gradient(135deg, #5fa8e6 0%, #274b9e 100%);
   --card-cost-mana-border: rgba(147, 197, 253, 0.65);
   --card-cost-mana-text: #eff6ff;
-  --card-cost-gold-bg: radial-gradient(circle at 30% 30%, #fcd34d, #b45309 85%);
+  --card-cost-gold-bg: linear-gradient(135deg, #f3c44c 0%, #9a5c10 100%);
   --card-cost-gold-border: rgba(252, 211, 77, 0.65);
   --card-cost-gold-text: #fffbeb;
   --board-glow-1: rgba(255, 214, 170, 0.14);
@@ -2560,11 +2560,11 @@ body.is-game .game-card[data-type="Order"] {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 999px;
   border: 1px solid var(--card-cost-border);
   background: var(--card-cost-bg);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--card-cost-text);
   box-shadow: var(--card-cost-shadow);
@@ -2583,13 +2583,14 @@ body.is-game .game-card[data-type="Order"] {
 }
 
 .game-card__cost-icon {
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .game-card__cost-number {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
 }
 
 .game-card__tags {
