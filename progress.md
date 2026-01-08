@@ -21,10 +21,6 @@
   scope: make the market overlay toggle button larger, fixed-position, and usable for both show/hide states
   files: apps/web/src/components/GameScreen.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md
   status: in progress
-- owner: agent3
-  scope: add `scripts/card-tools.js` CLI for initiative collisions/decollide/compress with deck filters (dry-run)
-  files: scripts/card-tools.js, package.json, docs/cards.md, implementation_plan.md, progress.md
-  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -33,6 +29,7 @@
 - Added a dev-only Card Editor view with inline numeric edits, copy flow, initiative tools (collision listing + decollide/compress), and patch export; wired into the app nav and documented in the plan checklist. (Files: `apps/web/src/components/CardEditor.tsx`, `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` overlaps agent2/agent4 scope.)
 - Moved Card Editor filters to the top layout and adjusted the editor grid to keep the tool panel separate from gameplay views. (Files: `apps/web/src/components/CardEditor.tsx`, `apps/web/src/styles.css`.) (Overlap note: `apps/web/src/styles.css` overlaps agent2/agent4 scope.)
 - Added a local patch-apply script for Card Editor exports (edits only; clone entries are manual) and exposed it as `npm run cards:apply`; marked the plan item complete. (Files: `scripts/apply-card-patch.js`, `package.json`, `implementation_plan.md`.)
+- Added `scripts/card-tools.js` CLI for initiative collisions/decollide/compress with deck filters, plus npm scripts and docs; marked the plan items complete. (Files: `scripts/card-tools.js`, `package.json`, `docs/cards.md`, `implementation_plan.md`.)
 
 ## Milestone After Full Test Play and Thinking progress
 - Added setup host-advance gating in the engine (AdvanceSetup command + setup status view), updated setup/action/smoke tests plus server auto-setup + sample-game helpers, and added a host-only Advance Setup button in the lobby; updated the plan checklist. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/action-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/index.ts`, `apps/server/src/server.ts`, `apps/web/src/lib/sample-game.ts`, `apps/web/src/components/Lobby.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.)

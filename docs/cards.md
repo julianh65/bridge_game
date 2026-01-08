@@ -69,6 +69,28 @@ Use the web client to browse all registered cards without digging through files:
 - This view reads from the engine registry (`CARD_DEFS`), so any edits in
   `packages/engine/src/content/cards/` appear immediately on reload.
 
+## Card Tools CLI (Initiatives)
+Use the CLI helper to inspect initiative collisions or generate a patch for decolliding
+or compressing initiative values. The tool reads the TypeScript card defs and only
+prints output by default.
+
+### Common commands
+```bash
+# List initiative collisions in a specific deck.
+npm run cards:collisions -- --deck starter
+
+# Propose initiative updates to remove collisions and write a patch file.
+npm run cards:decollide -- --deck age1 --patch /tmp/initiative-patch.json
+
+# Compress initiatives to 1..N and print JSON to stdout.
+npm run cards:compress -- --deck age2 --json
+```
+
+### Notes
+- `--deck` accepts a comma-separated list (example: `--deck age1,age2`).
+- The script never edits TypeScript files directly; use the patch output to apply
+  changes manually (or via `scripts/apply-card-patch.js`).
+
 ## Card Art Generation (OpenAI)
 Card art is generated via the CLI script at `scripts/generate-card-art.js`. The script uses
 the OpenAI Images API by default and appends the card title to the end of the prompt so

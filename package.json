@@ -12,6 +12,10 @@
     "dev:server": "partykit dev",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "cards:apply": "node scripts/apply-card-patch.js",
+    "cards:collisions": "node scripts/card-tools.js collisions",
+    "cards:decollide": "node scripts/card-tools.js decollide",
+    "cards:compress": "node scripts/card-tools.js compress",
     "test": "npm run -w @bridgefront/engine test",
     "test:watch": "npm run -w @bridgefront/engine test:watch",
     "typecheck": "tsc -b"

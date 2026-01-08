@@ -361,9 +361,9 @@ I need some sort of script or way to edit the cards and decks in a nice UI with 
 - [x] Surface initiative collisions in the editor view with per-deck grouping.
 - [x] Add an export panel that copies JSON patch + human-readable change summary.
 - [x] Add a local patch-apply script for Card Editor exports (edits only; clones manual).
-- [ ] Implement CLI tooling (`scripts/card-tools.js`) for `collisions`, `de-collide`, and `compress` with deck filters; default to dry-run output.
+- [x] Implement CLI tooling (`scripts/card-tools.js`) for `collisions`, `de-collide`, and `compress` with deck filters; default to dry-run output.
 - [ ] Add lightweight tests for collision/decollide/compress helpers.
-- [ ] Document editor + CLI usage in `docs/cards.md` and add npm scripts.
+- [x] Document editor + CLI usage in `docs/cards.md` and add npm scripts.
 
 #### Acceptance criteria (proposed)
 - Card Editor can modify allowed numeric fields and export a patch without touching TS files.
