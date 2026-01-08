@@ -150,6 +150,21 @@ const formatEdgeLabel = (edgeKey: string, labels: Record<string, string>): strin
   }
 };
 
+const formatTileLabel = (tile: string | null | undefined): string | null => {
+  switch (tile) {
+    case "capital":
+      return "Capital";
+    case "forge":
+      return "Forge";
+    case "mine":
+      return "Mine";
+    case "center":
+      return "Center";
+    default:
+      return null;
+  }
+};
+
 const getTargetString = (
   record: Record<string, unknown> | null,
   key: string
@@ -790,9 +805,14 @@ export const GameScreen = ({
   const activeCombatHex = activeCombat
     ? view.public.board.hexes[activeCombat.start.hexKey] ?? null
     : null;
-  const activeCombatLabel = activeCombat
-    ? hexLabels[activeCombat.start.hexKey] ?? null
+  const activeCombatCoordLabel = activeCombat
+    ? formatHexLabel(activeCombat.start.hexKey, hexLabels)
     : null;
+  const activeCombatTileLabel = formatTileLabel(activeCombatHex?.tile);
+  const activeCombatLabel =
+    activeCombatCoordLabel && activeCombatTileLabel
+      ? `${activeCombatCoordLabel} ${activeCombatTileLabel}`
+      : activeCombatCoordLabel;
   const isCapitalBattle = activeCombatHex?.tile === "capital";
   const actionRevealDurationMs = view.public.config.ACTION_REVEAL_DURATION_MS;
   const isActionPhase = view.public.phase === "round.action";

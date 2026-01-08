@@ -285,8 +285,8 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Market dice roll animation feels smoother and more synchronized.
 - [x] Board generation spawns a fixed number of random bridges at setup (per updated rules).
 - [ ] Combat and combat overlay redesign:
- - [ ] Change the coords to the tile type and our labelling system e.g. Battle at A1 Mine
- - [ ] Make Faction Icons Bigger
+ - [x] Change the coords to the tile type and our labelling system e.g. Battle at A1 Mine
+ - [x] Make Faction Icons Bigger
  - [ ] Make it more visual and less number based, this should be exciting and look nice and visually intuitive
    - [ ] Each force alive should be represented by a circle and should have a die under it (unrolled)
    - [ ] Each champion should also be represented by a circle and should have their stats and dice under them (unrolled) it should be obvious their health

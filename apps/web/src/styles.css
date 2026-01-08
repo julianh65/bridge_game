@@ -5821,6 +5821,12 @@ body.is-game .combat-summary__role {
   gap: 6px;
 }
 
+.combat-overlay .faction-symbol--mini {
+  width: 18px;
+  height: 18px;
+  font-size: 8px;
+}
+
 .combat-summary__name {
   font-size: 15px;
   color: #482a14;
