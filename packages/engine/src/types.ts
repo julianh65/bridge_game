@@ -408,6 +408,7 @@ export type LobbyPlayer = {
 
 export type SetupChoice =
   | { kind: "pickCapital"; hexKey: HexKey }
+  | { kind: "unlockCapital" }
   | { kind: "placeStartingBridge"; edgeKey: EdgeKey }
   | { kind: "pickFreeStartingCard"; cardId: CardDefId };
 

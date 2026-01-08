@@ -17,9 +17,11 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- (owner: agent1) Capital draft simultaneous pick + unlock: update setup flow/choices/view, capital draft UI, event formatting, and tests. Files: `packages/engine/src/setup-flow.ts`, `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/action-flow.test.ts`, `apps/web/src/components/SetupCapitalDraft.tsx`, `apps/web/src/lib/event-format.ts`, `apps/web/src/lib/sample-game.ts`, `implementation_plan.md`.
 - owner: agent2; scope: combat overlay redesign (UI structure, dice flow staging, faction labels, retreat placeholders); files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`; status: in progress
 - owner: agent4; scope: market overlay hotkey + translucent scrim, special tile hover labels, unaffordable mana card styling; files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`; status: in progress (Overlap note: `apps/web/src/components/GameScreen.tsx` + `apps/web/src/styles.css` also in agent2 scope.)
+
+## Milestone After Full Test Play and Thinking progress
+- Made capital draft simultaneous with lock/unlock support, updated setup draft UI + event formatting, and added unlock test coverage; marked the plan item complete. (Files: `packages/engine/src/setup-flow.ts`, `packages/engine/src/types.ts`, `packages/engine/src/setup-flow.test.ts`, `apps/web/src/components/SetupCapitalDraft.tsx`, `apps/web/src/lib/event-format.ts`, `implementation_plan.md`.)
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)

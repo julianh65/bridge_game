@@ -92,6 +92,11 @@ export const formatGameEvent = (
       const hexLabel = formatHexKey(hexKey, hexLabels);
       return `${formatPlayer(playerId, playersById)} picked capital ${hexLabel}`;
     }
+    case "setup.capitalUnlocked": {
+      const hexKey = readString(payload.hexKey) ?? "unknown";
+      const hexLabel = formatHexKey(hexKey, hexLabels);
+      return `${formatPlayer(playerId, playersById)} unlocked capital ${hexLabel}`;
+    }
     case "setup.startingBridgePlaced": {
       const edgeKey = readString(payload.edgeKey) ?? "unknown";
       const alreadyExists = readBoolean(payload.alreadyExists);

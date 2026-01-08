@@ -23,24 +23,18 @@ type CapitalAssignments = {
   capitalByHex: Map<HexKey, PlayerID>;
 };
 
-const buildCapitalAssignments = (board: GameView["public"]["board"]): CapitalAssignments => {
+const buildCapitalAssignments = (choices: Record<PlayerID, HexKey | null>): CapitalAssignments => {
   const capitalByPlayer = new Map<PlayerID, HexKey>();
   const capitalByHex = new Map<HexKey, PlayerID>();
-  for (const hex of Object.values(board.hexes)) {
-    if (hex.tile !== "capital" || !hex.ownerPlayerId) {
+  for (const [playerId, hexKey] of Object.entries(choices)) {
+    if (!hexKey) {
       continue;
     }
-    capitalByPlayer.set(hex.ownerPlayerId, hex.key);
-    capitalByHex.set(hex.key, hex.ownerPlayerId);
+    const typedPlayerId = playerId as PlayerID;
+    capitalByPlayer.set(typedPlayerId, hexKey);
+    capitalByHex.set(hexKey, typedPlayerId);
   }
   return { capitalByPlayer, capitalByHex };
-};
-
-const buildDraftOrder = (players: GameView["public"]["players"]): PlayerID[] => {
-  return [...players]
-    .sort((a, b) => a.seatIndex - b.seatIndex)
-    .map((player) => player.id)
-    .reverse();
 };
 
 export const SetupCapitalDraft = ({
@@ -49,10 +43,14 @@ export const SetupCapitalDraft = ({
   status,
   onSubmitChoice
 }: SetupCapitalDraftProps) => {
+  const setup = view.public.setup;
   const players = view.public.players;
   const playerCount = players.length;
   const radius = view.public.board.radius;
   const capitalSlots = useMemo(() => {
+    if (setup?.type === "setup.capitalDraft") {
+      return setup.availableSlots;
+    }
     try {
       return getCapitalSlots(
         playerCount,
@@ -62,12 +60,14 @@ export const SetupCapitalDraft = ({
     } catch {
       return [];
     }
-  }, [playerCount, radius]);
+  }, [playerCount, radius, setup]);
 
-  const { capitalByPlayer, capitalByHex } = useMemo(
-    () => buildCapitalAssignments(view.public.board),
-    [view.public.board]
-  );
+  const { capitalByPlayer, capitalByHex } = useMemo(() => {
+    if (setup?.type === "setup.capitalDraft") {
+      return buildCapitalAssignments(setup.choices);
+    }
+    return { capitalByPlayer: new Map<PlayerID, HexKey>(), capitalByHex: new Map<HexKey, PlayerID>() };
+  }, [setup]);
 
   const slotLabels = useMemo(() => {
     return new Map(capitalSlots.map((slot, index) => [slot, String(index + 1)]));
@@ -77,27 +77,31 @@ export const SetupCapitalDraft = ({
     () => capitalSlots.filter((slot) => !capitalByHex.has(slot)),
     [capitalSlots, capitalByHex]
   );
-  const draftOrder = useMemo(() => buildDraftOrder(players), [players]);
+  const waitingFor = useMemo(() => {
+    if (setup?.type !== "setup.capitalDraft") {
+      return new Set<PlayerID>();
+    }
+    return new Set(setup.waitingForPlayerIds);
+  }, [setup]);
 
-  const isCapitalDraft =
-    view.public.phase === "setup" &&
-    capitalSlots.length > 0 &&
-    availableSlots.length > 0;
+  const isCapitalDraft = setup?.type === "setup.capitalDraft" && capitalSlots.length > 0;
 
   if (!isCapitalDraft) {
     return null;
   }
 
-  const pickedPlayers = new Set(capitalByPlayer.keys());
-  const nextPickerId = draftOrder.find((id) => !pickedPlayers.has(id)) ?? null;
-  const nextPickerName =
-    players.find((player) => player.id === nextPickerId)?.name ?? "Unknown";
+  const lockedCount = players.length - waitingFor.size;
   const localCapital = playerId ? capitalByPlayer.get(playerId) ?? null : null;
   const localCapitalLabel = localCapital
     ? slotLabels.get(localCapital)
     : null;
   const canPick =
-    status === "connected" && Boolean(playerId) && playerId === nextPickerId;
+    status === "connected" && Boolean(playerId) && waitingFor.has(playerId as PlayerID);
+  const canUnlock =
+    status === "connected" &&
+    Boolean(playerId) &&
+    Boolean(localCapital) &&
+    !waitingFor.has(playerId as PlayerID);
 
   const helperText = (() => {
     if (status !== "connected") {
@@ -107,21 +111,26 @@ export const SetupCapitalDraft = ({
       return "Spectators can watch the draft but cannot pick.";
     }
     if (canPick) {
-      return "Your turn: select a capital slot.";
+      return "Select a capital slot to lock in. You can unlock to change while others pick.";
     }
-    return `Waiting for ${nextPickerName} to pick.`;
+    if (canUnlock) {
+      return "Capital locked. Unlock to change your slot.";
+    }
+    return "Waiting for other players to lock in.";
   })();
 
   return (
     <section className="panel setup-draft">
       <h2>Capital Draft</h2>
       <p className="muted">
-        Pick an available capital slot when it is your turn. Slots are labeled on the map.
+        Pick an available capital slot to lock in your capital. Slots are labeled on the map.
       </p>
       <div className="setup-draft__summary">
         <div className="resource-row">
-          <span>Up next</span>
-          <strong>{nextPickerName}</strong>
+          <span>Locked</span>
+          <strong>
+            {lockedCount}/{players.length}
+          </strong>
         </div>
         {localCapital ? (
           <div className="resource-row">
@@ -129,6 +138,15 @@ export const SetupCapitalDraft = ({
             <strong title={localCapital}>
               {localCapitalLabel ? `Slot ${localCapitalLabel}` : localCapital}
             </strong>
+            {canUnlock ? (
+              <button
+                type="button"
+                className="btn btn-tertiary"
+                onClick={() => onSubmitChoice({ kind: "unlockCapital" })}
+              >
+                Unlock
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>
@@ -153,7 +171,7 @@ export const SetupCapitalDraft = ({
         {players.map((player) => {
           const capitalHex = capitalByPlayer.get(player.id) ?? null;
           const capitalLabel = capitalHex ? slotLabels.get(capitalHex) : null;
-          const isActive = player.id === nextPickerId && !capitalHex;
+          const isActive = waitingFor.has(player.id);
           return (
             <div
               key={player.id}
@@ -169,7 +187,7 @@ export const SetupCapitalDraft = ({
                     : capitalHex
                   : isActive
                     ? "Picking..."
-                    : "Waiting"}
+                    : "Locked"}
               </strong>
             </div>
           );

@@ -36,9 +36,16 @@ const withUpdatedPlayer = (state: GameState, playerId: PlayerID, update: (player
   };
 };
 
+const getCapitalDraftWaitingFor = (
+  players: PlayerState[],
+  choices: Record<PlayerID, HexKey | null>
+): PlayerID[] => {
+  return players.map((player) => player.id).filter((playerId) => !choices[playerId]);
+};
+
 export const createCapitalDraftBlock = (players: PlayerState[], availableSlots: HexKey[]): BlockState => ({
   type: "setup.capitalDraft",
-  waitingFor: players.map((player) => player.id).reverse(),
+  waitingFor: players.map((player) => player.id),
   payload: {
     availableSlots,
     choices: Object.fromEntries(players.map((player) => [player.id, null]))
@@ -209,11 +216,59 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
   }
 
   if (block.type === "setup.capitalDraft") {
+    if (choice.kind === "unlockCapital") {
+      const pickedHex = block.payload.choices[playerId];
+      if (!pickedHex) {
+        throw new Error("player has no capital to unlock");
+      }
+
+      const hex = state.board.hexes[pickedHex];
+      if (!hex) {
+        throw new Error("capital hex does not exist");
+      }
+
+      const updatedBoard = {
+        ...state.board,
+        hexes: {
+          ...state.board.hexes,
+          [pickedHex]: {
+            ...hex,
+            tile: hex.tile === "capital" ? "normal" : hex.tile,
+            ownerPlayerId: undefined
+          }
+        }
+      };
+
+      const updatedState = withUpdatedPlayer(state, playerId, (player) => ({
+        ...player,
+        capitalHex: undefined
+      }));
+
+      const updatedChoices = { ...block.payload.choices, [playerId]: null };
+      const nextState = {
+        ...updatedState,
+        board: updatedBoard,
+        blocks: {
+          ...block,
+          waitingFor: getCapitalDraftWaitingFor(state.players, updatedChoices),
+          payload: {
+            ...block.payload,
+            choices: updatedChoices
+          }
+        }
+      };
+
+      return emit(nextState, {
+        type: "setup.capitalUnlocked",
+        payload: { playerId, hexKey: pickedHex }
+      });
+    }
+
     if (choice.kind !== "pickCapital") {
       throw new Error("expected pickCapital during capital draft");
     }
-    if (block.waitingFor[0] !== playerId) {
-      throw new Error("not your turn to pick a capital");
+    if (block.payload.choices[playerId]) {
+      throw new Error("player already locked a capital");
     }
 
     const hexKey = choice.hexKey;
@@ -251,15 +306,16 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
       return { ...player, capitalHex: hexKey };
     });
 
+    const updatedChoices = { ...block.payload.choices, [playerId]: hexKey };
     const nextState = {
       ...updatedState,
       board: updatedBoard,
       blocks: {
         ...block,
-        waitingFor: block.waitingFor.slice(1),
+        waitingFor: getCapitalDraftWaitingFor(state.players, updatedChoices),
         payload: {
           ...block.payload,
-          choices: { ...block.payload.choices, [playerId]: hexKey }
+          choices: updatedChoices
         }
       }
     };

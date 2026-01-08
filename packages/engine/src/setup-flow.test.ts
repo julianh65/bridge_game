@@ -183,6 +183,58 @@ describe("setup flow", () => {
     expect(finalP2?.deck.drawPile.length).toBe(expectedDrawPile + 2);
   });
 
+  it("allows unlocking and repicking a capital before the draft completes", () => {
+    let state = createNewGame(DEFAULT_CONFIG, 456, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    state = runUntilBlocked(state);
+    expect(state.blocks?.type).toBe("setup.capitalDraft");
+
+    const slots = state.blocks?.payload.availableSlots ?? [];
+    const firstSlot = slots[0];
+    const secondSlot = slots[1];
+    if (!firstSlot || !secondSlot) {
+      throw new Error("missing capital slots for unlock test");
+    }
+
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "pickCapital", hexKey: firstSlot } },
+      "p1"
+    );
+
+    expect(state.blocks?.payload.choices["p1"]).toBe(firstSlot);
+    expect(state.blocks?.waitingFor).not.toContain("p1");
+    expect(state.board.hexes[firstSlot]?.tile).toBe("capital");
+
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "unlockCapital" } },
+      "p1"
+    );
+
+    expect(state.blocks?.payload.choices["p1"]).toBeNull();
+    expect(state.blocks?.waitingFor).toContain("p1");
+    expect(state.board.hexes[firstSlot]?.tile).toBe("normal");
+    expect(state.board.hexes[firstSlot]?.ownerPlayerId).toBeUndefined();
+
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "pickCapital", hexKey: secondSlot } },
+      "p1"
+    );
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "pickCapital", hexKey: firstSlot } },
+      "p2"
+    );
+
+    state = runUntilBlocked(state);
+    expect(state.blocks?.type).toBe("setup.startingBridges");
+  });
+
   it("expands free starting card offers for cipher players", () => {
     let state = createNewGame(DEFAULT_CONFIG, 321, [
       { id: "p1", name: "Player 1", factionId: "cipher" },
