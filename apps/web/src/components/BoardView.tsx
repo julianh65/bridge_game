@@ -32,6 +32,8 @@ export type BoardActionAnimation = {
   edgeKey?: string;
   hexKey?: string;
   playerId?: string | null;
+  unitKind?: "force" | "champion";
+  unitLabel?: string | null;
 };
 
 type BoardViewProps = {
@@ -1617,17 +1619,40 @@ export const BoardView = ({
               if (!pathD) {
                 return null;
               }
+              const unitKind = animation.unitKind ?? "force";
+              const unitLabel = animation.unitLabel ?? null;
+              const unitClassName = [
+                "action-anim__unit",
+                unitKind === "champion" ? "action-anim__unit--champion" : ""
+              ]
+                .filter(Boolean)
+                .join(" ");
+              const unitBodyClassName = [
+                "action-anim__unit-body",
+                unitKind === "champion" ? "action-anim__unit-body--champion" : ""
+              ]
+                .filter(Boolean)
+                .join(" ");
               return (
                 <g key={animation.id} className={className} style={actionAnimationStyle}>
                   <path className="action-anim__path" d={pathD} />
-                  <circle className="action-anim__token" r={6}>
+                  <g className={unitClassName}>
+                    {unitKind === "champion" ? (
+                      <circle className="action-anim__champion-ring" r={11} />
+                    ) : null}
+                    <circle className={unitBodyClassName} r={9} />
+                    {unitLabel ? (
+                      <text className="action-anim__unit-text" y={0.4}>
+                        {unitLabel}
+                      </text>
+                    ) : null}
                     <animateMotion
                       dur={`${actionAnimationDuration}ms`}
                       path={pathD}
                       keyTimes="0;1"
                       calcMode="linear"
                     />
-                  </circle>
+                  </g>
                 </g>
               );
             }

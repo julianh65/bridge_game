@@ -5983,12 +5983,43 @@ body.is-game .btn-secondary:active:not(:disabled) {
   filter: drop-shadow(0 0 6px rgba(15, 9, 4, 0.45));
 }
 
-.action-anim__token {
+.action-anim__unit {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.action-anim__unit-body {
   fill: var(--action-anim-color);
   stroke: rgba(25, 18, 10, 0.65);
-  stroke-width: 1;
+  stroke-width: 1.2;
   opacity: 0;
   filter: drop-shadow(0 0 8px rgba(15, 9, 4, 0.5));
+  animation: action-anim-token var(--action-anim-duration) ease-out forwards;
+}
+
+.action-anim__unit-body--champion {
+  fill: #f6dd9b;
+}
+
+.action-anim__unit-text {
+  font-size: 7px;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  fill: #2e2012;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.6);
+  stroke-width: 1;
+  opacity: 0;
+  animation: action-anim-token var(--action-anim-duration) ease-out forwards;
+}
+
+.action-anim__champion-ring {
+  fill: none;
+  stroke: #f7e2a6;
+  stroke-width: 1.4;
+  opacity: 0;
+  filter: drop-shadow(0 0 6px rgba(15, 9, 4, 0.4));
   animation: action-anim-token var(--action-anim-duration) ease-out forwards;
 }
 

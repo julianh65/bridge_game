@@ -77,6 +77,8 @@ type ActionCardReveal = ActionRevealOverlayData & {
   targetHexKeys: string[];
   targetEdgeKeys: string[];
   movePaths: string[][];
+  moveUnitKind: "force" | "champion" | null;
+  moveUnitLabel: string | null;
 };
 
 type AgeCue = {
@@ -150,6 +152,17 @@ const formatEdgeLabel = (edgeKey: string, labels: Record<string, string>): strin
   } catch {
     return edgeKey;
   }
+};
+
+const getChampionGlyph = (name: string) => {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  const initials = words.map((word) => word[0]?.toUpperCase() ?? "").join("");
+  const glyph = initials.replace(/[^A-Z]/g, "").slice(0, 2);
+  if (glyph) {
+    return glyph;
+  }
+  const fallback = name.replace(/[^A-Za-z0-9]/g, "").slice(0, 2).toUpperCase();
+  return fallback || "C";
 };
 
 const formatTileLabel = (tile: string | null | undefined): string | null => {
@@ -249,6 +262,29 @@ const getTargetPaths = (record: Record<string, unknown> | null): string[][] => {
     pushPath([from, to]);
   }
   return paths;
+};
+
+const resolveMoveUnitMeta = (
+  record: Record<string, unknown> | null,
+  board: GameView["public"]["board"]
+): { unitKind: "force" | "champion" | null; unitLabel: string | null } => {
+  if (!record) {
+    return { unitKind: null, unitLabel: null };
+  }
+  const unitId = getTargetString(record, "unitId") ?? getTargetString(record, "championId");
+  if (unitId) {
+    const unit = board.units[unitId];
+    if (unit?.kind === "champion") {
+      const name = CARD_DEFS_BY_ID.get(unit.cardDefId)?.name ?? unit.cardDefId;
+      return { unitKind: "champion", unitLabel: getChampionGlyph(name) };
+    }
+    return { unitKind: "force", unitLabel: null };
+  }
+  const forceCount = getTargetNumber(record, "forceCount");
+  if (forceCount !== null) {
+    return { unitKind: "force", unitLabel: String(forceCount) };
+  }
+  return { unitKind: null, unitLabel: null };
 };
 
 const getTargetCardInstanceIds = (record: Record<string, unknown> | null): string[] => {
@@ -1393,6 +1429,10 @@ export const GameScreen = ({
           hexLabels
         );
         const movePaths = getTargetPaths(targetRecord);
+        const moveMeta =
+          movePaths.length > 0
+            ? resolveMoveUnitMeta(targetRecord, view.public.board)
+            : { unitKind: null, unitLabel: null };
         newReveals.push({
           key: `${i}-${cardId}`,
           playerId,
@@ -1405,7 +1445,9 @@ export const GameScreen = ({
           targetLines: targetInfo.targetLines,
           targetHexKeys: targetInfo.targetHexKeys,
           targetEdgeKeys: targetInfo.targetEdgeKeys,
-          movePaths
+          movePaths,
+          moveUnitKind: moveMeta.unitKind,
+          moveUnitLabel: moveMeta.unitLabel
         });
         continue;
       }
@@ -1423,6 +1465,11 @@ export const GameScreen = ({
         const action = actionRaw as BasicAction;
         const basicReveal = describeBasicAction(action, hexLabels);
         const movePaths = action.kind === "march" ? [[action.from, action.to]] : [];
+        const moveUnitKind = action.kind === "march" ? "force" : null;
+        const moveUnitLabel =
+          action.kind === "march" && typeof action.forceCount === "number"
+            ? String(action.forceCount)
+            : null;
         newReveals.push({
           key: `${i}-${event.type}`,
           playerId,
@@ -1435,7 +1482,9 @@ export const GameScreen = ({
           targetLines: basicReveal.targets.targetLines,
           targetHexKeys: basicReveal.targets.targetHexKeys,
           targetEdgeKeys: basicReveal.targets.targetEdgeKeys,
-          movePaths
+          movePaths,
+          moveUnitKind,
+          moveUnitLabel
         });
       }
     }
@@ -1518,7 +1567,9 @@ export const GameScreen = ({
         id: `${activeCardReveal.key}-move-${index}`,
         kind: "move",
         path,
-        playerId: activeCardReveal.playerId
+        playerId: activeCardReveal.playerId,
+        unitKind: activeCardReveal.moveUnitKind ?? undefined,
+        unitLabel: activeCardReveal.moveUnitLabel ?? undefined
       });
     });
     activeCardReveal.targetEdgeKeys.forEach((edgeKey, index) => {
