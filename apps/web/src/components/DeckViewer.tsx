@@ -84,6 +84,11 @@ export const DeckViewer = ({
         id: "scrapped",
         label: `Scrapped (${privateView.deckCounts.scrapped})`,
         cards: deckCards.scrapped
+      },
+      {
+        id: "burned",
+        label: `Burned (${privateView.deckCounts.burned})`,
+        cards: deckCards.burned
       }
     ];
   }, [deckCards, privateView]);
@@ -135,6 +140,12 @@ export const DeckViewer = ({
           label: "Scrapped",
           count: deckCounts.scrapped,
           arrow: null
+        },
+        {
+          id: "burned",
+          label: "Burned",
+          count: deckCounts.burned,
+          arrow: null
         }
       ]
     : [];
@@ -153,6 +164,7 @@ export const DeckViewer = ({
         <div className="cards-browser__summary">
           <span className="status-pill">{inDeckCount} cards in deck</span>
           <span className="status-pill">{privateView.deckCounts.scrapped} scrapped</span>
+          <span className="status-pill">{privateView.deckCounts.burned} burned</span>
           {onReturnToGame ? (
             <button type="button" className="btn btn-secondary" onClick={onReturnToGame}>
               Back to Game

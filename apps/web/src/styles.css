@@ -2014,6 +2014,10 @@ body.is-game .deck-flow__pile {
   border-color: #a8a29e;
 }
 
+.deck-flow__pile[data-pile="burned"] {
+  border-color: #dc2626;
+}
+
 .deck-flow__label {
   font-size: 10px;
   text-transform: uppercase;
