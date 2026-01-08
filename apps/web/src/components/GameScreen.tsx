@@ -2637,6 +2637,7 @@ export const GameScreen = ({
         availableMana={availableMana}
         maxMana={maxMana}
         availableGold={availableGold}
+        vpTotal={localVpTotal}
         canDeclareAction={canDeclareAction}
         canSubmitAction={canSubmitAction}
         actionHint={actionHint}

@@ -1481,8 +1481,10 @@ body.is-game .filter-pill.is-active {
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 280px));
   gap: 12px;
+  justify-content: start;
+  align-items: start;
 }
 
 .game-card {
@@ -1500,6 +1502,12 @@ body.is-game .filter-pill.is-active {
   --card-type-bg: rgba(124, 45, 18, 0.08);
   --card-type-border: rgba(124, 45, 18, 0.2);
   --card-type-text: #7c2d12;
+}
+
+.game-card--grid {
+  width: 100%;
+  max-width: 280px;
+  justify-self: start;
 }
 
 .game-card[data-type="Champion"] {
@@ -1613,6 +1621,7 @@ body.is-game .game-card[data-type="Order"] {
 .game-card__name {
   margin: 0;
   font-size: 19px;
+  text-align: center;
 }
 
 .game-card__type {
@@ -1678,7 +1687,7 @@ body.is-game .game-card[data-type="Order"] {
   font-size: 14px;
   color: var(--ink);
   line-height: 1.4;
-  text-align: left;
+  text-align: center;
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
@@ -2524,8 +2533,39 @@ body.is-game .action-reveal__targets--empty {
 .game-hand__header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 8px;
+}
+
+.game-hand__title {
+  display: grid;
+  gap: 4px;
+}
+
+.hand-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.hand-resources {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hand-resource {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--panel-chip);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink);
 }
 
 .hand-controls {

@@ -59,6 +59,7 @@ type GameScreenHandPanelProps = {
   availableMana: number;
   maxMana: number;
   availableGold: number;
+  vpTotal: number | null;
   canDeclareAction: boolean;
   canSubmitAction: boolean;
   actionHint: string | null;
@@ -95,6 +96,7 @@ export const GameScreenHandPanel = ({
   availableMana,
   maxMana,
   availableGold,
+  vpTotal,
   canDeclareAction,
   canSubmitAction,
   actionHint,
@@ -202,8 +204,22 @@ export const GameScreenHandPanel = ({
       {showHandPanel ? (
         <section className="panel game-hand">
           <div className="game-hand__header">
-            <div>
-              <h2>Hand</h2>
+            <div className="game-hand__title">
+              <div className="hand-title">
+                <h2>Hand</h2>
+                <div className="hand-resources" aria-label="Hand resources">
+                  <span className="hand-resource hand-resource--gold">
+                    <span aria-hidden="true">🟡</span>
+                    {availableGold}
+                  </span>
+                  {vpTotal !== null ? (
+                    <span className="hand-resource hand-resource--vp">
+                      <span aria-hidden="true">🟢</span>
+                      {vpTotal}
+                    </span>
+                  ) : null}
+                </div>
+              </div>
               <span className="hand-meta">{handCount} cards</span>
             </div>
             <div className="hand-controls">
