@@ -544,7 +544,8 @@ Done
 ### Tasks (web - targeting reliability)
 - [x] Fix hex selection for Bridge Crew and Build Bridge edge picking.
 - [x] Add board-pick mode + valid target highlights for champion-targeted cards (ex: Emergency Evac).
-- [ ] Add Mortar Shot targeting helpers: highlight only hexes within range of friendly forces and show scatter/aoe hint in the card target UI.
+- [x] Add Mortar Shot targeting helpers: highlight only hexes within range of friendly forces.
+- [ ] Add Mortar Shot targeting helper: show scatter/aoe hint in the card target UI.
 
 ### Tasks UI
 - [x] The basic actions in the card hand panel below needs to be reworked, it's taking up too much horizontal space, The bridge march reinforce buttons should be stacked and be thinner and we can probably streamline the whole UI of each when they're expanded

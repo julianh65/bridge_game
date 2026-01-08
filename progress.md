@@ -17,7 +17,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
- - owner: agent3; scope: Bridge Network card + multi-bridge build support; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md`; status: in progress
+ - owner: agent1; scope: allow unselect/change in setup bridge + free-card picks; files: `apps/web/src/components/SetupStartingBridges.tsx`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `packages/engine/src/types.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/setup-flow.test.ts`, `apps/web/src/styles.css`, `progress.md`; status: in progress (overlap note: `apps/web/src/styles.css` already has other in-flight edits)
  - owner: agent2; scope: add Burn the Bridges Age II card effect (move + destroy connected bridges) with tests; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md`; status: in progress
 
 
@@ -105,7 +105,8 @@
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
-- TODO: add Mortar Shot UI helpers (range-limited hex highlights + scatter/aoe hint) in targeting UI (tracked in `implementation_plan.md`).
+- TODO: add Mortar Shot targeting hint (scatter/aoe text) in the card target UI (tracked in `implementation_plan.md`).
+- Limited Mortar Shot card hex highlights to tiles within range of friendly forces. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Added collection draw roll reveal animations (mine/forge/center) with `NumberRoll` styling and plan subtask updates. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 - Thickened power/champion GameCard borders for clearer differentiation and marked the plan item complete. (Overlap note: `apps/web/src/styles.css` touched.)
 - Simplified the basic actions UI: removed pick/clear buttons, made march/bridge targets clickable fields, and auto-clear march destination when the start changes; marked the plan item complete in `implementation_plan.md`. (Overlap note: touched `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`.)

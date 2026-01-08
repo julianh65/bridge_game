@@ -2018,6 +2018,49 @@ export const GameScreen = ({
         typeof targetSpec.maxDistanceFromFriendlyChampion === "number"
           ? targetSpec.maxDistanceFromFriendlyChampion
           : null;
+      const mortarEffect = selectedCardDef.effects?.find(
+        (effect) => effect.kind === "mortarShot"
+      ) as { maxDistance?: number } | undefined;
+      const mortarMaxDistance =
+        mortarEffect && typeof mortarEffect.maxDistance === "number"
+          ? mortarEffect.maxDistance
+          : 2;
+      const mortarForceCoords =
+        mortarEffect && Number.isFinite(mortarMaxDistance) && mortarMaxDistance >= 0
+          ? Object.values(board.units)
+              .filter(
+                (unit) => unit.kind === "force" && unit.ownerPlayerId === localPlayerId
+              )
+              .map((unit) => {
+                try {
+                  return parseHexKey(unit.hex);
+                } catch {
+                  return null;
+                }
+              })
+              .filter((coord): coord is { q: number; r: number } => coord !== null)
+          : [];
+
+      const hasFriendlyForceWithinRange = (hexKey: string) => {
+        if (!mortarEffect) {
+          return true;
+        }
+        if (mortarForceCoords.length === 0) {
+          return false;
+        }
+        let targetCoord: { q: number; r: number } | null = null;
+        try {
+          targetCoord = parseHexKey(hexKey);
+        } catch {
+          return false;
+        }
+        if (!targetCoord) {
+          return false;
+        }
+        return mortarForceCoords.some(
+          (coord) => axialDistance(coord, targetCoord) <= mortarMaxDistance
+        );
+      };
 
       const hasFriendlyChampionWithinRange = (hexKey: string) => {
         if (maxDistanceFromChampion === null) {
@@ -2071,6 +2114,9 @@ export const GameScreen = ({
           continue;
         }
         if (!hasFriendlyChampionWithinRange(key)) {
+          continue;
+        }
+        if (!hasFriendlyForceWithinRange(key)) {
           continue;
         }
         validTargets.add(key);
