@@ -10,6 +10,7 @@ Edit that file to adjust rules and regenerate the board in the debug UI.
 
 ### Action reveal timing
 - `ACTION_REVEAL_DURATION_MS`: how long the action reveal overlay stays on screen (milliseconds).
+- `ACTION_REVEAL_HIGHLIGHT_PAUSE_MS`: how long board highlights linger after the overlay fades (milliseconds).
 
 ### Market roll-off timing
 - `MARKET_ROLLOFF_DURATION_MS`: how long each roll-off die roll animates in the market overlay (milliseconds).

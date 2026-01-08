@@ -348,7 +348,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] needs to be a way for me to test different cards in different board states, like a debug play game where i straight launch to age n with whatever cards in my hand i want
 - [x] The UI in the cards for mana and gold needs to be slightly larger and more readable, background gradient makes it hard to read slightly
 - [ ] The cards across different parts of the game can be different sizes, I want them to all be a standard size, big enough to fit everything, it's fine if there's empty space on some. they should be the size of the champion cards fitting those stats + their description
-- [ ] Between action reveals while the board is still "highlighting" where it was played there should be like a configurable timing pause where the popup modal displaying the card and who played it closes and we see where on the map it's played
+- [x] Between action reveals while the board is still "highlighting" where it was played there should be like a configurable timing pause where the popup modal displaying the card and who played it closes and we see where on the map it's played
 - [ ] I want there to be an animation when cards are drawn
 
 ### Mini Milestone For Me
@@ -426,6 +426,7 @@ Start going through the rules_draft and adding the logic for the different types
 - [ ] Add cost overrides/free-play effects (Last Contract, A Hero Joins the Battle).
 - [ ] Add random card generation effects (Black Market Pull, Forge Miracle).
 - [ ] Add burn keyword enforcement for granted cards (Forge Miracle, power deck burn effects). and an animation on burn
+- [ ] Bridge crew is supposed to let you immediately move over the bridge you are going to construct
 
 ### Punchlist — Done cards blocked by UI/validation
 - [ ] UI: add `multiPath` targeting flow with per-path add/remove, min/max path counts, and per-path highlights (Roll Out, Coordinated Advance, Grand Maneuver).
@@ -691,11 +692,13 @@ Done
     - [x] Age II market: War Taxes (gain gold).
     - [x] Age II market: Strategic Triumph (gain gold).
     - [x] Age II market: Bridge Lockdown (lock bridge modifier).
+    - [x] Age II market: Wormhole Link (link hexes).
     - [x] Age II market: Battalion Contract (deploy to capital).
     - [x] Age II market: Triple March (move up to 3 along bridges).
     - [x] Age II market: Stall (no-op).
     - [x] Age II market: Burn the Bridges (destroy connected bridges).
     - [x] Age II market: Center Dispatch (draw if you occupy center).
+    - [x] Age II market: Repair Orders (heal all champions).
   - [ ] Champion ability tests (on-deploy, on-death, on-battle-win, dice mods, VP aura).
     - [x] Bounty Hunter bonus gold on champion kill in battle.
     - [x] Ironclad Warden bodyguard hit assignment policy.

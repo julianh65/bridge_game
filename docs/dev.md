@@ -40,3 +40,5 @@
 ## Owner notes (Julian)
 - Action reveal overlay duration is configured in `packages/engine/src/config.ts` via
   `ACTION_REVEAL_DURATION_MS` (milliseconds). Adjust this to speed up or slow down action reveals.
+- Board highlight pause after the overlay is controlled by
+  `ACTION_REVEAL_HIGHLIGHT_PAUSE_MS` (milliseconds).

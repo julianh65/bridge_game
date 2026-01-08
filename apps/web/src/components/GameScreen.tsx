@@ -759,6 +759,7 @@ export const GameScreen = ({
   >({});
   const [cardRevealQueue, setCardRevealQueue] = useState<ActionCardReveal[]>([]);
   const [activeCardReveal, setActiveCardReveal] = useState<ActionCardReveal | null>(null);
+  const [isActionRevealOverlayVisible, setIsActionRevealOverlayVisible] = useState(false);
   const [cardRevealKey, setCardRevealKey] = useState(0);
   const [combatQueue, setCombatQueue] = useState<CombatSequence[]>([]);
   const [phaseCue, setPhaseCue] = useState<{ label: string; round: number } | null>(null);
@@ -1139,6 +1140,10 @@ export const GameScreen = ({
       : activeCombatCoordLabel;
   const isCapitalBattle = activeCombatHex?.tile === "capital";
   const actionRevealDurationMs = view.public.config.ACTION_REVEAL_DURATION_MS;
+  const actionRevealHighlightPauseMs = Math.max(
+    0,
+    view.public.config.ACTION_REVEAL_HIGHLIGHT_PAUSE_MS
+  );
   const isActionPhase = view.public.phase === "round.action";
   const isStudyPhase = view.public.phase === "round.study";
   const isMarketPhase = view.public.phase === "round.market";
@@ -1844,15 +1849,26 @@ export const GameScreen = ({
 
   useEffect(() => {
     if (!activeCardReveal) {
+      setIsActionRevealOverlayVisible(false);
       return;
     }
-    const timeout = window.setTimeout(() => {
-      setActiveCardReveal(null);
+    setIsActionRevealOverlayVisible(true);
+    const overlayTimeout = window.setTimeout(() => {
+      setIsActionRevealOverlayVisible(false);
     }, actionRevealDurationMs);
+    const revealTimeout = window.setTimeout(() => {
+      setActiveCardReveal(null);
+    }, actionRevealDurationMs + actionRevealHighlightPauseMs);
     return () => {
-      window.clearTimeout(timeout);
+      window.clearTimeout(overlayTimeout);
+      window.clearTimeout(revealTimeout);
     };
-  }, [activeCardReveal, actionRevealDurationMs, cardRevealKey]);
+  }, [
+    activeCardReveal,
+    actionRevealDurationMs,
+    actionRevealHighlightPauseMs,
+    cardRevealKey
+  ]);
 
   const actionAnimations = useMemo<BoardActionAnimation[]>(() => {
     if (!activeCardReveal) {
@@ -3194,7 +3210,7 @@ export const GameScreen = ({
           </div>
         </div>
       ) : null}
-      {activeCardReveal ? (
+      {activeCardReveal && isActionRevealOverlayVisible ? (
         <ActionRevealOverlay
           key={activeCardReveal.key}
           reveal={activeCardReveal}

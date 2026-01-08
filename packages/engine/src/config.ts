@@ -9,6 +9,7 @@ export const DEFAULT_CONFIG: GameConfig = {
   ROUNDS_MAX: 10,
   VP_TO_WIN: 10,
   ACTION_REVEAL_DURATION_MS: 2000,
+  ACTION_REVEAL_HIGHLIGHT_PAUSE_MS: 900,
   MARKET_ROLLOFF_DURATION_MS: 1500,
   basicActionFactionOrder: ["bastion", "veil", "aerial", "prospect", "cipher", "gatewright"],
   boardRadiusByPlayerCount: {
