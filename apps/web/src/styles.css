@@ -38,6 +38,7 @@
   --card-bg-hand: linear-gradient(145deg, #fff7e8, #efe3d2);
   --card-shadow: 0 14px 28px rgba(35, 28, 19, 0.14);
   --card-shadow-hand: 0 12px 20px rgba(35, 28, 19, 0.18);
+  --card-border: rgba(171, 141, 111, 0.25);
   --card-art-bg: linear-gradient(135deg, #f8e8d2, #f1d2af);
   --card-art-border: rgba(111, 90, 70, 0.65);
   --card-art-text: #8b6f57;
@@ -66,6 +67,13 @@
   --card-cost-gold-bg: radial-gradient(circle at 30% 30%, #fef3c7, #facc15 80%);
   --card-cost-gold-border: rgba(217, 119, 6, 0.45);
   --card-cost-gold-text: #92400e;
+  --board-glow-1: rgba(255, 248, 235, 0.9);
+  --board-glow-2: rgba(214, 193, 162, 0.45);
+  --board-base: linear-gradient(140deg, #efe0c9, #e1cdb2);
+  --board-border: rgba(164, 137, 106, 0.35);
+  --board-target-bg: rgba(255, 245, 224, 0.6);
+  --board-target-outline: rgba(180, 83, 9, 0.4);
+  --hex-stroke: rgba(108, 90, 66, 0.65);
   --player-color-0: #d66b6b;
   --player-color-1: #4b8fd1;
   --player-color-2: #e0b54b;
@@ -101,53 +109,61 @@ body.is-game {
   --hero-panel: #1b1410;
   --hero-shadow: rgba(10, 6, 4, 0.6);
   --border: #3a2b20;
-  --normal: #1c1410;
-  --glass-panel: rgba(16, 11, 8, 0.78);
-  --glass-panel-strong: rgba(24, 17, 12, 0.85);
-  --panel-soft: rgba(28, 20, 14, 0.9);
-  --panel-soft-alt: rgba(24, 18, 13, 0.92);
-  --panel-soft-active: rgba(51, 34, 22, 0.9);
-  --panel-inset: rgba(32, 22, 15, 0.92);
-  --panel-inset-border: rgba(217, 119, 6, 0.3);
-  --panel-chip: rgba(33, 23, 16, 0.95);
-  --table-row-bg: rgba(26, 19, 16, 0.92);
-  --table-row-waiting-bg: rgba(92, 32, 32, 0.45);
-  --table-row-submitted-bg: rgba(26, 74, 45, 0.45);
+  --normal: #3a2c22;
+  --glass-panel: rgba(32, 22, 16, 0.7);
+  --glass-panel-strong: rgba(46, 32, 22, 0.78);
+  --panel-soft: rgba(46, 34, 25, 0.9);
+  --panel-soft-alt: rgba(40, 30, 22, 0.92);
+  --panel-soft-active: rgba(66, 48, 34, 0.92);
+  --panel-inset: rgba(46, 34, 25, 0.92);
+  --panel-inset-border: rgba(217, 119, 6, 0.38);
+  --panel-chip: rgba(44, 32, 23, 0.95);
+  --table-row-bg: rgba(34, 26, 20, 0.9);
+  --table-row-waiting-bg: rgba(102, 46, 40, 0.45);
+  --table-row-submitted-bg: rgba(34, 80, 52, 0.45);
   --danger-ink: #f8caca;
   --danger-bg: rgba(92, 32, 32, 0.4);
   --danger-border: #8a2c2c;
-  --card-bg: linear-gradient(180deg, #1f1713 0%, #2b1e16 100%);
-  --card-bg-hand: linear-gradient(145deg, #211812, #2a1d16);
-  --card-shadow: 0 16px 30px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 214, 170, 0.08);
-  --card-shadow-hand: 0 12px 22px rgba(0, 0, 0, 0.45);
-  --card-art-bg: linear-gradient(135deg, #2a1f18, #3b2a20);
-  --card-art-border: rgba(214, 168, 120, 0.25);
-  --card-art-text: #bfa08a;
-  --card-art-shadow: inset 0 0 0 1px rgba(255, 220, 180, 0.22),
-    inset 0 0 0 3px rgba(86, 61, 42, 0.45), 0 8px 16px rgba(0, 0, 0, 0.45);
-  --card-ornament-bg: #2c2017;
-  --card-ornament-border: rgba(217, 119, 6, 0.45);
-  --card-ornament-text: #f9ddb7;
-  --card-count-bg: #2a1e16;
-  --card-count-border: rgba(217, 119, 6, 0.35);
-  --card-count-text: #f9ddb7;
+  --card-bg: linear-gradient(180deg, #2b221b 0%, #3a2b21 100%);
+  --card-bg-hand: linear-gradient(145deg, #2f241c, #3c2d22);
+  --card-shadow: 0 16px 30px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 214, 170, 0.18);
+  --card-shadow-hand: 0 12px 22px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 214, 170, 0.16);
+  --card-border: rgba(255, 214, 170, 0.2);
+  --card-art-bg: linear-gradient(135deg, #3b2c22, #4a372a);
+  --card-art-border: rgba(214, 168, 120, 0.35);
+  --card-art-text: #d2b49c;
+  --card-art-shadow: inset 0 0 0 1px rgba(255, 225, 190, 0.3),
+    inset 0 0 0 3px rgba(96, 72, 50, 0.5), 0 8px 16px rgba(0, 0, 0, 0.4);
+  --card-ornament-bg: #3a2b20;
+  --card-ornament-border: rgba(245, 158, 11, 0.4);
+  --card-ornament-text: #fee3c0;
+  --card-count-bg: #3a2b20;
+  --card-count-border: rgba(245, 158, 11, 0.35);
+  --card-count-text: #fee3c0;
   --card-vp-bg: rgba(34, 197, 94, 0.2);
   --card-vp-border: rgba(34, 197, 94, 0.45);
   --card-vp-text: #bbf7d0;
-  --card-stat-bg: #241a14;
-  --card-stat-border: rgba(217, 119, 6, 0.18);
-  --card-stat-text: #e2c7ad;
-  --card-stat-strong: #f6e7d1;
-  --card-cost-bg: #241a14;
-  --card-cost-border: rgba(192, 150, 110, 0.35);
-  --card-cost-text: #f2dec4;
-  --card-cost-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-  --card-cost-mana-bg: radial-gradient(circle at 30% 30%, #3b82f6, #1e3a8a 80%);
-  --card-cost-mana-border: rgba(96, 165, 250, 0.55);
-  --card-cost-mana-text: #dbeafe;
-  --card-cost-gold-bg: radial-gradient(circle at 30% 30%, #f59e0b, #92400e 85%);
-  --card-cost-gold-border: rgba(245, 158, 11, 0.6);
-  --card-cost-gold-text: #fde68a;
+  --card-stat-bg: #32261d;
+  --card-stat-border: rgba(245, 158, 11, 0.2);
+  --card-stat-text: #e6d0b8;
+  --card-stat-strong: #fff1dc;
+  --card-cost-bg: #32261d;
+  --card-cost-border: rgba(218, 173, 125, 0.4);
+  --card-cost-text: #ffe8cf;
+  --card-cost-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+  --card-cost-mana-bg: radial-gradient(circle at 30% 30%, #7dd3fc, #1e3a8a 75%);
+  --card-cost-mana-border: rgba(147, 197, 253, 0.65);
+  --card-cost-mana-text: #eff6ff;
+  --card-cost-gold-bg: radial-gradient(circle at 30% 30%, #fcd34d, #b45309 85%);
+  --card-cost-gold-border: rgba(252, 211, 77, 0.65);
+  --card-cost-gold-text: #fffbeb;
+  --board-glow-1: rgba(255, 214, 170, 0.14);
+  --board-glow-2: rgba(160, 118, 78, 0.2);
+  --board-base: linear-gradient(140deg, #2a1f18, #3b2a20);
+  --board-border: rgba(234, 187, 129, 0.25);
+  --board-target-bg: rgba(70, 46, 30, 0.55);
+  --board-target-outline: rgba(217, 119, 6, 0.55);
+  --hex-stroke: rgba(210, 170, 120, 0.5);
   background: radial-gradient(circle at 20% 15%, rgba(88, 50, 32, 0.35), transparent 55%),
     radial-gradient(circle at 80% 35%, rgba(56, 33, 24, 0.35), transparent 60%),
     linear-gradient(135deg, #0a0908 0%, #15110e 100%);
@@ -1346,7 +1362,7 @@ body.is-game .status-pill--idle {
 
 .game-card {
   border-radius: 18px;
-  border: 1px solid transparent;
+  border: 1px solid var(--card-border);
   background: var(--card-bg);
   padding: 14px;
   display: flex;
@@ -2244,6 +2260,8 @@ body.is-game .game-card[data-type="Order"] {
   bottom: 16px;
   z-index: 58;
   background: var(--glass-panel);
+  border: 1px solid var(--border);
+  box-shadow: 0 18px 32px rgba(35, 28, 19, 0.18);
   backdrop-filter: blur(9px);
   -webkit-backdrop-filter: blur(9px);
 }
@@ -4448,15 +4466,11 @@ body.is-game .btn-secondary:active:not(:disabled) {
   --bridge-neutral: rgba(45, 39, 32, 0.6);
   width: 100%;
   height: min(72vh, 680px);
-  background: radial-gradient(
-      circle at 20% 20%,
-      rgba(255, 248, 235, 0.9),
-      transparent 58%
-    ),
-    radial-gradient(circle at 70% 80%, rgba(214, 193, 162, 0.45), transparent 60%),
-    linear-gradient(140deg, #efe0c9, #e1cdb2);
+  background: radial-gradient(circle at 20% 20%, var(--board-glow-1), transparent 58%),
+    radial-gradient(circle at 70% 80%, var(--board-glow-2), transparent 60%),
+    var(--board-base);
   border-radius: 18px;
-  box-shadow: inset 0 0 0 1px rgba(164, 137, 106, 0.35);
+  box-shadow: inset 0 0 0 1px var(--board-border);
 }
 
 .board-svg--game {
@@ -4538,9 +4552,9 @@ body.is-game .btn-secondary:active:not(:disabled) {
 
 .board-svg--interactive.is-targeting {
   cursor: crosshair;
-  background: rgba(255, 245, 224, 0.6);
+  background: var(--board-target-bg);
   border-radius: 16px;
-  outline: 2px dashed rgba(180, 83, 9, 0.4);
+  outline: 2px dashed var(--board-target-outline);
   outline-offset: 6px;
 }
 
@@ -4565,7 +4579,7 @@ body.is-game .btn-secondary:active:not(:disabled) {
 }
 
 .hex {
-  stroke: rgba(108, 90, 66, 0.65);
+  stroke: var(--hex-stroke);
   stroke-width: 1.3;
   stroke-linejoin: round;
   fill: var(--normal);
