@@ -950,8 +950,8 @@ body.is-game .setup-card-pick__player-row--active {
 }
 
 .setup-flow__players {
-  max-width: 260px;
-  justify-self: end;
+  max-width: none;
+  justify-self: stretch;
   width: 100%;
 }
 

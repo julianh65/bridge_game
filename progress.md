@@ -25,9 +25,9 @@
   scope: allow edge-target bridge cards (Bridge Crew) to optionally select a move path after building the bridge.
   files: apps/web/src/components/GameScreen.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md
   status: in progress
-- owner: agent3
-  scope: add targeted Triple March card-effect test (move path max distance with bridges).
-  files: packages/engine/src/card-effects.triple-march.test.ts, implementation_plan.md, progress.md
+- owner: agent4
+  scope: add Age II Interrupt card (draw 2, others draw 1) with draw-other-players effect and test coverage.
+  files: packages/engine/src/card-effects.ts, packages/engine/src/content/cards/age2.ts, packages/engine/src/action-flow.test.ts (overlap with agent1 scope), implementation_plan.md, progress.md
   status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -63,6 +63,7 @@
 - Added a setup deck preview step before capital draft with starter deck counts plus starter spell/champion callouts, and updated setup tests + setup flow UI; marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/index.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/index.test.ts`, `apps/web/src/components/SetupDeckPreview.tsx`, `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Restored setup deck preview as the initial setup block (createNewGame now starts at `setup.deckPreview`) and verified setup/index tests. (Files: `packages/engine/src/engine.ts`.) (Test: `npm run -w @bridgefront/engine test -- setup-flow.test.ts index.test.ts`.) (owner: agent2)
 - Updated action-flow test setup to advance past deck preview before capital draft; action-flow suite passes again. (File: `packages/engine/src/action-flow.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- action-flow.test.ts`.) (owner: agent2)
+- Widened setup layout so the players panel fills its grid column beside deck preview/capital draft instead of hugging the far edge. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Added per-faction starter deck mapping scaffold (defaults to the common deck), updated card registry coverage, and noted the remaining per-faction initiative work in the plan. (Files: `packages/engine/src/content/starter-decks.ts`, `packages/engine/src/content/cards/cards.test.ts`, `implementation_plan.md`.)
 - Added per-faction starter initiative variants for Quick Move/Zap/Scout Report and updated starter decks to use the faction-specific IDs; marked the plan item complete. (Files: `packages/engine/src/content/cards/starter.ts`, `packages/engine/src/content/starter-decks.ts`, `implementation_plan.md`.)
 - Added card art mappings for faction-specific starter variants (Quick Move/Zap/Scout Report) so art resolves for the new IDs. (File: `apps/web/src/data/card-art.json`.) (Overlap note: `apps/web/src/data/card-art.json` already had in-flight art mappings.)
@@ -112,6 +113,7 @@
 - Enabled linked-hex movement (Tunnel Network/Wormhole Link) for board-pick march + card move paths by honoring link modifiers in UI targeting; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Added Burn the Bridges (Age II) with destroy-connected-bridges effect, movement-target validation, and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent2)
 - Removed rules text truncation on large card variants while keeping clamps on compact hand/market/collection cards; updated the plan checklist. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
+- Added faction-ordered basic action resolution (config-driven) and surfaced basic-action order on faction cards; updated config/spec docs and marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/config.ts`, `packages/engine/src/action-flow.ts`, `apps/web/src/lib/factions.ts`, `apps/web/src/components/PreGameLobby.tsx`, `docs/configuration.md`, `technical_spec.md`, `implementation_plan.md`.) (Overlap note: `packages/engine/src/config.ts` already had in-flight duration/tile-count edits.) (Test: `npm run -w @bridgefront/engine test -- action-flow.test.ts` failed: `capitals were not assigned` in `setupToActionPhase`.)
 
 ## Milestone 8 progress
 - Added Age II market card defs (Set to Skirmish, Battalion Contract, Rally Where You Stand, Insight, Stall, Deep Shaft Rig, Strategic Triumph, Banner of Resolve) using existing effects; updated the plan checklist. (Files: `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.) (owner: agent4) (Overlap note: included a pre-staged `implementation_plan.md` edit about burn animation.)
@@ -156,6 +158,7 @@
 - Confirmed Temporary Bridge coverage includes temporary flag + no-occupancy validation in engine tests. (owner: agent3)
 - Added Battalion Contract card-effect test for capital deployment (10 forces) and updated the plan checklist. (Files: `packages/engine/src/card-effects.battalion-contract.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.battalion-contract.test.ts`.) (owner: agent3)
 - Added Burn the Bridges card-effect test for move + destroy connected bridges and updated the plan checklist. (Files: `packages/engine/src/card-effects.burn-the-bridges.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.burn-the-bridges.test.ts`.) (owner: agent3)
+- Added Triple March card-effect test for max-distance validation and movement along bridges; updated the plan checklist. (Files: `packages/engine/src/card-effects.triple-march.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.triple-march.test.ts`.) (owner: agent3)
 - Added Strategic Triumph card-effect test for gold gain and updated the plan checklist. (Files: `packages/engine/src/card-effects.strategic-triumph.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.strategic-triumph.test.ts`.) (owner: agent2)
 - Added Small Hands card-effect test for draw-if-empty hand (plan already tracked). (File: `packages/engine/src/card-effects.small-hands.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.small-hands.test.ts`.) (owner: agent2)
 - Added Center Dispatch card-effect test for center-conditional draw and updated the plan checklist. (Files: `packages/engine/src/card-effects.center-dispatch.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.center-dispatch.test.ts`.) (owner: agent2)
