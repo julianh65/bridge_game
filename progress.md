@@ -25,7 +25,6 @@
   scope: add `scripts/card-tools.js` CLI for initiative collisions/decollide/compress with deck filters (dry-run)
   files: scripts/card-tools.js, package.json, docs/cards.md, implementation_plan.md, progress.md
   status: in progress
-
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -127,6 +126,7 @@
 - Highlighted Burn tags with distinct styling + subtle animation and split the burn UX checklist into clearer sub-items. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Enabled card tags in the Card Editor and Cards tab so the Burn styling is visible during browsing. (Files: `apps/web/src/components/CardEditor.tsx`, `apps/web/src/components/CardsBrowser.tsx`.)
 - Applied the dark theme styling to the Play home screen by enabling the game theme for the Play tab even before joining a room; marked the plan item complete. (Files: `apps/web/src/App.tsx`, `implementation_plan.md`.)
+- Tuned the Play home hero + panels to use dark-theme gradients and borders so the “Enter the War Table” area matches the fantasy palette. (Files: `apps/web/src/styles.css`.)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.

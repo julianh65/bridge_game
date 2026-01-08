@@ -452,6 +452,31 @@ h1 {
   font-weight: 600;
 }
 
+body.is-game .home__hero {
+  background: radial-gradient(circle at top left, rgba(217, 119, 6, 0.2), transparent 55%),
+    radial-gradient(circle at 15% 75%, rgba(124, 45, 18, 0.45), transparent 60%),
+    linear-gradient(135deg, #1b1410 0%, #221710 55%, #19120d 100%);
+}
+
+body.is-game .home__hero::after {
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+body.is-game .home__hero-meta-item {
+  background: rgba(28, 20, 14, 0.7);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+body.is-game .home__panel {
+  background: linear-gradient(180deg, #1d1510 0%, #231912 100%);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+body.is-game .home__panel--signal {
+  background: linear-gradient(180deg, #241711 0%, #2b1c14 100%);
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
 .controls {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
