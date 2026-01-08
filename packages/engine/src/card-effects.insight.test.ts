@@ -8,13 +8,13 @@ import { createNewGame } from "./engine";
 
 describe("Insight", () => {
   it("draws two cards", () => {
-    const base = createNewGame(DEFAULT_CONFIG, 14, [
+    const base = createNewGame(DEFAULT_CONFIG, 22, [
       { id: "p1", name: "Player 1" },
       { id: "p2", name: "Player 2" }
     ]);
 
     const first = createCardInstance(base, "starter.quick_march");
-    const second = createCardInstance(first.state, "starter.quick_march");
+    const second = createCardInstance(first.state, "starter.supply_cache");
 
     const state = {
       ...second.state,

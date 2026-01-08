@@ -938,6 +938,22 @@ export const CombatOverlay = ({
                   ) : null}
                 </div>
               </div>
+              {showHits ? (
+                <div className="combat-round__totals">
+                  <div className="combat-round__total">
+                    <span className="combat-round__total-label">Attackers hits</span>
+                    <strong className="combat-round__total-value">
+                      {currentRound.attackers.hits}
+                    </strong>
+                  </div>
+                  <div className="combat-round__total">
+                    <span className="combat-round__total-label">Defenders hits</span>
+                    <strong className="combat-round__total-value">
+                      {currentRound.defenders.hits}
+                    </strong>
+                  </div>
+                </div>
+              ) : null}
             </div>
           )}
         </div>
