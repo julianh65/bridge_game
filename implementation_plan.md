@@ -569,7 +569,7 @@ Done
       - [x] Bridge Lockdown.
       - [x] Wormhole Link.
       - [x] Bridge Network.
-      - [ ] Bridge Pivot.
+      - [x] Bridge Pivot.
     - [ ] Age II Synergy/Gambits card defs (4).
       - [ ] Foundry Heist.
       - [x] Deep Shaft Rig.

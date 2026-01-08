@@ -100,6 +100,7 @@ const SUPPORTED_EFFECTS = new Set([
   "lockBridge",
   "trapBridge",
   "destroyBridge",
+  "bridgePivot",
   "battleWinDraw",
   "destroyConnectedBridges",
   "linkHexes",
@@ -802,6 +803,78 @@ const getExistingBridgePlans = (
   return plans;
 };
 
+const getBridgePivotPlans = (
+  state: GameState,
+  playerId: PlayerID,
+  targetSpec: TargetRecord,
+  targets: CardPlayTargets
+): { existing: BuildBridgePlan; build: BuildBridgePlan; sharedHex: string } | null => {
+  const edgeKeys = getEdgeKeyTargets(targets);
+  if (!edgeKeys || edgeKeys.length === 0) {
+    return null;
+  }
+  const minEdges =
+    typeof targetSpec.minEdges === "number" ? Math.max(0, Math.floor(targetSpec.minEdges)) : 2;
+  const maxEdges =
+    typeof targetSpec.maxEdges === "number"
+      ? Math.max(0, Math.floor(targetSpec.maxEdges))
+      : 2;
+  if (edgeKeys.length < minEdges || edgeKeys.length > maxEdges) {
+    return null;
+  }
+
+  let existing: BuildBridgePlan | null = null;
+  let build: BuildBridgePlan | null = null;
+
+  for (const edgeKey of edgeKeys) {
+    let rawA: string;
+    let rawB: string;
+    try {
+      [rawA, rawB] = parseEdgeKey(edgeKey);
+    } catch {
+      return null;
+    }
+    const canonicalKey = getBridgeKey(rawA, rawB);
+    if (state.board.bridges[canonicalKey]) {
+      const plan = getExistingBridgePlan(state, playerId, targetSpec, { edgeKey });
+      if (!plan || existing) {
+        return null;
+      }
+      existing = plan;
+    } else {
+      const plan = getBuildBridgePlan(state, playerId, targetSpec, { edgeKey });
+      if (!plan || build) {
+        return null;
+      }
+      build = plan;
+    }
+  }
+
+  if (!existing || !build) {
+    return null;
+  }
+
+  const sharedHex =
+    existing.from === build.from || existing.from === build.to
+      ? existing.from
+      : existing.to === build.from || existing.to === build.to
+        ? existing.to
+        : null;
+  if (!sharedHex) {
+    return null;
+  }
+
+  const allowAnywhere = targetSpec.anywhere === true;
+  if (!allowAnywhere) {
+    const shared = state.board.hexes[sharedHex];
+    if (!shared || !isOccupiedByPlayer(shared, playerId)) {
+      return null;
+    }
+  }
+
+  return { existing, build, sharedHex };
+};
+
 export const validateMovePath = (
   state: GameState,
   playerId: PlayerID,
@@ -1289,6 +1362,11 @@ export const isCardPlayable = (
         : Number.POSITIVE_INFINITY;
     if (edgeKeys.length < minEdges || edgeKeys.length > maxEdges) {
       return false;
+    }
+    const hasBridgePivot =
+      card.effects?.some((effect) => effect.kind === "bridgePivot") ?? false;
+    if (hasBridgePivot) {
+      return Boolean(getBridgePivotPlans(state, playerId, targetSpec, targets ?? null));
     }
     const hasBuildBridge = card.effects?.some((effect) => effect.kind === "buildBridge") ?? false;
     const hasExistingBridgeEffect =
@@ -3039,6 +3117,29 @@ export const resolveCardEffects = (
           break;
         }
         const { [plan.key]: _removed, ...bridges } = nextState.board.bridges;
+        nextState = {
+          ...nextState,
+          board: {
+            ...nextState.board,
+            bridges
+          }
+        };
+        break;
+      }
+      case "bridgePivot": {
+        const targetSpec = card.targetSpec as TargetRecord;
+        const plans = getBridgePivotPlans(nextState, playerId, targetSpec, targets ?? null);
+        if (!plans) {
+          break;
+        }
+        const bridges = { ...nextState.board.bridges };
+        delete bridges[plans.existing.key];
+        bridges[plans.build.key] = {
+          key: plans.build.key,
+          from: plans.build.from,
+          to: plans.build.to,
+          ownerPlayerId: playerId
+        };
         nextState = {
           ...nextState,
           board: {

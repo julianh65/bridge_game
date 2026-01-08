@@ -462,6 +462,25 @@ export const WORMHOLE_LINK: CardDef = {
   effects: [{ kind: "linkHexes" }]
 };
 
+export const BRIDGE_PIVOT: CardDef = {
+  id: "age2.bridge_pivot",
+  name: "Bridge Pivot",
+  rulesText:
+    "Choose a hex, destroy one bridge connected to that hex and place a new bridge connected to that hex.",
+  type: "Spell",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 80,
+  burn: false,
+  targetSpec: {
+    kind: "multiEdge",
+    minEdges: 2,
+    maxEdges: 2
+  },
+  effects: [{ kind: "bridgePivot" }]
+};
+
 export const DEEP_SHAFT_RIG: CardDef = {
   id: "age2.deep_shaft_rig",
   name: "Deep Shaft Rig",
@@ -791,6 +810,7 @@ export const AGE2_CARDS: CardDef[] = [
   BRIDGE_LOCKDOWN,
   BRIDGE_NETWORK,
   WORMHOLE_LINK,
+  BRIDGE_PIVOT,
   DEEP_SHAFT_RIG,
   WAR_PROFITEERS,
   ENCIRCLEMENT,
