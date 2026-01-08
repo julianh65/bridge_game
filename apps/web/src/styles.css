@@ -6183,21 +6183,60 @@ body.is-game .btn-secondary:active:not(:disabled) {
 
 .force-split-popover__header {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: 11px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 10px;
   color: var(--muted);
 }
 
 .force-split-popover__title {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--ink);
 }
 
 .force-split-popover__meta {
+  max-width: 110px;
   font-size: 10px;
   color: var(--muted);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.force-split-popover .action-panel__split {
+  gap: 4px;
+  padding: 6px;
+}
+
+.force-split-popover .action-panel__split-header {
+  font-size: 10px;
+}
+
+.force-split-popover .action-panel__split-toggle {
+  gap: 4px;
+}
+
+.force-split-popover .btn-tertiary {
+  padding: 5px 8px;
+  font-size: 11px;
+}
+
+.force-split-popover .action-panel__split-controls {
+  gap: 4px;
+  font-size: 10px;
+}
+
+.force-split-popover .action-panel__split-count {
+  min-width: 24px;
+  font-size: 11px;
+}
+
+.force-split-popover .action-panel__split-hint,
+.force-split-popover .action-panel__split-note {
+  font-size: 10px;
 }
 
 .board-svg--interactive {
