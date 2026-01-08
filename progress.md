@@ -17,10 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent1
-  scope: animate action-phase move/bridge effects on the board in sync with the action reveal overlay
-  files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/BoardView.tsx, apps/web/src/styles.css, implementation_plan.md
-  status: in progress
 - owner: agent2
   scope: make the market overlay toggle button larger, fixed-position, and usable for both show/hide states
   files: apps/web/src/components/GameScreen.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md
@@ -29,10 +25,6 @@
   scope: add `scripts/card-tools.js` CLI for initiative collisions/decollide/compress with deck filters (dry-run)
   files: scripts/card-tools.js, package.json, docs/cards.md, implementation_plan.md, progress.md
   status: in progress
-- owner: agent5
-  scope: retreat rules implementation (combat retreat block + action resolution queue + retreat selection overlay UI)
-  files: packages/engine/src/types.ts, packages/engine/src/combat.ts, packages/engine/src/engine.ts, packages/engine/src/action-flow.ts, packages/engine/src/view.ts, apps/web/src/App.tsx, apps/web/src/components/GameScreen.tsx, apps/web/src/components/CombatOverlay.tsx, apps/web/src/components/CombatRetreatOverlay.tsx, apps/web/src/styles.css, implementation_plan.md, progress.md
-  status: in progress (overlap note: `apps/web/src/components/GameScreen.tsx` + `apps/web/src/styles.css` are in agent1 scope)
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -50,6 +42,7 @@
 - Added card art mappings for faction-specific starter variants (Quick Move/Zap/Scout Report) so art resolves for the new IDs. (File: `apps/web/src/data/card-art.json`.) (Overlap note: `apps/web/src/data/card-art.json` already had in-flight art mappings.)
 - Added a phase tracker with arrow-separated steps highlighting the active phase in the game HUD; updated the plan checklist. (Files: `apps/web/src/components/GameScreenHeader.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreen.tsx` + `apps/web/src/styles.css` are in agent1’s active scope.)
 - Fixed setup sidebar player rows to wrap long names and prevent overflow in the setup flow panel. (File: `apps/web/src/styles.css`.) (Overlap note: `apps/web/src/styles.css` is in agent1’s active scope.)
+- Enlarged the market overlay show/hide toggle button and kept it fixed in place for both states; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreen.tsx` + `apps/web/src/styles.css` are in agent1’s active scope.)
 - Added a setup flow screen focused on map steps (capital draft + starting bridges) and free starting card, replacing the setup lobby view; marked the map screen + secret bridge reveal plan items complete. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.) (Overlap note: `apps/web/src/App.tsx` already in-flight.)
 - Tweaked setup flow layout with floating host controls, a slimmer players panel, and a left-to-right free-card offer row with the waiting/status column on the right. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `apps/web/src/styles.css`.)
 - Added unselect/change support for starting bridges and free starting card picks (UI + engine) with setup-flow tests. (Files: `apps/web/src/components/SetupStartingBridges.tsx`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `apps/web/src/styles.css`, `packages/engine/src/types.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/setup-flow.test.ts`.)
@@ -133,6 +126,7 @@
 - Updated the private view VP totals to recompute control points live from board occupation changes; marked the plan checklist item complete. (Files: `packages/engine/src/round-flow.ts`, `packages/engine/src/view.ts`, `implementation_plan.md`.)
 - Highlighted Burn tags with distinct styling + subtle animation and split the burn UX checklist into clearer sub-items. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Enabled card tags in the Card Editor and Cards tab so the Burn styling is visible during browsing. (Files: `apps/web/src/components/CardEditor.tsx`, `apps/web/src/components/CardsBrowser.tsx`.)
+- Applied the dark theme styling to the Play home screen by enabling the game theme for the Play tab even before joining a room; marked the plan item complete. (Files: `apps/web/src/App.tsx`, `implementation_plan.md`.)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.

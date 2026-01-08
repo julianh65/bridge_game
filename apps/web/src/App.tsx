@@ -72,11 +72,11 @@ export default function App() {
   const showPreGameLobby = Boolean(room.lobby && !room.view);
   const showEditor = import.meta.env.DEV;
   const isThemeView =
+    view === "play" ||
     view === "cards" ||
     view === "deck" ||
     view === "battle" ||
-    view === "editor" ||
-    (view === "play" && Boolean(roomConfig));
+    view === "editor";
 
   useEffect(() => {
     document.body.classList.toggle("is-game", isThemeView);

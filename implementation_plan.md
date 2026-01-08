@@ -325,19 +325,19 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Need a something in UI to mark which cell is "my capital"
 - [x] Add per-faction starter deck mapping (edit in `starter-decks.ts`).
 - [x] Update starter card defs per faction with unique initiatives as needed.
-- [ ] Add the dark styling to the Play main tab area
+- [x] Add the dark styling to the Play main tab area
 - [ ] Burn keyword UX + validation
   - [x] Make Burn tags visually distinct (color + subtle animation).
   - [ ] Verify burn effects resolve correctly; add a small visual cue if needed.
 - [x] there should be a nice / easy to see phase tracker, so right now we see it’s phase market but it would be cool if it was like the different phases separated by → and then it just highlights whichever phase it is
-- [ ] the show / hide market button should be bigger and easier to hit and toggle back and forth, like it should probably be floating and fixed position and be in the exact same position whether they are in show / hide so it’s easier to toggle between
+- [x] the show / hide market button should be bigger and easier to hit and toggle back and forth, like it should probably be floating and fixed position and be in the exact same position whether they are in show / hide so it’s easier to toggle between
 - [ ] why is all the card art way zoomed in at market phase?
 - [ ] the market dice roll is a bit weird for ties, like it seemed like it insta skipped and i didn’t get to see who won it, at the end of the rolls it needs to show who won the roll and pause
 - [ ] when the action phase flashes up also show the card that was played, like the art and all
 - [ ] right now the mana orb can sometimes cover up the action panel when it goes to split or move all
 - [ ] for the collection phase modal that should be hid-able like the market, and it should have more detail as to who’s collecting what and why
 - [ ] need to add order of basic actions logic, different factions will always act before others, that should show in the faction selector and be configurable from the config and should also really impact the game
-- [ ] hard: the forces should move around the board and bridges and things should happen in sync with the popup modal during the action phase
+- [x] hard: the forces should move around the board and bridges and things should happen in sync with the popup modal during the action phase
 - [ ] there’s still a bit of buginess between phase transitions where we go from action phase to collection phase like the collection modal will instantly pop up
 - [ ] scout report still doesn’t let you choose which ones to draw or discard
 - [ ] in the combat screen we should see what the champions as well as forces hit on (if there are modifiers it should reflect that as well)
@@ -626,6 +626,7 @@ Done
 - [x] Make the cards slightly more readable, try to maximize space usage, make the font slightly larger, and it should be way more obvious the mana and gold cost, you can even put them in the bottom left and right corner like in hearthstone, to that end the entire hand area on the bottom can be made like 10% taller to accomodate
 - [x] Confirm that champion targetting cards have a UI and work such that you can target a specific champion if there are two in the same hex
 - [ ] Hard: What I'd really like is for the actions to happen on the board as they're revealed with the reveal thing. So after the card is revaled that player one built a bridge here then the bridge builds on the board, and after a player moves something it moves on the boards, and it should animate between the hexes (TODO LATER DON'T PICK THIS UP IT'S DANGEROUS)
+- [ ] add a rejoin game type logic
 
 ## Milestone 9.5 -- Card Art + Description
 
