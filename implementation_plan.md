@@ -263,18 +263,27 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 ### Tasks
 - [x] Capital draft selection is simultaneous (no ordered picking); allow lock/unlock freely.
 - [ ] Setup flow overhaul into full-screen phases with host-advanced gates:
+  - [ ] Define setup phase model in engine/view (phase enum, host id, per-player ready/lock status).
+  - [ ] Add setup commands for ready/lock toggles and host-only phase advance; validate host + "all ready" gates.
+  - [ ] Adjust setup flow runner so phases advance only on host command (no auto-advance on empty waiting list).
+  - [ ] Support secret setup payloads (starting bridges) with private picks and reveal-on-advance behavior.
+  - [ ] Wire server/client to send setup ready/advance commands during setup; block spectators.
+  - [ ] Build a full-screen SetupFlow layout + stepper to replace current in-lobby setup panels.
   - [ ] Lobby waiting room view for join/ready state.
   - [ ] Faction selection screen with faction abilities visible; host advances once all lock.
+    - [ ] Add faction ability copy data (passive + starter spell/champion text) for UI display.
   - [ ] Starting deck preview screen (card components) showing faction abilities; all ready -> host advance.
+    - [ ] Show starter deck composition (counts) + champion/spell callouts.
   - [ ] Map screen with two sub-steps:
     - [ ] Capital selection (simultaneous, no turn order).
     - [ ] Initial bridge placement: secret selection of two bridges, reveal simultaneously.
   - [ ] Free starting card draft screen with improved presentation.
   - [ ] Transition to main game after all setup steps complete.
+  - [ ] Add engine/view tests for setup gating + secret bridge reveal; add UI smoke coverage if feasible.
 - [ ] Champion card UI shows iconography for health, dice, hits, and bounty.
 - [x] Market HUD shows current gold with the same emoji/visual language used elsewhere.
 - [ ] Champion cards communicate gold cost scaling for the nth champion clearly.
-- [x] Action reveal popup uses A1-style board labels (not axial coords).
+- [ ] Action reveal popup uses A1-style board labels (not axial coords).
 - [ ] Collection UI becomes a modal overlay (no top-bar layout shift).
 - [ ] Center collection offers power picks (not normal card draft).
 - [ ] Market dice roll animation feels smoother and more synchronized.
@@ -293,26 +302,52 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [ ] On retreat, resolve one final combat round, then move all forces across chosen bridge and end combat.
 - [ ] Add "Burn the Bridges" card (rules-aligned effect + UI + tests).
 - [ ] Live VP updates immediately on occupation changes.
-- [x] Basic actions show a short hover tooltip explanation.
+- [ ] Basic actions show a short hover tooltip explanation.
 - [x] Basic actions show mana/gold costs on the buttons.
-- [ ] Center card text alignment (titles/lines) on card faces.
+- [x] Center card text alignment (titles/lines) on card faces.
 - [x] Market show/hide has a hotkey; overlay background slightly transparent.
 - [ ] Market dice overlay includes faction symbols and uses an overlay (not a new stacked container).
 - [x] Special tiles show a small hover label with type (Mine, Forge, etc).
 - [ ] Fix phantom/ghost battle overlay state leaks when moving between screens.
 - [ ] Collection phase sequence highlights per-source payouts one by one (mines, forge, center).
-- [ ] Add gold + VP to the hand panel header area (near Hand label).
+- [x] Add gold + VP to the hand panel header area (near Hand label).
 - [ ] Board "chit" styling (units/champions/forces) aligns with dark fantasy theme.
 - [ ] Champion target modal should not shift page layout; convert to overlay.
 - [ ] Add stats tracking TODO (battles won, other metrics) for later.
 - [ ] Fix card hover stacking so hovered cards always render on top.
 - [ ] Force-split dialog appears near the clicked hex (not bottom of screen).
-- [x] Add an "active effects" view so players see ongoing effects.
+- [ ] Add an "active effects" view so players see ongoing effects.
 - [x] Gray out or mark cards that are unaffordable due to mana.
 - [ ] Fix phase progression after capital battles (ensure collection/market transitions).
 - [ ] Add UI for scout orders and "draw and pick" effects.
-- [ ] Fix card aspect ratios on large screens (avoid stretched/fat cards).
+- [x] Fix card aspect ratios on large screens (avoid stretched/fat cards).
+- [ ] Need a UI to demarkate which cell is "my capital"
 
+### Mini Milestone For Me
+
+I need some sort of script or way to edit the cards and decks in a nice UI with some nice to have features. I don't really know how this will work because the cards are kind of defined in typescript files not in JSON or anything. So help me think through this. There could be two options which is just a UI that loads in the the current deck and lets me view things and edit things and then saves it as a list of edits / changes that I can then take and make manually in the code, or we have a way such that it somehow writes back to the files? But if that's too tricky / dangerous then we should just do the first approach. The editor should let me view all cards, create copies of cards. I should be able to modify the attributes of cards easily, like health, gold, mana costs, scaling etc... but not like the names of cards or the effects, for bigger changes like that I will need to do that myself manually in the code. I also need some helpful helper functions / code to be able to run. One to show me all the colissions in initiative numbers, one to automatically decollide the deck, so it goes through and for any colissions that there are it decollides them by incrementing initiatives until there are no more colissions, and then one to "compress" initiative numbers so if I have like only 3 cards for example 10, 90, 30 it should compress them so the inititatives are 1, 3, 2. Maybe I can somehow build off the cards viewer screen I have but have a debug / dev version of it?
+
+#### Scope (proposed)
+- Dev-only card/deck editor built on the existing Cards browser (no auth/sharing).
+- Editable fields limited to numeric/value attributes (initiative, mana/gold cost, health, bounty, scaling/counts); names/effects locked.
+- Default workflow exports a patch/change list for manual TS edits; no direct file writes in MVP.
+
+#### Tasks (proposed)
+- [ ] Define an edit-patch schema (`CardEditPatch`) and helpers to apply patches in the UI preview only.
+- [ ] Add a dev-only Card Editor view (toggle or route) that reuses card filters/grid.
+- [ ] Implement inline editors for allowed fields with validation, revert, and "dirty" indicators.
+- [ ] Add a clone-card flow that creates a new draft ID (suffix) and carries editable fields.
+- [ ] Add a deck editor panel (market/power per age) to adjust counts and view totals.
+- [ ] Surface initiative collisions in the editor view with per-deck grouping.
+- [ ] Add an export panel that copies JSON patch + human-readable change summary.
+- [ ] Implement CLI tooling (`scripts/card-tools.js`) for `collisions`, `de-collide`, and `compress` with deck filters; default to dry-run output.
+- [ ] Add lightweight tests for collision/decollide/compress helpers.
+- [ ] Document editor + CLI usage in `docs/cards.md` and add npm scripts.
+
+#### Acceptance criteria (proposed)
+- Card Editor can modify allowed numeric fields and export a patch without touching TS files.
+- Deck view highlights initiative collisions and can output a de-collided/compressed proposal.
+- CLI tools produce the same collision/decollide/compress results as the UI.
 
 ### Tasks (web)
 - Champion UI:
