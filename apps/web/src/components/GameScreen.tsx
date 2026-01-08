@@ -3385,7 +3385,7 @@ export const GameScreen = ({
                 playerFactionById={playerFactionById}
                 homeCapitalHexKey={localCapitalHexKey}
                 showCoords={false}
-                showMineValues={false}
+                showMineValues
                 labelByHex={hexLabels}
                 labelVariant="coords"
                 className="board-svg board-svg--game"

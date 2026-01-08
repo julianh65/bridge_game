@@ -350,7 +350,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] The cards across different parts of the game can be different sizes, I want them to all be a standard size, big enough to fit everything, it's fine if there's empty space on some. they should be the size of the champion cards fitting those stats + their description
 - [x] Between action reveals while the board is still "highlighting" where it was played there should be like a configurable timing pause where the popup modal displaying the card and who played it closes and we see where on the map it's played
 - [ ] I want there to be an animation when cards are drawn
-- [ ] on the board we need to see the mine yields
+- [x] on the board we need to see the mine yields
 - [ ] The pass and confirm pass button is bugged
 - [x] The forge scrap doesn't look right, i just see a bunch of pills with random card ids
 - [ ] remove the mine draft, it should just give gold, and update the rules
