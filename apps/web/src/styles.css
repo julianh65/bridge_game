@@ -3117,8 +3117,57 @@ body.is-game .action-reveal__targets--empty {
   color: var(--ink);
 }
 
+.deck-pill__label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 9px;
+  color: var(--muted);
+}
+
 .deck-pill strong {
   font-weight: 600;
+}
+
+.deck-pill__delta {
+  margin-left: 2px;
+  padding: 1px 4px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--panel-soft);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--muted);
+}
+
+.deck-pill__delta.is-positive {
+  color: var(--accent-strong);
+  border-color: rgba(217, 119, 6, 0.45);
+  background: rgba(217, 119, 6, 0.12);
+}
+
+.deck-pill__delta.is-negative {
+  color: var(--danger-ink);
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
+}
+
+.deck-pill.is-pulsing {
+  animation: deck-pill-pulse 700ms ease;
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 1px rgba(217, 119, 6, 0.15), 0 6px 14px rgba(17, 24, 39, 0.18);
+}
+
+@keyframes deck-pill-pulse {
+  0% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-2px);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 .game-hand__layout {

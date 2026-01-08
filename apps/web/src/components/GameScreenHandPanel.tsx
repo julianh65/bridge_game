@@ -1,4 +1,4 @@
-import { type CSSProperties, type ReactNode, useEffect, useState } from "react";
+import { type CSSProperties, type ReactNode, useEffect, useRef, useState } from "react";
 
 import {
   CARD_DEFS,
@@ -48,6 +48,8 @@ const getCardTargetHint = (cardDef: CardDef | null): string | null => {
       return null;
   }
 };
+
+type DeckPulseKey = "draw" | "discard" | "scrapped";
 
 type GameScreenHandPanelProps = {
   canShowHandPanel: boolean;
@@ -131,6 +133,10 @@ export const GameScreenHandPanel = ({
   const [isPassConfirming, setIsPassConfirming] = useState(false);
   const shouldConfirmPass = availableMana > 0;
   const manaLabel = `${availableMana}/${maxMana}`;
+  const [deckPulse, setDeckPulse] = useState({ draw: 0, discard: 0, scrapped: 0 });
+  const [deckDelta, setDeckDelta] = useState({ draw: 0, discard: 0, scrapped: 0 });
+  const deckPrevRef = useRef<NonNullable<GameView["private"]>["deckCounts"] | null>(null);
+  const deckTimersRef = useRef<Partial<Record<DeckPulseKey, number>>>({});
 
   useEffect(() => {
     if (!canSubmitDone || !shouldConfirmPass) {
@@ -149,6 +155,48 @@ export const GameScreenHandPanel = ({
       setIsPassConfirming(false);
     }
   }, [showHandPanel]);
+
+  useEffect(() => {
+    if (!deckCounts) {
+      deckPrevRef.current = null;
+      return;
+    }
+    const previous = deckPrevRef.current;
+    deckPrevRef.current = deckCounts;
+    if (!previous) {
+      return;
+    }
+    const deltas = {
+      draw: deckCounts.drawPile - previous.drawPile,
+      discard: deckCounts.discardPile - previous.discardPile,
+      scrapped: deckCounts.scrapped - previous.scrapped
+    };
+    (Object.keys(deltas) as DeckPulseKey[]).forEach((key) => {
+      const delta = deltas[key];
+      if (delta === 0) {
+        return;
+      }
+      setDeckDelta((current) => ({ ...current, [key]: delta }));
+      setDeckPulse((current) => ({ ...current, [key]: current[key] + 1 }));
+      const existingTimer = deckTimersRef.current[key];
+      if (existingTimer) {
+        window.clearTimeout(existingTimer);
+      }
+      deckTimersRef.current[key] = window.setTimeout(() => {
+        setDeckDelta((current) => ({ ...current, [key]: 0 }));
+      }, 900);
+    });
+  }, [deckCounts]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(deckTimersRef.current).forEach((timer) => {
+        if (timer) {
+          window.clearTimeout(timer);
+        }
+      });
+    };
+  }, []);
 
   const handlePassClick = () => {
     if (!canSubmitDone) {
@@ -199,6 +247,32 @@ export const GameScreenHandPanel = ({
     };
   }, [showHandPanel, primaryAction, canSubmitDone, handlePassClick, onSubmitAction]);
 
+  const deckPills = deckCounts
+    ? [
+        {
+          id: "draw" as const,
+          label: "Draw pile",
+          count: deckCounts.drawPile,
+          delta: deckDelta.draw,
+          pulseKey: deckPulse.draw
+        },
+        {
+          id: "discard" as const,
+          label: "Discard",
+          count: deckCounts.discardPile,
+          delta: deckDelta.discard,
+          pulseKey: deckPulse.discard
+        },
+        {
+          id: "scrapped" as const,
+          label: "Scrapped",
+          count: deckCounts.scrapped,
+          delta: deckDelta.scrapped,
+          pulseKey: deckPulse.scrapped
+        }
+      ]
+    : [];
+
   return (
     <>
       {showHandPanel ? (
@@ -225,15 +299,27 @@ export const GameScreenHandPanel = ({
             <div className="hand-controls">
               {deckCounts ? (
                 <div className="deck-pills" aria-label="Deck counts">
-                  <span className="deck-pill">
-                    Draw <strong>{deckCounts.drawPile}</strong>
-                  </span>
-                  <span className="deck-pill">
-                    Discard <strong>{deckCounts.discardPile}</strong>
-                  </span>
-                  <span className="deck-pill">
-                    Scrapped <strong>{deckCounts.scrapped}</strong>
-                  </span>
+                  {deckPills.map((pill) => (
+                    <span
+                      key={`${pill.id}-${pill.pulseKey}`}
+                      className={`deck-pill deck-pill--${pill.id} ${
+                        pill.delta !== 0 ? "is-pulsing" : ""
+                      }`}
+                      aria-label={`${pill.label} ${pill.count}`}
+                    >
+                      <span className="deck-pill__label">{pill.label}</span>
+                      <strong>{pill.count}</strong>
+                      {pill.delta !== 0 ? (
+                        <span
+                          className={`deck-pill__delta ${
+                            pill.delta > 0 ? "is-positive" : "is-negative"
+                          }`}
+                        >
+                          {pill.delta > 0 ? `+${pill.delta}` : pill.delta}
+                        </span>
+                      ) : null}
+                    </span>
+                  ))}
                 </div>
               ) : null}
               <button type="button" className="btn btn-tertiary" onClick={onHideHandPanel}>

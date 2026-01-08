@@ -17,8 +17,8 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
- - owner: agent3; scope: Mortar Shot targeting helper (limit hex highlights to friendly-force range + add scatter hint text); files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`, `progress.md`; status: in progress
- - owner: agent5; scope: clarify draw/discard pile UI and add hand-panel draw/discard animations; files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in progress
+ - owner: agent3; scope: Bridge Network card + multi-bridge build support; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md`; status: in progress
+ - owner: agent2; scope: add Burn the Bridges Age II card effect (move + destroy connected bridges) with tests; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md`; status: in progress
 
 
 ## Planning updates
@@ -101,6 +101,7 @@
 - Converted champion target selection into a floating overlay panel to avoid layout shifts; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
 - Marked the local player's capital with a ring indicator on the board view; updated the plan checklist. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3) (Overlap note: `implementation_plan.md` included a pre-existing burn test TODO; `progress.md` picked up an agent5 active-task entry.)
 - Lifted hovered card grid items above neighbors in cards/market/collection/hand-picker views; updated the plan checklist. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
+- Clarified draw/discard/scrapped pile pills with delta badges and pulse animation in the hand panel; marked the plan checklist item complete. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreenHandPanel.tsx` also in agent3 scope.)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
