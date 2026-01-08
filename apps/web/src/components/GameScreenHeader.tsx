@@ -2,6 +2,7 @@ type GameScreenHeaderProps = {
   isCollapsed: boolean;
   connectionLabel: string;
   connectionClass: string;
+  phase: string;
   phaseLabel: string;
   round: number;
   roomId: string;
@@ -12,10 +13,23 @@ type GameScreenHeaderProps = {
   onToggle: () => void;
 };
 
+const PHASE_TRACKER_STEPS = [
+  { key: "round.reset", label: "Reset" },
+  { key: "round.study", label: "Study" },
+  { key: "round.market", label: "Market" },
+  { key: "round.action", label: "Action" },
+  { key: "round.sieges", label: "Sieges" },
+  { key: "round.collection", label: "Collection" },
+  { key: "round.scoring", label: "Scoring" },
+  { key: "round.cleanup", label: "Cleanup" },
+  { key: "round.ageUpdate", label: "Age" }
+];
+
 export const GameScreenHeader = ({
   isCollapsed,
   connectionLabel,
   connectionClass,
+  phase,
   phaseLabel,
   round,
   roomId,
@@ -26,6 +40,7 @@ export const GameScreenHeader = ({
   onToggle
 }: GameScreenHeaderProps) => {
   const showConnectionStatus = connectionLabel !== "Live";
+  const activePhaseIndex = PHASE_TRACKER_STEPS.findIndex((step) => step.key === phase);
   const resourceChips =
     localGold === null && localVpTotal === null ? null : (
       <div className="game-screen__resources">
@@ -53,6 +68,34 @@ export const GameScreenHeader = ({
         ) : null}
       </div>
     );
+  const phaseTracker = (
+    <div
+      className={`phase-tracker ${isCollapsed ? "phase-tracker--compact" : ""}`}
+      aria-label="Round phases"
+    >
+      {PHASE_TRACKER_STEPS.map((step, index) => {
+        const isActive = index === activePhaseIndex;
+        const isComplete = activePhaseIndex > -1 && index < activePhaseIndex;
+        return (
+          <div className="phase-tracker__group" key={step.key}>
+            <div
+              className={`phase-tracker__step${isActive ? " is-active" : ""}${
+                isComplete ? " is-complete" : ""
+              }`}
+              aria-current={isActive ? "step" : undefined}
+            >
+              {step.label}
+            </div>
+            {index < PHASE_TRACKER_STEPS.length - 1 ? (
+              <span className="phase-tracker__arrow" aria-hidden="true">
+                →
+              </span>
+            ) : null}
+          </div>
+        );
+      })}
+    </div>
+  );
   return (
     <header className={`game-screen__header ${isCollapsed ? "is-collapsed" : ""}`}>
       {isCollapsed ? (
@@ -62,7 +105,7 @@ export const GameScreenHeader = ({
             {showConnectionStatus ? (
               <span className={`status-pill ${connectionClass}`}>{connectionLabel}</span>
             ) : null}
-            <span className="status-pill status-pill--phase">Phase: {phaseLabel}</span>
+            {phaseTracker}
             <span className="status-pill">Round {round}</span>
           </div>
           <div className="game-screen__collapsed-actions">
@@ -79,6 +122,7 @@ export const GameScreenHeader = ({
             <p className="subhead">
               Round {round} · Phase {phaseLabel}
             </p>
+            {phaseTracker}
           </div>
           <div className="game-screen__meta">
             {resourceChips}

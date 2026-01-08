@@ -324,12 +324,12 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Add a battle debug tab to simulate combat with custom forces/champions.
 - [x] Need a something in UI to mark which cell is "my capital"
 - [x] Add per-faction starter deck mapping (edit in `starter-decks.ts`).
-- [ ] Update starter card defs per faction with unique initiatives as needed.
+- [x] Update starter card defs per faction with unique initiatives as needed.
 - [ ] Add the dark styling to the Play main tab area
 - [ ] Burn keyword UX + validation
   - [x] Make Burn tags visually distinct (color + subtle animation).
   - [ ] Verify burn effects resolve correctly; add a small visual cue if needed.
-- [ ] there should be a nice / easy to see phase tracker, so right now we see it’s phase market but it would be cool if it was like the different phases separated by → and then it just highlights whichever phase it is
+- [x] there should be a nice / easy to see phase tracker, so right now we see it’s phase market but it would be cool if it was like the different phases separated by → and then it just highlights whichever phase it is
 - [ ] the show / hide market button should be bigger and easier to hit and toggle back and forth, like it should probably be floating and fixed position and be in the exact same position whether they are in show / hide so it’s easier to toggle between
 - [ ] why is all the card art way zoomed in at market phase?
 - [ ] the market dice roll is a bit weird for ties, like it seemed like it insta skipped and i didn’t get to see who won it, at the end of the rolls it needs to show who won the roll and pause

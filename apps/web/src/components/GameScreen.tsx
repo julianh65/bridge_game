@@ -2636,6 +2636,7 @@ export const GameScreen = ({
         isCollapsed={isHeaderCollapsed}
         connectionLabel={connectionLabel}
         connectionClass={connectionClass}
+        phase={view.public.phase}
         phaseLabel={phaseLabel}
         round={view.public.round}
         roomId={roomId}
