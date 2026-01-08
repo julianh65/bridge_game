@@ -347,6 +347,7 @@ export const MarketPanel = ({
                 const seatIndex = playerSeatIndexById.get(roll.playerId);
                 const swatchStyle = playerSwatchStyle(seatIndex);
                 const factionId = playerFactionById.get(roll.playerId);
+                const seatLabel = typeof seatIndex === "number" ? `P${seatIndex + 1}` : null;
                 return (
                   <div
                     key={`roll-${roll.playerId}-${round.roundIndex}`}
@@ -364,7 +365,12 @@ export const MarketPanel = ({
                         factionId={factionId}
                         className="faction-symbol--mini"
                       />
-                      {roll.name}
+                      <span className="market-rolloff__player">{roll.name}</span>
+                      {seatLabel ? (
+                        <span className="market-rolloff__seat" aria-hidden="true">
+                          {seatLabel}
+                        </span>
+                      ) : null}
                     </span>
                     <NumberRoll
                       value={roll.value}

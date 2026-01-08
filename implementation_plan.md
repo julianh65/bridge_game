@@ -75,7 +75,7 @@ Goal: get the board game “moving pieces and fighting” ASAP.
   - champion hp + bounty
 - [x] Implement siege resolution at end of action phase.
 - [x] Implement collection minimal:
-  - mines: take gold only (skip mine draft for now)
+  - mines: take gold only
   - forges/center: no-op placeholder
 - [x] Implement scoring:
   - compute control VP and total VP
@@ -176,7 +176,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Implement gain-card insertion random into draw pile.
 - [x] Victory cards grant +1 permanent VP on gain.
 - [x] Implement collection prompts:
-  - mines: gold or mine draft (reveal 1 market card -> choose gain or not)
+  - mines: gain gold only
   - forges: reforge (scrap 1) or forge draft (reveal 3 -> gain 1)
   - center: power pick (reveal 2 -> gain 1; currently drawn from market deck until power decks land)
 
@@ -354,7 +354,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Board hex labels use the UI font and mine values show +gold markers
 - [x] The pass and confirm pass button is bugged
 - [x] The forge scrap doesn't look right, i just see a bunch of pills with random card ids
-- [ ] remove the mine draft, it should just give gold, and update the rules
+- [x] remove the mine draft, it should just give gold, and update the rules
 
 ### Mini Milestone For Me
 ### Mini Milestone For Me
@@ -643,7 +643,8 @@ Done
 - [x] The mana and gold costs on the cards in hand needs to be much larger and easier to see
 - [ ] When moving between hexes we need to also be able to determine if we want to move just troops, champion, champion plus split of troops etc
 - [ ] The market transition can happen to fast while we're still waiting to see what all the actions were.
-- [ ] Dice roll in the market and in general needs to be a bit bigger and clearly mark who is who, also each player should click to "roll" their respective die.
+- [x] Dice roll in the market and in general needs to be a bit bigger and clearly mark who is who.
+- [ ] Market roll-offs: each player clicks to roll their respective die.
   - [x] Enlarge market roll-off dice UI and add clearer player labels.
   - [ ] Allow each player to click to roll their die (sync with server).
 - [x] In the market or on the card I don't see the nice champion stats that we created
