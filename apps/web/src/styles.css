@@ -2405,9 +2405,21 @@ body.is-game .status-pill--idle {
   box-shadow: 0 8px 18px rgba(180, 83, 9, 0.18);
 }
 
+body.is-game .hand-pass.is-armed {
+  border-color: #d97706;
+  background: rgba(64, 40, 20, 0.85);
+  color: #fbd7a5;
+  box-shadow: 0 8px 18px rgba(201, 113, 29, 0.24);
+}
+
 .hand-pass.is-armed:hover:not(:disabled) {
   border-color: #c2410c;
   background: #ffe7c0;
+}
+
+body.is-game .hand-pass.is-armed:hover:not(:disabled) {
+  border-color: #f59e0b;
+  background: rgba(82, 50, 24, 0.95);
 }
 
 .deck-counts--compact .resource-row {
@@ -2421,6 +2433,11 @@ body.is-game .status-pill--idle {
   border-radius: 12px;
   border: 1px solid var(--border);
   background: #fffdf6;
+}
+
+body.is-game .sidebar-section {
+  border-color: #3a2b20;
+  background: linear-gradient(160deg, #1b140f 0%, #120d0a 100%);
 }
 
 .sidebar-section--table {
@@ -2491,6 +2508,10 @@ body.is-game .status-pill--idle {
   color: var(--muted);
 }
 
+body.is-game .dock-count {
+  background: rgba(68, 45, 30, 0.65);
+}
+
 .intel-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -2504,6 +2525,11 @@ body.is-game .status-pill--idle {
   border-radius: 10px;
   border: 1px solid rgba(214, 200, 180, 0.7);
   background: #fdf7ec;
+}
+
+body.is-game .intel-card {
+  border-color: #3a2b20;
+  background: rgba(26, 19, 16, 0.92);
 }
 
 .intel-card--log {
@@ -2543,6 +2569,12 @@ body.is-game .status-pill--idle {
   padding: 10px;
   border-radius: 10px;
   background: #f6f0e4;
+}
+
+body.is-game .hand-empty,
+body.is-game .log-empty {
+  background: rgba(26, 19, 16, 0.92);
+  border: 1px solid rgba(58, 43, 32, 0.6);
 }
 
 .hand-meta {
@@ -3684,10 +3716,21 @@ body.is-game .card-tag--active {
   background: #fffdf6;
 }
 
+body.is-game .player-row {
+  border-color: #3a2b20;
+  background: rgba(26, 19, 16, 0.92);
+}
+
 .player-row--waiting {
   border-color: rgba(220, 38, 38, 0.45);
   background: #fff1f1;
   box-shadow: inset 4px 0 0 rgba(220, 38, 38, 0.35);
+}
+
+body.is-game .player-row--waiting {
+  border-color: rgba(248, 113, 113, 0.5);
+  background: rgba(92, 32, 32, 0.45);
+  box-shadow: inset 4px 0 0 rgba(248, 113, 113, 0.4);
 }
 
 .player-row--submitted {
@@ -3696,8 +3739,18 @@ body.is-game .card-tag--active {
   box-shadow: inset 4px 0 0 rgba(22, 163, 74, 0.35);
 }
 
+body.is-game .player-row--submitted {
+  border-color: rgba(74, 222, 128, 0.5);
+  background: rgba(26, 74, 45, 0.45);
+  box-shadow: inset 4px 0 0 rgba(74, 222, 128, 0.4);
+}
+
 .player-row--idle {
   background: #fffdf6;
+}
+
+body.is-game .player-row--idle {
+  background: rgba(26, 19, 16, 0.92);
 }
 
 .player-row__info {

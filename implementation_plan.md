@@ -571,6 +571,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
   - [ ] Convert remaining hard-coded light surfaces to theme variables so the dark palette is consistent.
     - [x] Market overlay surfaces (panel/order/bids/rolloff/chips) now use dark overrides.
     - [x] Card tag + detail surfaces now use dark overrides.
+    - [x] Sidebar sections, intel cards, player rows, and empty-state surfaces now use dark overrides.
 - [x] For cards with victory points we need to denote how many VP's they're worth on the card
 - [ ] We need to add logic and look for escalating champion costs as per the rules
 - [x] Slightly make the images a bit bigger and for all images it will crop, but I want it to crop like 10% higher than it is now, that is to say i want it centered 10% higher than it is now for all cards

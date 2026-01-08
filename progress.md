@@ -16,8 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- none
-- owner: agent2; scope: dark-theme remaining light surfaces for sidebar/intel/player list/empty states; files: `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in progress
+- agent4: Implement Age III Ruin the Span card (multi-edge bridge destruction) with engine target validation + UI edge picking support. Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/action-flow.test.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -52,6 +51,7 @@
 - Added champion-target selection UI with an in-hand list and explicit selection indicator to disambiguate multiple champions on one hex; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 - Added dark-fantasy in-game palette overrides (background + palette variables) with nav/panel/button/status restyling; updated the plan subtask. (Files: `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2) (Overlap note: `implementation_plan.md` also has agent3 edits in progress.)
 - Added dark-theme overrides for market overlay surfaces and card tag/detail backgrounds to push the fantasy look; updated the plan subtask. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
+- Added dark-theme overrides for sidebar sections, intel cards, player rows, and empty-state surfaces; updated the plan subtask. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2) (Overlap note: `progress.md` picked up agent4 active-task update.)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
