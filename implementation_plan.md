@@ -223,7 +223,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Cipher Quiet Study (round-start discard then redraw)
   - [x] Cipher Expanded Choice (pick from N+1 when choosing cards)
   - [x] Capital occupation VP bonus (+2 temp VP instead of +1)
-  - [ ] etc. (start with 1–2 factions but first double check the rules from rules_draft)
+- [ ] Confirm with the rules and everything that all faction passives are implemented
 - [x] Support faction starter spell effects with existing primitives (Air Drop deployForces, Rich Veins increaseMineValue).
 - [x] Implement remaining faction starter spell effects (Hold the Line, Marked for Coin, Perfect Recall).
 - Implement champions:
@@ -263,16 +263,16 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 ### Tasks
 - [x] Capital draft selection is simultaneous (no ordered picking); allow lock/unlock freely.
 - [ ] Setup flow overhaul into full-screen phases with host-advanced gates:
-  - [ ] Lobby waiting room view for join/ready state.
-  - [ ] Faction selection screen with faction abilities visible; host advances once all lock.
+  - [x] Lobby waiting room view for join/ready state.
+  - [x] Faction selection screen with faction abilities visible; host advances once all lock.
     - [x] Add faction ability copy data (passive + starter spell/champion text) for UI display.
   - [ ] Starting deck preview screen (card components) showing faction abilities; all ready -> host advance.
     - [ ] Show starter deck composition (counts) + champion/spell callouts.
   - [x] Map screen with two sub-steps:
     - [x] Capital selection (simultaneous, no turn order).
     - [x] Initial bridge placement: secret selection of two bridges, reveal simultaneously.
-  - [ ] Free starting card draft screen with improved presentation.
-  - [ ] Transition to main game after all setup steps complete.
+  - [x] Free starting card draft screen with improved presentation.
+  - [x] Transition to main game after all setup steps complete.
   - [x] Engine: add setup host-advance gate + setup status view (AdvanceSetup + readiness), update setup tests.
   - [x] Engine: add secret starting-bridge selection + reveal flow, with setup tests.
   - [ ] UI smoke coverage for setup gating/bridge reveal if feasible.
@@ -287,7 +287,6 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Combat and combat overlay redesign:
  - [x] Change the coords to the tile type and our labelling system e.g. Battle at A1 Mine
  - [x] Make Faction Icons Bigger
- - [ ] Make it more visual and less number based, this should be exciting and look nice and visually intuitive
    - [x] Each force alive should be represented by a circle and should have a die under it (unrolled)
    - [x] Each champion should also be represented by a circle and should have their stats and dice under them (unrolled) it should be obvious their health
    - [x] Then each player clicks roll and all the dice roll
@@ -297,9 +296,9 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
  - [x] Each consecutive round shouldn’t be like a new div / container appended to the bottom, the UI should just update to reflect the changes
  - [x] Right now there are issues with syncing, it should show who has rolled and who hasn’t and the outcomes should only show after both players hit roll and they should be synchronized in terms of going to the next round of the battle or retreating for all players
 - [x] Draw/discard UI clarity: show piles clearly and add draw animations in hand area.
-- [ ] Retreat rules implementation:
-  - [ ] If a bridge is adjacent and player has 1 mana, allow retreat selection.
-  - [ ] On retreat, resolve one final combat round, then move all forces across chosen bridge and end combat.
+- [x] Retreat rules implementation:
+  - [x] If a bridge is adjacent and player has 1 mana, allow retreat selection.
+  - [x] On retreat, resolve one final combat round, then move all forces across chosen bridge and end combat.
 - [x] Add "Burn the Bridges" card (rules-aligned effect + UI + tests).
 - [x] Live VP updates immediately on occupation changes.
 - [ ] Basic actions show a short hover tooltip explanation.
@@ -313,7 +312,6 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Add gold + VP to the hand panel header area (near Hand label).
 - [ ] Board "chit" styling (units/champions/forces) aligns with dark fantasy theme.
 - [x] Champion target modal should not shift page layout; convert to overlay.
-- [ ] Add stats tracking TODO (battles won, other metrics) for later.
 - [x] Fix card hover stacking so hovered cards always render on top.
 - [ ] Force-split dialog appears near the clicked hex (not bottom of screen).
 - [ ] Add an "active effects" view so players see ongoing effects.
@@ -357,7 +355,7 @@ I need some sort of script or way to edit the cards and decks in a nice UI with 
 - [x] Add a dev-only Card Editor view (toggle or route) that reuses card filters/grid.
 - [x] Implement inline editors for allowed fields with validation, revert, and "dirty" indicators.
 - [x] Add a clone-card flow that creates a new draft ID (suffix) and carries editable fields.
-- [x] Add a deck editor panel (market/power per age) to adjust counts and view totals.
+- [ ] Add a deck editor panel (market/power per age) to adjust counts and view totals.
 - [x] Surface initiative collisions in the editor view with per-deck grouping.
 - [x] Add an export panel that copies JSON patch + human-readable change summary.
 - [x] Add a local patch-apply script for Card Editor exports (edits only; clones manual).
@@ -651,6 +649,7 @@ Can I somehow add analytics to this? see players where, etc etc...
 - [ ] a turn timer that at the end picks a random valid card or something, this should be configurable from settings
 - [ ] add save / loading games
 - [ ] make a public list of rooms
+- [ ] add stats tracking throughout the game
 
 ### Acceptance criteria
 - 2–4 friends can play a complete game session without needing a restart.

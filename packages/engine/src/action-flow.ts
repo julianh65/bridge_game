@@ -2,6 +2,8 @@ import { areAdjacent, neighborHexKeys, parseEdgeKey, parseHexKey } from "@bridge
 
 import type {
   ActionDeclaration,
+  ActionResolutionEntry,
+  ActionResolutionState,
   BasicAction,
   BlockState,
   CardPlayDeclaration,
@@ -269,6 +271,78 @@ export const createActionStepBlock = (state: GameState): BlockState | null => {
   };
 };
 
+const buildActionResolutionEntries = (
+  state: GameState,
+  declarations: Record<PlayerID, ActionDeclaration | null>
+): ActionResolutionEntry[] => {
+  const orderedPlayers = getLeadOrderedPlayers(state.players, state.leadSeatIndex);
+  const leadOrderIndex = new Map(
+    orderedPlayers.map((player, index) => [player.id, index])
+  );
+
+  const cardPlays: Array<{
+    player: PlayerState;
+    declaration: CardPlayDeclaration;
+    card: CardDef | null;
+  }> = [];
+
+  for (const player of orderedPlayers) {
+    const declaration = declarations[player.id];
+    if (declaration?.kind === "card") {
+      cardPlays.push({
+        player,
+        declaration,
+        card: getCardDefinition(state, declaration.cardInstanceId)
+      });
+    }
+  }
+
+  const orderedCardPlays = [...cardPlays].sort((a, b) => {
+    const aInitiative = a.card?.initiative ?? Number.MAX_SAFE_INTEGER;
+    const bInitiative = b.card?.initiative ?? Number.MAX_SAFE_INTEGER;
+    if (aInitiative !== bInitiative) {
+      return aInitiative - bInitiative;
+    }
+    return (leadOrderIndex.get(a.player.id) ?? 0) - (leadOrderIndex.get(b.player.id) ?? 0);
+  });
+
+  const entries: ActionResolutionEntry[] = [];
+  for (const entry of orderedCardPlays) {
+    entries.push({
+      kind: "card",
+      playerId: entry.player.id,
+      cardInstanceId: entry.declaration.cardInstanceId,
+      targets: entry.declaration.targets ?? null
+    });
+  }
+
+  for (const player of orderedPlayers) {
+    const declaration = declarations[player.id];
+    if (declaration?.kind === "basic") {
+      entries.push({ kind: "basic", playerId: player.id, action: declaration.action });
+    }
+  }
+
+  for (const player of orderedPlayers) {
+    const declaration = declarations[player.id];
+    if (declaration?.kind === "done") {
+      entries.push({ kind: "done", playerId: player.id });
+    }
+  }
+
+  return entries;
+};
+
+export const createActionResolutionState = (
+  state: GameState,
+  declarations: Record<PlayerID, ActionDeclaration | null>
+): ActionResolutionState => {
+  return {
+    entries: buildActionResolutionEntries(state, declarations),
+    index: 0
+  };
+};
+
 export const applyActionDeclaration = (
   state: GameState,
   declaration: ActionDeclaration,
@@ -345,94 +419,13 @@ export const resolveActionStep = (
   state: GameState,
   declarations: Record<PlayerID, ActionDeclaration | null>
 ): GameState => {
+  const entries = buildActionResolutionEntries(state, declarations);
   let nextState = state;
-  const orderedPlayers = getLeadOrderedPlayers(state.players, state.leadSeatIndex);
-  const leadOrderIndex = new Map(
-    orderedPlayers.map((player, index) => [player.id, index])
-  );
-
-  const cardPlays: Array<{
-    player: PlayerState;
-    declaration: CardPlayDeclaration;
-    card: CardDef | null;
-  }> = [];
-
-  for (const player of orderedPlayers) {
-    const declaration = declarations[player.id];
-    if (declaration?.kind === "card") {
-      cardPlays.push({
-        player,
-        declaration,
-        card: getCardDefinition(state, declaration.cardInstanceId)
-      });
+  for (const entry of entries) {
+    nextState = resolveActionEntry(nextState, entry);
+    if (nextState.blocks?.type === "combat.retreat") {
+      return nextState;
     }
-  }
-
-  const orderedCardPlays = [...cardPlays].sort((a, b) => {
-    const aInitiative = a.card?.initiative ?? Number.MAX_SAFE_INTEGER;
-    const bInitiative = b.card?.initiative ?? Number.MAX_SAFE_INTEGER;
-    if (aInitiative !== bInitiative) {
-      return aInitiative - bInitiative;
-    }
-    return (leadOrderIndex.get(a.player.id) ?? 0) - (leadOrderIndex.get(b.player.id) ?? 0);
-  });
-
-  for (const entry of orderedCardPlays) {
-    const cardId = entry.card?.id ?? "unknown";
-    nextState = emit(nextState, {
-      type: `action.card.${cardId}`,
-      payload: {
-        playerId: entry.player.id,
-        cardId,
-        targets: entry.declaration.targets ?? null
-      }
-    });
-    if (entry.card) {
-      nextState = resolveCardEffects(
-        nextState,
-        entry.player.id,
-        entry.card,
-        entry.declaration.targets
-      );
-    }
-    nextState = finalizeCardPlay(
-      nextState,
-      entry.player.id,
-      entry.declaration.cardInstanceId,
-      entry.card
-    );
-    nextState = resolveImmediateBattles(nextState);
-  }
-
-  for (const player of orderedPlayers) {
-    const declaration = declarations[player.id];
-    if (!declaration || declaration.kind !== "basic") {
-      continue;
-    }
-
-    nextState = emit(nextState, {
-      type: `action.basic.${declaration.action.kind}`,
-      payload: { playerId: player.id, action: declaration.action }
-    });
-    nextState = resolveBasicAction(nextState, player.id, declaration.action);
-    nextState = resolveImmediateBattles(nextState);
-  }
-
-  for (const player of orderedPlayers) {
-    const declaration = declarations[player.id];
-    if (!declaration || declaration.kind !== "done") {
-      continue;
-    }
-    nextState = emit(nextState, {
-      type: "action.done",
-      payload: { playerId: player.id }
-    });
-    nextState = {
-      ...nextState,
-      players: nextState.players.map((entry) =>
-        entry.id === player.id ? { ...entry, doneThisRound: true } : entry
-      )
-    };
   }
 
   return nextState;
@@ -451,6 +444,78 @@ const resolveBasicAction = (state: GameState, playerId: PlayerID, action: BasicA
       return state;
     }
   }
+};
+
+function resolveActionEntry(state: GameState, entry: ActionResolutionEntry): GameState {
+  if (entry.kind === "card") {
+    const card = getCardDefinition(state, entry.cardInstanceId);
+    const cardId = card?.id ?? "unknown";
+    let nextState = emit(state, {
+      type: `action.card.${cardId}`,
+      payload: {
+        playerId: entry.playerId,
+        cardId,
+        targets: entry.targets ?? null
+      }
+    });
+    if (card) {
+      nextState = resolveCardEffects(nextState, entry.playerId, card, entry.targets ?? null);
+    }
+    nextState = finalizeCardPlay(nextState, entry.playerId, entry.cardInstanceId, card);
+    return resolveImmediateBattles(nextState);
+  }
+
+  if (entry.kind === "basic") {
+    let nextState = emit(state, {
+      type: `action.basic.${entry.action.kind}`,
+      payload: { playerId: entry.playerId, action: entry.action }
+    });
+    nextState = resolveBasicAction(nextState, entry.playerId, entry.action);
+    return resolveImmediateBattles(nextState);
+  }
+
+  let nextState = emit(state, {
+    type: "action.done",
+    payload: { playerId: entry.playerId }
+  });
+  nextState = {
+    ...nextState,
+    players: nextState.players.map((player) =>
+      player.id === entry.playerId ? { ...player, doneThisRound: true } : player
+    )
+  };
+  return nextState;
+}
+
+export const resolveNextActionEntry = (state: GameState): GameState => {
+  const pending = state.actionResolution;
+  if (!pending) {
+    return state;
+  }
+  const entry = pending.entries[pending.index];
+  if (!entry) {
+    return {
+      ...state,
+      actionResolution: undefined
+    };
+  }
+
+  const nextState = resolveActionEntry(state, entry);
+  const nextIndex = pending.index + 1;
+  if (nextIndex >= pending.entries.length) {
+    return {
+      ...nextState,
+      actionResolution: undefined
+    };
+  }
+
+  return {
+    ...nextState,
+    actionResolution: {
+      entries: pending.entries,
+      index: nextIndex
+    }
+  };
 };
 
 const resolveBuildBridge = (state: GameState, playerId: PlayerID, edgeKey: string): GameState => {

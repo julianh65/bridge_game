@@ -1,13 +1,17 @@
-import { compareHexKeys, randInt, rollDie } from "@bridgefront/shared";
+import { compareHexKeys, parseEdgeKey, randInt, rollDie } from "@bridgefront/shared";
 
 import type {
   ChampionUnitState,
+  BlockState,
   CombatAssignmentContext,
   CombatContext,
   CombatEndContext,
   CombatEndReason,
   CombatRoundContext,
   CombatSide,
+  CombatSideSummary,
+  CombatRetreatSelection,
+  EdgeKey,
   CombatUnitContext,
   GameState,
   HexKey,
@@ -33,6 +37,7 @@ import {
   removeChampionModifiers
 } from "./champions";
 import { applyChampionKillRewards } from "./rewards";
+import { moveStack } from "./units";
 
 const FORCE_HIT_FACES = 2;
 const MAX_STALE_COMBAT_ROUNDS = 20;
@@ -566,6 +571,97 @@ const summarizeUnits = (
   return { forces, champions, total: forces + champions };
 };
 
+const buildSideSummary = (
+  playerId: PlayerID,
+  unitIds: UnitID[],
+  units: Record<UnitID, UnitState>
+): CombatSideSummary => {
+  return {
+    playerId,
+    ...summarizeUnits(unitIds, units)
+  };
+};
+
+const getRetreatDestination = (hexKey: HexKey, edgeKey: EdgeKey): HexKey | null => {
+  try {
+    const [from, to] = parseEdgeKey(edgeKey);
+    if (from === hexKey) {
+      return to;
+    }
+    if (to === hexKey) {
+      return from;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+};
+
+const canRetreatToHex = (state: GameState, playerId: PlayerID, hexKey: HexKey): boolean => {
+  const hex = state.board.hexes[hexKey];
+  if (!hex) {
+    return false;
+  }
+  const occupants = getPlayerIdsOnHex(hex);
+  if (occupants.length < 2) {
+    return true;
+  }
+  return occupants.includes(playerId);
+};
+
+const getRetreatEdgesForPlayer = (
+  state: GameState,
+  hexKey: HexKey,
+  playerId: PlayerID
+): EdgeKey[] => {
+  const player = state.players.find((entry) => entry.id === playerId);
+  if (!player || player.resources.mana < 1) {
+    return [];
+  }
+
+  const edges: EdgeKey[] = [];
+  for (const bridge of Object.values(state.board.bridges)) {
+    if (bridge.locked) {
+      continue;
+    }
+    if (bridge.from !== hexKey && bridge.to !== hexKey) {
+      continue;
+    }
+    const destination = bridge.from === hexKey ? bridge.to : bridge.from;
+    if (!canRetreatToHex(state, playerId, destination)) {
+      continue;
+    }
+    edges.push(bridge.key);
+  }
+
+  return edges;
+};
+
+const applyRetreatMoves = (
+  state: GameState,
+  hexKey: HexKey,
+  plans: Array<{ playerId: PlayerID; destination: HexKey }>
+): GameState => {
+  let nextState = state;
+
+  for (const plan of plans) {
+    const hex = nextState.board.hexes[hexKey];
+    if (!hex) {
+      continue;
+    }
+    const occupants = hex.occupants[plan.playerId] ?? [];
+    if (occupants.length === 0) {
+      continue;
+    }
+    nextState = {
+      ...nextState,
+      board: moveStack(nextState.board, plan.playerId, hexKey, plan.destination)
+    };
+  }
+
+  return nextState;
+};
+
 const createEmptyHitSummary = (): HitAssignmentSummary => ({
   forces: 0,
   champions: []
@@ -602,7 +698,64 @@ const summarizeHitAssignments = (
   return { forces, champions };
 };
 
-export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState => {
+export const createCombatRetreatBlock = (
+  state: GameState,
+  hexKey: HexKey
+): BlockState | null => {
+  const hex = state.board.hexes[hexKey];
+  if (!hex) {
+    return null;
+  }
+
+  const participants = getPlayerIdsOnHex(hex);
+  if (participants.length !== 2) {
+    return null;
+  }
+
+  const attackersId = participants[0];
+  const defendersId = participants[1];
+  const availableEdges: Record<PlayerID, EdgeKey[]> = {
+    [attackersId]: getRetreatEdgesForPlayer(state, hexKey, attackersId),
+    [defendersId]: getRetreatEdgesForPlayer(state, hexKey, defendersId)
+  };
+  const eligiblePlayerIds = participants.filter(
+    (playerId) => (availableEdges[playerId] ?? []).length > 0
+  );
+  if (eligiblePlayerIds.length === 0) {
+    return null;
+  }
+
+  const choices = Object.fromEntries(
+    participants.map((playerId) => [playerId, null])
+  ) as Record<PlayerID, CombatRetreatSelection>;
+
+  return {
+    type: "combat.retreat",
+    waitingFor: eligiblePlayerIds,
+    payload: {
+      hexKey,
+      attackers: buildSideSummary(
+        attackersId,
+        hex.occupants[attackersId] ?? [],
+        state.board.units
+      ),
+      defenders: buildSideSummary(
+        defendersId,
+        hex.occupants[defendersId] ?? [],
+        state.board.units
+      ),
+      eligiblePlayerIds,
+      availableEdges,
+      choices
+    }
+  };
+};
+
+export const resolveBattleAtHex = (
+  state: GameState,
+  hexKey: HexKey,
+  retreatChoices?: Record<PlayerID, EdgeKey>
+): GameState => {
   const hex = state.board.hexes[hexKey];
   if (!hex) {
     return state;
@@ -613,19 +766,61 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
     return state;
   }
 
+  const retreatPlans: Array<{ playerId: PlayerID; destination: HexKey }> = [];
+  if (retreatChoices) {
+    for (const playerId of participants) {
+      const edgeKey = retreatChoices[playerId];
+      if (!edgeKey) {
+        continue;
+      }
+      const bridge = state.board.bridges[edgeKey];
+      if (!bridge || bridge.locked) {
+        continue;
+      }
+      const destination = getRetreatDestination(hexKey, edgeKey);
+      if (!destination || !canRetreatToHex(state, playerId, destination)) {
+        continue;
+      }
+      const player = state.players.find((entry) => entry.id === playerId);
+      if (!player || player.resources.mana < 1) {
+        continue;
+      }
+      retreatPlans.push({ playerId, destination });
+    }
+  }
+
+  let nextState: GameState = state;
+  if (retreatPlans.length > 0) {
+    const retreating = new Set(retreatPlans.map((plan) => plan.playerId));
+    nextState = {
+      ...nextState,
+      players: nextState.players.map((player) =>
+        retreating.has(player.id)
+          ? {
+              ...player,
+              resources: {
+                ...player.resources,
+                mana: Math.max(0, player.resources.mana - 1)
+              }
+            }
+          : player
+      )
+    };
+  }
+
   const initialAttackers = hex.occupants[participants[0]] ?? [];
   const initialDefenders = hex.occupants[participants[1]] ?? [];
-  let nextState = emit(state, {
+  nextState = emit(nextState, {
     type: "combat.start",
     payload: {
       hexKey,
       attackers: {
         playerId: participants[0],
-        ...summarizeUnits(initialAttackers, state.board.units)
+        ...summarizeUnits(initialAttackers, nextState.board.units)
       },
       defenders: {
         playerId: participants[1],
-        ...summarizeUnits(initialDefenders, state.board.units)
+        ...summarizeUnits(initialDefenders, nextState.board.units)
       }
     }
   });
@@ -635,6 +830,7 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
   let staleRounds = 0;
   let endReason: CombatEndReason = "eliminated";
   let battleRound = 0;
+  const retreatAfterRound = retreatPlans.length > 0;
   let bodyguardUsed: Record<CombatSide, boolean> = {
     attackers: false,
     defenders: false
@@ -697,8 +893,10 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
       unitCanHit(nextState, modifiers, contextBase, "defenders", unitId, nextUnits[unitId])
     );
     if (!attackersCanHit && !defendersCanHit) {
-      endReason = "noHits";
-      break;
+      if (!retreatAfterRound) {
+        endReason = "noHits";
+        break;
+      }
     }
 
     const attackerRoll = rollHitsForUnits(
@@ -749,6 +947,13 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
           hitsToDefenders: createEmptyHitSummary()
         }
       });
+      if (retreatAfterRound) {
+        nextState = applyRetreatMoves(nextState, hexKey, retreatPlans);
+        nextBoard = nextState.board;
+        nextUnits = nextState.board.units;
+        endReason = "retreated";
+        break;
+      }
       if (staleRounds >= MAX_STALE_COMBAT_ROUNDS) {
         endReason = "stale";
         break;
@@ -942,6 +1147,22 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
 
     nextBoard = nextState.board;
     nextUnits = nextState.board.units;
+
+    const postRoundHex = nextBoard.hexes[hexKey];
+    const remainingAttackers = postRoundHex?.occupants[participants[0]] ?? [];
+    const remainingDefenders = postRoundHex?.occupants[participants[1]] ?? [];
+    if (remainingAttackers.length === 0 || remainingDefenders.length === 0) {
+      endReason = "eliminated";
+      break;
+    }
+
+    if (retreatAfterRound) {
+      nextState = applyRetreatMoves(nextState, hexKey, retreatPlans);
+      nextBoard = nextState.board;
+      nextUnits = nextState.board.units;
+      endReason = "retreated";
+      break;
+    }
   }
 
   const finalHex = nextBoard.hexes[hexKey];
@@ -992,7 +1213,70 @@ export const resolveBattleAtHex = (state: GameState, hexKey: HexKey): GameState 
   return expireEndOfBattleModifiers(nextState, hexKey);
 };
 
+export const applyCombatRetreatChoice = (
+  state: GameState,
+  playerId: PlayerID,
+  payload: { hexKey: HexKey; edgeKey: EdgeKey | null }
+): GameState => {
+  const block = state.blocks;
+  if (!block || block.type !== "combat.retreat") {
+    return state;
+  }
+  if (block.payload.hexKey !== payload.hexKey) {
+    return state;
+  }
+  if (!block.waitingFor.includes(playerId)) {
+    return state;
+  }
+  if (!block.payload.eligiblePlayerIds.includes(playerId)) {
+    return state;
+  }
+
+  let choice: CombatRetreatSelection = "stay";
+  if (payload.edgeKey) {
+    const options = block.payload.availableEdges[playerId] ?? [];
+    if (!options.includes(payload.edgeKey)) {
+      return state;
+    }
+    choice = payload.edgeKey;
+  }
+
+  return {
+    ...state,
+    blocks: {
+      ...block,
+      waitingFor: block.waitingFor.filter((id) => id !== playerId),
+      payload: {
+        ...block.payload,
+        choices: {
+          ...block.payload.choices,
+          [playerId]: choice
+        }
+      }
+    }
+  };
+};
+
+export const resolveCombatRetreatBlock = (
+  state: GameState,
+  block: Extract<BlockState, { type: "combat.retreat" }>
+): GameState => {
+  const retreatChoices: Record<PlayerID, EdgeKey> = {};
+  for (const [playerId, choice] of Object.entries(block.payload.choices)) {
+    if (!choice || choice === "stay") {
+      continue;
+    }
+    retreatChoices[playerId] = choice;
+  }
+
+  return resolveBattleAtHex(state, block.payload.hexKey, retreatChoices);
+};
+
 export const resolveImmediateBattles = (state: GameState): GameState => {
+  if (state.blocks?.type === "combat.retreat") {
+    return state;
+  }
+
   const contested = Object.values(state.board.hexes)
     .filter((hex) => hex.tile !== "capital" && isContestedHex(hex))
     .map((hex) => hex.key)
@@ -1000,6 +1284,13 @@ export const resolveImmediateBattles = (state: GameState): GameState => {
 
   let nextState = state;
   for (const hexKey of contested) {
+    const block = createCombatRetreatBlock(nextState, hexKey);
+    if (block) {
+      return {
+        ...nextState,
+        blocks: block
+      };
+    }
     nextState = resolveBattleAtHex(nextState, hexKey);
   }
 
@@ -1007,6 +1298,10 @@ export const resolveImmediateBattles = (state: GameState): GameState => {
 };
 
 export const resolveSieges = (state: GameState): GameState => {
+  if (state.blocks?.type === "combat.retreat") {
+    return state;
+  }
+
   const seatIndexByPlayer = new Map<PlayerID, number>();
   for (const player of state.players) {
     seatIndexByPlayer.set(player.id, player.seatIndex);
@@ -1030,6 +1325,13 @@ export const resolveSieges = (state: GameState): GameState => {
 
   let nextState = state;
   for (const entry of contestedCapitals) {
+    const block = createCombatRetreatBlock(nextState, entry.key);
+    if (block) {
+      return {
+        ...nextState,
+        blocks: block
+      };
+    }
     nextState = resolveBattleAtHex(nextState, entry.key);
   }
 

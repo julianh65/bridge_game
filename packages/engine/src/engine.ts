@@ -30,8 +30,13 @@ import {
   resolveQuietStudyChoices,
   resolveCollectionChoices
 } from "./round-flow";
-import { applyActionDeclaration, createActionStepBlock, resolveActionStep } from "./action-flow";
-import { resolveSieges } from "./combat";
+import {
+  applyActionDeclaration,
+  createActionResolutionState,
+  createActionStepBlock,
+  resolveNextActionEntry
+} from "./action-flow";
+import { applyCombatRetreatChoice, resolveCombatRetreatBlock, resolveSieges } from "./combat";
 import { emit } from "./events";
 import {
   applyMarketBid,
@@ -191,6 +196,10 @@ export const applyCommand = (
     return applyCollectionChoice(state, _command.payload, _playerId);
   }
 
+  if (_command.type === "SubmitCombatRetreat") {
+    return applyCombatRetreatChoice(state, _playerId, _command.payload);
+  }
+
   return state;
 };
 
@@ -200,6 +209,18 @@ export const runUntilBlocked = (state: GameState): GameState => {
   while (true) {
     if (nextState.winnerPlayerId) {
       return nextState;
+    }
+
+    if (nextState.blocks?.type === "combat.retreat") {
+      if (nextState.blocks.waitingFor.length > 0) {
+        return nextState;
+      }
+      nextState = resolveCombatRetreatBlock(nextState, nextState.blocks);
+      nextState = {
+        ...nextState,
+        blocks: undefined
+      };
+      continue;
     }
 
     if (nextState.phase === "round.reset") {
@@ -279,6 +300,14 @@ export const runUntilBlocked = (state: GameState): GameState => {
     }
 
     if (nextState.phase === "round.action") {
+      if (nextState.actionResolution) {
+        nextState = resolveNextActionEntry(nextState);
+        if (nextState.blocks?.type === "combat.retreat") {
+          return nextState;
+        }
+        continue;
+      }
+
       if (!nextState.blocks) {
         const block = createActionStepBlock(nextState);
         if (!block) {
@@ -296,10 +325,13 @@ export const runUntilBlocked = (state: GameState): GameState => {
         if (nextState.blocks.waitingFor.length > 0) {
           return nextState;
         }
-        nextState = resolveActionStep(nextState, nextState.blocks.payload.declarations);
         nextState = {
           ...nextState,
-          blocks: undefined
+          blocks: undefined,
+          actionResolution: createActionResolutionState(
+            nextState,
+            nextState.blocks.payload.declarations
+          )
         };
         continue;
       }
@@ -309,6 +341,9 @@ export const runUntilBlocked = (state: GameState): GameState => {
 
     if (nextState.phase === "round.sieges") {
       nextState = resolveSieges(nextState);
+      if (nextState.blocks?.type === "combat.retreat") {
+        return nextState;
+      }
       nextState = enterPhase(nextState, "round.collection");
       continue;
     }

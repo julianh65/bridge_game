@@ -182,7 +182,16 @@ export type HitAssignmentPolicy =
   | "tacticalHand"
   | "focusFire";
 
-export type CombatEndReason = "eliminated" | "noHits" | "stale";
+export type CombatEndReason = "eliminated" | "noHits" | "stale" | "retreated";
+
+export type CombatSideSummary = {
+  playerId: PlayerID;
+  forces: number;
+  champions: number;
+  total: number;
+};
+
+export type CombatRetreatSelection = EdgeKey | "stay" | null;
 
 export type CombatContext = {
   hexKey: HexKey;
@@ -367,6 +376,17 @@ export type BlockState = {
   payload: {
     declarations: Record<PlayerID, ActionDeclaration | null>;
   };
+} | {
+  type: "combat.retreat";
+  waitingFor: PlayerID[];
+  payload: {
+    hexKey: HexKey;
+    attackers: CombatSideSummary;
+    defenders: CombatSideSummary;
+    eligiblePlayerIds: PlayerID[];
+    availableEdges: Record<PlayerID, EdgeKey[]>;
+    choices: Record<PlayerID, CombatRetreatSelection>;
+  };
 };
 
 export type GameEvent = {
@@ -398,6 +418,7 @@ export type GameState = {
   logs: GameEvent[];
   modifiers: Modifier[];
   blocks?: BlockState;
+  actionResolution?: ActionResolutionState;
   cardsByInstanceId: Record<CardInstanceID, CardInstance>;
   winnerPlayerId: PlayerID | null;
 };
@@ -434,6 +455,21 @@ export type ActionDeclaration =
   | CardPlayDeclaration
   | { kind: "done" };
 
+export type ActionResolutionEntry =
+  | {
+      kind: "card";
+      playerId: PlayerID;
+      cardInstanceId: CardInstanceID;
+      targets?: CardPlayTargets;
+    }
+  | { kind: "basic"; playerId: PlayerID; action: BasicAction }
+  | { kind: "done"; playerId: PlayerID };
+
+export type ActionResolutionState = {
+  entries: ActionResolutionEntry[];
+  index: number;
+};
+
 export type Command = {
   type: "SubmitSetupChoice";
   payload: SetupChoice;
@@ -451,6 +487,9 @@ export type Command = {
 } | {
   type: "SubmitCollectionChoices";
   payload: CollectionChoice[];
+} | {
+  type: "SubmitCombatRetreat";
+  payload: { hexKey: HexKey; edgeKey: EdgeKey | null };
 };
 
 export type PlayerPublicView = {
@@ -553,6 +592,16 @@ export type QuietStudyPrivateView = {
   isWaiting: boolean;
 };
 
+export type CombatRetreatPublicView = {
+  hexKey: HexKey;
+  attackers: CombatSideSummary;
+  defenders: CombatSideSummary;
+  waitingForPlayerIds: PlayerID[];
+  eligiblePlayerIds: PlayerID[];
+  availableEdges: Record<PlayerID, EdgeKey[]>;
+  choices: Record<PlayerID, CombatRetreatSelection>;
+};
+
 export type SetupPublicView =
   | {
       type: "setup.capitalDraft";
@@ -618,6 +667,7 @@ export type GameView = {
     logs: GameEvent[];
     players: PlayerPublicView[];
     actionStep: ActionStepPublicView | null;
+    combat: CombatRetreatPublicView | null;
     setup: SetupPublicView | null;
     setupStatus: SetupStatusView | null;
     collection: CollectionPublicView | null;

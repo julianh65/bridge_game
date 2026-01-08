@@ -616,6 +616,7 @@ export const GameScreen = ({
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMarketOverlayOpen, setIsMarketOverlayOpen] = useState(false);
+  const [isCollectionOverlayOpen, setIsCollectionOverlayOpen] = useState(false);
   const [marketOutroHold, setMarketOutroHold] = useState(false);
   const [marketWinner, setMarketWinner] = useState<MarketWinnerHighlight | null>(null);
   const [marketWinnerHistory, setMarketWinnerHistory] = useState<
@@ -644,6 +645,7 @@ export const GameScreen = ({
   const lastCardRevealIndex = useRef(-1);
   const marketOverlayHoldTimeout = useRef<number | null>(null);
   const wasMarketPhaseRef = useRef(false);
+  const wasCollectionPhaseRef = useRef(false);
   const marketRowKey = useMemo(() => {
     const cardIds = view.public.market.currentRow.map((card) => card.cardId).join("|");
     return `${view.public.market.age}:${view.public.round}:${cardIds}`;
@@ -956,6 +958,7 @@ export const GameScreen = ({
     (isMarketPhase && (isMarketOverlayOpen || shouldForceMarketOverlay)) ||
     shouldHoldMarketOverlay;
   const canToggleMarketOverlay = isMarketPhase && !shouldForceMarketOverlay;
+  const showCollectionOverlay = isCollectionPhase && isCollectionOverlayOpen;
   const canShowHandPanel =
     Boolean(view.private) && isActionPhase && !showMarketOverlay;
   const showVictoryScreen = Boolean(view.public.winnerPlayerId && isVictoryVisible);
@@ -1247,6 +1250,20 @@ export const GameScreen = ({
     }
     setMarketOutroHold(false);
   }, [isMarketPhase, isMarketOverlayOpen, marketOutroHoldMs]);
+
+  useEffect(() => {
+    if (isCollectionPhase) {
+      if (!wasCollectionPhaseRef.current) {
+        setIsCollectionOverlayOpen(true);
+      }
+      wasCollectionPhaseRef.current = true;
+      return;
+    }
+    if (wasCollectionPhaseRef.current) {
+      wasCollectionPhaseRef.current = false;
+      setIsCollectionOverlayOpen(false);
+    }
+  }, [isCollectionPhase]);
 
   useEffect(() => {
     if (!canToggleMarketOverlay) {
@@ -2664,22 +2681,44 @@ export const GameScreen = ({
     onSubmitQuietStudy(quietStudySelectedIds);
   };
 
+  const showCollectionOverlayToggle = isCollectionPhase;
+  const collectionToggleLabel = showCollectionOverlay
+    ? "Hide Collection"
+    : "Show Collection";
   const collectionOverlay = isCollectionPhase ? (
-    <div className="collection-overlay" role="dialog" aria-modal="true">
-      <div className="collection-overlay__scrim" />
-      <div className="collection-overlay__panel">
-        <CollectionPanel
-          phase={view.public.phase}
-          player={localPlayer ?? null}
-          players={view.public.players}
-          status={status}
-          handCards={handCards}
-          collectionPublic={view.public.collection}
-          collectionPrivate={view.private?.collection ?? null}
-          onSubmitChoices={onSubmitCollectionChoices}
-        />
-      </div>
-    </div>
+    <>
+      {showCollectionOverlay ? (
+        <div className="collection-overlay" role="dialog" aria-modal="true">
+          <div className="collection-overlay__scrim" />
+          <div className="collection-overlay__panel">
+            <CollectionPanel
+              phase={view.public.phase}
+              player={localPlayer ?? null}
+              players={view.public.players}
+              status={status}
+              handCards={handCards}
+              collectionPublic={view.public.collection}
+              collectionPrivate={view.private?.collection ?? null}
+              labelByHex={hexLabels}
+              onSubmitChoices={onSubmitCollectionChoices}
+            />
+          </div>
+        </div>
+      ) : null}
+      {showCollectionOverlayToggle ? (
+        <button
+          type="button"
+          className={`btn btn-primary collection-overlay__toggle${
+            showCollectionOverlay ? " is-active" : ""
+          }`}
+          data-sfx="soft"
+          aria-pressed={showCollectionOverlay}
+          onClick={() => setIsCollectionOverlayOpen((current) => !current)}
+        >
+          {collectionToggleLabel}
+        </button>
+      ) : null}
+    </>
   ) : null;
 
   const showMarketOverlayToggle = isMarketPhase;

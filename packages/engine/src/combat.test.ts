@@ -4,6 +4,7 @@ import * as shared from "@bridgefront/shared";
 
 import { createBaseBoard } from "./board-generation";
 import { resolveBattleAtHex, resolveImmediateBattles, resolveSieges } from "./combat";
+import { getBridgeKey } from "./board";
 import { applyChampionDeployment } from "./champions";
 import { emit } from "./events";
 import { createFactionModifiers } from "./faction-passives";
@@ -961,5 +962,69 @@ describe("combat resolution", () => {
     const remaining = resolved.modifiers.map((modifier) => modifier.id).sort();
 
     expect(remaining).toEqual(["m2", "m3"]);
+  });
+
+  it("retreats after one round and spends mana", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({
+      value: 6,
+      next: rng
+    }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 3, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    const retreatHex = "1,0";
+    const edgeKey = getBridgeKey(hexKey, retreatHex);
+
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        p1: ["f1"],
+        p2: ["f2"]
+      }
+    };
+    board.units = {
+      f1: { id: "f1", ownerPlayerId: "p1", kind: "force", hex: hexKey },
+      f2: { id: "f2", ownerPlayerId: "p2", kind: "force", hex: hexKey }
+    };
+    board.bridges[edgeKey] = {
+      key: edgeKey,
+      from: hexKey,
+      to: retreatHex,
+      ownerPlayerId: "p1"
+    };
+
+    const state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(5),
+      board,
+      players: base.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              resources: {
+                ...player.resources,
+                mana: 1
+              }
+            }
+          : player
+      )
+    };
+
+    const resolved = resolveBattleAtHex(state, hexKey, { p1: edgeKey });
+    const retreatHexState = resolved.board.hexes[retreatHex];
+    const originHexState = resolved.board.hexes[hexKey];
+
+    expect(retreatHexState.occupants["p1"] ?? []).toHaveLength(1);
+    expect(originHexState.occupants["p1"] ?? []).toHaveLength(0);
+    expect(originHexState.occupants["p2"] ?? []).toHaveLength(1);
+    const p1 = resolved.players.find((player) => player.id === "p1");
+    expect(p1?.resources.mana).toBe(0);
   });
 });

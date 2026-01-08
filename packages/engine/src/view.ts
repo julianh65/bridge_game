@@ -1,5 +1,6 @@
 import type {
   BlockState,
+  CombatRetreatPublicView,
   GameState,
   GameView,
   Modifier,
@@ -87,6 +88,20 @@ const buildSetupStatusView = (state: GameState): SetupStatusView | null => {
   };
 };
 
+const buildCombatRetreatView = (
+  block: Extract<BlockState, { type: "combat.retreat" }>
+): CombatRetreatPublicView => {
+  return {
+    hexKey: block.payload.hexKey,
+    attackers: block.payload.attackers,
+    defenders: block.payload.defenders,
+    waitingForPlayerIds: block.waitingFor,
+    eligiblePlayerIds: block.payload.eligiblePlayerIds,
+    availableEdges: block.payload.availableEdges,
+    choices: block.payload.choices
+  };
+};
+
 const mapCardInstances = (state: GameState, instanceIds: string[]) => {
   return instanceIds.map(
     (instanceId) =>
@@ -154,6 +169,8 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
         }
       : null;
   const setupStatus = buildSetupStatusView(state);
+  const combatPublic =
+    state.blocks?.type === "combat.retreat" ? buildCombatRetreatView(state.blocks) : null;
 
   return {
     public: {
@@ -177,6 +194,7 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
         connected: player.visibility.connected
       })),
       actionStep,
+      combat: combatPublic,
       setup: setupPublic,
       setupStatus,
       collection: collectionPublic,

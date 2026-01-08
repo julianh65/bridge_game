@@ -4156,6 +4156,32 @@ body.is-game .market-overlay__panel {
   box-shadow: 0 22px 60px rgba(22, 18, 12, 0.4);
 }
 
+.collection-overlay__toggle {
+  position: fixed;
+  right: 24px;
+  top: 190px;
+  z-index: 66;
+  min-width: 190px;
+  padding: 12px 20px;
+  font-size: 14px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.02em;
+  box-shadow: 0 12px 24px rgba(20, 12, 6, 0.35);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.collection-overlay__toggle.is-active {
+  box-shadow: 0 12px 26px rgba(20, 12, 6, 0.4);
+}
+
+.collection-overlay__toggle:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(20, 12, 6, 0.4);
+}
+
 body.is-game .collection-overlay__panel {
   border-color: var(--border);
   background: linear-gradient(135deg, #1b1410, #120d0a 65%, #1d1410);
@@ -4700,6 +4726,74 @@ body.is-game .market-rolloff__entry.is-winner .market-rolloff__name {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+}
+
+.collection-summary {
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fff3dc;
+}
+
+body.is-game .collection-summary {
+  background: rgba(32, 22, 16, 0.8);
+  border-color: #4a3627;
+}
+
+.collection-summary__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.collection-summary__title {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.collection-summary__count {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f6ead2;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+body.is-game .collection-summary__count {
+  background: #2a1e16;
+  color: var(--muted);
+}
+
+.collection-summary__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+
+.collection-summary__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.collection-summary__label {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.collection-summary__detail {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: right;
 }
 
 .collection-prompts {
@@ -7864,6 +7958,14 @@ body.is-game .combat-outcome__auto {
     left: 50%;
     right: auto;
     bottom: 24px;
+    min-width: 160px;
+  }
+
+  .collection-overlay__toggle {
+    top: auto;
+    left: 50%;
+    right: auto;
+    bottom: 90px;
     min-width: 160px;
   }
 

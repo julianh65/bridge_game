@@ -270,6 +270,9 @@ export default function App() {
           onSubmitQuietStudy={(cardInstanceIds) =>
             room.sendCommand({ type: "SubmitQuietStudy", payload: { cardInstanceIds } })
           }
+          onSubmitCombatRetreat={(hexKey, edgeKey) =>
+            room.sendCommand({ type: "SubmitCombatRetreat", payload: { hexKey, edgeKey } })
+          }
           combatSync={room.combatSync}
           serverTimeOffset={room.serverTimeOffset}
           onCombatRoll={(sequenceId, roundIndex) =>

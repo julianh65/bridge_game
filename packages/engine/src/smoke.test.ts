@@ -151,6 +151,24 @@ const resolveActionStepBlock = (state: GameState): GameState => {
   return nextState;
 };
 
+const resolveCombatRetreatBlock = (state: GameState): GameState => {
+  let nextState = state;
+  const block = nextState.blocks;
+  if (!block || block.type !== "combat.retreat") {
+    return nextState;
+  }
+
+  for (const playerId of block.waitingFor) {
+    nextState = applyCommand(
+      nextState,
+      { type: "SubmitCombatRetreat", payload: { hexKey: block.payload.hexKey, edgeKey: null } },
+      playerId
+    );
+  }
+
+  return nextState;
+};
+
 const buildCollectionChoices = (
   state: GameState,
   playerId: PlayerID,
@@ -252,6 +270,8 @@ const resolveBlock = (state: GameState): GameState => {
       return resolveMarketBidBlock(state);
     case "actionStep.declarations":
       return resolveActionStepBlock(state);
+    case "combat.retreat":
+      return resolveCombatRetreatBlock(state);
     case "collection.choices":
       return resolveCollectionBlock(state);
     default: {
@@ -720,6 +740,13 @@ const resolveQuietStudyBlockRandom = (state: GameState, picker: DecisionPicker):
   return nextState;
 };
 
+const resolveCombatRetreatBlockRandom = (
+  state: GameState,
+  _picker: DecisionPicker
+): GameState => {
+  return resolveCombatRetreatBlock(state);
+};
+
 const resolveBlockRandom = (state: GameState, picker: DecisionPicker): GameState => {
   const block = state.blocks;
   if (!block) {
@@ -746,6 +773,8 @@ const resolveBlockRandom = (state: GameState, picker: DecisionPicker): GameState
       return resolveMarketBidBlockRandom(state, picker);
     case "actionStep.declarations":
       return resolveActionStepBlockRandom(state, picker);
+    case "combat.retreat":
+      return resolveCombatRetreatBlockRandom(state, picker);
     case "round.quietStudy":
       return resolveQuietStudyBlockRandom(state, picker);
     case "collection.choices":

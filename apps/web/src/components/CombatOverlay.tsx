@@ -765,14 +765,6 @@ export const CombatOverlay = ({
           <div className="combat-overlay__actions">
             <button
               type="button"
-              className="btn btn-tertiary"
-              disabled
-              title="Retreat selection coming soon"
-            >
-              Retreat (1 mana)
-            </button>
-            <button
-              type="button"
               className="btn btn-primary"
               onClick={handleRoll}
               disabled={hasSync ? rollDisabled : isResolving}
