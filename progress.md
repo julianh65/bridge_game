@@ -57,6 +57,7 @@
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
+- TODO: add Mortar Shot UI helpers (range-limited hex highlights + scatter/aoe hint) in targeting UI (tracked in `implementation_plan.md`).
 - Added collection draw roll reveal animations (mine/forge/center) with `NumberRoll` styling and plan subtask updates. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 - Thickened power/champion GameCard borders for clearer differentiation and marked the plan item complete. (Overlap note: `apps/web/src/styles.css` touched.)
 - Simplified the basic actions UI: removed pick/clear buttons, made march/bridge targets clickable fields, and auto-clear march destination when the start changes; marked the plan item complete in `implementation_plan.md`. (Overlap note: touched `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`.)
@@ -92,6 +93,7 @@
 - Removed the native browser tooltip on unit stack/champion token hover so only the custom SVG tooltip appears.
 - Overlap note: commit also picked up pre-staged changes in `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, and `implementation_plan.md`.
 - Increased bridge preview hitbox width to make edge selection easier. (Overlap note: touched `apps/web/src/styles.css` alongside agent3/agent4.)
+- Fixed duplicate `edgeKeys` variable name in `GameScreen` target reveal helper to resolve Vite compile error.
 - Added emoji resource symbols (gold/mana/VP) in the command center + table stats with distinct colors for easier scanning.
 - Slimmed the action strip: moved Pass/Submit + deck counts into the hand footer, simplified basic actions, and added a command-center table with per-player gold/mana/hand counts.
 - Aligned action enablement with action-step waiting eligibility and added action-panel hints for disabled states (no mana/submitted/not action phase).

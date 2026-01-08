@@ -223,10 +223,14 @@ const describeRevealTargets = (
     }
   };
 
-  const edgeKeys = getTargetStringArray(targets, "edgeKeys");
-  if (edgeKeys.length > 0) {
-    edgeKeys.forEach(addEdge);
-    pushLine(edgeKeys.length === 1 ? `Edge ${edgeKeys[0]}` : `Edges ${edgeKeys.join(", ")}`);
+  const edgeKeyList = getTargetStringArray(targets, "edgeKeys");
+  if (edgeKeyList.length > 0) {
+    edgeKeyList.forEach(addEdge);
+    pushLine(
+      edgeKeyList.length === 1
+        ? `Edge ${edgeKeyList[0]}`
+        : `Edges ${edgeKeyList.join(", ")}`
+    );
   } else {
     const edgeKey = getTargetString(targets, "edgeKey");
     if (edgeKey) {
