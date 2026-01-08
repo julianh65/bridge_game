@@ -1,18 +1,9 @@
 # Bridgefront Web MVP — Implementation Plan
 
-This plan is organized by deliverable milestones with concrete acceptance criteria.
+This plan is organized by deliverable milestones with concrete acceptance criteria. It's a living breathing document that is always being added to by the admin. Old milestones and tasks will
+sometimes be culled / cleaned up to reduce context load on things completed.
 The aim is to reach “playable with friends” quickly while preserving a clean extension path.
 
----
-
-## Milestone 0 — Repo scaffolding + dev ergonomics
-
-### Tasks
-- [x] Add basic test runner for engine (`vitest` preferred for TS).
-- [x] Add a single shared `@bridgefront/shared` package for ids/hex/RNG utils.
-- [x] Add dev scripts (web dev server, room server dev, tests).
-
----
 
 ## Milestone 1 — Engine core skeleton (no UI logic yet)
 
@@ -36,20 +27,6 @@ The aim is to reach “playable with friends” quickly while preserving a clean
   - `buildView(state, viewerPlayerId)`
 - [x] Extracted view construction into `packages/engine/src/view.ts` for clarity.
 
-### Acceptance criteria
-- A single test creates a 2-player game state, runs `runUntilBlocked`, and ends blocked on the first setup input (capital draft).
-
----
-
-## Milestone 1.5 — Early debug UI (local inspector)
-
-### Tasks
-- [x] Build a local-only debug UI in `apps/web` that renders a seeded board.
-
-### Acceptance criteria
-- `apps/web` shows a deterministic board inspector without needing the server.
-
----
 
 ## Milestone 2 — Setup flow + procedural map
 
@@ -114,51 +91,14 @@ Goal: get the board game “moving pieces and fighting” ASAP.
 
 ### Tasks (server)
 - [x] Implement PartyKit room server (host-controlled start; engine handles legality checks):
-  - create room state
-  - handle join (assign seat or spectator)
-  - handle command messages -> apply to engine -> broadcast update
-  - maintain revision and reject out-of-turn / invalid block commands (lightly)
 - [x] Implement rejoin token:
-  - generate per-seat token
-  - store mapping in room memory
-  - allow reclaiming seat on reconnect
 
 ### Tasks (web)
 - [x] Implement Home + Lobby:
   - [x] create/join room UI
   - [x] host-controlled start with pre-game lobby snapshot
 - [x] Lobby polish:
-  - [x] room code copy to clipboard
   - [x] board preview panel + reroll control
-- [x] Implement Game Screen minimal:
-  - [x] render board (SVG hexes)
-  - [x] show resources and phase
-  - [x] show log events as text
-
----
-
-## Milestone 4.5 — Setup UX (playtest unblock)
-
-Goal: allow two browsers to complete setup and reach the action phase quickly.
-
-### Tasks (server)
-- [x] Replace auto-start with host-controlled start (agent2 work).
-
-### Tasks (web)
-- [x] Setup UI for `setup.capitalDraft`:
-  - show available slots
-  - submit pick
-- [x] Setup UI for `setup.startingBridges`:
-  - allow edge input or click to place bridges
-  - show remaining bridges per player
-- [x] Setup UI for `setup.freeStartingCardPick`:
-  - show 3 offers
-  - submit pick
-- [x] Optional “Auto-setup” button (dev/testing) to submit valid choices.
-
-### Acceptance criteria
-- Two browsers can join a room, complete setup (manual or auto), and reach `round.action`.
-
 ---
 
 ## Milestone 5 — Action Step system + hand + playing starter cards
@@ -319,6 +259,60 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
       - [x] Grand Strategist (Tactical Hand hit assignment)
 - [ ] Quick check in, the rules in rules_draft are kind of living and breathing as I update things or change balance so make sure that everything is still correct, and add a few more champions and their abilities and everything in to test
 
+### Milestone After Full Test Play and Thinking
+### Tasks
+- [ ] Capital draft selection is simultaneous (no ordered picking); allow lock/unlock freely.
+- [ ] Setup flow overhaul into full-screen phases with host-advanced gates:
+  - [ ] Lobby waiting room view for join/ready state.
+  - [ ] Faction selection screen with faction abilities visible; host advances once all lock.
+  - [ ] Starting deck preview screen (card components) showing faction abilities; all ready -> host advance.
+  - [ ] Map screen with two sub-steps:
+    - [ ] Capital selection (simultaneous, no turn order).
+    - [ ] Initial bridge placement: secret selection of two bridges, reveal simultaneously.
+  - [ ] Free starting card draft screen with improved presentation.
+  - [ ] Transition to main game after all setup steps complete.
+- [ ] Champion card UI shows iconography for health, dice, hits, and bounty.
+- [ ] Market HUD shows current gold with the same emoji/visual language used elsewhere.
+- [ ] Champion cards communicate gold cost scaling for the nth champion clearly.
+- [ ] Action reveal popup uses A1-style board labels (not axial coords).
+- [ ] Collection UI becomes a modal overlay (no top-bar layout shift).
+- [ ] Center collection offers power picks (not normal card draft).
+- [ ] Market dice roll animation feels smoother and more synchronized.
+- [ ] Board generation spawns a fixed number of random bridges at setup (per updated rules).
+- [ ] Combat overlay redesign:
+  - [ ] Show forces per side, per-unit rolls, champion rolls/HP, and clear totals.
+  - [ ] Synchronized dice roll flow: spin -> lock in -> hit assignment -> next round.
+  - [ ] Show faction symbols in combat.
+  - [ ] Show bounty rewards and battle results clearly.
+  - [ ] Auto-close combat for all players when resolved.
+  - [ ] Show combat modifiers (buffs/debuffs) explicitly.
+  - [ ] Label capital battles in the modal.
+- [ ] Draw/discard UI clarity: show piles clearly and add draw animations in hand area.
+- [ ] Retreat rules implementation:
+  - [ ] If a bridge is adjacent and player has 1 mana, allow retreat selection.
+  - [ ] On retreat, resolve one final combat round, then move all forces across chosen bridge and end combat.
+- [ ] Add "Burn the Bridges" card (rules-aligned effect + UI + tests).
+- [ ] Live VP updates immediately on occupation changes.
+- [ ] Basic actions show a short hover tooltip explanation.
+- [ ] Basic actions show mana/gold costs on the buttons.
+- [ ] Center card text alignment (titles/lines) on card faces.
+- [ ] Market show/hide has a hotkey; overlay background slightly transparent.
+- [ ] Market dice overlay includes faction symbols and uses an overlay (not a new stacked container).
+- [ ] Special tiles show a small hover label with type (Mine, Forge, etc).
+- [ ] Fix phantom/ghost battle overlay state leaks when moving between screens.
+- [ ] Collection phase sequence highlights per-source payouts one by one (mines, forge, center).
+- [ ] Add gold + VP to the hand panel header area (near Hand label).
+- [ ] Board "chit" styling (units/champions/forces) aligns with dark fantasy theme.
+- [ ] Champion target modal should not shift page layout; convert to overlay.
+- [ ] Add stats tracking TODO (battles won, other metrics) for later.
+- [ ] Fix card hover stacking so hovered cards always render on top.
+- [ ] Force-split dialog appears near the clicked hex (not bottom of screen).
+- [ ] Add an "active effects" view so players see ongoing effects.
+- [ ] Gray out or mark cards that are unaffordable due to mana.
+- [ ] Fix phase progression after capital battles (ensure collection/market transitions).
+- [ ] Add UI for scout orders and "draw and pick" effects.
+- [ ] Fix card aspect ratios on large screens (avoid stretched/fat cards).
+
 
 ### Tasks (web)
 - Champion UI:
@@ -372,23 +366,7 @@ Start going through the rules_draft and adding the logic for the different types
 
 ## Milestone 7.5 — Script to Generate Art for Cards
 
-### Tasks
-- [x] Add a card-art manifest in the web client that maps card ids to image paths.
-- [x] Add a CLI script to select cards, build prompts, call a diffusion provider, and write images + update the manifest.
-- [x] Decide on the default diffusion provider + credentials workflow (OpenAI image API via `OPENAI_API_KEY`).
-- [x] Document how to run the art script and tune prompts/negative prompts.
-
----
-
-## Milestone 7.6 — Rules alignment review
-
-Pause and read through the rules of the game. Make sure that what we've done aligns as much as possible. Add any tasks below to fix things that don't.
-
-### Tasks
-- [x] Resolve board sizing + capital slot mapping across `rules_draft.md`, `technical_spec.md`, and `DEFAULT_CONFIG` (radius + slots per player count).
-- [x] Align special tile counts across rules/spec/config (mines/forges/center per player count).
-- [x] Align mine value distribution across rules/spec/config (values + weights, including current 3/7 entries).
-- [x] Fix market preview round mapping typo in rules (Age II Round 6 preview count).
+Done
 
 
 ## Milestone 8 — Content expansion + stability pass
@@ -608,7 +586,7 @@ Can I somehow add analytics to this? see players where, etc etc...
 
 ## Milestone 13 -- Future stuff / not urgent now
 - [ ] time how long every one takes to do their turns and have that be accessible somewhere
-- [ ] a turn timer that at the end picks a random valid card or something
+- [ ] a turn timer that at the end picks a random valid card or something, this should be configurable from settings
 
 ### Acceptance criteria
 - 2–4 friends can play a complete game session without needing a restart.
