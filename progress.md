@@ -17,7 +17,8 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
- - owner: agent1; scope: setup flow layout tweaks (host controls, player column width, free card offer layout); files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `apps/web/src/styles.css`, `progress.md`; status: in progress (overlap note: `apps/web/src/styles.css` already has other in-flight edits)
+ - owner: agent3; scope: Mortar Shot targeting helper (limit hex highlights to friendly-force range + add scatter hint text); files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`, `progress.md`; status: in progress
+ - owner: agent5; scope: clarify draw/discard pile UI and add hand-panel draw/discard animations; files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in progress
 
 
 ## Planning updates
@@ -32,6 +33,7 @@
 ## Milestone After Full Test Play and Thinking progress
 - Added setup host-advance gating in the engine (AdvanceSetup command + setup status view), updated setup/action/smoke tests plus server auto-setup + sample-game helpers, and added a host-only Advance Setup button in the lobby; updated the plan checklist. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/action-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/index.ts`, `apps/server/src/server.ts`, `apps/web/src/lib/sample-game.ts`, `apps/web/src/components/Lobby.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.)
 - Added a setup flow screen focused on map steps (capital draft + starting bridges) and free starting card, replacing the setup lobby view; marked the map screen + secret bridge reveal plan items complete. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.) (Overlap note: `apps/web/src/App.tsx` already in-flight.)
+- Tweaked setup flow layout with floating host controls, a slimmer players panel, and a left-to-right free-card offer row with the waiting/status column on the right. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `apps/web/src/styles.css`.)
 - Added faction ability copy data (passives + starter spell/champion text) and surfaced it in the faction selection UI. (Files: `apps/web/src/lib/factions.ts`, `apps/web/src/components/PreGameLobby.tsx`, `implementation_plan.md`.)
 - Refined the pre-game lobby layout by moving start controls into the seats panel and restyling faction cards into sectioned passives/starter kit blocks. (Files: `apps/web/src/components/PreGameLobby.tsx`, `apps/web/src/styles.css`.)
 - Thinned seat rows, thickened faction cards, and shifted the start block above the seat list in the pre-game lobby. (Files: `apps/web/src/components/PreGameLobby.tsx`, `apps/web/src/styles.css`.)

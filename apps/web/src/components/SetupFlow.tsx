@@ -61,6 +61,9 @@ export const SetupFlow = ({
     }
     return "Auto-setup is a dev shortcut for playtesting.";
   })();
+  const advanceHint = canAdvanceSetup
+    ? "Advance to the next setup phase."
+    : "Waiting for all players to lock in.";
 
   let phaseLabel = "Setup Lobby";
   let phaseSubtitle = "Waiting for the host to start setup.";
@@ -103,6 +106,29 @@ export const SetupFlow = ({
           <RoomCodeCopy roomId={roomId} />
         </div>
       </header>
+
+      {isHost ? (
+        <div className="setup-flow__host-actions">
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={onAdvanceSetup}
+            disabled={!canAdvanceSetup}
+            title={advanceHint}
+          >
+            Advance Setup
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={onAutoSetup}
+            disabled={!canAutoSetup}
+            title={autoSetupHint}
+          >
+            Auto-setup
+          </button>
+        </div>
+      ) : null}
 
       <div className="lobby__grid">
         {showMapPreview ? (
@@ -156,7 +182,7 @@ export const SetupFlow = ({
           onSubmitChoice={onSubmitSetupChoice}
         />
 
-        <section className="panel">
+        <section className="panel setup-flow__players">
           <h2>Players</h2>
           <ul className="seat-list">
             {players.map((player) => (
@@ -191,42 +217,6 @@ export const SetupFlow = ({
             ))}
           </ul>
         </section>
-
-        {isHost && setupStatus ? (
-          <section className="panel setup-advance">
-            <h2>Advance Setup</h2>
-            <p className="muted">
-              Host advances once everyone locks their picks for the current phase.
-            </p>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={onAdvanceSetup}
-              disabled={!canAdvanceSetup}
-            >
-              Advance Setup
-            </button>
-            <p className="muted">
-              {canAdvanceSetup ? "Ready to advance." : "Waiting for all players to lock in."}
-            </p>
-          </section>
-        ) : null}
-
-        {isHost ? (
-          <section className="panel setup-tools">
-            <h2>Setup Tools</h2>
-            <p className="muted">Host-only shortcuts for testing setup.</p>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={onAutoSetup}
-              disabled={!canAutoSetup}
-            >
-              Auto-setup
-            </button>
-            <p className="muted">{autoSetupHint}</p>
-          </section>
-        ) : null}
       </div>
 
       <div className="lobby__actions">

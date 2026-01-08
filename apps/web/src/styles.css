@@ -836,6 +836,37 @@ body.is-game .setup-card-pick__player-row--active {
   gap: 12px;
 }
 
+.setup-flow__host-actions {
+  align-self: flex-end;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-left: auto;
+  position: sticky;
+  top: 12px;
+  z-index: 5;
+}
+
+.setup-flow__players {
+  max-width: 260px;
+  justify-self: end;
+  width: 100%;
+}
+
+.setup-card-pick__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.setup-card-pick__main,
+.setup-card-pick__status {
+  display: grid;
+  gap: 12px;
+}
+
 .setup-bridges__summary,
 .setup-card-pick__summary {
   display: grid;
@@ -922,8 +953,10 @@ body.is-game .setup-bridges__suggestion:hover:not(:disabled) {
 }
 
 .setup-card-pick__offers {
-  display: grid;
-  gap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
 }
 
 .setup-card-pick__offer {
@@ -934,10 +967,14 @@ body.is-game .setup-bridges__suggestion:hover:not(:disabled) {
   border: none;
   background: transparent;
   cursor: pointer;
+  width: clamp(160px, 18vw, 220px);
+  flex: 0 0 auto;
 }
 
 .setup-card-pick__offer .game-card {
   width: 100%;
+  min-height: 320px;
+  aspect-ratio: 2 / 3.2;
 }
 
 .setup-card-pick__offer.is-selected .game-card {
@@ -948,6 +985,23 @@ body.is-game .setup-bridges__suggestion:hover:not(:disabled) {
 .setup-card-pick__offer:disabled {
   cursor: not-allowed;
   opacity: 0.7;
+}
+
+@media (max-width: 960px) {
+  .setup-flow__host-actions {
+    position: static;
+    align-self: stretch;
+    justify-content: flex-start;
+  }
+
+  .setup-flow__players {
+    max-width: none;
+    justify-self: stretch;
+  }
+
+  .setup-card-pick__layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 .lobby-dice {
