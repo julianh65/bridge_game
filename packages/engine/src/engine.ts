@@ -14,7 +14,8 @@ import {
   createCapitalDraftBlock,
   createFreeStartingCardBlock,
   createStartingBridgesBlock,
-  finalizeCapitalDraft
+  finalizeCapitalDraft,
+  finalizeStartingBridges
 } from "./setup-flow";
 import {
   applyAgeUpdate,
@@ -404,7 +405,8 @@ export const runUntilBlocked = (state: GameState): GameState => {
     }
 
     if (advanceReadyState.blocks.type === "setup.startingBridges") {
-      const { state: updatedState, block } = createFreeStartingCardBlock(advanceReadyState);
+      const revealed = finalizeStartingBridges(advanceReadyState);
+      const { state: updatedState, block } = createFreeStartingCardBlock(revealed);
       nextState = {
         ...updatedState,
         blocks: block

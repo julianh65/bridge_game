@@ -63,7 +63,7 @@ const resolveStartingBridgesBlock = (state: GameState): GameState => {
       throw new Error(`missing capital for ${playerId}`);
     }
 
-    const placedEdges = new Set(block.payload.placedEdges[playerId] ?? []);
+    const placedEdges = new Set(block.payload.selectedEdges[playerId] ?? []);
     const neighbors = neighborHexKeys(player.capitalHex).filter(
       (key) => Boolean(nextState.board.hexes[key])
     );
@@ -503,7 +503,7 @@ const resolveStartingBridgesBlockRandom = (
       throw new Error(`missing capital for ${playerId}`);
     }
 
-    const placedEdges = new Set(block.payload.placedEdges[playerId] ?? []);
+    const placedEdges = new Set(block.payload.selectedEdges[playerId] ?? []);
     const neighbors = neighborHexKeys(player.capitalHex).filter(
       (key) => Boolean(nextState.board.hexes[key])
     );

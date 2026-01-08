@@ -331,7 +331,7 @@ export type BlockState = {
   waitingFor: PlayerID[];
   payload: {
     remaining: Record<PlayerID, number>;
-    placedEdges: Record<PlayerID, EdgeKey[]>;
+    selectedEdges: Record<PlayerID, EdgeKey[]>;
   };
 } | {
   type: "setup.freeStartingCardPick";
@@ -562,7 +562,6 @@ export type SetupPublicView =
       type: "setup.startingBridges";
       waitingForPlayerIds: PlayerID[];
       remaining: Record<PlayerID, number>;
-      placedEdges: Record<PlayerID, EdgeKey[]>;
     }
   | {
       type: "setup.freeStartingCardPick";
@@ -572,6 +571,11 @@ export type SetupPublicView =
   | null;
 
 export type SetupPrivateView =
+  | {
+      type: "setup.startingBridges";
+      remaining: number;
+      selectedEdges: EdgeKey[];
+    }
   | {
       type: "setup.freeStartingCardPick";
       offers: CardDefId[];

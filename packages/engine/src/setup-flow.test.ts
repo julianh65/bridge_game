@@ -128,6 +128,7 @@ describe("setup flow", () => {
 
     const [p1EdgeA, p1EdgeB] = pickStartingEdges(p1Capital as HexKey, state.board);
     const [p2EdgeA, p2EdgeB] = pickStartingEdges(p2Capital as HexKey, state.board);
+    const existingBridgeCount = Object.keys(state.board.bridges).length;
 
     state = applyCommand(
       state,
@@ -152,10 +153,15 @@ describe("setup flow", () => {
 
     state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.startingBridges");
+    expect(Object.keys(state.board.bridges)).toHaveLength(existingBridgeCount);
 
     state = advanceSetup(state);
     state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.freeStartingCardPick");
+    expect(state.board.bridges[p1EdgeA]).toBeTruthy();
+    expect(state.board.bridges[p1EdgeB]).toBeTruthy();
+    expect(state.board.bridges[p2EdgeA]).toBeTruthy();
+    expect(state.board.bridges[p2EdgeB]).toBeTruthy();
 
     const p1Offer = state.blocks?.payload.offers["p1"]?.[0];
     const p2Offer = state.blocks?.payload.offers["p2"]?.[0];

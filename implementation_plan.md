@@ -284,14 +284,18 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Center collection offers power picks (not normal card draft).
 - [ ] Market dice roll animation feels smoother and more synchronized.
 - [x] Board generation spawns a fixed number of random bridges at setup (per updated rules).
-- [ ] Combat overlay redesign:
-  - [x] Show forces per side, per-unit rolls, champion rolls/HP, and clear totals.
-  - [x] Synchronized dice roll flow: spin -> lock in -> hit assignment -> next round.
-  - [x] Show faction symbols in combat.
-  - [x] Show bounty rewards and battle results clearly.
-  - [x] Auto-close combat for all players when resolved.
-  - [x] Show combat modifiers (buffs/debuffs) explicitly.
-  - [x] Label capital battles in the modal.
+- [ ] Combat and combat overlay redesign:
+ - [ ] Change the coords to the tile type and our labelling system e.g. Battle at A1 Mine
+ - [ ] Make Faction Icons Bigger
+ - [ ] Make it more visual and less number based, this should be exciting and look nice and visually intuitive
+   - [ ] Each force alive should be represented by a circle and should have a die under it (unrolled)
+   - [ ] Each champion should also be represented by a circle and should have their stats and dice under them (unrolled) it should be obvious their health
+   - [ ] Then each player clicks roll and all the dice roll
+   - [ ] at the bottom it shows the cumulative hits each side did
+   - [ ] then both players hit like “next” and the engine randomly assigns hits, putting x’s over forces and displaying how many hits were assigned to the champions
+   - [ ] then players hit next again and the forces that were hit are removed and the champions take damage and the loop continues again where they roll again
+ - [ ] Each consecutive round shouldn’t be like a new div / container appended to the bottom, the UI should just update to reflect the changes
+ - [ ] Right now there are issues with syncing, it should show who has rolled and who hasn’t and the outcomes should only show after both players hit roll and they should be synchronized in terms of going to the next round of the battle or retreating for all players
 - [ ] Draw/discard UI clarity: show piles clearly and add draw animations in hand area.
 - [ ] Retreat rules implementation:
   - [ ] If a bridge is adjacent and player has 1 mana, allow retreat selection.
@@ -308,7 +312,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Collection phase sequence highlights per-source payouts one by one (mines, forge, center).
 - [x] Add gold + VP to the hand panel header area (near Hand label).
 - [ ] Board "chit" styling (units/champions/forces) aligns with dark fantasy theme.
-- [ ] Champion target modal should not shift page layout; convert to overlay.
+- [x] Champion target modal should not shift page layout; convert to overlay.
 - [ ] Add stats tracking TODO (battles won, other metrics) for later.
 - [ ] Fix card hover stacking so hovered cards always render on top.
 - [ ] Force-split dialog appears near the clicked hex (not bottom of screen).
@@ -318,7 +322,9 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Add UI for scout orders and "draw and pick" effects.
 - [x] Fix card aspect ratios on large screens (avoid stretched/fat cards).
 - [x] Add a battle debug tab to simulate combat with custom forces/champions.
-- [ ] Need a UI to demarkate which cell is "my capital"
+- [ ] Need a something in UI to mark which cell is "my capital"
+- [ ] We need to modify it and set it up so that each faction has their own set of starter cards with different initiatives which I can edit and setup
+- [ ] Add the dark styling to the Play main tab area
 
 ### Mini Milestone For Me
 

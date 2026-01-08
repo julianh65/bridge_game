@@ -2283,7 +2283,7 @@ export const GameScreen = ({
   ) : null;
   const championTargetPanel =
     selectedCardDef && cardTargetKind === "champion" ? (
-      <div className="hand-targets">
+      <div className="hand-targets hand-targets--overlay">
         <div className="hand-targets__header">
           <strong>Target champion</strong>
           <span className="hand-targets__meta">
@@ -2335,13 +2335,22 @@ export const GameScreen = ({
       </div>
     ) : null;
   const handTargetsPanel =
-    topdeckPanel || cardMovePanel || championTargetPanel ? (
+    topdeckPanel || cardMovePanel ? (
       <>
         {topdeckPanel}
         {cardMovePanel}
-        {championTargetPanel}
       </>
     ) : null;
+  const championTargetOverlay = championTargetPanel ? (
+    <div
+      className="champion-target-overlay"
+      role="dialog"
+      aria-modal="false"
+      aria-label="Champion target selection"
+    >
+      <div className="champion-target-overlay__panel">{championTargetPanel}</div>
+    </div>
+  ) : null;
   const showHandPicker =
     isActionPhase && isHandPickerOpen && topdeckCount > 0 && Boolean(selectedCardDef);
   const handPickerTitle = "Topdeck from hand";
@@ -2556,6 +2565,8 @@ export const GameScreen = ({
       {marketOverlay}
 
       {collectionOverlay}
+
+      {championTargetOverlay}
 
       {sidebarToggle}
       <div

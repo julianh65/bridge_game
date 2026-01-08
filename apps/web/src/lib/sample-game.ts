@@ -74,7 +74,7 @@ const autoResolveSetup = (state: GameState): GameState => {
           .filter(
             (edgeKey) =>
               !nextState.board.bridges[edgeKey] &&
-              !(block.payload.placedEdges[playerId] ?? []).includes(edgeKey)
+              !(block.payload.selectedEdges[playerId] ?? []).includes(edgeKey)
           );
 
         for (let i = 0; i < remaining && i < candidateEdges.length; i += 1) {

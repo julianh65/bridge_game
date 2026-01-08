@@ -33,8 +33,7 @@ const buildSetupPublicView = (block: SetupBlockState): SetupPublicView => {
     return {
       type: block.type,
       waitingForPlayerIds: block.waitingFor,
-      remaining: block.payload.remaining,
-      placedEdges: block.payload.placedEdges
+      remaining: block.payload.remaining
     };
   }
   const chosen = Object.fromEntries(
@@ -48,6 +47,13 @@ const buildSetupPublicView = (block: SetupBlockState): SetupPublicView => {
 };
 
 const buildSetupPrivateView = (block: SetupBlockState, playerId: PlayerID): SetupPrivateView => {
+  if (block.type === "setup.startingBridges") {
+    return {
+      type: block.type,
+      remaining: block.payload.remaining[playerId] ?? 0,
+      selectedEdges: block.payload.selectedEdges[playerId] ?? []
+    };
+  }
   if (block.type !== "setup.freeStartingCardPick") {
     return null;
   }

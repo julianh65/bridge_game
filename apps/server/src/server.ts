@@ -164,7 +164,7 @@ const pickStartingBridge = (
   block: Extract<BlockState, { type: "setup.startingBridges" }>,
   playerId: PlayerID
 ): string => {
-  const placed = new Set(block.payload.placedEdges[playerId] ?? []);
+  const placed = new Set(block.payload.selectedEdges[playerId] ?? []);
   const options = getStartingBridgeOptions(state, playerId);
   const edgeKey = options.find((candidate) => !placed.has(candidate));
   if (!edgeKey) {

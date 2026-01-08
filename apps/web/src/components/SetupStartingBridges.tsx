@@ -44,11 +44,11 @@ const findPlayerCapital = (
 const buildSuggestedEdges = (
   board: GameView["public"]["board"],
   capitalHex: HexKey,
-  placedEdges: EdgeKey[]
+  selectedEdges: EdgeKey[]
 ): SuggestedEdge[] => {
   const capitalCoord = parseHexKey(capitalHex);
   const seen = new Set<EdgeKey>();
-  const placed = new Set<EdgeKey>(placedEdges);
+  const placed = new Set<EdgeKey>(selectedEdges);
   const suggestions: SuggestedEdge[] = [];
 
   for (const hexKey of Object.keys(board.hexes)) {
@@ -86,6 +86,10 @@ export const SetupStartingBridges = ({
   const setup = view.public.setup;
   const startingBridges =
     setup && setup.type === "setup.startingBridges" ? setup : null;
+  const privateSetup =
+    view.private?.setup && view.private.setup.type === "setup.startingBridges"
+      ? view.private.setup
+      : null;
 
   const players = view.public.players;
   const playerNames = useMemo(
@@ -101,9 +105,8 @@ export const SetupStartingBridges = ({
       : "none";
   const isWaiting = Boolean(playerId && waitingFor.includes(playerId));
   const remainingByPlayer = startingBridges?.remaining ?? {};
-  const placedEdgesByPlayer = startingBridges?.placedEdges ?? {};
   const localRemaining = playerId ? remainingByPlayer[playerId] ?? 0 : 0;
-  const localPlaced = playerId ? placedEdgesByPlayer[playerId] ?? [] : [];
+  const localPlaced = privateSetup?.selectedEdges ?? [];
   const capitalHex = useMemo(
     () => findPlayerCapital(view.public.board, playerId),
     [view.public.board, playerId]
@@ -198,7 +201,8 @@ export const SetupStartingBridges = ({
       <div className="setup-bridges__players">
         {players.map((player) => {
           const remaining = remainingByPlayer[player.id] ?? 0;
-          const placedEdges = placedEdgesByPlayer[player.id] ?? [];
+          const isLocal = playerId === player.id;
+          const placedEdges = isLocal ? localPlaced : [];
           const isActive = waitingFor.includes(player.id);
           return (
             <div
@@ -209,7 +213,7 @@ export const SetupStartingBridges = ({
             >
               <div className="setup-bridges__player-info">
                 <span className="setup-bridges__player-name">{player.name}</span>
-                {placedEdges.length > 0 ? (
+                {isLocal && placedEdges.length > 0 ? (
                   <ul className="card-list">
                     {placedEdges.map((edge) => (
                       <li key={edge} className="card-tag" title={edge}>
@@ -218,7 +222,9 @@ export const SetupStartingBridges = ({
                     ))}
                   </ul>
                 ) : (
-                  <span className="muted">No edges yet.</span>
+                  <span className="muted">
+                    {remaining === 0 ? "Locked in." : "Selecting bridges."}
+                  </span>
                 )}
               </div>
               <span className="status-pill">{remaining} left</span>

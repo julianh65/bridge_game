@@ -2792,6 +2792,32 @@ body.is-game .action-reveal__targets--empty {
   color: var(--muted);
 }
 
+.hand-targets--overlay {
+  border-style: solid;
+  border-color: var(--border);
+  background: var(--panel-soft);
+  box-shadow: 0 16px 28px rgba(12, 9, 6, 0.35);
+  padding: 12px 14px;
+  max-height: min(360px, calc(100vh - 220px));
+  overflow: auto;
+}
+
+.champion-target-overlay {
+  position: fixed;
+  top: 128px;
+  right: 24px;
+  z-index: 59;
+  pointer-events: none;
+  display: flex;
+  justify-content: flex-end;
+  width: min(360px, calc(100vw - 48px));
+}
+
+.champion-target-overlay__panel {
+  pointer-events: auto;
+  width: min(360px, calc(100vw - 48px));
+}
+
 .hand-toggle {
   position: fixed;
   left: 50%;
@@ -6482,6 +6508,17 @@ body.is-game .combat-outcome__auto {
     top: auto;
     bottom: 24px;
     right: 16px;
+  }
+
+  .champion-target-overlay {
+    top: auto;
+    bottom: 168px;
+    right: 16px;
+    width: min(360px, calc(100vw - 32px));
+  }
+
+  .champion-target-overlay__panel {
+    width: min(360px, calc(100vw - 32px));
   }
 
   .market-panel {

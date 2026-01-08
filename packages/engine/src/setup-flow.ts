@@ -8,6 +8,7 @@ import {
 import type {
   BlockState,
   CardDefId,
+  GameEvent,
   GameState,
   HexKey,
   PlayerID,
@@ -57,7 +58,7 @@ export const createStartingBridgesBlock = (players: PlayerState[]): BlockState =
   waitingFor: players.map((player) => player.id),
   payload: {
     remaining: Object.fromEntries(players.map((player) => [player.id, 2])),
-    placedEdges: Object.fromEntries(players.map((player) => [player.id, []]))
+    selectedEdges: Object.fromEntries(players.map((player) => [player.id, []]))
   }
 });
 
@@ -214,6 +215,54 @@ export const finalizeCapitalDraft = (state: GameState): GameState => {
   return initializeStartingAssets(nextState);
 };
 
+export const finalizeStartingBridges = (state: GameState): GameState => {
+  const block = state.blocks;
+  if (!block || block.type !== "setup.startingBridges") {
+    return state;
+  }
+
+  const selectedEdges = block.payload.selectedEdges;
+  const existing = new Set(Object.keys(state.board.bridges));
+  const nextBridges = { ...state.board.bridges };
+  const events: GameEvent[] = [];
+
+  for (const player of state.players) {
+    const edges = selectedEdges[player.id] ?? [];
+    for (const edgeKey of edges) {
+      const [rawA, rawB] = parseEdgeKey(edgeKey);
+      const canonical = getBridgeKey(rawA, rawB);
+      const alreadyExists = existing.has(canonical);
+      if (!alreadyExists) {
+        existing.add(canonical);
+        nextBridges[canonical] = {
+          key: canonical,
+          from: rawA,
+          to: rawB,
+          ownerPlayerId: player.id
+        };
+      }
+      events.push({
+        type: "setup.startingBridgePlaced",
+        payload: { playerId: player.id, edgeKey: canonical, alreadyExists }
+      });
+    }
+  }
+
+  let nextState: GameState = {
+    ...state,
+    board: {
+      ...state.board,
+      bridges: nextBridges
+    }
+  };
+
+  for (const event of events) {
+    nextState = emit(nextState, event);
+  }
+
+  return nextState;
+};
+
 export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId: PlayerID): GameState => {
   const block = state.blocks;
   if (!block) {
@@ -368,34 +417,18 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
       throw new Error("starting bridge must touch within distance 2 of capital");
     }
 
-    if (block.payload.placedEdges[playerId].includes(edgeKey)) {
+    if (block.payload.selectedEdges[playerId].includes(edgeKey)) {
       throw new Error("starting bridge already selected by player");
     }
-
-    const bridgeAlreadyExists = Boolean(state.board.bridges[edgeKey]);
-    const updatedBoard = {
-      ...state.board,
-      bridges: bridgeAlreadyExists
-        ? state.board.bridges
-        : {
-            ...state.board.bridges,
-            [edgeKey]: {
-              key: edgeKey,
-              from: rawA,
-              to: rawB,
-              ownerPlayerId: playerId
-            }
-          }
-    };
 
     const nextRemaining = {
       ...block.payload.remaining,
       [playerId]: remaining - 1
     };
 
-    const nextPlaced = {
-      ...block.payload.placedEdges,
-      [playerId]: [...block.payload.placedEdges[playerId], edgeKey]
+    const nextSelected = {
+      ...block.payload.selectedEdges,
+      [playerId]: [...block.payload.selectedEdges[playerId], edgeKey]
     };
 
     const nextWaitingFor =
@@ -405,21 +438,17 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
 
     const nextState = {
       ...state,
-      board: updatedBoard,
       blocks: {
         ...block,
         waitingFor: nextWaitingFor,
         payload: {
           remaining: nextRemaining,
-          placedEdges: nextPlaced
+          selectedEdges: nextSelected
         }
       }
     };
 
-    return emit(nextState, {
-      type: "setup.startingBridgePlaced",
-      payload: { playerId, edgeKey, alreadyExists: bridgeAlreadyExists }
-    });
+    return nextState;
   }
 
   if (block.type === "setup.freeStartingCardPick") {
