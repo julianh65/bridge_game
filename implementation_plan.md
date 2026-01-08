@@ -433,6 +433,9 @@ Pause and read through the rules of the game. Make sure that what we've done ali
     - [ ] Age II Movement card defs (5).
     - [ ] Age II Recruitment card defs (5).
     - [ ] Age II Economy card defs (5).
+      - [x] War Taxes.
+      - [x] Refined Ingots.
+      - [x] Guild Favor.
     - [ ] Age II Deckcraft card defs (5).
     - [ ] Age II Combat/Tactics card defs (5).
       - [x] Focus Fire.
@@ -444,6 +447,10 @@ Pause and read through the rules of the game. Make sure that what we've done ali
       - [x] Mortar Shot.
       - [x] Champion Recall.
     - [ ] Age II Bridges/Terrain card defs (4).
+      - [x] Bridge Lockdown.
+      - [x] Wormhole Link.
+      - [ ] Bridge Network.
+      - [ ] Bridge Pivot.
     - [ ] Age II Synergy/Gambits card defs (4).
     - [ ] Age II Victory card defs (4).
     - [ ] Age II Champion card defs (8).

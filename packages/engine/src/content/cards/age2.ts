@@ -134,6 +134,83 @@ export const CHAMPION_RECALL: CardDef = {
   effects: [{ kind: "recallChampion" }]
 };
 
+export const WAR_TAXES: CardDef = {
+  id: "age2.war_taxes",
+  name: "War Taxes",
+  rulesText: "Gain +4 gold.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 60,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "gainGold", amount: 4 }]
+};
+
+export const REFINED_INGOTS: CardDef = {
+  id: "age2.refined_ingots",
+  name: "Refined Ingots",
+  rulesText: "Gain +2 gold. If you occupy a Mine, gain +4 gold instead.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 55,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "prospecting", baseGold: 2, bonusIfMine: 2 }]
+};
+
+export const GUILD_FAVOR: CardDef = {
+  id: "age2.guild_favor",
+  name: "Guild Favor",
+  rulesText: "Gain +4 gold and draw 1.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 2 },
+  initiative: 40,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [
+    { kind: "gainGold", amount: 4 },
+    { kind: "drawCards", count: 1 }
+  ]
+};
+
+export const BRIDGE_LOCKDOWN: CardDef = {
+  id: "age2.bridge_lockdown",
+  name: "Bridge Lockdown",
+  rulesText: "Choose a Bridge adjacent to a hex you occupy; it can't be crossed this round.",
+  type: "Spell",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 2 },
+  initiative: 40,
+  burn: false,
+  targetSpec: { kind: "edge" },
+  effects: [{ kind: "lockBridge" }]
+};
+
+export const WORMHOLE_LINK: CardDef = {
+  id: "age2.wormhole_link",
+  name: "Wormhole Link",
+  rulesText:
+    "Choose 2 hexes within distance 3 of your Champions; treat them as adjacent until end of round.",
+  type: "Spell",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 2 },
+  initiative: 80,
+  burn: true,
+  targetSpec: {
+    kind: "hexPair",
+    maxDistanceFromFriendlyChampion: 3
+  },
+  effects: [{ kind: "linkHexes" }]
+};
+
 export const JET_STRIKER: CardDef = {
   id: "champion.age2.jet_striker",
   name: "Jet Striker",
@@ -339,6 +416,11 @@ export const AGE2_CARDS: CardDef[] = [
   GOLD_PLATED_ARMOR,
   MORTAR_SHOT,
   CHAMPION_RECALL,
+  WAR_TAXES,
+  REFINED_INGOTS,
+  GUILD_FAVOR,
+  BRIDGE_LOCKDOWN,
+  WORMHOLE_LINK,
   JET_STRIKER,
   GUERILLA_NATIVE_MERCENARY,
   TAX_REAVER,
