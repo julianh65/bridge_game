@@ -30,6 +30,8 @@ const getCardTargetHint = (cardDef: CardDef | null): string | null => {
   switch (cardDef.targetSpec.kind) {
     case "edge":
       return "Pick an edge on the board.";
+    case "multiEdge":
+      return "Pick multiple edges on the board.";
     case "stack":
       return "Pick a stack, then a destination.";
     case "path":

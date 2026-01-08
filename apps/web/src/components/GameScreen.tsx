@@ -223,10 +223,16 @@ const describeRevealTargets = (
     }
   };
 
-  const edgeKey = getTargetString(targets, "edgeKey");
-  if (edgeKey) {
-    addEdge(edgeKey);
-    pushLine(`Edge ${edgeKey}`);
+  const edgeKeys = getTargetStringArray(targets, "edgeKeys");
+  if (edgeKeys.length > 0) {
+    edgeKeys.forEach(addEdge);
+    pushLine(edgeKeys.length === 1 ? `Edge ${edgeKeys[0]}` : `Edges ${edgeKeys.join(", ")}`);
+  } else {
+    const edgeKey = getTargetString(targets, "edgeKey");
+    if (edgeKey) {
+      addEdge(edgeKey);
+      pushLine(`Edge ${edgeKey}`);
+    }
   }
 
   const hexKey = getTargetString(targets, "hexKey");
@@ -356,6 +362,8 @@ const getDefaultCardPickMode = (cardDef: CardDef | null): BoardPickMode => {
   }
   switch (cardDef.targetSpec.kind) {
     case "edge":
+      return "cardEdge";
+    case "multiEdge":
       return "cardEdge";
     case "stack":
       return "cardStack";
@@ -1420,25 +1428,42 @@ export const GameScreen = ({
       return;
     }
     if (boardPickMode === "bridgeEdge" || boardPickMode === "cardEdge") {
+      const isCardEdge = boardPickMode === "cardEdge";
+      const isMultiEdge = isCardEdge && cardTargetKind === "multiEdge";
       if (!pendingEdgeStart || pendingEdgeStart === hexKey) {
         setPendingEdgeStart(hexKey);
-        if (boardPickMode === "cardEdge") {
+        if (isCardEdge && !isMultiEdge) {
           setCardTargetsObject(null);
         }
         return;
       }
       if (!isAdjacent(pendingEdgeStart, hexKey)) {
         setPendingEdgeStart(hexKey);
-        if (boardPickMode === "cardEdge") {
+        if (isCardEdge && !isMultiEdge) {
           setCardTargetsObject(null);
         }
         return;
       }
       const edge = getBridgeKey(pendingEdgeStart, hexKey);
-      if (boardPickMode === "bridgeEdge") {
-        setEdgeKey(edge);
+      if (isCardEdge) {
+        if (isMultiEdge) {
+          const currentEdges = getTargetStringArray(targetRecord, "edgeKeys");
+          const nextEdges = currentEdges.includes(edge)
+            ? currentEdges.filter((entry) => entry !== edge)
+            : [...currentEdges, edge];
+          const targetSpec = selectedCardDef?.targetSpec as Record<string, unknown> | undefined;
+          const maxEdges =
+            typeof targetSpec?.maxEdges === "number" ? Math.floor(targetSpec.maxEdges) : null;
+          const limited =
+            maxEdges && maxEdges > 0 && nextEdges.length > maxEdges
+              ? nextEdges.slice(nextEdges.length - maxEdges)
+              : nextEdges;
+          setCardTargetsObject(limited.length > 0 ? { edgeKeys: limited } : null);
+        } else {
+          setCardTargetsObject({ edgeKey: edge });
+        }
       } else {
-        setCardTargetsObject({ edgeKey: edge });
+        setEdgeKey(edge);
       }
       setPendingEdgeStart(null);
       return;
@@ -1511,7 +1536,22 @@ export const GameScreen = ({
       return;
     }
     if (boardPickMode === "cardEdge") {
-      setCardTargetsObject({ edgeKey });
+      if (cardTargetKind === "multiEdge") {
+        const currentEdges = getTargetStringArray(targetRecord, "edgeKeys");
+        const nextEdges = currentEdges.includes(edgeKey)
+          ? currentEdges.filter((entry) => entry !== edgeKey)
+          : [...currentEdges, edgeKey];
+        const targetSpec = selectedCardDef?.targetSpec as Record<string, unknown> | undefined;
+        const maxEdges =
+          typeof targetSpec?.maxEdges === "number" ? Math.floor(targetSpec.maxEdges) : null;
+        const limited =
+          maxEdges && maxEdges > 0 && nextEdges.length > maxEdges
+            ? nextEdges.slice(nextEdges.length - maxEdges)
+            : nextEdges;
+        setCardTargetsObject(limited.length > 0 ? { edgeKeys: limited } : null);
+      } else {
+        setCardTargetsObject({ edgeKey });
+      }
       setPendingEdgeStart(null);
     }
   };
@@ -1565,10 +1605,15 @@ export const GameScreen = ({
     const neighbors = (key: string) =>
       neighborHexKeys(key).filter((neighbor) => hasHex(neighbor));
 
-    const hasAnyEdgeCandidate = (start: string, requiresOccupiedEndpoint: boolean) => {
+    const hasAnyEdgeCandidate = (
+      start: string,
+      requiresOccupiedEndpoint: boolean,
+      requiresExistingBridge: boolean
+    ) => {
       const startOccupied = isOccupied(start);
       for (const neighbor of neighbors(start)) {
-        if (hasBridge(board, start, neighbor)) {
+        const isBridge = hasBridge(board, start, neighbor);
+        if (requiresExistingBridge ? !isBridge : isBridge) {
           continue;
         }
         if (requiresOccupiedEndpoint && !startOccupied && !isOccupied(neighbor)) {
@@ -1582,11 +1627,13 @@ export const GameScreen = ({
     const addEdgeCandidatesFrom = (
       start: string,
       requiresOccupiedEndpoint: boolean,
+      requiresExistingBridge: boolean,
       markNeighborTargets = true
     ) => {
       const startOccupied = isOccupied(start);
       for (const neighbor of neighbors(start)) {
-        if (hasBridge(board, start, neighbor)) {
+        const isBridge = hasBridge(board, start, neighbor);
+        if (requiresExistingBridge ? !isBridge : isBridge) {
           continue;
         }
         if (requiresOccupiedEndpoint && !startOccupied && !isOccupied(neighbor)) {
@@ -1630,46 +1677,60 @@ export const GameScreen = ({
 
     if (boardPickMode === "bridgeEdge") {
       const requiresOccupiedEndpoint = true;
+      const requiresExistingBridge = false;
       const startCandidates = new Set<string>();
       for (const key of hexKeys) {
-        if (!hasAnyEdgeCandidate(key, requiresOccupiedEndpoint)) {
+        if (!hasAnyEdgeCandidate(key, requiresOccupiedEndpoint, requiresExistingBridge)) {
           continue;
         }
         startCandidates.add(key);
         startTargets.add(key);
       }
       if (pendingEdgeStart && hasHex(pendingEdgeStart)) {
-        addEdgeCandidatesFrom(pendingEdgeStart, requiresOccupiedEndpoint);
+        addEdgeCandidatesFrom(pendingEdgeStart, requiresOccupiedEndpoint, requiresExistingBridge);
       } else {
         for (const key of startCandidates) {
           validTargets.add(key);
-          addEdgeCandidatesFrom(key, requiresOccupiedEndpoint, false);
+          addEdgeCandidatesFrom(key, requiresOccupiedEndpoint, requiresExistingBridge, false);
         }
       }
     }
 
     if (boardPickMode === "cardEdge") {
-      if (!selectedCardDef || cardTargetKind !== "edge") {
+      if (
+        !selectedCardDef ||
+        (cardTargetKind !== "edge" && cardTargetKind !== "multiEdge")
+      ) {
         return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
       const edgeSpec = selectedCardDef.targetSpec as Record<string, unknown>;
       const allowAnywhere = edgeSpec.anywhere === true;
       const requiresOccupiedEndpoint =
         allowAnywhere || edgeSpec.requiresOccupiedEndpoint === false ? false : true;
+      const hasBuildBridge =
+        selectedCardDef.effects?.some((effect) => effect.kind === "buildBridge") ?? false;
+      const hasExistingBridgeEffect =
+        selectedCardDef.effects?.some(
+          (effect) =>
+            effect.kind === "lockBridge" ||
+            effect.kind === "trapBridge" ||
+            effect.kind === "destroyBridge"
+        ) ?? false;
+      const requiresExistingBridge = !hasBuildBridge && hasExistingBridgeEffect;
       const startCandidates = new Set<string>();
       for (const key of hexKeys) {
-        if (!hasAnyEdgeCandidate(key, requiresOccupiedEndpoint)) {
+        if (!hasAnyEdgeCandidate(key, requiresOccupiedEndpoint, requiresExistingBridge)) {
           continue;
         }
         startCandidates.add(key);
         startTargets.add(key);
       }
       if (pendingEdgeStart && hasHex(pendingEdgeStart)) {
-        addEdgeCandidatesFrom(pendingEdgeStart, requiresOccupiedEndpoint);
+        addEdgeCandidatesFrom(pendingEdgeStart, requiresOccupiedEndpoint, requiresExistingBridge);
       } else {
         for (const key of startCandidates) {
           validTargets.add(key);
-          addEdgeCandidatesFrom(key, requiresOccupiedEndpoint, false);
+          addEdgeCandidatesFrom(key, requiresOccupiedEndpoint, requiresExistingBridge, false);
         }
       }
     }

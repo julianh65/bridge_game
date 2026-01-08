@@ -723,6 +723,35 @@ describe("action flow", () => {
     expect(state.board.bridges[edge]).toBeUndefined();
   });
 
+  it("destroys multiple bridges with a multi-edge target", () => {
+    let { state, p1Edges } = setupToActionPhase();
+    const [edgeA, edgeB] = p1Edges;
+    if (!edgeA || !edgeB) {
+      throw new Error("expected at least two starting bridges");
+    }
+
+    const destroyBridgesCard: CardDef = {
+      id: "test.destroy_bridges",
+      name: "Destroy Bridges",
+      rulesText: "Destroy 2 bridges anywhere.",
+      type: "Order",
+      deck: "starter",
+      tags: [],
+      cost: { mana: 0 },
+      initiative: 1,
+      burn: false,
+      targetSpec: { kind: "multiEdge", anywhere: true, minEdges: 2, maxEdges: 2 },
+      effects: [{ kind: "destroyBridge" }]
+    };
+
+    state = resolveCardEffects(state, "p1", destroyBridgesCard, {
+      edgeKeys: [edgeA, edgeB]
+    });
+
+    expect(state.board.bridges[edgeA]).toBeUndefined();
+    expect(state.board.bridges[edgeB]).toBeUndefined();
+  });
+
   it("moves part of a stack when forceCount is set", () => {
     let { state, p1Capital, p1Edges } = setupToActionPhase();
     const [edge] = p1Edges;

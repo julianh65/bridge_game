@@ -52,6 +52,7 @@ import { markPlayerMovedThisRound } from "./player-flags";
 const SUPPORTED_TARGET_KINDS = new Set([
   "none",
   "edge",
+  "multiEdge",
   "stack",
   "path",
   "multiPath",
@@ -153,6 +154,28 @@ const getEdgeKeyTarget = (targets: CardPlayTargets): string | null => {
   const record = getTargetRecord(targets);
   const edgeKey = record?.edgeKey;
   return typeof edgeKey === "string" && edgeKey.length > 0 ? edgeKey : null;
+};
+
+const getEdgeKeyTargets = (targets: CardPlayTargets): string[] | null => {
+  const record = getTargetRecord(targets);
+  const raw = record?.edgeKeys ?? record?.edges ?? record?.edgeKey;
+  if (!raw) {
+    return null;
+  }
+  if (typeof raw === "string") {
+    return raw.length > 0 ? [raw] : null;
+  }
+  if (!Array.isArray(raw) || raw.length === 0) {
+    return null;
+  }
+  const edges: string[] = [];
+  for (const entry of raw) {
+    if (typeof entry !== "string" || entry.length === 0) {
+      return null;
+    }
+    edges.push(entry);
+  }
+  return edges;
 };
 
 const getHexKeyTarget = (targets: CardPlayTargets): string | null => {
@@ -717,6 +740,29 @@ const getExistingBridgePlan = (
   return { from: rawA, to: rawB, key: canonicalKey };
 };
 
+const getExistingBridgePlans = (
+  state: GameState,
+  playerId: PlayerID,
+  targetSpec: TargetRecord,
+  targets: CardPlayTargets
+): BuildBridgePlan[] | null => {
+  const edgeKeys = getEdgeKeyTargets(targets);
+  if (!edgeKeys || edgeKeys.length === 0) {
+    return null;
+  }
+  const plans: BuildBridgePlan[] = [];
+  const seen = new Set<string>();
+  for (const edgeKey of edgeKeys) {
+    const plan = getExistingBridgePlan(state, playerId, targetSpec, { edgeKey });
+    if (!plan || seen.has(plan.key)) {
+      return null;
+    }
+    seen.add(plan.key);
+    plans.push(plan);
+  }
+  return plans;
+};
+
 export const validateMovePath = (
   state: GameState,
   playerId: PlayerID,
@@ -1188,6 +1234,45 @@ export const isCardPlayable = (
         stopOnOccupied
       })
     );
+  }
+
+  if (card.targetSpec.kind === "multiEdge") {
+    const targetSpec = card.targetSpec as TargetRecord;
+    const edgeKeys = getEdgeKeyTargets(targets ?? null);
+    if (!edgeKeys || edgeKeys.length === 0) {
+      return false;
+    }
+    const minEdges =
+      typeof targetSpec.minEdges === "number" ? Math.max(0, Math.floor(targetSpec.minEdges)) : 1;
+    const maxEdges =
+      typeof targetSpec.maxEdges === "number"
+        ? Math.max(0, Math.floor(targetSpec.maxEdges))
+        : Number.POSITIVE_INFINITY;
+    if (edgeKeys.length < minEdges || edgeKeys.length > maxEdges) {
+      return false;
+    }
+    const hasBuildBridge = card.effects?.some((effect) => effect.kind === "buildBridge") ?? false;
+    const hasExistingBridgeEffect =
+      card.effects?.some(
+        (effect) =>
+          effect.kind === "lockBridge" ||
+          effect.kind === "trapBridge" ||
+          effect.kind === "destroyBridge"
+      ) ?? false;
+    const planResolver = hasBuildBridge
+      ? getBuildBridgePlan
+      : hasExistingBridgeEffect
+        ? getExistingBridgePlan
+        : getBuildBridgePlan;
+    const seen = new Set<string>();
+    for (const edgeKey of edgeKeys) {
+      const plan = planResolver(state, playerId, targetSpec, { edgeKey });
+      if (!plan || seen.has(plan.key)) {
+        return false;
+      }
+      seen.add(plan.key);
+    }
+    return true;
   }
 
   if (card.targetSpec.kind === "multiPath") {
@@ -2581,12 +2666,26 @@ export const resolveCardEffects = (
         break;
       }
       case "destroyBridge": {
-        const plan = getExistingBridgePlan(
-          nextState,
-          playerId,
-          card.targetSpec as TargetRecord,
-          targets ?? null
-        );
+        const targetSpec = card.targetSpec as TargetRecord;
+        if (card.targetSpec.kind === "multiEdge") {
+          const plans = getExistingBridgePlans(nextState, playerId, targetSpec, targets ?? null);
+          if (!plans || plans.length === 0) {
+            break;
+          }
+          const bridges = { ...nextState.board.bridges };
+          for (const plan of plans) {
+            delete bridges[plan.key];
+          }
+          nextState = {
+            ...nextState,
+            board: {
+              ...nextState.board,
+              bridges
+            }
+          };
+          break;
+        }
+        const plan = getExistingBridgePlan(nextState, playerId, targetSpec, targets ?? null);
         if (!plan) {
           break;
         }

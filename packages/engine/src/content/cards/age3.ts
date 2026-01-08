@@ -155,6 +155,25 @@ export const WORMHOLE_GATE: CardDef = {
   effects: [{ kind: "linkHexes" }]
 };
 
+export const RUIN_THE_SPAN: CardDef = {
+  id: "age3.ruin_the_span",
+  name: "Ruin the Span",
+  rulesText: "Destroy 2 Bridges anywhere.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 3 },
+  initiative: 60,
+  burn: false,
+  targetSpec: {
+    kind: "multiEdge",
+    anywhere: true,
+    minEdges: 2,
+    maxEdges: 2
+  },
+  effects: [{ kind: "destroyBridge" }]
+};
+
 export const CONQUEST_RECORD: CardDef = {
   id: "age3.conquest_record",
   name: "Conquest Record",
@@ -370,6 +389,7 @@ export const AGE3_CARDS: CardDef[] = [
   LAST_LECTURE,
   EXECUTION_ORDER,
   WORMHOLE_GATE,
+  RUIN_THE_SPAN,
   CONQUEST_RECORD,
   FINAL_OATH,
   LOGISTICS_OFFICER,

@@ -16,7 +16,7 @@
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 
 ## Active tasks
-- agent4: Implement Age III Ruin the Span card (multi-edge bridge destruction) with engine target validation + UI edge picking support. Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/action-flow.test.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.
+- none
 
 ## Milestone 8 progress
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
@@ -43,6 +43,7 @@
 - Added Age II Champion Recall (return champion from board to hand via burn pile) with tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.champion-recall.test.ts`, `implementation_plan.md`.) (Overlap note: touched `packages/engine/src/card-effects.ts` + `packages/engine/src/content/cards/age2.ts` alongside other in-flight edits.)
 - Added Age II Mortar Shot (scatter AoE with force destruction + champion damage) with tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.mortar-shot.test.ts`, `implementation_plan.md`.) (Overlap note: touched `packages/engine/src/card-effects.ts` + `packages/engine/src/content/cards/age2.ts` alongside other in-flight edits.)
 - Added Age III Wormhole Gate card def (link-hexes) and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (owner: agent4)
+- Added Age III Ruin the Span (destroy 2 bridges) with multi-edge targeting support, edge-selection UI updates for existing bridges, and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/action-flow.test.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Added Age III victory card defs (Conquest Record, Final Oath) using gain-gold/heal effects and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (owner: agent4)
 
 ## Milestone 9 progress

@@ -463,7 +463,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
       - [x] Execution Order.
     - [ ] Age III Bridges/Terrain card defs (2).
       - [x] Wormhole Gate.
-      - [ ] Ruin the Span.
+      - [x] Ruin the Span.
     - [ ] Age III Synergy/Gambits card defs (2).
     - [ ] Age III Victory card defs (4+).
       - [x] Conquest Record.
