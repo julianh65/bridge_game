@@ -516,11 +516,13 @@ export type PlayerPrivateView = {
     drawPile: number;
     discardPile: number;
     scrapped: number;
+    burned: number;
   };
   deckCards: {
     drawPile: CardInstance[];
     discardPile: CardInstance[];
-  scrapped: CardInstance[];
+    scrapped: CardInstance[];
+    burned: CardInstance[];
   };
   vp: { permanent: number; control: number; total: number };
   setup: SetupPrivateView | null;

@@ -222,12 +222,14 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
           deckCounts: {
             drawPile: viewer.deck.drawPile.length,
             discardPile: viewer.deck.discardPile.length,
-            scrapped: viewer.deck.scrapped.length
+            scrapped: viewer.deck.scrapped.length,
+            burned: viewer.burned.length
           },
           deckCards: {
             drawPile: mapCardInstances(state, viewer.deck.drawPile),
             discardPile: mapCardInstances(state, viewer.deck.discardPile),
-            scrapped: mapCardInstances(state, viewer.deck.scrapped)
+            scrapped: mapCardInstances(state, viewer.deck.scrapped),
+            burned: mapCardInstances(state, viewer.burned)
           },
           vp: viewerVp,
           setup: setupPrivate,

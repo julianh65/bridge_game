@@ -57,7 +57,7 @@ const getCardTargetHint = (cardDef: CardDef | null): string | null => {
   }
 };
 
-type DeckPulseKey = "draw" | "discard" | "scrapped";
+type DeckPulseKey = "draw" | "discard" | "scrapped" | "burned";
 
 type GameScreenHandPanelProps = {
   canShowHandPanel: boolean;
@@ -141,8 +141,8 @@ export const GameScreenHandPanel = ({
   const [isPassConfirming, setIsPassConfirming] = useState(false);
   const shouldConfirmPass = availableMana > 0;
   const manaLabel = `${availableMana}/${maxMana}`;
-  const [deckPulse, setDeckPulse] = useState({ draw: 0, discard: 0, scrapped: 0 });
-  const [deckDelta, setDeckDelta] = useState({ draw: 0, discard: 0, scrapped: 0 });
+  const [deckPulse, setDeckPulse] = useState({ draw: 0, discard: 0, scrapped: 0, burned: 0 });
+  const [deckDelta, setDeckDelta] = useState({ draw: 0, discard: 0, scrapped: 0, burned: 0 });
   const deckPrevRef = useRef<NonNullable<GameView["private"]>["deckCounts"] | null>(null);
   const deckTimersRef = useRef<Partial<Record<DeckPulseKey, number>>>({});
 
@@ -177,7 +177,8 @@ export const GameScreenHandPanel = ({
     const deltas = {
       draw: deckCounts.drawPile - previous.drawPile,
       discard: deckCounts.discardPile - previous.discardPile,
-      scrapped: deckCounts.scrapped - previous.scrapped
+      scrapped: deckCounts.scrapped - previous.scrapped,
+      burned: deckCounts.burned - previous.burned
     };
     (Object.keys(deltas) as DeckPulseKey[]).forEach((key) => {
       const delta = deltas[key];
@@ -277,6 +278,13 @@ export const GameScreenHandPanel = ({
           count: deckCounts.scrapped,
           delta: deckDelta.scrapped,
           pulseKey: deckPulse.scrapped
+        },
+        {
+          id: "burned" as const,
+          label: "Burned",
+          count: deckCounts.burned,
+          delta: deckDelta.burned,
+          pulseKey: deckPulse.burned
         }
       ]
     : [];
