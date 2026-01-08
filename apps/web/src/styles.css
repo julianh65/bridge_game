@@ -2455,10 +2455,6 @@ body.is-game .game-card[data-type="Order"] {
   color: var(--ink);
   line-height: 1.4;
   text-align: center;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 .game-card__rules--hidden {
@@ -2575,10 +2571,6 @@ body.is-game .game-card[data-type="Order"] {
   flex-wrap: wrap;
   gap: 4px;
   align-items: center;
-}
-
-.game-card--detail .game-card__rules {
-  -webkit-line-clamp: 6;
 }
 
 .game-card--power {
@@ -4049,7 +4041,10 @@ body.is-game .log-empty {
 .game-card--hand .game-card__rules {
   font-size: 11px;
   color: var(--muted);
+  display: -webkit-box;
   -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .game-card--hand .game-card__champion {
@@ -4612,7 +4607,10 @@ body.is-game .game-card--market .card-tag {
   margin: 0;
   font-size: 14px;
   color: var(--ink);
+  display: -webkit-box;
   -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .market-card__rules--hidden,
@@ -5271,7 +5269,10 @@ body.is-game .collection-roll {
 
 .collection-card .game-card__rules {
   font-size: 12px;
+  display: -webkit-box;
   -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .collection-card .game-card__initiative {

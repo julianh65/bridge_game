@@ -17,6 +17,10 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- owner: agent1
+  scope: improve random bridge placement to avoid center connections and bias toward emptier/spread board areas.
+  files: packages/engine/src/board-generation.ts, packages/engine/src/board-generation.test.ts, packages/engine/src/setup-flow.ts, apps/web/src/lib/board-preview.ts, implementation_plan.md, progress.md
+  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -96,6 +100,7 @@
 - Added an active effects view in the info dock with Log/Effects tabs plus a sidebar button to open it; marked the plan checklist item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenSidebar.tsx`.)
 - Enabled linked-hex movement (Tunnel Network/Wormhole Link) for board-pick march + card move paths by honoring link modifiers in UI targeting; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Added Burn the Bridges (Age II) with destroy-connected-bridges effect, movement-target validation, and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent2)
+- Removed rules text truncation on large card variants while keeping clamps on compact hand/market/collection cards; updated the plan checklist. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
 
 ## Milestone 8 progress
 - Added Age II market card defs (Set to Skirmish, Battalion Contract, Rally Where You Stand, Insight, Stall, Deep Shaft Rig, Strategic Triumph, Banner of Resolve) using existing effects; updated the plan checklist. (Files: `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.) (owner: agent4) (Overlap note: included a pre-staged `implementation_plan.md` edit about burn animation.)
