@@ -210,6 +210,7 @@ export const CardsBrowser = () => {
                   card={card}
                   cardId={card.id}
                   showId
+                  showTags
                   showFaction
                   showChampionStats
                 />

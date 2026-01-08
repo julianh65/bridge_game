@@ -118,6 +118,7 @@
 - Clarified draw/discard/scrapped pile pills with delta badges and pulse animation in the hand panel; marked the plan checklist item complete. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreenHandPanel.tsx` also in agent3 scope.)
 - Updated the private view VP totals to recompute control points live from board occupation changes; marked the plan checklist item complete. (Files: `packages/engine/src/round-flow.ts`, `packages/engine/src/view.ts`, `implementation_plan.md`.)
 - Highlighted Burn tags with distinct styling + subtle animation and split the burn UX checklist into clearer sub-items. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.)
+- Enabled card tags in the Card Editor and Cards tab so the Burn styling is visible during browsing. (Files: `apps/web/src/components/CardEditor.tsx`, `apps/web/src/components/CardsBrowser.tsx`.)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
