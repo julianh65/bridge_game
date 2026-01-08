@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { CARD_DEFS, type CardDefId, type CardInstance } from "@bridgefront/engine";
+import {
+  CARD_DEFS,
+  type Age,
+  type BoardState,
+  type CardDefId,
+  type CardInstance
+} from "@bridgefront/engine";
 
 import type { RoomClient } from "../lib/room-client";
 
@@ -9,6 +15,38 @@ const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 type RoomDebugPanelProps = {
   room: RoomClient;
 };
+
+const getAgeForRound = (round: number): Age => {
+  if (round >= 8) {
+    return "III";
+  }
+  if (round >= 4) {
+    return "II";
+  }
+  return "I";
+};
+
+const isBoardSnapshot = (value: unknown): value is BoardState => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const record = value as Record<string, unknown>;
+  return (
+    typeof record.radius === "number" &&
+    typeof record.hexes === "object" &&
+    record.hexes !== null &&
+    typeof record.bridges === "object" &&
+    record.bridges !== null &&
+    typeof record.units === "object" &&
+    record.units !== null
+  );
+};
+
+const ROUND_PRESETS = [
+  { label: "Age I start (Round 1)", round: 1 },
+  { label: "Age II start (Round 4)", round: 4 },
+  { label: "Age III start (Round 8)", round: 8 }
+];
 
 export const RoomDebugPanel = ({ room }: RoomDebugPanelProps) => {
   if (!import.meta.env.DEV) {
@@ -19,7 +57,10 @@ export const RoomDebugPanel = ({ room }: RoomDebugPanelProps) => {
   const [patchPath, setPatchPath] = useState("");
   const [patchValue, setPatchValue] = useState("");
   const [handCardInput, setHandCardInput] = useState("");
+  const [roundInput, setRoundInput] = useState("");
+  const [boardSnapshotInput, setBoardSnapshotInput] = useState("");
   const currentSeed = room.debugState?.seed ?? room.view?.public.seed ?? null;
+  const currentRound = room.debugState?.round ?? room.view?.public.round ?? null;
 
   useEffect(() => {
     if (seedInput.trim() === "" && currentSeed !== null && currentSeed !== undefined) {
@@ -27,8 +68,18 @@ export const RoomDebugPanel = ({ room }: RoomDebugPanelProps) => {
     }
   }, [currentSeed, seedInput]);
 
+  useEffect(() => {
+    if (roundInput.trim() === "" && currentRound !== null && currentRound !== undefined) {
+      setRoundInput(String(currentRound));
+    }
+  }, [currentRound, roundInput]);
+
   const seedValue = seedInput.trim() === "" ? null : Number(seedInput);
   const seedValid = seedValue === null || Number.isFinite(seedValue);
+  const roundValue = roundInput.trim() === "" ? null : Number(roundInput);
+  const roundValid = roundValue !== null && Number.isFinite(roundValue) && roundValue > 0;
+  const roundAge =
+    roundValid && roundValue !== null ? getAgeForRound(Math.floor(roundValue)) : null;
   const canSend = room.status === "connected" && Boolean(room.playerId);
   const patchValueState = useMemo(() => {
     const raw = patchValue.trim();
@@ -57,8 +108,28 @@ export const RoomDebugPanel = ({ room }: RoomDebugPanelProps) => {
     });
     return { rawIds, valid, invalid };
   }, [handCardInput]);
+  const boardSnapshotState = useMemo(() => {
+    const raw = boardSnapshotInput.trim();
+    if (!raw) {
+      return { value: null, valid: false, error: "Paste board JSON to apply." };
+    }
+    try {
+      const parsed = JSON.parse(raw);
+      if (!isBoardSnapshot(parsed)) {
+        return {
+          value: null,
+          valid: false,
+          error: "Board snapshot must include radius, hexes, bridges, and units."
+        };
+      }
+      return { value: parsed, valid: true, error: null };
+    } catch {
+      return { value: null, valid: false, error: "Invalid JSON in board snapshot." };
+    }
+  }, [boardSnapshotInput]);
   const patchPathValue = patchPath.trim();
   const canPatch = canSend && patchPathValue !== "" && patchValueState.valid;
+  const canApplyRound = canSend && Boolean(room.debugState) && roundValid;
   const playerIndex = useMemo(() => {
     if (!room.debugState || !room.playerId) {
       return -1;
@@ -71,6 +142,7 @@ export const RoomDebugPanel = ({ room }: RoomDebugPanelProps) => {
     playerIndex >= 0 &&
     parsedHandCards.valid.length > 0 &&
     parsedHandCards.invalid.length === 0;
+  const canApplyBoardSnapshot = canSend && Boolean(room.debugState) && boardSnapshotState.valid;
   const stateJson = useMemo(() => {
     if (!room.debugState) {
       return "";
@@ -111,6 +183,33 @@ export const RoomDebugPanel = ({ room }: RoomDebugPanelProps) => {
     });
   };
 
+  const applyRoundPreset = (targetRound: number) => {
+    if (!canSend || !room.debugState) {
+      return;
+    }
+    const normalizedRound = Math.max(1, Math.floor(targetRound));
+    const age = getAgeForRound(normalizedRound);
+    const playerCount = room.debugState.players.length;
+    const leadSeatIndex = playerCount > 0 ? (normalizedRound - 1) % playerCount : 0;
+    room.sendDebugCommand({ command: "patchState", path: "round", value: normalizedRound });
+    room.sendDebugCommand({ command: "patchState", path: "market.age", value: age });
+    room.sendDebugCommand({
+      command: "patchState",
+      path: "leadSeatIndex",
+      value: leadSeatIndex
+    });
+    room.sendDebugCommand({ command: "state" });
+  };
+
+  const handleClearBlocks = () => {
+    if (!canSend) {
+      return;
+    }
+    room.sendDebugCommand({ command: "patchState", path: "blocks", value: null });
+    room.sendDebugCommand({ command: "patchState", path: "actionResolution", value: null });
+    room.sendDebugCommand({ command: "state" });
+  };
+
   const handleInjectHand = (mode: "add" | "replace") => {
     if (!canInjectHand || !room.debugState) {
       return;
@@ -142,6 +241,25 @@ export const RoomDebugPanel = ({ room }: RoomDebugPanelProps) => {
       command: "patchState",
       path: `players[${playerIndex}].deck.hand`,
       value: nextHand
+    });
+    room.sendDebugCommand({ command: "state" });
+  };
+
+  const handleCaptureBoard = () => {
+    if (!room.debugState) {
+      return;
+    }
+    setBoardSnapshotInput(JSON.stringify(room.debugState.board, null, 2));
+  };
+
+  const handleApplyBoardSnapshot = () => {
+    if (!canApplyBoardSnapshot || !boardSnapshotState.value) {
+      return;
+    }
+    room.sendDebugCommand({
+      command: "patchState",
+      path: "board",
+      value: boardSnapshotState.value
     });
     room.sendDebugCommand({ command: "state" });
   };
@@ -196,6 +314,46 @@ export const RoomDebugPanel = ({ room }: RoomDebugPanelProps) => {
         </button>
       </div>
       <p className="muted">Patch values accept JSON; unquoted text is treated as a string.</p>
+      <h3>Scenario Presets</h3>
+      <p className="muted">Quick round/age adjustments and cleanup helpers.</p>
+      <div className="controls">
+        <label>
+          Round
+          <input
+            type="number"
+            value={roundInput}
+            onChange={(event) => setRoundInput(event.target.value)}
+          />
+        </label>
+        <button
+          type="button"
+          onClick={() => {
+            if (roundValue === null || !roundValid) {
+              return;
+            }
+            applyRoundPreset(roundValue);
+          }}
+          disabled={!canApplyRound}
+        >
+          Apply Round
+        </button>
+        {roundAge ? <span className="muted">Age {roundAge}</span> : null}
+      </div>
+      <div className="controls">
+        {ROUND_PRESETS.map((preset) => (
+          <button
+            key={preset.round}
+            type="button"
+            onClick={() => applyRoundPreset(preset.round)}
+            disabled={!canSend || !room.debugState}
+          >
+            {preset.label}
+          </button>
+        ))}
+        <button type="button" onClick={handleClearBlocks} disabled={!canSend}>
+          Clear Blocks
+        </button>
+      </div>
       <h3>Hand Injector</h3>
       <p className="muted">
         Paste card ids to add or replace your hand (comma or space separated).
@@ -232,6 +390,35 @@ export const RoomDebugPanel = ({ room }: RoomDebugPanelProps) => {
       ) : null}
       {!room.debugState ? (
         <p className="muted">Fetch state to enable hand injection.</p>
+      ) : null}
+      <h3>Board Snapshot</h3>
+      <p className="muted">Capture or apply the current board for scenario testing.</p>
+      <div className="controls">
+        <button type="button" onClick={handleCaptureBoard} disabled={!room.debugState}>
+          Capture Board
+        </button>
+        <button
+          type="button"
+          onClick={handleApplyBoardSnapshot}
+          disabled={!canApplyBoardSnapshot}
+        >
+          Apply Board
+        </button>
+        <button type="button" onClick={() => setBoardSnapshotInput("")}>
+          Clear
+        </button>
+      </div>
+      <label>
+        Board JSON
+        <textarea
+          rows={8}
+          value={boardSnapshotInput}
+          onChange={(event) => setBoardSnapshotInput(event.target.value)}
+          placeholder='{"radius":4,"hexes":{...},"bridges":{...},"units":{...}}'
+        />
+      </label>
+      {boardSnapshotState.error ? (
+        <p className="muted">{boardSnapshotState.error}</p>
       ) : null}
       {room.debugState ? (
         <details>

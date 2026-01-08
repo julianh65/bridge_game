@@ -557,6 +557,7 @@ none
 - Board inspector now labels special tiles (CAP/FORGE/MINE/CTR) on the hexes.
 - Fixed hex fill styles so tiles render in their intended colors.
 - Added dev-only room debug tools (state JSON fetch, advance phase, reset with seed) plus server debug commands for host-only use.
+- Added scenario presets (round/age) and board snapshot capture/apply helpers to the Room Debug panel for faster setup testing. (Files: `apps/web/src/components/RoomDebugPanel.tsx`, `implementation_plan.md`.)
 
 ## Milestone 4 progress
 - Added a game screen placeholder layout in `apps/web` (board area + sidebar stubs), no server wiring yet.
