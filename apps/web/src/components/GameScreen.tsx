@@ -38,6 +38,7 @@ import { VictoryScreen } from "./VictoryScreen";
 import { buildHexRender } from "../lib/board-preview";
 import { extractCombatSequences, type CombatSequence } from "../lib/combat-log";
 import { formatGameEvent } from "../lib/event-format";
+import { getFactionName } from "../lib/factions";
 import type { CombatSyncMap, RoomConnectionStatus } from "../lib/room-client";
 import { playSfx } from "../lib/sfx";
 
@@ -87,6 +88,14 @@ type AgeCue = {
   label: string;
   round: number;
   kind: "start" | "shift";
+};
+
+type ModifierView = GameView["public"]["modifiers"][number];
+
+type ActiveEffectEntry = {
+  id: string;
+  label: string;
+  detail: string;
 };
 
 const parseTargets = (raw: string): Record<string, unknown> | null => {
@@ -489,6 +498,72 @@ const describeBasicAction = (
   }
 };
 
+const formatModifierDurationLabel = (duration: ModifierView["duration"]) => {
+  switch (duration.type) {
+    case "permanent":
+      return "Permanent";
+    case "endOfRound":
+      return "Until round end";
+    case "endOfBattle":
+      return "Until battle ends";
+    case "uses":
+      return `${duration.remaining} use${duration.remaining === 1 ? "" : "s"}`;
+    default: {
+      const _exhaustive: never = duration;
+      return String(_exhaustive);
+    }
+  }
+};
+
+const formatModifierSourceLabel = (modifier: ModifierView) => {
+  const sourceId = modifier.source.sourceId;
+  switch (modifier.source.type) {
+    case "faction": {
+      const factionName = getFactionName(sourceId);
+      return factionName ? `Faction ${factionName}` : `Faction ${sourceId}`;
+    }
+    case "champion": {
+      const name = CARD_DEFS_BY_ID.get(sourceId)?.name ?? sourceId;
+      return `Champion ${name}`;
+    }
+    case "card":
+      return CARD_DEFS_BY_ID.get(sourceId)?.name ?? sourceId;
+    default: {
+      const _exhaustive: never = modifier.source.type;
+      return String(_exhaustive);
+    }
+  }
+};
+
+const buildActiveEffects = (
+  modifiers: ModifierView[],
+  playerNameById: Map<string, string>
+): ActiveEffectEntry[] =>
+  modifiers.map((modifier) => {
+    const ownerLabel = modifier.ownerPlayerId
+      ? playerNameById.get(modifier.ownerPlayerId) ?? modifier.ownerPlayerId
+      : null;
+    const attachment =
+      modifier.attachedHex
+        ? `Hex ${modifier.attachedHex}`
+        : modifier.attachedEdge
+          ? `Edge ${modifier.attachedEdge}`
+          : modifier.attachedUnitId
+            ? `Unit ${modifier.attachedUnitId}`
+            : "Global";
+    const durationLabel = formatModifierDurationLabel(modifier.duration);
+    const detailParts = [
+      ownerLabel ? `Owner ${ownerLabel}` : null,
+      attachment,
+      durationLabel
+    ].filter(Boolean);
+    return {
+      id: modifier.id,
+      label: formatModifierSourceLabel(modifier),
+      detail: detailParts.join(" · ")
+    };
+  });
+
 const formatAgeCueLabel = (age: string) => `Age ${age} Begins`;
 
 const AGE_CUE_STORAGE_PREFIX = "bridgefront:age-cue";
@@ -596,6 +671,10 @@ export const GameScreen = ({
     () => new Map(view.public.players.map((player) => [player.id, player.name])),
     [view.public.players]
   );
+  const activeEffects = useMemo(
+    () => buildActiveEffects(view.public.modifiers, playerNames),
+    [playerNames, view.public.modifiers]
+  );
   const playerFactions = useMemo(
     () =>
       new Map(
@@ -680,6 +759,7 @@ export const GameScreen = ({
   const [pendingStackFrom, setPendingStackFrom] = useState<string | null>(null);
   const [pendingPath, setPendingPath] = useState<string[]>([]);
   const [isInfoDockOpen, setIsInfoDockOpen] = useState(false);
+  const [infoDockTab, setInfoDockTab] = useState<"log" | "effects">("log");
   const [isHandPanelOpen, setIsHandPanelOpen] = useState(true);
   const [basicActionIntent, setBasicActionIntent] = useState<BasicActionIntent>("none");
   const storedAgeCue = useMemo(() => readStoredAgeCue(roomId), [roomId]);
@@ -1162,8 +1242,9 @@ export const GameScreen = ({
   const handleVictoryClose = () => {
     setIsVictoryVisible(false);
   };
-  const toggleDock = () => {
-    setIsInfoDockOpen((open) => !open);
+  const openDock = (tab: "log" | "effects") => {
+    setInfoDockTab(tab);
+    setIsInfoDockOpen(true);
   };
   const collapseSidebar = () => {
     setIsSidebarCollapsed(true);
@@ -2872,13 +2953,46 @@ export const GameScreen = ({
         ))}
       </ul>
     );
+  const effectsContent =
+    activeEffects.length === 0 ? (
+      <div className="log-empty">No active effects.</div>
+    ) : (
+      <ul className="log-list">
+        {activeEffects.map((effect) => (
+          <li key={effect.id}>
+            <span className="intel-value">{effect.label}</span>
+            {effect.detail ? <span className="player-meta"> {effect.detail}</span> : null}
+          </li>
+        ))}
+      </ul>
+    );
 
   const infoDock = isInfoDockOpen ? (
     <section className="panel game-dock" aria-live="polite">
       <div className="game-dock__header">
         <div className="game-dock__title">
           <span className="game-dock__eyebrow">Table intel</span>
-          <strong className="game-dock__label">Log</strong>
+          <strong className="game-dock__label">
+            {infoDockTab === "effects" ? "Active effects" : "Log"}
+          </strong>
+        </div>
+        <div className="game-dock__tabs">
+          <button
+            type="button"
+            className={`btn btn-tertiary ${infoDockTab === "log" ? "is-active" : ""}`}
+            aria-pressed={infoDockTab === "log"}
+            onClick={() => setInfoDockTab("log")}
+          >
+            Log <span className="dock-count">{logCount}</span>
+          </button>
+          <button
+            type="button"
+            className={`btn btn-tertiary ${infoDockTab === "effects" ? "is-active" : ""}`}
+            aria-pressed={infoDockTab === "effects"}
+            onClick={() => setInfoDockTab("effects")}
+          >
+            Effects <span className="dock-count">{activeEffects.length}</span>
+          </button>
         </div>
         <button
           type="button"
@@ -2888,7 +3002,9 @@ export const GameScreen = ({
           Close
         </button>
       </div>
-      <div className="game-dock__body">{logContent}</div>
+      <div className="game-dock__body">
+        {infoDockTab === "effects" ? effectsContent : logContent}
+      </div>
     </section>
   ) : null;
   const sidebarToggle = isSidebarCollapsed ? (
@@ -3101,8 +3217,10 @@ export const GameScreen = ({
             isInteractivePhase={isInteractivePhase}
             logCount={logCount}
             lastLogLabel={lastLogLabel}
+            activeEffectsCount={activeEffects.length}
             isInfoDockOpen={isInfoDockOpen}
-            onToggleDock={toggleDock}
+            infoDockTab={infoDockTab}
+            onOpenDock={openDock}
             onCollapse={collapseSidebar}
           />
         ) : null}

@@ -20,8 +20,10 @@ type GameScreenSidebarProps = {
   isInteractivePhase: boolean;
   logCount: number;
   lastLogLabel: string | null;
+  activeEffectsCount: number;
   isInfoDockOpen: boolean;
-  onToggleDock: () => void;
+  infoDockTab: "log" | "effects";
+  onOpenDock: (tab: "log" | "effects") => void;
   onCollapse: () => void;
 };
 
@@ -78,8 +80,10 @@ export const GameScreenSidebar = ({
   isInteractivePhase,
   logCount,
   lastLogLabel,
+  activeEffectsCount,
   isInfoDockOpen,
-  onToggleDock,
+  infoDockTab,
+  onOpenDock,
   onCollapse
 }: GameScreenSidebarProps) => {
   type SectionKey = "status" | "table" | "intel";
@@ -293,10 +297,21 @@ export const GameScreenSidebar = ({
             <div className="dock-buttons">
               <button
                 type="button"
-                className={`btn btn-tertiary ${isInfoDockOpen ? "is-active" : ""}`}
-                onClick={onToggleDock}
+                className={`btn btn-tertiary ${
+                  isInfoDockOpen && infoDockTab === "log" ? "is-active" : ""
+                }`}
+                onClick={() => onOpenDock("log")}
               >
                 Log <span className="dock-count">{logCount}</span>
+              </button>
+              <button
+                type="button"
+                className={`btn btn-tertiary ${
+                  isInfoDockOpen && infoDockTab === "effects" ? "is-active" : ""
+                }`}
+                onClick={() => onOpenDock("effects")}
+              >
+                Effects <span className="dock-count">{activeEffectsCount}</span>
               </button>
             </div>
             <button
