@@ -324,9 +324,9 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Add per-faction starter deck mapping (edit in `starter-decks.ts`).
 - [x] Update starter card defs per faction with unique initiatives as needed.
 - [x] Add the dark styling to the Play main tab area
-- [ ] Burn keyword UX + validation
+- [x] Burn keyword UX + validation
   - [x] Make Burn tags visually distinct (color + subtle animation).
-  - [ ] Verify burn effects resolve correctly; add a small visual cue if needed.
+  - [x] Verify burn effects resolve correctly; add a small visual cue if needed.
 - [x] there should be a nice / easy to see phase tracker, so right now we see it’s phase market but it would be cool if it was like the different phases separated by → and then it just highlights whichever phase it is
 - [x] the show / hide market button should be bigger and easier to hit and toggle back and forth, like it should probably be floating and fixed position and be in the exact same position whether they are in show / hide so it’s easier to toggle between
 - [x] why is all the card art way zoomed in at market phase?
@@ -341,7 +341,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] in the combat screen we should see what the champions as well as forces hit on (if there are modifiers it should reflect that as well)
 - [ ] tunnel network didn’t work
 - [x] similar to the show / hide market floating button we also want a go to and forth your own deck button to see the deck and go back and forth
-- [ ] the faction information is squished, remove the starter kit and pick going to selected affects the layout of the container its in
+- [x] the faction information is squished, remove the starter kit and pick going to selected affects the layout of the container its in
 ### Mini Milestone For Me
 
 I need some sort of script or way to edit the cards and decks in a nice UI with some nice to have features. I don't really know how this will work because the cards are kind of defined in typescript files not in JSON or anything. So help me think through this. There could be two options which is just a UI that loads in the the current deck and lets me view things and edit things and then saves it as a list of edits / changes that I can then take and make manually in the code, or we have a way such that it somehow writes back to the files? But if that's too tricky / dangerous then we should just do the first approach. The editor should let me view all cards, create copies of cards. I should be able to modify the attributes of cards easily, like health, gold, mana costs, scaling etc... but not like the names of cards or the effects, for bigger changes like that I will need to do that myself manually in the code. I also need some helpful helper functions / code to be able to run. One to show me all the colissions in initiative numbers, one to automatically decollide the deck, so it goes through and for any colissions that there are it decollides them by incrementing initiatives until there are no more colissions, and then one to "compress" initiative numbers so if I have like only 3 cards for example 10, 90, 30 it should compress them so the inititatives are 1, 3, 2. Maybe I can somehow build off the cards viewer screen I have but have a debug / dev version of it?

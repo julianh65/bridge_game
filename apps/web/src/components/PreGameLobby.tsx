@@ -1,4 +1,4 @@
-import { CARD_DEFS_BY_ID, type PlayerID } from "@bridgefront/engine";
+import type { PlayerID } from "@bridgefront/engine";
 
 import { FactionSymbol } from "./FactionSymbol";
 import { RoomCodeCopy } from "./RoomCodeCopy";
@@ -24,15 +24,6 @@ export const PreGameLobby = ({
   onPickFaction,
   onLeave
 }: PreGameLobbyProps) => {
-  const formatRulesText = (text?: string) => text?.replace(/\s+/g, " ").trim() ?? "";
-  const formatCardSummary = (cardId: string) => {
-    const card = CARD_DEFS_BY_ID[cardId];
-    if (!card) {
-      return cardId;
-    }
-    const rules = formatRulesText(card.rulesText);
-    return rules ? `${card.name} - ${rules}` : card.name;
-  };
   const connectedCount = lobby.players.filter((player) => player.connected).length;
   const localFactionId =
     lobby.players.find((player) => player.id === playerId)?.factionId ?? null;
@@ -162,6 +153,9 @@ export const PreGameLobby = ({
               const cardClass = `faction-card${isSelected ? " is-selected" : ""}${
                 isTaken ? " is-taken" : ""
               }`;
+              const tagClass = `faction-card__tag${
+                isSelected ? " faction-card__tag--selected" : isTaken ? " faction-card__tag--taken" : ""
+              }`;
               return (
                 <button
                   key={faction.id}
@@ -192,27 +186,8 @@ export const PreGameLobby = ({
                         ))}
                       </ul>
                     </div>
-                    <div className="faction-card__section">
-                      <span className="faction-card__section-title">Starter Kit</span>
-                      <div className="faction-card__starter">
-                        <span className="faction-card__starter-label">Spell</span>
-                        <span className="faction-card__starter-value">
-                          {formatCardSummary(faction.starterSpellId)}
-                        </span>
-                      </div>
-                      <div className="faction-card__starter">
-                        <span className="faction-card__starter-label">Champion</span>
-                        <span className="faction-card__starter-value">
-                          {formatCardSummary(faction.starterChampionId)}
-                        </span>
-                      </div>
-                    </div>
                   </div>
-                  {isSelected ? (
-                    <span className="chip chip--local">Selected</span>
-                  ) : (
-                    <span className="faction-card__tag">{tagLabel}</span>
-                  )}
+                  <span className={tagClass}>{tagLabel}</span>
                 </button>
               );
             })}
