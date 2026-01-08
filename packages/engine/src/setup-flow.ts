@@ -225,7 +225,8 @@ export const finalizeCapitalDraft = (state: GameState): GameState => {
 
   const bridged = placeRandomBridges(placement.board, placement.rngState, {
     capitalHexes,
-    count: tileCounts.randomBridges
+    count: tileCounts.randomBridges,
+    rules: state.config.boardGenerationRules
   });
 
   const nextState = {

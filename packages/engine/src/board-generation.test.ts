@@ -144,10 +144,15 @@ describe("board generation", () => {
     const rng = createRngState(777);
     const count = DEFAULT_CONFIG.tileCountsByPlayerCount[3].randomBridges;
 
-    const first = placeRandomBridges(board, rng, { capitalHexes: capitals, count });
+    const first = placeRandomBridges(board, rng, {
+      capitalHexes: capitals,
+      count,
+      rules: DEFAULT_CONFIG.boardGenerationRules
+    });
     const second = placeRandomBridges(board, createRngState(777), {
       capitalHexes: capitals,
-      count
+      count,
+      rules: DEFAULT_CONFIG.boardGenerationRules
     });
 
     expect(first.edgeKeys).toHaveLength(count);
@@ -157,6 +162,8 @@ describe("board generation", () => {
       const [a, b] = parseEdgeKey(edgeKey);
       expect(capitals).not.toContain(a);
       expect(capitals).not.toContain(b);
+      expect(a).not.toBe("0,0");
+      expect(b).not.toBe("0,0");
     }
   });
 });

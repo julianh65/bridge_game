@@ -117,6 +117,7 @@ type SpecialTilePlacementOptions = {
 type RandomBridgePlacementOptions = {
   capitalHexes: HexKey[];
   count: number;
+  rules: BoardGenerationRules;
 };
 
 type RandomBridgePlacementResult = {
@@ -125,9 +126,17 @@ type RandomBridgePlacementResult = {
   edgeKeys: EdgeKey[];
 };
 
+type EdgeCandidate = {
+  key: EdgeKey;
+  from: HexKey;
+  to: HexKey;
+};
+
 const CENTER_KEY = "0,0";
 const CAPITAL_BALANCE_WEIGHT = 4;
 const GLOBAL_SPREAD_WEIGHT = 3;
+const BRIDGE_SPECIAL_WEIGHT = 4;
+const BRIDGE_SPREAD_WEIGHT = 3;
 
 const cloneBoard = (board: BoardState): BoardState => {
   const hexes: Record<HexKey, HexState> = {};
@@ -162,6 +171,41 @@ const minDistanceToSet = (key: HexKey, others: HexKey[]): number => {
     }
   }
   return min;
+};
+
+const minDistanceToSetForEdge = (edge: EdgeCandidate, others: HexKey[]): number => {
+  return Math.min(minDistanceToSet(edge.from, others), minDistanceToSet(edge.to, others));
+};
+
+const listSpecialHexKeys = (board: BoardState): HexKey[] => {
+  return Object.values(board.hexes)
+    .filter((hex) => hex.tile !== "normal")
+    .map((hex) => hex.key);
+};
+
+const listBridgeAnchorKeys = (bridges: BoardState["bridges"]): HexKey[] => {
+  const anchors = new Set<HexKey>();
+  for (const bridge of Object.values(bridges)) {
+    anchors.add(bridge.from);
+    anchors.add(bridge.to);
+  }
+  return [...anchors];
+};
+
+const scoreBridgeCandidate = (
+  edge: EdgeCandidate,
+  specialKeys: HexKey[],
+  bridgeAnchors: HexKey[]
+): number => {
+  const specialDistance = minDistanceToSetForEdge(edge, specialKeys);
+  const bridgeDistance = minDistanceToSetForEdge(edge, bridgeAnchors);
+  const specialScore = Number.isFinite(specialDistance)
+    ? specialDistance * BRIDGE_SPECIAL_WEIGHT
+    : 0;
+  const bridgeScore = Number.isFinite(bridgeDistance)
+    ? bridgeDistance * BRIDGE_SPREAD_WEIGHT
+    : 0;
+  return specialScore + bridgeScore;
 };
 
 const closestCapitalIndex = (key: HexKey, capitalHexes: HexKey[]): number => {
@@ -533,7 +577,7 @@ export const placeRandomBridges = (
   rngState: RNGState,
   options: RandomBridgePlacementOptions
 ): RandomBridgePlacementResult => {
-  const { capitalHexes, count } = options;
+  const { capitalHexes, count, rules } = options;
   if (!Number.isInteger(count) || count < 0) {
     throw new Error("random bridge count must be a non-negative integer");
   }
@@ -550,11 +594,14 @@ export const placeRandomBridges = (
   }
 
   const seenEdges = new Set<EdgeKey>();
-  const candidates: Array<{ key: EdgeKey; from: HexKey; to: HexKey }> = [];
+  const candidates: EdgeCandidate[] = [];
   for (const key of Object.keys(board.hexes)) {
     const from = key as HexKey;
     for (const neighbor of neighborHexKeys(from)) {
       if (!board.hexes[neighbor]) {
+        continue;
+      }
+      if (from === CENTER_KEY || neighbor === CENTER_KEY) {
         continue;
       }
       if (capitalSet.has(from) || capitalSet.has(neighbor)) {
@@ -569,12 +616,48 @@ export const placeRandomBridges = (
     }
   }
 
-  if (count > candidates.length) {
+  const emptyCandidates = candidates.filter((edge) => {
+    const fromHex = board.hexes[edge.from];
+    const toHex = board.hexes[edge.to];
+    return fromHex?.tile === "normal" && toHex?.tile === "normal";
+  });
+  const candidatePool = emptyCandidates.length >= count ? emptyCandidates : candidates;
+
+  if (count > candidatePool.length) {
     throw new Error("random bridge count exceeds available edges");
   }
 
-  const { value: shuffled, next } = shuffle(rngState, candidates);
-  const selected = shuffled.slice(0, count);
+  const specialKeys = listSpecialHexKeys(board);
+  const baseAnchors = listBridgeAnchorKeys(board.bridges);
+  const anchorKeys = new Set(baseAnchors);
+  let next = rngState;
+  let remaining = [...candidatePool];
+  const selected: EdgeCandidate[] = [];
+  const topK = Math.max(1, rules.topK);
+
+  for (let i = 0; i < count; i += 1) {
+    const anchorList = Array.from(anchorKeys);
+    const ranked = remaining
+      .map((edge) => ({
+        edge,
+        score: scoreBridgeCandidate(edge, specialKeys, anchorList)
+      }))
+      .sort((a, b) => {
+        if (a.score !== b.score) {
+          return b.score - a.score;
+        }
+        return a.edge.key.localeCompare(b.edge.key);
+      });
+    const limit = Math.min(topK, ranked.length);
+    const { value: index, next: nextRng } = randInt(next, 0, limit - 1);
+    const chosen = ranked[index].edge;
+    next = nextRng;
+    selected.push(chosen);
+    anchorKeys.add(chosen.from);
+    anchorKeys.add(chosen.to);
+    remaining = remaining.filter((edge) => edge.key !== chosen.key);
+  }
+
   const bridges = { ...board.bridges };
   for (const edge of selected) {
     bridges[edge.key] = {

@@ -342,7 +342,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] tunnel network didn’t work
 - [x] similar to the show / hide market floating button we also want a go to and forth your own deck button to see the deck and go back and forth
 - [x] the faction information is squished, remove the starter kit and pick going to selected affects the layout of the container its in
-- [ ] for the bridges that generate and randomly get placed try to wire it up so it's a bit more "intelligent" in that it balances out the board, place bridges not conected to the center and try to place them on more empty parts of the board
+- [x] for the bridges that generate and randomly get placed try to wire it up so it's a bit more "intelligent" in that it balances out the board, place bridges not conected to the center and try to place them on more empty parts of the board
 - [x] sometimes the texts on cards are cut off and turn into ...
 - [ ] the bridge card didn't give me the option to move 1 stack 1 hex
 - [ ] needs to be a way for me to test different cards in different board states, like a debug play game where i straight launch to age n with whatever cards in my hand i want

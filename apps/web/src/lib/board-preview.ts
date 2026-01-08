@@ -76,7 +76,8 @@ export const buildBoardPreview = (playerCount: number, seedInput: string): Board
 
   const { board: bridgedBoard } = placeRandomBridges(placedBoard, rngState, {
     capitalHexes: capitals,
-    count: DEFAULT_CONFIG.tileCountsByPlayerCount[playerCount].randomBridges
+    count: DEFAULT_CONFIG.tileCountsByPlayerCount[playerCount].randomBridges,
+    rules: DEFAULT_CONFIG.boardGenerationRules
   });
   const hexRender = buildHexRender(bridgedBoard);
 
