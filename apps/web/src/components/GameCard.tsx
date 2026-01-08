@@ -60,6 +60,9 @@ const formatTypeLabel = (type?: string | null) => {
   return normalized.replace(/\b\w/g, (match) => match.toUpperCase());
 };
 
+const formatChampionGoldScale = (values: number[]) =>
+  values.map((value) => `+${value}`).join(" / ");
+
 export const GameCard = ({
   card,
   cardId,
@@ -105,6 +108,13 @@ export const GameCard = ({
   const factionName = showFactionLabel ? getFactionName(card?.factionId) : null;
   const victoryPoints =
     !isHidden && card?.type === "Victory" ? card.victoryPoints ?? 1 : null;
+  const championGoldScale =
+    showChampionStats && !isHidden && card?.champion?.goldCostByChampionCount?.length
+      ? formatChampionGoldScale(card.champion.goldCostByChampionCount)
+      : null;
+  const championScaleLabel = championGoldScale
+    ? `Gold scales ${championGoldScale} (champions owned)`
+    : null;
 
   const classes = [
     "game-card",
@@ -170,24 +180,41 @@ export const GameCard = ({
         </div>
       ) : null}
       {showChampionStats && !isHidden && card?.champion ? (
-        <div className="game-card__champion">
-          <div className="game-card__champion-stat">
-            <span>HP</span>
-            <strong>{card.champion.hp}</strong>
+        <>
+          <div className="game-card__champion">
+            <div className="game-card__champion-stat game-card__champion-stat--hp">
+              <span className="game-card__champion-icon" aria-hidden="true">
+                ❤
+              </span>
+              <span className="game-card__champion-label">HP</span>
+              <strong>{card.champion.hp}</strong>
+            </div>
+            <div className="game-card__champion-stat game-card__champion-stat--dice">
+              <span className="game-card__champion-icon" aria-hidden="true">
+                🎲
+              </span>
+              <span className="game-card__champion-label">Dice</span>
+              <strong>{card.champion.attackDice}</strong>
+            </div>
+            <div className="game-card__champion-stat game-card__champion-stat--hits">
+              <span className="game-card__champion-icon" aria-hidden="true">
+                🎯
+              </span>
+              <span className="game-card__champion-label">Hits</span>
+              <strong>{card.champion.hitFaces}</strong>
+            </div>
+            <div className="game-card__champion-stat game-card__champion-stat--bounty">
+              <span className="game-card__champion-icon" aria-hidden="true">
+                💰
+              </span>
+              <span className="game-card__champion-label">Bounty</span>
+              <strong>{card.champion.bounty}</strong>
+            </div>
           </div>
-          <div className="game-card__champion-stat">
-            <span>Dice</span>
-            <strong>{card.champion.attackDice}</strong>
-          </div>
-          <div className="game-card__champion-stat">
-            <span>Hits</span>
-            <strong>{card.champion.hitFaces}</strong>
-          </div>
-          <div className="game-card__champion-stat">
-            <span>Bounty</span>
-            <strong>{card.champion.bounty}</strong>
-          </div>
-        </div>
+          {championScaleLabel ? (
+            <div className="game-card__champion-scale">{championScaleLabel}</div>
+          ) : null}
+        </>
       ) : null}
       {showTags && !isHidden && tags.length > 0 ? (
         <div className="game-card__tags">
