@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import { DEFAULT_CONFIG } from "../../config";
-import { COMMON_STARTER_DECK, FACTION_STARTER_CHAMPIONS, FACTION_STARTER_SPELLS } from "../starter-decks";
+import {
+  COMMON_STARTER_DECK,
+  FACTION_STARTER_CHAMPIONS,
+  FACTION_STARTER_DECKS,
+  FACTION_STARTER_SPELLS
+} from "../starter-decks";
 import { CARD_DEFS, getCardDef } from "./index";
 
 const collectValues = (record: Record<string, string>): string[] => Object.values(record);
@@ -22,6 +27,7 @@ describe("card registry", () => {
   it("covers starter deck and faction starter cards", () => {
     const starterIds = [
       ...COMMON_STARTER_DECK,
+      ...Object.values(FACTION_STARTER_DECKS).flat(),
       ...collectValues(FACTION_STARTER_SPELLS),
       ...collectValues(FACTION_STARTER_CHAMPIONS)
     ];

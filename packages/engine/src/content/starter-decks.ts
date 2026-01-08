@@ -14,6 +14,15 @@ export const COMMON_STARTER_DECK: CardDefId[] = [
 
 export const DEFAULT_FACTION_ID = "bastion";
 
+export const FACTION_STARTER_DECKS: Record<string, CardDefId[]> = {
+  bastion: [...COMMON_STARTER_DECK],
+  veil: [...COMMON_STARTER_DECK],
+  aerial: [...COMMON_STARTER_DECK],
+  prospect: [...COMMON_STARTER_DECK],
+  cipher: [...COMMON_STARTER_DECK],
+  gatewright: [...COMMON_STARTER_DECK]
+};
+
 export const FACTION_STARTER_SPELLS: Record<string, CardDefId> = {
   bastion: "faction.bastion.hold_the_line",
   veil: "faction.veil.marked_for_coin",
@@ -48,6 +57,6 @@ export const resolveStarterFactionCards = (factionId: string): StarterFactionCar
     factionId: resolvedFaction,
     starterSpellId: FACTION_STARTER_SPELLS[resolvedFaction],
     championId: FACTION_STARTER_CHAMPIONS[resolvedFaction],
-    deck: COMMON_STARTER_DECK
+    deck: FACTION_STARTER_DECKS[resolvedFaction] ?? COMMON_STARTER_DECK
   };
 };
