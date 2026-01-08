@@ -11,6 +11,7 @@ import { ActionPanel, type BasicActionIntent, type BoardPickMode } from "./Actio
 import { GameCard } from "./GameCard";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
+const CARD_DRAW_ANIMATION_MS = 900;
 
 const isEditableTarget = (target: EventTarget | null): boolean => {
   if (!target || !(target instanceof HTMLElement)) {
@@ -141,6 +142,9 @@ export const GameScreenHandPanel = ({
   const [deckDelta, setDeckDelta] = useState({ draw: 0, discard: 0, scrapped: 0, burned: 0 });
   const deckPrevRef = useRef<NonNullable<GameView["private"]>["deckCounts"] | null>(null);
   const deckTimersRef = useRef<Partial<Record<DeckPulseKey, number>>>({});
+  const prevHandIdsRef = useRef<string[]>([]);
+  const drawTimersRef = useRef<Record<string, number>>({});
+  const [recentDrawnIds, setRecentDrawnIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!canSubmitDone || !shouldConfirmPass) {
@@ -204,8 +208,55 @@ export const GameScreenHandPanel = ({
   }, [deckCounts]);
 
   useEffect(() => {
+    const currentIds = handCards.map((card) => card.id);
+    const previousIds = prevHandIdsRef.current;
+    prevHandIdsRef.current = currentIds;
+    if (previousIds.length === 0) {
+      return;
+    }
+    const previousSet = new Set(previousIds);
+    const newIds = currentIds.filter((id) => !previousSet.has(id));
+    if (newIds.length === 0) {
+      setRecentDrawnIds((current) => {
+        const currentSet = new Set(currentIds);
+        const trimmed = new Set(Array.from(current).filter((id) => currentSet.has(id)));
+        return trimmed.size === current.size ? current : trimmed;
+      });
+      return;
+    }
+    setRecentDrawnIds((current) => {
+      const currentSet = new Set(currentIds);
+      const next = new Set(Array.from(current).filter((id) => currentSet.has(id)));
+      newIds.forEach((id) => next.add(id));
+      return next;
+    });
+    newIds.forEach((id) => {
+      const existing = drawTimersRef.current[id];
+      if (existing) {
+        window.clearTimeout(existing);
+      }
+      drawTimersRef.current[id] = window.setTimeout(() => {
+        setRecentDrawnIds((current) => {
+          if (!current.has(id)) {
+            return current;
+          }
+          const next = new Set(current);
+          next.delete(id);
+          return next;
+        });
+        delete drawTimersRef.current[id];
+      }, CARD_DRAW_ANIMATION_MS);
+    });
+  }, [handCards]);
+
+  useEffect(() => {
     return () => {
       Object.values(deckTimersRef.current).forEach((timer) => {
+        if (timer) {
+          window.clearTimeout(timer);
+        }
+      });
+      Object.values(drawTimersRef.current).forEach((timer) => {
         if (timer) {
           window.clearTimeout(timer);
         }
@@ -367,6 +418,7 @@ export const GameScreenHandPanel = ({
                       const canAfford = hasMana && hasGold;
                       const showManaWarning = canDeclareAction && manaCost > 0 && !hasMana;
                       const isPlayable = canDeclareAction && canAfford;
+                      const isDrawn = recentDrawnIds.has(card.id);
                       const totalCards = handCards.length;
                       const centerIndex = (totalCards - 1) / 2;
                       const offset = index - centerIndex;
@@ -384,7 +436,9 @@ export const GameScreenHandPanel = ({
                           type="button"
                           className={`hand-card ${isSelected ? "is-selected" : ""} ${
                             isPlayable ? "" : "is-disabled"
-                          } ${showManaWarning ? "is-mana-short" : ""}`}
+                          } ${showManaWarning ? "is-mana-short" : ""} ${
+                            isDrawn ? "is-drawn" : ""
+                          }`}
                           style={handStyle}
                           aria-pressed={isSelected}
                           aria-disabled={!isPlayable}

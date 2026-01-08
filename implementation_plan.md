@@ -349,7 +349,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] The UI in the cards for mana and gold needs to be slightly larger and more readable, background gradient makes it hard to read slightly
 - [x] The cards across different parts of the game can be different sizes, I want them to all be a standard size, big enough to fit everything, it's fine if there's empty space on some. they should be the size of the champion cards fitting those stats + their description
 - [x] Between action reveals while the board is still "highlighting" where it was played there should be like a configurable timing pause where the popup modal displaying the card and who played it closes and we see where on the map it's played
-- [ ] I want there to be an animation when cards are drawn
+- [x] I want there to be an animation when cards are drawn
 - [x] on the board we need to see the mine yields
 - [x] Board hex labels use the UI font and mine values show +gold markers
 - [x] The pass and confirm pass button is bugged

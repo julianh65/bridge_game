@@ -4003,6 +4003,41 @@ body.is-game .log-empty {
   }
 }
 
+@keyframes cardDraw {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+    box-shadow: 0 6px 14px rgba(245, 158, 11, 0.18);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 16px 28px rgba(245, 158, 11, 0.3);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    box-shadow: 0 12px 20px rgba(35, 28, 19, 0.18);
+  }
+}
+
+@keyframes handDraw {
+  0% {
+    opacity: 0;
+    transform: translateY(calc(var(--hand-lift, 0px) + 22px))
+      rotate(var(--hand-rotate, 0deg)) scale(0.96);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(calc(var(--hand-lift, 0px) - 8px))
+      rotate(var(--hand-rotate, 0deg)) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(var(--hand-lift, 0px)) rotate(var(--hand-rotate, 0deg)) scale(1);
+  }
+}
+
 .hand-card {
   position: relative;
   border: none;
@@ -4016,6 +4051,11 @@ body.is-game .log-empty {
   transform-origin: bottom center;
   transition: transform 0.2s ease;
   scroll-snap-align: center;
+}
+
+.hand-card.is-drawn {
+  animation: handDraw 0.55s ease;
+  will-change: transform, opacity;
 }
 
 .hand-card__mana-warning {
@@ -4138,6 +4178,11 @@ body.is-game .log-empty {
 .hand-card:focus-visible .game-card--hand {
   border-color: var(--accent);
   box-shadow: 0 12px 22px rgba(35, 28, 19, 0.24);
+}
+
+.hand-card.is-drawn .hand-card__face,
+.hand-card.is-drawn .game-card--hand {
+  animation: cardDraw 0.9s ease;
 }
 
 .hand-card.is-selected .hand-card__face,
@@ -6330,11 +6375,11 @@ body.is-game .btn-secondary:active:not(:disabled) {
 }
 
 .hex__value {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   fill: #f9d47a;
   stroke: rgba(40, 24, 8, 0.7);
-  stroke-width: 2;
+  stroke-width: 1.6;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0;
 }
@@ -8247,6 +8292,9 @@ body.is-game .combat-outcome__auto {
   .hex--target,
   .bridge--preview,
   .hand-card.is-selected .hand-card__face,
+  .hand-card.is-selected .game-card--hand,
+  .hand-card.is-drawn .hand-card__face,
+  .hand-card.is-drawn .game-card--hand,
   .card-detail,
   .victory-screen__panel,
   .combat-dice__die.is-rolling {
