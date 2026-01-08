@@ -6436,11 +6436,11 @@ body.is-game .btn-secondary:active:not(:disabled) {
 }
 
 .hex__value {
-  font-size: 7px;
+  font-size: 6.5px;
   font-weight: 700;
   fill: #f9d47a;
   stroke: rgba(40, 24, 8, 0.7);
-  stroke-width: 1;
+  stroke-width: 0.9;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0;
 }
