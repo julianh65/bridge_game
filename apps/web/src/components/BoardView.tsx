@@ -54,6 +54,7 @@ type BoardViewProps = {
   modifiers?: ModifierView[];
   playerIndexById?: Record<string, number>;
   playerFactionById?: Record<string, string>;
+  capitalOwnerByHex?: Record<string, string>;
   homeCapitalHexKey?: string | null;
   showCoords?: boolean;
   showTags?: boolean;
@@ -416,6 +417,7 @@ export const BoardView = ({
   modifiers,
   playerIndexById,
   playerFactionById,
+  capitalOwnerByHex,
   homeCapitalHexKey = null,
   showCoords = true,
   showTags = true,
@@ -1303,6 +1305,12 @@ export const BoardView = ({
         const hexTitleParts = [`Hex ${hex.key}`];
         if (hex.tile && hex.tile !== "normal") {
           hexTitleParts.push(`Tile: ${hex.tile}`);
+        }
+        if (hex.tile === "capital") {
+          const ownerLabel = capitalOwnerByHex?.[hex.key];
+          if (ownerLabel) {
+            hexTitleParts.push(`Capital: ${ownerLabel}`);
+          }
         }
         if (hex.tile === "mine" && hex.mineValue) {
           hexTitleParts.push(`Mine value: ${hex.mineValue}`);

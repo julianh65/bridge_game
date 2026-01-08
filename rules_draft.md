@@ -383,7 +383,7 @@ Gold Display
 Players see all other players gold counts.
 16) Collection Phase (simultaneous)
 All players resolve tile collections for tiles they occupy:
-Mines: gain gold equal to Mine Value or Draft
+Mines: gain gold equal to Mine Value
 Forges: choose Reforge or Forge Draft
 Center: Power Pick
 16.1 Power Pick (Center)

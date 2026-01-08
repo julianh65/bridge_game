@@ -80,6 +80,7 @@ export const MarketPanel = ({
   );
   const [bidAmount, setBidAmount] = useState(0);
   const [showWinner, setShowWinner] = useState(true);
+  const [localRollReady, setLocalRollReady] = useState<Record<string, boolean>>({});
   const bidEntries = players.map((player) => {
     const bid = market.bids[player.id];
     const isOut = market.playersOut[player.id];
@@ -280,6 +281,14 @@ export const MarketPanel = ({
   }, [winnerHighlight?.rollOffKey, rollOffDurationMs, showRollOff]);
 
   useEffect(() => {
+    if (!winnerHighlight || !showRollOff) {
+      setLocalRollReady({});
+      return;
+    }
+    setLocalRollReady({});
+  }, [winnerHighlight?.rollOffKey, showRollOff]);
+
+  useEffect(() => {
     if (!winnerHighlight || rollOffSchedule.rounds.length === 0) {
       setVisibleRollRounds(rollOffSchedule.rounds.length);
       return;
@@ -342,8 +351,14 @@ export const MarketPanel = ({
             <span className="market-rolloff__label">Round {round.roundIndex + 1}</span>
             <div className="market-rolloff__rolls">
               {round.rolls.map((roll, index) => {
+                const rollKey = `${winnerHighlight?.rollOffKey ?? 0}-${round.roundIndex}-${
+                  roll.playerId
+                }`;
+                const isLocalRoll = roll.playerId === playerId;
+                const hasRolled = !isLocalRoll || localRollReady[rollKey];
                 const isWinner = roll.playerId === winnerHighlight?.playerId;
                 const delayMs = round.rollDelays[index] ?? round.startMs;
+                const effectiveDelayMs = isLocalRoll ? 0 : delayMs;
                 const seatIndex = playerSeatIndexById.get(roll.playerId);
                 const swatchStyle = playerSwatchStyle(seatIndex);
                 const factionId = playerFactionById.get(roll.playerId);
@@ -372,15 +387,27 @@ export const MarketPanel = ({
                         </span>
                       ) : null}
                     </span>
-                    <NumberRoll
-                      value={roll.value}
-                      sides={6}
-                      durationMs={rollDurationMs}
-                      delayMs={delayMs}
-                      rollKey={`${winnerHighlight?.rollOffKey ?? 0}-${round.roundIndex}-${roll.playerId}`}
-                      className="number-roll--lg"
-                      label={`${roll.name} roll`}
-                    />
+                    {hasRolled ? (
+                      <NumberRoll
+                        value={roll.value}
+                        sides={6}
+                        durationMs={rollDurationMs}
+                        delayMs={effectiveDelayMs}
+                        rollKey={`${rollKey}-ready`}
+                        className="number-roll--lg"
+                        label={`${roll.name} roll`}
+                      />
+                    ) : (
+                      <button
+                        type="button"
+                        className="market-rolloff__roll-button"
+                        onClick={() =>
+                          setLocalRollReady((current) => ({ ...current, [rollKey]: true }))
+                        }
+                      >
+                        Roll
+                      </button>
+                    )}
                   </div>
                 );
               })}

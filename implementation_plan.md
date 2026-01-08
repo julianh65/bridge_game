@@ -644,7 +644,7 @@ Done
 - [ ] When moving between hexes we need to also be able to determine if we want to move just troops, champion, champion plus split of troops etc
 - [ ] The market transition can happen to fast while we're still waiting to see what all the actions were.
 - [x] Dice roll in the market and in general needs to be a bit bigger and clearly mark who is who.
-- [ ] Market roll-offs: each player clicks to roll their respective die.
+- [x] Market roll-offs: each player clicks to roll their respective die.
   - [x] Enlarge market roll-off dice UI and add clearer player labels.
   - [ ] Allow each player to click to roll their die (sync with server).
 - [x] In the market or on the card I don't see the nice champion stats that we created

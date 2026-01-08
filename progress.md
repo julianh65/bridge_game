@@ -17,7 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- [agent2] Add capital owner names to hex hover tooltip. Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`. Status: in progress.
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -64,6 +63,7 @@
 - Updated board label typography to use the UI font and clarified mine value markers with a +gold icon. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.) (owner: agent2) (Overlap note: `apps/web/src/styles.css` is also in agent1 scope.)
 - Reduced mine value label size and removed the emoji for a cleaner board read. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.) (owner: agent2) (Overlap note: `apps/web/src/styles.css` is also in agent1 scope.)
 - Tweaked mine value label sizing down further to reduce visual noise on the board. (File: `apps/web/src/styles.css`.) (owner: agent2) (Overlap note: `apps/web/src/styles.css` is also in agent1 scope.)
+- Added capital owner names to the hex hover tooltip for capital tiles. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`.) (owner: agent2)
 - Added per-faction starter deck mapping scaffold (defaults to the common deck), updated card registry coverage, and noted the remaining per-faction initiative work in the plan. (Files: `packages/engine/src/content/starter-decks.ts`, `packages/engine/src/content/cards/cards.test.ts`, `implementation_plan.md`.)
 - Added per-faction starter initiative variants for Quick Move/Zap/Scout Report and updated starter decks to use the faction-specific IDs; marked the plan item complete. (Files: `packages/engine/src/content/cards/starter.ts`, `packages/engine/src/content/starter-decks.ts`, `implementation_plan.md`.)
 - Added card art mappings for faction-specific starter variants (Quick Move/Zap/Scout Report) so art resolves for the new IDs. (File: `apps/web/src/data/card-art.json`.) (Overlap note: `apps/web/src/data/card-art.json` already had in-flight art mappings.)
@@ -108,6 +108,7 @@
 - Held market roll-off winner highlights through the tie-break animation so the winner callout stays visible; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Persisted market winner banners on resolved cards so each won card keeps its callout. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/MarketPanel.tsx`.)
 - Enlarged market roll-off dice chips and added clearer player labeling (seat tags + stronger rows); updated the plan checklist. (Files: `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` is in agent1 scope.)
+- Added per-player roll buttons for market roll-offs so each player clicks to animate their die; updated the plan checklist. (Files: `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` is in agent1 scope.)
 - Fixed pass/confirm pass UX so the confirmation state only clears when action selections change, not every render. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.)
 - Added draw animations for newly dealt hand cards using per-card highlight timing and a hand draw keyframe. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` is in agent1 scope.)
 - Moved force-split controls to a board-adjacent popover for march + card moves, added overlay rendering in BoardView, and left a small split hint in the action/hand panels; updated the plan checklist. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/ForceSplitPopover.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
