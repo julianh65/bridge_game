@@ -390,6 +390,7 @@ export type GameState = {
   round: number;
   leadSeatIndex: number;
   phase: PhaseState;
+  setup: SetupState;
   board: BoardState;
   market: MarketState;
   marketDecks: MarketDeckState;
@@ -434,6 +435,8 @@ export type ActionDeclaration =
 export type Command = {
   type: "SubmitSetupChoice";
   payload: SetupChoice;
+} | {
+  type: "AdvanceSetup";
 } | {
   type: "SubmitQuietStudy";
   payload: { cardInstanceIds: CardInstanceID[] };
@@ -576,6 +579,27 @@ export type SetupPrivateView =
     }
   | null;
 
+export type SetupPhase =
+  | "setup.lobby"
+  | "setup.faction"
+  | "setup.deckPreview"
+  | "setup.capitalDraft"
+  | "setup.startingBridges"
+  | "setup.freeStartingCardPick"
+  | "setup.complete";
+
+export type SetupStatusView = {
+  phase: SetupPhase;
+  hostPlayerId: PlayerID | null;
+  lockedByPlayerId: Record<PlayerID, boolean>;
+  waitingForPlayerIds: PlayerID[];
+  canAdvance: boolean;
+};
+
+export type SetupState = {
+  advanceRequested: boolean;
+};
+
 export type GameView = {
   public: {
     config: GameConfig;
@@ -589,6 +613,7 @@ export type GameView = {
     players: PlayerPublicView[];
     actionStep: ActionStepPublicView | null;
     setup: SetupPublicView | null;
+    setupStatus: SetupStatusView | null;
     collection: CollectionPublicView | null;
     quietStudy: QuietStudyPublicView | null;
     winnerPlayerId: PlayerID | null;

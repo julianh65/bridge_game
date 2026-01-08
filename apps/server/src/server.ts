@@ -233,6 +233,13 @@ const runAutoSetup = (state: GameState): GameState => {
       return nextState;
     }
     if (!nextState.blocks || nextState.blocks.waitingFor.length === 0) {
+      if (nextState.blocks && nextState.blocks.waitingFor.length === 0) {
+        const hostId = nextState.players.find((player) => player.seatIndex === 0)?.id;
+        if (!hostId) {
+          throw new Error("no host available to advance setup");
+        }
+        nextState = applyCommand(nextState, { type: "AdvanceSetup" }, hostId);
+      }
       nextState = runUntilBlocked(nextState);
       continue;
     }

@@ -13,6 +13,14 @@ const pickStartingEdges = (capital: HexKey, board: BoardState): EdgeKey[] => {
   return [getBridgeKey(capital, neighbors[0]), getBridgeKey(capital, neighbors[1])];
 };
 
+const advanceSetup = (state: GameState): GameState => {
+  const hostId = state.players.find((player) => player.seatIndex === 0)?.id;
+  if (!hostId) {
+    throw new Error("no host available to advance setup");
+  }
+  return applyCommand(state, { type: "AdvanceSetup" }, hostId);
+};
+
 const advanceThroughMarket = (state: GameState): GameState => {
   let nextState = state;
 
@@ -67,6 +75,10 @@ describe("setup flow", () => {
       { type: "SubmitSetupChoice", payload: { kind: "pickCapital", hexKey: p1Slot } },
       "p1"
     );
+    state = runUntilBlocked(state);
+    expect(state.blocks?.type).toBe("setup.capitalDraft");
+
+    state = advanceSetup(state);
     state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.startingBridges");
     expect(Object.keys(state.board.bridges)).toHaveLength(
@@ -139,6 +151,10 @@ describe("setup flow", () => {
     );
 
     state = runUntilBlocked(state);
+    expect(state.blocks?.type).toBe("setup.startingBridges");
+
+    state = advanceSetup(state);
+    state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.freeStartingCardPick");
 
     const p1Offer = state.blocks?.payload.offers["p1"]?.[0];
@@ -157,6 +173,10 @@ describe("setup flow", () => {
       "p2"
     );
 
+    state = runUntilBlocked(state);
+    expect(state.blocks?.type).toBe("setup.freeStartingCardPick");
+
+    state = advanceSetup(state);
     state = runUntilBlocked(state);
     state = advanceThroughMarket(state);
     expect(state.phase).toBe("round.action");
@@ -235,6 +255,8 @@ describe("setup flow", () => {
     );
 
     state = runUntilBlocked(state);
+    state = advanceSetup(state);
+    state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.startingBridges");
   });
 
@@ -262,6 +284,8 @@ describe("setup flow", () => {
       { type: "SubmitSetupChoice", payload: { kind: "pickCapital", hexKey: p1Slot } },
       "p1"
     );
+    state = runUntilBlocked(state);
+    state = advanceSetup(state);
     state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.startingBridges");
 
@@ -295,6 +319,8 @@ describe("setup flow", () => {
       "p2"
     );
 
+    state = runUntilBlocked(state);
+    state = advanceSetup(state);
     state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.freeStartingCardPick");
     expect(state.blocks?.payload.offers["p1"]).toHaveLength(4);

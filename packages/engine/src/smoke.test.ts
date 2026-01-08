@@ -107,6 +107,14 @@ const resolveFreeStartingCardBlock = (state: GameState): GameState => {
   return nextState;
 };
 
+const advanceSetupGate = (state: GameState): GameState => {
+  const hostId = state.players.find((player) => player.seatIndex === 0)?.id;
+  if (!hostId) {
+    throw new Error("no host available to advance setup");
+  }
+  return applyCommand(state, { type: "AdvanceSetup" }, hostId);
+};
+
 const resolveMarketBidBlock = (state: GameState): GameState => {
   let nextState = state;
   const block = nextState.blocks;
@@ -226,10 +234,19 @@ const resolveBlock = (state: GameState): GameState => {
 
   switch (block.type) {
     case "setup.capitalDraft":
+      if (block.waitingFor.length === 0) {
+        return advanceSetupGate(state);
+      }
       return resolveCapitalDraftBlock(state);
     case "setup.startingBridges":
+      if (block.waitingFor.length === 0) {
+        return advanceSetupGate(state);
+      }
       return resolveStartingBridgesBlock(state);
     case "setup.freeStartingCardPick":
+      if (block.waitingFor.length === 0) {
+        return advanceSetupGate(state);
+      }
       return resolveFreeStartingCardBlock(state);
     case "market.bidsForCard":
       return resolveMarketBidBlock(state);
@@ -711,10 +728,19 @@ const resolveBlockRandom = (state: GameState, picker: DecisionPicker): GameState
 
   switch (block.type) {
     case "setup.capitalDraft":
+      if (block.waitingFor.length === 0) {
+        return advanceSetupGate(state);
+      }
       return resolveCapitalDraftBlockRandom(state, picker);
     case "setup.startingBridges":
+      if (block.waitingFor.length === 0) {
+        return advanceSetupGate(state);
+      }
       return resolveStartingBridgesBlockRandom(state, picker);
     case "setup.freeStartingCardPick":
+      if (block.waitingFor.length === 0) {
+        return advanceSetupGate(state);
+      }
       return resolveFreeStartingCardBlockRandom(state, picker);
     case "market.bidsForCard":
       return resolveMarketBidBlockRandom(state, picker);

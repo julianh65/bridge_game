@@ -263,15 +263,9 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 ### Tasks
 - [x] Capital draft selection is simultaneous (no ordered picking); allow lock/unlock freely.
 - [ ] Setup flow overhaul into full-screen phases with host-advanced gates:
-  - [ ] Define setup phase model in engine/view (phase enum, host id, per-player ready/lock status).
-  - [ ] Add setup commands for ready/lock toggles and host-only phase advance; validate host + "all ready" gates.
-  - [ ] Adjust setup flow runner so phases advance only on host command (no auto-advance on empty waiting list).
-  - [ ] Support secret setup payloads (starting bridges) with private picks and reveal-on-advance behavior.
-  - [ ] Wire server/client to send setup ready/advance commands during setup; block spectators.
-  - [ ] Build a full-screen SetupFlow layout + stepper to replace current in-lobby setup panels.
   - [ ] Lobby waiting room view for join/ready state.
   - [ ] Faction selection screen with faction abilities visible; host advances once all lock.
-    - [ ] Add faction ability copy data (passive + starter spell/champion text) for UI display.
+    - [x] Add faction ability copy data (passive + starter spell/champion text) for UI display.
   - [ ] Starting deck preview screen (card components) showing faction abilities; all ready -> host advance.
     - [ ] Show starter deck composition (counts) + champion/spell callouts.
   - [ ] Map screen with two sub-steps:
@@ -279,10 +273,12 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
     - [ ] Initial bridge placement: secret selection of two bridges, reveal simultaneously.
   - [ ] Free starting card draft screen with improved presentation.
   - [ ] Transition to main game after all setup steps complete.
-  - [ ] Add engine/view tests for setup gating + secret bridge reveal; add UI smoke coverage if feasible.
-- [ ] Champion card UI shows iconography for health, dice, hits, and bounty.
+  - [x] Engine: add setup host-advance gate + setup status view (AdvanceSetup + readiness), update setup tests.
+  - [ ] Engine: add secret starting-bridge selection + reveal flow, with setup tests.
+  - [ ] UI smoke coverage for setup gating/bridge reveal if feasible.
+- [x] Champion card UI shows iconography for health, dice, hits, and bounty.
 - [x] Market HUD shows current gold with the same emoji/visual language used elsewhere.
-- [ ] Champion cards communicate gold cost scaling for the nth champion clearly.
+- [x] Champion cards communicate gold cost scaling for the nth champion clearly.
 - [ ] Action reveal popup uses A1-style board labels (not axial coords).
 - [x] Collection UI becomes a modal overlay (no top-bar layout shift).
 - [ ] Center collection offers power picks (not normal card draft).
@@ -308,7 +304,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Market show/hide has a hotkey; overlay background slightly transparent.
 - [ ] Market dice overlay includes faction symbols and uses an overlay (not a new stacked container).
 - [x] Special tiles show a small hover label with type (Mine, Forge, etc).
-- [ ] Fix phantom/ghost battle overlay state leaks when moving between screens.
+- [x] Fix phantom/ghost battle overlay state leaks when moving between screens.
 - [ ] Collection phase sequence highlights per-source payouts one by one (mines, forge, center).
 - [x] Add gold + VP to the hand panel header area (near Hand label).
 - [ ] Board "chit" styling (units/champions/forces) aligns with dark fantasy theme.
@@ -334,13 +330,14 @@ I need some sort of script or way to edit the cards and decks in a nice UI with 
 - Default workflow exports a patch/change list for manual TS edits; no direct file writes in MVP.
 
 #### Tasks (proposed)
-- [ ] Define an edit-patch schema (`CardEditPatch`) and helpers to apply patches in the UI preview only.
-- [ ] Add a dev-only Card Editor view (toggle or route) that reuses card filters/grid.
-- [ ] Implement inline editors for allowed fields with validation, revert, and "dirty" indicators.
-- [ ] Add a clone-card flow that creates a new draft ID (suffix) and carries editable fields.
+- [x] Define an edit-patch schema (`CardEditPatch`) and helpers to apply patches in the UI preview only.
+- [x] Add a dev-only Card Editor view (toggle or route) that reuses card filters/grid.
+- [x] Implement inline editors for allowed fields with validation, revert, and "dirty" indicators.
+- [x] Add a clone-card flow that creates a new draft ID (suffix) and carries editable fields.
 - [ ] Add a deck editor panel (market/power per age) to adjust counts and view totals.
-- [ ] Surface initiative collisions in the editor view with per-deck grouping.
-- [ ] Add an export panel that copies JSON patch + human-readable change summary.
+- [x] Surface initiative collisions in the editor view with per-deck grouping.
+- [x] Add an export panel that copies JSON patch + human-readable change summary.
+- [x] Add a local patch-apply script for Card Editor exports (edits only; clones manual).
 - [ ] Implement CLI tooling (`scripts/card-tools.js`) for `collisions`, `de-collide`, and `compress` with deck filters; default to dry-run output.
 - [ ] Add lightweight tests for collision/decollide/compress helpers.
 - [ ] Document editor + CLI usage in `docs/cards.md` and add npm scripts.

@@ -6,7 +6,8 @@ import type {
   ModifierView,
   PlayerID,
   SetupPrivateView,
-  SetupPublicView
+  SetupPublicView,
+  SetupStatusView
 } from "./types";
 
 type SetupBlockState = Extract<
@@ -54,6 +55,27 @@ const buildSetupPrivateView = (block: SetupBlockState, playerId: PlayerID): Setu
     type: block.type,
     offers: block.payload.offers[playerId] ?? [],
     chosen: block.payload.chosen[playerId] ?? null
+  };
+};
+
+const buildSetupStatusView = (state: GameState): SetupStatusView | null => {
+  if (state.phase !== "setup") {
+    return null;
+  }
+
+  const setupBlock = state.blocks && isSetupBlock(state.blocks) ? state.blocks : null;
+  const waitingForPlayerIds = setupBlock?.waitingFor ?? [];
+  const hostPlayerId = state.players.find((player) => player.seatIndex === 0)?.id ?? null;
+  const lockedByPlayerId = Object.fromEntries(
+    state.players.map((player) => [player.id, !waitingForPlayerIds.includes(player.id)])
+  );
+
+  return {
+    phase: setupBlock ? setupBlock.type : "setup.lobby",
+    hostPlayerId,
+    lockedByPlayerId,
+    waitingForPlayerIds,
+    canAdvance: Boolean(setupBlock && waitingForPlayerIds.length === 0)
   };
 };
 
@@ -109,6 +131,7 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
           isWaiting: state.blocks.waitingFor.includes(viewer.id)
         }
       : null;
+  const setupStatus = buildSetupStatusView(state);
 
   return {
     public: {
@@ -133,6 +156,7 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
       })),
       actionStep,
       setup: setupPublic,
+      setupStatus,
       collection: collectionPublic,
       quietStudy: quietStudyPublic,
       winnerPlayerId: state.winnerPlayerId

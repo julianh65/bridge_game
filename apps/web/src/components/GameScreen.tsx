@@ -611,6 +611,7 @@ export const GameScreen = ({
   const selectedReinforce =
     reinforceOptions.find((option) => option.key === reinforceHex) ?? reinforceOptions[0] ?? null;
   const lastCombatEndIndex = useRef(-1);
+  const hasCombatLogBaseline = useRef(false);
   const hasMarketLogBaseline = useRef(false);
   const hasCardRevealBaseline = useRef(false);
   const hasPhaseCueBaseline = useRef(false);
@@ -1356,14 +1357,21 @@ export const GameScreen = ({
 
   useEffect(() => {
     const logs = view.public.logs;
+    if (!hasCombatLogBaseline.current) {
+      hasCombatLogBaseline.current = true;
+      lastCombatEndIndex.current = logs.length - 1;
+      setCombatQueue([]);
+      return;
+    }
     if (logs.length === 0) {
       lastCombatEndIndex.current = -1;
       setCombatQueue([]);
       return;
     }
-    if (lastCombatEndIndex.current >= logs.length) {
-      lastCombatEndIndex.current = -1;
+    if (logs.length - 1 < lastCombatEndIndex.current) {
+      lastCombatEndIndex.current = logs.length - 1;
       setCombatQueue([]);
+      return;
     }
     const sequences = extractCombatSequences(logs);
     const newSequences = sequences.filter(

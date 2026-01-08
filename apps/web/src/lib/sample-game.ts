@@ -26,6 +26,15 @@ const autoResolveSetup = (state: GameState): GameState => {
 
   while (nextState.phase === "setup" && nextState.blocks) {
     const block = nextState.blocks;
+    if (block.waitingFor.length === 0) {
+      const hostId = nextState.players.find((player) => player.seatIndex === 0)?.id;
+      if (!hostId) {
+        break;
+      }
+      nextState = applyCommand(nextState, { type: "AdvanceSetup" }, hostId);
+      nextState = runUntilBlocked(nextState);
+      continue;
+    }
 
     if (block.type === "setup.capitalDraft") {
       const playerId = block.waitingFor[0];

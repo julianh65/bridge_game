@@ -38,6 +38,14 @@ const pickStartingEdges = (capital: HexKey, board: BoardState): EdgeKey[] => {
   return [getBridgeKey(capital, neighbors[0]), getBridgeKey(capital, neighbors[1])];
 };
 
+const advanceSetup = (state: GameState): GameState => {
+  const hostId = state.players.find((player) => player.seatIndex === 0)?.id;
+  if (!hostId) {
+    throw new Error("no host available to advance setup");
+  }
+  return applyCommand(state, { type: "AdvanceSetup" }, hostId);
+};
+
 const pickOpenBridgeEdge = (capital: HexKey, board: BoardState): EdgeKey => {
   const neighbors = neighborHexKeys(capital).filter((key) => Boolean(board.hexes[key]));
   for (const neighbor of neighbors) {
@@ -169,6 +177,8 @@ const setupToActionPhase = (
     "p1"
   );
   state = runUntilBlocked(state);
+  state = advanceSetup(state);
+  state = runUntilBlocked(state);
 
   const p1Capital = state.players.find((player) => player.id === "p1")?.capitalHex;
   const p2Capital = state.players.find((player) => player.id === "p2")?.capitalHex;
@@ -195,6 +205,8 @@ const setupToActionPhase = (
   }
 
   state = runUntilBlocked(state);
+  state = advanceSetup(state);
+  state = runUntilBlocked(state);
 
   const p1Offer = state.blocks?.payload.offers["p1"]?.[0];
   const p2Offer = state.blocks?.payload.offers["p2"]?.[0];
@@ -213,6 +225,8 @@ const setupToActionPhase = (
     "p2"
   );
 
+  state = runUntilBlocked(state);
+  state = advanceSetup(state);
   state = runUntilBlocked(state);
   state = advanceThroughMarket(state);
 

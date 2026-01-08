@@ -1715,11 +1715,46 @@ body.is-game .game-card[data-type="Order"] {
   background: var(--card-stat-bg);
   font-size: 11px;
   color: var(--card-stat-text);
+  justify-items: center;
 }
 
 .game-card__champion-stat strong {
   font-size: 12px;
   color: var(--card-stat-strong);
+}
+
+.game-card__champion-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.game-card__champion-label {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.game-card__champion-stat--hp .game-card__champion-icon {
+  color: #ef4444;
+}
+
+.game-card__champion-stat--dice .game-card__champion-icon {
+  color: #a855f7;
+}
+
+.game-card__champion-stat--hits .game-card__champion-icon {
+  color: #f59e0b;
+}
+
+.game-card__champion-stat--bounty .game-card__champion-icon {
+  color: #eab308;
+}
+
+.game-card__champion-scale {
+  font-size: 11px;
+  text-align: center;
+  color: var(--muted);
 }
 
 .game-card__cost {
@@ -3100,6 +3135,18 @@ body.is-game .log-empty {
 
 .game-card--hand .game-card__champion-stat strong {
   font-size: 10px;
+}
+
+.game-card--hand .game-card__champion-icon {
+  font-size: 11px;
+}
+
+.game-card--hand .game-card__champion-label {
+  font-size: 8px;
+}
+
+.game-card--hand .game-card__champion-scale {
+  font-size: 9px;
 }
 
 .game-card--hand .game-card__age {

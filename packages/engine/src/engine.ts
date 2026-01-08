@@ -62,6 +62,33 @@ const createPlayerState = (player: LobbyPlayer, seatIndex: number, startingGold:
   };
 };
 
+const getHostPlayerId = (state: GameState): PlayerID | null => {
+  return state.players.find((player) => player.seatIndex === 0)?.id ?? null;
+};
+
+const requestSetupAdvance = (state: GameState, playerId: PlayerID): GameState => {
+  if (state.phase !== "setup") {
+    throw new Error("setup advance is only available during setup");
+  }
+  const hostPlayerId = getHostPlayerId(state);
+  if (!hostPlayerId || hostPlayerId !== playerId) {
+    throw new Error("only the host can advance setup");
+  }
+  if (!state.blocks) {
+    throw new Error("no setup block to advance");
+  }
+  if (state.blocks.waitingFor.length > 0) {
+    throw new Error("setup cannot advance until all players are ready");
+  }
+  return {
+    ...state,
+    setup: {
+      ...state.setup,
+      advanceRequested: true
+    }
+  };
+};
+
 const normalizeSeed = (seed: GameState["seed"]): number => {
   if (typeof seed === "number") {
     if (!Number.isFinite(seed)) {
@@ -109,6 +136,7 @@ export const createNewGame = (
     round: 0,
     leadSeatIndex: 0,
     phase: "setup",
+    setup: { advanceRequested: false },
     board,
     market: {
       age: "I",
@@ -139,6 +167,10 @@ export const applyCommand = (
 ): GameState => {
   if (_command.type === "SubmitSetupChoice") {
     return applySetupChoice(state, _command.payload, _playerId);
+  }
+
+  if (_command.type === "AdvanceSetup") {
+    return requestSetupAdvance(state, _playerId);
   }
 
   if (_command.type === "SubmitQuietStudy") {
@@ -350,8 +382,20 @@ export const runUntilBlocked = (state: GameState): GameState => {
       return nextState;
     }
 
-    if (nextState.blocks.type === "setup.capitalDraft") {
-      const setupState = finalizeCapitalDraft(nextState);
+    if (!nextState.setup.advanceRequested) {
+      return nextState;
+    }
+
+    const advanceReadyState = {
+      ...nextState,
+      setup: {
+        ...nextState.setup,
+        advanceRequested: false
+      }
+    };
+
+    if (advanceReadyState.blocks.type === "setup.capitalDraft") {
+      const setupState = finalizeCapitalDraft(advanceReadyState);
       nextState = {
         ...setupState,
         blocks: createStartingBridgesBlock(setupState.players)
@@ -359,8 +403,8 @@ export const runUntilBlocked = (state: GameState): GameState => {
       continue;
     }
 
-    if (nextState.blocks.type === "setup.startingBridges") {
-      const { state: updatedState, block } = createFreeStartingCardBlock(nextState);
+    if (advanceReadyState.blocks.type === "setup.startingBridges") {
+      const { state: updatedState, block } = createFreeStartingCardBlock(advanceReadyState);
       nextState = {
         ...updatedState,
         blocks: block
@@ -368,8 +412,8 @@ export const runUntilBlocked = (state: GameState): GameState => {
       continue;
     }
 
-    if (nextState.blocks.type === "setup.freeStartingCardPick") {
-      nextState = enterPhase(nextState, "round.reset");
+    if (advanceReadyState.blocks.type === "setup.freeStartingCardPick") {
+      nextState = enterPhase(advanceReadyState, "round.reset");
       continue;
     }
 

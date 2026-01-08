@@ -8,7 +8,7 @@ import { SetupCapitalDraft } from "./SetupCapitalDraft";
 import { SetupFreeStartingCardPick } from "./SetupFreeStartingCardPick";
 import { SetupStartingBridges } from "./SetupStartingBridges";
 import { buildBoardPreview } from "../lib/board-preview";
-import { getFactionName, getFactionSymbol } from "../lib/factions";
+import { getFactionName } from "../lib/factions";
 import type { RoomConnectionStatus } from "../lib/room-client";
 
 type LobbyProps = {
@@ -30,6 +30,7 @@ export const Lobby = ({
   onRerollMap,
   onSubmitSetupChoice,
   onAutoSetup,
+  onAdvanceSetup,
   onLeave
 }: LobbyProps) => {
   const players = view.public.players;
@@ -45,6 +46,8 @@ export const Lobby = ({
   const isHost = Boolean(playerId && hostId === playerId);
   const canReroll = isHost && status === "connected";
   const canAutoSetup = isHost && status === "connected";
+  const setupStatus = view.public.setupStatus;
+  const canAdvanceSetup = Boolean(setupStatus?.canAdvance) && isHost && status === "connected";
   const autoSetupHint = (() => {
     if (status !== "connected") {
       return "Connect to use auto-setup.";
@@ -194,6 +197,26 @@ export const Lobby = ({
           </button>
           <p className="muted">{autoSetupHint}</p>
         </section>
+
+        {isHost && setupStatus ? (
+          <section className="panel setup-advance">
+            <h2>Advance Setup</h2>
+            <p className="muted">
+              Host advances to the next setup step once everyone locks their picks.
+            </p>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={onAdvanceSetup}
+              disabled={!canAdvanceSetup}
+            >
+              Advance Setup
+            </button>
+            <p className="muted">
+              {canAdvanceSetup ? "Ready to advance." : "Waiting for all players to lock in."}
+            </p>
+          </section>
+        ) : null}
 
         <SetupCapitalDraft
           view={view}

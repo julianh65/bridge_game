@@ -63,8 +63,11 @@ export type {
   PlayerState,
   ResourceState,
   SetupChoice,
+  SetupPhase,
   SetupPrivateView,
   SetupPublicView,
+  SetupState,
+  SetupStatusView,
   TileType,
   UnitID,
   UnitState
