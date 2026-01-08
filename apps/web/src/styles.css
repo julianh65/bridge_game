@@ -68,8 +68,8 @@
   --card-cost-gold-border: rgba(217, 119, 6, 0.45);
   --card-cost-gold-text: #92400e;
   --card-width: clamp(220px, 24vw, 270px);
-  --card-height: calc(var(--card-width) * 1.5);
-  --card-art-height: calc(var(--card-width) * 0.6);
+  --card-height: calc(var(--card-width) * 1.6);
+  --card-art-height: calc(var(--card-width) * 0.7);
   --hand-card-overlap: calc(var(--card-width) * -0.18);
   --board-glow-1: rgba(255, 248, 235, 0.9);
   --board-glow-2: rgba(214, 193, 162, 0.45);
@@ -2501,34 +2501,29 @@ body.is-game .game-card[data-type="Order"] {
 .game-card__champion {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
+  gap: 4px;
   text-align: center;
 }
 
 .game-card__champion-stat {
   display: grid;
-  gap: 2px;
-  padding: 6px 8px;
-  border-radius: 10px;
+  gap: 1px;
+  padding: 4px 6px;
+  border-radius: 8px;
   border: 1px solid var(--card-stat-border);
   background: var(--card-stat-bg);
-  font-size: 11px;
+  font-size: 10px;
   color: var(--card-stat-text);
   justify-items: center;
 }
 
 .game-card__champion-stat strong {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--card-stat-strong);
 }
 
-.game-card__champion-icon {
-  font-size: 14px;
-  line-height: 1;
-}
-
 .game-card__champion-label {
-  font-size: 9px;
+  font-size: 8px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);

@@ -183,30 +183,18 @@ export const GameCard = ({
         <>
           <div className="game-card__champion">
             <div className="game-card__champion-stat game-card__champion-stat--hp">
-              <span className="game-card__champion-icon" aria-hidden="true">
-                ❤
-              </span>
               <span className="game-card__champion-label">HP</span>
               <strong>{card.champion.hp}</strong>
             </div>
             <div className="game-card__champion-stat game-card__champion-stat--dice">
-              <span className="game-card__champion-icon" aria-hidden="true">
-                🎲
-              </span>
               <span className="game-card__champion-label">Dice</span>
               <strong>{card.champion.attackDice}</strong>
             </div>
             <div className="game-card__champion-stat game-card__champion-stat--hits">
-              <span className="game-card__champion-icon" aria-hidden="true">
-                🎯
-              </span>
               <span className="game-card__champion-label">Hits</span>
               <strong>{card.champion.hitFaces}</strong>
             </div>
             <div className="game-card__champion-stat game-card__champion-stat--bounty">
-              <span className="game-card__champion-icon" aria-hidden="true">
-                💰
-              </span>
               <span className="game-card__champion-label">Bounty</span>
               <strong>{card.champion.bounty}</strong>
             </div>
