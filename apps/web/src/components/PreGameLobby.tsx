@@ -92,7 +92,7 @@ export const PreGameLobby = ({
         </div>
       </header>
 
-      <div className="lobby__grid">
+      <div className="lobby__grid lobby__grid--pre-game">
         <section className="panel">
           <h2>Seats</h2>
           <div className="lobby__start">

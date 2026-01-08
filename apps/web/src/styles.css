@@ -758,6 +758,16 @@ body.is-game .status-pill--idle {
   gap: 20px;
 }
 
+.lobby__grid--pre-game {
+  grid-template-columns: minmax(220px, 0.75fr) minmax(320px, 1.25fr);
+}
+
+@media (max-width: 860px) {
+  .lobby__grid--pre-game {
+    grid-template-columns: 1fr;
+  }
+}
+
 .lobby__map-preview {
   display: grid;
 }
