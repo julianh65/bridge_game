@@ -83,6 +83,7 @@ const SUPPORTED_EFFECTS = new Set([
   "moveStack",
   "moveStacks",
   "deployForces",
+  "deployForcesOnMines",
   "increaseMineValue",
   "healChampion",
   "healChampions",
@@ -1830,6 +1831,25 @@ export const resolveCardEffects = (
           ...nextState,
           board: addForcesToHex(nextState.board, playerId, targetHexKey, count)
         };
+        break;
+      }
+      case "deployForcesOnMines": {
+        const count = typeof effect.count === "number" ? Math.max(0, Math.floor(effect.count)) : 0;
+        if (count <= 0) {
+          break;
+        }
+        for (const hex of Object.values(nextState.board.hexes)) {
+          if (hex.tile !== "mine") {
+            continue;
+          }
+          if (!isOccupiedByPlayer(hex, playerId)) {
+            continue;
+          }
+          nextState = {
+            ...nextState,
+            board: addForcesToHex(nextState.board, playerId, hex.key, count)
+          };
+        }
         break;
       }
       case "evacuateChampion": {

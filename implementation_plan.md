@@ -534,7 +534,7 @@ Done
       - [x] Rally Where You Stand.
       - [x] Forward Barracks.
       - [ ] Conscription Drive.
-      - [ ] Miner Army.
+      - [x] Miner Army.
     - [ ] Age II Economy card defs (5).
     - [x] War Taxes.
     - [x] Smuggling Ring.

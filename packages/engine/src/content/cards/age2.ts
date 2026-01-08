@@ -134,6 +134,20 @@ export const FORWARD_BARRACKS: CardDef = {
   effects: [{ kind: "recruit", capitalCount: 4, occupiedCount: 4 }]
 };
 
+export const MINER_ARMY: CardDef = {
+  id: "age2.miner_army",
+  name: "Miner Army",
+  rulesText: "Deploy 2 Forces into all Mines you occupy.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1, gold: 1 },
+  initiative: 70,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "deployForcesOnMines", count: 2 }]
+};
+
 export const FOCUS_FIRE: CardDef = {
   id: "age2.focus_fire",
   name: "Focus Fire",
@@ -740,6 +754,7 @@ export const AGE2_CARDS: CardDef[] = [
   BATTALION_CONTRACT,
   RALLY_WHERE_YOU_STAND,
   FORWARD_BARRACKS,
+  MINER_ARMY,
   FOCUS_FIRE,
   SLOW,
   WARD,

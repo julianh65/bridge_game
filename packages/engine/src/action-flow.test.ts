@@ -8,9 +8,10 @@ import {
 } from "@bridgefront/shared";
 import { describe, expect, it } from "vitest";
 
-import type { BoardState, EdgeKey, GameState, HexKey } from "./types";
+import type { ActionDeclaration, BoardState, EdgeKey, GameState, HexKey } from "./types";
 import { createBaseBoard } from "./board-generation";
 import { createCardInstance, createCardInstances } from "./cards";
+import { createActionResolutionState } from "./action-flow";
 import { isCardPlayable, resolveCardEffects, validateMovePath } from "./card-effects";
 import { getCardDef } from "./content/cards";
 import type { CardDef } from "./content/cards";
@@ -2614,6 +2615,46 @@ describe("action flow", () => {
 
     const after = countForces(state, mineHex.key, "p1");
     expect(after).toBe(before + 4);
+  });
+
+  it("plays miner army to deploy forces to each occupied mine", () => {
+    let { state } = setupToActionPhase();
+    const mines = Object.values(state.board.hexes).filter((hex) => hex.tile === "mine");
+    const [firstMine, secondMine] = mines;
+    if (!firstMine || !secondMine) {
+      throw new Error("missing mines for miner army");
+    }
+
+    state = { ...state, board: addForcesToHex(state.board, "p1", firstMine.key, 1) };
+    state = { ...state, board: addForcesToHex(state.board, "p1", secondMine.key, 1) };
+
+    const countForces = (input: GameState, hexKey: HexKey, playerId: string): number => {
+      const hex = input.board.hexes[hexKey];
+      if (!hex) {
+        return 0;
+      }
+      const occupants = hex.occupants[playerId] ?? [];
+      return occupants.filter((unitId) => input.board.units[unitId]?.kind === "force").length;
+    };
+
+    const beforeFirst = countForces(state, firstMine.key, "p1");
+    const beforeSecond = countForces(state, secondMine.key, "p1");
+    const injected = addCardToHand(state, "p1", "age2.miner_army");
+    state = injected.state;
+
+    state = applyCommand(
+      state,
+      { type: "SubmitAction", payload: { kind: "card", cardInstanceId: injected.instanceId } },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const afterFirst = countForces(state, firstMine.key, "p1");
+    const afterSecond = countForces(state, secondMine.key, "p1");
+    expect(afterFirst).toBe(beforeFirst + 2);
+    expect(afterSecond).toBe(beforeSecond + 2);
   });
 
   it("plays encirclement to destroy enemy forces when surrounded", () => {
