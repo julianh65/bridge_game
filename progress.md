@@ -17,7 +17,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
- - owner: agent1; scope: allow unselect/change in setup bridge + free-card picks; files: `apps/web/src/components/SetupStartingBridges.tsx`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `packages/engine/src/types.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/setup-flow.test.ts`, `apps/web/src/styles.css`, `progress.md`; status: in progress (overlap note: `apps/web/src/styles.css` already has other in-flight edits)
+ - owner: agent2; scope: add Age II movement cards (Triple March, Coordinated Advance, Breakthrough Line) and battle-win cleanup draw effect with tests; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.breakthrough-line.test.ts`, `implementation_plan.md`, `progress.md`; status: in progress
 
 
 ## Planning updates
@@ -34,6 +34,7 @@
 - Added per-faction starter deck mapping scaffold (defaults to the common deck), updated card registry coverage, and noted the remaining per-faction initiative work in the plan. (Files: `packages/engine/src/content/starter-decks.ts`, `packages/engine/src/content/cards/cards.test.ts`, `implementation_plan.md`.)
 - Added a setup flow screen focused on map steps (capital draft + starting bridges) and free starting card, replacing the setup lobby view; marked the map screen + secret bridge reveal plan items complete. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.) (Overlap note: `apps/web/src/App.tsx` already in-flight.)
 - Tweaked setup flow layout with floating host controls, a slimmer players panel, and a left-to-right free-card offer row with the waiting/status column on the right. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `apps/web/src/styles.css`.)
+- Added unselect/change support for starting bridges and free starting card picks (UI + engine) with setup-flow tests. (Files: `apps/web/src/components/SetupStartingBridges.tsx`, `apps/web/src/components/SetupFreeStartingCardPick.tsx`, `apps/web/src/styles.css`, `packages/engine/src/types.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/setup-flow.test.ts`.)
 - Added faction ability copy data (passives + starter spell/champion text) and surfaced it in the faction selection UI. (Files: `apps/web/src/lib/factions.ts`, `apps/web/src/components/PreGameLobby.tsx`, `implementation_plan.md`.)
 - Refined the pre-game lobby layout by moving start controls into the seats panel and restyling faction cards into sectioned passives/starter kit blocks. (Files: `apps/web/src/components/PreGameLobby.tsx`, `apps/web/src/styles.css`.)
 - Thinned seat rows, thickened faction cards, and shifted the start block above the seat list in the pre-game lobby. (Files: `apps/web/src/components/PreGameLobby.tsx`, `apps/web/src/styles.css`.)
@@ -104,6 +105,7 @@
 - Marked the local player's capital with a ring indicator on the board view; updated the plan checklist. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3) (Overlap note: `implementation_plan.md` included a pre-existing burn test TODO; `progress.md` picked up an agent5 active-task entry.)
 - Lifted hovered card grid items above neighbors in cards/market/collection/hand-picker views; updated the plan checklist. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
 - Clarified draw/discard/scrapped pile pills with delta badges and pulse animation in the hand panel; marked the plan checklist item complete. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreenHandPanel.tsx` also in agent3 scope.)
+- Updated the private view VP totals to recompute control points live from board occupation changes; marked the plan checklist item complete. (Files: `packages/engine/src/round-flow.ts`, `packages/engine/src/view.ts`, `implementation_plan.md`.)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.

@@ -670,6 +670,38 @@ const addControl = (totals: ControlTotals, playerId: PlayerID, amount: number) =
   };
 };
 
+export const getControlTotals = (state: GameState): ControlTotals => {
+  let controlTotals: ControlTotals = {};
+
+  for (const hex of Object.values(state.board.hexes)) {
+    if (hex.tile !== "center" && hex.tile !== "forge" && hex.tile !== "capital") {
+      continue;
+    }
+    const occupants = getPlayerIdsOnHex(hex);
+    if (occupants.length !== 1) {
+      continue;
+    }
+    const occupant = occupants[0];
+    let baseControl = 0;
+    if (hex.tile === "center" || hex.tile === "forge") {
+      baseControl = 1;
+    } else if (hex.tile === "capital" && hex.ownerPlayerId && hex.ownerPlayerId !== occupant) {
+      baseControl = 1;
+    }
+    if (baseControl <= 0) {
+      continue;
+    }
+    const adjusted = getControlValue(
+      state,
+      { playerId: occupant, hexKey: hex.key, tile: hex.tile, baseValue: baseControl },
+      baseControl
+    );
+    controlTotals = addControl(controlTotals, occupant, adjusted);
+  }
+
+  return controlTotals;
+};
+
 const resolveTiebreak = (players: GameState["players"]): PlayerID | null => {
   if (players.length === 0) {
     return null;
@@ -704,33 +736,7 @@ const capitalIsSafe = (state: GameState, playerId: PlayerID): boolean => {
 };
 
 export const applyScoring = (state: GameState): GameState => {
-  let controlTotals: ControlTotals = {};
-
-  for (const hex of Object.values(state.board.hexes)) {
-    if (hex.tile !== "center" && hex.tile !== "forge" && hex.tile !== "capital") {
-      continue;
-    }
-    const occupants = getPlayerIdsOnHex(hex);
-    if (occupants.length !== 1) {
-      continue;
-    }
-    const occupant = occupants[0];
-    let baseControl = 0;
-    if (hex.tile === "center" || hex.tile === "forge") {
-      baseControl = 1;
-    } else if (hex.tile === "capital" && hex.ownerPlayerId && hex.ownerPlayerId !== occupant) {
-      baseControl = 1;
-    }
-    if (baseControl <= 0) {
-      continue;
-    }
-    const adjusted = getControlValue(
-      state,
-      { playerId: occupant, hexKey: hex.key, tile: hex.tile, baseValue: baseControl },
-      baseControl
-    );
-    controlTotals = addControl(controlTotals, occupant, adjusted);
-  }
+  const controlTotals = getControlTotals(state);
 
   const players = state.players.map((player) => {
     const controlBonus = getControlBonus(state, { playerId: player.id }, 0);

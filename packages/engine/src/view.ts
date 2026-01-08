@@ -9,6 +9,8 @@ import type {
   SetupPublicView,
   SetupStatusView
 } from "./types";
+import { getControlBonus } from "./modifiers";
+import { getControlTotals } from "./round-flow";
 
 type SetupBlockState = Extract<
   BlockState,
@@ -99,6 +101,20 @@ const toModifierView = (modifier: Modifier): ModifierView => {
 
 export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): GameView => {
   const viewer = state.players.find((player) => player.id === viewerPlayerId) ?? null;
+  const controlTotals = viewer ? getControlTotals(state) : null;
+  const viewerVp =
+    viewer && controlTotals
+      ? (() => {
+          const baseControl = controlTotals[viewer.id] ?? 0;
+          const controlBonus = getControlBonus(state, { playerId: viewer.id }, 0);
+          const control = baseControl + controlBonus;
+          return {
+            ...viewer.vp,
+            control,
+            total: viewer.vp.permanent + control
+          };
+        })()
+      : null;
   const actionStep =
     state.blocks?.type === "actionStep.declarations"
       ? {
@@ -182,7 +198,7 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
             discardPile: mapCardInstances(state, viewer.deck.discardPile),
             scrapped: mapCardInstances(state, viewer.deck.scrapped)
           },
-          vp: viewer.vp,
+          vp: viewerVp,
           setup: setupPrivate,
           collection: collectionPrivate,
           quietStudy: quietStudyPrivate
