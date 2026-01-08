@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 
-import type { CardDef, CardDefId } from "@bridgefront/engine";
-import { CARD_DEFS } from "@bridgefront/engine";
+import type { Age, CardDef, CardDefId } from "@bridgefront/engine";
+import {
+  CARD_DEFS,
+  MARKET_DECKS_BY_AGE,
+  POWER_DECKS_BY_AGE
+} from "@bridgefront/engine";
 
 import { GameCard } from "./GameCard";
 
@@ -37,11 +41,48 @@ type CardClonePatch = {
   changes?: CardEdit;
 };
 
+type DeckKind = "market" | "power";
+
 const toggleValue = (values: string[], value: string) => {
   if (values.includes(value)) {
     return values.filter((entry) => entry !== value);
   }
   return [...values, value];
+};
+
+const buildDeckCounts = (deck: CardDefId[]) => {
+  const counts: Record<CardDefId, number> = {};
+  for (const id of deck) {
+    counts[id] = (counts[id] ?? 0) + 1;
+  }
+  return counts;
+};
+
+const mergeDeckCounts = (
+  baseCounts: Record<CardDefId, number>,
+  edits: Record<CardDefId, number> | undefined
+) => {
+  if (!edits || Object.keys(edits).length === 0) {
+    return baseCounts;
+  }
+  const next = { ...baseCounts };
+  for (const [id, count] of Object.entries(edits)) {
+    const safeCount = Math.max(0, Math.floor(count));
+    next[id as CardDefId] = safeCount;
+  }
+  return next;
+};
+
+const buildDeckListFromCounts = (
+  entries: { id: CardDefId; count: number }[]
+) => {
+  const list: CardDefId[] = [];
+  for (const entry of entries) {
+    for (let i = 0; i < entry.count; i += 1) {
+      list.push(entry.id);
+    }
+  }
+  return list;
 };
 
 const normalizeEdit = (edit: CardEdit): CardEdit => {
@@ -196,6 +237,11 @@ export const CardEditor = () => {
   const [selectedId, setSelectedId] = useState<CardDefId | null>(null);
   const [edits, setEdits] = useState<Record<CardDefId, CardEdit>>({});
   const [clones, setClones] = useState<CloneCard[]>([]);
+  const [deckKind, setDeckKind] = useState<DeckKind>("market");
+  const [deckAge, setDeckAge] = useState<Age>("I");
+  const [deckEdits, setDeckEdits] = useState<
+    Record<string, Record<CardDefId, number>>
+  >({});
 
   const baseCards = useMemo(
     () => [...CARD_DEFS, ...clones.map((clone) => clone.card)],
@@ -230,6 +276,70 @@ export const CardEditor = () => {
     }
     return entries;
   }, [clones]);
+
+  const deckKey = `${deckKind}-${deckAge}`;
+  const deckSource =
+    deckKind === "market"
+      ? MARKET_DECKS_BY_AGE[deckAge]
+      : POWER_DECKS_BY_AGE[deckAge];
+
+  const baseDeckCounts = useMemo(() => buildDeckCounts(deckSource), [deckSource]);
+  const deckCounts = useMemo(
+    () => mergeDeckCounts(baseDeckCounts, deckEdits[deckKey]),
+    [baseDeckCounts, deckEdits, deckKey]
+  );
+
+  const deckEntries = useMemo(() => {
+    const entries: {
+      id: CardDefId;
+      name: string;
+      count: number;
+      baseCount: number;
+      isEdited: boolean;
+    }[] = [];
+    const baseIds = new Set<CardDefId>();
+
+    for (const [id, baseCount] of Object.entries(baseDeckCounts)) {
+      const cardId = id as CardDefId;
+      baseIds.add(cardId);
+      const count = deckCounts[cardId] ?? 0;
+      const card = baseCardById[cardId];
+      entries.push({
+        id: cardId,
+        name: card?.name ?? cardId,
+        count,
+        baseCount,
+        isEdited: count !== baseCount
+      });
+    }
+
+    for (const [id, count] of Object.entries(deckCounts)) {
+      const cardId = id as CardDefId;
+      if (baseIds.has(cardId) || count === 0) {
+        continue;
+      }
+      const card = baseCardById[cardId];
+      entries.push({
+        id: cardId,
+        name: card?.name ?? cardId,
+        count,
+        baseCount: 0,
+        isEdited: count !== 0
+      });
+    }
+
+    entries.sort((a, b) => a.name.localeCompare(b.name));
+    return entries;
+  }, [baseDeckCounts, deckCounts, baseCardById]);
+
+  const deckTotals = useMemo(() => {
+    const totalCards = deckEntries.reduce((sum, entry) => sum + entry.count, 0);
+    const uniqueCards = deckEntries.filter((entry) => entry.count > 0).length;
+    const editedCards = deckEntries.filter((entry) => entry.isEdited).length;
+    return { totalCards, uniqueCards, editedCards };
+  }, [deckEntries]);
+
+  const deckExport = useMemo(() => buildDeckListFromCounts(deckEntries), [deckEntries]);
 
   const deckOptions = useMemo(
     () => Array.from(new Set(cards.map((card) => card.deck))).sort(),
@@ -368,6 +478,37 @@ export const CardEditor = () => {
 
   const clearAllEdits = () => {
     setEdits({});
+  };
+
+  const updateDeckCount = (cardId: CardDefId, value: number) => {
+    const safeValue = Math.max(0, Math.floor(value));
+    setDeckEdits((prev) => {
+      const next = { ...prev };
+      const deckEdit = { ...(next[deckKey] ?? {}) };
+      const baseValue = baseDeckCounts[cardId] ?? 0;
+      if (safeValue === baseValue) {
+        delete deckEdit[cardId];
+      } else {
+        deckEdit[cardId] = safeValue;
+      }
+      if (Object.keys(deckEdit).length === 0) {
+        delete next[deckKey];
+      } else {
+        next[deckKey] = deckEdit;
+      }
+      return next;
+    });
+  };
+
+  const resetDeckEdits = () => {
+    setDeckEdits((prev) => {
+      if (!prev[deckKey]) {
+        return prev;
+      }
+      const next = { ...prev };
+      delete next[deckKey];
+      return next;
+    });
   };
 
   const resetFilters = () => {
@@ -1081,6 +1222,105 @@ export const CardEditor = () => {
           )}
         </section>
       </div>
+
+      <section className="panel card-editor__deck">
+        <header className="card-editor__deck-header">
+          <div>
+            <h2>Deck Editor</h2>
+            <p className="muted">
+              Adjust card counts for the market and power decks, then copy the JSON
+              array into the deck definitions.
+            </p>
+          </div>
+          <div className="card-editor__deck-controls">
+            <div className="card-editor__deck-select">
+              <label htmlFor="deck-kind-select">Deck</label>
+              <select
+                id="deck-kind-select"
+                value={deckKind}
+                onChange={(event) => setDeckKind(event.target.value as DeckKind)}
+              >
+                <option value="market">Market</option>
+                <option value="power">Power</option>
+              </select>
+            </div>
+            <div className="card-editor__deck-select">
+              <label htmlFor="deck-age-select">Age</label>
+              <select
+                id="deck-age-select"
+                value={deckAge}
+                onChange={(event) => setDeckAge(event.target.value as Age)}
+              >
+                <option value="I">Age I</option>
+                <option value="II">Age II</option>
+                <option value="III">Age III</option>
+              </select>
+            </div>
+            <button type="button" className="btn btn-secondary" onClick={resetDeckEdits}>
+              Reset Deck
+            </button>
+          </div>
+        </header>
+
+        <div className="card-editor__deck-meta">
+          <span className="status-pill">{deckTotals.totalCards} cards</span>
+          <span className="status-pill">{deckTotals.uniqueCards} unique</span>
+          <span className="status-pill">{deckTotals.editedCards} edits</span>
+        </div>
+
+        {deckEntries.length === 0 ? (
+          <p className="muted">No cards are listed in this deck yet.</p>
+        ) : (
+          <div className="card-editor__deck-grid">
+            {deckEntries.map((entry) => (
+              <div
+                key={entry.id}
+                className={`card-editor__deck-row ${
+                  entry.isEdited ? "is-edited" : ""
+                }`}
+              >
+                <div className="card-editor__deck-card">
+                  <strong>{entry.name}</strong>
+                  <span className="muted">{entry.id}</span>
+                </div>
+                <div className="card-editor__deck-count">
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={entry.count}
+                    onChange={(event) => {
+                      const raw = event.target.value;
+                      if (raw === "") {
+                        updateDeckCount(entry.id, 0);
+                        return;
+                      }
+                      const value = Number(raw);
+                      if (!Number.isFinite(value)) {
+                        return;
+                      }
+                      updateDeckCount(entry.id, value);
+                    }}
+                  />
+                  <span className="card-editor__hint">Base: {entry.baseCount}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="card-editor__export card-editor__deck-export">
+          <h4>Deck JSON</h4>
+          <p className="muted">
+            Paste into{" "}
+            {deckKind === "market"
+              ? "packages/engine/src/content/market-decks.ts"
+              : "packages/engine/src/content/power-decks.ts"}
+            .
+          </p>
+          <textarea readOnly rows={6} value={JSON.stringify(deckExport, null, 2)} />
+        </div>
+      </section>
     </section>
   );
 };

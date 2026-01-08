@@ -357,7 +357,7 @@ I need some sort of script or way to edit the cards and decks in a nice UI with 
 - [x] Add a dev-only Card Editor view (toggle or route) that reuses card filters/grid.
 - [x] Implement inline editors for allowed fields with validation, revert, and "dirty" indicators.
 - [x] Add a clone-card flow that creates a new draft ID (suffix) and carries editable fields.
-- [ ] Add a deck editor panel (market/power per age) to adjust counts and view totals.
+- [x] Add a deck editor panel (market/power per age) to adjust counts and view totals.
 - [x] Surface initiative collisions in the editor view with per-deck grouping.
 - [x] Add an export panel that copies JSON patch + human-readable change summary.
 - [x] Add a local patch-apply script for Card Editor exports (edits only; clones manual).
@@ -649,6 +649,8 @@ Can I somehow add analytics to this? see players where, etc etc...
 ## Milestone 13 -- Future stuff / not urgent now
 - [ ] time how long every one takes to do their turns and have that be accessible somewhere
 - [ ] a turn timer that at the end picks a random valid card or something, this should be configurable from settings
+- [ ] add save / loading games
+- [ ] make a public list of rooms
 
 ### Acceptance criteria
 - 2–4 friends can play a complete game session without needing a restart.

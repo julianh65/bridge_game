@@ -1675,6 +1675,108 @@ body.is-game .card-editor__filters {
   overflow: auto;
 }
 
+.card-editor__deck {
+  display: grid;
+  gap: 16px;
+}
+
+.card-editor__deck-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.card-editor__deck-header h2 {
+  margin-top: 0;
+}
+
+.card-editor__deck-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.card-editor__deck-select {
+  display: grid;
+  gap: 6px;
+  min-width: 140px;
+}
+
+.card-editor__deck-select label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.card-editor__deck-select select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.card-editor__deck-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.card-editor__deck-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.card-editor__deck-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.card-editor__deck-row.is-edited {
+  border-color: rgba(217, 119, 6, 0.5);
+  box-shadow: 0 0 0 1px rgba(217, 119, 6, 0.2);
+}
+
+.card-editor__deck-card {
+  display: grid;
+  gap: 4px;
+}
+
+.card-editor__deck-count {
+  display: grid;
+  gap: 6px;
+}
+
+.card-editor__deck-count input {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.card-editor__deck-export {
+  margin-top: 4px;
+}
+
+@media (max-width: 720px) {
+  .card-editor__deck-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .battle-debug {
   display: grid;
   gap: 20px;
@@ -6750,6 +6852,88 @@ body.is-game .combat-summary__name {
 .combat-summary__stats {
   display: grid;
   gap: 6px;
+}
+
+.combat-retreat__body {
+  display: grid;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.combat-retreat__side {
+  border-radius: 16px;
+  border: 1px solid rgba(122, 88, 52, 0.2);
+  background: rgba(255, 249, 240, 0.7);
+  padding: 14px 16px;
+  display: grid;
+  gap: 10px;
+}
+
+body.is-game .combat-retreat__side {
+  border-color: var(--border);
+  background: var(--panel-soft);
+}
+
+.combat-retreat__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.combat-retreat__player {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.combat-retreat__role {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(84, 60, 36, 0.7);
+}
+
+body.is-game .combat-retreat__role {
+  color: rgba(248, 227, 199, 0.7);
+}
+
+.combat-retreat__summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: rgba(68, 46, 26, 0.8);
+}
+
+body.is-game .combat-retreat__summary {
+  color: rgba(248, 227, 199, 0.8);
+}
+
+.combat-retreat__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.combat-retreat__empty {
+  font-size: 13px;
+  color: rgba(84, 60, 36, 0.7);
+}
+
+body.is-game .combat-retreat__empty {
+  color: rgba(248, 227, 199, 0.7);
+}
+
+.combat-retreat__selection {
+  font-size: 13px;
+  color: rgba(84, 60, 36, 0.8);
+}
+
+body.is-game .combat-retreat__selection {
+  color: rgba(248, 227, 199, 0.8);
 }
 
 .combat-summary__stat {
