@@ -3468,11 +3468,8 @@ body.is-game .action-reveal__targets--empty {
 .game-hand__mana {
   display: flex;
   justify-content: flex-end;
-  position: absolute;
-  right: 16px;
-  bottom: 12px;
+  align-items: center;
   pointer-events: none;
-  z-index: 0;
 }
 
 .game-hand__actions-header {

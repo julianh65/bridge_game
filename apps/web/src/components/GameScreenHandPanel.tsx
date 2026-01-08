@@ -407,6 +407,12 @@ export const GameScreenHandPanel = ({
                 <h3>Actions</h3>
                 <span className="hand-meta">Basic actions</span>
               </div>
+              <div className="game-hand__mana">
+                <div className="mana-orb" aria-label={`Mana ${manaLabel}`}>
+                  <span className="mana-orb__label">Mana</span>
+                  <strong className="mana-orb__value">{manaLabel}</strong>
+                </div>
+              </div>
               {selectedCard && selectedLabel ? (
                 <div className="hand-selection">
                   <div className="hand-selection__main">
@@ -444,12 +450,6 @@ export const GameScreenHandPanel = ({
                 onBoardPickModeChange={onBoardPickModeChange}
               />
             </aside>
-          </div>
-          <div className="game-hand__mana">
-            <div className="mana-orb" aria-label={`Mana ${manaLabel}`}>
-              <span className="mana-orb__label">Mana</span>
-              <strong className="mana-orb__value">{manaLabel}</strong>
-            </div>
           </div>
           <div className="game-hand__footer">
             <div className="hand-submit">
