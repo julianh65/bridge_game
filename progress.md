@@ -54,6 +54,7 @@
 - Added dark-fantasy in-game palette overrides (background + palette variables) with nav/panel/button/status restyling; updated the plan subtask. (Files: `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2) (Overlap note: `implementation_plan.md` also has agent3 edits in progress.)
 - Added dark-theme overrides for market overlay surfaces and card tag/detail backgrounds to push the fantasy look; updated the plan subtask. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 - Added dark-theme overrides for sidebar sections, intel cards, player rows, and empty-state surfaces; updated the plan subtask. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2) (Overlap note: `progress.md` picked up agent4 active-task update.)
+- Extended dark-theme variables to cards, hand/action panels, and command table rows for consistent in-game surfaces; updated the plan subtask. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.

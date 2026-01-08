@@ -20,6 +20,52 @@
   --mine: #15803d;
   --center: #0f766e;
   --normal: #fef8ec;
+  --glass-panel: rgba(255, 250, 240, 0.62);
+  --glass-panel-strong: rgba(253, 244, 228, 0.68);
+  --panel-soft: #f7f1e7;
+  --panel-soft-alt: #f6f0e4;
+  --panel-soft-active: #fff2d6;
+  --panel-inset: #fff7e8;
+  --panel-inset-border: rgba(124, 45, 18, 0.2);
+  --panel-chip: #f7f1e6;
+  --table-row-bg: #fffdf6;
+  --table-row-waiting-bg: #fff1f1;
+  --table-row-submitted-bg: #f0fdf4;
+  --danger-ink: #991b1b;
+  --danger-bg: #fff1f1;
+  --danger-border: #fecaca;
+  --card-bg: linear-gradient(180deg, #fffdf8 0%, #f4e6d2 100%);
+  --card-bg-hand: linear-gradient(145deg, #fff7e8, #efe3d2);
+  --card-shadow: 0 14px 28px rgba(35, 28, 19, 0.14);
+  --card-shadow-hand: 0 12px 20px rgba(35, 28, 19, 0.18);
+  --card-art-bg: linear-gradient(135deg, #f8e8d2, #f1d2af);
+  --card-art-border: rgba(111, 90, 70, 0.65);
+  --card-art-text: #8b6f57;
+  --card-art-shadow: inset 0 0 0 1px rgba(255, 248, 236, 0.85),
+    inset 0 0 0 3px rgba(111, 90, 70, 0.35), 0 6px 12px rgba(35, 28, 19, 0.18);
+  --card-ornament-bg: #fff1d6;
+  --card-ornament-border: rgba(124, 45, 18, 0.25);
+  --card-ornament-text: #7c2d12;
+  --card-count-bg: #f8eede;
+  --card-count-border: rgba(124, 45, 18, 0.2);
+  --card-count-text: #7c2d12;
+  --card-vp-bg: rgba(34, 197, 94, 0.15);
+  --card-vp-border: rgba(22, 101, 52, 0.2);
+  --card-vp-text: #166534;
+  --card-stat-bg: #f7efe3;
+  --card-stat-border: rgba(124, 45, 18, 0.12);
+  --card-stat-text: #6b4a2a;
+  --card-stat-strong: #3f2d1a;
+  --card-cost-bg: #f8efe1;
+  --card-cost-border: rgba(148, 163, 184, 0.5);
+  --card-cost-text: #3f2a16;
+  --card-cost-shadow: 0 6px 12px rgba(15, 23, 42, 0.12);
+  --card-cost-mana-bg: radial-gradient(circle at 30% 30%, #dbeafe, #93c5fd 75%);
+  --card-cost-mana-border: rgba(59, 130, 246, 0.45);
+  --card-cost-mana-text: #1e3a8a;
+  --card-cost-gold-bg: radial-gradient(circle at 30% 30%, #fef3c7, #facc15 80%);
+  --card-cost-gold-border: rgba(217, 119, 6, 0.45);
+  --card-cost-gold-text: #92400e;
   --player-color-0: #d66b6b;
   --player-color-1: #4b8fd1;
   --player-color-2: #e0b54b;
@@ -56,6 +102,52 @@ body.is-game {
   --hero-shadow: rgba(10, 6, 4, 0.6);
   --border: #3a2b20;
   --normal: #1c1410;
+  --glass-panel: rgba(16, 11, 8, 0.78);
+  --glass-panel-strong: rgba(24, 17, 12, 0.85);
+  --panel-soft: rgba(28, 20, 14, 0.9);
+  --panel-soft-alt: rgba(24, 18, 13, 0.92);
+  --panel-soft-active: rgba(51, 34, 22, 0.9);
+  --panel-inset: rgba(32, 22, 15, 0.92);
+  --panel-inset-border: rgba(217, 119, 6, 0.3);
+  --panel-chip: rgba(33, 23, 16, 0.95);
+  --table-row-bg: rgba(26, 19, 16, 0.92);
+  --table-row-waiting-bg: rgba(92, 32, 32, 0.45);
+  --table-row-submitted-bg: rgba(26, 74, 45, 0.45);
+  --danger-ink: #f8caca;
+  --danger-bg: rgba(92, 32, 32, 0.4);
+  --danger-border: #8a2c2c;
+  --card-bg: linear-gradient(180deg, #1f1713 0%, #2b1e16 100%);
+  --card-bg-hand: linear-gradient(145deg, #211812, #2a1d16);
+  --card-shadow: 0 16px 30px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 214, 170, 0.08);
+  --card-shadow-hand: 0 12px 22px rgba(0, 0, 0, 0.45);
+  --card-art-bg: linear-gradient(135deg, #2a1f18, #3b2a20);
+  --card-art-border: rgba(214, 168, 120, 0.25);
+  --card-art-text: #bfa08a;
+  --card-art-shadow: inset 0 0 0 1px rgba(255, 220, 180, 0.22),
+    inset 0 0 0 3px rgba(86, 61, 42, 0.45), 0 8px 16px rgba(0, 0, 0, 0.45);
+  --card-ornament-bg: #2c2017;
+  --card-ornament-border: rgba(217, 119, 6, 0.45);
+  --card-ornament-text: #f9ddb7;
+  --card-count-bg: #2a1e16;
+  --card-count-border: rgba(217, 119, 6, 0.35);
+  --card-count-text: #f9ddb7;
+  --card-vp-bg: rgba(34, 197, 94, 0.2);
+  --card-vp-border: rgba(34, 197, 94, 0.45);
+  --card-vp-text: #bbf7d0;
+  --card-stat-bg: #241a14;
+  --card-stat-border: rgba(217, 119, 6, 0.18);
+  --card-stat-text: #e2c7ad;
+  --card-stat-strong: #f6e7d1;
+  --card-cost-bg: #241a14;
+  --card-cost-border: rgba(192, 150, 110, 0.35);
+  --card-cost-text: #f2dec4;
+  --card-cost-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  --card-cost-mana-bg: radial-gradient(circle at 30% 30%, #3b82f6, #1e3a8a 80%);
+  --card-cost-mana-border: rgba(96, 165, 250, 0.55);
+  --card-cost-mana-text: #dbeafe;
+  --card-cost-gold-bg: radial-gradient(circle at 30% 30%, #f59e0b, #92400e 85%);
+  --card-cost-gold-border: rgba(245, 158, 11, 0.6);
+  --card-cost-gold-text: #fde68a;
   background: radial-gradient(circle at 20% 15%, rgba(88, 50, 32, 0.35), transparent 55%),
     radial-gradient(circle at 80% 35%, rgba(56, 33, 24, 0.35), transparent 60%),
     linear-gradient(135deg, #0a0908 0%, #15110e 100%);
@@ -1255,7 +1347,7 @@ body.is-game .status-pill--idle {
 .game-card {
   border-radius: 18px;
   border: 1px solid transparent;
-  background: linear-gradient(180deg, #fffdf8 0%, #f4e6d2 100%);
+  background: var(--card-bg);
   padding: 14px;
   display: flex;
   flex-direction: column;
@@ -1263,7 +1355,7 @@ body.is-game .status-pill--idle {
   position: relative;
   text-align: center;
   color: var(--ink);
-  box-shadow: 0 14px 28px rgba(35, 28, 19, 0.14);
+  box-shadow: var(--card-shadow);
   --card-type-bg: rgba(124, 45, 18, 0.08);
   --card-type-border: rgba(124, 45, 18, 0.2);
   --card-type-text: #7c2d12;
@@ -1293,11 +1385,41 @@ body.is-game .status-pill--idle {
   --card-type-text: #92400e;
 }
 
+body.is-game .game-card {
+  --card-type-bg: rgba(217, 119, 6, 0.2);
+  --card-type-border: rgba(217, 119, 6, 0.45);
+  --card-type-text: #fbd7a5;
+}
+
+body.is-game .game-card[data-type="Champion"] {
+  --card-type-bg: rgba(248, 113, 113, 0.18);
+  --card-type-border: rgba(248, 113, 113, 0.45);
+  --card-type-text: #fecaca;
+}
+
+body.is-game .game-card[data-type="Victory"] {
+  --card-type-bg: rgba(34, 197, 94, 0.18);
+  --card-type-border: rgba(34, 197, 94, 0.4);
+  --card-type-text: #bbf7d0;
+}
+
+body.is-game .game-card[data-type="Spell"] {
+  --card-type-bg: rgba(96, 165, 250, 0.18);
+  --card-type-border: rgba(96, 165, 250, 0.4);
+  --card-type-text: #dbeafe;
+}
+
+body.is-game .game-card[data-type="Order"] {
+  --card-type-bg: rgba(245, 158, 11, 0.2);
+  --card-type-border: rgba(245, 158, 11, 0.45);
+  --card-type-text: #fde68a;
+}
+
 .game-card__art {
   height: 150px;
   border-radius: 12px;
-  border: 1px solid rgba(111, 90, 70, 0.65);
-  background: linear-gradient(135deg, #f8e8d2, #f1d2af);
+  border: 1px solid var(--card-art-border);
+  background: var(--card-art-bg);
   background-size: 110%;
   background-position: 50% 40%;
   background-repeat: no-repeat;
@@ -1307,9 +1429,8 @@ body.is-game .status-pill--idle {
   font-size: 10px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #8b6f57;
-  box-shadow: inset 0 0 0 1px rgba(255, 248, 236, 0.85),
-    inset 0 0 0 3px rgba(111, 90, 70, 0.35), 0 6px 12px rgba(35, 28, 19, 0.18);
+  color: var(--card-art-text);
+  box-shadow: var(--card-art-shadow);
   overflow: hidden;
 }
 
@@ -1320,13 +1441,13 @@ body.is-game .status-pill--idle {
   width: 28px;
   height: 28px;
   border-radius: 999px;
-  border: 1px solid rgba(124, 45, 18, 0.25);
-  background: #fff1d6;
+  border: 1px solid var(--card-ornament-border);
+  background: var(--card-ornament-bg);
   display: grid;
   place-items: center;
   font-size: 12px;
   font-weight: 700;
-  color: #7c2d12;
+  color: var(--card-ornament-text);
 }
 
 .game-card__count {
@@ -1335,11 +1456,11 @@ body.is-game .status-pill--idle {
   right: 10px;
   padding: 2px 8px;
   border-radius: 999px;
-  border: 1px solid rgba(124, 45, 18, 0.2);
-  background: #f8eede;
+  border: 1px solid var(--card-count-border);
+  background: var(--card-count-bg);
   font-size: 10px;
   font-weight: 600;
-  color: #7c2d12;
+  color: var(--card-count-text);
 }
 
 .game-card__header {
@@ -1373,11 +1494,11 @@ body.is-game .status-pill--idle {
   margin: 0;
   padding: 3px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(22, 101, 52, 0.2);
-  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid var(--card-vp-border);
+  background: var(--card-vp-bg);
   font-size: 12px;
   font-weight: 600;
-  color: #166534;
+  color: var(--card-vp-text);
 }
 
 .game-card__vp--inline {
@@ -1440,15 +1561,15 @@ body.is-game .status-pill--idle {
   gap: 2px;
   padding: 6px 8px;
   border-radius: 10px;
-  border: 1px solid rgba(124, 45, 18, 0.12);
-  background: #f7efe3;
+  border: 1px solid var(--card-stat-border);
+  background: var(--card-stat-bg);
   font-size: 11px;
-  color: #6b4a2a;
+  color: var(--card-stat-text);
 }
 
 .game-card__champion-stat strong {
   font-size: 12px;
-  color: #3f2d1a;
+  color: var(--card-stat-strong);
 }
 
 .game-card__cost {
@@ -1467,24 +1588,24 @@ body.is-game .status-pill--idle {
   gap: 6px;
   padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.5);
-  background: #f8efe1;
+  border: 1px solid var(--card-cost-border);
+  background: var(--card-cost-bg);
   font-size: 13px;
   font-weight: 700;
-  color: #3f2a16;
-  box-shadow: 0 6px 12px rgba(15, 23, 42, 0.12);
+  color: var(--card-cost-text);
+  box-shadow: var(--card-cost-shadow);
 }
 
 .game-card__cost-chip--mana {
-  border-color: rgba(59, 130, 246, 0.45);
-  background: radial-gradient(circle at 30% 30%, #dbeafe, #93c5fd 75%);
-  color: #1e3a8a;
+  border-color: var(--card-cost-mana-border);
+  background: var(--card-cost-mana-bg);
+  color: var(--card-cost-mana-text);
 }
 
 .game-card__cost-chip--gold {
-  border-color: rgba(217, 119, 6, 0.45);
-  background: radial-gradient(circle at 30% 30%, #fef3c7, #facc15 80%);
-  color: #92400e;
+  border-color: var(--card-cost-gold-border);
+  background: var(--card-cost-gold-bg);
+  color: var(--card-cost-gold-text);
 }
 
 .game-card__cost-icon {
@@ -2122,7 +2243,7 @@ body.is-game .status-pill--idle {
   right: 16px;
   bottom: 16px;
   z-index: 58;
-  background: rgba(255, 250, 240, 0.62);
+  background: var(--glass-panel);
   backdrop-filter: blur(9px);
   -webkit-backdrop-filter: blur(9px);
 }
@@ -2196,7 +2317,7 @@ body.is-game .status-pill--idle {
   padding: 4px 8px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  background: #f7f1e6;
+  background: var(--panel-chip);
   font-size: 11px;
   color: var(--ink);
 }
@@ -2238,7 +2359,7 @@ body.is-game .status-pill--idle {
   padding: 8px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: rgba(253, 244, 228, 0.68);
+  background: var(--glass-panel-strong);
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
   position: relative;
@@ -2272,8 +2393,8 @@ body.is-game .status-pill--idle {
   gap: 8px;
   padding: 6px 8px;
   border-radius: 10px;
-  border: 1px solid rgba(124, 45, 18, 0.2);
-  background: #fff7e8;
+  border: 1px solid var(--panel-inset-border);
+  background: var(--panel-inset);
 }
 
 .hand-selection__main {
@@ -2308,8 +2429,8 @@ body.is-game .status-pill--idle {
   gap: 6px;
   padding: 8px 10px;
   border-radius: 10px;
-  border: 1px dashed rgba(124, 45, 18, 0.2);
-  background: #fff7e8;
+  border: 1px dashed var(--panel-inset-border);
+  background: var(--panel-inset);
 }
 
 .hand-targets__header {
@@ -2318,7 +2439,7 @@ body.is-game .status-pill--idle {
   justify-content: space-between;
   gap: 8px;
   font-size: 12px;
-  color: #7c2d12;
+  color: var(--accent);
 }
 
 .hand-targets__meta {
@@ -2636,8 +2757,8 @@ body.is-game .log-empty {
   aspect-ratio: 5 / 7;
   border-radius: 14px;
   border: 1px solid var(--border);
-  background: linear-gradient(145deg, #fff7e8, #efe3d2);
-  box-shadow: 0 10px 18px rgba(35, 28, 19, 0.16);
+  background: var(--card-bg-hand);
+  box-shadow: var(--card-shadow-hand);
   padding: 8px;
   text-align: left;
   color: var(--ink);
@@ -2646,8 +2767,8 @@ body.is-game .log-empty {
 
 .game-card--hand {
   border-radius: 16px;
-  background: linear-gradient(145deg, #fff7e8, #efe3d2);
-  box-shadow: 0 12px 20px rgba(35, 28, 19, 0.18);
+  background: var(--card-bg-hand);
+  box-shadow: var(--card-shadow-hand);
   padding: 10px;
   gap: 6px;
   text-align: center;
@@ -2756,7 +2877,7 @@ body.is-game .log-empty {
   color: var(--muted);
   padding: 2px 6px;
   border-radius: 999px;
-  background: #f6f0e4;
+  background: var(--panel-soft-alt);
   white-space: nowrap;
 }
 
@@ -3040,27 +3161,17 @@ body.is-game .market-order__step.is-winner {
 .game-card--market .game-card__art {
   height: 180px;
   border-radius: 12px;
-  border: 1px solid rgba(111, 90, 70, 0.65);
-  background: linear-gradient(135deg, #f8e8d2, #f1d2af);
+  border: 1px solid var(--card-art-border);
+  background: var(--card-art-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 10px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #8b6f57;
-  box-shadow: inset 0 0 0 1px rgba(255, 248, 236, 0.85),
-    inset 0 0 0 3px rgba(111, 90, 70, 0.35), 0 6px 12px rgba(35, 28, 19, 0.18);
+  color: var(--card-art-text);
+  box-shadow: var(--card-art-shadow);
   overflow: hidden;
-}
-
-body.is-game .market-card__art,
-body.is-game .game-card--market .game-card__art {
-  border-color: #4a3627;
-  background: linear-gradient(135deg, #2a1e16, #1a120e);
-  color: #bfae97;
-  box-shadow: inset 0 0 0 1px rgba(25, 18, 12, 0.9),
-    inset 0 0 0 3px rgba(74, 54, 39, 0.35), 0 6px 12px rgba(6, 4, 3, 0.4);
 }
 
 .market-card__header,
@@ -3818,7 +3929,7 @@ body.is-game .player-row--idle {
   padding: 6px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: #fffdf6;
+  background: var(--table-row-bg);
   overflow: hidden;
 }
 
@@ -3828,11 +3939,13 @@ body.is-game .player-row--idle {
 
 .table-row--waiting {
   border-color: rgba(220, 38, 38, 0.4);
+  background: var(--table-row-waiting-bg);
   box-shadow: inset 4px 0 0 rgba(220, 38, 38, 0.35);
 }
 
 .table-row--submitted {
   border-color: rgba(22, 163, 74, 0.4);
+  background: var(--table-row-submitted-bg);
   box-shadow: inset 4px 0 0 rgba(22, 163, 74, 0.35);
 }
 
@@ -3918,7 +4031,7 @@ body.is-game .player-row--idle {
   padding: 4px 10px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  background: #f7f1e7;
+  background: var(--panel-soft);
   font-size: 11px;
   font-weight: 600;
   color: var(--ink);
@@ -3937,7 +4050,7 @@ body.is-game .player-row--idle {
 .action-chip.is-active {
   border-color: var(--accent);
   color: var(--accent);
-  background: #fff2d6;
+  background: var(--panel-soft-active);
   box-shadow: 0 6px 14px rgba(180, 83, 9, 0.18);
 }
 
@@ -3961,7 +4074,7 @@ body.is-game .player-row--idle {
   padding: 8px;
   border-radius: 10px;
   border: 1px dashed var(--border);
-  background: #f7f1e7;
+  background: var(--panel-soft);
 }
 
 .action-panel__split-header {
@@ -4043,7 +4156,7 @@ body.is-game .player-row--idle {
 }
 
 .action-field.is-error > span {
-  color: #b91c1c;
+  color: var(--danger-ink);
 }
 
 .action-field__controls {
@@ -4074,7 +4187,7 @@ body.is-game .player-row--idle {
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px dashed var(--border);
-  background: #f6f0e4;
+  background: var(--panel-soft-alt);
   font-size: 13px;
   color: var(--ink);
   transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease,
@@ -4102,15 +4215,15 @@ body.is-game .player-row--idle {
 .action-field__value.is-active {
   border-style: solid;
   border-color: var(--accent);
-  background: #fff2d6;
+  background: var(--panel-soft-active);
   box-shadow: 0 8px 16px rgba(180, 83, 9, 0.12);
 }
 
 .action-field__value.is-error {
   border-style: solid;
-  border-color: #ef4444;
-  background: #fff1f1;
-  color: #991b1b;
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
+  color: var(--danger-ink);
 }
 
 .action-field input {
@@ -4128,19 +4241,13 @@ body.is-game .player-row--idle {
   color: var(--muted);
   padding: 8px 10px;
   border-radius: 10px;
-  background: #f6f0e4;
+  background: var(--panel-soft-alt);
 }
 
 .action-panel__hint--error {
-  color: #991b1b;
-  background: #fff1f1;
-  border: 1px solid #fecaca;
-}
-
-body.is-game .action-panel__hint--error {
-  color: #f8caca;
-  background: rgba(92, 32, 32, 0.4);
-  border-color: #8a2c2c;
+  color: var(--danger-ink);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
 }
 
 .btn {

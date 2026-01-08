@@ -526,6 +526,7 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 ### Tasks (web - targeting reliability)
 - [x] Fix hex selection for Bridge Crew and Build Bridge edge picking.
 - [x] Add board-pick mode + valid target highlights for champion-targeted cards (ex: Emergency Evac).
+- [ ] Add Mortar Shot targeting helpers: highlight only hexes within range of friendly forces and show scatter/aoe hint in the card target UI.
 
 ### Tasks UI
 - [x] The basic actions in the card hand panel below needs to be reworked, it's taking up too much horizontal space, The bridge march reinforce buttons should be stacked and be thinner and we can probably streamline the whole UI of each when they're expanded
@@ -575,10 +576,11 @@ Pause and read through the rules of the game. Make sure that what we've done ali
 - [x] Card styling, can we make the art slightly taller, and add a border around the images that looks nice?
 - [ ] Large and hard -- make the entire UI look a bit more dark fantasy and cooler
   - [x] Add a darker in-game palette + background overrides (body `is-game`) plus nav/panel/button/status restyling.
-  - [ ] Convert remaining hard-coded light surfaces to theme variables so the dark palette is consistent.
+  - [x] Convert remaining hard-coded light surfaces to theme variables so the dark palette is consistent.
     - [x] Market overlay surfaces (panel/order/bids/rolloff/chips) now use dark overrides.
     - [x] Card tag + detail surfaces now use dark overrides.
     - [x] Sidebar sections, intel cards, player rows, and empty-state surfaces now use dark overrides.
+    - [x] Hand/action panels, card surfaces, and command table rows now use theme variables.
 - [x] For cards with victory points we need to denote how many VP's they're worth on the card
 - [ ] We need to add logic and look for escalating champion costs as per the rules
 - [x] Slightly make the images a bit bigger and for all images it will crop, but I want it to crop like 10% higher than it is now, that is to say i want it centered 10% higher than it is now for all cards
