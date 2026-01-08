@@ -420,4 +420,14 @@ const main = () => {
   printChangesReport(changes, command, activeDeckFilter);
 };
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  buildCollisionGroups,
+  buildDecollideChanges,
+  buildCompressChanges,
+  compareCards,
+  buildPatch
+};

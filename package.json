@@ -16,6 +16,7 @@
     "cards:collisions": "node scripts/card-tools.js collisions",
     "cards:decollide": "node scripts/card-tools.js decollide",
     "cards:compress": "node scripts/card-tools.js compress",
+    "cards:test": "node scripts/card-tools.test.js",
     "test": "npm run -w @bridgefront/engine test",
     "test:watch": "npm run -w @bridgefront/engine test:watch",
     "typecheck": "tsc -b"
