@@ -133,17 +133,21 @@ const getUnitDisplayName = (
   return "Force";
 };
 
-const getUnitGlyph = (unit: CombatUnitRoll, cardDefsById: Map<string, CardDef>) => {
-  if (unit.kind === "force") {
-    return "F";
-  }
-  const name = getUnitDisplayName(unit, cardDefsById);
+const getNameGlyph = (name: string) => {
   const letters = name
     .split(/\s+/)
     .map((word) => word[0])
     .join("")
     .toUpperCase();
   return letters.slice(0, 2) || "C";
+};
+
+const getUnitGlyph = (unit: CombatUnitRoll, cardDefsById: Map<string, CardDef>) => {
+  if (unit.kind === "force") {
+    return "F";
+  }
+  const name = getUnitDisplayName(unit, cardDefsById);
+  return getNameGlyph(name);
 };
 
 const splitUnitsByKind = (units: CombatUnitRoll[]) => {
@@ -297,12 +301,6 @@ export const CombatOverlay = ({
         setRevealedRounds((value) => value + 1);
       }, ROLL_DONE_MS)
     ];
-  };
-
-  const handleSkip = () => {
-    clearRollTimers();
-    clearAutoClose();
-    onClose();
   };
 
   const syncNow = useMemo(() => {
@@ -514,6 +512,67 @@ export const CombatOverlay = ({
     );
   };
 
+  const renderHitPips = (summary: HitAssignmentSummary, isVisible: boolean) => {
+    if (!isVisible) {
+      return null;
+    }
+    const forceHits = summary.forces;
+    const forcePips = Math.min(forceHits, 8);
+    const forceOverflow = forceHits - forcePips;
+    return (
+      <div className="combat-hit-pips">
+        <div className="combat-hit-pips__section">
+          <span className="combat-hit-pips__label">Forces</span>
+          <div className="combat-hit-pips__row">
+            {forceHits === 0 ? (
+              <span className="combat-hit-pips__empty">None</span>
+            ) : (
+              <>
+                {Array.from({ length: forcePips }).map((_, index) => (
+                  <span
+                    key={`force-${index}`}
+                    className="combat-hit-pip combat-hit-pip--force"
+                  >
+                    x
+                  </span>
+                ))}
+                {forceOverflow > 0 ? (
+                  <span className="combat-hit-pip combat-hit-pip--force combat-hit-pip--overflow">
+                    +{forceOverflow}
+                  </span>
+                ) : null}
+              </>
+            )}
+          </div>
+        </div>
+        <div className="combat-hit-pips__section">
+          <span className="combat-hit-pips__label">Champions</span>
+          <div className="combat-hit-pips__row">
+            {summary.champions.length === 0 ? (
+              <span className="combat-hit-pips__empty">None</span>
+            ) : (
+              summary.champions.map((champion) => {
+                const name =
+                  cardDefsById.get(champion.cardDefId)?.name ?? champion.cardDefId;
+                const glyph = getNameGlyph(name);
+                return (
+                  <span
+                    key={champion.unitId}
+                    className="combat-hit-pip combat-hit-pip--champion"
+                    title={`${name} hits ${champion.hits}`}
+                  >
+                    <span className="combat-hit-pip__glyph">{glyph}</span>
+                    <span className="combat-hit-pip__count">x{champion.hits}</span>
+                  </span>
+                );
+              })
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderDiceFaces = (
     dice: { value: number; isHit: boolean }[],
     phase: RoundPhase
@@ -712,9 +771,6 @@ export const CombatOverlay = ({
             >
               Retreat (1 mana)
             </button>
-            <button type="button" className="btn btn-tertiary" onClick={handleSkip}>
-              Skip
-            </button>
             <button
               type="button"
               className="btn btn-primary"
@@ -852,6 +908,7 @@ export const CombatOverlay = ({
               <div className="combat-round__assignments">
                 <div className="combat-round__assign">
                   <span className="combat-round__label">Hits to defenders</span>
+                  {renderHitPips(currentRound.hitsToDefenders, showAssignments)}
                   {renderHitSummary(currentRound.hitsToDefenders, showAssignments)}
                   {showAssignments && roundBountyAttackers > 0 ? (
                     <span className="combat-round__bounty">
@@ -861,6 +918,7 @@ export const CombatOverlay = ({
                 </div>
                 <div className="combat-round__assign">
                   <span className="combat-round__label">Hits to attackers</span>
+                  {renderHitPips(currentRound.hitsToAttackers, showAssignments)}
                   {renderHitSummary(currentRound.hitsToAttackers, showAssignments)}
                   {showAssignments && roundBountyDefenders > 0 ? (
                     <span className="combat-round__bounty">
