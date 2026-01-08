@@ -148,11 +148,21 @@ export const GameScreenHandPanel = ({
     }
   }, [canSubmitDone, shouldConfirmPass]);
 
+  const actionSelectionKey = [
+    selectedCardId,
+    basicActionIntent,
+    edgeKey,
+    marchFrom,
+    marchTo,
+    reinforceHex,
+    boardPickMode
+  ].join("|");
+
   useEffect(() => {
-    if (primaryAction) {
+    if (isPassConfirming) {
       setIsPassConfirming(false);
     }
-  }, [primaryAction]);
+  }, [actionSelectionKey]);
 
   useEffect(() => {
     if (!showHandPanel) {

@@ -347,12 +347,12 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] the bridge card didn't give me the option to move 1 stack 1 hex
 - [ ] needs to be a way for me to test different cards in different board states, like a debug play game where i straight launch to age n with whatever cards in my hand i want
 - [x] The UI in the cards for mana and gold needs to be slightly larger and more readable, background gradient makes it hard to read slightly
-- [ ] The cards across different parts of the game can be different sizes, I want them to all be a standard size, big enough to fit everything, it's fine if there's empty space on some. they should be the size of the champion cards fitting those stats + their description
+- [x] The cards across different parts of the game can be different sizes, I want them to all be a standard size, big enough to fit everything, it's fine if there's empty space on some. they should be the size of the champion cards fitting those stats + their description
 - [x] Between action reveals while the board is still "highlighting" where it was played there should be like a configurable timing pause where the popup modal displaying the card and who played it closes and we see where on the map it's played
 - [ ] I want there to be an animation when cards are drawn
 - [x] on the board we need to see the mine yields
 - [x] Board hex labels use the UI font and mine values show +gold markers
-- [ ] The pass and confirm pass button is bugged
+- [x] The pass and confirm pass button is bugged
 - [x] The forge scrap doesn't look right, i just see a bunch of pills with random card ids
 - [ ] remove the mine draft, it should just give gold, and update the rules
 
@@ -543,7 +543,7 @@ Done
       - [x] Battalion Contract.
       - [x] Rally Where You Stand.
       - [x] Forward Barracks.
-      - [ ] Conscription Drive.
+      - [x] Conscription Drive.
       - [x] Miner Army.
     - [ ] Age II Economy card defs (5).
     - [x] War Taxes.
@@ -554,7 +554,7 @@ Done
     - [ ] Age II Deckcraft card defs (5).
     - [ ] Cycle Protocol.
     - [x] Insight.
-    - [ ] Clean Cuts.
+    - [x] Clean Cuts.
     - [x] Stall.
     - [x] Interrupt.
     - [ ] Age II Combat/Tactics card defs (5).

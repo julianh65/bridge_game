@@ -17,8 +17,8 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- [ ] (owner: agent1) Standardize card sizing across UI to a single champion-sized baseline (hand/market/collection/setup). Files: `apps/web/src/styles.css`.
 - [agent4] Add discard/burn-from-hand card effects + hand picker support; add Age II Conscription Drive + Clean Cuts card defs. Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`. Status: in progress.
+- [ ] (owner: agent3) Remove mine draft (auto-collect mine gold), update collection prompts/UI and rules/docs. Files: `packages/engine/src/round-flow.ts`, `packages/engine/src/types.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `apps/web/src/components/CollectionPanel.tsx`, `rules_draft.md`, `technical_spec.md`, `implementation_plan.md`.
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -84,6 +84,7 @@
 - Exported `placeRandomBridges` from the engine index to resolve the board preview import error. (File: `packages/engine/src/index.ts`.)
 - Confirmed the market overlay hotkey exists, lightened the market scrim, added special-tile hover labels on the board, and marked mana-short cards in hand; updated the plan checklist. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4) (Overlap note: `apps/web/src/styles.css` overlap agent2 scope.)
 - Centered card face text, added gold/VP chips to the hand header, and constrained grid card sizing to avoid stretched cards on large screens; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4) (Overlap note: `apps/web/src/styles.css` overlaps agent2 scope.)
+- Standardized card sizing across hand/market/collection/setup using shared CSS sizing variables and marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Set a minimum size for grid/detail cards so non-champion cards match champion-height layouts. (File: `apps/web/src/styles.css`.) (Overlap note: `apps/web/src/styles.css` is in agent1 scope.)
 - Redesigned the combat overlay with side summaries, staged dice flow, faction symbols, active effects list, bounty callouts, capital battle labeling, auto-close, and retreat placeholders. (Files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` also in agent4 scope.)
 - Updated combat overlay headers to include tile labels (A1 Mine) and enlarged faction symbols; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5) (Overlap note: `apps/web/src/styles.css` overlaps other in-flight styling.)
@@ -106,6 +107,7 @@
 - Added a market roll-off overlay with faction symbols and synchronized dice timing; updated the plan checklist. (Files: `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.)
 - Held market roll-off winner highlights through the tie-break animation so the winner callout stays visible; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Persisted market winner banners on resolved cards so each won card keeps its callout. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/MarketPanel.tsx`.)
+- Fixed pass/confirm pass UX so the confirmation state only clears when action selections change, not every render. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.)
 - Moved force-split controls to a board-adjacent popover for march + card moves, added overlay rendering in BoardView, and left a small split hint in the action/hand panels; updated the plan checklist. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/ForceSplitPopover.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Tightened the force-split popover sizing and buttons to reduce board coverage, and set explicit overlay dimensions so it blocks fewer hex clicks. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`.)
 - Moved the force-split popover to the top-left board overlay (removed selected/reset tools) so it no longer blocks hex picking. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`.)
