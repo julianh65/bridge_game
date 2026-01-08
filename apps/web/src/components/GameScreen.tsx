@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 
 import {
   CARD_DEFS,
@@ -752,6 +752,8 @@ export const GameScreen = ({
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMarketOverlayOpen, setIsMarketOverlayOpen] = useState(false);
   const [isCollectionOverlayOpen, setIsCollectionOverlayOpen] = useState(false);
+  const [marketAutoOpenPending, setMarketAutoOpenPending] = useState(false);
+  const [collectionAutoOpenPending, setCollectionAutoOpenPending] = useState(false);
   const [marketOutroHold, setMarketOutroHold] = useState(false);
   const [marketWinner, setMarketWinner] = useState<MarketWinnerHighlight | null>(null);
   const [marketWinnerHistory, setMarketWinnerHistory] = useState<
@@ -1116,6 +1118,7 @@ export const GameScreen = ({
   const activeCombat = combatQueue[0] ?? null;
   const activeCombatSync =
     activeCombat && combatSync ? combatSync[activeCombat.id] ?? null : null;
+  const overlayBlockers = Boolean(pendingCombat || activeCombat || activeCardReveal);
   const pendingCombatHex = pendingCombat
     ? view.public.board.hexes[pendingCombat.hexKey] ?? null
     : null;
@@ -1271,6 +1274,14 @@ export const GameScreen = ({
   const toggleHeaderCollapsed = () => {
     setIsHeaderCollapsed((value) => !value);
   };
+  const toggleMarketOverlay = useCallback(() => {
+    setMarketAutoOpenPending(false);
+    setIsMarketOverlayOpen((current) => !current);
+  }, []);
+  const toggleCollectionOverlay = useCallback(() => {
+    setCollectionAutoOpenPending(false);
+    setIsCollectionOverlayOpen((current) => !current);
+  }, []);
   const handleVictoryClose = () => {
     setIsVictoryVisible(false);
   };
@@ -1421,7 +1432,12 @@ export const GameScreen = ({
           marketOverlayHoldTimeout.current = null;
         }
         setMarketOutroHold(false);
-        setIsMarketOverlayOpen(true);
+        if (overlayBlockers) {
+          setMarketAutoOpenPending(true);
+          setIsMarketOverlayOpen(false);
+        } else {
+          setIsMarketOverlayOpen(true);
+        }
       }
       wasMarketPhaseRef.current = true;
       return;
@@ -1429,6 +1445,7 @@ export const GameScreen = ({
 
     if (wasMarketPhaseRef.current) {
       wasMarketPhaseRef.current = false;
+      setMarketAutoOpenPending(false);
       if (!isMarketOverlayOpen) {
         if (marketOverlayHoldTimeout.current) {
           window.clearTimeout(marketOverlayHoldTimeout.current);
@@ -1460,21 +1477,43 @@ export const GameScreen = ({
       marketOverlayHoldTimeout.current = null;
     }
     setMarketOutroHold(false);
-  }, [isMarketPhase, isMarketOverlayOpen, marketOutroHoldMs]);
+  }, [isMarketPhase, isMarketOverlayOpen, marketOutroHoldMs, overlayBlockers]);
 
   useEffect(() => {
     if (isCollectionPhase) {
       if (!wasCollectionPhaseRef.current) {
-        setIsCollectionOverlayOpen(true);
+        if (overlayBlockers) {
+          setCollectionAutoOpenPending(true);
+          setIsCollectionOverlayOpen(false);
+        } else {
+          setIsCollectionOverlayOpen(true);
+        }
       }
       wasCollectionPhaseRef.current = true;
       return;
     }
     if (wasCollectionPhaseRef.current) {
       wasCollectionPhaseRef.current = false;
+      setCollectionAutoOpenPending(false);
       setIsCollectionOverlayOpen(false);
     }
-  }, [isCollectionPhase]);
+  }, [isCollectionPhase, overlayBlockers]);
+
+  useEffect(() => {
+    if (!isMarketPhase || !marketAutoOpenPending || overlayBlockers) {
+      return;
+    }
+    setMarketAutoOpenPending(false);
+    setIsMarketOverlayOpen(true);
+  }, [isMarketPhase, marketAutoOpenPending, overlayBlockers]);
+
+  useEffect(() => {
+    if (!isCollectionPhase || !collectionAutoOpenPending || overlayBlockers) {
+      return;
+    }
+    setCollectionAutoOpenPending(false);
+    setIsCollectionOverlayOpen(true);
+  }, [collectionAutoOpenPending, isCollectionPhase, overlayBlockers]);
 
   useEffect(() => {
     if (!canToggleMarketOverlay) {
@@ -1494,13 +1533,13 @@ export const GameScreen = ({
         return;
       }
       event.preventDefault();
-      setIsMarketOverlayOpen((current) => !current);
+      toggleMarketOverlay();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [canToggleMarketOverlay]);
+  }, [canToggleMarketOverlay, toggleMarketOverlay]);
 
   useEffect(() => {
     if (view.public.winnerPlayerId) {
@@ -3053,7 +3092,7 @@ export const GameScreen = ({
           }`}
           data-sfx="soft"
           aria-pressed={showCollectionOverlay}
-          onClick={() => setIsCollectionOverlayOpen((current) => !current)}
+          onClick={toggleCollectionOverlay}
         >
           {collectionToggleLabel}
         </button>
@@ -3098,7 +3137,7 @@ export const GameScreen = ({
           }`}
           data-sfx="soft"
           aria-pressed={showMarketOverlay}
-          onClick={() => setIsMarketOverlayOpen((current) => !current)}
+          onClick={toggleMarketOverlay}
           disabled={!canToggleMarketOverlay}
         >
           {marketToggleLabel}
