@@ -491,6 +491,39 @@ const describeBasicAction = (
 
 const formatAgeCueLabel = (age: string) => `Age ${age} Begins`;
 
+const AGE_CUE_STORAGE_PREFIX = "bridgefront:age-cue";
+
+const normalizeAgeCueValue = (value: string | null) => {
+  if (value === "I" || value === "II" || value === "III") {
+    return value;
+  }
+  return null;
+};
+
+const readStoredAgeCue = (roomId: string) => {
+  if (!roomId || typeof window === "undefined") {
+    return null;
+  }
+  try {
+    const key = `${AGE_CUE_STORAGE_PREFIX}:${roomId}`;
+    return normalizeAgeCueValue(window.sessionStorage.getItem(key));
+  } catch {
+    return null;
+  }
+};
+
+const writeStoredAgeCue = (roomId: string, age: string) => {
+  if (!roomId || typeof window === "undefined") {
+    return;
+  }
+  try {
+    const key = `${AGE_CUE_STORAGE_PREFIX}:${roomId}`;
+    window.sessionStorage.setItem(key, age);
+  } catch {
+    // Ignore storage failures (private mode, quota, etc.).
+  }
+};
+
 const getDefaultCardPickMode = (cardDef: CardDef | null): BoardPickMode => {
   if (!cardDef) {
     return "none";
@@ -648,6 +681,7 @@ export const GameScreen = ({
   const [isInfoDockOpen, setIsInfoDockOpen] = useState(false);
   const [isHandPanelOpen, setIsHandPanelOpen] = useState(true);
   const [basicActionIntent, setBasicActionIntent] = useState<BasicActionIntent>("none");
+  const storedAgeCue = useMemo(() => readStoredAgeCue(roomId), [roomId]);
   const lastMarketEventIndex = useRef(-1);
   const lastCardRevealIndex = useRef(-1);
   const marketOverlayHoldTimeout = useRef<number | null>(null);
@@ -690,6 +724,37 @@ export const GameScreen = ({
     }
     return isOccupiedByPlayer(centerHex, localPlayerId);
   }, [localPlayer?.factionId, localPlayerId, centerHexKey, view.public.board.hexes]);
+
+  const linkedNeighborsByHex = useMemo(() => {
+    const map = new Map<string, Set<string>>();
+    if (!localPlayerId) {
+      return map;
+    }
+    const boardHexes = view.public.board.hexes;
+    const addLink = (from: string, to: string) => {
+      const current = map.get(from);
+      if (current) {
+        current.add(to);
+      } else {
+        map.set(from, new Set([to]));
+      }
+    };
+    for (const modifier of view.public.modifiers) {
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== localPlayerId) {
+        continue;
+      }
+      const link = modifier.data?.link as { from?: string; to?: string } | undefined;
+      if (!link?.from || !link?.to) {
+        continue;
+      }
+      if (!boardHexes[link.from] || !boardHexes[link.to]) {
+        continue;
+      }
+      addLink(link.from, link.to);
+      addLink(link.to, link.from);
+    }
+    return map;
+  }, [localPlayerId, view.public.board.hexes, view.public.modifiers]);
 
   const reinforceOptions = useMemo(() => {
     if (!localPlayerId) {
@@ -742,10 +807,10 @@ export const GameScreen = ({
   const hasMarketLogBaseline = useRef(false);
   const hasCardRevealBaseline = useRef(false);
   const hasPhaseCueBaseline = useRef(false);
-  const hasAgeIntroShown = useRef(false);
+  const hasAgeIntroShown = useRef(Boolean(storedAgeCue));
   const lastPhaseRef = useRef(view.public.phase);
   const lastRoundRef = useRef(view.public.round);
-  const lastAgeRef = useRef(view.public.market.age);
+  const lastAgeRef = useRef(storedAgeCue ?? view.public.market.age);
   const targetRecord = useMemo(() => parseTargets(cardTargetsRaw), [cardTargetsRaw]);
   const selectedChampionId =
     getTargetString(targetRecord, "unitId") ?? getTargetString(targetRecord, "championId");
@@ -1366,6 +1431,7 @@ export const GameScreen = ({
       setAgeCueKey((value) => value + 1);
       hasAgeIntroShown.current = true;
       lastAgeRef.current = age;
+      writeStoredAgeCue(roomId, age);
       return;
     }
     if (age === lastAgeRef.current) {
@@ -1376,7 +1442,8 @@ export const GameScreen = ({
     setAgeCue({ label: formatAgeCueLabel(age), round, kind: "shift" });
     setAgeCueKey((value) => value + 1);
     hasAgeIntroShown.current = true;
-  }, [view.public.market.age, view.public.phase, view.public.round]);
+    writeStoredAgeCue(roomId, age);
+  }, [roomId, view.public.market.age, view.public.phase, view.public.round]);
 
   useEffect(() => {
     if (!phaseCue) {
@@ -1759,6 +1826,13 @@ export const GameScreen = ({
     }
   };
 
+  const isMoveAdjacent = (from: string, to: string) => {
+    if (isAdjacent(from, to)) {
+      return true;
+    }
+    return linkedNeighborsByHex.get(from)?.has(to) ?? false;
+  };
+
   const handleBoardHexClick = (hexKey: string) => {
     const isPickable =
       boardPickMode === "none" ||
@@ -1868,7 +1942,7 @@ export const GameScreen = ({
         if (last === hexKey) {
           return current;
         }
-        if (!isAdjacent(last, hexKey)) {
+        if (!isMoveAdjacent(last, hexKey)) {
           const next = [hexKey];
           setCardTargetsObject(null);
           return next;
@@ -1983,6 +2057,38 @@ export const GameScreen = ({
     };
     const neighbors = (key: string) =>
       neighborHexKeys(key).filter((neighbor) => hasHex(neighbor));
+    const getLinkedNeighbors = (key: string) => {
+      const linked = linkedNeighborsByHex.get(key);
+      if (!linked || linked.size === 0) {
+        return [];
+      }
+      return Array.from(linked).filter((neighbor) => hasHex(neighbor));
+    };
+    const getMoveNeighbors = (key: string) => {
+      const baseNeighbors = neighbors(key);
+      const linkedNeighbors = getLinkedNeighbors(key);
+      if (linkedNeighbors.length === 0) {
+        return baseNeighbors;
+      }
+      const merged = new Set(baseNeighbors);
+      for (const neighbor of linkedNeighbors) {
+        merged.add(neighbor);
+      }
+      return Array.from(merged);
+    };
+    const canMoveBetween = (from: string, to: string, requiresBridge: boolean) => {
+      const baseNeighbors = neighbors(from);
+      const baseNeighborSet = new Set(baseNeighbors);
+      const isBaseAdjacent = baseNeighborSet.has(to);
+      const isLinked = linkedNeighborsByHex.get(from)?.has(to) ?? false;
+      if (!isBaseAdjacent && !isLinked) {
+        return false;
+      }
+      if (requiresBridge && isBaseAdjacent && !hasBridge(board, from, to)) {
+        return false;
+      }
+      return canEnter(to);
+    };
 
     const hasAnyEdgeCandidate = (
       start: string,
@@ -2030,8 +2136,8 @@ export const GameScreen = ({
         if (!isOccupied(key)) {
           continue;
         }
-        const canMarchFrom = neighbors(key).some(
-          (neighbor) => hasBridge(board, key, neighbor) && canEnter(neighbor)
+        const canMarchFrom = getMoveNeighbors(key).some((neighbor) =>
+          canMoveBetween(key, neighbor, true)
         );
         if (canMarchFrom) {
           validTargets.add(key);
@@ -2043,11 +2149,8 @@ export const GameScreen = ({
       if (!marchFrom || !hasHex(marchFrom) || !isOccupied(marchFrom)) {
         return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
-      for (const neighbor of neighbors(marchFrom)) {
-        if (!hasBridge(board, marchFrom, neighbor)) {
-          continue;
-        }
-        if (!canEnter(neighbor)) {
+      for (const neighbor of getMoveNeighbors(marchFrom)) {
+        if (!canMoveBetween(marchFrom, neighbor, true)) {
           continue;
         }
         validTargets.add(neighbor);
@@ -2125,12 +2228,9 @@ export const GameScreen = ({
         if (!isOccupied(key)) {
           continue;
         }
-        const hasDestination = neighbors(key).some((neighbor) => {
-          if (requiresBridge && !hasBridge(board, key, neighbor)) {
-            return false;
-          }
-          return canEnter(neighbor);
-        });
+        const hasDestination = getMoveNeighbors(key).some((neighbor) =>
+          canMoveBetween(key, neighbor, requiresBridge)
+        );
         if (hasDestination) {
           startCandidates.add(key);
           startTargets.add(key);
@@ -2138,11 +2238,8 @@ export const GameScreen = ({
       }
       const fromKey = pendingStackFrom;
       if (fromKey && hasHex(fromKey)) {
-        for (const neighbor of neighbors(fromKey)) {
-          if (requiresBridge && !hasBridge(board, fromKey, neighbor)) {
-            continue;
-          }
-          if (!canEnter(neighbor)) {
+        for (const neighbor of getMoveNeighbors(fromKey)) {
+          if (!canMoveBetween(fromKey, neighbor, requiresBridge)) {
             continue;
           }
           validTargets.add(neighbor);
@@ -2169,12 +2266,9 @@ export const GameScreen = ({
           if (!isOccupied(key)) {
             continue;
           }
-          const hasStep = neighbors(key).some((neighbor) => {
-            if (requiresBridge && !hasBridge(board, key, neighbor)) {
-              return false;
-            }
-            return canEnter(neighbor);
-          });
+          const hasStep = getMoveNeighbors(key).some((neighbor) =>
+            canMoveBetween(key, neighbor, requiresBridge)
+          );
           if (hasStep) {
             startCandidates.add(key);
             startTargets.add(key);
@@ -2212,11 +2306,8 @@ export const GameScreen = ({
             startHexKeys: Array.from(startTargets)
           };
         }
-        for (const neighbor of neighbors(last)) {
-          if (requiresBridge && !hasBridge(board, last, neighbor)) {
-            continue;
-          }
-          if (!canEnter(neighbor)) {
+        for (const neighbor of getMoveNeighbors(last)) {
+          if (!canMoveBetween(last, neighbor, requiresBridge)) {
             continue;
           }
           validTargets.add(neighbor);
@@ -2430,6 +2521,7 @@ export const GameScreen = ({
   }, [
     localPlayerId,
     view.public.board,
+    linkedNeighborsByHex,
     boardPickMode,
     marchFrom,
     pendingEdgeStart,

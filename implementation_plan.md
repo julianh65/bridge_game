@@ -339,7 +339,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] there’s still a bit of buginess between phase transitions where we go from action phase to collection phase like the collection modal will instantly pop up
 - [x] scout report still doesn’t let you choose which ones to draw or discard
 - [x] in the combat screen we should see what the champions as well as forces hit on (if there are modifiers it should reflect that as well)
-- [ ] tunnel network didn’t work
+- [x] tunnel network didn’t work
 - [x] similar to the show / hide market floating button we also want a go to and forth your own deck button to see the deck and go back and forth
 - [x] the faction information is squished, remove the starter kit and pick going to selected affects the layout of the container its in
 - [ ] for the bridges that generate and randomly get placed try to wire it up so it's a bit more "intelligent" in that it balances out the board, place bridges not conected to the center and try to place them on more empty parts of the board
@@ -729,3 +729,5 @@ Can I somehow add analytics to this? see players where, etc etc...
   - rarely adding a new query/hook/event
 
 ---
+    - [x] Age II market: Refined Ingots (mine bonus gold).
+    - [x] Age II market: War Taxes (gain gold).

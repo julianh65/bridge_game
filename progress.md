@@ -87,6 +87,7 @@
 - Held market roll-off winner highlights through the tie-break animation so the winner callout stays visible; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Persisted market winner banners on resolved cards so each won card keeps its callout. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/MarketPanel.tsx`.)
 - Moved force-split controls to a board-adjacent popover for march + card moves, added overlay rendering in BoardView, and left a small split hint in the action/hand panels; updated the plan checklist. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/ForceSplitPopover.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
+- Enabled linked-hex movement (Tunnel Network/Wormhole Link) for board-pick march + card move paths by honoring link modifiers in UI targeting; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Added Burn the Bridges (Age II) with destroy-connected-bridges effect, movement-target validation, and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent2)
 
 ## Milestone 8 progress
