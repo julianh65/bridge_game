@@ -60,6 +60,18 @@ export const PreGameLobby = ({
       : status === "error"
         ? "status-pill--error"
         : "status-pill--waiting";
+  const startStatus = (() => {
+    if (!isHost) {
+      return "Waiting for the host to start.";
+    }
+    if (connectedCount < lobby.minPlayers) {
+      return `Need ${lobby.minPlayers} connected players to start.`;
+    }
+    if (!allFactionsPicked) {
+      return `Waiting for faction picks from ${missingFactions.join(", ")}.`;
+    }
+    return "Ready to start.";
+  })();
 
   return (
     <section className="lobby">
@@ -115,6 +127,26 @@ export const PreGameLobby = ({
               </li>
             ))}
           </ul>
+          <div className="lobby__start">
+            <div className="lobby__start-info">
+              <div className="lobby__start-title">Start Game</div>
+              <p className="muted">
+                Host starts the match once {lobby.minPlayers}+ players are connected and factions
+                are chosen.
+              </p>
+              <p className="muted">{startStatus}</p>
+            </div>
+            {isHost ? (
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={onStartGame}
+                disabled={!canStart}
+              >
+                Start Game
+              </button>
+            ) : null}
+          </div>
         </section>
 
         <section className="panel">
@@ -140,26 +172,40 @@ export const PreGameLobby = ({
                   onClick={() => onPickFaction(faction.id)}
                 >
                   <div className="faction-card__meta">
-                    <span className="faction-card__label">
-                      <FactionSymbol factionId={faction.id} />
-                      <span>{faction.name}</span>
-                    </span>
-                    <div className="faction-card__desc">{faction.description}</div>
-                    <div className="faction-card__desc">
-                      <strong>Passives</strong>
-                      {faction.passives.map((passive) => (
-                        <div key={passive.name}>
-                          {passive.name} — {passive.description}
-                        </div>
-                      ))}
+                    <div className="faction-card__header">
+                      <span className="faction-card__label">
+                        <FactionSymbol factionId={faction.id} />
+                        <span>{faction.name}</span>
+                      </span>
+                      <div className="faction-card__desc">{faction.description}</div>
                     </div>
-                    <div className="faction-card__desc">
-                      <strong>Starter Spell</strong>
-                      <div>{formatCardSummary(faction.starterSpellId)}</div>
+                    <div className="faction-card__section">
+                      <span className="faction-card__section-title">Passives</span>
+                      <ul className="faction-card__list">
+                        {faction.passives.map((passive) => (
+                          <li key={passive.name}>
+                            <span className="faction-card__passive-name">{passive.name}</span>
+                            <span className="faction-card__passive-desc">
+                              {passive.description}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                    <div className="faction-card__desc">
-                      <strong>Starter Champion</strong>
-                      <div>{formatCardSummary(faction.starterChampionId)}</div>
+                    <div className="faction-card__section">
+                      <span className="faction-card__section-title">Starter Kit</span>
+                      <div className="faction-card__starter">
+                        <span className="faction-card__starter-label">Spell</span>
+                        <span className="faction-card__starter-value">
+                          {formatCardSummary(faction.starterSpellId)}
+                        </span>
+                      </div>
+                      <div className="faction-card__starter">
+                        <span className="faction-card__starter-label">Champion</span>
+                        <span className="faction-card__starter-value">
+                          {formatCardSummary(faction.starterChampionId)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                   {isSelected ? (
@@ -175,30 +221,6 @@ export const PreGameLobby = ({
             <p className="muted">Connect to pick a faction.</p>
           ) : !localFactionId ? (
             <p className="muted">Select a faction to ready up.</p>
-          ) : null}
-        </section>
-
-        <section className="panel">
-          <h2>Host Controls</h2>
-          <p className="muted">Start the game when at least {lobby.minPlayers} players are ready.</p>
-          <div className="lobby__actions">
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={onStartGame}
-              disabled={!canStart}
-            >
-              Start Game
-            </button>
-          </div>
-          {!isHost ? (
-            <p className="muted">Waiting for the host to start.</p>
-          ) : connectedCount < lobby.minPlayers ? (
-            <p className="muted">Need {lobby.minPlayers} connected players to start.</p>
-          ) : !allFactionsPicked ? (
-            <p className="muted">
-              Waiting for faction picks from {missingFactions.join(", ")}.
-            </p>
           ) : null}
         </section>
       </div>
