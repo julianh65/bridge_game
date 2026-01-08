@@ -322,9 +322,10 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Add UI for scout orders and "draw and pick" effects.
 - [x] Fix card aspect ratios on large screens (avoid stretched/fat cards).
 - [x] Add a battle debug tab to simulate combat with custom forces/champions.
-- [ ] Need a something in UI to mark which cell is "my capital"
+- [x] Need a something in UI to mark which cell is "my capital"
 - [ ] We need to modify it and set it up so that each faction has their own set of starter cards with different initiatives which I can edit and setup
 - [ ] Add the dark styling to the Play main tab area
+- [ ] Need to test and make sure burn works, maybe a nice animation for it too, and stylistically on cards the burn keyword needs to be apparent
 
 ### Mini Milestone For Me
 

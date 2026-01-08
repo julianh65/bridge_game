@@ -2603,6 +2603,7 @@ export const GameScreen = ({
                 modifiers={view.public.modifiers}
                 playerIndexById={playerColorIndexById}
                 playerFactionById={playerFactionById}
+                homeCapitalHexKey={localCapitalHexKey}
                 showCoords={false}
                 showMineValues={false}
                 labelByHex={hexLabels}

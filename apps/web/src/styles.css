@@ -5183,6 +5183,14 @@ body.is-game .btn-secondary:active:not(:disabled) {
   filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.45));
 }
 
+.hex__home-ring {
+  fill: none;
+  stroke: var(--accent-strong);
+  stroke-width: 2.4;
+  filter: drop-shadow(0 0 6px var(--accent));
+  pointer-events: none;
+}
+
 .hex--capital {
   fill: rgba(159, 18, 57, 0.9);
 }

@@ -18,7 +18,7 @@
 
 ## Active tasks
  - owner: agent1; scope: implement secret starting-bridge selection + reveal gating in setup flow (engine state/view + tests); files: `packages/engine/src/types.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/view.ts`, `packages/engine/src/setup-flow.test.ts`, `implementation_plan.md`, `progress.md`; status: in progress
- - owner: agent3; scope: mark local player's capital on the board UI; files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in progress
+ - owner: agent5; scope: market roll-off overlay + faction symbols + smoother roll timing; files: `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`; status: in progress
 
  
 
@@ -93,6 +93,7 @@
 - Added mana/gold cost chips to the basic action buttons in the hand panel; updated the plan checklist. (Files: `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
 - Converted the collection UI into a modal overlay with scrim/panel styling to avoid layout shifts; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
 - Converted champion target selection into a floating overlay panel to avoid layout shifts; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
+- Marked the local player's capital with a ring indicator on the board view; updated the plan checklist. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3) (Overlap note: `implementation_plan.md` included a pre-existing burn test TODO; `progress.md` picked up an agent5 active-task entry.)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.

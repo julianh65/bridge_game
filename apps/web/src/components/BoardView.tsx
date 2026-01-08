@@ -31,6 +31,7 @@ type BoardViewProps = {
   modifiers?: ModifierView[];
   playerIndexById?: Record<string, number>;
   playerFactionById?: Record<string, string>;
+  homeCapitalHexKey?: string | null;
   showCoords?: boolean;
   showTags?: boolean;
   showMineValues?: boolean;
@@ -126,6 +127,7 @@ const TILE_TOOLTIP_OFFSET_Y = 12;
 const UNIT_MOVE_PULSE_MS = 720;
 const EFFECT_BADGE_RADIUS = HEX_DRAW_SIZE * 0.12;
 const EFFECT_BADGE_OFFSET = HEX_DRAW_SIZE * 0.3;
+const HOME_CAPITAL_RING_SIZE = HEX_DRAW_SIZE * 1.06;
 
 const shortenSegment = (
   from: { x: number; y: number },
@@ -349,6 +351,7 @@ export const BoardView = ({
   modifiers,
   playerIndexById,
   playerFactionById,
+  homeCapitalHexKey = null,
   showCoords = true,
   showTags = true,
   showMineValues = true,
@@ -1115,6 +1118,7 @@ export const BoardView = ({
         const isSelected = selectedHexKey === hex.key;
         const isHighlighted = highlightSet.has(hex.key);
         const isValidTarget = validSet.has(hex.key);
+        const isHomeCapital = homeCapitalHexKey === hex.key;
         const isInactive =
           clickable && hasValidTargets && !isValidTarget && !isSelected && !isHighlighted;
         const occupantCount = board
@@ -1160,6 +1164,12 @@ export const BoardView = ({
         return (
           <g key={hex.key} onMouseEnter={handleTileEnter} onMouseLeave={handleTileLeave}>
             <title>{hexTitle}</title>
+            {isHomeCapital ? (
+              <polygon
+                className="hex__home-ring"
+                points={hexPoints(hex.x, hex.y, HOME_CAPITAL_RING_SIZE)}
+              />
+            ) : null}
             <polygon
               className={polygonClasses}
               points={hexPoints(hex.x, hex.y, HEX_DRAW_SIZE)}
