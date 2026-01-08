@@ -1888,6 +1888,25 @@ body.is-game .filter-pill.is-active {
   align-items: start;
 }
 
+.cards-grid > *,
+.market-card-grid > *,
+.collection-card-grid > *,
+.hand-picker__grid > * {
+  position: relative;
+  z-index: 0;
+}
+
+.cards-grid > *:hover,
+.cards-grid > *:focus-within,
+.market-card-grid > *:hover,
+.market-card-grid > *:focus-within,
+.collection-card-grid > *:hover,
+.collection-card-grid > *:focus-within,
+.hand-picker__grid > *:hover,
+.hand-picker__grid > *:focus-within {
+  z-index: 5;
+}
+
 .game-card {
   border-radius: 18px;
   border: 1px solid var(--card-border);
