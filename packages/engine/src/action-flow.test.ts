@@ -2451,6 +2451,99 @@ describe("action flow", () => {
     expect(enemyHealed.hp).toBe(1);
   });
 
+  it("plays center dispatch to draw 1 when not occupying center", () => {
+    let { state } = setupToActionPhase();
+    const playCard = createCardInstance(state, "age2.center_dispatch");
+    const drawCard = createCardInstance(playCard.state, "starter.supply_cache");
+    state = drawCard.state;
+
+    state = {
+      ...state,
+      players: state.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              deck: {
+                hand: [playCard.instanceId],
+                drawPile: [drawCard.instanceId],
+                discardPile: [],
+                scrapped: []
+              }
+            }
+          : player
+      )
+    };
+
+    state = applyCommand(
+      state,
+      { type: "SubmitAction", payload: { kind: "card", cardInstanceId: playCard.instanceId } },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state");
+    }
+    expect(p1After.deck.hand).toEqual([drawCard.instanceId]);
+    expect(p1After.deck.discardPile).toContain(playCard.instanceId);
+  });
+
+  it("plays center dispatch to draw 2 when occupying center", () => {
+    let { state } = setupToActionPhase();
+    const playCard = createCardInstance(state, "age2.center_dispatch");
+    const drawCards = createCardInstances(playCard.state, [
+      "starter.supply_cache",
+      "starter.supply_cache"
+    ]);
+    state = drawCards.state;
+
+    const centerHex = Object.values(state.board.hexes).find((hex) => hex.tile === "center")?.key;
+    if (!centerHex) {
+      throw new Error("missing center hex");
+    }
+
+    state = {
+      ...state,
+      board: addForcesToHex(state.board, "p1", centerHex, 1)
+    };
+
+    state = {
+      ...state,
+      players: state.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              deck: {
+                hand: [playCard.instanceId],
+                drawPile: drawCards.instanceIds,
+                discardPile: [],
+                scrapped: []
+              }
+            }
+          : player
+      )
+    };
+
+    state = applyCommand(
+      state,
+      { type: "SubmitAction", payload: { kind: "card", cardInstanceId: playCard.instanceId } },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state");
+    }
+    expect(p1After.deck.hand).toEqual(drawCards.instanceIds);
+    expect(p1After.deck.discardPile).toContain(playCard.instanceId);
+  });
+
   it("plays zap to damage a champion, remove it, and award bounty", () => {
     let { state } = setupToActionPhase();
     const p2Capital = state.players.find((player) => player.id === "p2")?.capitalHex;

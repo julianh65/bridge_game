@@ -422,6 +422,16 @@ Start going through the rules_draft and adding the logic for the different types
 - [ ] Add random card generation effects (Black Market Pull, Forge Miracle).
 - [ ] Add burn keyword enforcement for granted cards (Forge Miracle, power deck burn effects). and an animation on burn
 
+### Punchlist — Done cards blocked by UI/validation
+- [ ] UI: add `multiPath` targeting flow with per-path add/remove, min/max path counts, and per-path highlights (Roll Out, Coordinated Advance, Grand Maneuver).
+- [ ] UI: add `hexPair` targeting flow (pick two hexes, show linkage preview, enforce allowSame/maxDistanceFromFriendlyChampion) for Wormhole Link + Wormhole Gate.
+- [ ] UI: support compound targets for edge+move cards (Bridge Crew: `edgeKey` + optional `from/to` or `path`) with a stepper or dual-mode picker.
+- [ ] UI: enforce `stopOnOccupied` during path selection (Column Advance): block path continuation past occupied hexes and surface a hint.
+- [ ] UI: enforce champion targeting constraints in picker (`requiresFriendlyChampion`, `maxDistance`) for Marked for Coin + Execution Order.
+- [ ] UI: Mortar Shot targeting helpers (force-range gating + scatter preview ring) and block invalid picks.
+- [ ] UI: manual hit assignment overlay for Focus Fire + Tactical Hand (pick targets for assigned hits, show remaining hits).
+- [ ] Engine: decide on no-op orders (Stall) — allow playable no-effect cards or remove the card.
+
 
 ## Milestone 7.5 — Script to Generate Art for Cards
 
@@ -438,6 +448,7 @@ Done
   - [x] Added Flank Step, Scavenger's Market, Supply Ledger, Patrol Record (existing effects only).
   - [x] Added Banner Claim (Victory: move 1 stack 1 hex along a Bridge).
 - [ ] Add remaining Age I market cards + Age I market champions per rules_draft (movement/recruit/economy/deckcraft/combat/bridges/synergy/victory).
+  - [ ] Start adding Age II/III card sets into the game (defs + deck lists wired so they appear in market phases).
   - [x] Age I champions: Bounty Hunter, Sergeant, Traitor.
   - [x] Age I champion: Field Surgeon (active heal ability).
   - [x] Added Sabotage Bridge, Bridge Trap, and Tunnel Network (bridge/terrain effects).
@@ -555,7 +566,7 @@ Done
       - [ ] Encirclement.
     - [ ] Age II Victory card defs (4).
       - [x] Strategic Triumph.
-      - [ ] Center Dispatch.
+      - [x] Center Dispatch.
       - [x] Banner of Resolve.
       - [ ] Big VP Gainer.
     - [ ] Age II Champion card defs (8).

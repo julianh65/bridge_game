@@ -447,6 +447,24 @@ export const STRATEGIC_TRIUMPH: CardDef = {
   victoryPoints: 1
 };
 
+export const CENTER_DISPATCH: CardDef = {
+  id: "age2.center_dispatch",
+  name: "Center Dispatch",
+  rulesText: "Draw 2 if you occupy Center; otherwise draw 1.",
+  type: "Victory",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 35,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [
+    { kind: "drawCards", count: 1 },
+    { kind: "drawCardsIfTile", tile: "center", count: 1 }
+  ],
+  victoryPoints: 1
+};
+
 export const BANNER_OF_RESOLVE: CardDef = {
   id: "age2.banner_of_resolve",
   name: "Banner of Resolve",
@@ -688,6 +706,7 @@ export const AGE2_CARDS: CardDef[] = [
   WORMHOLE_LINK,
   DEEP_SHAFT_RIG,
   STRATEGIC_TRIUMPH,
+  CENTER_DISPATCH,
   BANNER_OF_RESOLVE,
   JET_STRIKER,
   GUERILLA_NATIVE_MERCENARY,

@@ -73,6 +73,7 @@ const SUPPORTED_EFFECTS = new Set([
   "gainGold",
   "gainMana",
   "drawCards",
+  "drawCardsIfTile",
   "drawCardsIfHandEmpty",
   "scoutReport",
   "prospecting",
@@ -1573,6 +1574,17 @@ export const resolveCardEffects = (
       case "drawCards": {
         const count = typeof effect.count === "number" ? effect.count : 0;
         nextState = drawCards(nextState, playerId, count);
+        break;
+      }
+      case "drawCardsIfTile": {
+        const tile = typeof effect.tile === "string" ? effect.tile : null;
+        const count = typeof effect.count === "number" ? Math.max(0, Math.floor(effect.count)) : 0;
+        if (!tile || count <= 0) {
+          break;
+        }
+        if (playerOccupiesTile(nextState, playerId, tile as TileType)) {
+          nextState = drawCards(nextState, playerId, count);
+        }
         break;
       }
       case "drawCardsIfHandEmpty": {
