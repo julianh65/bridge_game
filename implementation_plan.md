@@ -658,6 +658,8 @@ Done
   - [x] Age I market: Paid Volunteers / National Service recruit coverage.
   - [ ] Age II/III market + power deck card tests (as content lands).
     - [x] Age II market: Deep Shaft Rig (mine value bump + force deploy).
+    - [x] Age II market: Rally Where You Stand (deploy to champion hex).
+    - [x] Age II market: Smuggling Ring (enemy capital bonus gold).
   - [ ] Champion ability tests (on-deploy, on-death, on-battle-win, dice mods, VP aura).
     - [x] Bounty Hunter bonus gold on champion kill in battle.
     - [x] Ironclad Warden bodyguard hit assignment policy.

@@ -17,6 +17,10 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- owner: agent2
+  scope: add Smuggling Ring gain-gold test coverage (enemy capital bonus)
+  files: packages/engine/src/card-effects.smuggling-ring.test.ts, implementation_plan.md, progress.md
+  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -121,6 +125,7 @@
 - Added Age III Ruin the Span (destroy 2 bridges) with multi-edge targeting support, edge-selection UI updates for existing bridges, and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/action-flow.test.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Added Age III victory card defs (Conquest Record, Final Oath) using gain-gold/heal effects and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added Deep Shaft Rig card-effect test for mine value bump + force deploy; updated the plan checklist. (Files: `packages/engine/src/card-effects.deep-shaft-rig.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.deep-shaft-rig.test.ts`.) (owner: agent4)
+- Added Rally Where You Stand card-effect test for deploying forces to a friendly champion hex; updated the plan checklist. (Files: `packages/engine/src/card-effects.rally-where-you-stand.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.rally-where-you-stand.test.ts`.) (owner: agent4)
 
 ## Milestone 9 progress
 - Shifted GameCard art cropping upward (~10%) with a slight zoom across variants; updated the plan checklist. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
