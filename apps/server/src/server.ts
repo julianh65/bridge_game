@@ -288,14 +288,6 @@ const buildDebugCollectionChoices = (
   const hand = player?.deck.hand ?? [];
 
   const choices = prompts.map((prompt) => {
-    if (prompt.kind === "mine") {
-      return {
-        kind: "mine",
-        hexKey: prompt.hexKey,
-        choice: "gold"
-      };
-    }
-
     if (prompt.kind === "forge") {
       if (hand.length > 0) {
         return {

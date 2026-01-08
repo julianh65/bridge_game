@@ -620,7 +620,7 @@ Prompts are needed for:
 - choose 1 of N revealed cards
 - choose a hex/edge target
 - discard up to N
-- choose “mine gold vs mine draft”, “forge reforge vs forge draft”, “power pick”
+- choose “forge reforge vs forge draft”, “power pick”
 
 Prompt system requirements:
 - serializable prompt payload in GameState

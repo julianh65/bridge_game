@@ -257,7 +257,7 @@ export type MineGoldContext = {
 
 export type CardChoiceContext = {
   playerId: PlayerID;
-  kind: "freeStartingCard" | "mineDraft" | "forgeDraft" | "centerPick";
+  kind: "freeStartingCard" | "forgeDraft" | "centerPick";
   baseCount: number;
 };
 
@@ -552,12 +552,6 @@ export type ActionStepPublicView = {
 
 export type CollectionPrompt =
   | {
-      kind: "mine";
-      hexKey: HexKey;
-      mineValue: number;
-      revealed: CardDefId[];
-    }
-  | {
       kind: "forge";
       hexKey: HexKey;
       revealed: CardDefId[];
@@ -569,13 +563,6 @@ export type CollectionPrompt =
     };
 
 export type CollectionChoice =
-  | {
-      kind: "mine";
-      hexKey: HexKey;
-      choice: "gold" | "draft";
-      gainCard?: boolean;
-      cardId?: CardDefId;
-    }
   | {
       kind: "forge";
       hexKey: HexKey;

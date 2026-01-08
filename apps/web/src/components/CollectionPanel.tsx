@@ -37,11 +37,8 @@ const getChoiceKey = (choice: CollectionChoice) => getPromptKey(choice.kind, cho
 const formatHexLabel = (hexKey: string, labelByHex?: Record<string, string>) =>
   labelByHex?.[hexKey] ?? hexKey;
 
-const getPromptSignature = (prompt: CollectionPrompt) => {
-  const reveals = prompt.revealed.join(",");
-  const mineValue = prompt.kind === "mine" ? prompt.mineValue : "";
-  return `${prompt.kind}:${prompt.hexKey}:${mineValue}:${reveals}`;
-};
+const getPromptSignature = (prompt: CollectionPrompt) =>
+  `${prompt.kind}:${prompt.hexKey}:${prompt.revealed.join(",")}`;
 
 const isChoiceValid = (
   prompt: CollectionPrompt,
@@ -50,22 +47,6 @@ const isChoiceValid = (
 ) => {
   if (choice.kind !== prompt.kind || choice.hexKey !== prompt.hexKey) {
     return false;
-  }
-
-  if (choice.kind === "mine") {
-    if (choice.choice === "gold") {
-      return true;
-    }
-    if (prompt.revealed.length === 0 || typeof choice.gainCard !== "boolean") {
-      return false;
-    }
-    if (!choice.gainCard) {
-      return true;
-    }
-    if (choice.cardId) {
-      return prompt.revealed.includes(choice.cardId);
-    }
-    return prompt.revealed.length === 1;
   }
 
   if (choice.kind === "forge") {
@@ -183,12 +164,9 @@ export const CollectionPanel = ({
   const promptSummary = useMemo(() => {
     return prompts.map((prompt) => {
       const hexLabel = formatHexLabel(prompt.hexKey, labelByHex);
-      const kindLabel =
-        prompt.kind === "mine" ? "Mine" : prompt.kind === "forge" ? "Forge" : "Center";
+      const kindLabel = prompt.kind === "forge" ? "Forge" : "Center";
       let detail = "";
-      if (prompt.kind === "mine") {
-        detail = `Value ${prompt.mineValue} gold · choose gold or draft`;
-      } else if (prompt.kind === "forge") {
+      if (prompt.kind === "forge") {
         detail = "Scrap 1 to reforge or draft a card";
       } else {
         detail = "Pick 1 power card";
@@ -222,7 +200,7 @@ export const CollectionPanel = ({
       return;
     }
     const stageOrder: CollectionPrompt["kind"][] = [];
-    (["mine", "forge", "center"] as const).forEach((kind) => {
+    (["forge", "center"] as const).forEach((kind) => {
       if (prompts.some((prompt) => prompt.kind === kind)) {
         stageOrder.push(kind);
       }
@@ -379,125 +357,6 @@ export const CollectionPanel = ({
               const hexLabel = formatHexLabel(prompt.hexKey, labelByHex);
               const revealCount = prompt.revealed.length;
               const revealLabel = revealCount === 1 ? "1 card" : `${revealCount} cards`;
-
-              if (prompt.kind === "mine") {
-                const selectedGold = selection?.kind === "mine" && selection.choice === "gold";
-                const selectedDraftId =
-                  selection?.kind === "mine" &&
-                  selection.choice === "draft" &&
-                  selection.gainCard === true
-                    ? selection.cardId ?? (prompt.revealed.length === 1 ? prompt.revealed[0] : null)
-                    : null;
-                const selectedSkip =
-                  selection?.kind === "mine" &&
-                  selection.choice === "draft" &&
-                  selection.gainCard === false;
-                return (
-                  <div
-                    key={key}
-                    className={`collection-prompt ${isStageActive ? "is-highlighted" : ""} ${
-                      isStageDimmed ? "is-dimmed" : ""
-                    }`}
-                  >
-                    <div className="collection-prompt__header">
-                      <span className="collection-prompt__title">Mine</span>
-                      <span className="collection-prompt__meta">{hexLabel}</span>
-                    </div>
-                    <div className="collection-prompt__section">
-                      <span className="collection-prompt__label">
-                        Value {prompt.mineValue} gold
-                      </span>
-                      <p className="collection-prompt__note">
-                        {revealCount > 0
-                          ? `Reveal ${revealLabel} to draft 1, or take the gold.`
-                          : "No cards left to draft this round; take the gold."}
-                      </p>
-                      <div className="collection-prompt__options">
-                        <button
-                          type="button"
-                          className={`btn btn-tertiary ${selectedGold ? "is-active" : ""}`}
-                          disabled={!canInteract}
-                          onClick={() =>
-                            setChoice(prompt, {
-                              kind: "mine",
-                              hexKey: prompt.hexKey,
-                              choice: "gold"
-                            })
-                          }
-                        >
-                          Take gold
-                        </button>
-                      </div>
-                    </div>
-                    <div className="collection-prompt__section">
-                      <span className="collection-prompt__label">
-                        Mine draft (choose 1)
-                      </span>
-                      {prompt.revealed.length === 0 ? (
-                        <div className="collection-prompt__note">
-                          No card revealed.
-                        </div>
-                      ) : isRevealPending ? (
-                        <div className="collection-roll">
-                          <NumberRoll
-                            value={rollState?.roll ?? 1}
-                            sides={COLLECTION_ROLL_SIDES}
-                            durationMs={COLLECTION_ROLL_DURATION_MS}
-                            rollKey={rollState?.rollKey}
-                            className="number-roll--lg"
-                            label="Mine draw roll"
-                          />
-                          <span className="collection-roll__label">
-                            Revealing mine draw...
-                          </span>
-                        </div>
-                      ) : (
-                        <>
-                          <div className="collection-card-grid">
-                            {prompt.revealed.map((cardId) => {
-                              const isSelected = selectedDraftId === cardId;
-                              return (
-                                <CollectionCardOption
-                                  key={`${cardId}-${prompt.hexKey}`}
-                                  cardId={cardId}
-                                  isSelected={isSelected}
-                                  disabled={!canInteract}
-                                  onSelect={() =>
-                                    setChoice(prompt, {
-                                      kind: "mine",
-                                      hexKey: prompt.hexKey,
-                                      choice: "draft",
-                                      gainCard: true,
-                                      cardId
-                                    })
-                                  }
-                                />
-                              );
-                            })}
-                          </div>
-                          <button
-                            type="button"
-                            className={`btn btn-tertiary ${
-                              selectedSkip ? "is-active" : ""
-                            }`}
-                            disabled={!canInteract}
-                            onClick={() =>
-                              setChoice(prompt, {
-                                kind: "mine",
-                                hexKey: prompt.hexKey,
-                                choice: "draft",
-                                gainCard: false
-                              })
-                            }
-                          >
-                            Skip cards
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                );
-              }
 
               if (prompt.kind === "forge") {
                 const selectedReforgeId =

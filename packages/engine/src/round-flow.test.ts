@@ -162,7 +162,7 @@ describe("quiet study", () => {
 });
 
 describe("collection", () => {
-  it("resolves mine gold and forge draft choices", () => {
+  it("collects mine gold and resolves forge draft choices", () => {
     const base = createNewGame(DEFAULT_CONFIG, 1, [
       { id: "p1", name: "Player 1" },
       { id: "p2", name: "Player 2" }
@@ -228,17 +228,17 @@ describe("collection", () => {
     expect(created.block).not.toBeNull();
     const block = created.block!;
     const prompts = block.payload.prompts.p1 ?? [];
-    expect(prompts).toHaveLength(2);
+    expect(prompts).toHaveLength(1);
     const promptMap = new Map(prompts.map((prompt) => [`${prompt.kind}:${prompt.hexKey}`, prompt]));
-    expect(promptMap.get("mine:0,1")?.revealed).toEqual([deck[0]]);
-    expect(promptMap.get("forge:1,0")?.revealed).toEqual(deck.slice(1, 4));
-    expect(created.state.marketDecks.I).toHaveLength(0);
+    expect(promptMap.get("forge:1,0")?.revealed).toEqual(deck.slice(0, 3));
+    expect(created.state.marketDecks.I).toEqual([deck[3]]);
+    const createdPlayer = created.state.players.find((entry) => entry.id === "p1");
+    expect(createdPlayer?.resources.gold).toBe(2);
 
     let nextState = { ...created.state, blocks: block };
     nextState = applyCollectionChoice(
       nextState,
       [
-        { kind: "mine", hexKey: "0,1", choice: "gold" },
         { kind: "forge", hexKey: "1,0", choice: "draft", cardId: deck[1] }
       ],
       "p1"
@@ -317,7 +317,6 @@ describe("collection", () => {
       prompts.map((prompt) => [`${prompt.kind}:${prompt.hexKey}`, prompt])
     );
 
-    expect(promptMap.get("mine:0,1")?.revealed).toHaveLength(2);
     expect(promptMap.get("forge:1,0")?.revealed).toHaveLength(4);
     expect(promptMap.get("center:0,-1")?.revealed).toHaveLength(3);
   });
@@ -372,18 +371,8 @@ describe("collection", () => {
     };
 
     const created = createCollectionBlock(state);
-    expect(created.block).not.toBeNull();
-    const block = created.block!;
-
-    let nextState = { ...created.state, blocks: block };
-    nextState = applyCollectionChoice(
-      nextState,
-      [{ kind: "mine", hexKey: "0,1", choice: "gold" }],
-      "p1"
-    );
-
-    const resolved = resolveCollectionChoices(nextState);
-    const player = resolved.players.find((entry) => entry.id === "p1");
+    expect(created.block).toBeNull();
+    const player = created.state.players.find((entry) => entry.id === "p1");
     expect(player?.resources.gold).toBe(3);
   });
 
@@ -442,22 +431,12 @@ describe("collection", () => {
     };
 
     const created = createCollectionBlock(state);
-    expect(created.block).not.toBeNull();
-    const block = created.block!;
-
-    let nextState = { ...created.state, blocks: block };
-    nextState = applyCollectionChoice(
-      nextState,
-      [{ kind: "mine", hexKey: "0,1", choice: "gold" }],
-      "p1"
-    );
-
-    const resolved = resolveCollectionChoices(nextState);
-    const player = resolved.players.find((entry) => entry.id === "p1");
+    expect(created.block).toBeNull();
+    const player = created.state.players.find((entry) => entry.id === "p1");
     expect(player?.resources.gold).toBe(3);
   });
 
-  it("returns mine draft cards to the market deck when declined", () => {
+  it("does not consume the market deck when only mines are collected", () => {
     const base = createNewGame(DEFAULT_CONFIG, 1, [
       { id: "p1", name: "Player 1" },
       { id: "p2", name: "Player 2" }
@@ -498,75 +477,10 @@ describe("collection", () => {
     };
 
     const created = createCollectionBlock(state);
-    const block = created.block!;
-    let nextState = { ...created.state, blocks: block };
-    nextState = applyCollectionChoice(
-      nextState,
-      [{ kind: "mine", hexKey: "0,1", choice: "draft", gainCard: false }],
-      "p1"
-    );
-
-    const resolved = resolveCollectionChoices(nextState);
-    const player = resolved.players.find((entry) => entry.id === "p1");
+    expect(created.block).toBeNull();
+    const player = created.state.players.find((entry) => entry.id === "p1");
     expect(player?.deck.drawPile).toHaveLength(0);
-    expect(resolved.marketDecks.I).toEqual(deck);
-  });
-
-  it("grants mine draft cards to the draw pile when accepted", () => {
-    const base = createNewGame(DEFAULT_CONFIG, 2, [
-      { id: "p1", name: "Player 1" },
-      { id: "p2", name: "Player 2" }
-    ]);
-    const deck = ["age1.trade_caravan"];
-
-    const board = createBaseBoard(1);
-    board.hexes["0,1"] = {
-      ...board.hexes["0,1"],
-      tile: "mine",
-      mineValue: 2,
-      occupants: {
-        p1: ["u1"]
-      }
-    };
-    board.units = {
-      u1: {
-        id: "u1",
-        ownerPlayerId: "p1",
-        kind: "force",
-        hex: "0,1"
-      }
-    };
-
-    const state = {
-      ...base,
-      phase: "round.collection" as const,
-      board,
-      market: {
-        ...base.market,
-        age: "I"
-      },
-      marketDecks: {
-        I: deck,
-        II: [],
-        III: []
-      }
-    };
-
-    const created = createCollectionBlock(state);
-    const block = created.block!;
-    let nextState = { ...created.state, blocks: block };
-    nextState = applyCollectionChoice(
-      nextState,
-      [{ kind: "mine", hexKey: "0,1", choice: "draft", gainCard: true }],
-      "p1"
-    );
-
-    const resolved = resolveCollectionChoices(nextState);
-    const player = resolved.players.find((entry) => entry.id === "p1");
-    expect(player?.deck.drawPile.length).toBe(1);
-    const gainedCard = player?.deck.drawPile[0];
-    expect(resolved.cardsByInstanceId[gainedCard ?? ""]?.defId).toBe(deck[0]);
-    expect(resolved.marketDecks.I).toHaveLength(0);
+    expect(created.state.marketDecks.I).toEqual(deck);
   });
 
   it("reforges at a forge by scrapping a card and returning reveals", () => {

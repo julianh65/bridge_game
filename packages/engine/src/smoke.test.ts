@@ -198,14 +198,6 @@ const buildCollectionChoices = (
   }
 
   return prompts.map((prompt) => {
-    if (prompt.kind === "mine") {
-      return {
-        kind: "mine",
-        hexKey: prompt.hexKey,
-        choice: "gold"
-      };
-    }
-
     if (prompt.kind === "forge") {
       if (prompt.revealed.length > 0) {
         return {
@@ -653,24 +645,6 @@ const buildRandomCollectionChoices = (
   }
 
   return prompts.map((prompt) => {
-    if (prompt.kind === "mine") {
-      if (prompt.revealed.length > 0 && picker.pickBool()) {
-        const gainCard = picker.pickBool();
-        return {
-          kind: "mine",
-          hexKey: prompt.hexKey,
-          choice: "draft",
-          gainCard,
-          cardId: gainCard ? picker.pick(prompt.revealed, `mine draft for ${playerId}`) : undefined
-        };
-      }
-      return {
-        kind: "mine",
-        hexKey: prompt.hexKey,
-        choice: "gold"
-      };
-    }
-
     if (prompt.kind === "forge") {
       const canDraft = prompt.revealed.length > 0;
       const canReforge = player.deck.hand.length > 0;

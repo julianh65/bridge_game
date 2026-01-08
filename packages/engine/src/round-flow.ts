@@ -261,7 +261,7 @@ const getMineGoldValue = (
 const getChoiceCount = (
   state: GameState,
   playerId: PlayerID,
-  kind: "freeStartingCard" | "mineDraft" | "forgeDraft" | "centerPick",
+  kind: "freeStartingCard" | "forgeDraft" | "centerPick",
   baseCount: number
 ): number => {
   const rawCount = getCardChoiceCount(
@@ -294,7 +294,7 @@ const buildCollectionPrompts = (state: GameState): Record<PlayerID, CollectionPr
   );
 
   const specialHexes = Object.values(state.board.hexes)
-    .filter((hex) => hex.tile === "mine" || hex.tile === "forge" || hex.tile === "center")
+    .filter((hex) => hex.tile === "forge" || hex.tile === "center")
     .sort((a, b) => a.key.localeCompare(b.key));
 
   for (const hex of specialHexes) {
@@ -306,14 +306,7 @@ const buildCollectionPrompts = (state: GameState): Record<PlayerID, CollectionPr
     if (!prompts[playerId]) {
       continue;
     }
-    if (hex.tile === "mine") {
-      prompts[playerId].push({
-        kind: "mine",
-        hexKey: hex.key,
-        mineValue: hex.mineValue ?? 0,
-        revealed: []
-      });
-    } else if (hex.tile === "forge") {
+    if (hex.tile === "forge") {
       prompts[playerId].push({
         kind: "forge",
         hexKey: hex.key,
@@ -331,15 +324,35 @@ const buildCollectionPrompts = (state: GameState): Record<PlayerID, CollectionPr
   return prompts;
 };
 
+const applyMineGoldCollection = (state: GameState): GameState => {
+  const mineHexes = Object.values(state.board.hexes)
+    .filter((hex) => hex.tile === "mine")
+    .sort((a, b) => a.key.localeCompare(b.key));
+
+  let nextState = state;
+  for (const hex of mineHexes) {
+    const occupants = getPlayerIdsOnHex(hex);
+    if (occupants.length !== 1) {
+      continue;
+    }
+    const playerId = occupants[0];
+    const mineGold = getMineGoldValue(nextState, playerId, hex.key, hex.mineValue ?? 0);
+    nextState = addGold(nextState, playerId, mineGold);
+  }
+
+  return nextState;
+};
+
 export const createCollectionBlock = (
   state: GameState
 ): { state: GameState; block: BlockState | null } => {
-  const promptsByPlayer = buildCollectionPrompts(state);
-  const playersInSeatOrder = getSeatOrderedPlayers(state.players);
+  const stateWithMineGold = applyMineGoldCollection(state);
+  const promptsByPlayer = buildCollectionPrompts(stateWithMineGold);
+  const playersInSeatOrder = getSeatOrderedPlayers(stateWithMineGold.players);
 
-  const currentAge = state.market.age;
-  let marketDeck = state.marketDecks[currentAge] ?? [];
-  let powerDeck = state.powerDecks[currentAge] ?? [];
+  const currentAge = stateWithMineGold.market.age;
+  let marketDeck = stateWithMineGold.marketDecks[currentAge] ?? [];
+  let powerDeck = stateWithMineGold.powerDecks[currentAge] ?? [];
   const nextPrompts: Record<PlayerID, CollectionPrompt[]> = { ...promptsByPlayer };
 
   for (const player of playersInSeatOrder) {
@@ -350,18 +363,13 @@ export const createCollectionBlock = (
     const resolved: CollectionPrompt[] = [];
     for (const prompt of prompts) {
       let drawn: CardDefId[] = [];
-      if (prompt.kind === "mine") {
-        const drawCount = getChoiceCount(state, player.id, "mineDraft", 1);
-        const draw = takeFromDeck(marketDeck, drawCount);
-        drawn = draw.drawn;
-        marketDeck = draw.remaining;
-      } else if (prompt.kind === "forge") {
-        const drawCount = getChoiceCount(state, player.id, "forgeDraft", 3);
+      if (prompt.kind === "forge") {
+        const drawCount = getChoiceCount(stateWithMineGold, player.id, "forgeDraft", 3);
         const draw = takeFromDeck(marketDeck, drawCount);
         drawn = draw.drawn;
         marketDeck = draw.remaining;
       } else if (prompt.kind === "center") {
-        const drawCount = getChoiceCount(state, player.id, "centerPick", 2);
+        const drawCount = getChoiceCount(stateWithMineGold, player.id, "centerPick", 2);
         const draw = takeFromDeck(powerDeck, drawCount);
         drawn = draw.drawn;
         powerDeck = draw.remaining;
@@ -381,13 +389,13 @@ export const createCollectionBlock = (
   if (waitingFor.length === 0) {
     return {
       state: {
-        ...state,
+        ...stateWithMineGold,
         marketDecks: {
-          ...state.marketDecks,
+          ...stateWithMineGold.marketDecks,
           [currentAge]: marketDeck
         },
         powerDecks: {
-          ...state.powerDecks,
+          ...stateWithMineGold.powerDecks,
           [currentAge]: powerDeck
         }
       },
@@ -396,13 +404,13 @@ export const createCollectionBlock = (
   }
 
   const nextState: GameState = {
-    ...state,
+    ...stateWithMineGold,
     marketDecks: {
-      ...state.marketDecks,
+      ...stateWithMineGold.marketDecks,
       [currentAge]: marketDeck
     },
     powerDecks: {
-      ...state.powerDecks,
+      ...stateWithMineGold.powerDecks,
       [currentAge]: powerDeck
     }
   };
@@ -415,7 +423,7 @@ export const createCollectionBlock = (
       payload: {
         prompts: nextPrompts,
         choices: Object.fromEntries(
-          state.players.map((player) => [player.id, null])
+          stateWithMineGold.players.map((player) => [player.id, null])
         ) as Record<PlayerID, CollectionChoice[] | null>
       }
     }
@@ -430,22 +438,6 @@ const isCollectionChoiceValid = (
 ): boolean => {
   if (prompt.kind !== choice.kind || prompt.hexKey !== choice.hexKey) {
     return false;
-  }
-
-  if (choice.kind === "mine") {
-    if (choice.choice === "gold") {
-      return true;
-    }
-    if (prompt.revealed.length === 0 || typeof choice.gainCard !== "boolean") {
-      return false;
-    }
-    if (!choice.gainCard) {
-      return true;
-    }
-    if (choice.cardId) {
-      return prompt.revealed.includes(choice.cardId);
-    }
-    return prompt.revealed.length === 1;
   }
 
   if (choice.kind === "forge") {
@@ -571,46 +563,7 @@ export const resolveCollectionChoices = (state: GameState): GameState => {
         continue;
       }
 
-      if (choice.kind === "mine") {
-        const revealed = prompt.revealed;
-        if (choice.choice === "gold") {
-          const mineGold = getMineGoldValue(
-            nextState,
-            player.id,
-            prompt.hexKey,
-            prompt.mineValue
-          );
-          nextState = addGold(nextState, player.id, mineGold);
-          const returned = returnToBottomRandom(nextState, marketDeck, revealed);
-          nextState = returned.state;
-          marketDeck = returned.deck;
-        } else if (revealed.length > 0) {
-          if (choice.gainCard) {
-            const chosen =
-              choice.cardId ?? (revealed.length === 1 ? revealed[0] : null);
-            if (chosen && revealed.includes(chosen)) {
-              const leftovers = revealed.filter((cardId) => cardId !== chosen);
-              const returned = returnToBottomRandom(nextState, marketDeck, leftovers);
-              nextState = returned.state;
-              marketDeck = returned.deck;
-              const created = createCardInstance(nextState, chosen);
-              nextState = insertCardIntoDrawPileRandom(
-                created.state,
-                player.id,
-                created.instanceId
-              );
-            } else {
-              const returned = returnToBottomRandom(nextState, marketDeck, revealed);
-              nextState = returned.state;
-              marketDeck = returned.deck;
-            }
-          } else {
-            const returned = returnToBottomRandom(nextState, marketDeck, revealed);
-            nextState = returned.state;
-            marketDeck = returned.deck;
-          }
-        }
-      } else if (choice.kind === "forge") {
+      if (choice.kind === "forge") {
         if (choice.choice === "reforge") {
           nextState = scrapCardFromHand(nextState, player.id, choice.scrapCardId);
           const returned = returnToBottomRandom(nextState, marketDeck, prompt.revealed);
