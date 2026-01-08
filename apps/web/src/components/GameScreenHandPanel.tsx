@@ -238,7 +238,10 @@ export const GameScreenHandPanel = ({
                       const isSelected = card.id === selectedCardId;
                       const manaCost = def?.cost.mana ?? 0;
                       const goldCost = def?.cost.gold ?? 0;
-                      const canAfford = availableMana >= manaCost && availableGold >= goldCost;
+                      const hasMana = availableMana >= manaCost;
+                      const hasGold = availableGold >= goldCost;
+                      const canAfford = hasMana && hasGold;
+                      const showManaWarning = canDeclareAction && manaCost > 0 && !hasMana;
                       const isPlayable = canDeclareAction && canAfford;
                       const totalCards = handCards.length;
                       const centerIndex = (totalCards - 1) / 2;
@@ -257,13 +260,18 @@ export const GameScreenHandPanel = ({
                           type="button"
                           className={`hand-card ${isSelected ? "is-selected" : ""} ${
                             isPlayable ? "" : "is-disabled"
-                          }`}
+                          } ${showManaWarning ? "is-mana-short" : ""}`}
                           style={handStyle}
                           aria-pressed={isSelected}
                           aria-disabled={!isPlayable}
                           title={`${label} (${card.id})`}
                           onClick={() => onSelectCard(card.id)}
                         >
+                          {showManaWarning ? (
+                            <span className="hand-card__mana-warning" aria-hidden="true">
+                              Need Mana
+                            </span>
+                          ) : null}
                           <GameCard
                             as="div"
                             variant="hand"

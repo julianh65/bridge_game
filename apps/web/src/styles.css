@@ -2984,6 +2984,22 @@ body.is-game .log-empty {
   scroll-snap-align: center;
 }
 
+.hand-card__mana-warning {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(30, 58, 138, 0.85);
+  color: #dbeafe;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 6px 12px rgba(15, 23, 42, 0.22);
+}
+
 .hand-card + .hand-card {
   margin-left: -42px;
 }
@@ -3176,6 +3192,11 @@ body.is-game .log-empty {
   filter: saturate(0.75);
 }
 
+.hand-card.is-mana-short .hand-card__face,
+.hand-card.is-mana-short .game-card--hand {
+  filter: grayscale(0.45);
+}
+
 .deck-counts,
 .market-summary {
   display: grid;
@@ -3194,8 +3215,8 @@ body.is-game .log-empty {
 .market-overlay__scrim {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at top, rgba(15, 10, 5, 0.45), transparent 55%),
-    linear-gradient(135deg, rgba(30, 24, 18, 0.7), rgba(12, 10, 8, 0.82));
+  background: radial-gradient(circle at top, rgba(15, 10, 5, 0.38), transparent 58%),
+    linear-gradient(135deg, rgba(30, 24, 18, 0.58), rgba(12, 10, 8, 0.72));
   backdrop-filter: blur(6px);
 }
 
@@ -5283,6 +5304,25 @@ body.is-game .btn-secondary:active:not(:disabled) {
   fill: #eff6ff;
   text-anchor: middle;
   dominant-baseline: middle;
+}
+
+.tile-tooltip {
+  pointer-events: none;
+}
+
+.tile-tooltip__box {
+  fill: rgba(22, 16, 12, 0.9);
+  stroke: rgba(246, 214, 132, 0.5);
+  stroke-width: 0.7;
+  filter: drop-shadow(0 2px 6px rgba(12, 10, 8, 0.4));
+}
+
+.tile-tooltip__text {
+  font-size: 9px;
+  font-weight: 700;
+  fill: #f7e2a6;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .champion-tooltip {

@@ -82,6 +82,14 @@ type ChampionTooltip = {
   lines: TooltipLine[];
 };
 
+type TileTooltip = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  label: string;
+};
+
 type EffectBadge = {
   key: string;
   x: number;
@@ -107,6 +115,14 @@ const TOOLTIP_PADDING_X = 8;
 const TOOLTIP_PADDING_Y = 6;
 const TOOLTIP_OFFSET_X = 14;
 const TOOLTIP_OFFSET_Y = 16;
+const TILE_TOOLTIP_MIN_WIDTH = 56;
+const TILE_TOOLTIP_MAX_WIDTH = 120;
+const TILE_TOOLTIP_CHAR_WIDTH = 6;
+const TILE_TOOLTIP_LINE_HEIGHT = 12;
+const TILE_TOOLTIP_PADDING_X = 6;
+const TILE_TOOLTIP_PADDING_Y = 4;
+const TILE_TOOLTIP_OFFSET_X = 10;
+const TILE_TOOLTIP_OFFSET_Y = 12;
 const UNIT_MOVE_PULSE_MS = 720;
 const EFFECT_BADGE_RADIUS = HEX_DRAW_SIZE * 0.12;
 const EFFECT_BADGE_OFFSET = HEX_DRAW_SIZE * 0.3;
@@ -142,6 +158,21 @@ const tileTag = (tile: string) => {
       return "CTR";
     default:
       return "";
+  }
+};
+
+const tileLabel = (tile: string): string | null => {
+  switch (tile) {
+    case "capital":
+      return "Capital";
+    case "forge":
+      return "Forge";
+    case "mine":
+      return "Mine";
+    case "center":
+      return "Center";
+    default:
+      return null;
   }
 };
 
@@ -338,6 +369,7 @@ export const BoardView = ({
   const [viewBox, setViewBox] = useState(baseViewBox);
   const [isPanning, setIsPanning] = useState(false);
   const [championTooltip, setChampionTooltip] = useState<ChampionTooltip | null>(null);
+  const [tileTooltip, setTileTooltip] = useState<TileTooltip | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const lastBaseViewBoxRef = useRef<ViewBox | null>(null);
   const lastResetTokenRef = useRef<number | null>(resetViewToken ?? null);
@@ -780,6 +812,33 @@ export const BoardView = ({
     };
   };
 
+  const buildTileTooltip = (
+    label: string,
+    anchorX: number,
+    anchorY: number
+  ): TileTooltip | null => {
+    if (!label) {
+      return null;
+    }
+    const estimatedWidth =
+      label.length * TILE_TOOLTIP_CHAR_WIDTH + TILE_TOOLTIP_PADDING_X * 2;
+    const width = clamp(estimatedWidth, TILE_TOOLTIP_MIN_WIDTH, TILE_TOOLTIP_MAX_WIDTH);
+    const height = TILE_TOOLTIP_LINE_HEIGHT + TILE_TOOLTIP_PADDING_Y * 2;
+    const rawX = anchorX + TILE_TOOLTIP_OFFSET_X;
+    const rawY = anchorY - height - TILE_TOOLTIP_OFFSET_Y;
+    const minX = viewBox.minX + 4;
+    const maxX = viewBox.minX + viewBox.width - width - 4;
+    const minY = viewBox.minY + 4;
+    const maxY = viewBox.minY + viewBox.height - height - 4;
+    return {
+      x: clamp(rawX, minX, maxX),
+      y: clamp(rawY, minY, maxY),
+      width,
+      height,
+      label
+    };
+  };
+
   const handleWheel: WheelEventHandler<SVGSVGElement> = (event) => {
     if (!enablePanZoom) {
       return;
@@ -972,6 +1031,7 @@ export const BoardView = ({
     setIsPanning(false);
     didDragRef.current = false;
     setChampionTooltip(null);
+    setTileTooltip(null);
   };
 
   const handlePointerLeave: PointerEventHandler<SVGSVGElement> = (event) => {
@@ -989,6 +1049,7 @@ export const BoardView = ({
     setIsPanning(false);
     didDragRef.current = false;
     setChampionTooltip(null);
+    setTileTooltip(null);
   };
 
   const clickable = Boolean(onHexClick);
@@ -1039,6 +1100,7 @@ export const BoardView = ({
     >
       {hexes.map((hex) => {
         const tag = showTags ? tileTag(hex.tile) : "";
+        const tileLabelText = tileLabel(hex.tile);
         const labelText = labelByHex?.[hex.key];
         const labelClassName =
           labelVariant === "coords"
@@ -1082,9 +1144,21 @@ export const BoardView = ({
         ]
           .filter(Boolean)
           .join(" ");
+        const handleTileEnter = () => {
+          if (!tileLabelText || isPanning || didDragRef.current) {
+            return;
+          }
+          const tooltip = buildTileTooltip(tileLabelText, hex.x, hex.y);
+          if (tooltip) {
+            setTileTooltip(tooltip);
+          }
+        };
+        const handleTileLeave = () => {
+          setTileTooltip(null);
+        };
 
         return (
-          <g key={hex.key}>
+          <g key={hex.key} onMouseEnter={handleTileEnter} onMouseLeave={handleTileLeave}>
             <title>{hexTitle}</title>
             <polygon
               className={polygonClasses}
@@ -1451,6 +1525,29 @@ export const BoardView = ({
           </g>
         );
       })}
+      {tileTooltip ? (
+        <g
+          className="tile-tooltip"
+          transform={`translate(${tileTooltip.x} ${tileTooltip.y})`}
+        >
+          <rect
+            className="tile-tooltip__box"
+            x={0}
+            y={0}
+            width={tileTooltip.width}
+            height={tileTooltip.height}
+            rx={5}
+            ry={5}
+          />
+          <text
+            className="tile-tooltip__text"
+            x={TILE_TOOLTIP_PADDING_X}
+            y={TILE_TOOLTIP_PADDING_Y + TILE_TOOLTIP_LINE_HEIGHT - 2}
+          >
+            {tileTooltip.label}
+          </text>
+        </g>
+      ) : null}
       {championTooltip ? (
         <g
           className="champion-tooltip"
