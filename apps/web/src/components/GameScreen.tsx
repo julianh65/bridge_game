@@ -388,10 +388,19 @@ const describeRevealTargets = (
     }
   }
 
-  const hexKey = getTargetString(targets, "hexKey");
-  if (hexKey) {
-    addHex(hexKey);
-    pushLine(`Hex ${formatHexLabel(hexKey, labels)}`);
+  const hexKeyList = getTargetStringArray(targets, "hexKeys");
+  if (hexKeyList.length > 0) {
+    hexKeyList.forEach(addHex);
+    const hexLabels = hexKeyList.map((hex) => formatHexLabel(hex, labels));
+    pushLine(
+      hexLabels.length === 1 ? `Hex ${hexLabels[0]}` : `Hexes ${hexLabels.join(", ")}`
+    );
+  } else {
+    const hexKey = getTargetString(targets, "hexKey");
+    if (hexKey) {
+      addHex(hexKey);
+      pushLine(`Hex ${formatHexLabel(hexKey, labels)}`);
+    }
   }
 
   const path = targets.path;

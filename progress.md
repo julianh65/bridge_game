@@ -17,6 +17,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -56,6 +57,7 @@
 - Rebalanced setup layout so the players panel stays narrow on the right while setup panels get the main column width. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Added Repair Orders card-effect test for healing all friendly champions and updated the plan checklist. (Files: `packages/engine/src/card-effects.repair-orders.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.repair-orders.test.ts`.) (owner: agent2)
 - Added Patch Up card-effect test for base vs capital bonus healing. (File: `packages/engine/src/card-effects.patch-up.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.patch-up.test.ts`.) (owner: agent2)
+- Added action reveal target lines for hex-pair targets (`hexKeys` arrays) so the overlay uses A1-style labels for multi-hex targets; marked the plan item complete. (File: `apps/web/src/components/GameScreen.tsx`.) (owner: agent2)
 - Added per-faction starter deck mapping scaffold (defaults to the common deck), updated card registry coverage, and noted the remaining per-faction initiative work in the plan. (Files: `packages/engine/src/content/starter-decks.ts`, `packages/engine/src/content/cards/cards.test.ts`, `implementation_plan.md`.)
 - Added per-faction starter initiative variants for Quick Move/Zap/Scout Report and updated starter decks to use the faction-specific IDs; marked the plan item complete. (Files: `packages/engine/src/content/cards/starter.ts`, `packages/engine/src/content/starter-decks.ts`, `implementation_plan.md`.)
 - Added card art mappings for faction-specific starter variants (Quick Move/Zap/Scout Report) so art resolves for the new IDs. (File: `apps/web/src/data/card-art.json`.) (Overlap note: `apps/web/src/data/card-art.json` already had in-flight art mappings.)

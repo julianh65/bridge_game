@@ -279,7 +279,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Champion card UI shows iconography for health, dice, hits, and bounty.
 - [x] Market HUD shows current gold with the same emoji/visual language used elsewhere.
 - [x] Champion cards communicate gold cost scaling for the nth champion clearly.
-- [ ] Action reveal popup uses A1-style board labels (not axial coords).
+- [x] Action reveal popup uses A1-style board labels (not axial coords).
 - [x] Collection UI becomes a modal overlay (no top-bar layout shift).
 - [x] Center collection offers power picks (not normal card draft).
 - [x] Market dice roll animation feels smoother and more synchronized.
