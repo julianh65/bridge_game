@@ -17,9 +17,17 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- owner: agent5
+  scope: add a configurable pause after action reveal overlays so board highlights linger between reveals.
+  files: apps/web/src/components/GameScreen.tsx, packages/engine/src/types.ts, packages/engine/src/config.ts, progress.md, implementation_plan.md
+  status: in progress
 - owner: agent1
   scope: fix phase progression after capital battles (ensure collection/market transitions).
   files: packages/engine/src/engine.ts, packages/engine/src/combat.ts, packages/engine/src/action-flow.ts, packages/engine/src/types.ts, packages/engine/src/action-flow.test.ts, packages/engine/src/smoke.test.ts, packages/engine/src/combat.test.ts, progress.md, implementation_plan.md
+  status: in progress
+- owner: agent2
+  scope: add Repair Orders (heal all champions) card-effect test and plan note.
+  files: packages/engine/src/card-effects.repair-orders.test.ts, implementation_plan.md, progress.md
   status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -57,6 +65,7 @@
 - Updated action-flow test setup to advance past deck preview before capital draft; action-flow suite passes again. (File: `packages/engine/src/action-flow.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- action-flow.test.ts`.) (owner: agent2)
 - Widened setup layout so the players panel fills its grid column beside deck preview/capital draft instead of hugging the far edge. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Rebalanced setup layout so the players panel stays narrow on the right while setup panels get the main column width. (File: `apps/web/src/styles.css`.) (owner: agent2)
+- Added Roll Out card-effect test for multi-stack movement and updated the plan checklist. (Files: `packages/engine/src/card-effects.roll-out.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.roll-out.test.ts`.) (owner: agent2)
 - Added per-faction starter deck mapping scaffold (defaults to the common deck), updated card registry coverage, and noted the remaining per-faction initiative work in the plan. (Files: `packages/engine/src/content/starter-decks.ts`, `packages/engine/src/content/cards/cards.test.ts`, `implementation_plan.md`.)
 - Added per-faction starter initiative variants for Quick Move/Zap/Scout Report and updated starter decks to use the faction-specific IDs; marked the plan item complete. (Files: `packages/engine/src/content/cards/starter.ts`, `packages/engine/src/content/starter-decks.ts`, `implementation_plan.md`.)
 - Added card art mappings for faction-specific starter variants (Quick Move/Zap/Scout Report) so art resolves for the new IDs. (File: `apps/web/src/data/card-art.json`.) (Overlap note: `apps/web/src/data/card-art.json` already had in-flight art mappings.)
@@ -524,6 +533,7 @@ none
 - Added card registry tests for unique IDs and starter/free-start coverage.
 - Added an initial Age I market deck list export under `packages/engine/src/content/market-decks.ts`.
 - Added market deck tests to validate ids are unique, registered, and age-appropriate.
+- Wired Age II/III market decks to their card lists and expanded deck tests to cover all ages. (Files: `packages/engine/src/content/market-decks.ts`, `packages/engine/src/content/market-decks.test.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added derived card tags for burn/power/victory/champion in the registry, with tests.
 - Added Age I champion cards for Bounty Hunter, Sergeant, and Traitor to the Age I market list.
 

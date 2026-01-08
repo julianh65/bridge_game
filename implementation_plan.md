@@ -349,6 +349,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] The UI in the cards for mana and gold needs to be slightly larger and more readable, background gradient makes it hard to read slightly
 - [ ] The cards across different parts of the game can be different sizes, I want them to all be a standard size, big enough to fit everything, it's fine if there's empty space on some. they should be the size of the champion cards fitting those stats + their description
 - [ ] Between action reveals while the board is still "highlighting" where it was played there should be like a configurable timing pause where the popup modal displaying the card and who played it closes and we see where on the map it's played
+- [ ] I want there to be an animation when cards are drawn
 
 ### Mini Milestone For Me
 ### Mini Milestone For Me
@@ -452,7 +453,7 @@ Done
   - [x] Added Flank Step, Scavenger's Market, Supply Ledger, Patrol Record (existing effects only).
   - [x] Added Banner Claim (Victory: move 1 stack 1 hex along a Bridge).
 - [ ] Add remaining Age I market cards + Age I market champions per rules_draft (movement/recruit/economy/deckcraft/combat/bridges/synergy/victory).
-  - [ ] Start adding Age II/III card sets into the game (defs + deck lists wired so they appear in market phases).
+  - [x] Start adding Age II/III card sets into the game (defs + deck lists wired so they appear in market phases).
   - [x] Age I champions: Bounty Hunter, Sergeant, Traitor.
   - [x] Age I champion: Field Surgeon (active heal ability).
   - [x] Added Sabotage Bridge, Bridge Trap, and Tunnel Network (bridge/terrain effects).
@@ -679,6 +680,7 @@ Done
   - [x] Age I market: Temporary Bridge (temporary flag on bridge).
   - [x] Age I market: Paid Volunteers / National Service recruit coverage.
   - [x] Age I market: Small Hands (draw 3 if last card).
+  - [x] Age I market: Roll Out (move two stacks).
   - [ ] Age II/III market + power deck card tests (as content lands).
     - [x] Age II market: Deep Shaft Rig (mine value bump + force deploy).
     - [x] Age II market: Rally Where You Stand (deploy to champion hex).
