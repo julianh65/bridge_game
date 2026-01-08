@@ -4263,6 +4263,7 @@ body.is-game .player-row--idle {
 }
 
 .action-chip {
+  display: flex;
   width: 100%;
   padding: 4px 10px;
   border-radius: 999px;
@@ -4272,9 +4273,58 @@ body.is-game .player-row--idle {
   font-weight: 600;
   color: var(--ink);
   text-align: left;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   cursor: pointer;
   transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease,
     box-shadow 0.2s ease;
+}
+
+.action-chip__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.action-chip__cost {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.action-chip__cost-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--card-cost-border);
+  background: var(--card-cost-bg);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--card-cost-text);
+  box-shadow: var(--card-cost-shadow);
+}
+
+.action-chip__cost-chip--mana {
+  border-color: var(--card-cost-mana-border);
+  background: var(--card-cost-mana-bg);
+  color: var(--card-cost-mana-text);
+}
+
+.action-chip__cost-chip--gold {
+  border-color: var(--card-cost-gold-border);
+  background: var(--card-cost-gold-bg);
+  color: var(--card-cost-gold-text);
+}
+
+.action-chip__cost-icon {
+  font-size: 11px;
+  line-height: 1;
+}
+
+.action-chip__cost-number {
+  font-variant-numeric: tabular-nums;
 }
 
 .action-chip:disabled {

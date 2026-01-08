@@ -4,6 +4,15 @@ type PlayerView = GameView["public"]["players"][number];
 
 export type BasicActionIntent = "none" | "bridge" | "march" | "reinforce";
 
+const BASIC_ACTION_MANA_COST = 1;
+const REINFORCE_GOLD_COST = 1;
+
+const BASIC_ACTION_COSTS: Record<Exclude<BasicActionIntent, "none">, { mana: number; gold: number }> = {
+  bridge: { mana: BASIC_ACTION_MANA_COST, gold: 0 },
+  march: { mana: BASIC_ACTION_MANA_COST, gold: 0 },
+  reinforce: { mana: BASIC_ACTION_MANA_COST, gold: REINFORCE_GOLD_COST }
+};
+
 export type BoardPickMode =
   | "none"
   | "marchFrom"
@@ -66,6 +75,28 @@ export const ActionPanel = ({
   const currentForceCount =
     marchForceCount === null ? Math.min(1, marchForceMax) : marchForceCount;
 
+  const renderCost = (cost: { mana: number; gold: number }) => (
+    <span
+      className="action-chip__cost"
+      aria-label={`Cost: ${cost.mana} mana${cost.gold ? `, ${cost.gold} gold` : ""}`}
+    >
+      <span className="action-chip__cost-chip action-chip__cost-chip--mana">
+        <span className="action-chip__cost-icon" aria-hidden="true">
+          🔵
+        </span>
+        <span className="action-chip__cost-number">{cost.mana}</span>
+      </span>
+      {cost.gold ? (
+        <span className="action-chip__cost-chip action-chip__cost-chip--gold">
+          <span className="action-chip__cost-icon" aria-hidden="true">
+            🟡
+          </span>
+          <span className="action-chip__cost-number">{cost.gold}</span>
+        </span>
+      ) : null}
+    </span>
+  );
+
   const toggleIntent = (intent: BasicActionIntent) => {
     const nextIntent = basicActionIntent === intent ? "none" : intent;
     onBasicActionIntentChange(nextIntent);
@@ -85,7 +116,8 @@ export const ActionPanel = ({
           disabled={!canSubmitAction}
           onClick={() => toggleIntent("bridge")}
         >
-          Bridge
+          <span className="action-chip__label">Bridge</span>
+          {renderCost(BASIC_ACTION_COSTS.bridge)}
         </button>
         <button
           type="button"
@@ -93,7 +125,8 @@ export const ActionPanel = ({
           disabled={!canSubmitAction}
           onClick={() => toggleIntent("march")}
         >
-          March
+          <span className="action-chip__label">March</span>
+          {renderCost(BASIC_ACTION_COSTS.march)}
         </button>
         <button
           type="button"
@@ -101,7 +134,8 @@ export const ActionPanel = ({
           disabled={!canReinforce}
           onClick={() => toggleIntent("reinforce")}
         >
-          Reinforce
+          <span className="action-chip__label">Reinforce</span>
+          {renderCost(BASIC_ACTION_COSTS.reinforce)}
         </button>
       </div>
 

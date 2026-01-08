@@ -261,7 +261,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 
 ### Milestone After Full Test Play and Thinking
 ### Tasks
-- [ ] Capital draft selection is simultaneous (no ordered picking); allow lock/unlock freely.
+- [x] Capital draft selection is simultaneous (no ordered picking); allow lock/unlock freely.
 - [ ] Setup flow overhaul into full-screen phases with host-advanced gates:
   - [ ] Lobby waiting room view for join/ready state.
   - [ ] Faction selection screen with faction abilities visible; host advances once all lock.
@@ -294,7 +294,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Add "Burn the Bridges" card (rules-aligned effect + UI + tests).
 - [ ] Live VP updates immediately on occupation changes.
 - [ ] Basic actions show a short hover tooltip explanation.
-- [ ] Basic actions show mana/gold costs on the buttons.
+- [x] Basic actions show mana/gold costs on the buttons.
 - [ ] Center card text alignment (titles/lines) on card faces.
 - [ ] Market show/hide has a hotkey; overlay background slightly transparent.
 - [ ] Market dice overlay includes faction symbols and uses an overlay (not a new stacked container).
