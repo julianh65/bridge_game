@@ -21,10 +21,10 @@
   scope: add setup deck preview screen with starter deck composition counts and starter spell/champion callouts
   files: apps/web/src/components/SetupFlow.tsx, apps/web/src/components/SetupDeckPreview.tsx, apps/web/src/styles.css, packages/engine/src/types.ts, packages/engine/src/view.ts, packages/engine/src/engine.ts, packages/engine/src/setup-flow.ts, packages/engine/src/index.ts, packages/engine/src/setup-flow.test.ts, packages/engine/src/smoke.test.ts, packages/engine/src/index.test.ts, progress.md, implementation_plan.md
   status: in progress (overlap note: `apps/web/src/styles.css` also in agent3/agent1 scope)
-- owner: agent5
-  scope: set min card dimensions so non-champion cards match champion height
-  files: apps/web/src/styles.css, progress.md
-  status: in progress (overlap note: `apps/web/src/styles.css` in agent1 scope)
+- owner: agent1
+  scope: add explicit power pick (power deck) card task lists from rules to the implementation plan
+  files: implementation_plan.md, progress.md
+  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -61,6 +61,7 @@
 - Exported `placeRandomBridges` from the engine index to resolve the board preview import error. (File: `packages/engine/src/index.ts`.)
 - Confirmed the market overlay hotkey exists, lightened the market scrim, added special-tile hover labels on the board, and marked mana-short cards in hand; updated the plan checklist. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4) (Overlap note: `apps/web/src/styles.css` overlap agent2 scope.)
 - Centered card face text, added gold/VP chips to the hand header, and constrained grid card sizing to avoid stretched cards on large screens; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4) (Overlap note: `apps/web/src/styles.css` overlaps agent2 scope.)
+- Set a minimum size for grid/detail cards so non-champion cards match champion-height layouts. (File: `apps/web/src/styles.css`.) (Overlap note: `apps/web/src/styles.css` is in agent1 scope.)
 - Redesigned the combat overlay with side summaries, staged dice flow, faction symbols, active effects list, bounty callouts, capital battle labeling, auto-close, and retreat placeholders. (Files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` also in agent4 scope.)
 - Updated combat overlay headers to include tile labels (A1 Mine) and enlarged faction symbols; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5) (Overlap note: `apps/web/src/styles.css` overlaps other in-flight styling.)
 - Added per-unit combat roll logging plus a single-round combat overlay view with force/champion tokens, HP, and per-unit dice; updated the plan checklist. (Files: `packages/engine/src/combat.ts`, `apps/web/src/lib/combat-log.ts`, `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)

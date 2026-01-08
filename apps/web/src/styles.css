@@ -2148,6 +2148,13 @@ body.is-game .filter-pill.is-active {
   width: 100%;
   max-width: 280px;
   justify-self: start;
+  min-width: 220px;
+  min-height: 360px;
+}
+
+.game-card--detail {
+  min-width: 220px;
+  min-height: 360px;
 }
 
 .game-card[data-type="Champion"] {
