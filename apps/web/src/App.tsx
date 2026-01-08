@@ -28,6 +28,7 @@ const statusLabels: Record<string, string> = {
 
 export default function App() {
   const [view, setView] = useState<AppView>("play");
+  const [suppressEntryCues, setSuppressEntryCues] = useState(false);
   const [roomConfig, setRoomConfig] = useState<RoomJoinParams | null>(null);
   const room = useRoom(roomConfig);
   const lastStatusRef = useRef(room.status);
@@ -46,6 +47,7 @@ export default function App() {
   const handleLeave = () => {
     room.disconnect();
     setRoomConfig(null);
+    setSuppressEntryCues(false);
   };
 
   useEffect(() => {
@@ -77,8 +79,14 @@ export default function App() {
     view === "deck" ||
     view === "battle" ||
     view === "editor";
-  const handleOpenDeck = () => setView("deck");
-  const handleReturnToGame = () => setView("play");
+  const handleSelectView = (nextView: AppView) => {
+    if (nextView === "play" && view === "deck") {
+      setSuppressEntryCues(true);
+    }
+    setView(nextView);
+  };
+  const handleOpenDeck = () => handleSelectView("deck");
+  const handleReturnToGame = () => handleSelectView("play");
 
   useEffect(() => {
     document.body.classList.toggle("is-game", isThemeView);
@@ -107,7 +115,7 @@ export default function App() {
             type="button"
             className={view === "play" ? "is-active" : ""}
             data-sfx="soft"
-            onClick={() => setView("play")}
+            onClick={() => handleSelectView("play")}
           >
             Play
           </button>
@@ -115,7 +123,7 @@ export default function App() {
             type="button"
             className={view === "debug" ? "is-active" : ""}
             data-sfx="soft"
-            onClick={() => setView("debug")}
+            onClick={() => handleSelectView("debug")}
           >
             Board Debug
           </button>
@@ -123,7 +131,7 @@ export default function App() {
             type="button"
             className={view === "cards" ? "is-active" : ""}
             data-sfx="soft"
-            onClick={() => setView("cards")}
+            onClick={() => handleSelectView("cards")}
           >
             Cards
           </button>
@@ -131,7 +139,7 @@ export default function App() {
             type="button"
             className={view === "deck" ? "is-active" : ""}
             data-sfx="soft"
-            onClick={() => setView("deck")}
+            onClick={() => handleSelectView("deck")}
           >
             Deck
           </button>
@@ -139,7 +147,7 @@ export default function App() {
             type="button"
             className={view === "battle" ? "is-active" : ""}
             data-sfx="soft"
-            onClick={() => setView("battle")}
+            onClick={() => handleSelectView("battle")}
           >
             Battle Debug
           </button>
@@ -148,7 +156,7 @@ export default function App() {
               type="button"
               className={view === "editor" ? "is-active" : ""}
               data-sfx="soft"
-              onClick={() => setView("editor")}
+              onClick={() => handleSelectView("editor")}
             >
               Card Editor
             </button>
@@ -261,6 +269,7 @@ export default function App() {
           playerId={room.playerId}
           roomId={roomConfig.roomId}
           status={room.status}
+          suppressEntryCues={suppressEntryCues}
           onSubmitAction={(declaration) =>
             room.sendCommand({ type: "SubmitAction", payload: declaration })
           }

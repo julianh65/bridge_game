@@ -166,12 +166,28 @@ export const DeckViewer = ({
           <span className="status-pill">{privateView.deckCounts.scrapped} scrapped</span>
           <span className="status-pill">{privateView.deckCounts.burned} burned</span>
           {onReturnToGame ? (
-            <button type="button" className="btn btn-secondary" onClick={onReturnToGame}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              data-sfx="soft"
+              onClick={onReturnToGame}
+            >
               Back to Game
             </button>
           ) : null}
         </div>
       </header>
+
+      {onReturnToGame ? (
+        <button
+          type="button"
+          className="btn btn-secondary deck-toggle deck-toggle--return"
+          data-sfx="soft"
+          onClick={onReturnToGame}
+        >
+          Back to Game
+        </button>
+      ) : null}
 
       {deckFlow.length > 0 ? (
         <section className="panel deck-flow" aria-label="Deck flow">

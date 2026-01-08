@@ -4284,8 +4284,8 @@ body.is-game .market-overlay__panel {
 
 .deck-toggle {
   position: fixed;
-  right: 24px;
-  right: calc(24px + env(safe-area-inset-right));
+  right: 32px;
+  right: calc(32px + env(safe-area-inset-right));
   bottom: 128px;
   bottom: calc(128px + env(safe-area-inset-bottom));
   z-index: 65;
@@ -7770,6 +7770,49 @@ body.is-game .combat-unit__hit {
   gap: 8px;
 }
 
+.combat-round__totals {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(128, 94, 58, 0.22);
+  background: rgba(255, 246, 232, 0.85);
+}
+
+body.is-game .combat-round__totals {
+  border-color: rgba(245, 158, 11, 0.2);
+  background: rgba(27, 20, 15, 0.7);
+}
+
+.combat-round__total {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.combat-round__total-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgba(88, 60, 34, 0.7);
+}
+
+body.is-game .combat-round__total-label {
+  color: rgba(248, 227, 199, 0.7);
+}
+
+.combat-round__total-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(122, 72, 32, 0.95);
+}
+
+body.is-game .combat-round__total-value {
+  color: rgba(245, 158, 11, 0.95);
+}
+
 .combat-round__label {
   font-size: 12px;
   text-transform: uppercase;
@@ -8314,8 +8357,8 @@ body.is-game .combat-outcome__auto {
   }
 
   .deck-toggle {
-    right: 16px;
-    right: calc(16px + env(safe-area-inset-right));
+    right: 20px;
+    right: calc(20px + env(safe-area-inset-right));
     bottom: 120px;
     bottom: calc(120px + env(safe-area-inset-bottom));
     min-width: 120px;
