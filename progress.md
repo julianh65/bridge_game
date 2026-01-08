@@ -122,7 +122,7 @@
 - Added Age III Wormhole Gate card def (link-hexes) and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added Age III Ruin the Span (destroy 2 bridges) with multi-edge targeting support, edge-selection UI updates for existing bridges, and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/action-flow.test.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Added Age III victory card defs (Conquest Record, Final Oath) using gain-gold/heal effects and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (owner: agent4)
-- Added Deep Shaft Rig card-effect test for mine value bump + force deploy; updated the plan checklist. (Files: `packages/engine/src/card-effects.deep-shaft-rig.test.ts`, `implementation_plan.md`.) (owner: agent4)
+- Added Deep Shaft Rig card-effect test for mine value bump + force deploy; updated the plan checklist. (Files: `packages/engine/src/card-effects.deep-shaft-rig.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.deep-shaft-rig.test.ts`.) (owner: agent4)
 
 ## Milestone 9 progress
 - Shifted GameCard art cropping upward (~10%) with a slight zoom across variants; updated the plan checklist. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
