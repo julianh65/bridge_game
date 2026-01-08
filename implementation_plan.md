@@ -316,7 +316,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Force-split dialog appears near the clicked hex (not bottom of screen).
 - [x] Add an "active effects" view so players see ongoing effects.
 - [x] Gray out or mark cards that are unaffordable due to mana.
-- [ ] Fix phase progression after capital battles (ensure collection/market transitions).
+- [x] Fix phase progression after capital battles (ensure collection/market transitions).
 - [x] Add UI for scout orders and "draw and pick" effects.
 - [x] Fix card aspect ratios on large screens (avoid stretched/fat cards).
 - [x] Add a battle debug tab to simulate combat with custom forces/champions.
@@ -336,7 +336,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] for the collection phase modal that should be hid-able like the market, and it should have more detail as to who’s collecting what and why
 - [x] need to add order of basic actions logic, different factions will always act before others, that should show in the faction selector and be configurable from the config and should also really impact the game
 - [x] hard: the forces should move around the board and bridges and things should happen in sync with the popup modal during the action phase
-- [ ] there’s still a bit of buginess between phase transitions where we go from action phase to collection phase like the collection modal will instantly pop up
+- [x] there’s still a bit of buginess between phase transitions where we go from action phase to collection phase like the collection modal will instantly pop up
 - [x] scout report still doesn’t let you choose which ones to draw or discard
 - [x] in the combat screen we should see what the champions as well as forces hit on (if there are modifiers it should reflect that as well)
 - [x] tunnel network didn’t work
@@ -350,6 +350,10 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] The cards across different parts of the game can be different sizes, I want them to all be a standard size, big enough to fit everything, it's fine if there's empty space on some. they should be the size of the champion cards fitting those stats + their description
 - [x] Between action reveals while the board is still "highlighting" where it was played there should be like a configurable timing pause where the popup modal displaying the card and who played it closes and we see where on the map it's played
 - [ ] I want there to be an animation when cards are drawn
+- [ ] on the board we need to see the mine yields
+- [ ] The pass and confirm pass button is bugged
+- [ ] The forge scrap doesn't look right, i just see a bunch of pills with random card ids
+- [ ] remove the mine draft, it should just give gold, and update the rules
 
 ### Mini Milestone For Me
 ### Mini Milestone For Me
@@ -427,6 +431,7 @@ Start going through the rules_draft and adding the logic for the different types
 - [ ] Add random card generation effects (Black Market Pull, Forge Miracle).
 - [ ] Add burn keyword enforcement for granted cards (Forge Miracle, power deck burn effects). and an animation on burn
 - [ ] Bridge crew is supposed to let you immediately move over the bridge you are going to construct
+
 
 ### Punchlist — Done cards blocked by UI/validation
 - [ ] UI: add `multiPath` targeting flow with per-path add/remove, min/max path counts, and per-path highlights (Roll Out, Coordinated Advance, Grand Maneuver).
@@ -703,7 +708,12 @@ Done
     - [x] Bounty Hunter bonus gold on champion kill in battle.
     - [x] Ironclad Warden bodyguard hit assignment policy.
     - [x] Shadeblade Assassin's Edge pre-combat damage.
-  - [ ] Card primitive tests for new mechanics (bridge lockdown/trap, wormhole adjacency, dice roll cards, cost overrides).
+  - [ ] Card primitive tests for new mechanics.
+    - [x] Bridge lockdown movement block.
+    - [ ] Bridge trap force-loss trigger.
+    - [ ] Wormhole adjacency override.
+    - [ ] Dice roll gold thresholds.
+    - [ ] Cost override/scaling primitives.
 - [x] At the end of the market phase we don't see the nice animation and transition for the last player who auto gets it
 - [x] It needs to be much more clear that Done is like "Pass" and won't let you go again
 - [ ] Do a targetted review and cleanup of the codebase, try to find things that aren't being used anymore, are wrong etc... and clean it up, without breaking behavior.

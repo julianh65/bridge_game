@@ -1,32 +1,35 @@
+import { neighborHexKeys } from "@bridgefront/shared";
 import { describe, expect, it } from "vitest";
 
 import { getBridgeKey } from "./board";
 import { createBaseBoard } from "./board-generation";
-import { isCardPlayable, resolveCardEffects } from "./card-effects";
+import { resolveCardEffects, validateMovePath } from "./card-effects";
 import { BRIDGE_LOCKDOWN } from "./content/cards/age2";
 import { createNewGame, DEFAULT_CONFIG } from "./index";
 import { addForcesToHex } from "./units";
 import type { GameState } from "./types";
 
 describe("Bridge Lockdown", () => {
-  it("locks an existing bridge adjacent to friendly units", () => {
-    const base = createNewGame(DEFAULT_CONFIG, 23, [
+  it("blocks movement across the locked bridge", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
       { id: "p1", name: "Player 1" },
       { id: "p2", name: "Player 2" }
     ]);
 
-    const from = "0,0";
-    const to = "1,0";
-
+    const center = "0,0";
     let board = createBaseBoard(2);
-    board = addForcesToHex(board, "p1", from, 1);
+    board = addForcesToHex(board, "p1", center, 1);
 
-    const edgeKey = getBridgeKey(from, to);
+    const neighbor = neighborHexKeys(center).find((key) => Boolean(board.hexes[key]));
+    if (!neighbor) {
+      throw new Error("expected adjacent hex for bridge lockdown test");
+    }
+    const edgeKey = getBridgeKey(center, neighbor);
     board = {
       ...board,
       bridges: {
         ...board.bridges,
-        [edgeKey]: { key: edgeKey, from, to }
+        [edgeKey]: { key: edgeKey, from: center, to: neighbor, ownerPlayerId: "p1" }
       }
     };
 
@@ -37,13 +40,19 @@ describe("Bridge Lockdown", () => {
       board
     };
 
-    expect(isCardPlayable(state, "p1", BRIDGE_LOCKDOWN, { edgeKey })).toBe(true);
+    const before = validateMovePath(state, "p1", [center, neighbor], {
+      maxDistance: 1,
+      requiresBridge: true,
+      requireStartOccupied: true
+    });
+    expect(before).not.toBeNull();
 
     const resolved = resolveCardEffects(state, "p1", BRIDGE_LOCKDOWN, { edgeKey });
-    const modifier = resolved.modifiers.find((entry) => entry.attachedEdge === edgeKey);
-
-    expect(modifier).toBeTruthy();
-    expect(modifier?.source).toEqual({ type: "card", sourceId: BRIDGE_LOCKDOWN.id });
-    expect(modifier?.duration?.type).toBe("endOfRound");
+    const after = validateMovePath(resolved, "p1", [center, neighbor], {
+      maxDistance: 1,
+      requiresBridge: true,
+      requireStartOccupied: true
+    });
+    expect(after).toBeNull();
   });
 });
