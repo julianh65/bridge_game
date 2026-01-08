@@ -544,11 +544,11 @@ Done
       - [x] Guild Favor.
       - [ ] TBD: missing Age II economy entry after rules audit.
     - [ ] Age II Deckcraft card defs (5).
-      - [ ] Cycle Protocol.
-      - [x] Insight.
-      - [ ] Clean Cuts.
-      - [x] Stall.
-      - [ ] Interrupt.
+    - [ ] Cycle Protocol.
+    - [x] Insight.
+    - [ ] Clean Cuts.
+    - [x] Stall.
+    - [x] Interrupt.
     - [ ] Age II Combat/Tactics card defs (5).
       - [x] Focus Fire.
       - [x] Ward.

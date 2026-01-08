@@ -73,6 +73,7 @@ const SUPPORTED_EFFECTS = new Set([
   "gainGold",
   "gainMana",
   "drawCards",
+  "drawCardsOtherPlayers",
   "rollGold",
   "drawCardsIfTile",
   "drawCardsIfHandEmpty",
@@ -1585,6 +1586,19 @@ export const resolveCardEffects = (
       case "drawCards": {
         const count = typeof effect.count === "number" ? effect.count : 0;
         nextState = drawCards(nextState, playerId, count);
+        break;
+      }
+      case "drawCardsOtherPlayers": {
+        const count = typeof effect.count === "number" ? effect.count : 0;
+        if (count <= 0) {
+          break;
+        }
+        for (const player of nextState.players) {
+          if (player.id === playerId) {
+            continue;
+          }
+          nextState = drawCards(nextState, player.id, count);
+        }
         break;
       }
       case "rollGold": {

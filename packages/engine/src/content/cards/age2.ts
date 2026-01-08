@@ -395,6 +395,23 @@ export const STALL: CardDef = {
   effects: []
 };
 
+export const INTERRUPT: CardDef = {
+  id: "age2.interrupt",
+  name: "Interrupt",
+  rulesText: "Draw 2 cards. All other players draw 1 card.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 50,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [
+    { kind: "drawCards", count: 2 },
+    { kind: "drawCardsOtherPlayers", count: 1 }
+  ]
+};
+
 export const BRIDGE_LOCKDOWN: CardDef = {
   id: "age2.bridge_lockdown",
   name: "Bridge Lockdown",
@@ -770,6 +787,7 @@ export const AGE2_CARDS: CardDef[] = [
   GUILD_FAVOR,
   INSIGHT,
   STALL,
+  INTERRUPT,
   BRIDGE_LOCKDOWN,
   BRIDGE_NETWORK,
   WORMHOLE_LINK,

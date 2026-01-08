@@ -2992,6 +2992,64 @@ describe("action flow", () => {
     expect(isCardPlayable(state, "p2", spellCard, { unitId: target.unitId })).toBe(true);
   });
 
+  it("plays interrupt to draw for all players", () => {
+    let { state } = setupToActionPhase();
+    const interrupt = createCardInstance(state, "age2.interrupt");
+    const p1Draws = createCardInstances(interrupt.state, [
+      "test.interrupt.first",
+      "test.interrupt.second"
+    ]);
+    const p2Draw = createCardInstance(p1Draws.state, "test.interrupt.other");
+    state = p2Draw.state;
+
+    state = {
+      ...state,
+      players: state.players.map((player) => {
+        if (player.id === "p1") {
+          return {
+            ...player,
+            deck: {
+              hand: [interrupt.instanceId],
+              drawPile: p1Draws.instanceIds,
+              discardPile: [],
+              scrapped: []
+            }
+          };
+        }
+        if (player.id === "p2") {
+          return {
+            ...player,
+            deck: {
+              hand: [],
+              drawPile: [p2Draw.instanceId],
+              discardPile: [],
+              scrapped: []
+            }
+          };
+        }
+        return player;
+      })
+    };
+
+    state = applyCommand(
+      state,
+      { type: "SubmitAction", payload: { kind: "card", cardInstanceId: interrupt.instanceId } },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+    state = runUntilBlocked(state);
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    const p2After = state.players.find((player) => player.id === "p2");
+    if (!p1After || !p2After) {
+      throw new Error("missing players after interrupt");
+    }
+
+    expect(p1After.deck.hand).toEqual(p1Draws.instanceIds);
+    expect(p1After.deck.discardPile).toContain(interrupt.instanceId);
+    expect(p2After.deck.hand).toEqual([p2Draw.instanceId]);
+  });
+
   it("plays perfect recall to draw and optionally topdeck a card", () => {
     let { state } = setupToActionPhase();
 

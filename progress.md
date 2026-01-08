@@ -17,10 +17,14 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent4
-  scope: add Age II Interrupt card (draw 2, others draw 1) with draw-other-players effect and test coverage.
-  files: packages/engine/src/card-effects.ts, packages/engine/src/content/cards/age2.ts, packages/engine/src/action-flow.test.ts (overlap with agent1 scope), implementation_plan.md, progress.md
+- owner: agent1
+  scope: add unit test coverage for basic-action faction order resolution.
+  files: packages/engine/src/basic-action-order.test.ts, progress.md
   status: in progress
+- owner: agent2
+  scope: tighten setup layout so players panel stays thin and main panels get more width.
+  files: apps/web/src/styles.css, progress.md
+  status: in progress (overlap: apps/web/src/styles.css with other agents)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -134,6 +138,7 @@
 - Added Age II Encirclement with adjacency gating and force-destruction effect plus action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added Age II Forward Barracks with mine/forge/capital choice validation and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added Age II Miner Army with mine-occupancy force deployment and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent4)
+- Added Age II Interrupt deckcraft card with draw-other-players effect and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- action-flow.test.ts`.) (owner: agent4)
 - Added Age II Gold Plated Armor with gold-for-damage prevention, combat integration, and tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/champions.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.) (Overlap note: touched `packages/engine/src/card-effects.combat-modifiers.test.ts` while agent3 active.)
 - Added partial-damage coverage for Gold Plated Armor (only affordable hits prevented) and marked the combat modifier checklist complete in `implementation_plan.md`. (Files: `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.) (owner: agent2) (Test: `npm run -w @bridgefront/engine test -- card-effects.combat-modifiers.test.ts`.)
 - Added Age II Slow combat modifier (target champion rolls 1 die next battle) with tests; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.)
