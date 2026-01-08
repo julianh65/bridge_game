@@ -348,7 +348,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] needs to be a way for me to test different cards in different board states, like a debug play game where i straight launch to age n with whatever cards in my hand i want
 - [ ] The UI in the cards for mana and gold needs to be slightly larger and more readable, background gradient makes it hard to read slightly
 - [ ] The cards across different parts of the game can be different sizes, I want them to all be a standard size, big enough to fit everything, it's fine if there's empty space on some. they should be the size of the champion cards fitting those stats + their description
-
+- [ ] Between action reveals while the board is still "highlighting" where it was played there should be like a configurable timing pause where the popup modal displaying the card and who played it closes and we see where on the map it's played
 
 ### Mini Milestone For Me
 ### Mini Milestone For Me

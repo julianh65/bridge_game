@@ -17,10 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent5
-  scope: allow edge-target bridge cards (Bridge Crew) to optionally select a move path after building the bridge.
-  files: apps/web/src/components/GameScreen.tsx, apps/web/src/styles.css, progress.md, implementation_plan.md
-  status: in progress
 - owner: agent4
   scope: add Age II Interrupt card (draw 2, others draw 1) with draw-other-players effect and test coverage.
   files: packages/engine/src/card-effects.ts, packages/engine/src/content/cards/age2.ts, packages/engine/src/action-flow.test.ts (overlap with agent1 scope), implementation_plan.md, progress.md
@@ -109,6 +105,7 @@
 - Enabled linked-hex movement (Tunnel Network/Wormhole Link) for board-pick march + card move paths by honoring link modifiers in UI targeting; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Added Burn the Bridges (Age II) with destroy-connected-bridges effect, movement-target validation, and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent2)
 - Removed rules text truncation on large card variants while keeping clamps on compact hand/market/collection cards; updated the plan checklist. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
+- Enabled optional move selection for edge-target bridge cards (Bridge Crew) by preserving edge targets and allowing a follow-on stack/path pick; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Added faction-ordered basic action resolution (config-driven) and surfaced basic-action order on faction cards; updated config/spec docs and marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/config.ts`, `packages/engine/src/action-flow.ts`, `apps/web/src/lib/factions.ts`, `apps/web/src/components/PreGameLobby.tsx`, `docs/configuration.md`, `technical_spec.md`, `implementation_plan.md`.) (Overlap note: `packages/engine/src/config.ts` already had in-flight duration/tile-count edits.) (Test: `npm run -w @bridgefront/engine test -- action-flow.test.ts` failed: `capitals were not assigned` in `setupToActionPhase`.)
 
 ## Milestone 8 progress

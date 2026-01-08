@@ -227,6 +227,20 @@ const getTargetStringArray = (
   return value.filter((entry) => typeof entry === "string" && entry.length > 0);
 };
 
+const buildEdgeTargetPayload = (
+  record: Record<string, unknown> | null
+): Record<string, unknown> | null => {
+  const edgeKeys = getTargetStringArray(record, "edgeKeys");
+  if (edgeKeys.length > 0) {
+    return { edgeKeys };
+  }
+  const edgeKey = getTargetString(record, "edgeKey");
+  if (edgeKey) {
+    return { edgeKey };
+  }
+  return null;
+};
+
 const normalizePathTarget = (value: unknown): string[] | null => {
   if (!Array.isArray(value)) {
     return null;
@@ -915,13 +929,26 @@ export const GameScreen = ({
       : null;
   const moveStackEffect =
     selectedCardDef?.effects?.find((effect) => effect.kind === "moveStack") ?? null;
+  const edgeMoveMode =
+    cardTargetKind === "edge" && moveStackEffect
+      ? typeof (moveStackEffect as { maxDistance?: number }).maxDistance === "number" &&
+        (moveStackEffect as { maxDistance?: number }).maxDistance <= 1
+        ? "cardStack"
+        : "cardPath"
+      : null;
+  const cardMoveTargetKind =
+    edgeMoveMode === "cardPath"
+      ? "path"
+      : edgeMoveMode === "cardStack"
+        ? "stack"
+        : cardTargetKind;
   const hasFixedMoveForceCount =
     typeof moveStackEffect?.forceCount === "number" ||
     typeof selectedCardDef?.targetSpec.forceCount === "number";
   const cardMoveSupportsSplit =
     Boolean(moveStackEffect) &&
     !hasFixedMoveForceCount &&
-    (cardTargetKind === "stack" || cardTargetKind === "path");
+    (cardMoveTargetKind === "stack" || cardMoveTargetKind === "path");
   const cardMoveForceCount = useMemo(() => {
     if (!cardMoveSupportsSplit) {
       return null;
@@ -937,15 +964,15 @@ export const GameScreen = ({
     if (!cardMoveSupportsSplit || !targetRecord) {
       return null;
     }
-    if (cardTargetKind === "path") {
+    if (cardMoveTargetKind === "path") {
       const path = getTargetStringArray(targetRecord, "path");
       return path.length > 0 ? path[0] : null;
     }
-    if (cardTargetKind === "stack") {
+    if (cardMoveTargetKind === "stack") {
       return getTargetString(targetRecord, "from");
     }
     return null;
-  }, [cardMoveSupportsSplit, cardTargetKind, targetRecord]);
+  }, [cardMoveSupportsSplit, cardMoveTargetKind, targetRecord]);
   const cardMoveForceMax = useMemo(() => {
     if (!localPlayerId || !cardMoveStartHex) {
       return 0;
@@ -1902,6 +1929,21 @@ export const GameScreen = ({
     setCardTargetsRaw(hasTargets ? JSON.stringify(nextTargets) : "");
   };
 
+  const clearEdgeMoveTargets = () => {
+    if (!targetRecord) {
+      return;
+    }
+    const nextTargets = { ...targetRecord };
+    delete nextTargets.from;
+    delete nextTargets.to;
+    delete nextTargets.path;
+    delete nextTargets.forceCount;
+    const hasTargets = Object.keys(nextTargets).length > 0;
+    setCardTargetsRaw(hasTargets ? JSON.stringify(nextTargets) : "");
+    setPendingStackFrom(null);
+    setPendingPath([]);
+  };
+
   const isAdjacent = (from: string, to: string) => {
     try {
       return areAdjacent(parseHexKey(from), parseHexKey(to));
@@ -2006,12 +2048,24 @@ export const GameScreen = ({
       return;
     }
     if (boardPickMode === "cardStack") {
-      if (!pendingStackFrom || pendingStackFrom === hexKey) {
-        setPendingStackFrom(hexKey);
-        setCardTargetsObject(null);
+      const edgePayload =
+        cardTargetKind === "edge" && moveStackEffect
+          ? buildEdgeTargetPayload(targetRecord)
+          : null;
+      if (cardTargetKind === "edge" && moveStackEffect && !edgePayload) {
         return;
       }
-      setCardTargetsObject({ from: pendingStackFrom, to: hexKey });
+      if (!pendingStackFrom || pendingStackFrom === hexKey) {
+        setPendingStackFrom(hexKey);
+        setCardTargetsObject(edgePayload);
+        return;
+      }
+      const nextTargets: Record<string, unknown> = {
+        from: pendingStackFrom,
+        to: hexKey,
+        ...(edgePayload ?? {})
+      };
+      setCardTargetsObject(nextTargets);
       setPendingStackFrom(null);
       return;
     }
@@ -2019,7 +2073,11 @@ export const GameScreen = ({
       setPendingPath((current) => {
         if (current.length === 0) {
           const next = [hexKey];
-          setCardTargetsObject(null);
+          const edgePayload =
+            cardTargetKind === "edge" && moveStackEffect
+              ? buildEdgeTargetPayload(targetRecord)
+              : null;
+          setCardTargetsObject(edgePayload);
           return next;
         }
         const last = current[current.length - 1];
@@ -2028,12 +2086,21 @@ export const GameScreen = ({
         }
         if (!isMoveAdjacent(last, hexKey)) {
           const next = [hexKey];
-          setCardTargetsObject(null);
+          const edgePayload =
+            cardTargetKind === "edge" && moveStackEffect
+              ? buildEdgeTargetPayload(targetRecord)
+              : null;
+          setCardTargetsObject(edgePayload);
           return next;
         }
         const next = [...current, hexKey];
         if (next.length >= 2) {
-          setCardTargetsObject({ path: next });
+          const edgePayload =
+            cardTargetKind === "edge" && moveStackEffect
+              ? buildEdgeTargetPayload(targetRecord)
+              : null;
+          const nextTargets: Record<string, unknown> = { path: next, ...(edgePayload ?? {}) };
+          setCardTargetsObject(nextTargets);
         }
         return next;
       });
@@ -2302,11 +2369,23 @@ export const GameScreen = ({
     }
 
     if (boardPickMode === "cardStack") {
-      if (!selectedCardDef || cardTargetKind !== "stack") {
+      const isEdgeMove =
+        cardTargetKind === "edge" && edgeMoveMode === "cardStack" && moveStackEffect;
+      if (!selectedCardDef || (!isEdgeMove && cardTargetKind !== "stack")) {
         return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
+      if (isEdgeMove) {
+        const edgeKey = getTargetString(targetRecord, "edgeKey");
+        const edgeKeys = getTargetStringArray(targetRecord, "edgeKeys");
+        if (!edgeKey && edgeKeys.length === 0) {
+          return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
+        }
+      }
       const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
-      const requiresBridge = targetSpec.requiresBridge !== false;
+      const requiresBridge =
+        moveStackEffect && moveStackEffect.requiresBridge === false
+          ? false
+          : targetSpec.requiresBridge !== false;
       const startCandidates = new Set<string>();
       for (const key of hexKeys) {
         if (!isOccupied(key)) {
@@ -2336,13 +2415,29 @@ export const GameScreen = ({
     }
 
     if (boardPickMode === "cardPath") {
-      if (!selectedCardDef || cardTargetKind !== "path") {
+      const isEdgeMove =
+        cardTargetKind === "edge" && edgeMoveMode === "cardPath" && moveStackEffect;
+      if (!selectedCardDef || (!isEdgeMove && cardTargetKind !== "path")) {
         return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
+      if (isEdgeMove) {
+        const edgeKey = getTargetString(targetRecord, "edgeKey");
+        const edgeKeys = getTargetStringArray(targetRecord, "edgeKeys");
+        if (!edgeKey && edgeKeys.length === 0) {
+          return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
+        }
+      }
       const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
-      const requiresBridge = targetSpec.requiresBridge !== false;
+      const requiresBridge =
+        moveStackEffect && moveStackEffect.requiresBridge === false
+          ? false
+          : targetSpec.requiresBridge !== false;
       const maxDistance =
-        typeof targetSpec.maxDistance === "number" ? targetSpec.maxDistance : null;
+        isEdgeMove && typeof moveStackEffect?.maxDistance === "number"
+          ? moveStackEffect.maxDistance
+          : typeof targetSpec.maxDistance === "number"
+            ? targetSpec.maxDistance
+            : null;
       const canStart = maxDistance === null || maxDistance >= 1;
       const startCandidates = new Set<string>();
       if (canStart) {
@@ -2612,7 +2707,10 @@ export const GameScreen = ({
     pendingStackFrom,
     pendingPath,
     selectedCardDef,
-    cardTargetKind
+    cardTargetKind,
+    moveStackEffect,
+    edgeMoveMode,
+    targetRecord
   ]);
 
   const revealHexKeys = activeCardReveal?.targetHexKeys ?? [];
@@ -2658,6 +2756,21 @@ export const GameScreen = ({
     (cardId) => handCardLabels.get(cardId) ?? cardId
   );
   const topdeckLimitLabel = topdeckCount === 1 ? "1 card" : `${topdeckCount} cards`;
+  const edgeMovePayload = edgeMoveMode ? buildEdgeTargetPayload(targetRecord) : null;
+  const edgeMovePath =
+    edgeMoveMode === "cardPath" ? getTargetStringArray(targetRecord, "path") : [];
+  const edgeMoveFrom = getTargetString(targetRecord, "from");
+  const edgeMoveTo = getTargetString(targetRecord, "to");
+  const edgeMoveSummary =
+    edgeMovePath.length > 1
+      ? `Path ${edgeMovePath
+          .map((hexKey) => hexLabels[hexKey] ?? hexKey)
+          .join(" → ")}`
+      : edgeMoveFrom && edgeMoveTo
+        ? `Move ${hexLabels[edgeMoveFrom] ?? edgeMoveFrom} → ${
+            hexLabels[edgeMoveTo] ?? edgeMoveTo
+          }`
+        : null;
   const cardMoveStartLabel = cardMoveStartHex
     ? hexLabels[cardMoveStartHex] ?? cardMoveStartHex
     : null;
@@ -2686,6 +2799,7 @@ export const GameScreen = ({
   const selectedChampionHexLabel = selectedChampion
     ? hexLabels[selectedChampion.hex] ?? selectedChampion.hex
     : null;
+  const edgeMoveLabel = edgeMoveMode === "cardPath" ? "Path" : "Stack";
   const topdeckPanel =
     selectedCardDef && topdeckCount > 0 ? (
       <div className="hand-targets">
@@ -2720,6 +2834,41 @@ export const GameScreen = ({
           {selectedHandCardIds.length > 0
             ? `Selected: ${selectedHandLabels.join(", ")}`
             : "No cards selected."}
+        </p>
+      </div>
+    ) : null;
+  const edgeMovePanel =
+    edgeMoveMode && selectedCardDef ? (
+      <div className="hand-targets">
+        <div className="hand-targets__header">
+          <strong>Optional move</strong>
+          <span className="hand-targets__meta">{edgeMoveLabel}</span>
+        </div>
+        <p className="hand-targets__hint">
+          {edgeMovePayload
+            ? "Pick a stack to move after building the bridge (optional)."
+            : "Pick a bridge first to unlock the move."}
+        </p>
+        <div className="hand-targets__actions">
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={!edgeMovePayload || !canSubmitAction}
+            onClick={() => setBoardPickModeSafe(edgeMoveMode)}
+          >
+            Pick move
+          </button>
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={!edgeMoveSummary}
+            onClick={clearEdgeMoveTargets}
+          >
+            Clear move
+          </button>
+        </div>
+        <p className="hand-targets__selected">
+          {edgeMoveSummary ? `Selected: ${edgeMoveSummary}` : "No move selected."}
         </p>
       </div>
     ) : null;
@@ -2806,9 +2955,10 @@ export const GameScreen = ({
       </div>
     ) : null;
   const handTargetsPanel =
-    topdeckPanel || cardMovePanel ? (
+    topdeckPanel || edgeMovePanel || cardMovePanel ? (
       <>
         {topdeckPanel}
+        {edgeMovePanel}
         {cardMovePanel}
       </>
     ) : null;
