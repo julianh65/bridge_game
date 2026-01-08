@@ -64,6 +64,7 @@
 - Added champion stat iconography (HP/dice/hits/bounty) and a gold cost scaling hint on champion cards; updated the plan checklist. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4) (Overlap note: `apps/web/src/styles.css` overlaps agent2 scope.)
 - Fixed combat overlay log baseline so old combat sequences don’t replay on view changes; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Added a market roll-off overlay with faction symbols and synchronized dice timing; updated the plan checklist. (Files: `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.)
+- Held market roll-off winner highlights through the tie-break animation so the winner callout stays visible; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Added Burn the Bridges (Age II) with destroy-connected-bridges effect, movement-target validation, and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent2)
 
 ## Milestone 8 progress

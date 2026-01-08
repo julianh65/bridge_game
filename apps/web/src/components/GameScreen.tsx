@@ -27,6 +27,7 @@ import { ActionRevealOverlay, type ActionRevealOverlayData } from "./ActionRevea
 import { BoardView, type BoardActionAnimation } from "./BoardView";
 import { CollectionPanel } from "./CollectionPanel";
 import { CombatOverlay } from "./CombatOverlay";
+import { CombatRetreatOverlay } from "./CombatRetreatOverlay";
 import { GameScreenHandPanel } from "./GameScreenHandPanel";
 import { GameScreenHeader } from "./GameScreenHeader";
 import { GameScreenSidebar } from "./GameScreenSidebar";
@@ -522,6 +523,7 @@ type GameScreenProps = {
   onSubmitMarketBid: (bid: Bid) => void;
   onSubmitCollectionChoices: (choices: CollectionChoice[]) => void;
   onSubmitQuietStudy: (cardInstanceIds: string[]) => void;
+  onSubmitCombatRetreat?: (hexKey: string, edgeKey: string | null) => void;
   combatSync?: CombatSyncMap | null;
   serverTimeOffset?: number | null;
   onCombatRoll?: (sequenceId: string, roundIndex: number) => void;
@@ -538,6 +540,7 @@ export const GameScreen = ({
   onSubmitMarketBid,
   onSubmitCollectionChoices,
   onSubmitQuietStudy,
+  onSubmitCombatRetreat,
   combatSync,
   serverTimeOffset,
   onCombatRoll,
@@ -893,9 +896,21 @@ export const GameScreen = ({
   const lastLogLabel = lastLogEntry
     ? formatGameEvent(lastLogEntry, playerNames, hexLabels, CARD_DEFS_BY_ID)
     : null;
+  const pendingCombat = view.public.combat;
   const activeCombat = combatQueue[0] ?? null;
   const activeCombatSync =
     activeCombat && combatSync ? combatSync[activeCombat.id] ?? null : null;
+  const pendingCombatHex = pendingCombat
+    ? view.public.board.hexes[pendingCombat.hexKey] ?? null
+    : null;
+  const pendingCombatCoordLabel = pendingCombat
+    ? formatHexLabel(pendingCombat.hexKey, hexLabels)
+    : null;
+  const pendingCombatTileLabel = formatTileLabel(pendingCombatHex?.tile);
+  const pendingCombatLabel =
+    pendingCombatCoordLabel && pendingCombatTileLabel
+      ? `${pendingCombatCoordLabel} ${pendingCombatTileLabel}`
+      : pendingCombatCoordLabel;
   const activeCombatHex = activeCombat
     ? view.public.board.hexes[activeCombat.start.hexKey] ?? null
     : null;
@@ -1055,6 +1070,12 @@ export const GameScreen = ({
       return;
     }
     onCombatRoll(activeCombat.id, roundIndex);
+  };
+  const handleCombatRetreat = (hexKey: string, edgeKey: string | null) => {
+    if (!onSubmitCombatRetreat) {
+      return;
+    }
+    onSubmitCombatRetreat(hexKey, edgeKey);
   };
   const clearCardSelection = () => {
     setCardInstanceId("");
@@ -1527,13 +1548,39 @@ export const GameScreen = ({
     if (!marketWinner) {
       return;
     }
+    const baseHoldMs = 3500;
+    let holdMs = baseHoldMs;
+    if (marketWinner.rollOff && marketWinner.rollOff.length > 0) {
+      const rollDurationMs = Math.max(
+        0,
+        view.public.config.MARKET_ROLLOFF_DURATION_MS
+      );
+      // Keep these roll-off timing values aligned with MarketPanel.
+      const rollDelayBaseMs = 120;
+      const rollRoundGapMs = 260;
+      const rollGapMs = 0;
+      let nextStartMs = rollDelayBaseMs;
+      let rollOffDurationMs = rollDelayBaseMs;
+      for (const round of marketWinner.rollOff) {
+        const rollCount = Object.keys(round).length;
+        if (rollCount === 0) {
+          continue;
+        }
+        const lastIndex = Math.max(rollCount - 1, 0);
+        const endMs = nextStartMs + lastIndex * rollGapMs + rollDurationMs;
+        rollOffDurationMs = endMs;
+        nextStartMs = endMs + rollRoundGapMs;
+      }
+      const winnerPauseMs = 1400;
+      holdMs = Math.max(baseHoldMs, rollOffDurationMs + winnerPauseMs);
+    }
     const timeout = window.setTimeout(() => {
       setMarketWinner(null);
-    }, 3500);
+    }, holdMs);
     return () => {
       window.clearTimeout(timeout);
     };
-  }, [marketWinner]);
+  }, [marketWinner, view.public.config.MARKET_ROLLOFF_DURATION_MS]);
 
   useEffect(() => {
     if (activeCardReveal || cardRevealQueue.length === 0) {
@@ -2731,7 +2778,17 @@ export const GameScreen = ({
           durationMs={actionRevealDurationMs}
         />
       ) : null}
-      {activeCombat ? (
+      {pendingCombat ? (
+        <CombatRetreatOverlay
+          combat={pendingCombat}
+          playersById={playerNames}
+          playerFactionsById={playerFactions}
+          viewerId={playerId}
+          hexLabel={pendingCombatLabel}
+          hexLabels={hexLabels}
+          onSubmitRetreat={handleCombatRetreat}
+        />
+      ) : activeCombat ? (
         <CombatOverlay
           sequence={activeCombat}
           playersById={playerNames}
