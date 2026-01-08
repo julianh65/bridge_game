@@ -68,13 +68,15 @@ export default function App() {
   const showGame = Boolean(room.view && room.view.public.phase !== "setup");
   const isGameLayout = view === "play" && showGame;
   const showPreGameLobby = Boolean(room.lobby && !room.view);
+  const isThemeView =
+    view === "cards" || view === "deck" || (view === "play" && Boolean(roomConfig));
 
   useEffect(() => {
-    document.body.classList.toggle("is-game", isGameLayout);
+    document.body.classList.toggle("is-game", isThemeView);
     return () => {
       document.body.classList.remove("is-game");
     };
-  }, [isGameLayout]);
+  }, [isThemeView]);
 
   return (
     <main

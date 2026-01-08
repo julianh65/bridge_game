@@ -803,6 +803,22 @@ body.is-game .status-pill--idle {
   background: #fff3e0;
 }
 
+body.is-game .setup-draft__player-row,
+body.is-game .setup-bridges__player-row,
+body.is-game .setup-card-pick__player-row {
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+  color: var(--ink);
+}
+
+body.is-game .setup-draft__player-row--active,
+body.is-game .setup-bridges__player-row--active,
+body.is-game .setup-card-pick__player-row--active {
+  background: var(--panel-soft-active);
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: inset 4px 0 0 rgba(245, 158, 11, 0.4);
+}
+
 .setup-bridges,
 .setup-card-pick,
 .setup-tools {
@@ -844,6 +860,17 @@ body.is-game .status-pill--idle {
   font-size: 12px;
   color: var(--ink);
   cursor: pointer;
+}
+
+body.is-game .setup-bridges__suggestion {
+  background: var(--panel-chip);
+  border-color: var(--border);
+  color: var(--ink);
+}
+
+body.is-game .setup-bridges__suggestion:hover:not(:disabled) {
+  border-color: rgba(245, 158, 11, 0.6);
+  background: var(--panel-soft-active);
 }
 
 .setup-bridges__suggestion:disabled {
@@ -950,6 +977,16 @@ body.is-game .status-pill--idle {
   background: #f0fdf4;
 }
 
+body.is-game .seat {
+  background: var(--panel-soft);
+  border-color: var(--border);
+}
+
+body.is-game .seat.is-ready {
+  background: rgba(28, 65, 43, 0.45);
+  border-color: rgba(74, 222, 128, 0.45);
+}
+
 .seat__info {
   display: flex;
   flex-direction: column;
@@ -981,6 +1018,12 @@ body.is-game .status-pill--idle {
   cursor: pointer;
 }
 
+body.is-game .seat__toggle {
+  background: var(--panel-soft-alt);
+  border-color: var(--border);
+  color: var(--ink);
+}
+
 .faction-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -1001,6 +1044,12 @@ body.is-game .status-pill--idle {
   color: var(--muted);
 }
 
+body.is-game .faction-card {
+  border-color: rgba(245, 158, 11, 0.28);
+  background: var(--panel-soft);
+  color: rgba(248, 230, 200, 0.8);
+}
+
 .faction-card__meta {
   display: flex;
   flex-direction: column;
@@ -1014,6 +1063,10 @@ body.is-game .status-pill--idle {
   gap: 8px;
   font-weight: 600;
   color: #3b2a12;
+}
+
+body.is-game .faction-card__label {
+  color: var(--ink);
 }
 
 .faction-card__desc {
@@ -1040,6 +1093,18 @@ body.is-game .status-pill--idle {
   border-color: #fca5a5;
   background: #fff1f2;
   color: #7f1d1d;
+}
+
+body.is-game .faction-card.is-selected {
+  border-color: rgba(96, 165, 250, 0.55);
+  background: rgba(30, 58, 138, 0.25);
+  color: #e0f2fe;
+}
+
+body.is-game .faction-card.is-taken {
+  border-color: rgba(248, 113, 113, 0.55);
+  background: rgba(88, 32, 32, 0.45);
+  color: #fecaca;
 }
 
 .faction-card__tag {
@@ -1070,6 +1135,12 @@ body.is-game .status-pill--idle {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   overflow: hidden;
+}
+
+body.is-game .faction-symbol {
+  border-color: var(--border);
+  background: var(--panel-chip);
+  color: #f6e7d1;
 }
 
 .faction-symbol__icon {
@@ -1105,6 +1176,11 @@ body.is-game .status-pill--idle {
   padding: 8px 12px;
   border-radius: 10px;
   background: #f7f1e6;
+}
+
+body.is-game .settings-row {
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
 }
 
 .settings-label {
@@ -1149,6 +1225,12 @@ body.is-game .status-pill--idle {
   background: linear-gradient(120deg, #fff7e6, #fff1d6);
 }
 
+body.is-game .deck-flow {
+  background: linear-gradient(130deg, rgba(45, 32, 24, 0.92), rgba(30, 22, 16, 0.96));
+  border-radius: 18px;
+  border: 1px solid rgba(255, 214, 170, 0.12);
+}
+
 .deck-flow__track {
   display: flex;
   flex-wrap: wrap;
@@ -1171,6 +1253,12 @@ body.is-game .status-pill--idle {
   display: grid;
   gap: 4px;
   box-shadow: inset 0 0 0 1px rgba(255, 247, 230, 0.7);
+}
+
+body.is-game .deck-flow__pile {
+  background: var(--panel-soft-alt);
+  border-color: var(--border);
+  box-shadow: inset 0 0 0 1px rgba(255, 214, 170, 0.1);
 }
 
 .deck-flow__pile[data-pile="draw"] {
@@ -1213,6 +1301,10 @@ body.is-game .status-pill--idle {
   flex-shrink: 0;
 }
 
+body.is-game .deck-flow__arrow {
+  color: rgba(255, 214, 170, 0.65);
+}
+
 .deck-flow__arrow::after {
   content: "";
   position: absolute;
@@ -1225,6 +1317,11 @@ body.is-game .status-pill--idle {
   transform: translateY(-50%);
   opacity: 0.7;
   animation: deckFlowMove 1.6s linear infinite;
+}
+
+body.is-game .deck-flow__arrow::after {
+  background: var(--accent-strong);
+  opacity: 0.85;
 }
 
 .deck-flow__arrow--draw::after {
@@ -1274,6 +1371,13 @@ body.is-game .status-pill--idle {
   gap: 12px 16px;
   background: #fff8ee;
   box-shadow: inset 0 0 0 1px var(--border);
+}
+
+body.is-game .cards-browser__filters {
+  background: linear-gradient(135deg, rgba(40, 30, 22, 0.92), rgba(28, 20, 14, 0.96));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1px rgba(255, 214, 170, 0.08);
 }
 
 .cards-browser__filters h2 {
@@ -1330,6 +1434,12 @@ body.is-game .status-pill--idle {
     border-color 0.2s ease, color 0.2s ease;
 }
 
+body.is-game .filter-pill {
+  background: rgba(40, 30, 22, 0.85);
+  border-color: #4a3627;
+  color: rgba(248, 230, 200, 0.75);
+}
+
 .filter-pill:hover,
 .filter-pill:focus-visible {
   background: #ffeccc;
@@ -1337,6 +1447,14 @@ body.is-game .status-pill--idle {
   color: #7c2d12;
   box-shadow: 0 6px 12px rgba(245, 158, 11, 0.2);
   outline: none;
+}
+
+body.is-game .filter-pill:hover,
+body.is-game .filter-pill:focus-visible {
+  background: rgba(66, 48, 34, 0.92);
+  border-color: rgba(245, 158, 11, 0.6);
+  color: #ffe7c7;
+  box-shadow: 0 6px 12px rgba(217, 119, 6, 0.25);
 }
 
 .filter-pill:active {
@@ -1348,6 +1466,13 @@ body.is-game .status-pill--idle {
   border-color: #f59e0b;
   color: #7c2d12;
   box-shadow: 0 6px 12px rgba(245, 158, 11, 0.2);
+}
+
+body.is-game .filter-pill.is-active {
+  background: rgba(66, 48, 34, 0.95);
+  border-color: rgba(245, 158, 11, 0.8);
+  color: #ffe7c7;
+  box-shadow: 0 6px 12px rgba(217, 119, 6, 0.3);
 }
 
 .cards-browser__list h2 {
@@ -5180,6 +5305,12 @@ body.is-game .btn-secondary:active:not(:disabled) {
   gap: 18px;
 }
 
+body.is-game .combat-overlay__panel {
+  border-color: rgba(245, 158, 11, 0.45);
+  background: linear-gradient(140deg, #241b14, #2e2218 60%, #3a2a1f);
+  box-shadow: 0 26px 64px rgba(6, 4, 3, 0.7);
+}
+
 .hand-picker {
   position: fixed;
   inset: 0;
@@ -5213,6 +5344,12 @@ body.is-game .btn-secondary:active:not(:disabled) {
   gap: 16px;
 }
 
+body.is-game .hand-picker__panel {
+  border-color: rgba(245, 158, 11, 0.4);
+  background: linear-gradient(140deg, #241b14, #2e2218 60%, #3a2a1f);
+  box-shadow: 0 26px 64px rgba(6, 4, 3, 0.7);
+}
+
 .hand-picker__header {
   display: flex;
   justify-content: space-between;
@@ -5229,10 +5366,18 @@ body.is-game .btn-secondary:active:not(:disabled) {
   color: rgba(92, 60, 34, 0.7);
 }
 
+body.is-game .hand-picker__eyebrow {
+  color: rgba(253, 230, 200, 0.7);
+}
+
 .hand-picker__title {
   margin: 6px 0 0;
   font-size: 26px;
   color: #4b2b12;
+}
+
+body.is-game .hand-picker__title {
+  color: #ffe7c7;
 }
 
 .hand-picker__subhead {
@@ -5250,6 +5395,10 @@ body.is-game .btn-secondary:active:not(:disabled) {
 .hand-picker__meta {
   font-size: 12px;
   color: var(--muted);
+}
+
+body.is-game .hand-picker__meta {
+  color: rgba(248, 227, 199, 0.7);
 }
 
 .hand-picker__grid {
@@ -5278,6 +5427,11 @@ body.is-game .btn-secondary:active:not(:disabled) {
   border-color: #f59e0b;
   box-shadow: 0 18px 36px rgba(245, 158, 11, 0.2);
   transform: translateY(-4px);
+}
+
+body.is-game .hand-picker__card.is-selected .game-card {
+  border-color: rgba(245, 158, 11, 0.8);
+  box-shadow: 0 18px 36px rgba(245, 158, 11, 0.3);
 }
 
 .hand-picker__card.is-disabled,
@@ -5312,10 +5466,18 @@ body.is-game .btn-secondary:active:not(:disabled) {
   color: rgba(92, 60, 34, 0.7);
 }
 
+body.is-game .combat-overlay__eyebrow {
+  color: rgba(253, 230, 200, 0.7);
+}
+
 .combat-overlay__title {
   margin: 6px 0 0;
   font-size: 28px;
   color: #4b2b12;
+}
+
+body.is-game .combat-overlay__title {
+  color: #ffe7c7;
 }
 
 .combat-overlay__actions {
@@ -5338,6 +5500,11 @@ body.is-game .btn-secondary:active:not(:disabled) {
   gap: 6px;
 }
 
+body.is-game .combat-side {
+  border-color: var(--border);
+  background: var(--panel-soft);
+}
+
 .combat-side__role {
   font-size: 12px;
   text-transform: uppercase;
@@ -5345,9 +5512,17 @@ body.is-game .btn-secondary:active:not(:disabled) {
   color: rgba(84, 60, 36, 0.7);
 }
 
+body.is-game .combat-side__role {
+  color: rgba(248, 227, 199, 0.7);
+}
+
 .combat-side__name {
   font-size: 15px;
   color: #482a14;
+}
+
+body.is-game .combat-side__name {
+  color: #ffe7c7;
 }
 
 .combat-overlay__rounds {
@@ -5360,6 +5535,10 @@ body.is-game .btn-secondary:active:not(:disabled) {
   color: var(--muted);
 }
 
+body.is-game .combat-overlay__hint {
+  color: rgba(248, 227, 199, 0.7);
+}
+
 .combat-round {
   border-radius: 18px;
   border: 1px solid rgba(128, 94, 58, 0.25);
@@ -5367,6 +5546,11 @@ body.is-game .btn-secondary:active:not(:disabled) {
   padding: 16px;
   display: grid;
   gap: 12px;
+}
+
+body.is-game .combat-round {
+  border-color: var(--border);
+  background: var(--panel-inset);
 }
 
 .combat-round__header {
@@ -5377,9 +5561,17 @@ body.is-game .btn-secondary:active:not(:disabled) {
   color: #3e2412;
 }
 
+body.is-game .combat-round__header {
+  color: #ffe7c7;
+}
+
 .combat-round__meta {
   font-size: 12px;
   color: rgba(96, 66, 40, 0.7);
+}
+
+body.is-game .combat-round__meta {
+  color: rgba(248, 227, 199, 0.7);
 }
 
 .combat-round__grid {
@@ -5399,6 +5591,10 @@ body.is-game .btn-secondary:active:not(:disabled) {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: rgba(88, 60, 34, 0.7);
+}
+
+body.is-game .combat-round__label {
+  color: rgba(248, 227, 199, 0.7);
 }
 
 .combat-dice {
@@ -5421,6 +5617,13 @@ body.is-game .btn-secondary:active:not(:disabled) {
   box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.7);
 }
 
+body.is-game .combat-dice__die {
+  border-color: rgba(245, 158, 11, 0.35);
+  background: #31241b;
+  color: #ffe7c7;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
 .combat-round--fresh .combat-dice__die {
   animation: combatRoll 0.55s ease-out;
 }
@@ -5429,6 +5632,12 @@ body.is-game .btn-secondary:active:not(:disabled) {
   background: #f2d8a0;
   border-color: rgba(140, 90, 36, 0.6);
   color: #7a3d12;
+}
+
+body.is-game .combat-dice__die.is-hit {
+  background: rgba(245, 158, 11, 0.3);
+  border-color: rgba(245, 158, 11, 0.6);
+  color: #ffe7c7;
 }
 
 .combat-dice__empty {
@@ -5441,6 +5650,10 @@ body.is-game .btn-secondary:active:not(:disabled) {
   color: rgba(64, 42, 22, 0.85);
 }
 
+body.is-game .combat-round__hits {
+  color: rgba(255, 236, 214, 0.9);
+}
+
 .combat-hits__list {
   list-style: none;
   margin: 0;
@@ -5449,6 +5662,10 @@ body.is-game .btn-secondary:active:not(:disabled) {
   gap: 4px;
   font-size: 13px;
   color: rgba(58, 38, 20, 0.85);
+}
+
+body.is-game .combat-hits__list {
+  color: rgba(255, 236, 214, 0.9);
 }
 
 .combat-hits__empty {
@@ -5463,6 +5680,9 @@ body.is-game .btn-secondary:active:not(:disabled) {
   color: #45240f;
 }
 
+body.is-game .combat-overlay__outcome {
+  color: #ffe7c7;
+}
 .victory-screen {
   position: fixed;
   inset: 0;

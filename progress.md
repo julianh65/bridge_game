@@ -57,6 +57,7 @@
 - Extended dark-theme variables to cards, hand/action panels, and command table rows for consistent in-game surfaces; updated the plan subtask. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 - Rebalanced dark-theme contrast by lifting card/hand surfaces and adding a themed board background + hex strokes for clearer board readability. (Files: `apps/web/src/styles.css`.) (owner: agent2)
 - Restyled phase cue and action reveal overlays for dark theme with warmer panels and higher-contrast text. (Files: `apps/web/src/styles.css`.) (owner: agent2)
+- Applied the dark-fantasy theme to cards/deck views, setup screens, and combat/hand-picker overlays; enabled theme class for non-game views. (Files: `apps/web/src/App.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
