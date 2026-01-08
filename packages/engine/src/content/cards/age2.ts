@@ -60,6 +60,59 @@ export const BREAKTHROUGH_LINE: CardDef = {
   effects: [{ kind: "battleWinDraw", drawCount: 2 }, { kind: "moveStack", maxDistance: 2 }]
 };
 
+export const SET_TO_SKIRMISH: CardDef = {
+  id: "age2.set_to_skirmish",
+  name: "Set to Skirmish",
+  rulesText:
+    "Select a hex. If a battle happens there with your forces this round, they retreat to a random empty adjacent hex (or die if none are empty).",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 75,
+  burn: false,
+  targetSpec: {
+    kind: "hex",
+    owner: "any",
+    allowEmpty: true
+  },
+  effects: [{ kind: "setToSkirmish" }]
+};
+
+export const BATTALION_CONTRACT: CardDef = {
+  id: "age2.battalion_contract",
+  name: "Battalion Contract",
+  rulesText: "Deploy 10 Forces to your Capital.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 3, gold: 2 },
+  initiative: 80,
+  burn: false,
+  targetSpec: {
+    kind: "choice",
+    options: [{ kind: "capital" }]
+  },
+  effects: [{ kind: "recruit", capitalCount: 10 }]
+};
+
+export const RALLY_WHERE_YOU_STAND: CardDef = {
+  id: "age2.rally_where_you_stand",
+  name: "Rally Where You Stand",
+  rulesText: "Deploy 3 Forces to a friendly Champion's hex.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1, gold: 3 },
+  initiative: 50,
+  burn: false,
+  targetSpec: {
+    kind: "champion",
+    owner: "self"
+  },
+  effects: [{ kind: "deployForces", count: 3 }]
+};
+
 export const FOCUS_FIRE: CardDef = {
   id: "age2.focus_fire",
   name: "Focus Fire",
@@ -262,6 +315,34 @@ export const GUILD_FAVOR: CardDef = {
   ]
 };
 
+export const INSIGHT: CardDef = {
+  id: "age2.insight",
+  name: "Insight",
+  rulesText: "Draw 2. Burn.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 0 },
+  initiative: 60,
+  burn: true,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "drawCards", count: 2 }]
+};
+
+export const STALL: CardDef = {
+  id: "age2.stall",
+  name: "Stall",
+  rulesText: "Do nothing.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 0 },
+  initiative: 50,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: []
+};
+
 export const BRIDGE_LOCKDOWN: CardDef = {
   id: "age2.bridge_lockdown",
   name: "Bridge Lockdown",
@@ -310,6 +391,61 @@ export const WORMHOLE_LINK: CardDef = {
     maxDistanceFromFriendlyChampion: 3
   },
   effects: [{ kind: "linkHexes" }]
+};
+
+export const DEEP_SHAFT_RIG: CardDef = {
+  id: "age2.deep_shaft_rig",
+  name: "Deep Shaft Rig",
+  rulesText:
+    "Choose a Mine you occupy. Increase its Mine Value by +1 (max 7). Then deploy 1 Force onto that Mine.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 2, gold: 1 },
+  initiative: 60,
+  burn: false,
+  targetSpec: {
+    kind: "hex",
+    owner: "self",
+    tile: "mine"
+  },
+  effects: [
+    { kind: "increaseMineValue", amount: 1, maxValue: 7 },
+    { kind: "deployForces", count: 1 }
+  ]
+};
+
+export const STRATEGIC_TRIUMPH: CardDef = {
+  id: "age2.strategic_triumph",
+  name: "Strategic Triumph",
+  rulesText: "Gain +2 gold.",
+  type: "Victory",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 55,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "gainGold", amount: 2 }],
+  victoryPoints: 1
+};
+
+export const BANNER_OF_RESOLVE: CardDef = {
+  id: "age2.banner_of_resolve",
+  name: "Banner of Resolve",
+  rulesText: "Deploy 1 Force to your Capital.",
+  type: "Victory",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 75,
+  burn: false,
+  targetSpec: {
+    kind: "choice",
+    options: [{ kind: "capital" }]
+  },
+  effects: [{ kind: "recruit", capitalCount: 1 }],
+  victoryPoints: 1
 };
 
 export const JET_STRIKER: CardDef = {
@@ -512,6 +648,9 @@ export const AGE2_CARDS: CardDef[] = [
   TRIPLE_MARCH,
   COORDINATED_ADVANCE,
   BREAKTHROUGH_LINE,
+  SET_TO_SKIRMISH,
+  BATTALION_CONTRACT,
+  RALLY_WHERE_YOU_STAND,
   FOCUS_FIRE,
   SLOW,
   WARD,
@@ -524,9 +663,14 @@ export const AGE2_CARDS: CardDef[] = [
   WAR_TAXES,
   REFINED_INGOTS,
   GUILD_FAVOR,
+  INSIGHT,
+  STALL,
   BRIDGE_LOCKDOWN,
   BRIDGE_NETWORK,
   WORMHOLE_LINK,
+  DEEP_SHAFT_RIG,
+  STRATEGIC_TRIUMPH,
+  BANNER_OF_RESOLVE,
   JET_STRIKER,
   GUERILLA_NATIVE_MERCENARY,
   TAX_REAVER,
