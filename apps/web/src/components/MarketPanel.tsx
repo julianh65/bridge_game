@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState, type ChangeEvent, type CSSProperties } fr
 import { CARD_DEFS, type Bid, type GameView, type MarketState } from "@bridgefront/engine";
 
 import type { RoomConnectionStatus } from "../lib/room-client";
+import { FactionSymbol } from "./FactionSymbol";
 import { GameCard } from "./GameCard";
 import { NumberRoll } from "./NumberRoll";
 
@@ -69,6 +70,10 @@ export const MarketPanel = ({
     eligiblePlayerIds.every((id) => market.bids[id]);
   const playerSeatIndexById = useMemo(
     () => new Map(players.map((entry) => [entry.id, entry.seatIndex])),
+    [players]
+  );
+  const playerFactionById = useMemo(
+    () => new Map(players.map((entry) => [entry.id, entry.factionId ?? null])),
     [players]
   );
   const [bidAmount, setBidAmount] = useState(0);
@@ -160,10 +165,10 @@ export const MarketPanel = ({
     return { card, def, index, isHidden, isActive, isResolved, isWinner, label };
   });
   const showOrderRail = isOverlay && currentRow.length > 0;
-  const rollDurationMs = Math.max(0, rollDurationOverride ?? 1100);
-  const rollDelayBaseMs = 160;
-  const rollRoundGapMs = 300;
-  const rollGapMs = 140;
+  const rollDurationMs = Math.max(0, rollDurationOverride ?? 1000);
+  const rollDelayBaseMs = 120;
+  const rollRoundGapMs = 260;
+  const rollGapMs = 0;
   const rollOffRounds = useMemo(() => {
     const rollOff = winnerHighlight?.rollOff;
     if (!rollOff || rollOff.length === 0) {
@@ -325,6 +330,7 @@ export const MarketPanel = ({
                 const delayMs = round.rollDelays[index] ?? round.startMs;
                 const seatIndex = playerSeatIndexById.get(roll.playerId);
                 const swatchStyle = playerSwatchStyle(seatIndex);
+                const factionId = playerFactionById.get(roll.playerId);
                 return (
                   <div
                     key={`roll-${roll.playerId}-${round.roundIndex}`}
@@ -338,6 +344,10 @@ export const MarketPanel = ({
                           aria-hidden="true"
                         />
                       ) : null}
+                      <FactionSymbol
+                        factionId={factionId}
+                        className="faction-symbol--mini"
+                      />
                       {roll.name}
                     </span>
                     <NumberRoll
@@ -356,6 +366,11 @@ export const MarketPanel = ({
           </div>
         ))}
       </div>
+    </div>
+  ) : null;
+  const rollOffOverlay = rollOffPanel ? (
+    <div className="market-rolloff-overlay" aria-live="polite">
+      {rollOffPanel}
     </div>
   ) : null;
 
@@ -383,7 +398,6 @@ export const MarketPanel = ({
       </div>
 
       <div className="market-panel__layout">
-        {rollOffPanel}
         <div className="market-panel__cards">
           {currentRow.length === 0 ? (
             <div className="hand-empty">No market cards revealed.</div>
@@ -528,6 +542,7 @@ export const MarketPanel = ({
             )}
           </div>
         </aside>
+        {rollOffOverlay}
       </div>
     </section>
   );
