@@ -1376,7 +1376,7 @@ export const BoardView = ({
             ) : null}
             {showMineValues && hex.tile === "mine" && hex.mineValue ? (
               <text x={hex.x} y={valueY} className="hex__value">
-                +{hex.mineValue}💰
+                +{hex.mineValue} 💰
               </text>
             ) : null}
           </g>

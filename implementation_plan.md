@@ -351,7 +351,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Between action reveals while the board is still "highlighting" where it was played there should be like a configurable timing pause where the popup modal displaying the card and who played it closes and we see where on the map it's played
 - [ ] I want there to be an animation when cards are drawn
 - [x] on the board we need to see the mine yields
-- [x] Board hex labels use the display font and mine values show +gold markers
+- [x] Board hex labels use the UI font and mine values show +gold markers
 - [ ] The pass and confirm pass button is bugged
 - [x] The forge scrap doesn't look right, i just see a bunch of pills with random card ids
 - [ ] remove the mine draft, it should just give gold, and update the rules

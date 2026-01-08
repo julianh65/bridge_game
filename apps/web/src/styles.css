@@ -6292,13 +6292,12 @@ body.is-game .btn-secondary:active:not(:disabled) {
 .hex__coords,
 .hex__slot,
 .hex__value {
-  font-family: var(--display-font);
+  font-family: "Alegreya Sans", "Trebuchet MS", "Lucida Grande", sans-serif;
   text-anchor: middle;
   pointer-events: none;
   paint-order: stroke;
   stroke: rgba(27, 23, 18, 0.45);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
 }
 
 .hex__label {
@@ -6320,7 +6319,7 @@ body.is-game .btn-secondary:active:not(:disabled) {
   font-weight: 600;
   fill: rgba(255, 248, 236, 0.85);
   stroke-width: 1.4;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
 
 .hex__slot {
@@ -6336,8 +6335,8 @@ body.is-game .btn-secondary:active:not(:disabled) {
   fill: #f9d47a;
   stroke: rgba(40, 24, 8, 0.7);
   stroke-width: 2;
-  letter-spacing: 0.02em;
-  text-transform: none;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
 }
 
 .bridge {
