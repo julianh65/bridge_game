@@ -4,6 +4,7 @@ import type { PointerEvent as ReactPointerEvent } from "react";
 import { CardsBrowser } from "./components/CardsBrowser";
 import { DeckViewer } from "./components/DeckViewer";
 import { DebugBoard } from "./components/DebugBoard";
+import { BattleDebug } from "./components/BattleDebug";
 import { GameScreen } from "./components/GameScreen";
 import { Home, type RoomJoinParams } from "./components/Home";
 import { Lobby } from "./components/Lobby";
@@ -14,7 +15,7 @@ import { RoomCodeCopy } from "./components/RoomCodeCopy";
 import { useRoom } from "./lib/room-client";
 import { armSfx, getSfxForTarget, playSfx } from "./lib/sfx";
 
-type AppView = "play" | "debug" | "cards" | "deck";
+type AppView = "play" | "debug" | "cards" | "deck" | "battle";
 
 const statusLabels: Record<string, string> = {
   idle: "Idle",
@@ -69,7 +70,10 @@ export default function App() {
   const isGameLayout = view === "play" && showGame;
   const showPreGameLobby = Boolean(room.lobby && !room.view);
   const isThemeView =
-    view === "cards" || view === "deck" || (view === "play" && Boolean(roomConfig));
+    view === "cards" ||
+    view === "deck" ||
+    view === "battle" ||
+    (view === "play" && Boolean(roomConfig));
 
   useEffect(() => {
     document.body.classList.toggle("is-game", isThemeView);
@@ -126,6 +130,14 @@ export default function App() {
           >
             Deck
           </button>
+          <button
+            type="button"
+            className={view === "battle" ? "is-active" : ""}
+            data-sfx="soft"
+            onClick={() => setView("battle")}
+          >
+            Battle Debug
+          </button>
         </div>
       </nav>
 
@@ -144,6 +156,7 @@ export default function App() {
           status={room.status}
         />
       ) : null}
+      {view === "battle" ? <BattleDebug /> : null}
 
       {view === "play" && !roomConfig ? <Home onJoin={setRoomConfig} /> : null}
 

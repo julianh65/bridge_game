@@ -3285,6 +3285,52 @@ body.is-game .market-overlay__panel {
   z-index: 40;
 }
 
+.collection-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+
+.collection-overlay__scrim {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(14, 10, 6, 0.32), transparent 62%),
+    linear-gradient(135deg, rgba(28, 22, 16, 0.5), rgba(10, 8, 6, 0.7));
+  backdrop-filter: blur(4px);
+}
+
+.collection-overlay__panel {
+  position: relative;
+  z-index: 1;
+  width: min(980px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  border-radius: 22px;
+  border: 1px solid #d6c7b1;
+  background: linear-gradient(135deg, #fff7e8, #f2e2cc 65%, #ead4b7);
+  box-shadow: 0 22px 60px rgba(22, 18, 12, 0.4);
+}
+
+body.is-game .collection-overlay__panel {
+  border-color: var(--border);
+  background: linear-gradient(135deg, #1b1410, #120d0a 65%, #1d1410);
+  box-shadow: 0 22px 60px rgba(6, 4, 3, 0.5);
+}
+
+.collection-overlay__panel .sidebar-section {
+  border: none;
+  background: transparent;
+  padding: 22px;
+}
+
+.collection-overlay__panel .sidebar-section h3 {
+  font-size: 16px;
+  color: var(--ink);
+}
+
 .market-panel {
   display: grid;
   gap: 18px;
@@ -6378,6 +6424,10 @@ body.is-game .combat-outcome__auto {
   }
 
   .market-overlay {
+    padding: 12px;
+  }
+
+  .collection-overlay {
     padding: 12px;
   }
 

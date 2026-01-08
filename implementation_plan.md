@@ -284,7 +284,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Market HUD shows current gold with the same emoji/visual language used elsewhere.
 - [ ] Champion cards communicate gold cost scaling for the nth champion clearly.
 - [ ] Action reveal popup uses A1-style board labels (not axial coords).
-- [ ] Collection UI becomes a modal overlay (no top-bar layout shift).
+- [x] Collection UI becomes a modal overlay (no top-bar layout shift).
 - [ ] Center collection offers power picks (not normal card draft).
 - [ ] Market dice roll animation feels smoother and more synchronized.
 - [x] Board generation spawns a fixed number of random bridges at setup (per updated rules).
@@ -321,6 +321,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Fix phase progression after capital battles (ensure collection/market transitions).
 - [ ] Add UI for scout orders and "draw and pick" effects.
 - [x] Fix card aspect ratios on large screens (avoid stretched/fat cards).
+- [x] Add a battle debug tab to simulate combat with custom forces/champions.
 - [ ] Need a UI to demarkate which cell is "my capital"
 
 ### Mini Milestone For Me

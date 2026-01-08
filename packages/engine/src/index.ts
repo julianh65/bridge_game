@@ -26,6 +26,9 @@ export {
 export { buildView } from "./view";
 export { applyRoundReset } from "./round-flow";
 export { emit } from "./events";
+export { resolveBattleAtHex } from "./combat";
+export { applyChampionDeployment } from "./champions";
+export { addChampionToHex, addForcesToHex } from "./units";
 export type {
   Age,
   ActionDeclaration,

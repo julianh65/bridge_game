@@ -76,6 +76,7 @@
 ## Milestone After Full Test Play and Thinking progress
 - Added the gold emoji chip in the market bid HUD to match the resource iconography used elsewhere; updated the plan checklist. (Files: `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.) (owner: agent4) (Overlap note: `progress.md` includes agent2 active-task update.)
 - Added mana/gold cost chips to the basic action buttons in the hand panel; updated the plan checklist. (Files: `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
+- Converted the collection UI into a modal overlay with scrim/panel styling to avoid layout shifts; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.
