@@ -232,6 +232,7 @@ export const DeckViewer = ({
                         cardId={group.defId}
                         count={group.count}
                         showId
+                        showChampionStats
                         rulesFallback="Unknown card data."
                       />
                     );
