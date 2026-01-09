@@ -362,7 +362,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] The market click to roll for ties for each player still does it automatically and doesn't look right
 - [x] Can the champion chits on the map have the background image of their image? Same desaturated style of the board hexes
 - [x] Can the forces on the map have the background image as well? same desaturated style of the board hexes, pick a random soldier type image for now
-- [ ] During the small action preview phase on the board while cards are being played keep the highlighting paths and indicators on the board during that little pause between 
+- [x] During the small action preview phase on the board while cards are being played keep the highlighting paths and indicators on the board during that little pause between 
 
 ### Refactor Milestone
 
@@ -525,29 +525,29 @@ Done
         - [x] Oathstone.
         - [x] Banner of Sparks.
       - [ ] Age II Power (12) — Non-victory (6).
-        - [ ] Immunity Field.
-        - [ ] Rapid Reinforcements.
+        - [x] Immunity Field.
+        - [x] Rapid Reinforcements.
         - [ ] A Hero Joins the Battle.
         - [ ] TBD: fill missing Age II non-victory entries after rules audit (3).
       - [ ] Age II Power Victory (6).
-        - [ ] Writ of Industry.
-        - [ ] Bridge Charter.
-        - [ ] Dispatch to Front.
+        - [x] Writ of Industry.
+        - [x] Bridge Charter.
+        - [x] Dispatch to Front.
         - [ ] Chronicle of War.
         - [ ] TBD: fill missing Age II power victory entries after rules audit (2).
       - [ ] Age II Power Champions (verify deck size inclusion).
-        - [ ] Bannerman.
+        - [x] Bannerman.
       - [ ] Age III Power (12) — Non-victory (6).
         - [ ] Cataclysm Core.
-        - [ ] Quick Mobilization.
+        - [x] Quick Mobilization.
         - [ ] Forge Miracle.
-        - [ ] Final Funding.
+        - [x] Final Funding.
         - [ ] Last Stand.
         - [ ] TBD: fill missing Age III non-victory entry after rules audit.
       - [ ] Age III Power Victory (6).
-        - [ ] Imperial Warrant.
-        - [ ] Crown Coin.
-        - [ ] Deep Mine Charter.
+        - [x] Imperial Warrant.
+        - [x] Crown Coin.
+        - [x] Deep Mine Charter.
         - [ ] Center Relic.
         - [ ] Forge Relic.
         - [ ] Siege Chronicle.

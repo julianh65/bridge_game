@@ -19,6 +19,10 @@
 ## Active tasks
 - owner: agent1; scope: split `card-effects` resolvers into categorized modules (bridges/movement/combat/units) and re-export via a single index; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-*.ts`, `packages/engine/src/index.ts`, `implementation_plan.md`; status: in progress
 - owner: agent5; scope: add Age II/III power card defs that use existing effects (incl. Bannerman champion) and wire partial power deck lists; files: `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/power-decks.ts`, `implementation_plan.md`; status: in progress
+- owner: agent2
+  scope: keep hand in single row and compress overlap to avoid horizontal scroll
+  files: apps/web/src/components/GameScreenHandPanel.tsx, progress.md
+  status: in progress
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -154,6 +158,7 @@
 - Enabled optional move selection for edge-target bridge cards (Bridge Crew) by preserving edge targets and allowing a follow-on stack/path pick; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Increased mana/gold cost chip readability by enlarging text and softening gradients; updated the plan checklist. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Added a configurable action-reveal highlight pause so board highlights linger after the overlay closes; updated docs and the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `packages/engine/src/types.ts`, `packages/engine/src/config.ts`, `docs/configuration.md`, `docs/dev.md`, `implementation_plan.md`.)
+- Kept action-reveal highlights visible during the post-reveal pause by holding board indicators in place after the overlay closes. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenBoardSection.tsx`, `apps/web/src/components/BoardView.tsx`, `implementation_plan.md`.)
 - Added faction-ordered basic action resolution (config-driven) and surfaced basic-action order on faction cards; updated config/spec docs and marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/config.ts`, `packages/engine/src/action-flow.ts`, `apps/web/src/lib/factions.ts`, `apps/web/src/components/PreGameLobby.tsx`, `docs/configuration.md`, `technical_spec.md`, `implementation_plan.md`.) (Overlap note: `packages/engine/src/config.ts` already had in-flight duration/tile-count edits.) (Test: `npm run -w @bridgefront/engine test -- action-flow.test.ts` failed: `capitals were not assigned` in `setupToActionPhase`.)
 - Added a focused basic-action order unit test to validate faction-priority resolution. (File: `packages/engine/src/basic-action-order.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- basic-action-order.test.ts`.)
 

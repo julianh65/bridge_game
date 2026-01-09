@@ -24,6 +24,7 @@ type GameScreenBoardSectionProps = {
   onEdgeClick: (edgeKey: string) => void;
   actionAnimations: BoardActionAnimation[];
   actionAnimationDurationMs: number;
+  actionAnimationHold?: boolean;
   forceSplitPanel: ReactNode;
 };
 
@@ -45,6 +46,7 @@ export const GameScreenBoardSection = ({
   onEdgeClick,
   actionAnimations,
   actionAnimationDurationMs,
+  actionAnimationHold = false,
   forceSplitPanel
 }: GameScreenBoardSectionProps) => {
   return (
@@ -75,6 +77,7 @@ export const GameScreenBoardSection = ({
             showTags={false}
             actionAnimations={actionAnimations}
             actionAnimationDurationMs={actionAnimationDurationMs}
+            actionAnimationHold={actionAnimationHold}
           />
           {forceSplitPanel ? (
             <div className="board-tools board-tools--overlay board-tools--split">

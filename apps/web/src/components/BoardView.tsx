@@ -74,6 +74,7 @@ type BoardViewProps = {
   isTargeting?: boolean;
   actionAnimations?: BoardActionAnimation[];
   actionAnimationDurationMs?: number;
+  actionAnimationHold?: boolean;
   overlays?: BoardOverlayItem[];
 };
 
@@ -440,6 +441,7 @@ export const BoardView = ({
   isTargeting = false,
   actionAnimations = [],
   actionAnimationDurationMs,
+  actionAnimationHold = false,
   overlays = []
 }: BoardViewProps) => {
   const baseViewBox = useMemo(() => boundsForHexes(hexes), [hexes]);
@@ -861,7 +863,15 @@ export const BoardView = ({
   const actionAnimationStyle = actionAnimationDuration
     ? ({ ["--action-anim-duration" as string]: `${actionAnimationDuration}ms` } as CSSProperties)
     : undefined;
-  const actionAnimationsActive = actionAnimations.length > 0 && actionAnimationDuration > 0;
+  const actionAnimationsActive =
+    actionAnimations.length > 0 && (actionAnimationDuration > 0 || actionAnimationHold);
+  const actionHoldStyle = actionAnimationHold
+    ? ({ animation: "none", opacity: 0.85 } as CSSProperties)
+    : undefined;
+  const actionHoldUnitStyle = actionAnimationHold
+    ? ({ animation: "none", opacity: 0.95 } as CSSProperties)
+    : undefined;
+  const shouldAnimateUnits = !actionAnimationHold && actionAnimationDuration > 0;
 
   const toSvgPoint = (clientX: number, clientY: number) => {
     const svg = svgRef.current;
@@ -1819,6 +1829,7 @@ export const BoardView = ({
               if (!pathD) {
                 return null;
               }
+              const endPoint = points ? points[points.length - 1] : null;
               const unitKind = animation.unitKind ?? "force";
               const unitLabel = animation.unitLabel ?? null;
               const unitClassName = [
@@ -1833,25 +1844,39 @@ export const BoardView = ({
               ]
                 .filter(Boolean)
                 .join(" ");
+              const unitTransform =
+                actionAnimationHold && endPoint
+                  ? `translate(${endPoint.x} ${endPoint.y})`
+                  : undefined;
               return (
                 <g key={animation.id} className={className} style={actionAnimationStyle}>
-                  <path className="action-anim__path" d={pathD} />
-                  <g className={unitClassName}>
+                  <path className="action-anim__path" d={pathD} style={actionHoldStyle} />
+                  <g className={unitClassName} transform={unitTransform}>
                     {unitKind === "champion" ? (
-                      <circle className="action-anim__champion-ring" r={11} />
+                      <circle
+                        className="action-anim__champion-ring"
+                        r={11}
+                        style={actionHoldUnitStyle}
+                      />
                     ) : null}
-                    <circle className={unitBodyClassName} r={9} />
+                    <circle className={unitBodyClassName} r={9} style={actionHoldUnitStyle} />
                     {unitLabel ? (
-                      <text className="action-anim__unit-text" y={0.4}>
+                      <text
+                        className="action-anim__unit-text"
+                        y={0.4}
+                        style={actionHoldUnitStyle}
+                      >
                         {unitLabel}
                       </text>
                     ) : null}
-                    <animateMotion
-                      dur={`${actionAnimationDuration}ms`}
-                      path={pathD}
-                      keyTimes="0;1"
-                      calcMode="linear"
-                    />
+                    {shouldAnimateUnits ? (
+                      <animateMotion
+                        dur={`${actionAnimationDuration}ms`}
+                        path={pathD}
+                        keyTimes="0;1"
+                        calcMode="linear"
+                      />
+                    ) : null}
                   </g>
                 </g>
               );
@@ -1869,6 +1894,7 @@ export const BoardView = ({
                     y1={segment.from.y}
                     x2={segment.to.x}
                     y2={segment.to.y}
+                    style={actionHoldStyle}
                   />
                 </g>
               );
@@ -1885,6 +1911,7 @@ export const BoardView = ({
                     cx={center.x}
                     cy={center.y}
                     r={14}
+                    style={actionHoldStyle}
                   />
                 </g>
               );

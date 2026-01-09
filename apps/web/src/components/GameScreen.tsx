@@ -839,6 +839,8 @@ export const GameScreen = ({
     0,
     view.public.config.ACTION_REVEAL_HIGHLIGHT_PAUSE_MS
   );
+  const shouldHoldActionReveal =
+    Boolean(activeCardReveal) && !isActionRevealOverlayVisible && actionRevealHighlightPauseMs > 0;
   const isActionPhase = view.public.phase === "round.action";
   const isStudyPhase = view.public.phase === "round.study";
   const isMarketPhase = view.public.phase === "round.market";
@@ -3150,6 +3152,7 @@ export const GameScreen = ({
           onEdgeClick={handleBoardEdgeClick}
           actionAnimations={actionAnimations}
           actionAnimationDurationMs={actionRevealDurationMs}
+          actionAnimationHold={shouldHoldActionReveal}
           forceSplitPanel={forceSplitPanel}
         />
 
