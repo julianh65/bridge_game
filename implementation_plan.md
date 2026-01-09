@@ -442,7 +442,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] remove the how it works on the main screen and "core loop" container
 - [x] For cards that kind of "scale" like propoganda recruitment or future investment we need to represent on the card (in a very simple way, what the value would be if they played it is)
 - [x] Add a small countdown of how many rounds are left in the game
-- [ ] put the two debug board debug and battle debug under a little dropdown menu that's like debug
+- [x] put the two debug board debug and battle debug under a little dropdown menu that's like debug
 
 
 

@@ -21,7 +21,7 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-- (owner: agent5) [status: in progress] Group Board Debug + Battle Debug under a Debug dropdown in the top nav; files: `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`.
+
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -68,6 +68,7 @@
 - Added scaling-value callouts on cards with scaling counters (Propaganda Recruitment/Future Investment) by surfacing counters in the private view and rendering a simple "Deploy X" badge on cards in hand, hand pickers, and deck viewer; marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `apps/web/src/components/DeckViewer.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5)
 - Restricted starting bridge placement to edges where both endpoints are within distance 2 of the capital; updated engine validation, server auto-pick, UI highlights/copy, and setup-flow coverage; marked the plan item complete. (Files: `packages/engine/src/setup-flow.ts`, `packages/engine/src/setup-flow.test.ts`, `apps/server/src/server.ts`, `apps/web/src/components/SetupStartingBridges.tsx`, `implementation_plan.md`.) (owner: agent2)
 - Added a rounds-left HUD countdown using the configured max rounds; marked the plan item complete. (Files: `apps/web/src/components/GameScreenHeader.tsx`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent5)
+- Grouped Board Debug + Battle Debug under a Debug dropdown in the top nav; marked the plan item complete. (Files: `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5) (Overlap note: agent2 had an in-progress entry for the same scope.)
 - Fixed Cipher Quiet Study loop by advancing from `round.study` to `round.action` after resolving choices so the block doesn't re-trigger. (File: `packages/engine/src/engine.ts`.) (owner: agent4)
 - Fixed Chronicle of War optional discard + mana gating, with card-effect tests. (Files: `packages/engine/src/content/cards/power.ts`, `packages/engine/src/card-effects-economy.ts`, `packages/engine/src/card-effects.chronicle-of-war.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.chronicle-of-war.test.ts`.) (owner: agent1)
 - Allowed mine counts below player count by assigning home mines to a subset of capitals and keeping placement logic consistent; added coverage. (Files: `packages/engine/src/board-generation.ts`, `packages/engine/src/board-generation.test.ts`.) (owner: agent4) (Overlap note: commit also captured pre-staged Elite Guard card changes in `packages/engine/src/card-effects-units.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/card-effects.elite-guard.test.ts`.)

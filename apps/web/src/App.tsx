@@ -29,10 +29,12 @@ const statusLabels: Record<string, string> = {
 
 export default function App() {
   const [view, setView] = useState<AppView>("play");
+  const [isDebugMenuOpen, setIsDebugMenuOpen] = useState(false);
   const [suppressEntryCues, setSuppressEntryCues] = useState(false);
   const [roomConfig, setRoomConfig] = useState<RoomJoinParams | null>(null);
   const room = useRoom(roomConfig);
   const lastStatusRef = useRef(room.status);
+  const debugMenuRef = useRef<HTMLDivElement | null>(null);
 
   const statusLabel = statusLabels[room.status] ?? "Unknown";
   const statusClass = useMemo(() => {
@@ -80,11 +82,13 @@ export default function App() {
     view === "deck" ||
     view === "battle" ||
     view === "editor";
+  const isDebugView = view === "debug" || view === "battle";
   const handleSelectView = (nextView: AppView) => {
     if (nextView === "play" && view === "deck") {
       setSuppressEntryCues(true);
     }
     setView(nextView);
+    setIsDebugMenuOpen(false);
   };
   const handleOpenDeck = () => handleSelectView("deck");
   const handleReturnToGame = () => handleSelectView("play");
@@ -95,6 +99,31 @@ export default function App() {
       document.body.classList.remove("is-game");
     };
   }, [isThemeView]);
+
+  useEffect(() => {
+    if (!isDebugMenuOpen) {
+      return;
+    }
+    const handlePointerDown = (event: PointerEvent) => {
+      if (event.button !== 0) {
+        return;
+      }
+      if (!debugMenuRef.current) {
+        return;
+      }
+      if (!(event.target instanceof Node)) {
+        return;
+      }
+      if (debugMenuRef.current.contains(event.target)) {
+        return;
+      }
+      setIsDebugMenuOpen(false);
+    };
+    window.addEventListener("pointerdown", handlePointerDown);
+    return () => {
+      window.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [isDebugMenuOpen]);
 
   return (
     <main
@@ -122,14 +151,6 @@ export default function App() {
           </button>
           <button
             type="button"
-            className={view === "debug" ? "is-active" : ""}
-            data-sfx="soft"
-            onClick={() => handleSelectView("debug")}
-          >
-            Board Debug
-          </button>
-          <button
-            type="button"
             className={view === "cards" ? "is-active" : ""}
             data-sfx="soft"
             onClick={() => handleSelectView("cards")}
@@ -144,14 +165,39 @@ export default function App() {
           >
             Deck
           </button>
-          <button
-            type="button"
-            className={view === "battle" ? "is-active" : ""}
-            data-sfx="soft"
-            onClick={() => handleSelectView("battle")}
-          >
-            Battle Debug
-          </button>
+          <div className="view-toggle__dropdown" ref={debugMenuRef}>
+            <button
+              type="button"
+              className={`view-toggle__trigger${isDebugView ? " is-active" : ""}`}
+              data-sfx="soft"
+              aria-haspopup="menu"
+              aria-expanded={isDebugMenuOpen}
+              aria-controls="debug-menu"
+              onClick={() => setIsDebugMenuOpen((open) => !open)}
+            >
+              Debug <span className="view-toggle__caret">v</span>
+            </button>
+            {isDebugMenuOpen ? (
+              <div className="view-toggle__menu" role="menu" id="debug-menu">
+                <button
+                  type="button"
+                  className={view === "debug" ? "is-active" : ""}
+                  data-sfx="soft"
+                  onClick={() => handleSelectView("debug")}
+                >
+                  Board Debug
+                </button>
+                <button
+                  type="button"
+                  className={view === "battle" ? "is-active" : ""}
+                  data-sfx="soft"
+                  onClick={() => handleSelectView("battle")}
+                >
+                  Battle Debug
+                </button>
+              </div>
+            ) : null}
+          </div>
           {showEditor ? (
             <button
               type="button"
