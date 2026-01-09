@@ -98,7 +98,7 @@ export const DeckViewer = ({
       },
       {
         id: "draw",
-        label: `Draw pile (${privateView.deckCounts.drawPile})`,
+        label: `Draw pile (${privateView.deckCounts.drawPile}, unordered)`,
         cards: deckCards.drawPile
       },
       {
@@ -145,7 +145,7 @@ export const DeckViewer = ({
     ? [
         {
           id: "draw",
-          label: "Draw",
+          label: "Draw (unordered)",
           count: deckCounts.drawPile,
           arrow: "draw"
         },
