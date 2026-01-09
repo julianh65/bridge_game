@@ -18,7 +18,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- (owner: agent4) Allow spectators to close resolved combat overlays by exposing a Close button even in sync mode. Files: `apps/web/src/components/CombatOverlay.tsx`, `implementation_plan.md`, `progress.md`. Status: in progress.
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
 ## Test fixes
@@ -64,6 +63,8 @@
 - Fixed Cipher Quiet Study loop by advancing from `round.study` to `round.action` after resolving choices so the block doesn't re-trigger. (File: `packages/engine/src/engine.ts`.) (owner: agent4)
 - Fixed Chronicle of War optional discard + mana gating, with card-effect tests. (Files: `packages/engine/src/content/cards/power.ts`, `packages/engine/src/card-effects-economy.ts`, `packages/engine/src/card-effects.chronicle-of-war.test.ts`, `implementation_plan.md`.) (owner: agent1)
 - Allowed mine counts below player count by assigning home mines to a subset of capitals and keeping placement logic consistent; added coverage. (Files: `packages/engine/src/board-generation.ts`, `packages/engine/src/board-generation.test.ts`.) (owner: agent4) (Overlap note: commit also captured pre-staged Elite Guard card changes in `packages/engine/src/card-effects-units.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/card-effects.elite-guard.test.ts`.)
+- Added card rules text to the action reveal overlay so card descriptions are visible during reveals; updated the plan checklist. (Files: `apps/web/src/components/ActionRevealOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
+- Allowed spectators to close resolved combat overlays by showing a Close button even when synced; updated the plan checklist. (Files: `apps/web/src/components/CombatOverlay.tsx`, `implementation_plan.md`.) (owner: agent4)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.

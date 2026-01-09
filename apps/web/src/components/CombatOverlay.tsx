@@ -517,12 +517,12 @@ export const CombatOverlay = ({
   let rollLabel = "Roll dice";
   let rollDisabled = false;
   if (hasSync) {
-    if (!isLocalParticipant) {
-      rollLabel = "Spectating";
-      rollDisabled = true;
-    } else if (isResolved) {
+    if (isResolved) {
       rollLabel = "Close";
       rollDisabled = false;
+    } else if (!isLocalParticipant) {
+      rollLabel = "Spectating";
+      rollDisabled = true;
     } else if (localReady) {
       rollLabel = "Waiting for opponent";
       rollDisabled = true;
