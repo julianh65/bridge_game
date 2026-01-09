@@ -364,7 +364,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Can the forces on the map have the background image as well? same desaturated style of the board hexes, pick a random soldier type image for now
 - [x] During the small action preview phase on the board while cards are being played keep the highlighting paths and indicators on the board during that little pause between 
 - [x] Can we make the amount of cards we draw configurable from the config
-- [ ] Make whether or not they get the first "free card add" during setup phase configurable and make sure it doesn't break the tests
+- [x] Make whether or not they get the first "free card add" during setup phase configurable and make sure it doesn't break the tests
 
 ### Refactor Milestone
 
@@ -383,31 +383,6 @@ Note: hold off on doing these refactors until I specifically instruct
 - [x] card-effects: extract economy/hand effect handlers into a dedicated module.
 - [x] card-effects: split effect resolvers into categorized modules and re-export from a single index.
 - [ ] styles.css: split into logical partials (base/layout/components/overlays) and import in main. hold off on this for now
-
-### Mini Milestone For Me
-I need some sort of script or way to edit the cards and decks in a nice UI with some nice to have features. I don't really know how this will work because the cards are kind of defined in typescript files not in JSON or anything. So help me think through this. There could be two options which is just a UI that loads in the the current deck and lets me view things and edit things and then saves it as a list of edits / changes that I can then take and make manually in the code, or we have a way such that it somehow writes back to the files? But if that's too tricky / dangerous then we should just do the first approach. The editor should let me view all cards, create copies of cards. I should be able to modify the attributes of cards easily, like health, gold, mana costs, scaling etc... but not like the names of cards or the effects, for bigger changes like that I will need to do that myself manually in the code. I also need some helpful helper functions / code to be able to run. One to show me all the colissions in initiative numbers, one to automatically decollide the deck, so it goes through and for any colissions that there are it decollides them by incrementing initiatives until there are no more colissions, and then one to "compress" initiative numbers so if I have like only 3 cards for example 10, 90, 30 it should compress them so the inititatives are 1, 3, 2. Maybe I can somehow build off the cards viewer screen I have but have a debug / dev version of it?
-
-#### Scope (proposed)
-- Dev-only card/deck editor built on the existing Cards browser (no auth/sharing).
-- Editable fields limited to numeric/value attributes (initiative, mana/gold cost, health, bounty, scaling/counts); names/effects locked.
-- Default workflow exports a patch/change list for manual TS edits; no direct file writes in MVP.
-
-#### Tasks (proposed)
-- [x] Define an edit-patch schema (`CardEditPatch`) and helpers to apply patches in the UI preview only.
-- [x] Add a dev-only Card Editor view (toggle or route) that reuses card filters/grid.
-- [x] Implement inline editors for allowed fields with validation, revert, and "dirty" indicators.
-- [x] Add a clone-card flow that creates a new draft ID (suffix) and carries editable fields.
-- [x] Surface initiative collisions in the editor view with per-deck grouping.
-- [x] Add an export panel that copies JSON patch + human-readable change summary.
-- [x] Add a local patch-apply script for Card Editor exports (edits only; clones manual).
-- [x] Implement CLI tooling (`scripts/card-tools.js`) for `collisions`, `de-collide`, and `compress` with deck filters; default to dry-run output.
-- [x] Add lightweight tests for collision/decollide/compress helpers.
-- [x] Document editor + CLI usage in `docs/cards.md` and add npm scripts.
-
-#### Acceptance criteria (proposed)
-- Card Editor can modify allowed numeric fields and export a patch without touching TS files.
-- Deck view highlights initiative collisions and can output a de-collided/compressed proposal.
-- CLI tools produce the same collision/decollide/compress results as the UI.
 
 ### Tasks (web)
 - Champion UI:

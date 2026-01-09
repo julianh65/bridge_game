@@ -17,6 +17,10 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- owner: agent2
+  scope: add hex-pair targeting support for wormhole cards
+  files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/ActionPanel.tsx, apps/web/src/components/GameScreenHandPanel.tsx, implementation_plan.md, progress.md
+  status: in progress
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -47,6 +51,7 @@
 - Nudged the market overlay toggle lower and hard-centered it (reset top/right), and confirmed faction-specific card art mappings are already complete. (File: `apps/web/src/styles.css`.) (Audit: `apps/web/src/data/card-art.json`.)
 
 ## Milestone After Full Test Play and Thinking progress
+- Added `freeStartingCardEnabled` config toggle to skip the free starting card setup step, with docs; marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/config.ts`, `packages/engine/src/engine.ts`, `docs/configuration.md`, `implementation_plan.md`.)
 - Added Scout Report draw-and-pick choices with an action-phase block, selection command, private offers view, UI modal, and updated action/smoke tests; marked the plan checklist items complete. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/action-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.)
 - Added combat overlay cumulative hits row markup (paired with existing styles); marked the plan checklist item complete. (Files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Moved combat hit totals above the attacker/defender panels and marked hit assignments directly on unit tokens (forces show red X, champions get hit badges). (Files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`.)

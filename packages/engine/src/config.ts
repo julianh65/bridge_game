@@ -80,6 +80,7 @@ export const DEFAULT_CONFIG: GameConfig = {
     9: 0,
     10: 0
   },
+  freeStartingCardEnabled: true,
   freeStartingCardPool: [
     "age1.quick_march",
     "age1.prospecting",

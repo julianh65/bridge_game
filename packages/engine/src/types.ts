@@ -71,6 +71,7 @@ export type GameConfig = {
   boardGenerationRules: BoardGenerationRules;
   ageByRound: Record<number, Age>;
   marketPreviewByRound: Record<number, number>;
+  freeStartingCardEnabled: boolean;
   freeStartingCardPool: CardDefId[];
 };
 

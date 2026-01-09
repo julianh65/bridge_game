@@ -489,6 +489,10 @@ export const runUntilBlocked = (state: GameState): GameState => {
 
     if (advanceReadyState.blocks.type === "setup.startingBridges") {
       const revealed = finalizeStartingBridges(advanceReadyState);
+      if (!revealed.config.freeStartingCardEnabled) {
+        nextState = enterPhase(revealed, "round.reset");
+        continue;
+      }
       const { state: updatedState, block } = createFreeStartingCardBlock(revealed);
       nextState = {
         ...updatedState,
