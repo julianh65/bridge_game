@@ -439,7 +439,7 @@ Start going through the rules_draft and adding the logic for the different types
   - [x] Shock Drill: first battle this round your Forces hit on 1–5 in combat round 1.
   - [x] Frenzy: target friendly Champion rolls +2 dice this round and takes 2 damage immediately.
   - [x] Gold Plated Armor: prevent champion damage at gold cost for the round.
-- [ ] Add cost overrides/free-play effects (Last Contract, A Hero Joins the Battle).
+- [x] Add cost overrides/free-play effects (Last Contract, A Hero Joins the Battle).
 - [ ] Add random card generation effects (Black Market Pull, Forge Miracle).
 - [ ] Add burn keyword enforcement for granted cards (Forge Miracle, power deck burn effects). and an animation on burn
 - [x] Bridge crew is supposed to let you immediately move over the bridge you are going to construct
@@ -622,6 +622,8 @@ Done
       - [x] Wormhole Gate.
       - [x] Ruin the Span.
     - [ ] Age III Synergy/Gambits card defs (2).
+      - [x] Last Contract.
+      - [ ] Siege Writ.
     - [ ] Age III Victory card defs (4+).
       - [x] Conquest Record.
       - [x] Final Oath.

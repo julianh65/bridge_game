@@ -325,6 +325,20 @@ export const RUIN_THE_SPAN: CardDef = {
   effects: [{ kind: "destroyBridge" }]
 };
 
+export const LAST_CONTRACT: CardDef = {
+  id: "age3.last_contract",
+  name: "Last Contract",
+  rulesText: "The next Champion card you play this round costs 0 gold and 0 mana. Burn.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 1 },
+  initiative: 20,
+  burn: true,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "freeNextChampion", count: 1 }]
+};
+
 export const CONQUEST_RECORD: CardDef = {
   id: "age3.conquest_record",
   name: "Conquest Record",
@@ -581,6 +595,7 @@ export const AGE3_CARDS: CardDef[] = [
   COMPLETE_ENCIRCLEMENT,
   WORMHOLE_GATE,
   RUIN_THE_SPAN,
+  LAST_CONTRACT,
   CONQUEST_RECORD,
   FINAL_OATH,
   TIMER,

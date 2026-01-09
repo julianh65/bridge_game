@@ -34,6 +34,7 @@ import {
 import {
   CARDS_DISCARDED_THIS_ROUND_FLAG,
   CARDS_PLAYED_THIS_ROUND_FLAG,
+  FREE_CHAMPION_PLAYS_FLAG,
   MOVED_THIS_ROUND_FLAG
 } from "./player-flags";
 
@@ -59,7 +60,8 @@ export const applyRoundReset = (state: GameState): GameState => {
         ...player.flags,
         [MOVED_THIS_ROUND_FLAG]: false,
         [CARDS_PLAYED_THIS_ROUND_FLAG]: 0,
-        [CARDS_DISCARDED_THIS_ROUND_FLAG]: 0
+        [CARDS_DISCARDED_THIS_ROUND_FLAG]: 0,
+        [FREE_CHAMPION_PLAYS_FLAG]: 0
       }
     }))
   };

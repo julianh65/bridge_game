@@ -41,7 +41,7 @@ import { resolveChampionCardPlay, resolveUnitEffect } from "./card-effects-units
 import { resolveVictoryEffect } from "./card-effects-victory";
 import { countPlayerChampions } from "./units";
 import { resolveCapitalDeployHex } from "./deploy-utils";
-import { markPlayerMovedThisRound } from "./player-flags";
+import { incrementFreeChampionPlays, markPlayerMovedThisRound } from "./player-flags";
 
 export { validateMovePath };
 
@@ -95,6 +95,7 @@ const SUPPORTED_EFFECTS = new Set([
   "recruit",
   "holdTheLine",
   "markForCoin",
+  "freeNextChampion",
   "topdeckFromHand",
   "centerVpOnRoundEnd",
   "ward",
@@ -123,6 +124,22 @@ const SUPPORTED_EFFECTS = new Set([
   "evacuateChampion",
   "recallChampion"
 ]);
+
+const resolveCostEffect = (
+  state: GameState,
+  playerId: PlayerID,
+  effect: TargetRecord
+): GameState | null => {
+  if (effect.kind !== "freeNextChampion") {
+    return null;
+  }
+  const rawCount = typeof effect.count === "number" ? effect.count : 1;
+  const count = Math.max(0, Math.floor(rawCount));
+  if (count <= 0) {
+    return state;
+  }
+  return incrementFreeChampionPlays(state, playerId, count);
+};
 
 export const isCardPlayable = (
   state: GameState,
@@ -558,6 +575,11 @@ export const resolveCardEffects = (
     const economyResult = resolveEconomyEffect(nextState, playerId, effect, targets ?? null);
     if (economyResult !== null) {
       nextState = economyResult;
+      continue;
+    }
+    const costResult = resolveCostEffect(nextState, playerId, effect);
+    if (costResult !== null) {
+      nextState = costResult;
       continue;
     }
     const victoryResult = resolveVictoryEffect(nextState, playerId, card, effect, targets ?? null);

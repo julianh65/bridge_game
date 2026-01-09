@@ -4,6 +4,7 @@ export const MOVED_THIS_ROUND_FLAG = "movedThisRound";
 export const CARDS_PLAYED_THIS_ROUND_FLAG = "cardsPlayedThisRound";
 export const CARDS_DISCARDED_THIS_ROUND_FLAG = "cardsDiscardedThisRound";
 export const CARD_SCALING_COUNTERS_FLAG = "cardScalingCounters";
+export const FREE_CHAMPION_PLAYS_FLAG = "freeChampionPlays";
 
 const readCardsPlayedThisRound = (player: GameState["players"][number]): number => {
   const raw = player.flags[CARDS_PLAYED_THIS_ROUND_FLAG];
@@ -34,6 +35,14 @@ const readCardScalingCounter = (
   }
   const record = rawCounters as Record<string, unknown>;
   const raw = record[key];
+  if (typeof raw !== "number" || !Number.isFinite(raw)) {
+    return 0;
+  }
+  return Math.max(0, Math.floor(raw));
+};
+
+const readFreeChampionPlays = (player: GameState["players"][number]): number => {
+  const raw = player.flags[FREE_CHAMPION_PLAYS_FLAG];
   if (typeof raw !== "number" || !Number.isFinite(raw)) {
     return 0;
   }
@@ -88,6 +97,11 @@ export const getCardScalingCounter = (
 ): number => {
   const player = state.players.find((entry) => entry.id === playerId);
   return player ? readCardScalingCounter(player, key) : 0;
+};
+
+export const getFreeChampionPlays = (state: GameState, playerId: PlayerID): number => {
+  const player = state.players.find((entry) => entry.id === playerId);
+  return player ? readFreeChampionPlays(player) : 0;
 };
 
 export const incrementCardsPlayedThisRound = (
@@ -151,6 +165,68 @@ export const incrementCardsDiscardedThisRound = (
     flags: {
       ...player.flags,
       [CARDS_DISCARDED_THIS_ROUND_FLAG]: nextCount
+    }
+  };
+
+  return {
+    ...state,
+    players: nextPlayers
+  };
+};
+
+export const incrementFreeChampionPlays = (
+  state: GameState,
+  playerId: PlayerID,
+  amount = 1
+): GameState => {
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return state;
+  }
+
+  const index = state.players.findIndex((entry) => entry.id === playerId);
+  if (index < 0) {
+    return state;
+  }
+
+  const player = state.players[index];
+  const nextCount = readFreeChampionPlays(player) + Math.floor(amount);
+  if (player.flags[FREE_CHAMPION_PLAYS_FLAG] === nextCount) {
+    return state;
+  }
+
+  const nextPlayers = [...state.players];
+  nextPlayers[index] = {
+    ...player,
+    flags: {
+      ...player.flags,
+      [FREE_CHAMPION_PLAYS_FLAG]: nextCount
+    }
+  };
+
+  return {
+    ...state,
+    players: nextPlayers
+  };
+};
+
+export const consumeFreeChampionPlay = (state: GameState, playerId: PlayerID): GameState => {
+  const index = state.players.findIndex((entry) => entry.id === playerId);
+  if (index < 0) {
+    return state;
+  }
+
+  const player = state.players[index];
+  const current = readFreeChampionPlays(player);
+  if (current <= 0) {
+    return state;
+  }
+
+  const nextPlayers = [...state.players];
+  nextPlayers[index] = {
+    ...player,
+    flags: {
+      ...player.flags,
+      [FREE_CHAMPION_PLAYS_FLAG]: current - 1
     }
   };
 

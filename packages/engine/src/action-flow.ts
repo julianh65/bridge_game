@@ -20,7 +20,12 @@ import { getCardDef } from "./content/cards";
 import { resolveCapitalDeployHex } from "./deploy-utils";
 import { emit } from "./events";
 import { getDeployForcesCount, runMoveEvents } from "./modifiers";
-import { incrementCardsPlayedThisRound, markPlayerMovedThisRound } from "./player-flags";
+import {
+  consumeFreeChampionPlay,
+  getFreeChampionPlays,
+  incrementCardsPlayedThisRound,
+  markPlayerMovedThisRound
+} from "./player-flags";
 import { addForcesToHex, countPlayerChampions, moveStack, selectMovingUnits } from "./units";
 
 const BASIC_ACTION_MANA_COST = 1;
@@ -29,6 +34,7 @@ const REINFORCE_GOLD_COST = 1;
 type ActionCost = {
   mana: number;
   gold: number;
+  usesFreeChampion?: boolean;
 };
 
 type BuildBridgePlan = {
@@ -72,6 +78,9 @@ const getDeclarationCost = (
       card.type === "Champion"
         ? getChampionGoldCost(card, countPlayerChampions(state.board, playerId))
         : 0;
+    if (card.type === "Champion" && getFreeChampionPlays(state, playerId) > 0) {
+      return { mana: 0, gold: 0, usesFreeChampion: true };
+    }
     return { mana: card.cost.mana, gold: (card.cost.gold ?? 0) + championGold };
   }
 
@@ -474,6 +483,10 @@ export const applyActionDeclaration = (
       }
     }
   };
+
+  if (cost.usesFreeChampion) {
+    nextState = consumeFreeChampionPlay(nextState, playerId);
+  }
 
   if (declaration.kind === "card") {
     nextState = removeCardFromHand(nextState, playerId, declaration.cardInstanceId);
