@@ -1,4 +1,4 @@
-import { neighborHexKeys } from "@bridgefront/shared";
+import { axialDistance, neighborHexKeys, parseHexKey } from "@bridgefront/shared";
 import { describe, expect, it } from "vitest";
 
 import type { BoardState, EdgeKey, GameState, HexKey, PlayerID } from "./types";
@@ -11,6 +11,27 @@ const pickStartingEdges = (capital: HexKey, board: BoardState): EdgeKey[] => {
     throw new Error("capital must have at least two neighbors for test");
   }
   return [getBridgeKey(capital, neighbors[0]), getBridgeKey(capital, neighbors[1])];
+};
+
+const pickOutOfRangeEdge = (capital: HexKey, board: BoardState): EdgeKey => {
+  const capitalCoord = parseHexKey(capital);
+  for (const hexKey of Object.keys(board.hexes)) {
+    const coord = parseHexKey(hexKey);
+    if (axialDistance(coord, capitalCoord) > 2) {
+      continue;
+    }
+    for (const neighbor of neighborHexKeys(hexKey)) {
+      if (!board.hexes[neighbor]) {
+        continue;
+      }
+      const neighborCoord = parseHexKey(neighbor);
+      if (axialDistance(neighborCoord, capitalCoord) <= 2) {
+        continue;
+      }
+      return getBridgeKey(hexKey as HexKey, neighbor as HexKey);
+    }
+  }
+  throw new Error("no out-of-range starting bridge edge found for test");
 };
 
 const advanceSetup = (state: GameState): GameState => {
@@ -502,6 +523,50 @@ describe("setup flow", () => {
     expect(afterRemove.payload.remaining["p1"]).toBe(2);
     expect(afterRemove.payload.selectedEdges["p1"]).not.toContain(p1EdgeA);
     expect(afterRemove.waitingFor).toContain("p1");
+  });
+
+  it("rejects starting bridges beyond distance 2 from the capital", () => {
+    let state = createNewGame(DEFAULT_CONFIG, 222, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    state = runUntilBlocked(state);
+    state = readyDeckPreview(state);
+    state = advanceSetup(state);
+    state = runUntilBlocked(state);
+    const slots = state.blocks?.payload.availableSlots ?? [];
+    const p1Slot = slots[0];
+    const p2Slot = slots[1] ?? slots[0];
+
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "pickCapital", hexKey: p1Slot } },
+      "p1"
+    );
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "pickCapital", hexKey: p2Slot } },
+      "p2"
+    );
+    state = runUntilBlocked(state);
+    state = advanceSetup(state);
+    state = runUntilBlocked(state);
+    expect(state.blocks?.type).toBe("setup.startingBridges");
+
+    const p1Capital = state.players.find((player) => player.id === "p1")?.capitalHex;
+    if (!p1Capital) {
+      throw new Error("missing p1 capital for starting bridge distance test");
+    }
+    const edgeKey = pickOutOfRangeEdge(p1Capital, state.board);
+
+    expect(() =>
+      applyCommand(
+        state,
+        { type: "SubmitSetupChoice", payload: { kind: "placeStartingBridge", edgeKey } },
+        "p1"
+      )
+    ).toThrowError(/distance 2/);
   });
 
   it("allows unpicking a free starting card before setup advances", () => {

@@ -543,10 +543,10 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
 
     const capitalCoord = parseHexKey(player.capitalHex);
     const withinRange =
-      axialDistance(capitalCoord, parseHexKey(rawA)) <= 2 ||
+      axialDistance(capitalCoord, parseHexKey(rawA)) <= 2 &&
       axialDistance(capitalCoord, parseHexKey(rawB)) <= 2;
     if (!withinRange) {
-      throw new Error("starting bridge must touch within distance 2 of capital");
+      throw new Error("starting bridge must be within distance 2 of capital");
     }
 
     if (block.payload.selectedEdges[playerId].includes(edgeKey)) {

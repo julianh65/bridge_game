@@ -411,7 +411,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] could we have an animation when we get gold
 - [x] could we have a small animation when we get a VP
 - [x] make slot 1, slot 2, slot n click the same button to unlock not a seperate unlock button in capital draft
-- [ ] i can still starting bridges up to 3 edges away, make it 2
+- [x] i can still starting bridges up to 3 edges away, make it 2
 - [x] allow me to adjust from config how many forces each faction starts with
 - [x] MAJOR: after hitting done with cipher it just lets me continuously quiet study and never lets me advance
 - [x] During setup phase the players connected and X still mess up the flow, make the overall players container just slightly wider
@@ -431,7 +431,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] on the player display in the table make the numbers of everyones gold, mana, and hand slightly larger and easier to read without messing up the flow
 - [x] cards like coordinated advance where it says up to 2 kind of force you to click twice in the UI, there’s no way to say okay just move 1
 - [x] deep mine charter didn’t increase my VPs, although I added it from debug to test, so confirm that getting those cards will increase your VP
-- [ ] after i played gold plater armor and there was a battle the entire game just froze and there was no battle, reading the console (not sure if related) I’m getting a lot of maximum update depth exceeded at gamescreen
+- [ ] after i played gold plated armor and there was a battle the entire game just froze and there was no battle, reading the console (not sure if related) I’m getting a lot of maximum update depth exceeded at gamescreen
 - [ ] I got 9 VP and nothing happened, it didn’t detect that I won and no screen popped up
 - [x] Be creative and add a balanced age 1 card of similar flavor to the Dice War Profiteer card
 - [x] Dice war profiteer during the reveal stage needs to auto roll a dice for everyone to see
@@ -442,6 +442,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] remove the how it works on the main screen and "core loop" container
 - [x] For cards that kind of "scale" like propoganda recruitment or future investment we need to represent on the card (in a very simple way, what the value would be if they played it is)
 - [x] Add a small countdown of how many rounds are left in the game
+- [ ] put the two debug board debug and battle debug under a little dropdown menu that's like debug
 
 
 

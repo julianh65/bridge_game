@@ -177,6 +177,10 @@ const getStartingBridgeOptions = (state: GameState, playerId: PlayerID): string[
       if (!state.board.hexes[neighborKey]) {
         continue;
       }
+      const neighborCoord = parseHexKey(neighborKey);
+      if (axialDistance(neighborCoord, capitalCoord) > 2) {
+        continue;
+      }
       candidates.add(getBridgeKey(hexKey, neighborKey));
     }
   }

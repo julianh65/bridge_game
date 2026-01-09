@@ -61,6 +61,10 @@ const buildSuggestedEdges = (
       if (!board.hexes[neighbor]) {
         continue;
       }
+      const neighborCoord = parseHexKey(neighbor);
+      if (axialDistance(neighborCoord, capitalCoord) > 2) {
+        continue;
+      }
       const edgeKey = getBridgeKey(hexKey as HexKey, neighbor as HexKey);
       if (seen.has(edgeKey) || placed.has(edgeKey)) {
         continue;
@@ -174,7 +178,8 @@ export const SetupStartingBridges = ({
     <section className="panel setup-bridges">
       <h2>Starting Bridges</h2>
       <p className="muted">
-        Place two bridges between adjacent hexes within distance two of your capital.
+        Place two bridges between adjacent hexes where both endpoints are within distance two of
+        your capital.
       </p>
       <div className="setup-bridges__summary">
         <div className="resource-row">
