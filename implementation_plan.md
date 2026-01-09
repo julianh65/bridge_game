@@ -416,7 +416,7 @@ Start going through the rules_draft and adding the logic for the different types
   - [x] Focus Fire hit assignment control.
   - [x] Tactical Hand hit assignment control.
 - [x] Add multi-target/multi-stack actions (move two stacks, build multiple bridges, deploy to multiple mines).
-- [ ] Add variable VP sources (Victory +2, center-based VP, timer VP).
+- [x] Add variable VP sources (Victory +2, center-based VP, timer VP).
 - [ ] Add champion recall + removal effects (return champion to hand, on-death penalties).
 - [ ] Add deckcraft primitives: draw/discard mixes, discard up to N, burn from hand, conditional draw, scry/topdeck (Quick Study, Cycle Notes, Hard Mulligan, Tome of Orders, War Chronicle, Precise Planning, Small Hands, Spellcaster).
   - [x] Precise Planning (draw pile empty conditional draw + mana).
@@ -425,7 +425,7 @@ Start going through the rules_draft and adding the logic for the different types
   - [x] Spoils of War (battle-win gold).
   - [x] Smuggling Ring (enemy capital bonus gold).
   - [x] Pulling Strings (other-players battle gold).
-  - [ ] Market Squeeze (opponent gold steal).
+  - [x] Market Squeeze (opponent gold steal).
 - [ ] Add scaling/permanent counters tied to card state (Propaganda Recruitment, Future Investment).
 - [ ] Add bridge manipulation suite: build multiple bridges, destroy adjacent/any bridges, pivot, temporary bridges, bridge lockdown/trap.
   - [x] Destroy bridge effect (adjacent/occupied-edge).
@@ -562,7 +562,7 @@ Done
       - [x] Guild Favor.
       - [ ] TBD: missing Age II economy entry after rules audit.
     - [ ] Age II Deckcraft card defs (5).
-    - [ ] Cycle Protocol.
+    - [x] Cycle Protocol.
     - [x] Insight.
     - [x] Clean Cuts.
     - [x] Stall.

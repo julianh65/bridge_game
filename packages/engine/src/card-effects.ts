@@ -15,6 +15,7 @@ import {
   getEdgeKeyTargets,
   getMovePathTarget,
   getMultiPathTargets,
+  getPlayerIdTarget,
   type TargetRecord
 } from "./card-effects-targets";
 import {
@@ -37,6 +38,7 @@ import {
   validateMovePath
 } from "./card-effects-movement";
 import { resolveChampionCardPlay, resolveUnitEffect } from "./card-effects-units";
+import { resolveVictoryEffect } from "./card-effects-victory";
 import { countPlayerChampions } from "./units";
 import { resolveCapitalDeployHex } from "./deploy-utils";
 import { markPlayerMovedThisRound } from "./player-flags";
@@ -53,10 +55,12 @@ const SUPPORTED_TARGET_KINDS = new Set([
   "champion",
   "choice",
   "hex",
-  "hexPair"
+  "hexPair",
+  "player"
 ]);
 const SUPPORTED_EFFECTS = new Set([
   "gainGold",
+  "stealGold",
   "gainMana",
   "gainManaIfTile",
   "drawCards",
@@ -66,6 +70,7 @@ const SUPPORTED_EFFECTS = new Set([
   "drawCardsIfHandEmpty",
   "drawCardsIfDrawPileEmpty",
   "gainManaIfDrawPileEmpty",
+  "spellcaster",
   "discardFromHand",
   "burnFromHand",
   "scoutReport",
@@ -91,6 +96,7 @@ const SUPPORTED_EFFECTS = new Set([
   "holdTheLine",
   "markForCoin",
   "topdeckFromHand",
+  "centerVpOnRoundEnd",
   "ward",
   "immunityField",
   "lockBridge",
@@ -141,6 +147,20 @@ export const isCardPlayable = (
       return false;
     }
     if (countPlayerChampions(state.board, playerId) >= state.config.CHAMPION_LIMIT) {
+      return false;
+    }
+  }
+  const minManaRequirement = (card.effects ?? []).reduce((current, effect) => {
+    if (effect.kind !== "centerVpOnRoundEnd") {
+      return current;
+    }
+    const rawMin = (effect as TargetRecord).minMana;
+    const required = typeof rawMin === "number" ? Math.floor(rawMin) : 0;
+    return Math.max(current, required);
+  }, 0);
+  if (minManaRequirement > 0) {
+    const player = state.players.find((entry) => entry.id === playerId);
+    if (!player || player.resources.mana < minManaRequirement) {
       return false;
     }
   }
@@ -460,6 +480,28 @@ export const isCardPlayable = (
     return !wouldExceedTwoPlayers(capitalHex, playerId);
   }
 
+  if (card.targetSpec.kind === "player") {
+    const targetPlayerId = getPlayerIdTarget(targets ?? null);
+    if (!targetPlayerId) {
+      return false;
+    }
+    if (!state.players.some((player) => player.id === targetPlayerId)) {
+      return false;
+    }
+    const targetSpec = card.targetSpec as TargetRecord;
+    const owner = typeof targetSpec.owner === "string" ? targetSpec.owner : "enemy";
+    if (owner === "self") {
+      return targetPlayerId === playerId;
+    }
+    if (owner === "enemy") {
+      return targetPlayerId !== playerId;
+    }
+    if (owner === "any") {
+      return true;
+    }
+    return false;
+  }
+
   if (card.targetSpec.kind === "choice") {
     const choice = getChoiceTarget(targets ?? null);
     if (!choice) {
@@ -516,6 +558,11 @@ export const resolveCardEffects = (
     const economyResult = resolveEconomyEffect(nextState, playerId, effect, targets ?? null);
     if (economyResult !== null) {
       nextState = economyResult;
+      continue;
+    }
+    const victoryResult = resolveVictoryEffect(nextState, playerId, card, effect, targets ?? null);
+    if (victoryResult !== null) {
+      nextState = victoryResult;
       continue;
     }
     const unitResult = resolveUnitEffect(nextState, playerId, card, effect, targets ?? null);

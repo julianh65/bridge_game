@@ -576,6 +576,7 @@ export const GameScreen = ({
   const targetRecord = useMemo(() => parseTargets(cardTargetsRaw), [cardTargetsRaw]);
   const selectedChampionId =
     getTargetString(targetRecord, "unitId") ?? getTargetString(targetRecord, "championId");
+  const selectedTargetPlayerId = getTargetString(targetRecord, "playerId");
 
   const selectedCard = handCards.find((card) => card.id === cardInstanceId) ?? null;
   const selectedCardDef = selectedCard
@@ -983,8 +984,24 @@ export const GameScreen = ({
           : Number.POSITIVE_INFINITY;
       return count >= minPaths && count <= maxPaths;
     }
+    if (cardTargetKind === "player") {
+      if (!selectedTargetPlayerId) {
+        return false;
+      }
+      const owner = typeof targetSpec.owner === "string" ? targetSpec.owner : "enemy";
+      if (!localPlayerId) {
+        return owner === "any";
+      }
+      if (owner === "self") {
+        return selectedTargetPlayerId === localPlayerId;
+      }
+      if (owner === "enemy") {
+        return selectedTargetPlayerId !== localPlayerId;
+      }
+      return owner === "any";
+    }
     return true;
-  }, [cardTargetKind, selectedCardDef, targetRecord]);
+  }, [cardTargetKind, localPlayerId, selectedCardDef, selectedTargetPlayerId, targetRecord]);
   const canPlayCard =
     canSubmitAction &&
     trimmedCardId.length > 0 &&
@@ -3278,6 +3295,24 @@ export const GameScreen = ({
   const selectedChampionHexLabel = selectedChampion
     ? hexLabels[selectedChampion.hex] ?? selectedChampion.hex
     : null;
+  const playerTargetOptions = useMemo(() => {
+    if (!selectedCardDef || cardTargetKind !== "player") {
+      return [];
+    }
+    const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
+    const owner = typeof targetSpec.owner === "string" ? targetSpec.owner : "enemy";
+    return view.public.players.filter((player) => {
+      if (owner === "self") {
+        return player.id === localPlayerId;
+      }
+      if (owner === "enemy") {
+        return player.id !== localPlayerId;
+      }
+      return true;
+    });
+  }, [cardTargetKind, localPlayerId, selectedCardDef, view.public.players]);
+  const selectedTargetPlayer =
+    playerTargetOptions.find((player) => player.id === selectedTargetPlayerId) ?? null;
   const edgeMoveLabel = edgeMoveMode === "cardPath" ? "Path" : "Stack";
   const topdeckPanel =
     selectedCardDef && topdeckCount > 0 ? (
@@ -3383,6 +3418,47 @@ export const GameScreen = ({
           {selectedHandCardIds.length > 0
             ? `Selected: ${selectedHandLabels.join(", ")}`
             : "No cards selected."}
+        </p>
+      </div>
+    ) : null;
+  const playerTargetPanel =
+    selectedCardDef && cardTargetKind === "player" ? (
+      <div className="hand-targets">
+        <div className="hand-targets__header">
+          <strong>Target player</strong>
+          <span className="hand-targets__meta">
+            {selectedTargetPlayer ? "Selected" : "Pick 1"}
+          </span>
+        </div>
+        <p className="hand-targets__hint">
+          {playerTargetOptions.length > 0
+            ? "Choose a player to target."
+            : "No eligible players."}
+        </p>
+        <div className="hand-targets__actions">
+          {playerTargetOptions.map((player) => (
+            <button
+              key={player.id}
+              type="button"
+              className={`btn btn-tertiary${
+                player.id === selectedTargetPlayerId ? " is-active" : ""
+              }`}
+              onClick={() => setCardTargetsObject({ playerId: player.id })}
+            >
+              {player.id === localPlayerId ? `${player.name} (You)` : player.name}
+            </button>
+          ))}
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={!selectedTargetPlayerId}
+            onClick={() => setCardTargetsObject(null)}
+          >
+            Clear
+          </button>
+        </div>
+        <p className="hand-targets__selected">
+          {selectedTargetPlayer ? `Selected: ${selectedTargetPlayer.name}` : "No player selected."}
         </p>
       </div>
     ) : null;
@@ -3555,6 +3631,7 @@ export const GameScreen = ({
     topdeckPanel ||
     handDiscardPanel ||
     handBurnPanel ||
+    playerTargetPanel ||
     edgeMovePanel ||
     multiEdgePanel ||
     multiPathPanel ||
@@ -3563,6 +3640,7 @@ export const GameScreen = ({
         {topdeckPanel}
         {handDiscardPanel}
         {handBurnPanel}
+        {playerTargetPanel}
         {edgeMovePanel}
         {multiEdgePanel}
         {multiPathPanel}

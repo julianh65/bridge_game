@@ -429,9 +429,23 @@ export const PRECISE_PLANNING: CardDef = {
   burn: false,
   targetSpec: { kind: "none" },
   effects: [
-    { kind: "drawCardsIfDrawPileEmpty", count: 3 },
-    { kind: "gainManaIfDrawPileEmpty", amount: 1 }
+    { kind: "gainManaIfDrawPileEmpty", amount: 1 },
+    { kind: "drawCardsIfDrawPileEmpty", count: 3 }
   ]
+};
+
+export const SPELLCASTER: CardDef = {
+  id: "age1.spellcaster",
+  name: "Spellcaster",
+  rulesText: "Draw 1 card. If it is a Spell, draw 2 more.",
+  type: "Spell",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1 },
+  initiative: 70,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "spellcaster" }]
 };
 
 export const SUPPLY_LEDGER: CardDef = {
@@ -703,6 +717,7 @@ export const AGE1_CARDS: CardDef[] = [
   QUICK_STUDY,
   MAKE_A_PLAY,
   PAID_LOGISTICS,
+  SPELLCASTER,
   SMALL_HANDS,
   PRECISE_PLANNING,
   SUPPLY_LEDGER,

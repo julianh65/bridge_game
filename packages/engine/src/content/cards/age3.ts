@@ -126,6 +126,20 @@ export const ROYAL_MINT: CardDef = {
   effects: [{ kind: "gainGold", amount: 5 }]
 };
 
+export const MARKET_SQUEEZE: CardDef = {
+  id: "age3.market_squeeze",
+  name: "Market Squeeze",
+  rulesText: "Choose an opponent. They lose up to 3 gold; you gain that much.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 2 },
+  initiative: 45,
+  burn: false,
+  targetSpec: { kind: "player", owner: "enemy" },
+  effects: [{ kind: "stealGold", amount: 3 }]
+};
+
 export const BLACK_MARKET_PULL: CardDef = {
   id: "age3.black_market_pull",
   name: "Black Market Pull",
@@ -344,6 +358,22 @@ export const FINAL_OATH: CardDef = {
   effects: [{ kind: "healChampion", amount: 2 }]
 };
 
+export const TIMER: CardDef = {
+  id: "age3.timer",
+  name: "Timer",
+  rulesText:
+    "Must be played with 5+ mana. End of round: if you occupy the Center, gain 3 VP. Burn.",
+  type: "Victory",
+  victoryPoints: 1,
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 3 },
+  initiative: 35,
+  burn: true,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "centerVpOnRoundEnd", amount: 3, minMana: 5 }]
+};
+
 export const MONUMENT_PLAN: CardDef = {
   id: "age3.monument_plan",
   name: "Monument Plan",
@@ -539,6 +569,7 @@ export const AGE3_CARDS: CardDef[] = [
   ENDLESS_CONSCRIPTION,
   FORWARD_LEGION,
   ROYAL_MINT,
+  MARKET_SQUEEZE,
   BLACK_MARKET_PULL,
   PULLING_STRINGS,
   TOME_OF_ORDERS,
@@ -552,6 +583,7 @@ export const AGE3_CARDS: CardDef[] = [
   RUIN_THE_SPAN,
   CONQUEST_RECORD,
   FINAL_OATH,
+  TIMER,
   MONUMENT_PLAN,
   LOGISTICS_OFFICER,
   TITAN_VANGUARD,

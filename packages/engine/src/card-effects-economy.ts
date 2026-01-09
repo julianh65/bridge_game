@@ -2,7 +2,7 @@ import { randInt } from "@bridgefront/shared";
 
 import { getCardDef } from "./content/cards";
 import type { EffectSpec } from "./content/cards/types";
-import type { Age, CardPlayTargets, GameState, PlayerID, TileType } from "./types";
+import type { Age, CardInstanceID, CardPlayTargets, GameState, PlayerID, TileType } from "./types";
 import {
   addCardToBurned,
   addCardToDiscardPile,
@@ -115,6 +115,38 @@ const playerOccupiesEnemyCapital = (state: GameState, playerId: PlayerID): boole
     return (hex.occupants[playerId]?.length ?? 0) > 0;
   });
 };
+
+const isDrawPileEmpty = (state: GameState, playerId: PlayerID): boolean => {
+  const player = state.players.find((entry) => entry.id === playerId);
+  if (!player) {
+    return false;
+  }
+  return player.deck.drawPile.length === 0;
+};
+
+const drawCardsWithIds = (
+  state: GameState,
+  playerId: PlayerID,
+  count: number
+): { state: GameState; cards: CardInstanceID[] } => {
+  if (count <= 0) {
+    return { state, cards: [] };
+  }
+  let nextState = state;
+  const cards: CardInstanceID[] = [];
+  for (let i = 0; i < count; i += 1) {
+    const taken = takeTopCards(nextState, playerId, 1);
+    nextState = taken.state;
+    const cardId = taken.cards[0];
+    if (!cardId) {
+      break;
+    }
+    cards.push(cardId);
+    nextState = addCardToHandWithOverflow(nextState, playerId, cardId);
+  }
+  return { state: nextState, cards };
+};
+
 
 export const resolveEconomyEffect = (
   state: GameState,
@@ -281,33 +313,44 @@ export const resolveEconomyEffect = (
       return drawCards(nextState, playerId, count);
     }
     case "drawCardsIfDrawPileEmpty": {
-      const count = typeof effect.count === "number" ? effect.count : 0;
+      const count = typeof effect.count === "number" ? Math.max(0, Math.floor(effect.count)) : 0;
       if (count <= 0) {
         return nextState;
       }
-      const player = nextState.players.find((entry) => entry.id === playerId);
-      if (!player) {
-        return nextState;
-      }
-      if (player.deck.drawPile.length > 0) {
+      if (!isDrawPileEmpty(nextState, playerId)) {
         return nextState;
       }
       return drawCards(nextState, playerId, count);
     }
+
     case "gainManaIfDrawPileEmpty": {
-      const amount = typeof effect.amount === "number" ? effect.amount : 0;
+      const amount =
+        typeof effect.amount === "number" ? Math.max(0, Math.floor(effect.amount)) : 0;
       if (amount <= 0) {
         return nextState;
       }
-      const player = nextState.players.find((entry) => entry.id === playerId);
-      if (!player) {
-        return nextState;
-      }
-      if (player.deck.drawPile.length > 0) {
+      if (!isDrawPileEmpty(nextState, playerId)) {
         return nextState;
       }
       return addMana(nextState, playerId, amount);
     }
+
+    case "spellcaster": {
+      const firstDraw = drawCardsWithIds(nextState, playerId, 1);
+      nextState = firstDraw.state;
+      const cardId = firstDraw.cards[0];
+      if (!cardId) {
+        return nextState;
+      }
+      const defId = nextState.cardsByInstanceId[cardId]?.defId;
+      const cardDef = defId ? getCardDef(defId) : null;
+      if (cardDef?.type !== "Spell") {
+        return nextState;
+      }
+      const extraDraw = drawCardsWithIds(nextState, playerId, 2);
+      return extraDraw.state;
+    }
+
     case "topdeckFromHand": {
       const count = typeof effect.count === "number" ? Math.max(0, Math.floor(effect.count)) : 1;
       if (count <= 0) {

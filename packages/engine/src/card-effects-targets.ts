@@ -166,3 +166,9 @@ export const getCardInstanceTargets = (targets: CardPlayTargets): string[] => {
   const id = record?.cardInstanceId;
   return typeof id === "string" && id.length > 0 ? [id] : [];
 };
+
+export const getPlayerIdTarget = (targets: CardPlayTargets): string | null => {
+  const record = getTargetRecord(targets);
+  const playerId = record?.playerId ?? record?.targetPlayerId;
+  return typeof playerId === "string" && playerId.length > 0 ? playerId : null;
+};
