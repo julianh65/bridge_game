@@ -441,7 +441,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] add a cool favicon
 - [x] remove the how it works on the main screen and "core loop" container
 - [x] For cards that kind of "scale" like propoganda recruitment or future investment we need to represent on the card (in a very simple way, what the value would be if they played it is)
-- [ ] Add a small countdown of how many rounds are left in the game
+- [x] Add a small countdown of how many rounds are left in the game
 
 
 

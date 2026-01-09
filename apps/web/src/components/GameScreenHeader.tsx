@@ -7,6 +7,7 @@ type GameScreenHeaderProps = {
   phase: string;
   phaseLabel: string;
   round: number;
+  roundsMax: number;
   roomId: string;
   playerCount: number;
   winnerPlayerId: string | null;
@@ -34,6 +35,7 @@ export const GameScreenHeader = ({
   phase,
   phaseLabel,
   round,
+  roundsMax,
   roomId,
   playerCount,
   winnerPlayerId,
@@ -104,6 +106,8 @@ export const GameScreenHeader = ({
 
   const showConnectionStatus = connectionLabel !== "Live";
   const activePhaseIndex = PHASE_TRACKER_STEPS.findIndex((step) => step.key === phase);
+  const roundsLeft = Math.max(0, roundsMax - round + 1);
+  const roundsLeftLabel = roundsLeft <= 1 ? "Final round" : `Rounds left: ${roundsLeft}`;
   const resourceChips =
     localGold === null && localVpTotal === null ? null : (
       <div className="game-screen__resources">
@@ -178,6 +182,7 @@ export const GameScreenHeader = ({
             ) : null}
             {phaseTracker}
             <span className="status-pill">Round {round}</span>
+            <span className="status-pill">{roundsLeftLabel}</span>
           </div>
           <div className="game-screen__collapsed-actions">
             <button type="button" className="btn btn-tertiary" onClick={onToggle}>
@@ -202,6 +207,7 @@ export const GameScreenHeader = ({
             ) : null}
             <span className="status-pill status-pill--phase">Phase: {phaseLabel}</span>
             <span className="status-pill">Round {round}</span>
+            <span className="status-pill">{roundsLeftLabel}</span>
             <span className="status-pill">Players: {playerCount}</span>
             {winnerPlayerId ? (
               <span className="status-pill status-pill--winner">Winner: {winnerPlayerId}</span>

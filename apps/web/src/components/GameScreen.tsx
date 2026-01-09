@@ -4578,6 +4578,7 @@ export const GameScreen = ({
         phase={view.public.phase}
         phaseLabel={phaseLabel}
         round={view.public.round}
+        roundsMax={view.public.config.ROUNDS_MAX}
         roomId={roomId}
         playerCount={view.public.players.length}
         winnerPlayerId={view.public.winnerPlayerId ?? null}
