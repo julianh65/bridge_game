@@ -409,7 +409,7 @@ Start going through the rules_draft and adding the logic for the different types
   - [x] Wormhole links (treat two hexes as adjacent for a round).
   - [x] Tunnel network adjacency (non-passive card effects).
 - [x] Add hit-assignment control + battle retreat effects (Focus Fire, Tactical Hand, Set to Skirmish).
-- [ ] UI: manual hit assignment prompt when Tactical Hand/Focus Fire are active (select targets for assigned hits).
+<!-- - [ ] UI: manual hit assignment prompt when Tactical Hand/Focus Fire are active (select targets for assigned hits). -->
   - [x] Set to Skirmish retreat-on-battle modifier.
   - [x] Focus Fire hit assignment control.
   - [x] Tactical Hand hit assignment control.
@@ -442,7 +442,8 @@ Start going through the rules_draft and adding the logic for the different types
 - [x] UI: enforce `stopOnOccupied` during path selection (Column Advance): block path continuation past occupied hexes and surface a hint.
 - [x] UI: enforce champion targeting constraints in picker (`requiresFriendlyChampion`, `maxDistance`) for Marked for Coin + Execution Order.
 - [x] UI: Mortar Shot targeting helpers (force-range gating + scatter preview ring) and block invalid picks.
-- [ ] UI: manual hit assignment overlay for Focus Fire + Tactical Hand (pick targets for assigned hits, show remaining hits).
+<!-- - [ ] UI: manual hit assignment overlay for Focus Fire + Tactical Hand (pick targets for assigned hits, show remaining hits). -->
+- [ ] Future: add manual hit assignment UI flow for Focus Fire + Tactical Hand (combat selection + sync), then re-enable those cards.
 - [x] Engine: decide on no-op orders (Stall) — allow playable no-effect cards or remove the card.
 
 

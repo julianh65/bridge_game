@@ -854,7 +854,7 @@ export const AGE2_CARDS: CardDef[] = [
   FORWARD_BARRACKS,
   CONSCRIPTION_DRIVE,
   MINER_ARMY,
-  FOCUS_FIRE,
+  // TODO: Focus Fire disabled until manual hit assignment UI lands.
   SLOW,
   WARD,
   FRENZY,

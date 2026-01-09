@@ -558,6 +558,6 @@ export const AGE3_CARDS: CardDef[] = [
   CENTER_BANNERMAN,
   BLOOD_BANKER,
   STORMCALLER,
-  GRAND_STRATEGIST,
+  // TODO: Grand Strategist disabled until manual hit assignment UI lands.
   CAPITAL_BREAKER
 ];
