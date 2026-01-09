@@ -25,6 +25,7 @@
 - Compressed setup player status pills into a stacked layout with a compact ready indicator. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
 - Hid the force stack marker when a hex only has champions, centering champion tokens instead. (File: `apps/web/src/components/BoardView.tsx`.) (owner: agent2)
 - Quiet Study submissions now always register (no-op selections no longer get ignored); marked the plan item complete. (Files: `packages/engine/src/round-flow.ts`, `implementation_plan.md`.) (owner: agent2)
+- Increased card rules text size slightly for readability. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Anchored the hand cards to the bottom of the hand panel so Bridge Crew target popups no longer shift the row. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Enabled champion-only moves (forceCount 0) and bridge-bypass targeting so Skystriker/Bridge Runner can move without bridges when selected; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Enabled map-based combat retreat selection by highlighting valid retreat hexes, allowing board clicks to submit retreat choices, and letting the retreat overlay pass clicks through to the board; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5)
