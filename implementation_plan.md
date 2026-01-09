@@ -488,6 +488,7 @@ Start going through the rules_draft and adding the logic for the different types
   - [x] Forge Miracle grants burn/cost/initiative overrides on generated cards.
 - [x] Bridge crew is supposed to let you immediately move over the bridge you are going to construct
 - [ ] I still don't see the champion gold scaling with /'s inbetween the cost for the n'th champion, and validate that logic works
+- [ ] Let the user from the setup screen (host) set VP to win as well as max mana
 
 
 ### Punchlist — Done cards blocked by UI/validation
@@ -565,6 +566,7 @@ Done
         - [x] Rapid Reinforcements.
         - [x] A Hero Joins the Battle.
         - [x] Audit Immunity Field rules alignment (targeting + duration).
+        - [x] Audit A Hero Joins the Battle rules alignment (random 2-mana champion to capital).
       - [x] Age II Power Victory (4).
         - [x] Writ of Industry.
         - [x] Bridge Charter.
