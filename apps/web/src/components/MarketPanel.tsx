@@ -9,7 +9,7 @@ import { NumberRoll } from "./NumberRoll";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 
-type MarketWinnerHighlight = {
+export type MarketWinnerHighlight = {
   cardId: string;
   cardIndex: number | null;
   playerId: string | null;

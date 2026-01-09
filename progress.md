@@ -22,6 +22,9 @@
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
 - Added explicit power pick (power deck) card checklist tasks from `rules_draft.md` to `implementation_plan.md`, including missing-entry audit placeholders.
 
+## Refactor Milestone progress
+- Extracted market/collection overlay rendering into `apps/web/src/components/GameScreenOverlays.tsx` and shared the market winner highlight type; updated the refactor milestone checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenOverlays.tsx`, `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.)
+
 ## Mini Milestone For Me progress
 - Added a dev-only Card Editor view with inline numeric edits, copy flow, initiative tools (collision listing + decollide/compress), and patch export; wired into the app nav and documented in the plan checklist. (Files: `apps/web/src/components/CardEditor.tsx`, `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` overlaps agent2/agent4 scope.)
 - Moved Card Editor filters to the top layout and adjusted the editor grid to keep the tool panel separate from gameplay views. (Files: `apps/web/src/components/CardEditor.tsx`, `apps/web/src/styles.css`.) (Overlap note: `apps/web/src/styles.css` overlaps agent2/agent4 scope.)

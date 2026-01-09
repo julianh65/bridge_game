@@ -25,15 +25,18 @@ import {
 import { type BasicActionIntent, type BoardPickMode } from "./ActionPanel";
 import { ActionRevealOverlay, type ActionRevealOverlayData } from "./ActionRevealOverlay";
 import { BoardView, type BoardActionAnimation } from "./BoardView";
-import { CollectionPanel } from "./CollectionPanel";
 import { CombatOverlay } from "./CombatOverlay";
 import { CombatRetreatOverlay } from "./CombatRetreatOverlay";
 import { GameScreenHandPanel } from "./GameScreenHandPanel";
 import { GameScreenHeader } from "./GameScreenHeader";
+import {
+  GameScreenCollectionOverlay,
+  GameScreenMarketOverlay
+} from "./GameScreenOverlays";
 import { GameScreenSidebar } from "./GameScreenSidebar";
 import { ForceSplitPopover } from "./ForceSplitPopover";
 import { HandCardPickerModal } from "./HandCardPickerModal";
-import { MarketPanel } from "./MarketPanel";
+import type { MarketWinnerHighlight } from "./MarketPanel";
 import { VictoryScreen } from "./VictoryScreen";
 import { buildHexRender } from "../lib/board-preview";
 import { extractCombatSequences, type CombatSequence } from "../lib/combat-log";
@@ -54,18 +57,6 @@ type ChampionTargetOption = {
   hex: string;
   hp: number;
   maxHp: number;
-};
-
-type MarketWinnerHighlight = {
-  cardId: string;
-  cardIndex: number | null;
-  playerId: string | null;
-  playerName: string;
-  kind: "buy" | "pass";
-  amount: number | null;
-  passPot: number | null;
-  rollOff: Array<Record<string, number>> | null;
-  rollOffKey: number;
 };
 
 type CardRevealTargetInfo = {
@@ -3344,41 +3335,24 @@ export const GameScreen = ({
   const collectionToggleLabel = showCollectionOverlay
     ? "Hide Collection"
     : "Show Collection";
-  const collectionOverlay = isCollectionPhase ? (
-    <>
-      {showCollectionOverlay ? (
-        <div className="collection-overlay" role="dialog" aria-modal="true">
-          <div className="collection-overlay__scrim" />
-          <div className="collection-overlay__panel">
-            <CollectionPanel
-              phase={view.public.phase}
-              player={localPlayer ?? null}
-              players={view.public.players}
-              status={status}
-              handCards={handCards}
-              collectionPublic={view.public.collection}
-              collectionPrivate={view.private?.collection ?? null}
-              labelByHex={hexLabels}
-              onSubmitChoices={onSubmitCollectionChoices}
-            />
-          </div>
-        </div>
-      ) : null}
-      {showCollectionOverlayToggle ? (
-        <button
-          type="button"
-          className={`btn btn-primary collection-overlay__toggle${
-            showCollectionOverlay ? " is-active" : ""
-          }`}
-          data-sfx="soft"
-          aria-pressed={showCollectionOverlay}
-          onClick={toggleCollectionOverlay}
-        >
-          {collectionToggleLabel}
-        </button>
-      ) : null}
-    </>
-  ) : null;
+  const collectionOverlay = (
+    <GameScreenCollectionOverlay
+      isActive={isCollectionPhase}
+      isOpen={showCollectionOverlay}
+      showToggle={showCollectionOverlayToggle}
+      toggleLabel={collectionToggleLabel}
+      onToggle={toggleCollectionOverlay}
+      phase={view.public.phase}
+      player={localPlayer ?? null}
+      players={view.public.players}
+      status={status}
+      handCards={handCards}
+      collectionPublic={view.public.collection}
+      collectionPrivate={view.private?.collection ?? null}
+      labelByHex={hexLabels}
+      onSubmitChoices={onSubmitCollectionChoices}
+    />
+  );
 
   const showMarketOverlayToggle = isMarketPhase;
   const showDeckToggle = Boolean(onOpenDeck && view.private);
@@ -3387,45 +3361,28 @@ export const GameScreen = ({
     : showMarketOverlay
       ? "Hide Market"
       : "Show Market";
-  const marketOverlay = isMarketPhase || shouldHoldMarketOverlay ? (
-    <>
-      {showMarketOverlay ? (
-        <div className="market-overlay" role="dialog" aria-modal="true">
-          <div className="market-overlay__scrim" />
-          <div className="market-overlay__panel">
-            <MarketPanel
-              layout="overlay"
-              market={view.public.market}
-              players={view.public.players}
-              phase={view.public.phase}
-              player={localPlayer ?? null}
-              status={status}
-              onSubmitBid={onSubmitMarketBid}
-              onSubmitRollOff={onSubmitMarketRollOff}
-              winnerHighlight={marketWinner}
-              winnerHistory={marketWinnerHistory}
-              rollDurationMs={view.public.config.MARKET_ROLLOFF_DURATION_MS}
-              onClose={isMarketPhase ? () => setIsMarketOverlayOpen(false) : undefined}
-            />
-          </div>
-        </div>
-      ) : null}
-      {showMarketOverlayToggle ? (
-        <button
-          type="button"
-          className={`btn btn-primary market-overlay__toggle${
-            showMarketOverlay ? " is-active" : ""
-          }`}
-          data-sfx="soft"
-          aria-pressed={showMarketOverlay}
-          onClick={toggleMarketOverlay}
-          disabled={!canToggleMarketOverlay}
-        >
-          {marketToggleLabel}
-        </button>
-      ) : null}
-    </>
-  ) : null;
+  const marketOverlay = (
+    <GameScreenMarketOverlay
+      isActive={isMarketPhase}
+      shouldHoldOpen={shouldHoldMarketOverlay}
+      isOpen={showMarketOverlay}
+      showToggle={showMarketOverlayToggle}
+      toggleLabel={marketToggleLabel}
+      canToggle={canToggleMarketOverlay}
+      onToggle={toggleMarketOverlay}
+      market={view.public.market}
+      players={view.public.players}
+      phase={view.public.phase}
+      player={localPlayer ?? null}
+      status={status}
+      onSubmitBid={onSubmitMarketBid}
+      onSubmitRollOff={onSubmitMarketRollOff}
+      winnerHighlight={marketWinner}
+      winnerHistory={marketWinnerHistory}
+      rollDurationMs={view.public.config.MARKET_ROLLOFF_DURATION_MS}
+      onClose={isMarketPhase ? () => setIsMarketOverlayOpen(false) : undefined}
+    />
+  );
 
   const logContent =
     view.public.logs.length === 0 ? (
