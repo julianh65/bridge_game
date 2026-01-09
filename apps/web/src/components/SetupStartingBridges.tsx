@@ -187,6 +187,12 @@ export const SetupStartingBridges = ({
             <strong>{localRemaining}</strong>
           </div>
         ) : null}
+        {playerId ? (
+          <div className="resource-row">
+            <span>Selected</span>
+            <strong>{localPlaced.length}</strong>
+          </div>
+        ) : null}
       </div>
       <div className="setup-bridges__board">
         <BoardView

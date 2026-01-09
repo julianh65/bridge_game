@@ -17,6 +17,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- owner: agent1; scope: implement server-synced market roll-off clicks (engine roll-off block + UI command wiring); files: `packages/engine/src/types.ts`, `packages/engine/src/market.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/market.test.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/round-flow.test.ts` (if needed), `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/App.tsx`; status: in progress (overlap: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/App.tsx`, `packages/engine/src/types.ts` are in other agents' scopes; keeping edits minimal).
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -607,6 +608,7 @@ none
 - Added a dev-only auto-setup command on the server (host-only) to auto-pick setup choices for faster testing.
 - GameView now exposes setup block info (public setup payload + private free-card offers) to support setup UI.
 - Added setup lobby UI for starting bridges (edge input + suggested edges + per-player status).
+- Added selected-bridge count in the starting bridges summary to clarify picks remaining. (File: `apps/web/src/components/SetupStartingBridges.tsx`.) (owner: agent2)
 - Added setup lobby UI for free starting card picks (private offers + pick status).
 - Added a host-only auto-setup button in the setup lobby.
 
