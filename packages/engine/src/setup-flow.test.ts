@@ -30,19 +30,29 @@ const advanceThroughMarket = (state: GameState): GameState => {
       continue;
     }
 
-    if (nextState.blocks.type !== "market.bidsForCard") {
-      throw new Error(`unexpected block during market: ${nextState.blocks.type}`);
+    if (nextState.blocks.type === "market.bidsForCard") {
+      for (const playerId of nextState.blocks.waitingFor) {
+        nextState = applyCommand(
+          nextState,
+          { type: "SubmitMarketBid", payload: { kind: "pass", amount: 0 } },
+          playerId
+        );
+      }
+
+      nextState = runUntilBlocked(nextState);
+      continue;
     }
 
-    for (const playerId of nextState.blocks.waitingFor) {
-      nextState = applyCommand(
-        nextState,
-        { type: "SubmitMarketBid", payload: { kind: "pass", amount: 0 } },
-        playerId
-      );
+    if (nextState.blocks.type === "market.rollOff") {
+      for (const playerId of nextState.blocks.waitingFor) {
+        nextState = applyCommand(nextState, { type: "SubmitMarketRollOff" }, playerId);
+      }
+
+      nextState = runUntilBlocked(nextState);
+      continue;
     }
 
-    nextState = runUntilBlocked(nextState);
+    throw new Error(`unexpected block during market: ${nextState.blocks.type}`);
   }
 
   return nextState;

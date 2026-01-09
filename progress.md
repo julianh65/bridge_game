@@ -17,7 +17,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent1; scope: investigate failing engine tests (market deck sizing/mismatches) and fix; files: `packages/engine/src/market.test.ts`, `packages/engine/src/content/market-decks.ts`, `packages/engine/src/content/market-decks.test.ts`, `packages/engine/src/market.ts`; status: in progress
+ 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -648,6 +648,7 @@ none
 - Added quick bid buttons (1-4) in the Market panel to set common bid amounts faster.
 - Implemented market bidding block (buy/pass, tie-break roll-offs, pass pot, one-win-per-round) with command handling + resolution, added market bidding tests, and updated setup/action tests to auto-resolve market.
 - Added power deck scaffolding + init (currently seeded from market deck lists as a placeholder), and center picks now draw from power decks; updated collection resolution/tests accordingly.
+- Updated market/setup/action test helpers to handle `market.rollOff` blocks and aligned market/power deck init expectations with new deck lists. (Files: `packages/engine/src/action-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/market.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- action-flow.test.ts setup-flow.test.ts market.test.ts`.)
 - Added a collection sidebar panel that renders mine/forge/center prompts and submits `SubmitCollectionChoices` commands.
 - Aligned the collection panel props with `GameScreen` and added collection prompt styles in `apps/web/src/styles.css`.
 - Removed mine draft from collection: mines now auto-collect gold in engine, collection prompts/UI only cover forge + center, and docs/plan/tests were updated. (Files: `packages/engine/src/round-flow.ts`, `packages/engine/src/types.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `apps/web/src/components/CollectionPanel.tsx`, `apps/server/src/server.ts`, `rules_draft.md`, `technical_spec.md`, `implementation_plan.md`.)
