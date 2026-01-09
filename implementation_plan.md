@@ -723,6 +723,7 @@ Done
   - [x] Age I market: Paid Volunteers / National Service recruit coverage.
   - [x] Age I market: Small Hands (draw 3 if last card).
   - [x] Age I market: Roll Out (move two stacks).
+  - [x] Starter: Bridge Crew build + move across a newly built bridge.
   - [ ] Age II/III market + power deck card tests (as content lands).
     - [x] Age II market: Deep Shaft Rig (mine value bump + force deploy).
     - [x] Age II market: Rally Where You Stand (deploy to champion hex).

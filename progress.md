@@ -18,6 +18,7 @@
 
 ## Active tasks
 - owner: agent1; scope: split `card-effects` resolvers into categorized modules (bridges/movement/combat/units) and re-export via a single index; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-*.ts`, `packages/engine/src/index.ts`, `implementation_plan.md`; status: in progress
+- owner: agent5; scope: add Age II/III power card defs that use existing effects (incl. Bannerman champion) and wire partial power deck lists; files: `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/power-decks.ts`, `implementation_plan.md`; status: in progress
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -223,6 +224,7 @@
 - Added Age III victory card defs (Conquest Record, Final Oath) using gain-gold/heal effects and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added Deep Shaft Rig card-effect test for mine value bump + force deploy; updated the plan checklist. (Files: `packages/engine/src/card-effects.deep-shaft-rig.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.deep-shaft-rig.test.ts`.) (owner: agent4)
 - Added Rally Where You Stand card-effect test for deploying forces to a friendly champion hex; updated the plan checklist. (Files: `packages/engine/src/card-effects.rally-where-you-stand.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.rally-where-you-stand.test.ts`.) (owner: agent4)
+- Added Bridge Crew card-effect test for build + move across a newly built bridge; updated the plan checklist. (Files: `packages/engine/src/card-effects.bridge-crew.test.ts`, `implementation_plan.md`.) (owner: agent4)
 
 ## Milestone 9 progress
 - Shifted GameCard art cropping upward (~10%) with a slight zoom across variants; updated the plan checklist. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
