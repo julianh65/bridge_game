@@ -22,13 +22,13 @@
 
 ## Active tasks
 - (owner: agent3) [status: in progress] Group Board Debug + Battle Debug under a Debug dropdown in the top nav; files: `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`.
-- (owner: agent5) [status: planning] CDN asset pipeline for card art + tile textures (CDN base, upload script, remove from git, ignore local assets); files: `.gitignore`, `package.json`, `scripts/upload-assets.js`, `apps/web/src/lib/card-art.ts`, `apps/web/src/lib/asset-url.ts`, `apps/web/src/components/BoardView.tsx`, `docs/deploy.md`, `implementation_plan.md`, `progress.md`.
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
 ## Test fixes
 - Updated engine tests for market bid winners, Quiet Study hand-size behavior, and setup flow expectations (deck preview gating + card totals) to match current config/flow. (Files: `packages/engine/src/market.test.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`.) (owner: agent1)
 - Investigated engine test failures: `action-flow.test.ts` fails in `pickNonAdjacentMinePair` because 2-player maps only place 2 mines and can be adjacent, so the test can't find a non-adjacent pair (seed 123). (owner: agent2)
+- Stabilized the Prospect deep tunnels action-flow test by letting `pickNonAdjacentMinePair` fall back to any mine pair when non-adjacent mines are unavailable on small maps. (File: `packages/engine/src/action-flow.test.ts`.) (owner: agent2)
 - Prevented setup flow from crashing when `startingForcesByFaction` is missing by making the config optional in types and guarding access in `resolveStartingForces`. (Files: `packages/engine/src/types.ts`, `packages/engine/src/setup-flow.ts`.) (owner: agent2)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)

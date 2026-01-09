@@ -851,6 +851,7 @@ Done
     - [ ] Wormhole adjacency override.
     - [x] Dice roll gold thresholds.
     - [x] Cost override/scaling primitives.
+- [x] Stabilize Prospect deep tunnels coverage by allowing the test helper to fall back to adjacent mines on tiny maps.
 - [x] At the end of the market phase we don't see the nice animation and transition for the last player who auto gets it
 - [x] It needs to be much more clear that Done is like "Pass" and won't let you go again
 - [ ] Do a targetted review and cleanup of the codebase, try to find things that aren't being used anymore, are wrong etc... and clean it up, without breaking behavior.

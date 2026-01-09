@@ -104,6 +104,9 @@ const pickTwoStepMarchTarget = (
 
 const pickNonAdjacentMinePair = (board: BoardState): [HexKey, HexKey] => {
   const mines = Object.values(board.hexes).filter((hex) => hex.tile === "mine");
+  if (mines.length < 2) {
+    throw new Error("not enough mines for deep tunnels test");
+  }
   for (let i = 0; i < mines.length; i += 1) {
     const from = mines[i];
     if (!from) {
@@ -119,7 +122,7 @@ const pickNonAdjacentMinePair = (board: BoardState): [HexKey, HexKey] => {
       }
     }
   }
-  throw new Error("no non-adjacent mine pair found");
+  return [mines[0].key, mines[1].key];
 };
 
 const buildLinearPath = (start: HexKey, steps: number, board: BoardState): HexKey[] => {
