@@ -40,6 +40,27 @@ export const COORDINATED_ADVANCE: CardDef = {
   effects: [{ kind: "moveStacks", maxDistance: 2 }]
 };
 
+export const RAPID_REDEPLOY: CardDef = {
+  id: "age2.rapid_redeploy",
+  name: "Rapid Redeploy",
+  rulesText: "Move 1 Champion to any occupied hex. Heal it 1.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 65,
+  burn: false,
+  targetSpec: {
+    kind: "championMove",
+    owner: "self",
+    destination: {
+      owner: "any",
+      occupied: true
+    }
+  },
+  effects: [{ kind: "moveChampion" }, { kind: "healChampion", amount: 1 }]
+};
+
 export const BREAKTHROUGH_LINE: CardDef = {
   id: "age2.breakthrough_line",
   name: "Breakthrough Line",
@@ -881,6 +902,7 @@ export const CAPTURER: CardDef = {
 export const AGE2_CARDS: CardDef[] = [
   TRIPLE_MARCH,
   COORDINATED_ADVANCE,
+  RAPID_REDEPLOY,
   BREAKTHROUGH_LINE,
   SET_TO_SKIRMISH,
   BATTALION_CONTRACT,

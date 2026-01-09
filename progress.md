@@ -18,8 +18,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- (owner: agent3) Add host-configurable setup controls for `MAX_MANA` + `VP_TO_WIN`, with a new setup config command in the engine and setup UI inputs. Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/App.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress)
-- (owner: agent5) Add champion relocation targeting (champion + destination hex) and implement Rapid Redeploy + Extraction Run card defs, with engine validation/resolution and UI targeting flow. Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-targeting.ts`, `packages/engine/src/card-effects-units.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress)
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
 ## Test fixes
@@ -75,6 +73,7 @@
 - Audited Dispatch to Front power card vs `rules_draft.md` and noted alignment in the plan. (File: `implementation_plan.md`.) (owner: agent1)
 - Audited Chronicle of War power card vs `rules_draft.md` and added a plan note to address the optional discard + mana behavior mismatch. (File: `implementation_plan.md`.) (owner: agent1)
 - Audited Forge Sketch power card vs `rules_draft.md` and added a plan note about the optional discard mismatch. (File: `implementation_plan.md`.) (owner: agent1)
+- Fixed Forge Sketch optional discard handling (engine + UI), gated draw on discard, and added test coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-economy.ts`, `packages/engine/src/content/cards/power.ts`, `packages/engine/src/card-effects.forge-sketch.test.ts`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent1)
 
 ## Refactor Milestone progress
 - Extracted market/collection overlay rendering into `apps/web/src/components/GameScreenOverlays.tsx` and shared the market winner highlight type; updated the refactor milestone checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenOverlays.tsx`, `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.)
@@ -747,6 +746,7 @@ none
 - Victory cards now grant +1 permanent VP on gain (via draw pile insertion).
 
 ## Milestone 7 progress
+- Added host-only setup controls to update `MAX_MANA` and `VP_TO_WIN`, wiring a setup config command in the engine and setup UI inputs; updated plan checklist. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/index.ts`, `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.) (owner: agent3)
 - Implemented champion card play (hex targeting validation + deployment), champion gold cost scaling, and champion limit checks in engine with tests.
 - Added champion HP details to board stack tooltips in the UI.
 - Added Leadbound Shield Wall passive as a permanent faction modifier, wired during setup, with setup/combat coverage.
@@ -806,6 +806,7 @@ none
 - Deferred manual hit assignment UI for Focus Fire/Tactical Hand, disabled Focus Fire + Grand Strategist in card lists until the UI lands, and noted a future task in the plan. (Files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.)
 - Added player-target card support (engine validation + UI picker) and Market Squeeze steal-gold card/effect; marked the plan subtask complete. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-targets.ts`, `packages/engine/src/card-effects-economy.ts`, `packages/engine/src/content/cards/age3.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.) (Overlap note: `packages/engine/src/card-effects-economy.ts` includes in-flight changes from agent4.)
 - Added per-instance card overrides (cost/initiative/burn/tags) so Forge Miracle can grant discounted burn cards; wired overrides through action cost/initiative resolution and hand/collection/deck UI rendering, and added Forge Miracle to the Age III power deck. (Files: `packages/engine/src/types.ts`, `packages/engine/src/content/cards/index.ts`, `packages/engine/src/cards.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/card-effects-economy.ts`, `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/power-decks.ts`, `packages/engine/src/index.ts`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/components/DeckViewer.tsx`, `implementation_plan.md`.) (owner: agent5)
+- Added champion relocation targeting (champion + destination hex) with engine validation/resolution and UI selection flow, plus Rapid Redeploy (Age II) + Extraction Run (Age III) card defs. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-targeting.ts`, `packages/engine/src/card-effects-units.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.) (owner: agent5) (Overlap note: includes pre-existing optional discard UI tweaks in `apps/web/src/components/GameScreen.tsx`.)
 
 ## Milestone 7.5 progress
 - Added a card-art manifest + helper, GameCard art rendering, and a CLI script to generate diffusion art and update the manifest. (Files: `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`.)

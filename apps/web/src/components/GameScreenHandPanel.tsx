@@ -84,6 +84,8 @@ const getCardTargetHint = (cardDef: CardDef | null): string | null => {
       return "Pick a capital or occupied hex.";
     case "champion":
       return "Click a hex with an eligible champion.";
+    case "championMove":
+      return "Pick a champion, then choose a destination hex.";
     case "player":
       return "Choose a player to target.";
     case "none":

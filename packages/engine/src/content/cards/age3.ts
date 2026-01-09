@@ -59,6 +59,26 @@ export const FINAL_PUSH: CardDef = {
   effects: [{ kind: "battleWinDraw", drawCount: 2 }, { kind: "moveStack", maxDistance: 1 }]
 };
 
+export const EXTRACTION_RUN: CardDef = {
+  id: "age3.extraction_run",
+  name: "Extraction Run",
+  rulesText: "Move 1 Champion to any Mine. Gain 1 gold.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 1 },
+  initiative: 70,
+  burn: false,
+  targetSpec: {
+    kind: "championMove",
+    owner: "self",
+    destination: {
+      tile: "mine"
+    }
+  },
+  effects: [{ kind: "moveChampion" }, { kind: "gainGold", amount: 1 }]
+};
+
 export const DEEP_RESERVES: CardDef = {
   id: "age3.deep_reserves",
   name: "Deep Reserves",
@@ -598,6 +618,7 @@ export const AGE3_CARDS: CardDef[] = [
   GRAND_MANEUVER,
   GHOST_STEP,
   FINAL_PUSH,
+  EXTRACTION_RUN,
   DEEP_RESERVES,
   ENDLESS_CONSCRIPTION,
   FORWARD_LEGION,

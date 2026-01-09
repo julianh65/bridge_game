@@ -489,7 +489,7 @@ Start going through the rules_draft and adding the logic for the different types
   - [x] Forge Miracle grants burn/cost/initiative overrides on generated cards.
 - [x] Bridge crew is supposed to let you immediately move over the bridge you are going to construct
 - [x] I still don't see the champion gold scaling with /'s inbetween the cost for the n'th champion, and validate that logic works
-- [ ] Let the user from the setup screen (host) set VP to win as well as max mana
+- [x] Let the user from the setup screen (host) set VP to win as well as max mana
 
 
 ### Punchlist — Done cards blocked by UI/validation
@@ -559,7 +559,7 @@ Done
         - [x] Bridge Deed.
         - [x] Mine Charter.
         - [x] Forge Sketch.
-        - [ ] Audit Forge Sketch rules alignment (optional discard for draw; currently required).
+        - [x] Audit Forge Sketch rules alignment (optional discard for draw; fixed).
         - [x] Center Writ.
         - [x] Oathstone.
         - [x] Banner of Sparks.

@@ -18,6 +18,7 @@ import {
   wouldExceedTwoPlayers
 } from "./board";
 import {
+  getChampionMoveTarget,
   getChampionTarget,
   getHexTarget
 } from "./card-effects-targeting";
@@ -27,7 +28,11 @@ import {
 } from "./card-effects-targets";
 import { resolveCapitalDeployHex } from "./deploy-utils";
 import { getDeployForcesCount } from "./modifiers";
-import { getCardScalingCounter, incrementCardScalingCounter } from "./player-flags";
+import {
+  getCardScalingCounter,
+  incrementCardScalingCounter,
+  markPlayerMovedThisRound
+} from "./player-flags";
 import {
   addChampionToHex,
   addForcesToHex,
@@ -559,6 +564,26 @@ export const resolveUnitEffect = (
         board: moveUnitToHex(nextState.board, target.unitId, player.capitalHex)
       };
       return nextState;
+    }
+    case "moveChampion": {
+      const target = getChampionMoveTarget(
+        nextState,
+        playerId,
+        card.targetSpec as TargetRecord,
+        targets ?? null,
+        card
+      );
+      if (!target) {
+        return nextState;
+      }
+      if (wouldExceedTwoPlayers(target.hex, playerId)) {
+        return nextState;
+      }
+      nextState = {
+        ...nextState,
+        board: moveUnitToHex(nextState.board, target.unitId, target.hexKey)
+      };
+      return markPlayerMovedThisRound(nextState, playerId);
     }
     case "recallChampion": {
       const target = getChampionTarget(

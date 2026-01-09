@@ -19,6 +19,7 @@ import {
   type TargetRecord
 } from "./card-effects-targets";
 import {
+  getChampionMoveTarget,
   getChampionTarget,
   getHexPairTarget,
   getHexTarget,
@@ -53,6 +54,7 @@ const SUPPORTED_TARGET_KINDS = new Set([
   "path",
   "multiPath",
   "champion",
+  "championMove",
   "choice",
   "hex",
   "hexPair",
@@ -89,6 +91,7 @@ const SUPPORTED_EFFECTS = new Set([
   "healChampion",
   "healChampions",
   "dealChampionDamage",
+  "moveChampion",
   "cataclysmCore",
   "goldPlatedArmor",
   "patchUp",
@@ -195,12 +198,21 @@ export const isCardPlayable = (
       return Math.max(0, Math.floor(rawCount));
     };
 
-    const discardCount = getHandEffectCount("discardFromHand", 1);
+    const discardEffect = card.effects?.find((entry) => entry.kind === "discardFromHand") as
+      | TargetRecord
+      | undefined;
+    const discardCount =
+      typeof discardEffect?.count === "number"
+        ? Math.max(0, Math.floor(discardEffect.count))
+        : discardEffect
+          ? 1
+          : 0;
+    const discardOptional = discardEffect?.optional === true;
     const burnCount = getHandEffectCount("burnFromHand", 1);
     const topdeckCount = getHandEffectCount("topdeckFromHand", 1);
 
     if (targets == null) {
-      if (discardCount > 0 || burnCount > 0) {
+      if ((discardCount > 0 && !discardOptional) || burnCount > 0) {
         return false;
       }
       return true;
@@ -217,6 +229,9 @@ export const isCardPlayable = (
 
     const targetIds = getCardInstanceTargets(targets);
     if (targetIds.length === 0) {
+      if (discardOptional && burnCount === 0 && topdeckCount === 0) {
+        return true;
+      }
       return false;
     }
     const uniqueIds = new Set(targetIds);
@@ -496,6 +511,20 @@ export const isCardPlayable = (
       return false;
     }
     return !wouldExceedTwoPlayers(capitalHex, playerId);
+  }
+
+  if (card.targetSpec.kind === "championMove") {
+    const target = getChampionMoveTarget(
+      state,
+      playerId,
+      card.targetSpec as TargetRecord,
+      targets ?? null,
+      card
+    );
+    if (!target) {
+      return false;
+    }
+    return !wouldExceedTwoPlayers(target.hex, playerId);
   }
 
   if (card.targetSpec.kind === "player") {

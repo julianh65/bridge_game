@@ -259,6 +259,39 @@ export const getHexTarget = (
   return resolveHexTarget(state, playerId, targetSpec, hexKey);
 };
 
+export const getChampionMoveTarget = (
+  state: GameState,
+  playerId: PlayerID,
+  targetSpec: TargetRecord,
+  targets: CardPlayTargets,
+  card?: CardDef
+): {
+  unitId: string;
+  unit: GameState["board"]["units"][string];
+  hexKey: string;
+  hex: GameState["board"]["hexes"][string];
+} | null => {
+  const destinationRaw = targetSpec.destination;
+  if (!destinationRaw || typeof destinationRaw !== "object") {
+    return null;
+  }
+  const destinationSpec = destinationRaw as TargetRecord;
+  const championTarget = getChampionTarget(state, playerId, targetSpec, targets, card);
+  if (!championTarget) {
+    return null;
+  }
+  const destinationTarget = getHexTarget(state, playerId, destinationSpec, targets);
+  if (!destinationTarget) {
+    return null;
+  }
+  return {
+    unitId: championTarget.unitId,
+    unit: championTarget.unit,
+    hexKey: destinationTarget.hexKey,
+    hex: destinationTarget.hex
+  };
+};
+
 export const getHexPairTarget = (
   state: GameState,
   playerId: PlayerID,

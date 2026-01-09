@@ -266,6 +266,8 @@ const getDefaultCardPickMode = (cardDef: CardDef | null): BoardPickMode => {
       return "cardPath";
     case "champion":
       return "cardChampion";
+    case "championMove":
+      return "cardChampion";
     case "hex":
       return "cardHex";
     case "hexPair":
@@ -613,6 +615,7 @@ export const GameScreen = ({
   const selectedChampionId =
     getTargetString(targetRecord, "unitId") ?? getTargetString(targetRecord, "championId");
   const selectedTargetPlayerId = getTargetString(targetRecord, "playerId");
+  const selectedDestinationHexKey = getTargetString(targetRecord, "hexKey");
 
   const selectedCard = handCards.find((card) => card.id === cardInstanceId) ?? null;
   const selectedCardDef = selectedCard
@@ -635,8 +638,10 @@ export const GameScreen = ({
     }
     return edgeKeys;
   }, [cardTargetKind, targetRecord]);
+  const isChampionTargeting =
+    cardTargetKind === "champion" || cardTargetKind === "championMove";
   const championTargetOwner =
-    cardTargetKind === "champion" && selectedCardDef
+    isChampionTargeting && selectedCardDef
       ? (() => {
           const rawOwner = selectedCardDef.targetSpec.owner;
           if (rawOwner === "self" || rawOwner === "enemy" || rawOwner === "any") {
@@ -753,6 +758,8 @@ export const GameScreen = ({
       : discardFromHandEffect
         ? 1
         : 0;
+  const discardFromHandOptional =
+    Boolean(discardFromHandEffect && (discardFromHandEffect as { optional?: boolean }).optional);
   const burnFromHandEffect = selectedCardDef?.effects?.find(
     (effect) => effect.kind === "burnFromHand"
   );
@@ -1081,7 +1088,10 @@ export const GameScreen = ({
     canSubmitAction && marchFrom.trim().length > 0 && marchTo.trim().length > 0;
   const resolvedMarchIncludeChampions =
     marchIncludeChampions ?? marchForceCount === null;
-  const requiredHandSelectionCount = Math.max(discardFromHandCount, burnFromHandCount);
+  const requiredHandSelectionCount = Math.max(
+    discardFromHandOptional ? 0 : discardFromHandCount,
+    burnFromHandCount
+  );
   const hasRequiredHandTargets =
     requiredHandSelectionCount === 0 ||
     selectedHandCardIds.length === requiredHandSelectionCount;
@@ -2298,7 +2308,7 @@ export const GameScreen = ({
 
     if (
       (boardPickMode === "none" || boardPickMode === "cardChampion") &&
-      cardTargetKind === "champion" &&
+      isChampionTargeting &&
       selectedCardDef
     ) {
       const rawOwner = selectedCardDef.targetSpec.owner;
@@ -2319,7 +2329,19 @@ export const GameScreen = ({
         );
         const nextIndex =
           currentIndex >= 0 ? (currentIndex + 1) % championsOnHex.length : 0;
-        setCardTargetsObject({ unitId: championsOnHex[nextIndex].id });
+        const nextTargets =
+          cardTargetKind === "championMove"
+            ? {
+                ...(selectedDestinationHexKey
+                  ? { hexKey: selectedDestinationHexKey }
+                  : {}),
+                unitId: championsOnHex[nextIndex].id
+              }
+            : { unitId: championsOnHex[nextIndex].id };
+        setCardTargetsObject(nextTargets);
+        if (cardTargetKind === "championMove") {
+          setBoardPickModeSafe("cardHex");
+        }
         return;
       }
     }
@@ -2509,7 +2531,14 @@ export const GameScreen = ({
       setCardTargetsObject({ choice: "occupiedHex", hexKey });
     }
     if (boardPickMode === "cardHex") {
-      setCardTargetsObject({ hexKey });
+      const nextTargets =
+        cardTargetKind === "championMove"
+          ? {
+              ...(selectedChampionId ? { unitId: selectedChampionId } : {}),
+              hexKey
+            }
+          : { hexKey };
+      setCardTargetsObject(nextTargets);
     }
   };
 
@@ -3294,10 +3323,19 @@ export const GameScreen = ({
     }
 
     if (boardPickMode === "cardHex") {
-      if (!selectedCardDef || cardTargetKind !== "hex") {
+      if (!selectedCardDef || (cardTargetKind !== "hex" && cardTargetKind !== "championMove")) {
         return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
-      const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
+      const rawTargetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
+      const targetSpec =
+        cardTargetKind === "championMove"
+          ? rawTargetSpec.destination && typeof rawTargetSpec.destination === "object"
+            ? (rawTargetSpec.destination as Record<string, unknown>)
+            : null
+          : rawTargetSpec;
+      if (!targetSpec) {
+        return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
+      }
       const owner = typeof targetSpec.owner === "string" ? targetSpec.owner : "any";
       if (owner !== "self" && owner !== "enemy" && owner !== "any") {
         return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
@@ -3315,9 +3353,12 @@ export const GameScreen = ({
         typeof targetSpec.maxDistanceFromFriendlyChampion === "number"
           ? targetSpec.maxDistanceFromFriendlyChampion
           : null;
-      const mortarEffect = selectedCardDef.effects?.find(
-        (effect) => effect.kind === "mortarShot"
-      ) as { maxDistance?: number } | undefined;
+      const mortarEffect =
+        cardTargetKind === "hex"
+          ? (selectedCardDef.effects?.find(
+              (effect) => effect.kind === "mortarShot"
+            ) as { maxDistance?: number } | undefined)
+          : null;
       const mortarMaxDistance =
         mortarEffect && typeof mortarEffect.maxDistance === "number"
           ? mortarEffect.maxDistance
@@ -3518,7 +3559,7 @@ export const GameScreen = ({
     }
 
     if (boardPickMode === "cardChampion") {
-      if (!selectedCardDef || cardTargetKind !== "champion") {
+      if (!selectedCardDef || !isChampionTargeting) {
         return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
       const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
@@ -3609,6 +3650,7 @@ export const GameScreen = ({
     pendingHexPair,
     selectedCardDef,
     cardTargetKind,
+    isChampionTargeting,
     cardMoveForceCount,
     cardMoveIncludeChampions,
     cardMoveSupportsSplit,
@@ -3694,8 +3736,13 @@ export const GameScreen = ({
     (cardId) => handCardLabels.get(cardId) ?? cardId
   );
   const topdeckLimitLabel = topdeckCount === 1 ? "1 card" : `${topdeckCount} cards`;
-  const discardLimitLabel =
-    discardFromHandCount === 1 ? "1 card" : `${discardFromHandCount} cards`;
+  const discardLimitLabel = discardFromHandOptional
+    ? discardFromHandCount === 1
+      ? "up to 1 card"
+      : `up to ${discardFromHandCount} cards`
+    : discardFromHandCount === 1
+      ? "1 card"
+      : `${discardFromHandCount} cards`;
   const burnLimitLabel = burnFromHandCount === 1 ? "1 card" : `${burnFromHandCount} cards`;
   const edgeMovePayload = edgeMoveMode ? buildEdgeTargetPayload(targetRecord) : null;
   const edgeMoveEdgeKey = getTargetString(targetRecord, "edgeKey");
@@ -4032,6 +4079,56 @@ export const GameScreen = ({
         </p>
       </div>
     ) : null;
+  const championMovePanel =
+    selectedCardDef && cardTargetKind === "championMove" ? (
+      <div className="hand-targets">
+        <div className="hand-targets__header">
+          <strong>Relocate champion</strong>
+          <span className="hand-targets__meta">Pick champion + destination</span>
+        </div>
+        <p className="hand-targets__hint">
+          Select a champion, then choose a valid destination hex.
+        </p>
+        <div className="hand-targets__actions">
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={!canSubmitAction}
+            onClick={() => setBoardPickModeSafe("cardChampion")}
+          >
+            Pick champion
+          </button>
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={!canSubmitAction}
+            onClick={() => setBoardPickModeSafe("cardHex")}
+          >
+            Pick destination
+          </button>
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={!selectedChampionId && !selectedDestinationHexKey}
+            onClick={() => setCardTargetsObject(null)}
+          >
+            Clear
+          </button>
+        </div>
+        <p className="hand-targets__selected">
+          {selectedChampion
+            ? `Champion: ${selectedChampion.name} (${selectedChampion.ownerName})`
+            : "Champion: none."}
+        </p>
+        <p className="hand-targets__selected">
+          {selectedDestinationHexKey
+            ? `Destination: ${
+                hexLabels[selectedDestinationHexKey] ?? selectedDestinationHexKey
+              }`
+            : "Destination: none."}
+        </p>
+      </div>
+    ) : null;
   const edgeMovePanel =
     edgeMoveMode && selectedCardDef ? (
       <div className="hand-targets">
@@ -4178,7 +4275,7 @@ export const GameScreen = ({
       />
     ) : null;
   const championTargetOptions = useMemo<ChampionTargetOverlayOption[]>(() => {
-    if (!selectedCardDef || cardTargetKind !== "champion") {
+    if (!selectedCardDef || !isChampionTargeting) {
       return [];
     }
     return eligibleChampionTargets.map((unit) => ({
@@ -4190,18 +4287,28 @@ export const GameScreen = ({
       hp: unit.hp,
       maxHp: unit.maxHp
     }));
-  }, [cardTargetKind, eligibleChampionTargets, hexLabels, selectedCardDef]);
-  const showChampionTargetOverlay = Boolean(selectedCardDef && cardTargetKind === "champion");
+  }, [eligibleChampionTargets, hexLabels, isChampionTargeting, selectedCardDef]);
+  const showChampionTargetOverlay = Boolean(
+    selectedCardDef && isChampionTargeting && boardPickMode === "cardChampion"
+  );
   const handleChampionTargetSelect = (unit: ChampionTargetOverlayOption) => {
     setSelectedHexKey(unit.hex);
-    setBoardPickModeSafe("cardChampion");
-    setCardTargetsObject({ unitId: unit.id });
+    setBoardPickModeSafe(cardTargetKind === "championMove" ? "cardHex" : "cardChampion");
+    const nextTargets =
+      cardTargetKind === "championMove"
+        ? {
+            ...(selectedDestinationHexKey ? { hexKey: selectedDestinationHexKey } : {}),
+            unitId: unit.id
+          }
+        : { unitId: unit.id };
+    setCardTargetsObject(nextTargets);
   };
   const handTargetsPanel =
     topdeckPanel ||
     handDiscardPanel ||
     handBurnPanel ||
     playerTargetPanel ||
+    championMovePanel ||
     edgeMovePanel ||
     multiEdgePanel ||
     multiPathPanel ||
@@ -4211,6 +4318,7 @@ export const GameScreen = ({
         {handDiscardPanel}
         {handBurnPanel}
         {playerTargetPanel}
+        {championMovePanel}
         {edgeMovePanel}
         {multiEdgePanel}
         {multiPathPanel}
@@ -4247,7 +4355,7 @@ export const GameScreen = ({
         : "Topdeck from hand";
   const handPickerDescription =
     handPickerMode === "discard"
-      ? `Select ${handPickerLimitLabel} to discard.`
+      ? `Select ${discardLimitLabel} to discard.`
       : handPickerMode === "burn"
         ? `Select ${handPickerLimitLabel} to burn.`
         : handPickerCount > 0
