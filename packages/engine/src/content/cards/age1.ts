@@ -789,6 +789,30 @@ export const BOUNTY_HUNTER: CardDef = {
   }
 };
 
+export const STONEGUARD: CardDef = {
+  id: "champion.age1.stoneguard",
+  name: "Stoneguard",
+  rulesText: "No special ability.",
+  type: "Champion",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 2 },
+  initiative: 50,
+  burn: true,
+  targetSpec: {
+    kind: "hex",
+    owner: "self",
+    occupied: true
+  },
+  champion: {
+    hp: 4,
+    attackDice: 2,
+    hitFaces: 2,
+    bounty: 2,
+    goldCostByChampionCount: [0, 2, 4]
+  }
+};
+
 export const SERGEANT: CardDef = {
   id: "champion.age1.sergeant",
   name: "Sergeant",
@@ -881,6 +905,7 @@ export const AGE1_CARDS: CardDef[] = [
   FIELD_SURGEON,
   BRUTE,
   BOUNTY_HUNTER,
+  STONEGUARD,
   SERGEANT,
   TRAITOR
 ];

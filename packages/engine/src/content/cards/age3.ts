@@ -510,6 +510,30 @@ export const TITAN_VANGUARD: CardDef = {
   }
 };
 
+export const OBSIDIAN_SENTINEL: CardDef = {
+  id: "champion.age3.obsidian_sentinel",
+  name: "Obsidian Sentinel",
+  rulesText: "No special ability.",
+  type: "Champion",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 3 },
+  initiative: 60,
+  burn: true,
+  targetSpec: {
+    kind: "hex",
+    owner: "self",
+    occupied: true
+  },
+  champion: {
+    hp: 7,
+    attackDice: 3,
+    hitFaces: 2,
+    bounty: 4,
+    goldCostByChampionCount: [2, 4, 6]
+  }
+};
+
 export const CENTER_BANNERMAN: CardDef = {
   id: "champion.age3.center_bannerman",
   name: "Center Bannerman",
@@ -664,6 +688,7 @@ export const AGE3_CARDS: CardDef[] = [
   MONUMENT_PLAN,
   LOGISTICS_OFFICER,
   TITAN_VANGUARD,
+  OBSIDIAN_SENTINEL,
   CENTER_BANNERMAN,
   BLOOD_BANKER,
   STORMCALLER,

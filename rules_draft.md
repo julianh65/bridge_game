@@ -607,7 +607,7 @@ Each Age uses its own Market deck during:
 Market Bid‑Draft
 Forge Draft
 Victory cards below grant +1 Permanent VP when gained.
-23.1 Age I Market (47 cards)
+23.1 Age I Market (48 cards)
 A) Movement (5)
 Quick March
 Cost: 1 mana — Init: 40 / 50 (very fast initiative) — Type: Order
@@ -743,7 +743,7 @@ When played: Gain +1 gold.
 Patrol Record
 Cost: 1 mana — Init: 30 / 100 — Type: Victory
 When played: Draw 1 card
-I) Champions (8)
+I) Champions (9)
 Skirmisher Captain
 Cost: 2 mana — Gold 0/2/4 — Init: 65 / 135 — Type: Champion
 HP 4 — 2d hit 1–3 — Bounty 2
@@ -764,6 +764,10 @@ Bounty Hunter
 Cost: 2 mana — Gold 1/3/5 — Init: 75 / 150 — Type: Champion
 HP 4 — 2d hit 1–3 — Bounty 2
 Contract Pay — When an enemy Champion dies in a battle this Champion is in, gain +1 gold.
+Stoneguard
+Cost: 2 mana — Gold 0/2/4 — Init: 50 / 120 — Type: Champion
+HP 4 — 2d hit 1–2 — Bounty 2
+No special ability.
 Brute
 Cost: 2 mana — Gold 2/4/6 — Init: 35 / 105 — Type: Champion
 HP 6 — 1d hit 1–3 — Bounty 2
@@ -775,7 +779,7 @@ Traitor
 Cost: 1 mana — Gold 1/2/5 — Init: 35 / 105 — Type: Champion
 HP 5 — 3d hit 1–3 — Bounty 3
 Upon death instantly set the owner's mana to 0.
-23.2 Age II Market (47 cards)
+23.2 Age II Market (48 cards)
 Note to self: these should be cool abilities as well as a mix of incremental more powerful versions of the age I market cards
 A) Movement (5)
 Triple March
@@ -922,7 +926,7 @@ Cost: 1 mana — Init: 75 / 145 — Type: Victory
 Gives +2 VP
 When played: No effect
 When drawn: Lose 1 gold.
-I) Champions (8)
+I) Champions (9)
 Jet Striker
 Cost: 2 mana — Gold 1/3/5 — Init: 45 / 115 — Type: Champion
 HP 5 — 3d hit 1–2 — Bounty 3
@@ -949,6 +953,10 @@ If there are no friendly forces roll 3 extra dice.
 Reliable Veteran
 Cost: 2 mana — Gold 2/4/6 — Init: 65 / 135 — Type: Champion
 HP 6 — 1d hit 1–5 — Bounty 3
+Iron Sentinel
+Cost: 2 mana — Gold 1/3/5 — Init: 55 / 125 — Type: Champion
+HP 6 — 2d hit 1–3 — Bounty 3
+No special ability.
 Exodia
 Cost: 3 mana — Gold 0/0/0 — Init: 65 / 135 — Type: Champion
 HP 15 — 5d hit 1–4 — Bounty 5
@@ -957,7 +965,7 @@ Capturer
 Cost: 2 mana — Gold 1/2/5 — Init: 35 / 105 — Type: Champion
 HP 5 — 2d hit 1–3 — Bounty 0
 Everytime this champion wins a battle, deploy 1 force to the hex the champion occupies
-23.3 Age III Market (47 cards)
+23.3 Age III Market (48 cards)
 Note to self: there should be less of these and they should be not incremental improvements as much but more interesting ender type stuff. And there should be more VPs in this deck
 A) Movement (5)
 Grand Maneuver
@@ -1053,7 +1061,7 @@ Timer
 Cost: 3 mana — Init: 35 / 105 — Type: Victory
 Must be played when your own mana is 5 or greater. At the end of the round if you occupy the center gain 3 permanent VPs. (Burn)
 
-I) Champions (8)
+I) Champions (9)
 Logistics Officer
 Cost: 2 mana — Gold 2/4/6 — Init: 55 / 125 — Type: Champion
 HP 4 — 2d hit 1–3 — Bounty 3
@@ -1061,6 +1069,10 @@ You may deploy to the logistics officer as if it were your capital.
 Titan Vanguard
 Cost: 3 mana — Gold 2/4/6 — Init: 70 / 145 — Type: Champion
 HP 10 — 2d hit 1–3 — Bounty 5
+Obsidian Sentinel
+Cost: 3 mana — Gold 2/4/6 — Init: 60 / 130 — Type: Champion
+HP 7 — 3d hit 1–2 — Bounty 4
+No special ability.
 Center Bannerman
 Cost: 2 mana — Gold 2/4/6 — Init: 55 / 125 — Type: Champion
 HP 3 — 2d hit 1–2 — Bounty 5
