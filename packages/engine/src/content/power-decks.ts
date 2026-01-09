@@ -26,6 +26,7 @@ export const AGE2_POWER_DECK: CardDefId[] = [
 export const AGE3_POWER_DECK: CardDefId[] = [
   "power.age3.cataclysm_core",
   "power.age3.quick_mobilization",
+  "power.age3.forge_miracle",
   "power.age3.final_funding",
   "power.age3.last_stand",
   "power.age3.imperial_warrant",

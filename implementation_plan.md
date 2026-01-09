@@ -481,10 +481,11 @@ Start going through the rules_draft and adding the logic for the different types
   - [x] Frenzy: target friendly Champion rolls +2 dice this round and takes 2 damage immediately.
   - [x] Gold Plated Armor: prevent champion damage at gold cost for the round.
 - [x] Add cost overrides/free-play effects (Last Contract, A Hero Joins the Battle).
-- [ ] Add random card generation effects (Black Market Pull, Forge Miracle).
+- [x] Add random card generation effects (Black Market Pull, Forge Miracle).
   - [x] Black Market Pull draws random cards from the market deck (not top-of-deck).
-  - [ ] Forge Miracle: grant Age I market cards with burn + cost/initiative overrides.
+  - [x] Forge Miracle: grant Age I market cards with burn + cost/initiative overrides.
 - [ ] Add burn keyword enforcement for granted cards (Forge Miracle, power deck burn effects). and an animation on burn
+  - [x] Forge Miracle grants burn/cost/initiative overrides on generated cards.
 - [x] Bridge crew is supposed to let you immediately move over the bridge you are going to construct
 - [ ] I still don't see the champion gold scaling with /'s inbetween the cost for the n'th champion, and validate that logic works
 
@@ -570,9 +571,10 @@ Done
         - [x] Chronicle of War.
       - [x] Age II Power Champions (verify deck size inclusion).
         - [x] Bannerman.
-      - [x] Age III Power (8) — Non-victory (4).
+      - [x] Age III Power (9) — Non-victory (5).
         - [x] Cataclysm Core.
         - [x] Quick Mobilization.
+        - [x] Forge Miracle.
         - [x] Final Funding.
         - [x] Last Stand.
       - [x] Age III Power Victory (4).
@@ -581,7 +583,6 @@ Done
         - [x] Deep Mine Charter.
         - [x] Siege Chronicle.
       - [ ] Planned power additions (not in deck yet).
-        - [ ] Forge Miracle.
         - [ ] Center Relic.
         - [ ] Forge Relic.
         - [ ] TBD: one additional Age III non-victory entry.

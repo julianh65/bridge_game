@@ -2,7 +2,15 @@ import { randInt } from "@bridgefront/shared";
 
 import { getCardDef } from "./content/cards";
 import type { EffectSpec } from "./content/cards/types";
-import type { Age, CardInstanceID, CardPlayTargets, GameState, PlayerID, TileType } from "./types";
+import type {
+  Age,
+  CardInstanceID,
+  CardInstanceOverrides,
+  CardPlayTargets,
+  GameState,
+  PlayerID,
+  TileType
+} from "./types";
 import {
   addCardToBurned,
   addCardToDiscardPile,
@@ -114,6 +122,53 @@ const grantVictoryOnGain = (state: GameState, playerId: PlayerID, cardDefId: str
 
 const isAge = (value: unknown): value is Age =>
   value === "I" || value === "II" || value === "III";
+
+const normalizeCardInstanceOverrides = (value: unknown): CardInstanceOverrides | null => {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+  const record = value as Record<string, unknown>;
+  const overrides: CardInstanceOverrides = {};
+  const rawCost = record.cost;
+  if (rawCost && typeof rawCost === "object") {
+    const cost = rawCost as Record<string, unknown>;
+    const mana = cost.mana;
+    const gold = cost.gold;
+    const normalizedMana =
+      typeof mana === "number" && Number.isFinite(mana) ? Math.max(0, Math.floor(mana)) : null;
+    const normalizedGold =
+      typeof gold === "number" && Number.isFinite(gold) ? Math.max(0, Math.floor(gold)) : null;
+    if (normalizedMana !== null || normalizedGold !== null) {
+      const normalizedCost: CardInstanceOverrides["cost"] = {};
+      if (normalizedMana !== null) {
+        normalizedCost.mana = normalizedMana;
+      }
+      if (normalizedGold !== null) {
+        normalizedCost.gold = normalizedGold;
+      }
+      overrides.cost = normalizedCost;
+    }
+  }
+  if (typeof record.initiative === "number" && Number.isFinite(record.initiative)) {
+    overrides.initiative = Math.max(0, Math.floor(record.initiative));
+  }
+  if (typeof record.burn === "boolean") {
+    overrides.burn = record.burn;
+  }
+  if (typeof record.name === "string") {
+    overrides.name = record.name;
+  }
+  if (typeof record.rulesText === "string") {
+    overrides.rulesText = record.rulesText;
+  }
+  if (Array.isArray(record.tags)) {
+    const tags = record.tags.filter((tag) => typeof tag === "string");
+    if (tags.length > 0) {
+      overrides.tags = tags;
+    }
+  }
+  return Object.keys(overrides).length > 0 ? overrides : null;
+};
 
 const playerOccupiesTile = (
   state: GameState,
@@ -491,7 +546,15 @@ export const resolveEconomyEffect = (
         }
       }
       nextState = { ...nextState, rngState };
-      const created = createCardInstances(nextState, drawn);
+      const overrides = normalizeCardInstanceOverrides(effect.overrides);
+      const overrideList = overrides
+        ? drawn.map(() => ({
+            ...overrides,
+            cost: overrides.cost ? { ...overrides.cost } : undefined,
+            tags: overrides.tags ? [...overrides.tags] : undefined
+          }))
+        : undefined;
+      const created = createCardInstances(nextState, drawn, overrideList);
       nextState = created.state;
       nextState = {
         ...nextState,

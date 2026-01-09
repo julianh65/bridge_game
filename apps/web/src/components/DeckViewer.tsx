@@ -1,6 +1,12 @@
 import { useMemo } from "react";
 
-import { CARD_DEFS, type CardInstance, type GameView } from "@bridgefront/engine";
+import {
+  CARD_DEFS,
+  applyCardInstanceOverrides,
+  type CardInstance,
+  type CardInstanceOverrides,
+  type GameView
+} from "@bridgefront/engine";
 
 import type { RoomConnectionStatus } from "../lib/room-client";
 import { GameCard } from "./GameCard";
@@ -18,22 +24,42 @@ type DeckViewerProps = {
 };
 
 type CardGroup = {
+  key: string;
   defId: string;
   count: number;
   card: CardDef | null;
+};
+
+const getOverrideKey = (overrides?: CardInstanceOverrides | null): string => {
+  if (!overrides) {
+    return "";
+  }
+  const cost = overrides.cost;
+  const tags = overrides.tags ? [...overrides.tags].sort() : null;
+  return JSON.stringify({
+    cost: cost ? { mana: cost.mana, gold: cost.gold ?? 0 } : null,
+    initiative: overrides.initiative ?? null,
+    burn: overrides.burn ?? null,
+    name: overrides.name ?? null,
+    rulesText: overrides.rulesText ?? null,
+    tags
+  });
 };
 
 const groupCards = (cards: CardInstance[]): CardGroup[] => {
   const grouped = new Map<string, CardGroup>();
 
   for (const entry of cards) {
-    const existing = grouped.get(entry.defId);
+    const overrideKey = getOverrideKey(entry.overrides);
+    const groupKey = `${entry.defId}:${overrideKey}`;
+    const existing = grouped.get(groupKey);
     if (existing) {
       existing.count += 1;
       continue;
     }
-    const def = CARD_DEFS_BY_ID.get(entry.defId) ?? null;
-    grouped.set(entry.defId, { defId: entry.defId, count: 1, card: def });
+    const baseDef = CARD_DEFS_BY_ID.get(entry.defId) ?? null;
+    const def = baseDef ? applyCardInstanceOverrides(baseDef, entry.overrides) : null;
+    grouped.set(groupKey, { key: groupKey, defId: entry.defId, count: 1, card: def });
   }
 
   return Array.from(grouped.values()).sort((a, b) => {
@@ -226,7 +252,7 @@ export const DeckViewer = ({
                     const card = group.card;
                     return (
                       <GameCard
-                        key={`${pile.id}-${group.defId}`}
+                        key={`${pile.id}-${group.key}`}
                         variant="grid"
                         card={card}
                         cardId={group.defId}

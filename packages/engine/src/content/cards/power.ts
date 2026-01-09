@@ -356,6 +356,32 @@ export const QUICK_MOBILIZATION: CardDef = {
   effects: [{ kind: "moveStacks", maxDistance: 3 }]
 };
 
+export const FORGE_MIRACLE: CardDef = {
+  id: "power.age3.forge_miracle",
+  name: "Forge Miracle",
+  rulesText:
+    "Add 3 Age I Market cards to your hand. They cost 1 mana and 0 gold, have initiative 0, and gain Burn. Burn.",
+  type: "Order",
+  deck: "power",
+  tags: ["power", "age3"],
+  cost: { mana: 2 },
+  initiative: 35,
+  burn: true,
+  targetSpec: { kind: "none" },
+  effects: [
+    {
+      kind: "gainMarketCards",
+      age: "I",
+      count: 3,
+      overrides: {
+        cost: { mana: 1, gold: 0 },
+        initiative: 0,
+        burn: true
+      }
+    }
+  ]
+};
+
 export const FINAL_FUNDING: CardDef = {
   id: "power.age3.final_funding",
   name: "Final Funding",
@@ -484,6 +510,7 @@ export const AGE2_POWER_CARDS: CardDef[] = [
 export const AGE3_POWER_CARDS: CardDef[] = [
   CATACLYSM_CORE,
   QUICK_MOBILIZATION,
+  FORGE_MIRACLE,
   FINAL_FUNDING,
   LAST_STAND,
   IMPERIAL_WARRANT,

@@ -4,6 +4,7 @@ import type {
   CardDefId,
   CardDrawContext,
   CardInstanceID,
+  CardInstanceOverrides,
   GameState,
   PlayerID
 } from "./types";
@@ -182,16 +183,20 @@ type DiscardOptions = {
 
 export const createCardInstances = (
   state: GameState,
-  defIds: CardDefId[]
+  defIds: CardDefId[],
+  overrides?: Array<CardInstanceOverrides | null>
 ): { state: GameState; instanceIds: CardInstanceID[] } => {
   let nextIndex = Object.keys(state.cardsByInstanceId).length + 1;
   const instanceIds: CardInstanceID[] = [];
   const cardsByInstanceId = { ...state.cardsByInstanceId };
 
-  for (const defId of defIds) {
+  for (const [index, defId] of defIds.entries()) {
     const instanceId = `ci_${nextIndex}`;
     nextIndex += 1;
-    cardsByInstanceId[instanceId] = { id: instanceId, defId };
+    const override = overrides?.[index] ?? null;
+    cardsByInstanceId[instanceId] = override
+      ? { id: instanceId, defId, overrides: override }
+      : { id: instanceId, defId };
     instanceIds.push(instanceId);
   }
 
@@ -203,9 +208,12 @@ export const createCardInstances = (
 
 export const createCardInstance = (
   state: GameState,
-  defId: CardDefId
+  defId: CardDefId,
+  override?: CardInstanceOverrides | null
 ): { state: GameState; instanceId: CardInstanceID } => {
-  const { state: nextState, instanceIds } = createCardInstances(state, [defId]);
+  const { state: nextState, instanceIds } = createCardInstances(state, [defId], [
+    override ?? null
+  ]);
   return { state: nextState, instanceId: instanceIds[0] };
 };
 

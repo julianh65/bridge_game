@@ -16,7 +16,7 @@ import { addCardToBurned, addCardToDiscardPile, removeCardFromHand } from "./car
 import { resolveCardEffects, isCardPlayable, validateMovePath } from "./card-effects";
 import { resolveImmediateBattles } from "./combat";
 import type { CardDef } from "./content/cards";
-import { getCardDef } from "./content/cards";
+import { applyCardInstanceOverrides, getCardDef } from "./content/cards";
 import { resolveCapitalDeployHex } from "./deploy-utils";
 import { emit } from "./events";
 import { getDeployForcesCount, runMoveEvents } from "./modifiers";
@@ -48,7 +48,11 @@ const getCardDefinition = (state: GameState, cardInstanceId: string) => {
   if (!instance) {
     return null;
   }
-  return getCardDef(instance.defId) ?? null;
+  const card = getCardDef(instance.defId);
+  if (!card) {
+    return null;
+  }
+  return applyCardInstanceOverrides(card, instance.overrides);
 };
 
 const getChampionGoldCost = (card: CardDef, championCount: number): number => {

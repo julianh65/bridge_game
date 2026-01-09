@@ -1,4 +1,4 @@
-import type { CardDef, GameView } from "@bridgefront/engine";
+import { applyCardInstanceOverrides, type CardDef, type GameView } from "@bridgefront/engine";
 
 import { GameCard } from "./GameCard";
 
@@ -77,7 +77,8 @@ export const HandCardPickerModal = ({
         ) : (
           <div className="hand-picker__grid">
             {cards.map((card) => {
-              const def = cardDefsById.get(card.defId) ?? null;
+              const baseDef = cardDefsById.get(card.defId) ?? null;
+              const def = baseDef ? applyCardInstanceOverrides(baseDef, card.overrides) : null;
               const name = def?.name ?? card.defId;
               const isSelected = selectedSet.has(card.id);
               const isDisabled = !isSelected && !canSelectMore;

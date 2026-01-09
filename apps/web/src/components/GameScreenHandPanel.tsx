@@ -2,6 +2,7 @@ import { type CSSProperties, type ReactNode, useEffect, useRef, useState } from 
 
 import {
   CARD_DEFS,
+  applyCardInstanceOverrides,
   type ActionDeclaration,
   type CardDef,
   type GameView
@@ -181,7 +182,10 @@ export const GameScreenHandPanel = ({
   const showHandPanel = canShowHandPanel && isHandPanelOpen;
   const handCount = handCards.length;
   const selectedCard = handCards.find((card) => card.id === selectedCardId) ?? null;
-  const selectedCardDef = selectedCard ? CARD_DEFS_BY_ID.get(selectedCard.defId) ?? null : null;
+  const selectedCardBase = selectedCard ? CARD_DEFS_BY_ID.get(selectedCard.defId) ?? null : null;
+  const selectedCardDef = selectedCardBase
+    ? applyCardInstanceOverrides(selectedCardBase, selectedCard?.overrides)
+    : null;
   const selectedLabel = selectedCardDef?.name ?? selectedCard?.defId ?? null;
   const selectedTargetHint = getCardTargetHint(selectedCardDef);
   const retreatSelectionLabel = (() => {
@@ -553,7 +557,10 @@ export const GameScreenHandPanel = ({
                 <>
                   <div className="hand-row" ref={handRowRef} style={handRowStyle}>
                     {handCards.map((card, index) => {
-                      const def = CARD_DEFS_BY_ID.get(card.defId);
+                      const baseDef = CARD_DEFS_BY_ID.get(card.defId) ?? null;
+                      const def = baseDef
+                        ? applyCardInstanceOverrides(baseDef, card.overrides)
+                        : null;
                       const label = def?.name ?? card.defId;
                       const isSelected = card.id === selectedCardId;
                       const manaCost = def?.cost.mana ?? 0;

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import {
   CARD_DEFS,
+  applyCardInstanceOverrides,
   type CardInstance,
   type CollectionChoice,
   type CollectionPrompt,
@@ -107,7 +108,8 @@ const CollectionHandCardOption = ({
   disabled,
   onSelect
 }: CollectionHandCardOptionProps) => {
-  const cardDef = CARD_DEFS_BY_ID.get(card.defId) ?? null;
+  const baseDef = CARD_DEFS_BY_ID.get(card.defId) ?? null;
+  const cardDef = baseDef ? applyCardInstanceOverrides(baseDef, card.overrides) : null;
   return (
     <button
       type="button"

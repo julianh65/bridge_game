@@ -5,7 +5,7 @@ export {
   placeRandomBridges,
   placeSpecialTiles
 } from "./board-generation";
-export { CARD_DEFS, CARD_DEFS_BY_ID } from "./content/cards";
+export { CARD_DEFS, CARD_DEFS_BY_ID, applyCardInstanceOverrides } from "./content/cards";
 export type { CardDef, CardDeck, CardType } from "./content/cards";
 export { MARKET_DECKS_BY_AGE } from "./content/market-decks";
 export { POWER_DECKS_BY_AGE } from "./content/power-decks";
@@ -50,6 +50,7 @@ export type {
   CardDefId,
   CardInstance,
   CardInstanceID,
+  CardInstanceOverrides,
   Command,
   CollectionChoice,
   CollectionPrivateView,

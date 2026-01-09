@@ -447,6 +447,16 @@ export type GameEvent = {
 export type CardInstance = {
   id: CardInstanceID;
   defId: CardDefId;
+  overrides?: CardInstanceOverrides;
+};
+
+export type CardInstanceOverrides = {
+  cost?: { mana?: number; gold?: number };
+  initiative?: number;
+  burn?: boolean;
+  tags?: string[];
+  name?: string;
+  rulesText?: string;
 };
 
 export type GameState = {
