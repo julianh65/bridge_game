@@ -485,6 +485,7 @@ Start going through the rules_draft and adding the logic for the different types
   - [ ] Forge Miracle: grant Age I market cards with burn + cost/initiative overrides.
 - [ ] Add burn keyword enforcement for granted cards (Forge Miracle, power deck burn effects). and an animation on burn
 - [x] Bridge crew is supposed to let you immediately move over the bridge you are going to construct
+- [ ] I still don't see the champion gold scaling with /'s inbetween the cost for the n'th champion, and validate that logic works
 
 
 ### Punchlist — Done cards blocked by UI/validation
@@ -557,23 +558,23 @@ Done
         - [x] Center Writ.
         - [x] Oathstone.
         - [x] Banner of Sparks.
-      - [ ] Age II Power (8) — Non-victory (3).
+      - [x] Age II Power (8) — Non-victory (3).
         - [x] Immunity Field.
         - [x] Rapid Reinforcements.
         - [x] A Hero Joins the Battle.
-      - [ ] Age II Power Victory (4).
+      - [x] Age II Power Victory (4).
         - [x] Writ of Industry.
         - [x] Bridge Charter.
         - [x] Dispatch to Front.
         - [x] Chronicle of War.
       - [x] Age II Power Champions (verify deck size inclusion).
         - [x] Bannerman.
-      - [ ] Age III Power (8) — Non-victory (4).
+      - [x] Age III Power (8) — Non-victory (4).
         - [x] Cataclysm Core.
         - [x] Quick Mobilization.
         - [x] Final Funding.
         - [x] Last Stand.
-      - [ ] Age III Power Victory (4).
+      - [x] Age III Power Victory (4).
         - [x] Imperial Warrant.
         - [x] Crown Coin.
         - [x] Deep Mine Charter.
