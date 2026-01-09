@@ -21,7 +21,7 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-- (none)
+- (owner: agent4) [status: in progress] Add hand burn animation for cards sent to the burned pile; files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`.
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -824,6 +824,7 @@ none
 - Verified engine coverage with `npm run -w @bridgefront/engine test`.
 - Added targeting immunity modifiers (Ward/Immunity Field), attached Marked-for-Coin flags to champions, and added action-flow tests for enemy targeting blocks.
 - Added modifier hooks for on-card-draw and end-of-round events, wired draw/cleanup dispatch, and covered with engine tests.
+- Marked draw/round-end trigger plan item complete (on-draw penalties, end-of-round VP awards, marked champion payouts). (Files: `implementation_plan.md`, `progress.md`.) (owner: agent2)
 - Made `gainMarketCards` draw random cards from the market deck (Black Market Pull now random) and advanced RNG state; updated plan note. (File: `packages/engine/src/card-effects-economy.ts`.) (owner: agent5) (Overlap note: file had in-flight edits.)
 - Added lock-bridge card effect support (locks an existing bridge until end of round) with action-flow coverage; marked subtask in `implementation_plan.md`. (Overlap note: touched `implementation_plan.md` while agent3 active.)
 - Added destroy-bridge card effect support for edge-targeted cards with action-flow coverage; marked subtask in `implementation_plan.md`. (Overlap note: touched `implementation_plan.md` while agent3/agent2 active.)

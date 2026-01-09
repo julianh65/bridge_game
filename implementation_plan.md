@@ -483,7 +483,7 @@ Start going through the rules_draft and adding the logic for the different types
 ### Tasks
 - [x] Add per-round counters for cards played/discarded (cards played now tracked for Archivist Prime; discard tracking + other cards pending).
 - [x] Keep `SUPPORTED_EFFECTS` allowlist synced with effect resolvers so new effect kinds remain playable.
-- [ ] Add draw/round-end triggers (on-draw penalties, end-of-round VP awards, marked champion payouts).
+- [x] Add draw/round-end triggers (on-draw penalties, end-of-round VP awards, marked champion payouts).
   - [x] Engine hooks for on-card-draw + end-of-round modifier events (cards/cleanup integration).
 - [x] Add targeting immunities and marked/contract flags (Ward, Immunity Field, Marked for Coin).
 - [x] Add movement/adjacency modifiers (bridge lockdown/trap, wormhole links, tunnel network).
