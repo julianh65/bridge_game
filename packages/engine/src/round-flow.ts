@@ -66,7 +66,7 @@ export const applyRoundReset = (state: GameState): GameState => {
   nextState = refreshChampionAbilityUsesForRound(nextState);
 
   for (const player of nextState.players) {
-    nextState = drawToHandSize(nextState, player.id, 6);
+    nextState = drawToHandSize(nextState, player.id, state.config.HAND_DRAW_SIZE);
   }
 
   return {
@@ -176,7 +176,7 @@ export const resolveQuietStudyChoices = (state: GameState): GameState => {
         countAsDiscard: true
       });
     }
-    nextState = drawToHandSize(nextState, player.id, 6);
+    nextState = drawToHandSize(nextState, player.id, state.config.HAND_DRAW_SIZE);
   }
 
   return nextState;

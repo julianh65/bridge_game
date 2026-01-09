@@ -53,6 +53,7 @@ export type GameConfig = {
   START_GOLD: number;
   BASE_INCOME: number;
   HAND_LIMIT: number;
+  HAND_DRAW_SIZE: number;
   CHAMPION_LIMIT: number;
   ROUNDS_MAX: number;
   VP_TO_WIN: number;

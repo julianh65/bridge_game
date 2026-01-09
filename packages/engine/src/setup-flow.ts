@@ -192,7 +192,7 @@ export const initializeStartingAssets = (state: GameState): GameState => {
       }
     }));
 
-    updatedState = drawToHandSize(updatedState, playerId, 6);
+    updatedState = drawToHandSize(updatedState, playerId, state.config.HAND_DRAW_SIZE);
     nextState = updatedState;
   }
 

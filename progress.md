@@ -254,6 +254,7 @@
 - Enabled card tags in the Card Editor and Cards tab so the Burn styling is visible during browsing. (Files: `apps/web/src/components/CardEditor.tsx`, `apps/web/src/components/CardsBrowser.tsx`.)
 - Applied the dark theme styling to the Play home screen by enabling the game theme for the Play tab even before joining a room; marked the plan item complete. (Files: `apps/web/src/App.tsx`, `implementation_plan.md`.)
 - Tuned the Play home hero + panels to use dark-theme gradients and borders so the “Enter the War Table” area matches the fantasy palette. (Files: `apps/web/src/styles.css`.)
+- Made the hand draw size configurable via `GameConfig` and applied it during setup/round draws; updated docs and the plan checklist. (Files: `packages/engine/src/config.ts`, `packages/engine/src/types.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/setup-flow.ts`, `docs/configuration.md`, `implementation_plan.md`.) (owner: agent4)
 
 ## Milestone 8.5 progress
 - Ensured the market overlay auto-opens when the first phase is market and added bell cues to age transition overlays.

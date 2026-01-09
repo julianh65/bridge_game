@@ -363,7 +363,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Can the champion chits on the map have the background image of their image? Same desaturated style of the board hexes
 - [x] Can the forces on the map have the background image as well? same desaturated style of the board hexes, pick a random soldier type image for now
 - [x] During the small action preview phase on the board while cards are being played keep the highlighting paths and indicators on the board during that little pause between 
-- [ ] Can we make the amount of cards we draw configurable from the config
+- [x] Can we make the amount of cards we draw configurable from the config
 
 ### Refactor Milestone
 

@@ -8,6 +8,9 @@ Edit that file to adjust rules and regenerate the board in the debug UI.
 ### Victory condition
 - `VP_TO_WIN`: total VP required to win at the end of scoring (default 10).
 
+### Hand draw size
+- `HAND_DRAW_SIZE`: target hand size when drawing at round start and during setup (default 6).
+
 ### Action reveal timing
 - `ACTION_REVEAL_DURATION_MS`: how long the action reveal overlay stays on screen (milliseconds).
 - `ACTION_REVEAL_HIGHLIGHT_PAUSE_MS`: how long board highlights linger after the overlay fades (milliseconds).

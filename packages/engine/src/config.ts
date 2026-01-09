@@ -5,6 +5,7 @@ export const DEFAULT_CONFIG: GameConfig = {
   START_GOLD: 4,
   BASE_INCOME: 1,
   HAND_LIMIT: 10,
+  HAND_DRAW_SIZE: 6,
   CHAMPION_LIMIT: 4,
   ROUNDS_MAX: 10,
   VP_TO_WIN: 10,
