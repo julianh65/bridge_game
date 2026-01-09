@@ -948,11 +948,49 @@ export const GameScreen = ({
   const hasRequiredHandTargets =
     requiredHandSelectionCount === 0 ||
     selectedHandCardIds.length === requiredHandSelectionCount;
+  const hasValidTargetCount = useMemo(() => {
+    if (!selectedCardDef) {
+      return true;
+    }
+    const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
+    if (cardTargetKind === "multiEdge") {
+      const edgeKeys = new Set(getTargetStringArray(targetRecord, "edgeKeys"));
+      const edgeKey = getTargetString(targetRecord, "edgeKey");
+      if (edgeKey) {
+        edgeKeys.add(edgeKey);
+      }
+      const count = edgeKeys.size;
+      const minEdges =
+        typeof targetSpec.minEdges === "number"
+          ? Math.max(0, Math.floor(targetSpec.minEdges))
+          : 1;
+      const maxEdges =
+        typeof targetSpec.maxEdges === "number"
+          ? Math.max(0, Math.floor(targetSpec.maxEdges))
+          : Number.POSITIVE_INFINITY;
+      return count >= minEdges && count <= maxEdges;
+    }
+    if (cardTargetKind === "multiPath") {
+      const paths = getTargetPaths(targetRecord);
+      const count = paths.length;
+      const minPaths =
+        typeof targetSpec.minPaths === "number"
+          ? Math.max(0, Math.floor(targetSpec.minPaths))
+          : 1;
+      const maxPaths =
+        typeof targetSpec.maxPaths === "number"
+          ? Math.max(0, Math.floor(targetSpec.maxPaths))
+          : Number.POSITIVE_INFINITY;
+      return count >= minPaths && count <= maxPaths;
+    }
+    return true;
+  }, [cardTargetKind, selectedCardDef, targetRecord]);
   const canPlayCard =
     canSubmitAction &&
     trimmedCardId.length > 0 &&
     targetsError === null &&
-    hasRequiredHandTargets;
+    hasRequiredHandTargets &&
+    hasValidTargetCount;
   const cardDeclaration: ActionDeclaration | null = canPlayCard
     ? parsedTargets !== undefined
       ? {

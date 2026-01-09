@@ -728,6 +728,7 @@ none
 - Enforced `maxDistanceFromCapital` for hex targeting in the UI and added a capital-range hint for eligible cards. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`.)
 - Added Mortar Shot scatter preview highlights on adjacent hexes when targeting and marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreen.tsx` is in agent2 scope.)
 - Added a multi-edge targeting summary panel with min/max hints and a clear action for multi-bridge cards. (File: `apps/web/src/components/GameScreen.tsx`.)
+- Gated card play on multi-edge/multi-path min/max target counts so the Play Card action stays disabled until counts are valid. (File: `apps/web/src/components/GameScreen.tsx`.)
 - Deferred manual hit assignment UI for Focus Fire/Tactical Hand, disabled Focus Fire + Grand Strategist in card lists until the UI lands, and noted a future task in the plan. (Files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.)
 
 ## Milestone 7.5 progress
