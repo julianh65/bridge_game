@@ -120,6 +120,7 @@ export const GameCard = ({
   const factionName = showFactionLabel ? getFactionName(card?.factionId) : null;
   const victoryPoints =
     !isHidden && card?.type === "Victory" ? card.victoryPoints ?? 1 : null;
+  const showBurnBadge = variant === "hand" && !isHidden && Boolean(card?.burn);
   const championScaleLabel =
     showChampionStats && championGoldCosts
       ? `Gold cost ${championGoldCosts} (champions owned)`
@@ -141,6 +142,7 @@ export const GameCard = ({
   return (
     <Component className={classes} data-deck={deck} data-type={type}>
       {overlay}
+      {showBurnBadge ? <span className="game-card__burn-badge">Burn</span> : null}
       {initiativeLabel ? (
         <div className="game-card__initiative" aria-label={`Initiative ${initiativeLabel}`}>
           {initiativeLabel}

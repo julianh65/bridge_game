@@ -18,7 +18,9 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- (owner: agent5) Add champion relocation targeting (champion + destination hex) and implement Rapid Redeploy + Extraction Run card defs, with engine validation/resolution and UI targeting flow. Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-targeting.ts`, `packages/engine/src/card-effects-units.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `apps/web/src/components/GameScreen.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress)
+- (owner: agent3) Add host-configurable setup controls for `MAX_MANA` + `VP_TO_WIN`, with a new setup config command in the engine and setup UI inputs. Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/App.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress)
+- (owner: agent5) Add champion relocation targeting (champion + destination hex) and implement Rapid Redeploy + Extraction Run card defs, with engine validation/resolution and UI targeting flow. Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-targeting.ts`, `packages/engine/src/card-effects-units.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress)
+- (owner: agent4) Add basic save/load support by persisting room state to PartyKit storage and restoring on server start. Files: `apps/server/src/server.ts`, `progress.md`, `implementation_plan.md`. (status: in progress)
 ## Test fixes
 - Updated engine tests for market bid winners, Quiet Study hand-size behavior, and setup flow expectations (deck preview gating + card totals) to match current config/flow. (Files: `packages/engine/src/market.test.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`.) (owner: agent1)
 ## Milestone After Second Full Test Play and Thinking progress
@@ -26,6 +28,7 @@
 - Tightened the setup lobby/deck preview layout so the player panel stays narrow and the main panels fill more width. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Added a visual indicator for the local player's capital draft slot and row. (Files: `apps/web/src/components/SetupCapitalDraft.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
 - Displayed champion gold cost scaling with slash notation in card costs, updated action-reveal cost labels, and used scaled gold costs for hand affordance checks. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`.) (owner: agent2)
+- Added a burn badge on hand cards so burn status is visible even when tags are hidden. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
 - Enabled champion stat blocks in the Quiet Study hand picker. (File: `apps/web/src/components/HandCardPickerModal.tsx`.) (owner: agent2)
 - Compressed setup player status pills into a stacked layout with a compact ready indicator. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
 - Hid the force stack marker when a hex only has champions, centering champion tokens instead. (File: `apps/web/src/components/BoardView.tsx`.) (owner: agent2)

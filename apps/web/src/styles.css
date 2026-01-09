@@ -2644,6 +2644,29 @@ body.is-game .game-card[data-type="Order"] {
   color: var(--card-count-text);
 }
 
+.game-card__burn-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid #c2410c;
+  background: linear-gradient(135deg, #fed7aa, #f97316);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7c2d12;
+  box-shadow: 0 6px 12px rgba(234, 88, 12, 0.25);
+}
+
+body.is-game .game-card__burn-badge {
+  border-color: #f97316;
+  background: linear-gradient(135deg, #3b120b, #b45309);
+  color: #ffedd5;
+  box-shadow: 0 8px 14px rgba(249, 115, 22, 0.3);
+}
+
 .game-card__header {
   display: grid;
   gap: 6px;
