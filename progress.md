@@ -17,10 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent4
-  scope: refactor card-effects target helper utilities into module
-  files: packages/engine/src/card-effects.ts, packages/engine/src/card-effects-targets.ts, implementation_plan.md, progress.md
-  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -33,6 +29,7 @@
 - Moved label/target helper utilities into `apps/web/src/lib/game-screen-targets.ts` and updated the refactor milestone checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/lib/game-screen-targets.ts`, `implementation_plan.md`.)
 - Extracted the board legend + sidebar toggle into dedicated components and updated the refactor milestone checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenBoardLegend.tsx`, `apps/web/src/components/GameScreenSidebarToggle.tsx`, `implementation_plan.md`.)
 - Extracted the board section (BoardView + legend + split overlay) into `apps/web/src/components/GameScreenBoardSection.tsx` and updated the refactor milestone checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenBoardSection.tsx`, `implementation_plan.md`.)
+- Extracted card-effects target parsing helpers into `packages/engine/src/card-effects-targets.ts` and updated the refactor milestone checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-targets.ts`, `implementation_plan.md`.)
 
 ## Mini Milestone For Me progress
 - Added a dev-only Card Editor view with inline numeric edits, copy flow, initiative tools (collision listing + decollide/compress), and patch export; wired into the app nav and documented in the plan checklist. (Files: `apps/web/src/components/CardEditor.tsx`, `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` overlaps agent2/agent4 scope.)

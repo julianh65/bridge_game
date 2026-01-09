@@ -373,6 +373,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] GameScreen: extract board section (BoardView + legend + overlays) into component.
 - [ ] GameScreen: extract remaining HUD subsections into components.
 - [x] GameScreen: move label/target helper utilities into a shared module.
+- [x] card-effects: extract target parsing helpers into a shared module.
 - [ ] card-effects: split effect resolvers into categorized modules and re-export from a single index.
 - [ ] styles.css: split into logical partials (base/layout/components/overlays) and import in main.
 
@@ -638,6 +639,8 @@ Done
   - force advance to next phase
   - seed controls
 - [x] Set explicit Victory card VP values in card defs and surface them in card UI.
+- [ ] Right now it's possible for the cards in the hand if there are too many or on certain screens to not be seen, requiring left and right scrolling, I don't want the card sizes to be changed but I want this to be fixed
+- [ ] It would be nice if the background of the champions in the battle modal had the background image like the champions on the board chits
 
 ## Milestone 8.5 -- Things I've noticed and nice to haves
 
