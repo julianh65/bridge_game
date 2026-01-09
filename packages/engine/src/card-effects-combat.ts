@@ -20,6 +20,26 @@ import { removeModifierById } from "./card-effects-modifiers";
 import { moveUnits } from "./card-effects-movement";
 import { removeForcesFromHex } from "./card-effects-units";
 
+const addGold = (state: GameState, playerId: PlayerID, amount: number): GameState => {
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return state;
+  }
+  return {
+    ...state,
+    players: state.players.map((player) =>
+      player.id === playerId
+        ? {
+            ...player,
+            resources: {
+              ...player.resources,
+              gold: player.resources.gold + amount
+            }
+          }
+        : player
+    )
+  };
+};
+
 export const resolveCombatEffect = (
   state: GameState,
   playerId: PlayerID,
@@ -379,6 +399,48 @@ export const resolveCombatEffect = (
             data: {
               goldArmor: {
                 costPerDamage
+              }
+            }
+          }
+        ]
+      };
+      return nextState;
+    }
+    case "pullingStrings": {
+      const amount =
+        typeof effect.amount === "number" ? Math.max(0, Math.floor(effect.amount)) : 1;
+      if (amount <= 0) {
+        return nextState;
+      }
+      const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.pulling_strings`;
+      nextState = {
+        ...nextState,
+        modifiers: [
+          ...nextState.modifiers,
+          {
+            id: modifierId,
+            source: { type: "card", sourceId: card.id },
+            ownerPlayerId: playerId,
+            duration: { type: "endOfRound" },
+            hooks: {
+              beforeCombatRound: ({
+                state,
+                modifier,
+                round,
+                attackerPlayerId,
+                defenderPlayerId
+              }) => {
+                if (round !== 1) {
+                  return state;
+                }
+                const ownerId = modifier.ownerPlayerId;
+                if (!ownerId) {
+                  return state;
+                }
+                if (ownerId === attackerPlayerId || ownerId === defenderPlayerId) {
+                  return state;
+                }
+                return addGold(state, ownerId, amount);
               }
             }
           }

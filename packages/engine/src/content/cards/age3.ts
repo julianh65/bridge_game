@@ -126,6 +126,34 @@ export const ROYAL_MINT: CardDef = {
   effects: [{ kind: "gainGold", amount: 5 }]
 };
 
+export const BLACK_MARKET_PULL: CardDef = {
+  id: "age3.black_market_pull",
+  name: "Black Market Pull",
+  rulesText: "Gain 2 random Age III Market cards to your hand. Burn.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 1 },
+  initiative: 35,
+  burn: true,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "gainMarketCards", age: "III", count: 2 }]
+};
+
+export const PULLING_STRINGS: CardDef = {
+  id: "age3.pulling_strings",
+  name: "Pulling Strings",
+  rulesText: "Whenever two other players fight a battle this round, gain 1 gold.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 2 },
+  initiative: 35,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "pullingStrings", amount: 1 }]
+};
+
 export const TOME_OF_ORDERS: CardDef = {
   id: "age3.tome_of_orders",
   name: "Tome of Orders",
@@ -511,6 +539,8 @@ export const AGE3_CARDS: CardDef[] = [
   ENDLESS_CONSCRIPTION,
   FORWARD_LEGION,
   ROYAL_MINT,
+  BLACK_MARKET_PULL,
+  PULLING_STRINGS,
   TOME_OF_ORDERS,
   LAST_LECTURE,
   MASTER_PLAN,

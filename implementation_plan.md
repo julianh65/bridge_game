@@ -596,6 +596,8 @@ Done
       - [x] Forward Legion.
     - [ ] Age III Economy card defs (4).
       - [x] Royal Mint.
+      - [x] Black Market Pull.
+      - [x] Pulling Strings.
     - [ ] Age III Deckcraft card defs (4).
       - [x] Tome of Orders.
       - [x] Last Lecture.
@@ -625,6 +627,7 @@ Done
 - [x] Set explicit Victory card VP values in card defs and surface them in card UI.
 - [x] Right now it's possible for the cards in the hand if there are too many or on certain screens to not be seen, requiring left and right scrolling, I don't want the card sizes to be changed but I want this to be fixed
 - [x] It would be nice if the background of the champions in the battle modal had the background image like the champions on the board chits
+- [ ] Confirm that if a card that allows you to move 2 hexes is played, and after it's confirmed during the action phase, if another player who plays a card with lower initiative moves into the first hex of the two hex path, that the player will "stop" at that hex and do a combat.
 
 ## Milestone 8.5 -- Things I've noticed and nice to haves
 

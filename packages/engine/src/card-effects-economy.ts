@@ -1,11 +1,13 @@
 import { randInt } from "@bridgefront/shared";
 
+import { getCardDef } from "./content/cards";
 import type { EffectSpec } from "./content/cards/types";
-import type { CardPlayTargets, GameState, PlayerID, TileType } from "./types";
+import type { Age, CardPlayTargets, GameState, PlayerID, TileType } from "./types";
 import {
   addCardToBurned,
   addCardToDiscardPile,
   addCardToHandWithOverflow,
+  createCardInstances,
   discardCardFromHand,
   drawCards,
   removeCardFromHand,
@@ -56,6 +58,41 @@ const addMana = (state: GameState, playerId: PlayerID, amount: number): GameStat
     )
   };
 };
+
+const addPermanentVp = (state: GameState, playerId: PlayerID, amount: number): GameState => {
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return state;
+  }
+  return {
+    ...state,
+    players: state.players.map((player) =>
+      player.id === playerId
+        ? {
+            ...player,
+            vp: {
+              ...player.vp,
+              permanent: player.vp.permanent + amount
+            }
+          }
+        : player
+    )
+  };
+};
+
+const grantVictoryOnGain = (state: GameState, playerId: PlayerID, cardDefId: string): GameState => {
+  const cardDef = getCardDef(cardDefId);
+  if (!cardDef || cardDef.type !== "Victory") {
+    return state;
+  }
+  const victoryPoints = cardDef.victoryPoints ?? 1;
+  if (!Number.isFinite(victoryPoints) || victoryPoints <= 0) {
+    return state;
+  }
+  return addPermanentVp(state, playerId, Math.floor(victoryPoints));
+};
+
+const isAge = (value: unknown): value is Age =>
+  value === "I" || value === "II" || value === "III";
 
 const playerOccupiesTile = (
   state: GameState,
@@ -318,6 +355,41 @@ export const resolveEconomyEffect = (
           ? bonusIfMine
           : 0);
       return addGold(nextState, playerId, amount);
+    }
+    case "gainMarketCards": {
+      const age = isAge(effect.age) ? effect.age : null;
+      if (!age) {
+        return nextState;
+      }
+      const count =
+        typeof effect.count === "number" ? Math.max(0, Math.floor(effect.count)) : 1;
+      if (count <= 0) {
+        return nextState;
+      }
+      const deck = nextState.marketDecks[age] ?? [];
+      if (deck.length === 0) {
+        return nextState;
+      }
+      const drawCount = Math.min(count, deck.length);
+      const drawn = deck.slice(0, drawCount);
+      const remaining = deck.slice(drawCount);
+      const created = createCardInstances(nextState, drawn);
+      nextState = created.state;
+      nextState = {
+        ...nextState,
+        marketDecks: {
+          ...nextState.marketDecks,
+          [age]: remaining
+        }
+      };
+      for (const cardId of created.instanceIds) {
+        nextState = addCardToHandWithOverflow(nextState, playerId, cardId);
+        const defId = nextState.cardsByInstanceId[cardId]?.defId;
+        if (defId) {
+          nextState = grantVictoryOnGain(nextState, playerId, defId);
+        }
+      }
+      return nextState;
     }
     default:
       return null;
