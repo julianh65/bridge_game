@@ -207,6 +207,21 @@ export const FINAL_OATH: CardDef = {
   effects: [{ kind: "healChampion", amount: 2 }]
 };
 
+export const MONUMENT_PLAN: CardDef = {
+  id: "age3.monument_plan",
+  name: "Monument Plan",
+  rulesText: "Gives +2 VP. When played: Discard 1 card.",
+  type: "Victory",
+  victoryPoints: 2,
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 1 },
+  initiative: 60,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "discardFromHand", count: 1 }]
+};
+
 export const LOGISTICS_OFFICER: CardDef = {
   id: "champion.age3.logistics_officer",
   name: "Logistics Officer",
@@ -392,6 +407,7 @@ export const AGE3_CARDS: CardDef[] = [
   RUIN_THE_SPAN,
   CONQUEST_RECORD,
   FINAL_OATH,
+  MONUMENT_PLAN,
   LOGISTICS_OFFICER,
   TITAN_VANGUARD,
   CENTER_BANNERMAN,

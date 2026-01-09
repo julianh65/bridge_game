@@ -608,6 +608,8 @@ Done
     - [ ] Age III Victory card defs (4+).
       - [x] Conquest Record.
       - [x] Final Oath.
+      - [x] Monument Plan.
+      - [ ] Timer.
     - [ ] Age III Champion card defs (8).
   - [x] Add card metadata tags for Burn/Power/Victory/Champion and ensure filters use them.
 - [x] Add “smoke sim” tests:
