@@ -61,6 +61,7 @@
 - Verified faction passives against `rules_draft.md` and marked the checklist item complete. (File: `implementation_plan.md`.) (owner: agent1)
 - Verified derived power/burn/victory tags on power cards via card registry and checked off the plan item. (File: `implementation_plan.md`.) (owner: agent1)
 - Checked off the Age II/III power checklist headers now that all listed power cards are defined. (File: `implementation_plan.md`.) (owner: agent1)
+- Audited Immunity Field power card (targeting + duration) vs `rules_draft.md` and noted alignment in the plan. (File: `implementation_plan.md`.) (owner: agent1)
 
 ## Refactor Milestone progress
 - Extracted market/collection overlay rendering into `apps/web/src/components/GameScreenOverlays.tsx` and shared the market winner highlight type; updated the refactor milestone checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenOverlays.tsx`, `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.)

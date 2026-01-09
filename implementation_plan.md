@@ -564,6 +564,7 @@ Done
         - [x] Immunity Field.
         - [x] Rapid Reinforcements.
         - [x] A Hero Joins the Battle.
+        - [x] Audit Immunity Field rules alignment (targeting + duration).
       - [x] Age II Power Victory (4).
         - [x] Writ of Industry.
         - [x] Bridge Charter.
