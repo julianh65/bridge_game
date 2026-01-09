@@ -439,7 +439,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] Be creative and add a balanced age 2 card that gives VP, don't make it too crazy just make it basic, add it to the rules, the game and everywhere
 - [ ] Be creative and add to each age a balanced more "basic" champion card that dosen't do anything crazy but is balanced, add it to the rules, the game and everywhere
 - [x] add a cool favicon
-- [ ] remove the how it works on the main screen and "core loop" container
+- [x] remove the how it works on the main screen and "core loop" container
 - [ ] For cards that kind of "scale" like propoganda recruitment or future investment we need to represent on the card (in a very simple way, what the value would be if they played it is)
 
 

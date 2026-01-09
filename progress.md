@@ -82,6 +82,7 @@
 - Added a dark-fantasy favicon and wired it into the web entrypoint; marked the plan item complete. (Files: `apps/web/public/favicon.svg`, `apps/web/index.html`, `implementation_plan.md`.) (owner: agent2)
 - Added collection-phase public summaries for mine gold income and waiting players’ forge/center prompts; surfaced in the collection overlay and added mine-gold block coverage. (Files: `packages/engine/src/round-flow.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/CollectionPanel.tsx`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- round-flow.test.ts -t "collects mine gold"`.) (owner: agent5)
 - Widened the setup players panel (max width now 260px) so connected/offline and setup status pills have more room; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent1)
+- Removed the "How it works" panel and "Core loop" hero meta item from the home screen. (File: `apps/web/src/components/Home.tsx`.) (owner: agent2)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.

@@ -120,10 +120,6 @@ export const Home = ({ onJoin }: HomeProps) => {
               <span className="home__hero-meta-label">Session</span>
               <span className="home__hero-meta-value">45-90 minutes</span>
             </div>
-            <div className="home__hero-meta-item">
-              <span className="home__hero-meta-label">Core loop</span>
-              <span className="home__hero-meta-value">Draft, act, score</span>
-            </div>
           </div>
         </div>
 
@@ -200,25 +196,6 @@ export const Home = ({ onJoin }: HomeProps) => {
       ) : null}
 
       <div className="home__grid">
-        <section className="panel home__panel">
-          <h2>How it works</h2>
-          <p className="muted">
-            Each room is a PartyKit instance. Share the room code so others can join and
-            sync the same board state. When the server is online, this screen will connect
-            automatically.
-          </p>
-          <div className="home__tips">
-            <div>
-              <span className="label">Default host</span>
-              <span className="value">{defaultHost}</span>
-            </div>
-            <div>
-              <span className="label">Local dev</span>
-              <span className="value">Run PartyKit on port 1999.</span>
-            </div>
-          </div>
-        </section>
-
         <section className="panel home__panel home__panel--signal">
           <h2>Rules & Tutorial</h2>
           <p className="muted">
