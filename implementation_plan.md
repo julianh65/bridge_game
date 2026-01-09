@@ -846,7 +846,7 @@ Done
     - [x] Shadeblade Assassin's Edge pre-combat damage.
   - [ ] Card primitive tests for new mechanics.
     - [x] Bridge lockdown movement block.
-    - [ ] Bridge trap force-loss trigger.
+    - [x] Bridge trap force-loss trigger.
     - [ ] Wormhole adjacency override.
     - [x] Dice roll gold thresholds.
     - [x] Cost override/scaling primitives.
