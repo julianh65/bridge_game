@@ -4519,7 +4519,11 @@ body.is-game .log-empty {
 .hand-card:focus-visible {
   transform: translateY(calc(var(--hand-lift, 0px) - 12px))
     rotate(var(--hand-rotate, 0deg)) scale(1.04);
-  z-index: 70;
+  z-index: 120;
+}
+
+.hand-card.is-selected {
+  z-index: 90;
 }
 
 .hand-card:focus-visible {

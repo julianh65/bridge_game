@@ -17,7 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- (owner: agent2) Ensure hovered hand cards always rise above neighbors in the hand fan (z-index/hover stacking fix). Files: `apps/web/src/styles.css`, `progress.md`, `implementation_plan.md`. (status: in progress)
 ## Test fixes
 - Updated engine tests for market bid winners, Quiet Study hand-size behavior, and setup flow expectations (deck preview gating + card totals) to match current config/flow. (Files: `packages/engine/src/market.test.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`.) (owner: agent1)
 ## Milestone After Second Full Test Play and Thinking progress
@@ -28,6 +27,7 @@
 - Quiet Study submissions now always register (no-op selections no longer get ignored); marked the plan item complete. (Files: `packages/engine/src/round-flow.ts`, `implementation_plan.md`.) (owner: agent2)
 - Increased card rules text size slightly for readability. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Anchored the hand cards to the bottom of the hand panel so Bridge Crew target popups no longer shift the row. (File: `apps/web/src/styles.css`.) (owner: agent2)
+- Boosted hand-card hover/selection z-index so hovered cards consistently rise above the fan after actions. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Enabled champion-only moves (forceCount 0) and bridge-bypass targeting so Skystriker/Bridge Runner can move without bridges when selected; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Enabled map-based combat retreat selection by highlighting valid retreat hexes, allowing board clicks to submit retreat choices, and letting the retreat overlay pass clicks through to the board; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5)
 - Cleared basic-action selection state on round change so March doesn’t stay selected across rounds; updated the plan checklist. (File: `apps/web/src/components/GameScreen.tsx`.) (owner: agent5)
