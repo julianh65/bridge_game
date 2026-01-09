@@ -1294,6 +1294,7 @@ export const BoardView = ({
         const isHighlighted = highlightSet.has(hex.key);
         const isValidTarget = validSet.has(hex.key);
         const isHomeCapital = homeCapitalHexKey === hex.key;
+        const homeLabelY = tag ? hex.y - 18 : hex.y - 10;
         const isInactive =
           clickable && hasValidTargets && !isValidTarget && !isSelected && !isHighlighted;
         const hexPointsString = hexPoints(hex.x, hex.y, HEX_DRAW_SIZE);
@@ -1366,6 +1367,11 @@ export const BoardView = ({
               }}
             />
             <polygon className={vignetteClassName} points={hexPointsString} />
+            {isHomeCapital ? (
+              <text x={hex.x} y={homeLabelY} className="hex__home-label">
+                HOME
+              </text>
+            ) : null}
             {tag ? (
               <text x={hex.x} y={hex.y - 6} className="hex__tag">
                 {tag}

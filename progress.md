@@ -71,6 +71,7 @@
 - Reduced mine value label sizing again to keep the board tooltip numbers subtle. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Added capital owner names to the hex hover tooltip for capital tiles. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`.) (owner: agent2)
 - Added capital owner names to the on-board tile hover label for capital hexes. (File: `apps/web/src/components/BoardView.tsx`.) (owner: agent2)
+- Added a HOME label above the local capital ring to make it easier to spot your capital on the board. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
 - Added per-faction starter deck mapping scaffold (defaults to the common deck), updated card registry coverage, and noted the remaining per-faction initiative work in the plan. (Files: `packages/engine/src/content/starter-decks.ts`, `packages/engine/src/content/cards/cards.test.ts`, `implementation_plan.md`.)
 - Added per-faction starter initiative variants for Quick Move/Zap/Scout Report and updated starter decks to use the faction-specific IDs; marked the plan item complete. (Files: `packages/engine/src/content/cards/starter.ts`, `packages/engine/src/content/starter-decks.ts`, `implementation_plan.md`.)
 - Added card art mappings for faction-specific starter variants (Quick Move/Zap/Scout Report) so art resolves for the new IDs. (File: `apps/web/src/data/card-art.json`.) (Overlap note: `apps/web/src/data/card-art.json` already had in-flight art mappings.)

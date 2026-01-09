@@ -5746,6 +5746,12 @@ body.is-game .player-row--idle {
   color: var(--muted);
 }
 
+.action-panel__split-divider {
+  height: 1px;
+  background: var(--border);
+  opacity: 0.6;
+}
+
 .action-panel__split-count {
   min-width: 28px;
   text-align: center;
@@ -6389,6 +6395,7 @@ body.is-game .btn-secondary:active:not(:disabled) {
 }
 
 .hex__label,
+.hex__home-label,
 .hex__tag,
 .hex__coords,
 .hex__slot,
@@ -6413,6 +6420,16 @@ body.is-game .btn-secondary:active:not(:disabled) {
   font-weight: 700;
   fill: #fff7e6;
   stroke-width: 2;
+}
+
+.hex__home-label {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  fill: var(--accent-strong);
+  stroke: rgba(14, 10, 6, 0.65);
+  stroke-width: 1.6;
+  letter-spacing: 0.2em;
 }
 
 .hex__coords {
