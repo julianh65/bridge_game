@@ -61,10 +61,10 @@
   --card-cost-border: rgba(148, 163, 184, 0.5);
   --card-cost-text: #3f2a16;
   --card-cost-shadow: 0 6px 12px rgba(15, 23, 42, 0.12);
-  --card-cost-mana-bg: linear-gradient(135deg, #e0f2fe 0%, #9bbcf3 100%);
+  --card-cost-mana-bg: var(--card-cost-bg);
   --card-cost-mana-border: rgba(59, 130, 246, 0.45);
   --card-cost-mana-text: #1e3a8a;
-  --card-cost-gold-bg: linear-gradient(135deg, #fef3c7 0%, #f5c542 100%);
+  --card-cost-gold-bg: var(--card-cost-bg);
   --card-cost-gold-border: rgba(217, 119, 6, 0.45);
   --card-cost-gold-text: #92400e;
   --card-width: clamp(220px, 24vw, 270px);
@@ -155,10 +155,10 @@ body.is-game {
   --card-cost-border: rgba(218, 173, 125, 0.4);
   --card-cost-text: #ffe8cf;
   --card-cost-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
-  --card-cost-mana-bg: linear-gradient(135deg, #5fa8e6 0%, #274b9e 100%);
+  --card-cost-mana-bg: var(--card-cost-bg);
   --card-cost-mana-border: rgba(147, 197, 253, 0.65);
   --card-cost-mana-text: #eff6ff;
-  --card-cost-gold-bg: linear-gradient(135deg, #f3c44c 0%, #9a5c10 100%);
+  --card-cost-gold-bg: var(--card-cost-bg);
   --card-cost-gold-border: rgba(252, 211, 77, 0.65);
   --card-cost-gold-text: #fffbeb;
   --board-glow-1: rgba(255, 214, 170, 0.14);
