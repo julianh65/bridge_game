@@ -6,6 +6,7 @@ import {
   DEFAULT_CONFIG,
   emit,
   getBridgeKey,
+  getCapitalSlots,
   runUntilBlocked
 } from "@bridgefront/engine";
 import type {
@@ -1423,14 +1424,29 @@ export default class Server implements Party.Server {
     let nextState = runUntilBlocked(
       createNewGame(this.state.config ?? DEFAULT_CONFIG, seed, lobbyPlayers)
     );
+    const nextPlayers = nextState.players.map((player) => ({
+      ...player,
+      visibility: {
+        connected: (this.playerConnections.get(player.id) ?? 0) > 0
+      }
+    }));
+    const capitalSlots = getCapitalSlots(
+      nextPlayers.length,
+      nextState.board.radius,
+      nextState.config.capitalSlotsByPlayerCount
+    );
+    const capitalDraftBlock: BlockState = {
+      type: "setup.capitalDraft",
+      waitingFor: nextPlayers.map((player) => player.id),
+      payload: {
+        availableSlots: capitalSlots,
+        choices: Object.fromEntries(nextPlayers.map((player) => [player.id, null]))
+      }
+    };
     nextState = {
       ...nextState,
-      players: nextState.players.map((player) => ({
-        ...player,
-        visibility: {
-          connected: (this.playerConnections.get(player.id) ?? 0) > 0
-        }
-      }))
+      players: nextPlayers,
+      blocks: capitalDraftBlock
     };
     const nextRevision = this.state.revision + 1;
     this.state = { ...nextState, revision: nextRevision };
