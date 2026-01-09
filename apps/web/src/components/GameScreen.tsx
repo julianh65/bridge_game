@@ -26,7 +26,6 @@ import { type BasicActionIntent, type BoardPickMode } from "./ActionPanel";
 import { ActionRevealOverlay, type ActionRevealOverlayData } from "./ActionRevealOverlay";
 import { type BoardActionAnimation } from "./BoardView";
 import { CombatOverlay } from "./CombatOverlay";
-import { CombatRetreatOverlay } from "./CombatRetreatOverlay";
 import { DiceRollOverlay, type DiceRollOverlayData } from "./DiceRollOverlay";
 import { GameScreenCues, type AgeCue, type PhaseCue } from "./GameScreenCues";
 import { GameScreenBoardSection } from "./GameScreenBoardSection";
@@ -890,6 +889,43 @@ export const GameScreen = ({
       pendingCombat.waitingForPlayerIds.includes(localPlayerId)
   );
   const combatRetreatHexKeys = isCombatRetreatWaiting ? combatRetreatTargets.hexKeys : [];
+  const combatRetreatPanel = useMemo(() => {
+    if (!pendingCombat || !localPlayerId) {
+      return null;
+    }
+    if (
+      pendingCombat.attackers.playerId !== localPlayerId &&
+      pendingCombat.defenders.playerId !== localPlayerId
+    ) {
+      return null;
+    }
+    const options = pendingCombat.availableEdges[localPlayerId] ?? [];
+    const selection = pendingCombat.choices[localPlayerId] ?? null;
+    const canAct = pendingCombat.waitingForPlayerIds.includes(localPlayerId);
+    const labeledOptions = options
+      .map((edgeKey) => {
+        let destination: string | null = null;
+        try {
+          const [from, to] = parseEdgeKey(edgeKey);
+          destination =
+            from === pendingCombat.hexKey ? to : to === pendingCombat.hexKey ? from : null;
+        } catch {
+          destination = null;
+        }
+        if (!destination) {
+          return null;
+        }
+        const label = hexLabels[destination] ?? destination;
+        return { edgeKey, label };
+      })
+      .filter((entry): entry is { edgeKey: string; label: string } => Boolean(entry));
+    return {
+      hexLabel: pendingCombatLabel ?? pendingCombat.hexKey,
+      options: labeledOptions,
+      selection,
+      canAct
+    };
+  }, [hexLabels, localPlayerId, pendingCombat, pendingCombatLabel]);
   const activeCombatHex = activeCombat
     ? view.public.board.hexes[activeCombat.start.hexKey] ?? null
     : null;
@@ -4012,17 +4048,7 @@ export const GameScreen = ({
       {rollReveal ? (
         <DiceRollOverlay reveal={rollReveal} durationMs={rollRevealDurationMs} />
       ) : null}
-      {pendingCombat ? (
-        <CombatRetreatOverlay
-          combat={pendingCombat}
-          playersById={playerNames}
-          playerFactionsById={playerFactions}
-          viewerId={playerId}
-          hexLabel={pendingCombatLabel}
-          hexLabels={hexLabels}
-          onSubmitRetreat={handleCombatRetreat}
-        />
-      ) : activeCombat ? (
+      {activeCombat ? (
         <CombatOverlay
           sequence={activeCombat}
           playersById={playerNames}
@@ -4205,6 +4231,14 @@ export const GameScreen = ({
         primaryAction={primaryAction}
         primaryActionLabel={primaryActionLabel}
         canSubmitDone={canSubmitDone}
+        combatRetreat={
+          combatRetreatPanel && pendingCombat
+            ? {
+                ...combatRetreatPanel,
+                onSubmit: (edgeKey) => handleCombatRetreat(pendingCombat.hexKey, edgeKey)
+              }
+            : null
+        }
       />
     </section>
   );

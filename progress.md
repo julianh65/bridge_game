@@ -17,8 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- (owner: agent5) Move combat retreat decision into the main hand/actions panel with clear “one final round” messaging; remove the full-screen retreat overlay. Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`. (status: in progress)
-- (owner: agent2) Stop Bridge Crew card popup from pushing the hand UI upward; scope: hand panel layout. Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `progress.md`, `implementation_plan.md`. (status: in progress)
 ## Test fixes
 - Updated engine tests for market bid winners, Quiet Study hand-size behavior, and setup flow expectations (deck preview gating + card totals) to match current config/flow. (Files: `packages/engine/src/market.test.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`.) (owner: agent1)
 ## Milestone After Second Full Test Play and Thinking progress
@@ -27,6 +25,7 @@
 - Compressed setup player status pills into a stacked layout with a compact ready indicator. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
 - Hid the force stack marker when a hex only has champions, centering champion tokens instead. (File: `apps/web/src/components/BoardView.tsx`.) (owner: agent2)
 - Quiet Study submissions now always register (no-op selections no longer get ignored); marked the plan item complete. (Files: `packages/engine/src/round-flow.ts`, `implementation_plan.md`.) (owner: agent2)
+- Anchored the hand cards to the bottom of the hand panel so Bridge Crew target popups no longer shift the row. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Enabled champion-only moves (forceCount 0) and bridge-bypass targeting so Skystriker/Bridge Runner can move without bridges when selected; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Enabled map-based combat retreat selection by highlighting valid retreat hexes, allowing board clicks to submit retreat choices, and letting the retreat overlay pass clicks through to the board; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5)
 - Cleared basic-action selection state on round change so March doesn’t stay selected across rounds; updated the plan checklist. (File: `apps/web/src/components/GameScreen.tsx`.) (owner: agent5)
@@ -44,6 +43,7 @@
 - Roll-off ties now award the highest die roll (not lowest), with market roll-off tests updated; marked the plan item complete. (Files: `packages/engine/src/market.ts`, `packages/engine/src/market.test.ts`, `implementation_plan.md`.) (owner: agent5)
 - Relaxed forge placement to fall back to any eligible distance when preferred center distances have no candidates (avoids dead-end placements on small maps), with a fallback test; marked the plan item complete. (Files: `packages/engine/src/board-generation.ts`, `packages/engine/src/board-generation.test.ts`, `implementation_plan.md`.) (owner: agent5)
 - Persisted combat RNG updates during no-hit rounds so dice rolls advance (prevents repeated roll stalls), with test coverage; marked the plan item complete. (Files: `packages/engine/src/combat.ts`, `packages/engine/src/combat.test.ts`, `implementation_plan.md`.) (owner: agent5)
+- Moved combat retreat decisions into the hand/actions panel with clear "one final round" messaging and removed the full-screen retreat overlay; marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
