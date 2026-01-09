@@ -603,6 +603,8 @@ Done
       - [x] Perfect Cycle.
     - [ ] Age III Combat/Tactics card defs (4).
       - [x] Execution Order.
+      - [x] Attrition.
+      - [x] Complete Encirclement.
     - [ ] Age III Bridges/Terrain card defs (2).
       - [x] Wormhole Gate.
       - [x] Ruin the Span.

@@ -74,11 +74,81 @@ export const resolveCombatEffect = (
       const enemyForces = unitIds.filter(
         (unitId) => nextState.board.units[unitId]?.kind === "force"
       );
-      if (enemyForces.length === 0) {
+      const removeCount = Math.min(maxForces, enemyForces.length);
+      if (removeCount > 0) {
+        nextState = removeForcesFromHex(nextState, enemyId, target.hexKey, unitIds, removeCount);
+      }
+
+      const championDamage =
+        typeof effect.championDamage === "number"
+          ? Math.max(0, Math.floor(effect.championDamage))
+          : 0;
+      if (championDamage > 0) {
+        const updatedHex = nextState.board.hexes[target.hexKey];
+        if (!updatedHex) {
+          return nextState;
+        }
+        const championIds = Object.values(updatedHex.occupants).flat().filter((unitId) => {
+          return nextState.board.units[unitId]?.kind === "champion";
+        });
+        for (const unitId of championIds) {
+          nextState = dealChampionDamage(nextState, playerId, unitId, championDamage);
+        }
+      }
+      return nextState;
+    }
+    case "attrition": {
+      const target = getHexTarget(
+        nextState,
+        playerId,
+        card.targetSpec as TargetRecord,
+        targets ?? null
+      );
+      if (!target) {
         return nextState;
       }
-      const removeCount = Math.min(maxForces, enemyForces.length);
-      nextState = removeForcesFromHex(nextState, enemyId, target.hexKey, unitIds, removeCount);
+      const forceLoss =
+        typeof effect.forceLoss === "number" ? Math.max(0, Math.floor(effect.forceLoss)) : 3;
+      const championDamage =
+        typeof effect.championDamage === "number"
+          ? Math.max(0, Math.floor(effect.championDamage))
+          : 1;
+      const hex = nextState.board.hexes[target.hexKey];
+      if (!hex) {
+        return nextState;
+      }
+      const enemyEntry = Object.entries(hex.occupants).find(
+        ([occupantId, units]) => occupantId !== playerId && units.length > 0
+      );
+      if (enemyEntry && forceLoss > 0) {
+        const [enemyId, unitIds] = enemyEntry;
+        const enemyForces = unitIds.filter(
+          (unitId) => nextState.board.units[unitId]?.kind === "force"
+        );
+        if (enemyForces.length > 0) {
+          const removeCount = Math.min(forceLoss, enemyForces.length);
+          nextState = removeForcesFromHex(
+            nextState,
+            enemyId,
+            target.hexKey,
+            unitIds,
+            removeCount
+          );
+        }
+      }
+
+      if (championDamage > 0) {
+        const updatedHex = nextState.board.hexes[target.hexKey];
+        if (!updatedHex) {
+          return nextState;
+        }
+        const championIds = Object.values(updatedHex.occupants).flat().filter((unitId) => {
+          return nextState.board.units[unitId]?.kind === "champion";
+        });
+        for (const unitId of championIds) {
+          nextState = dealChampionDamage(nextState, playerId, unitId, championDamage);
+        }
+      }
       return nextState;
     }
     case "mortarShot": {

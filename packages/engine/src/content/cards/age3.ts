@@ -210,6 +210,43 @@ export const EXECUTION_ORDER: CardDef = {
   effects: [{ kind: "dealChampionDamage", amount: 3 }]
 };
 
+export const ATTRITION: CardDef = {
+  id: "age3.attrition",
+  name: "Attrition",
+  rulesText:
+    "Enemy stack within distance 1 of your Champion: destroy up to 3 enemy Forces. Champions there take 1 damage.",
+  type: "Spell",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 1 },
+  initiative: 65,
+  burn: false,
+  targetSpec: {
+    kind: "hex",
+    owner: "enemy",
+    maxDistanceFromFriendlyChampion: 1
+  },
+  effects: [{ kind: "attrition", forceLoss: 3, championDamage: 1 }]
+};
+
+export const COMPLETE_ENCIRCLEMENT: CardDef = {
+  id: "age3.complete_encirclement",
+  name: "Complete Encirclement",
+  rulesText:
+    "Choose an enemy-occupied hex. If you occupy at least four adjacent hexes, destroy all Forces there and deal 3 damage to all Champions.",
+  type: "Spell",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 2 },
+  initiative: 70,
+  burn: false,
+  targetSpec: {
+    kind: "hex",
+    owner: "enemy"
+  },
+  effects: [{ kind: "encirclement", minAdjacent: 4, maxForces: 99, championDamage: 3 }]
+};
+
 export const WORMHOLE_GATE: CardDef = {
   id: "age3.wormhole_gate",
   name: "Wormhole Gate",
@@ -479,6 +516,8 @@ export const AGE3_CARDS: CardDef[] = [
   MASTER_PLAN,
   PERFECT_CYCLE,
   EXECUTION_ORDER,
+  ATTRITION,
+  COMPLETE_ENCIRCLEMENT,
   WORMHOLE_GATE,
   RUIN_THE_SPAN,
   CONQUEST_RECORD,

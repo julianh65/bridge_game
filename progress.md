@@ -17,9 +17,13 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent4
-  scope: add Age III combat cards (Attrition + Complete Encirclement) and resolve effects
-  files: packages/engine/src/content/cards/age3.ts, packages/engine/src/card-effects-combat.ts, implementation_plan.md, progress.md
+- owner: agent5
+  scope: add power card effects for A Hero Joins the Battle, Last Stand, and Siege Chronicle
+  files: packages/engine/src/card-effects.ts, packages/engine/src/card-effects-units.ts, packages/engine/src/content/cards/power.ts, packages/engine/src/content/power-decks.ts, implementation_plan.md, progress.md
+  status: in progress
+- owner: agent1
+  scope: enforce stopOnOccupied during card path selection and add UI hint
+  files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/GameScreenHandPanel.tsx, implementation_plan.md, progress.md
   status: in progress
 
 ## Planning updates
@@ -599,6 +603,7 @@ none
 - Added Age I champion cards for Bounty Hunter, Sergeant, and Traitor to the Age I market list.
 - Added Age I power card defs (Command Surge, Instant Bridge Net, Secret Plans, Emergency Pay, Shock Drill, Bridge Deed, Mine Charter, Forge Sketch, Center Writ, Oathstone, Banner of Sparks), wired the Age I power deck list, and added a Center Writ mana-if-center effect; Age II/III power decks still clone market lists and one Age I non-victory slot remains TBD. (Files: `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/cards/index.ts`, `packages/engine/src/content/power-decks.ts`, `packages/engine/src/card-effects.ts`.) (Plan: `implementation_plan.md`.)
 - Added partial Age II/III power card defs using existing effects (Immunity Field, Rapid Reinforcements, Writ of Industry, Bridge Charter, Dispatch to Front, Bannerman; Quick Mobilization, Final Funding, Imperial Warrant, Crown Coin, Deep Mine Charter) and replaced Age II/III power deck lists with the implemented IDs. Missing power cards that need new effect support remain. (Files: `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/power-decks.ts`, `implementation_plan.md`.)
+- Added Age III combat cards Attrition + Complete Encirclement with attrition damage handling and encirclement champion damage support. (Files: `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/card-effects-combat.ts`, `implementation_plan.md`.)
 
 ## Debug UI progress
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.
