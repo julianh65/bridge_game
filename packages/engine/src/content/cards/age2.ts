@@ -168,6 +168,23 @@ export const MINER_ARMY: CardDef = {
   effects: [{ kind: "deployForcesOnMines", count: 2 }]
 };
 
+export const COMMAND_LOGISTICS: CardDef = {
+  id: "age2.command_logistics",
+  name: "Command Logistics",
+  rulesText: "Deploy 1 Force to your Capital for each card in your hand.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 2, gold: 2 },
+  initiative: 70,
+  burn: false,
+  targetSpec: {
+    kind: "choice",
+    options: [{ kind: "capital" }]
+  },
+  effects: [{ kind: "recruitByHandSize" }]
+};
+
 export const FOCUS_FIRE: CardDef = {
   id: "age2.focus_fire",
   name: "Focus Fire",
@@ -871,6 +888,7 @@ export const AGE2_CARDS: CardDef[] = [
   FORWARD_BARRACKS,
   CONSCRIPTION_DRIVE,
   MINER_ARMY,
+  COMMAND_LOGISTICS,
   // TODO: Focus Fire disabled until manual hit assignment UI lands.
   SLOW,
   WARD,

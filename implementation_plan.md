@@ -459,6 +459,7 @@ Start going through the rules_draft and adding the logic for the different types
 - [ ] Add deckcraft primitives: draw/discard mixes, discard up to N, burn from hand, conditional draw, scry/topdeck (Quick Study, Cycle Notes, Hard Mulligan, Tome of Orders, War Chronicle, Precise Planning, Small Hands, Spellcaster).
   - [x] Precise Planning (draw pile empty conditional draw + mana).
   - [x] Spellcaster (draw 1; if it is a Spell, draw 2 more).
+  - [x] Cycle Notes (draw 2, discard 1).
   - [ ] Add post-draw choice prompts for discard/burn/topdeck so newly drawn cards can be selected.
   - [ ] Support optional discard/burn/topdeck choices ("may discard/topdeck") without blocking card play when hand is empty.
   - [ ] Add a reusable action-step hand-picker block for draw-then-choose effects (Tome of Orders, Perfect Cycle, Forge Sketch, Chronicle of War, Perfect Recall).
@@ -600,12 +601,13 @@ Done
       - [x] Breakthrough Line.
       - [x] Set to Skirmish.
       - [x] Burn the Bridges.
-    - [ ] Age II Recruitment card defs (5).
+    - [ ] Age II Recruitment card defs (6).
       - [x] Battalion Contract.
       - [x] Rally Where You Stand.
       - [x] Forward Barracks.
       - [x] Conscription Drive.
       - [x] Miner Army.
+      - [x] Command Logistics.
     - [ ] Age II Economy card defs (5).
     - [x] War Taxes.
     - [x] Smuggling Ring.

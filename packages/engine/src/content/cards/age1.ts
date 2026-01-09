@@ -466,6 +466,23 @@ export const QUICK_STUDY: CardDef = {
   effects: [{ kind: "drawCards", count: 2 }]
 };
 
+export const CYCLE_NOTES: CardDef = {
+  id: "age1.cycle_notes",
+  name: "Cycle Notes",
+  rulesText: "Draw 2, discard 1.",
+  type: "Spell",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1 },
+  initiative: 45,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [
+    { kind: "drawCards", count: 2 },
+    { kind: "discardFromHand", count: 1 }
+  ]
+};
+
 export const SCOUT_REPORT: CardDef = {
   id: "age1.scout_report",
   name: "Scout Report",
@@ -824,6 +841,7 @@ export const AGE1_CARDS: CardDef[] = [
   BATTLE_CRY,
   SMOKE_SCREEN,
   QUICK_STUDY,
+  CYCLE_NOTES,
   SCOUT_REPORT,
   MAKE_A_PLAY,
   PAID_LOGISTICS,
