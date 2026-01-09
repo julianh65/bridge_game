@@ -79,6 +79,7 @@ export const CombatRetreatOverlay = ({
             <span className="combat-retreat__empty">No retreat options.</span>
           ) : canAct ? (
             <>
+              <span className="combat-retreat__selection">Click a highlighted hex on the map or choose below.</span>
               {options.map((edgeKey) => (
                 <button
                   key={edgeKey}

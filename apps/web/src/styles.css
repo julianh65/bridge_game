@@ -7361,6 +7361,18 @@ body.is-game .hex-link-preview__line {
   padding: 24px;
 }
 
+.combat-retreat {
+  pointer-events: none;
+}
+
+.combat-retreat .combat-overlay__scrim {
+  pointer-events: none;
+}
+
+.combat-retreat .combat-overlay__panel {
+  pointer-events: auto;
+}
+
 .combat-overlay__scrim {
   position: absolute;
   inset: 0;

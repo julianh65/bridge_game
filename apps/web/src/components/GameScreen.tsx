@@ -18,6 +18,7 @@ import {
   areAdjacent,
   axialDistance,
   neighborHexKeys,
+  parseEdgeKey,
   parseHexKey
 } from "@bridgefront/shared";
 
@@ -838,6 +839,37 @@ export const GameScreen = ({
     pendingCombatCoordLabel && pendingCombatTileLabel
       ? `${pendingCombatCoordLabel} ${pendingCombatTileLabel}`
       : pendingCombatCoordLabel;
+  const combatRetreatTargets = useMemo(() => {
+    if (!pendingCombat || !localPlayerId) {
+      return { hexKeys: [] as string[], edgeByHex: new Map<string, string>() };
+    }
+    const edgeKeys = pendingCombat.availableEdges[localPlayerId] ?? [];
+    const edgeByHex = new Map<string, string>();
+    const hexKeys: string[] = [];
+    for (const edgeKey of edgeKeys) {
+      let destination: string | null = null;
+      try {
+        const [from, to] = parseEdgeKey(edgeKey);
+        destination = from === pendingCombat.hexKey ? to : to === pendingCombat.hexKey ? from : null;
+      } catch {
+        destination = null;
+      }
+      if (!destination || !view.public.board.hexes[destination]) {
+        continue;
+      }
+      if (!edgeByHex.has(destination)) {
+        edgeByHex.set(destination, edgeKey);
+        hexKeys.push(destination);
+      }
+    }
+    return { hexKeys, edgeByHex };
+  }, [pendingCombat, localPlayerId, view.public.board.hexes]);
+  const isCombatRetreatWaiting = Boolean(
+    pendingCombat &&
+      localPlayerId &&
+      pendingCombat.waitingForPlayerIds.includes(localPlayerId)
+  );
+  const combatRetreatHexKeys = isCombatRetreatWaiting ? combatRetreatTargets.hexKeys : [];
   const activeCombatHex = activeCombat
     ? view.public.board.hexes[activeCombat.start.hexKey] ?? null
     : null;
@@ -896,8 +928,9 @@ export const GameScreen = ({
     Boolean(actionStep) &&
     isLocalWaiting &&
     !localPlayer?.doneThisRound;
-  const isBoardTargeting = boardPickMode !== "none";
-  const isEdgePickMode = boardPickMode === "bridgeEdge" || boardPickMode === "cardEdge";
+  const isBoardTargeting = boardPickMode !== "none" || isCombatRetreatWaiting;
+  const isEdgePickMode =
+    !isCombatRetreatWaiting && (boardPickMode === "bridgeEdge" || boardPickMode === "cardEdge");
   const availableMana = localPlayer?.resources.mana ?? 0;
   const availableGold = localPlayer?.resources.gold ?? 0;
   const maxMana = view.public.config.MAX_MANA;
@@ -1953,9 +1986,18 @@ export const GameScreen = ({
   };
 
   const handleBoardHexClick = (hexKey: string) => {
+    if (pendingCombat) {
+      if (isCombatRetreatWaiting) {
+        const edgeKey = combatRetreatTargets.edgeByHex.get(hexKey);
+        if (edgeKey) {
+          handleCombatRetreat(pendingCombat.hexKey, edgeKey);
+        }
+      }
+      return;
+    }
     const isPickable =
       boardPickMode === "none" ||
-      validHexKeys.includes(hexKey) ||
+      boardValidHexKeys.includes(hexKey) ||
       startHexKeys.includes(hexKey);
     if (!isPickable) {
       return;
@@ -3059,6 +3101,12 @@ export const GameScreen = ({
     edgeMoveMode,
     targetRecord
   ]);
+  const boardValidHexKeys = useMemo(() => {
+    if (isCombatRetreatWaiting) {
+      return combatRetreatHexKeys;
+    }
+    return validHexKeys;
+  }, [combatRetreatHexKeys, isCombatRetreatWaiting, validHexKeys]);
 
   const revealHexKeys = activeCardReveal?.targetHexKeys ?? [];
   const revealEdgeKeys = activeCardReveal?.targetEdgeKeys ?? [];
@@ -3942,7 +3990,7 @@ export const GameScreen = ({
           labelByHex={hexLabels}
           selectedHexKey={selectedHexKey}
           highlightHexKeys={highlightHexKeys}
-          validHexKeys={isEdgePickMode ? [] : validHexKeys}
+          validHexKeys={isEdgePickMode ? [] : boardValidHexKeys}
           previewEdgeKeys={previewEdgeKeys}
           previewHexPair={previewHexPair}
           isTargeting={isBoardTargeting}
