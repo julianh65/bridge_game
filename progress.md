@@ -17,6 +17,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- (owner: agent2) Ensure hovered hand cards always rise above neighbors in the hand fan (z-index/hover stacking fix). Files: `apps/web/src/styles.css`, `progress.md`, `implementation_plan.md`. (status: in progress)
 ## Test fixes
 - Updated engine tests for market bid winners, Quiet Study hand-size behavior, and setup flow expectations (deck preview gating + card totals) to match current config/flow. (Files: `packages/engine/src/market.test.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`.) (owner: agent1)
 ## Milestone After Second Full Test Play and Thinking progress
@@ -38,6 +39,7 @@
 - Bolded numeric values in card rules text and marked the plan item complete. (Files: `apps/web/src/components/GameCard.tsx`, `implementation_plan.md`.) (owner: agent1) (Overlap note: includes agent2 active-task line and agent3 Scout Report progress entry already present in `progress.md`.)
 - Slightly increased card rules text size and marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent1) (Overlap note: includes agent4 plan/progress updates for champion-only move fixes.)
 - Removed dice-roll animations from forge/power reveal prompts; kept a short reveal pause with plain copy. (File: `apps/web/src/components/CollectionPanel.tsx`.)
+- Delayed scout report + market/collection overlays until action reveal playback finishes so action previews are visible; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Converted hand-target panels (Bridge Crew edge/move) into overlays so the hand row no longer shifts upward. (File: `apps/web/src/styles.css`.)
 - Allowed capital-only choice cards (Banner of Sparks) to resolve without manual targets so they can be played. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-units.ts`.)
 - Fixed hand-card hover stacking by basing z-index on a CSS variable so hover brings cards to the front; updated the plan checklist. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)

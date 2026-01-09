@@ -385,15 +385,15 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] right now if there’s just a champion in the hex the force market still shows, it should just be the champion marker
 - [ ] certain cards won’t show like i did scout report and it didn’t show up in the action show phase
 - [x] cards that are being hovered over sometimes don’t move “on top” of other cards in z axis in hand, it works on the first round but after you play cards I think it stops working?
-- [ ] after the last action while the actions are showing the market phase modal instantly pops up covering everything
+- [x] after the last action while the actions are showing the market phase modal instantly pops up covering everything
 - [x] we should make it higher dice roll wins the card
 - [x] bridge crew card pop up affects ui flow of hand area and pushes all cards up
 - [x] I shrank the radii and adjusted the capital slots in the config, the board generation algorithm could be reworked slightly to try to make it more fair and reduce massive empty chances or one spawn that’s particularly bad, the mine placement is fine more the forges have to be fair, especially on 5 player maps, I get that it’s hard though, maybe relax the rule (but try to not prefer it) such that forges are allowed to go next to the center
 - [x] reduce the range of bridges you can place in the starting bridge setup from 3 to 2
 - [x] the retreat options need to not just list the cell you need to be able to pick on the map which hex you retreat to if you pick that option
 	- [x] and the retreat shouldn’t be on a separate screen it should be something you click on the main panel, and it should make it clear in the button that you still do one round of combat
-- [ ] the scout report hand picker UI instantly pops up not letting that player see what happened on the board during the action reveal part
-- [ ] the collection modal also instantly pops up not letting you see what happened during the action phase
+- [x] the scout report hand picker UI instantly pops up not letting that player see what happened on the board during the action reveal part
+- [x] the collection modal also instantly pops up not letting you see what happened during the action phase
 - [x] can’t play banner of sparks power card
 - [x] between rounds if you click march once we go to the next round the march action is still selected
 - [x] game breaking: after several rolls sometimes the forces keep rolling the same numbers? and then the whole fight just stalls out?

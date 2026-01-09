@@ -846,7 +846,14 @@ export const GameScreen = ({
   const activeCombat = combatQueue[0] ?? null;
   const activeCombatSync =
     activeCombat && combatSync ? combatSync[activeCombat.id] ?? null : null;
-  const overlayBlockers = Boolean(pendingCombat || activeCombat || activeCardReveal);
+  const hasPendingCardReveal =
+    hasCardRevealBaseline.current &&
+    view.public.logs.length - 1 > lastCardRevealIndex.current;
+  const actionRevealInFlight = Boolean(
+    activeCardReveal || cardRevealQueue.length > 0 || hasPendingCardReveal
+  );
+  const overlayBlockers = Boolean(pendingCombat || activeCombat || actionRevealInFlight);
+  const showScoutReportModal = isScoutReportActive && !actionRevealInFlight;
   const pendingCombatHex = pendingCombat
     ? view.public.board.hexes[pendingCombat.hexKey] ?? null
     : null;
@@ -970,10 +977,12 @@ export const GameScreen = ({
     marketWinner.cardIndex === lastMarketCardIndex;
   const shouldForceMarketOverlay = Boolean(isLastMarketWinner);
   const showMarketOverlay =
-    (isMarketPhase && (isMarketOverlayOpen || shouldForceMarketOverlay)) ||
-    shouldHoldMarketOverlay;
+    !actionRevealInFlight &&
+    ((isMarketPhase && (isMarketOverlayOpen || shouldForceMarketOverlay)) ||
+      shouldHoldMarketOverlay);
   const canToggleMarketOverlay = isMarketPhase && !shouldForceMarketOverlay;
-  const showCollectionOverlay = isCollectionPhase && isCollectionOverlayOpen;
+  const showCollectionOverlay =
+    isCollectionPhase && isCollectionOverlayOpen && !actionRevealInFlight;
   const canShowHandPanel =
     Boolean(view.private) && isActionPhase && !showMarketOverlay;
   const showVictoryScreen = Boolean(view.public.winnerPlayerId && isVictoryVisible);
@@ -4089,7 +4098,7 @@ export const GameScreen = ({
         onClose={handleSubmitQuietStudy}
       />
       <HandCardPickerModal
-        isOpen={isScoutReportActive}
+        isOpen={showScoutReportModal}
         title={scoutReportTitle}
         description={scoutReportDescription}
         cards={scoutReportOffers}
