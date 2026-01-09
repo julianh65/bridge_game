@@ -1078,8 +1078,9 @@ Center uses the current Age Power deck.
 Power Pick: Reveal 2, choose 1 to gain (random insert), put the other on bottom.
 Power decks are about 50% Victory cards (Power‑Victory are still Victory: +1 Permanent VP when gained).
 Note: These should mainly be burnable cards, like little extra powerful powers that you can one off use. But they should be decently strong
-24.1 Age I Power (12)
-Non‑Victory Power (6)
+Implementation note: current engine deck sizes are Age I 11, Age II 8, Age III 8; cards listed under Planned additions are not yet in the deck.
+24.1 Age I Power (11)
+Non‑Victory Power (5)
 Command Surge
 Cost: 0 mana — Init: 10 / 80 — Type: Spell
 Gain +2 mana. Burn.
@@ -1114,8 +1115,8 @@ When played: Heal a friendly Champion in your hex 2.
 Banner of Sparks
 Cost: 1 mana — Init: 60 / 130 — Type: Victory
 When played: Deploy 3 Forces to your Capital.
-24.2 Age II Power (12)
-Non‑Victory Power
+24.2 Age II Power (8)
+Non‑Victory Power (3)
 Immunity Field
 Cost: 2 mana — Init: 40 / 110 — Type: Spell
 Your champions cannot be targeted by enemy spells this round. Burn.
@@ -1125,7 +1126,7 @@ Deploy 6 forces to any cell you occupy. Burn.
 A Hero Joins the Battle
 Cost: 1 mana — Init: 55 / 125 — Type: Order
 Randomly select from all 2 mana heroes and deploy them for free into your capital. Burn.
-Power Victory (6) — +1 Permanent VP when gained
+Power Victory (4) — +1 Permanent VP when gained
 Writ of Industry
 Cost: 1 mana — Init: 55 / 120 — Type: Victory
 When played: If you occupy a Mine, gain +2 gold; else gain +1.
@@ -1138,28 +1139,26 @@ When played: Deploy 2 Forces to a hex you occupy that contains a Champion.
 Chronicle of War
 Cost: 1 mana — Init: 65 / 135 — Type: Victory
 When played: Draw 1; then you may discard 1 to gain +1 mana.
-Power Champion Cards
+Power Champion Cards (1)
 Bannerman
 Cost: 3 mana — Gold 2/4/6 — Init: 55 / 125 — Type: Champion
 HP 3 — 2d hit 1–2 — Bounty 5
 Worth 1 VP while on the board.
-24.3 Age III Power (12)
-Non‑Victory Power (6)
+24.3 Age III Power (8)
+Non‑Victory Power (4)
 Cataclysm Core
 Cost: 3 mana — Init: 45 / 110 — Type: Spell
 Choose hex: destroy all Forces there; Champions there take 3 damage. Burn.
 Quick Mobilization
 Cost: 1 mana — Init: 60 / 130 — Type: Order
 Move 2 stacks up to 3 along Bridges each. Burn.
-Forge Miracle
-Cost: 2 mana — Init: 35 / 105 — Type: Order
-Add 3 Age I Market cards to your hand and give them the Burn keyword. They cost 1 mana and 0 gold and have initiative 0. Burn.
 Final Funding
 Cost: 3 mana — Init: 50 / 120 — Type: Order
-Gain +15 gold. Burn.Last Stand
+Gain +15 gold. Burn.
+Last Stand
 Cost: 2 mana — Init: 75 / 150 — Type: Spell
 Until end of round, the first time an enemy stack enters your Capital, destroy 3 entering enemy Forces (random) before the siege.
-Power Victory (6) — +1 Permanent VP when gained
+Power Victory (4) — +1 Permanent VP when gained
 Imperial Warrant
 Cost: 1 mana — Init: 40 / 110 — Type: Victory
 When played: Move 1 stack up to 2 along Bridges.
@@ -1169,12 +1168,17 @@ When played: Gain +2 gold.
 Deep Mine Charter
 Cost: 1 mana + 1 gold — Init: 60 / 130 — Type: Victory
 When played: Increase a Mine you occupy by +1 value (max 7).
+Siege Chronicle
+Cost: 1 mana — Init: 70 / 145 — Type: Victory
+When played: If your Capital currently contains enemy units, deploy 3 Forces to your Capital.
+Planned additions (not in deck yet)
+Forge Miracle
+Cost: 2 mana — Init: 35 / 105 — Type: Order
+Add 3 Age I Market cards to your hand and give them the Burn keyword. They cost 1 mana and 0 gold and have initiative 0. Burn.
 Center Relic
 Cost: 1 mana — Init: 25 / 90 — Type: Victory
 When played: If you occupy Center, gain +1 mana and draw 1; otherwise scry 2.
 Forge Relic
 Cost: 1 mana — Init: 35 / 100 — Type: Victory
 When played: If you occupy a Forge, Forge Draft (reveal 3 Age III Market, gain 1), then discard 1.
-Siege Chronicle
-Cost: 1 mana — Init: 70 / 145 — Type: Victory
-When played: If your Capital currently contains enemy units, deploy 3 Forces to your Capital.
+TBD: one additional Age III non-victory entry.

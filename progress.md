@@ -11,6 +11,7 @@
 - Aligned board sizing/capital slots, tile counts, and mine value distribution across `rules_draft.md` + `technical_spec.md`.
 - Set `VP_TO_WIN` to 10 across `rules_draft.md` + `technical_spec.md` (config already 10).
 - Documented `VP_TO_WIN` default in `docs/configuration.md`.
+- Reconciled power deck counts in `rules_draft.md` with current engine lists and recorded the updated counts in `implementation_plan.md`.
 - Added a coordination note to `agent_instructions.md` to emphasize planning/logging before coding.
 - Clarified handling of other-agent changes in `agent_instructions.md` to avoid unnecessary escalation.
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.

@@ -532,23 +532,22 @@ Done
   - [ ] Age II market cards + champions (47 cards + 8 champions).
   - [ ] Age III market cards + champions (47 cards + 8 champions).
   - [ ] Power decks card defs and wiring (counts per `rules_draft.md`).
-    - [ ] Audit `rules_draft.md` power lists and record exact counts per age.
-    - [ ] Age I power non-victory card defs (per rules_draft counts).
+    - [x] Audit `rules_draft.md` power lists and record exact counts per age (current: Age I 11, Age II 8, Age III 8).
+    - [x] Age I power non-victory card defs (per rules_draft counts).
     - [x] Age I power victory card defs (per rules_draft counts, +1 VP on gain).
-    - [ ] Age II power non-victory card defs (per rules_draft counts).
-    - [ ] Age II power victory card defs (per rules_draft counts, +1 VP on gain).
-    - [ ] Age II power champion card defs (per rules_draft counts) and tagging.
-    - [ ] Age III power non-victory card defs (per rules_draft counts).
-    - [ ] Age III power victory card defs (per rules_draft counts, +1 VP on gain).
+    - [x] Age II power non-victory card defs (per rules_draft counts).
+    - [x] Age II power victory card defs (per rules_draft counts, +1 VP on gain).
+    - [x] Age II power champion card defs (per rules_draft counts) and tagging.
+    - [x] Age III power non-victory card defs (per rules_draft counts).
+    - [x] Age III power victory card defs (per rules_draft counts, +1 VP on gain).
     - [ ] Verify power/burn/victory tags on power cards.
     - [ ] Power pick card checklist (rules_draft §24).
-      - [ ] Age I Power (12) — Non-victory (6).
+      - [ ] Age I Power (11) — Non-victory (5).
         - [x] Command Surge.
         - [x] Instant Bridge Net.
         - [x] Secret Plans.
         - [x] Emergency Pay.
         - [x] Shock Drill.
-        - [ ] TBD: fill missing Age I non-victory entry after rules audit.
       - [x] Age I Power Victory (6).
         - [x] Bridge Deed.
         - [x] Mine Charter.
@@ -556,33 +555,32 @@ Done
         - [x] Center Writ.
         - [x] Oathstone.
         - [x] Banner of Sparks.
-      - [ ] Age II Power (12) — Non-victory (6).
+      - [ ] Age II Power (8) — Non-victory (3).
         - [x] Immunity Field.
         - [x] Rapid Reinforcements.
         - [x] A Hero Joins the Battle.
-        - [ ] TBD: fill missing Age II non-victory entries after rules audit (3).
-      - [ ] Age II Power Victory (6).
+      - [ ] Age II Power Victory (4).
         - [x] Writ of Industry.
         - [x] Bridge Charter.
         - [x] Dispatch to Front.
         - [x] Chronicle of War.
-        - [ ] TBD: fill missing Age II power victory entries after rules audit (2).
-      - [ ] Age II Power Champions (verify deck size inclusion).
+      - [x] Age II Power Champions (verify deck size inclusion).
         - [x] Bannerman.
-      - [ ] Age III Power (12) — Non-victory (6).
+      - [ ] Age III Power (8) — Non-victory (4).
         - [x] Cataclysm Core.
         - [x] Quick Mobilization.
-        - [ ] Forge Miracle.
         - [x] Final Funding.
         - [x] Last Stand.
-        - [ ] TBD: fill missing Age III non-victory entry after rules audit.
-      - [ ] Age III Power Victory (6).
+      - [ ] Age III Power Victory (4).
         - [x] Imperial Warrant.
         - [x] Crown Coin.
         - [x] Deep Mine Charter.
+        - [x] Siege Chronicle.
+      - [ ] Planned power additions (not in deck yet).
+        - [ ] Forge Miracle.
         - [ ] Center Relic.
         - [ ] Forge Relic.
-        - [x] Siege Chronicle.
+        - [ ] TBD: one additional Age III non-victory entry.
   - [ ] Replace `packages/engine/src/content/power-decks.ts` with real power deck lists (no market clones).
   - [ ] Update deck list exports/tests for market + power counts/uniqueness.
   - [ ] Add power deck card tests (at least one per unique effect).
