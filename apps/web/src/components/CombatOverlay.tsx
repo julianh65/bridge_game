@@ -606,10 +606,7 @@ export const CombatOverlay = ({
     const championArtStyle =
       unit.kind === "champion" && championArtUrl
         ? {
-            backgroundImage: `linear-gradient(180deg, rgba(24, 16, 10, 0.35), rgba(24, 16, 10, 0.85)), url("${championArtUrl}")`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat"
+            backgroundImage: `linear-gradient(180deg, rgba(24, 16, 10, 0.35), rgba(24, 16, 10, 0.85)), url("${championArtUrl}")`
           }
         : undefined;
     const displayGlyph = showHit && unit.kind === "force" ? "X" : glyph;
@@ -621,11 +618,10 @@ export const CombatOverlay = ({
     const hitLabel = formatHitFacesLabel(unit.hitFaces);
     return (
       <div key={unit.unitId} className={`combat-unit combat-unit--${unit.kind}`}>
-        <div
-          className={`combat-unit__token${showHit ? " is-hit" : ""}`}
-          title={title}
-          style={championArtStyle}
-        >
+        <div className={`combat-unit__token${showHit ? " is-hit" : ""}`} title={title}>
+          {championArtStyle ? (
+            <span className="combat-unit__art" style={championArtStyle} aria-hidden="true" />
+          ) : null}
           <span className="combat-unit__glyph">{displayGlyph}</span>
           {showHit && unit.kind === "champion" ? (
             <span className="combat-unit__hit-marker">
