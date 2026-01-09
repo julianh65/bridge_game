@@ -427,6 +427,20 @@ export const QUICK_STUDY: CardDef = {
   effects: [{ kind: "drawCards", count: 2 }]
 };
 
+export const SCOUT_REPORT: CardDef = {
+  id: "age1.scout_report",
+  name: "Scout Report",
+  rulesText: "Look at the top 3 cards of your draw pile. Put 1 into hand, discard 2.",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1 },
+  initiative: 220,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "scoutReport", lookCount: 3, keepCount: 1 }]
+};
+
 export const MAKE_A_PLAY: CardDef = {
   id: "age1.make_a_play",
   name: "Make a Play",
@@ -769,6 +783,7 @@ export const AGE1_CARDS: CardDef[] = [
   BATTLE_CRY,
   SMOKE_SCREEN,
   QUICK_STUDY,
+  SCOUT_REPORT,
   MAKE_A_PLAY,
   PAID_LOGISTICS,
   SPELLCASTER,

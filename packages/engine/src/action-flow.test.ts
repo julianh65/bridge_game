@@ -1758,7 +1758,7 @@ describe("action flow", () => {
 
   it("plays scout report to choose a card from the top and discard the rest", () => {
     let { state } = setupToActionPhase();
-    const injected = addCardToHand(state, "p1", "starter.scout_report");
+    const injected = addCardToHand(state, "p1", "age1.scout_report");
     state = injected.state;
 
     const created = createCardInstances(state, [

@@ -80,46 +80,6 @@ export const FIELD_MEDIC: CardDef = {
   effects: [{ kind: "healChampion", amount: 2 }]
 };
 
-export const SCOUT_REPORT: CardDef = {
-  id: "starter.scout_report",
-  name: "Scout Report",
-  rulesText: "Look at the top 3 cards of your draw pile. Put 1 into hand, discard 2.",
-  type: "Order",
-  deck: "starter",
-  tags: ["starter"],
-  cost: { mana: 1 },
-  initiative: 220,
-  burn: false,
-  targetSpec: { kind: "none" },
-  effects: [{ kind: "scoutReport", lookCount: 3, keepCount: 1 }]
-};
-
-export const SCOUT_REPORT_VEIL: CardDef = createStarterVariant(
-  SCOUT_REPORT,
-  "starter.scout_report.veil",
-  215
-);
-export const SCOUT_REPORT_AERIAL: CardDef = createStarterVariant(
-  SCOUT_REPORT,
-  "starter.scout_report.aerial",
-  200
-);
-export const SCOUT_REPORT_PROSPECT: CardDef = createStarterVariant(
-  SCOUT_REPORT,
-  "starter.scout_report.prospect",
-  218
-);
-export const SCOUT_REPORT_CIPHER: CardDef = createStarterVariant(
-  SCOUT_REPORT,
-  "starter.scout_report.cipher",
-  217
-);
-export const SCOUT_REPORT_GATEWRIGHT: CardDef = createStarterVariant(
-  SCOUT_REPORT,
-  "starter.scout_report.gatewright",
-  210
-);
-
 export const BRIDGE_CREW: CardDef = {
   id: "starter.bridge_crew",
   name: "Bridge Crew",
@@ -215,12 +175,6 @@ export const STARTER_CARDS: CardDef[] = [
   MARCH_ORDERS,
   SUPPLY_CACHE,
   FIELD_MEDIC,
-  SCOUT_REPORT,
-  SCOUT_REPORT_VEIL,
-  SCOUT_REPORT_AERIAL,
-  SCOUT_REPORT_PROSPECT,
-  SCOUT_REPORT_CIPHER,
-  SCOUT_REPORT_GATEWRIGHT,
   BRIDGE_CREW,
   QUICK_MOVE,
   QUICK_MOVE_VEIL,
