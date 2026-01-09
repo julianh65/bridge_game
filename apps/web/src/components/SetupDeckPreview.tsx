@@ -9,7 +9,7 @@ import {
 
 import { FactionSymbol } from "./FactionSymbol";
 import { GameCard } from "./GameCard";
-import { FACTIONS, getFactionName } from "../lib/factions";
+import { FACTIONS, getFactionBasicActionOrderLabel, getFactionName } from "../lib/factions";
 
 type SetupDeckPreviewProps = {
   view: GameView;
@@ -75,6 +75,7 @@ export const SetupDeckPreview = ({ view, playerId }: SetupDeckPreviewProps) => {
   const totalDeckCount = coreDeckCount + 1;
   const factionName = getFactionName(starter.factionId);
   const factionOption = FACTIONS.find((entry) => entry.id === starter.factionId) ?? null;
+  const basicActionOrderLabel = getFactionBasicActionOrderLabel(starter.factionId);
 
   return (
     <section className="panel setup-deck-preview">
@@ -137,6 +138,10 @@ export const SetupDeckPreview = ({ view, playerId }: SetupDeckPreviewProps) => {
             <div className="resource-row">
               <span>Opening hand</span>
               <strong>6 cards + champion</strong>
+            </div>
+            <div className="resource-row">
+              <span>Basic action order</span>
+              <strong>{basicActionOrderLabel}</strong>
             </div>
             <div className="resource-row">
               <span>Starter spell</span>
