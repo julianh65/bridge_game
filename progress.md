@@ -17,7 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- [owner: agent1] [status: in-progress] Make combat overlay timing configurable (roll lock/assign/done/auto-close) and align server sync with config. Files: `packages/engine/src/types.ts`, `packages/engine/src/config.ts`, `apps/server/src/server.ts`, `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/components/GameScreen.tsx`, `docs/configuration.md`, `implementation_plan.md`.
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -38,6 +37,7 @@
 - Added combat overlay cumulative hits row markup (paired with existing styles); marked the plan checklist item complete. (Files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Moved combat hit totals above the attacker/defender panels and marked hit assignments directly on unit tokens (forces show red X, champions get hit badges). (Files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`.)
 - Limited combat hit markers to the assignment step and made champion badges show per-hit counts (xN). (File: `apps/web/src/components/CombatOverlay.tsx`.)
+- Made combat overlay timing configurable via `GameConfig` (roll lock/assign/done/auto-close) and aligned server sync to the configured round-done timing; documented in `docs/configuration.md` and updated the plan checklist. (Files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/components/GameScreen.tsx`, `packages/engine/src/config.ts`, `packages/engine/src/types.ts`, `apps/server/src/server.ts`, `docs/configuration.md`, `implementation_plan.md`.)
 - Refreshed board unit/champion chits with rim + glow styling for a darker fantasy feel; marked the plan checklist item complete. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Added textured hex tiles with an SVG pattern filter (darken/desaturate) plus vignette overlay, and moved PNGs into public tile-texture assets. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `apps/web/public/tile-textures/*`.) (Overlap note: `apps/web/src/styles.css` is in agent1 scope.)
 - Added hover tooltips for basic action chips to explain bridge/march/reinforce costs; updated the plan checklist. (Files: `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)

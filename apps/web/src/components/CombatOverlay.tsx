@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import type { CardDef, ModifierView } from "@bridgefront/engine";
+import type { CardDef, GameConfig, ModifierView } from "@bridgefront/engine";
 
 import { FactionSymbol } from "./FactionSymbol";
 import type {
@@ -13,6 +13,13 @@ import type { CombatSyncState } from "../lib/room-client";
 
 type RoundPhase = "waiting" | "rolling" | "locked" | "assigned";
 
+type CombatTiming = {
+  rollLockMs: number;
+  rollAssignMs: number;
+  rollDoneMs: number;
+  autoCloseMs: number;
+};
+
 type CombatOverlayProps = {
   sequence: CombatSequence;
   playersById: Map<string, string>;
@@ -24,14 +31,58 @@ type CombatOverlayProps = {
   viewerId?: string | null;
   combatSync?: CombatSyncState | null;
   serverTimeOffset?: number | null;
+  config?: GameConfig | null;
   onRequestRoll?: (roundIndex: number) => void;
   onClose: () => void;
 };
 
-const ROLL_LOCK_MS = 650;
-const ROLL_ASSIGN_MS = 1300;
-const ROLL_DONE_MS = 1900;
-const AUTO_CLOSE_MS = 2200;
+const DEFAULT_COMBAT_TIMING: CombatTiming = {
+  rollLockMs: 650,
+  rollAssignMs: 1300,
+  rollDoneMs: 1900,
+  autoCloseMs: 2200
+};
+
+const readTimingValue = (value: number | null | undefined, fallback: number) => {
+  if (typeof value === "number" && Number.isFinite(value) && value >= 0) {
+    return value;
+  }
+  return fallback;
+};
+
+const getCombatTiming = (config?: GameConfig | null): CombatTiming => {
+  const lockMs = readTimingValue(
+    config?.COMBAT_ROLL_LOCK_MS,
+    DEFAULT_COMBAT_TIMING.rollLockMs
+  );
+  const assignMs = Math.max(
+    lockMs,
+    readTimingValue(
+      config?.COMBAT_ROLL_ASSIGN_MS,
+      DEFAULT_COMBAT_TIMING.rollAssignMs
+    )
+  );
+  const doneMs = Math.max(
+    assignMs,
+    readTimingValue(
+      config?.COMBAT_ROLL_DONE_MS,
+      DEFAULT_COMBAT_TIMING.rollDoneMs
+    )
+  );
+  const autoCloseMs = Math.max(
+    doneMs,
+    readTimingValue(
+      config?.COMBAT_AUTO_CLOSE_MS,
+      DEFAULT_COMBAT_TIMING.autoCloseMs
+    )
+  );
+  return {
+    rollLockMs: lockMs,
+    rollAssignMs: assignMs,
+    rollDoneMs: doneMs,
+    autoCloseMs
+  };
+};
 
 const formatPlayer = (playerId: string, playersById: Map<string, string>) => {
   return playersById.get(playerId) ?? playerId;
@@ -191,6 +242,7 @@ export const CombatOverlay = ({
   viewerId,
   combatSync,
   serverTimeOffset,
+  config,
   onRequestRoll,
   onClose
 }: CombatOverlayProps) => {
@@ -206,6 +258,10 @@ export const CombatOverlay = ({
   const [syncTick, setSyncTick] = useState(0);
   const rollTimers = useRef<number[]>([]);
   const autoCloseTimer = useRef<number | null>(null);
+  const { rollLockMs, rollAssignMs, rollDoneMs, autoCloseMs } = useMemo(
+    () => getCombatTiming(config),
+    [config]
+  );
 
   const clearRollTimers = () => {
     rollTimers.current.forEach((timer) => window.clearTimeout(timer));
@@ -246,7 +302,7 @@ export const CombatOverlay = ({
     const tick = () => {
       setSyncTick((value) => value + 1);
       const elapsed = Date.now() - combatSync.phaseStartAt;
-      if (elapsed < ROLL_DONE_MS + 120) {
+      if (elapsed < rollDoneMs + 120) {
         timer = window.setTimeout(tick, 120);
       }
     };
@@ -256,7 +312,7 @@ export const CombatOverlay = ({
         window.clearTimeout(timer);
       }
     };
-  }, [combatSync, sequence.id]);
+  }, [combatSync, sequence.id, rollDoneMs]);
 
   const { attackersBounty, defendersBounty } = useMemo(
     () => buildBountyTotals(sequence.rounds, cardDefsById),
@@ -305,18 +361,18 @@ export const CombatOverlay = ({
             ? { ...stage, phase: "locked" }
             : stage
         );
-      }, ROLL_LOCK_MS),
+      }, rollLockMs),
       window.setTimeout(() => {
         setRoundStage((stage) =>
           stage && stage.index === index
             ? { ...stage, phase: "assigned" }
             : stage
         );
-      }, ROLL_ASSIGN_MS),
+      }, rollAssignMs),
       window.setTimeout(() => {
         setRoundStage(null);
         setRevealedRounds((value) => value + 1);
-      }, ROLL_DONE_MS)
+      }, rollDoneMs)
     ];
   };
 
@@ -341,12 +397,12 @@ export const CombatOverlay = ({
   const syncPhase =
     syncElapsed === null
       ? null
-      : syncElapsed < ROLL_LOCK_MS
+      : syncElapsed < rollLockMs
         ? "rolling"
-        : syncElapsed < ROLL_ASSIGN_MS
+        : syncElapsed < rollAssignMs
           ? "locked"
           : "assigned";
-  const syncRoundDone = syncElapsed !== null && syncElapsed >= ROLL_DONE_MS;
+  const syncRoundDone = syncElapsed !== null && syncElapsed >= rollDoneMs;
   const hasMoreRounds = syncInfo ? syncInfo.roundIndex < sequence.rounds.length - 1 : false;
   const readyForNextRound = Boolean(syncInfo && syncRoundDone && hasMoreRounds);
   const isResolving = hasSync
@@ -388,11 +444,11 @@ export const CombatOverlay = ({
     autoCloseTimer.current = window.setTimeout(() => {
       setAutoClosePending(false);
       onClose();
-    }, AUTO_CLOSE_MS);
+    }, autoCloseMs);
     return () => {
       clearAutoCloseTimer();
     };
-  }, [onClose, isResolved, sequence.rounds.length]);
+  }, [autoCloseMs, onClose, isResolved, sequence.rounds.length]);
   const showHits = roundPhase === "locked" || roundPhase === "assigned";
   const showHitMarkers = roundPhase === "assigned";
   const stageLabel =

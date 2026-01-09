@@ -15,6 +15,12 @@ Edit that file to adjust rules and regenerate the board in the debug UI.
 ### Market roll-off timing
 - `MARKET_ROLLOFF_DURATION_MS`: how long each roll-off die roll animates in the market overlay (milliseconds).
 
+### Combat overlay timing
+- `COMBAT_ROLL_LOCK_MS`: delay before dice lock after a roll starts (milliseconds).
+- `COMBAT_ROLL_ASSIGN_MS`: delay before hit assignment visuals appear (milliseconds).
+- `COMBAT_ROLL_DONE_MS`: delay before a combat round is considered resolved (milliseconds).
+- `COMBAT_AUTO_CLOSE_MS`: delay before the combat overlay auto-closes after resolution (milliseconds).
+
 ### Basic action order
 - `basicActionFactionOrder`: faction IDs in the order their basic actions resolve (earlier = faster).
   - Factions not listed resolve after the listed ones, using lead order as the tie-break.

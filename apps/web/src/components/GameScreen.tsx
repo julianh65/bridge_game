@@ -3424,6 +3424,7 @@ export const GameScreen = ({
           viewerId={playerId}
           combatSync={activeCombatSync}
           serverTimeOffset={serverTimeOffset}
+          config={view.public.config}
           onRequestRoll={handleCombatRoll}
           onClose={handleCombatClose}
         />

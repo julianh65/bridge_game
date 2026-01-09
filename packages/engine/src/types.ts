@@ -59,6 +59,10 @@ export type GameConfig = {
   ACTION_REVEAL_DURATION_MS: number;
   ACTION_REVEAL_HIGHLIGHT_PAUSE_MS: number;
   MARKET_ROLLOFF_DURATION_MS: number;
+  COMBAT_ROLL_LOCK_MS: number;
+  COMBAT_ROLL_ASSIGN_MS: number;
+  COMBAT_ROLL_DONE_MS: number;
+  COMBAT_AUTO_CLOSE_MS: number;
   basicActionFactionOrder: string[];
   boardRadiusByPlayerCount: Record<number, number>;
   tileCountsByPlayerCount: Record<number, TileCounts>;

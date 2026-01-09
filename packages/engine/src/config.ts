@@ -11,6 +11,10 @@ export const DEFAULT_CONFIG: GameConfig = {
   ACTION_REVEAL_DURATION_MS: 2000,
   ACTION_REVEAL_HIGHLIGHT_PAUSE_MS: 900,
   MARKET_ROLLOFF_DURATION_MS: 1500,
+  COMBAT_ROLL_LOCK_MS: 650,
+  COMBAT_ROLL_ASSIGN_MS: 1300,
+  COMBAT_ROLL_DONE_MS: 1900,
+  COMBAT_AUTO_CLOSE_MS: 2200,
   basicActionFactionOrder: ["bastion", "veil", "aerial", "prospect", "cipher", "gatewright"],
   boardRadiusByPlayerCount: {
     2: 3,

@@ -97,7 +97,7 @@ type CombatSyncState = {
 const MIN_PLAYERS = 2;
 const MAX_PLAYERS = 6;
 const MAX_COMBAT_SYNC = 12;
-const COMBAT_ROLL_DONE_MS = 1900;
+const COMBAT_ROLL_DONE_MS = DEFAULT_CONFIG.COMBAT_ROLL_DONE_MS;
 const FACTION_IDS = new Set([
   "bastion",
   "veil",
@@ -995,7 +995,8 @@ export default class Server implements Party.Server {
 
     const now = Date.now();
     if (roundIndex > sync.roundIndex) {
-      if (!sync.phaseStartAt || now - sync.phaseStartAt < COMBAT_ROLL_DONE_MS) {
+      const rollDoneMs = this.state.config.COMBAT_ROLL_DONE_MS ?? COMBAT_ROLL_DONE_MS;
+      if (!sync.phaseStartAt || now - sync.phaseStartAt < rollDoneMs) {
         this.sendError(connection, "combat round is still resolving");
         return;
       }
