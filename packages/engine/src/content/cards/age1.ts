@@ -192,6 +192,27 @@ export const ESCORT_DETAIL: CardDef = {
   effects: [{ kind: "deployForces", count: 2 }]
 };
 
+export const ROADBLOCK_SQUAD: CardDef = {
+  id: "age1.roadblock_squad",
+  name: "Roadblock Squad",
+  rulesText: "Deploy 3 Forces to a Mine or Forge you occupy, or 1 Force to your Capital.",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1, gold: 1 },
+  initiative: 70,
+  burn: false,
+  targetSpec: {
+    kind: "choice",
+    options: [
+      { kind: "capital" },
+      { kind: "occupiedHex", tile: "mine" },
+      { kind: "occupiedHex", tile: "forge" }
+    ]
+  },
+  effects: [{ kind: "recruit", capitalCount: 1, occupiedCount: 3 }]
+};
+
 export const NATIONAL_SERVICE: CardDef = {
   id: "age1.national_service",
   name: "National Service",
@@ -315,6 +336,24 @@ export const TEMPORARY_BRIDGE: CardDef = {
     anywhere: true
   },
   effects: [{ kind: "buildBridge", temporary: true }]
+};
+
+export const RAPID_SPAN: CardDef = {
+  id: "age1.rapid_span",
+  name: "Rapid Span",
+  rulesText: "Build 2 Bridges, each touching a hex you occupy.",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1 },
+  initiative: 80,
+  burn: false,
+  targetSpec: {
+    kind: "multiEdge",
+    minEdges: 2,
+    maxEdges: 2
+  },
+  effects: [{ kind: "buildBridge" }]
 };
 
 export const SABOTAGE_BRIDGE: CardDef = {
@@ -770,12 +809,14 @@ export const AGE1_CARDS: CardDef[] = [
   RECRUIT_DETACHMENT,
   PAID_VOLUNTEERS,
   ESCORT_DETAIL,
+  ROADBLOCK_SQUAD,
   NATIONAL_SERVICE,
   FRONTIER_CLAIM,
   PROPAGANDA_RECRUITMENT,
   FUTURE_INVESTMENT,
   SCAVENGERS_MARKET,
   TEMPORARY_BRIDGE,
+  RAPID_SPAN,
   SABOTAGE_BRIDGE,
   BRIDGE_TRAP,
   TUNNEL_NETWORK,

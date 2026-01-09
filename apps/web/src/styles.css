@@ -825,8 +825,9 @@ body.is-game .status-pill--idle {
 }
 
 .setup-flow .lobby__grid {
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 260px);
+  grid-template-columns: minmax(0, 1fr) minmax(190px, 220px);
   align-items: start;
+  gap: 16px;
 }
 
 .setup-flow .lobby__grid > .panel:not(.setup-flow__players) {
@@ -900,8 +901,8 @@ body.is-game .setup-card-pick__player-row--active {
 
 .setup-deck-preview__layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(220px, 0.7fr);
-  gap: 16px;
+  grid-template-columns: minmax(0, 1.5fr) minmax(200px, 0.55fr);
+  gap: 14px;
   align-items: start;
 }
 
@@ -1026,7 +1027,7 @@ body.is-game .setup-card-pick__player-row--active {
 .setup-flow__players {
   grid-column: 2;
   grid-row: 1 / span 99;
-  max-width: 260px;
+  max-width: 220px;
   justify-self: end;
   width: 100%;
 }
