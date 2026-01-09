@@ -75,6 +75,8 @@ const SUPPORTED_EFFECTS = new Set([
   "deployForces",
   "recruitByHandSize",
   "deployForcesOnMines",
+  "deployRandomChampion",
+  "deployForcesIfEnemyInCapital",
   "increaseMineValue",
   "healChampion",
   "healChampions",
@@ -97,6 +99,7 @@ const SUPPORTED_EFFECTS = new Set([
   "linkCapitalToCenter",
   "battleCry",
   "smokeScreen",
+  "lastStand",
   "frenzy",
   "shockDrill",
   "focusFire",
@@ -119,7 +122,7 @@ export const isCardPlayable = (
 
   const hasEffects = Array.isArray(card.effects) && card.effects.length > 0;
   const isChampionCard = card.type === "Champion";
-  if (!isChampionCard && !hasEffects) {
+  if (!isChampionCard && !hasEffects && card.targetSpec.kind !== "none") {
     return false;
   }
   if (hasEffects && !card.effects?.every((effect) => SUPPORTED_EFFECTS.has(effect.kind))) {

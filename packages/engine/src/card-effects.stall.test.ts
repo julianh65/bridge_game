@@ -18,7 +18,7 @@ describe("Stall", () => {
       blocks: undefined
     };
 
-    expect(isCardPlayable(state, "p1", STALL)).toBe(false);
+    expect(isCardPlayable(state, "p1", STALL)).toBe(true);
 
     const resolved = resolveCardEffects(state, "p1", STALL);
     expect(resolved).toEqual(state);

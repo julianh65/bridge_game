@@ -21,6 +21,10 @@
   scope: add power card effects for A Hero Joins the Battle, Last Stand, and Siege Chronicle
   files: packages/engine/src/card-effects.ts, packages/engine/src/card-effects-units.ts, packages/engine/src/content/cards/power.ts, packages/engine/src/content/power-decks.ts, implementation_plan.md, progress.md
   status: in progress
+- owner: agent4
+  scope: add Age III economy cards Pulling Strings + Black Market Pull and effect support
+  files: packages/engine/src/content/cards/age3.ts, packages/engine/src/card-effects-combat.ts, packages/engine/src/card-effects-economy.ts, implementation_plan.md, progress.md
+  status: in progress
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -51,6 +55,7 @@
 - Nudged the market overlay toggle lower and hard-centered it (reset top/right), and confirmed faction-specific card art mappings are already complete. (File: `apps/web/src/styles.css`.) (Audit: `apps/web/src/data/card-art.json`.)
 
 ## Milestone After Full Test Play and Thinking progress
+- Allowed no-op orders (Stall) to be playable while still resolving to a no-op; marked the plan item complete. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.stall.test.ts`, `implementation_plan.md`.)
 - Added `freeStartingCardEnabled` config toggle to skip the free starting card setup step, with docs; marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/config.ts`, `packages/engine/src/engine.ts`, `docs/configuration.md`, `implementation_plan.md`.)
 - Added Scout Report draw-and-pick choices with an action-phase block, selection command, private offers view, UI modal, and updated action/smoke tests; marked the plan checklist items complete. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/action-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.)
 - Added combat overlay cumulative hits row markup (paired with existing styles); marked the plan checklist item complete. (Files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.)

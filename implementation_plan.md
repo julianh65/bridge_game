@@ -443,7 +443,7 @@ Start going through the rules_draft and adding the logic for the different types
 - [x] UI: enforce champion targeting constraints in picker (`requiresFriendlyChampion`, `maxDistance`) for Marked for Coin + Execution Order.
 - [ ] UI: Mortar Shot targeting helpers (force-range gating + scatter preview ring) and block invalid picks.
 - [ ] UI: manual hit assignment overlay for Focus Fire + Tactical Hand (pick targets for assigned hits, show remaining hits).
-- [ ] Engine: decide on no-op orders (Stall) — allow playable no-effect cards or remove the card.
+- [x] Engine: decide on no-op orders (Stall) — allow playable no-effect cards or remove the card.
 
 
 ## Milestone 7.5 — Script to Generate Art for Cards
@@ -505,7 +505,7 @@ Done
       - [ ] Age II Power (12) — Non-victory (6).
         - [x] Immunity Field.
         - [x] Rapid Reinforcements.
-        - [ ] A Hero Joins the Battle.
+        - [x] A Hero Joins the Battle.
         - [ ] TBD: fill missing Age II non-victory entries after rules audit (3).
       - [ ] Age II Power Victory (6).
         - [x] Writ of Industry.
@@ -520,7 +520,7 @@ Done
         - [x] Quick Mobilization.
         - [ ] Forge Miracle.
         - [x] Final Funding.
-        - [ ] Last Stand.
+        - [x] Last Stand.
         - [ ] TBD: fill missing Age III non-victory entry after rules audit.
       - [ ] Age III Power Victory (6).
         - [x] Imperial Warrant.
@@ -528,7 +528,7 @@ Done
         - [x] Deep Mine Charter.
         - [ ] Center Relic.
         - [ ] Forge Relic.
-        - [ ] Siege Chronicle.
+        - [x] Siege Chronicle.
   - [ ] Replace `packages/engine/src/content/power-decks.ts` with real power deck lists (no market clones).
   - [ ] Update deck list exports/tests for market + power counts/uniqueness.
   - [ ] Add power deck card tests (at least one per unique effect).
