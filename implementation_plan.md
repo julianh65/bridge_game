@@ -416,15 +416,15 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] MAJOR: after hitting done with cipher it just lets me continuously quiet study and never lets me advance
 - [x] During setup phase the players connected and X still mess up the flow, make the overall players container just slightly wider
 - [x] after the market is over we see the action phase and then the market modal briefly pops up again
-- [ ] in the action reveals when a champion card is in the reveal I don’t see the champion stats or description
+- [x] in the action reveals when a champion card is in the reveal I don’t see the champion stats or description
 - [x] some cards still don’t let me select in the move forces pop up to move 0 forces, in the case I want to just move my champion
 - [x] allow me to have less mines than players in the config
-- [ ] make sure the display of the draw pile in the UI is unordered and highlight somewhere by adding text that it’s unordered, something like (Unordered)
-- [ ] make quick move 1 stack, add to the description text a note to the player that this card has very low initiative
+- [x] make sure the display of the draw pile in the UI is unordered and highlight somewhere by adding text that it’s unordered, something like (Unordered)
+- [x] make quick move 1 stack, add to the description text a note to the player that this card has very low initiative
 - [x] the force chits can block the yield of the mine, make it so that in that hover over a hex where it says mine in a nice ui you also give the yield
 - [x] in the collection phase make sure we show other players like what this person is collecting, like Waiting for Player1 to Pick from Forge
 - [x] the collection phase also needs to show everyone who collected how much gold from the mines
-- [ ] Major: spectators can’t exit the battle screen once it’s over
+- [x] Major: spectators can’t exit the battle screen once it’s over
 - [x] set to skirmish doesn’t work, just remove it for now and add it as a future todo
 - [x] forge scrap should show you all cards anywhere in your deck
 - [x] remove the yellow and blue gradient background color on cards of the mana and gold icons
@@ -435,7 +435,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] I got 9 VP and nothing happened, it didn’t detect that I won and no screen popped up
 - [x] Be creative and add a balanced age 1 card of similar flavor to the Dice War Profiteer card
 - [x] Dice war profiteer during the reveal stage needs to auto roll a dice for everyone to see
-- [ ] When the cards pop up to reveal it needs to have their description text on them
+- [x] When the cards pop up to reveal it needs to have their description text on them
 - [x] Be creative and add a balanced age 2 card that gives VP, don't make it too crazy just make it basic, add it to the rules, the game and everywhere (War Bonds).
 - [ ] Be creative and add to each age a balanced more "basic" champion card that dosen't do anything crazy but is balanced, add it to the rules, the game and everywhere
 - [x] add a cool favicon
@@ -443,6 +443,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] For cards that kind of "scale" like propoganda recruitment or future investment we need to represent on the card (in a very simple way, what the value would be if they played it is)
 - [x] Add a small countdown of how many rounds are left in the game
 - [x] put the two debug board debug and battle debug under a little dropdown menu that's like debug
+- [ ] Move card art + tile textures to CDN with asset base config, upload tooling, and git ignore cleanup
 
 
 
