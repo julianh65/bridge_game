@@ -1275,10 +1275,13 @@ export const BoardView = ({
       </defs>
       {hexes.map((hex) => {
         const tag = showTags ? tileTag(hex.tile) : "";
+        const isHomeCapital = homeCapitalHexKey === hex.key;
         const capitalOwner = hex.tile === "capital" ? capitalOwnerByHex?.[hex.key] : null;
         const tileLabelText = capitalOwner
-          ? `Capital: ${capitalOwner}`
-          : tileLabel(hex.tile);
+          ? `Capital: ${capitalOwner}${isHomeCapital ? " (Home)" : ""}`
+          : isHomeCapital
+            ? "Home Capital"
+            : tileLabel(hex.tile);
         const labelText = labelByHex?.[hex.key];
         const labelClassName =
           labelVariant === "coords"
@@ -1293,7 +1296,6 @@ export const BoardView = ({
         const isSelected = selectedHexKey === hex.key;
         const isHighlighted = highlightSet.has(hex.key);
         const isValidTarget = validSet.has(hex.key);
-        const isHomeCapital = homeCapitalHexKey === hex.key;
         const homeLabelY = tag ? hex.y - 18 : hex.y - 10;
         const isInactive =
           clickable && hasValidTargets && !isValidTarget && !isSelected && !isHighlighted;
@@ -1315,6 +1317,9 @@ export const BoardView = ({
           if (ownerLabel) {
             hexTitleParts.push(`Capital: ${ownerLabel}`);
           }
+        }
+        if (isHomeCapital) {
+          hexTitleParts.push("Home capital");
         }
         if (hex.tile === "mine" && hex.mineValue) {
           hexTitleParts.push(`Mine value: ${hex.mineValue}`);

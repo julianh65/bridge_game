@@ -17,7 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- [agent5] (in progress) Add move selection for marches/card move stacks (forces vs champions), update engine selection/validation, and extend split popover/UI targets. Files: `packages/engine/src/types.ts`, `packages/engine/src/units.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/card-effects.ts`, `apps/web/src/components/ForceSplitPopover.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`. (Overlap note: `apps/web/src/components/GameScreen.tsx` + `apps/web/src/styles.css` are active in other agents’ scopes.)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -71,6 +70,7 @@
 - Reduced mine value label sizing again to keep the board tooltip numbers subtle. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Added capital owner names to the hex hover tooltip for capital tiles. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`.) (owner: agent2)
 - Added capital owner names to the on-board tile hover label for capital hexes. (File: `apps/web/src/components/BoardView.tsx`.) (owner: agent2)
+- Clarified home capital tooltips to call out your home capital explicitly. (File: `apps/web/src/components/BoardView.tsx`.) (owner: agent2)
 - Added a HOME label above the local capital ring to make it easier to spot your capital on the board. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
 - Added per-faction starter deck mapping scaffold (defaults to the common deck), updated card registry coverage, and noted the remaining per-faction initiative work in the plan. (Files: `packages/engine/src/content/starter-decks.ts`, `packages/engine/src/content/cards/cards.test.ts`, `implementation_plan.md`.)
 - Added per-faction starter initiative variants for Quick Move/Zap/Scout Report and updated starter decks to use the faction-specific IDs; marked the plan item complete. (Files: `packages/engine/src/content/cards/starter.ts`, `packages/engine/src/content/starter-decks.ts`, `implementation_plan.md`.)
@@ -125,6 +125,7 @@
 - Moved force-split controls to a board-adjacent popover for march + card moves, added overlay rendering in BoardView, and left a small split hint in the action/hand panels; updated the plan checklist. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/ForceSplitPopover.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Tightened the force-split popover sizing and buttons to reduce board coverage, and set explicit overlay dimensions so it blocks fewer hex clicks. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`.)
 - Moved the force-split popover to the top-left board overlay (removed selected/reset tools) so it no longer blocks hex picking. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`.)
+- Added champion inclusion toggles to move-split controls (champion-only or force-only moves), wired includeChampions through march/card moves, and updated engine move selection/validation. (Files: `packages/engine/src/types.ts`, `packages/engine/src/units.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/card-effects.ts`, `apps/web/src/components/ForceSplitPopover.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreen.tsx` + `apps/web/src/styles.css` are in other agents’ scopes.)
 - Added an active effects view in the info dock with Log/Effects tabs plus a sidebar button to open it; marked the plan checklist item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenSidebar.tsx`.)
 - Enabled linked-hex movement (Tunnel Network/Wormhole Link) for board-pick march + card move paths by honoring link modifiers in UI targeting; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Added Burn the Bridges (Age II) with destroy-connected-bridges effect, movement-target validation, and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent2)
@@ -158,6 +159,7 @@
 - Added Age III market card defs using existing effects (Grand Maneuver, Ghost Step, Deep Reserves, Forward Legion, Royal Mint, Tome of Orders, Last Lecture, Execution Order) and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (Overlap note: commit also picked up pre-staged changes in `apps/web/src/components/GameCard.tsx`.)
 - Added Monument Plan (Age III) victory card def with discard-on-play and +2 VP; updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added Age III deckcraft card defs for Master Plan (draw 4 discard 2) and Perfect Cycle (draw 1 burn 1); updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (owner: agent4)
+- Added Age III Final Push movement card def (move 1 along bridges with battle-win draw) and updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added Age II Repair Orders with a heal-all-champions effect and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.)
 - Added Age II Center Dispatch victory card with conditional center draw (`drawCardsIfTile`) and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added Age II Dice: War Profiteers with a roll-for-gold effect and action-flow coverage; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent4)
@@ -568,6 +570,7 @@ none
 - Added dev-only room debug tools (state JSON fetch, advance phase, reset with seed) plus server debug commands for host-only use.
 - Added setup-flow auto-setup scenario controls (round/age presets + board JSON apply) so debug presets are accessible from the setup UI. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/App.tsx`.)
 - Added scenario presets (round/age) and board snapshot capture/apply helpers to the Room Debug panel for faster setup testing. (Files: `apps/web/src/components/RoomDebugPanel.tsx`, `implementation_plan.md`.)
+- Added a compact setup-flow scenario drawer and a floating in-game hand injector overlay for dev hosts. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/App.tsx`, `apps/web/src/components/GameDebugOverlay.tsx`.)
 
 ## Milestone 4 progress
 - Added a game screen placeholder layout in `apps/web` (board area + sidebar stubs), no server wiring yet.
