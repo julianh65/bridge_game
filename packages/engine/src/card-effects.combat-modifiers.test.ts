@@ -5,7 +5,7 @@ import * as shared from "@bridgefront/shared";
 import { resolveBattleAtHex } from "./combat";
 import { resolveCardEffects } from "./card-effects";
 import { createBaseBoard } from "./board-generation";
-import { BATTLE_CRY, SMOKE_SCREEN } from "./content/cards/age1";
+import { BATTLE_CRY, SMOKE_SCREEN, SPOILS_OF_WAR } from "./content/cards/age1";
 import { SLOW } from "./content/cards/age2";
 import type { CardDef } from "./content/cards";
 import { createNewGame, DEFAULT_CONFIG } from "./index";
@@ -178,6 +178,52 @@ describe("combat card effects", () => {
     state = resolveBattleAtHex(state, hexB);
     const secondRound = getFirstCombatRound(state, hexB);
     expect(getHits(secondRound, "p2")).toBe(1);
+  });
+
+  it("spoils of war grants gold after winning a battle", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({ value: 1, next: rng }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 3, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: { p1: ["f1", "f2"], p2: ["f3"] }
+    };
+
+    board.units = {
+      f1: createForce("f1", "p1", hexKey),
+      f2: createForce("f2", "p1", hexKey),
+      f3: createForce("f3", "p2", hexKey)
+    };
+
+    let state: GameState = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(21),
+      board
+    };
+
+    state = resolveCardEffects(state, "p1", SPOILS_OF_WAR);
+    const goldBefore =
+      state.players.find((player) => player.id === "p1")?.resources.gold ?? 0;
+
+    state = resolveBattleAtHex(state, hexKey);
+
+    const goldAfter =
+      state.players.find((player) => player.id === "p1")?.resources.gold ?? 0;
+    expect(goldAfter).toBe(goldBefore + 3);
+
+    const hasSpoilsModifier = state.modifiers.some(
+      (modifier) => modifier.source.sourceId === SPOILS_OF_WAR.id
+    );
+    expect(hasSpoilsModifier).toBe(false);
   });
 
   it("frenzy boosts dice for the round and deals damage immediately", () => {
