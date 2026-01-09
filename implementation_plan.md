@@ -224,7 +224,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Cipher Quiet Study (round-start discard then redraw)
   - [x] Cipher Expanded Choice (pick from N+1 when choosing cards)
   - [x] Capital occupation VP bonus (+2 temp VP instead of +1)
-- [ ] Confirm with the rules and everything that all faction passives are implemented
+- [x] Confirm with the rules and everything that all faction passives are implemented
 - [x] Support faction starter spell effects with existing primitives (Air Drop deployForces, Rich Veins increaseMineValue).
 - [x] Implement remaining faction starter spell effects (Hold the Line, Marked for Coin, Perfect Recall).
 - Implement champions:
@@ -456,6 +456,9 @@ Start going through the rules_draft and adding the logic for the different types
 - [ ] Add deckcraft primitives: draw/discard mixes, discard up to N, burn from hand, conditional draw, scry/topdeck (Quick Study, Cycle Notes, Hard Mulligan, Tome of Orders, War Chronicle, Precise Planning, Small Hands, Spellcaster).
   - [x] Precise Planning (draw pile empty conditional draw + mana).
   - [x] Spellcaster (draw 1; if it is a Spell, draw 2 more).
+  - [ ] Add post-draw choice prompts for discard/burn/topdeck so newly drawn cards can be selected.
+  - [ ] Support optional discard/burn/topdeck choices ("may discard/topdeck") without blocking card play when hand is empty.
+  - [ ] Add a reusable action-step hand-picker block for draw-then-choose effects (Tome of Orders, Perfect Cycle, Forge Sketch, Chronicle of War, Perfect Recall).
 - [x] Add conditional economy triggers: battle-won gold, enemy capital bonuses, opponent gold steal, other-players battle gold (Spoils of War, Smuggling Ring, Market Squeeze, Pulling Strings).
   - [x] Spoils of War (battle-win gold).
   - [x] Smuggling Ring (enemy capital bonus gold).
@@ -484,11 +487,13 @@ Start going through the rules_draft and adding the logic for the different types
 - [x] UI: add `multiPath` targeting flow with per-path add/remove, min/max path counts, and per-path highlights (Roll Out, Coordinated Advance, Grand Maneuver).
 - [x] UI: add `hexPair` targeting flow (pick two hexes, show linkage preview, enforce allowSame/maxDistanceFromFriendlyChampion) for Wormhole Link + Wormhole Gate.
 - [x] UI: support compound targets for edge+move cards (Bridge Crew: `edgeKey` + optional `from/to` or `path`) with a stepper or dual-mode picker.
+- [ ] UI: Bridge Pivot edge picking must be exactly 1 existing + 1 new bridge that share a hex; block invalid edge pairs.
 - [x] UI: enforce `stopOnOccupied` during path selection (Column Advance): block path continuation past occupied hexes and surface a hint.
 - [x] UI: enforce champion targeting constraints in picker (`requiresFriendlyChampion`, `maxDistance`) for Marked for Coin + Execution Order.
 - [x] UI: Mortar Shot targeting helpers (force-range gating + scatter preview ring) and block invalid picks.
-<!-- - [ ] UI: manual hit assignment overlay for Focus Fire + Tactical Hand (pick targets for assigned hits, show remaining hits). -->
-- [ ] Future: add manual hit assignment UI flow for Focus Fire + Tactical Hand (combat selection + sync), then re-enable those cards.
+- [ ] UI: manual hit assignment overlay for Focus Fire + Tactical Hand (pick targets for assigned hits, show remaining hits).
+  - [ ] Add combat-step target selection + sync for assigned hits (server payload + client selection).
+  - [ ] Re-enable Focus Fire + Grand Strategist once the UI flow is live.
 - [x] Engine: decide on no-op orders (Stall) — allow playable no-effect cards or remove the card.
 
 
