@@ -87,8 +87,10 @@
 - Widened the setup players panel (max width now 260px) so connected/offline and setup status pills have more room; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent1)
 - Raised the dice roll overlay above action reveals so War Profiteers rolls are visible during reveal playback; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 - Added gold/VP gain pulse animations on the HUD resource chips so increases pop visually; marked the plan items complete. (Files: `apps/web/src/components/GameScreenHeader.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
+- Opening hand draw now animates by tagging the initial hand as freshly drawn; marked the plan item complete. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.) (owner: agent3)
 - Removed the "How it works" panel and "Core loop" hero meta item from the home screen. (File: `apps/web/src/components/Home.tsx`.) (owner: agent2)
 - Increased player table stat chip size (gold/mana/hand) for readability without shifting the layout; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent1)
+- Added a new Age I dice-roll economy card (Dice: Salvage Wager) and updated the rules + plan checklist. (Files: `packages/engine/src/content/cards/age1.ts`, `rules_draft.md`, `implementation_plan.md`.) (owner: agent1)
 - Debug card injection now adds permanent VP for Victory cards (e.g., Deep Mine Charter), keeping VP totals in sync when using the debug hand tool. (Files: `apps/web/src/components/GameDebugOverlay.tsx`, `implementation_plan.md`.) (owner: agent3)
 ## Planning updates
 - Added plan TODOs for the forge collection hard-lock audit + backup plan. (File: `implementation_plan.md`.) (owner: codex)

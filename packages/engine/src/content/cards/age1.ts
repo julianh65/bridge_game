@@ -124,6 +124,29 @@ export const TRADE_CARAVAN: CardDef = {
   effects: [{ kind: "gainGold", amount: 3 }]
 };
 
+export const SALVAGE_WAGER: CardDef = {
+  id: "age1.salvage_wager",
+  name: "Dice: Salvage Wager",
+  rulesText: "Roll 1 die. 1-3: Gain 1 gold. 5-6: Gain 4 gold.",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1 },
+  initiative: 50,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [
+    {
+      kind: "rollGold",
+      sides: 6,
+      highMin: 5,
+      lowGain: 1,
+      highGain: 4,
+      sourceCardId: "age1.salvage_wager"
+    }
+  ]
+};
+
 export const SPOILS_OF_WAR: CardDef = {
   id: "age1.spoils_of_war",
   name: "Spoils of War",
@@ -822,6 +845,7 @@ export const AGE1_CARDS: CardDef[] = [
   COLUMN_ADVANCE,
   PROSPECTING,
   TRADE_CARAVAN,
+  SALVAGE_WAGER,
   SPOILS_OF_WAR,
   RECRUIT_DETACHMENT,
   PAID_VOLUNTEERS,

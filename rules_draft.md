@@ -658,6 +658,11 @@ Gain +2 gold. If you occupy a Mine, gain +3 gold instead.
 Trade Caravan
 Cost: 1 mana — Init: 75 / 150 — Type: Order
 Gain +3 gold.
+Dice: Salvage Wager
+Cost: 1 mana — Init: 50 / 125 — Type: Order
+Roll 1 die.
+1-3: Gain 1 gold
+4-6: Gain 4 gold
 Spoils of War
 Cost: 1 mana — Init: 80 / 155 — Type: Order
 If you won a battle this round, gain +3 gold.
@@ -899,7 +904,7 @@ Roll 1 die.
 Encirclement
 Cost: 1 mana — Init: 70 / 145 — Type: Spell
 Choose an enemy‑occupied hex. If you occupy at least three different adjacent hexes to it, destroy up to 6 enemy Forces there.
-H) Victory (4) — +1 or +2 Permanent VP when gained
+H) Victory (5) — +1 or +2 Permanent VP when gained
 Strategic Triumph
 Cost: 1 mana — Init: 55 / 125 — Type: Victory
 When played: Gain +2 gold.
@@ -909,6 +914,9 @@ When played: If you occupy Center, draw 2. Else draw 1.
 Banner of Resolve
 Cost: 1 mana — Init: 75 / 145 — Type: Victory
 When played: Deploy 1 force to your capital.
+War Bonds
+Cost: 1 mana — Init: 65 / 135 — Type: Victory
+When played: Gain +1 gold and +1 mana.
 Big VP Gainer
 Cost: 1 mana — Init: 75 / 145 — Type: Victory
 Gives +2 VP
