@@ -521,13 +521,16 @@ export const isCardPlayable = (
   }
 
   if (card.targetSpec.kind === "choice") {
-    const choice = getChoiceTarget(targets ?? null);
-    if (!choice) {
-      return false;
-    }
     const options = Array.isArray(card.targetSpec.options)
       ? (card.targetSpec.options as TargetRecord[])
       : [];
+    const choice = getChoiceTarget(targets ?? null);
+    if (!choice) {
+      if (options.length === 1 && options[0]?.kind === "capital") {
+        return Boolean(resolveCapitalDeployHex(state, playerId, null));
+      }
+      return false;
+    }
     const matchingOptions = options.filter((option) => option.kind === choice.kind);
     if (matchingOptions.length === 0) {
       return false;

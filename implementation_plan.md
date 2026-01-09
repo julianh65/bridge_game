@@ -394,7 +394,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 	- [ ] and the retreat shouldn’t be on a separate screen it should be something you click on the main panel, and it should make it clear in the button that you still do one round of combat
 - [ ] the scout report hand picker UI instantly pops up not letting that player see what happened on the board during the action reveal part
 - [ ] the collection modal also instantly pops up not letting you see what happened during the action phase
-- [ ] can’t play banner of sparks power card
+- [x] can’t play banner of sparks power card
 - [x] between rounds if you click march once we go to the next round the march action is still selected
 - [x] game breaking: after several rolls sometimes the forces keep rolling the same numbers? and then the whole fight just stalls out?
 - [x] why is there a dice roll for revealing forge draw / power deck?

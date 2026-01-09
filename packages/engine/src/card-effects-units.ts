@@ -186,13 +186,16 @@ export const resolveUnitEffect = (
 
   switch (effect.kind) {
     case "recruit": {
-      const choice = getChoiceTarget(targets ?? null);
-      if (!choice) {
-        return nextState;
-      }
       const options = Array.isArray(card.targetSpec.options)
         ? (card.targetSpec.options as TargetRecord[])
         : [];
+      let choice = getChoiceTarget(targets ?? null);
+      if (!choice && options.length === 1 && options[0]?.kind === "capital") {
+        choice = { kind: "capital" };
+      }
+      if (!choice) {
+        return nextState;
+      }
       const capitalCountRaw =
         typeof effect.capitalCount === "number" ? effect.capitalCount : 2;
       const occupiedCountRaw =
@@ -279,13 +282,16 @@ export const resolveUnitEffect = (
       return nextState;
     }
     case "recruitByHandSize": {
-      const choice = getChoiceTarget(targets ?? null);
-      if (!choice || choice.kind !== "capital") {
-        return nextState;
-      }
       const options = Array.isArray(card.targetSpec.options)
         ? (card.targetSpec.options as TargetRecord[])
         : [];
+      let choice = getChoiceTarget(targets ?? null);
+      if (!choice && options.length === 1 && options[0]?.kind === "capital") {
+        choice = { kind: "capital" };
+      }
+      if (!choice || choice.kind !== "capital") {
+        return nextState;
+      }
       if (!options.some((option) => option.kind === "capital")) {
         return nextState;
       }
