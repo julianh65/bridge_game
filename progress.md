@@ -22,7 +22,6 @@
 
 ## Active tasks
 - (owner: agent1) [status: in progress] Add a new Age I dice-roll economy card (War Profiteers flavor) and update rules/plan; files: `packages/engine/src/content/cards/age1.ts`, `rules_draft.md`, `implementation_plan.md`, `progress.md`.
-- (owner: agent2) [status: in progress] Ensure debug hand injection awards Victory VP (Deep Mine Charter test) in the debug panel; files: `apps/web/src/components/RoomDebugPanel.tsx`, `implementation_plan.md`, `progress.md`.
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
 ## Test fixes
@@ -92,6 +91,7 @@
 - Increased player table stat chip size (gold/mana/hand) for readability without shifting the layout; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent1)
 - Added a new Age I dice-roll economy card (Dice: Salvage Wager) and updated the rules + plan checklist. (Files: `packages/engine/src/content/cards/age1.ts`, `rules_draft.md`, `implementation_plan.md`.) (owner: agent1)
 - Debug card injection now adds permanent VP for Victory cards (e.g., Deep Mine Charter), keeping VP totals in sync when using the debug hand tool. (Files: `apps/web/src/components/GameDebugOverlay.tsx`, `implementation_plan.md`.) (owner: agent3)
+- Debug room hand injection now adds Victory VP when injecting cards from the Room Debug panel, matching the in-game debug hand tool. (File: `apps/web/src/components/RoomDebugPanel.tsx`.) (owner: agent2)
 - Added War Bonds as an additional Age II Victory card (+1 gold, +1 mana) while keeping Big VP Gainer, updated rules, art mapping, and plan checklist. (Files: `packages/engine/src/content/cards/age2.ts`, `apps/web/src/data/card-art.json`, `rules_draft.md`, `implementation_plan.md`.) (owner: agent4)
 ## Planning updates
 - Added plan TODOs for the forge collection hard-lock audit + backup plan. (File: `implementation_plan.md`.) (owner: codex)

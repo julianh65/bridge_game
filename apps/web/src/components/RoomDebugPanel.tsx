@@ -248,16 +248,25 @@ export const RoomDebugPanel = ({ room }: RoomDebugPanelProps) => {
     }
     const state = room.debugState;
     const existingHand = state.players[playerIndex].deck.hand;
+    const currentVp = state.players[playerIndex].vp;
     const nextCardsByInstanceId: Record<string, CardInstance> = {
       ...state.cardsByInstanceId
     };
     let nextIndex = Object.keys(nextCardsByInstanceId).length + 1;
     const newInstanceIds: string[] = [];
+    let gainedVictoryPoints = 0;
     parsedHandCards.valid.forEach((defId) => {
       const instanceId = `ci_${nextIndex}`;
       nextIndex += 1;
       nextCardsByInstanceId[instanceId] = { id: instanceId, defId };
       newInstanceIds.push(instanceId);
+      const cardDef = CARD_DEFS_BY_ID.get(defId);
+      if (cardDef?.type === "Victory") {
+        const victoryPoints = cardDef.victoryPoints ?? 1;
+        if (Number.isFinite(victoryPoints) && victoryPoints > 0) {
+          gainedVictoryPoints += Math.floor(victoryPoints);
+        }
+      }
     });
     const nextHand =
       mode === "replace" ? newInstanceIds : [...existingHand, ...newInstanceIds];
@@ -271,6 +280,18 @@ export const RoomDebugPanel = ({ room }: RoomDebugPanelProps) => {
       path: `players[${playerIndex}].deck.hand`,
       value: nextHand
     });
+    if (gainedVictoryPoints > 0) {
+      room.sendDebugCommand({
+        command: "patchState",
+        path: `players[${playerIndex}].vp.permanent`,
+        value: currentVp.permanent + gainedVictoryPoints
+      });
+      room.sendDebugCommand({
+        command: "patchState",
+        path: `players[${playerIndex}].vp.total`,
+        value: currentVp.total + gainedVictoryPoints
+      });
+    }
     room.sendDebugCommand({ command: "state" });
   };
 
