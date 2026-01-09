@@ -8,6 +8,7 @@ import type {
   PlayerID
 } from "./types";
 import { getCardDef } from "./content/cards";
+import type { EffectSpec } from "./content/cards";
 import { runModifierEvents } from "./modifiers";
 import { incrementCardsDiscardedThisRound } from "./player-flags";
 
@@ -53,6 +54,60 @@ const addPermanentVp = (state: GameState, playerId: PlayerID, amount: number): G
   };
 };
 
+const adjustGold = (state: GameState, playerId: PlayerID, delta: number): GameState => {
+  if (!Number.isFinite(delta) || delta === 0) {
+    return state;
+  }
+
+  return {
+    ...state,
+    players: state.players.map((player) =>
+      player.id === playerId
+        ? {
+            ...player,
+            resources: {
+              ...player.resources,
+              gold: Math.max(0, player.resources.gold + delta)
+            }
+          }
+        : player
+    )
+  };
+};
+
+const applyCardDrawEffects = (
+  state: GameState,
+  playerId: PlayerID,
+  effects?: EffectSpec[]
+): GameState => {
+  if (!effects || effects.length === 0) {
+    return state;
+  }
+
+  let nextState = state;
+  for (const effect of effects) {
+    switch (effect.kind) {
+      case "gainGold": {
+        const amount = typeof effect.amount === "number" ? Math.floor(effect.amount) : 0;
+        if (amount > 0) {
+          nextState = adjustGold(nextState, playerId, amount);
+        }
+        break;
+      }
+      case "loseGold": {
+        const amount = typeof effect.amount === "number" ? Math.floor(effect.amount) : 0;
+        if (amount > 0) {
+          nextState = adjustGold(nextState, playerId, -amount);
+        }
+        break;
+      }
+      default:
+        break;
+    }
+  }
+  return nextState;
+};
+
 const applyCardDrawTriggers = (
   state: GameState,
   playerId: PlayerID,
@@ -71,7 +126,10 @@ const applyCardDrawTriggers = (
     destination
   };
 
-  return runModifierEvents(state, state.modifiers, (hooks) => hooks.onCardDraw, context);
+  let nextState = runModifierEvents(state, state.modifiers, (hooks) => hooks.onCardDraw, context);
+  const cardDef = getCardDef(instance.defId);
+  nextState = applyCardDrawEffects(nextState, playerId, cardDef?.onDraw);
+  return nextState;
 };
 
 type DiscardOptions = {

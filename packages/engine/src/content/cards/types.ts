@@ -38,6 +38,7 @@ export type CardDef = {
   burn: boolean;
   targetSpec: TargetSpec;
   effects?: EffectSpec[];
+  onDraw?: EffectSpec[];
   resolve?: (ctx: unknown, state: unknown, card: unknown, targets: unknown) => unknown;
   champion?: ChampionSpec;
   victoryPoints?: number;

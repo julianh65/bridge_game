@@ -17,6 +17,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- [agent5] (in progress) Add move selection for marches/card move stacks (forces vs champions), update engine selection/validation, and extend split popover/UI targets. Files: `packages/engine/src/types.ts`, `packages/engine/src/units.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/card-effects.ts`, `apps/web/src/components/ForceSplitPopover.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`. (Overlap note: `apps/web/src/components/GameScreen.tsx` + `apps/web/src/styles.css` are active in other agents’ scopes.)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -133,6 +134,7 @@
 - Added a focused basic-action order unit test to validate faction-priority resolution. (File: `packages/engine/src/basic-action-order.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- basic-action-order.test.ts`.)
 
 ## Milestone 8 progress
+- Added Big VP Gainer (Age II) victory card with on-draw gold loss support in card draw handling, plus plan update. (Files: `packages/engine/src/cards.ts`, `packages/engine/src/content/cards/types.ts`, `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added Age II market card defs (Set to Skirmish, Battalion Contract, Rally Where You Stand, Insight, Stall, Deep Shaft Rig, Strategic Triumph, Banner of Resolve) using existing effects; updated the plan checklist. (Files: `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.) (owner: agent4) (Overlap note: included a pre-staged `implementation_plan.md` edit about burn animation.)
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
 - Added explicit victoryPoints values to Age I Victory cards and marked the plan item complete in `implementation_plan.md`.
@@ -578,6 +580,7 @@ none
 - Lobby now includes a room code copy control with clipboard fallback.
 - Pre-game waiting panel now surfaces a room-code copy control for hosts before the lobby starts.
 - Lobby now includes a shared dice roller (d6) with last-roll display and room-wide broadcast.
+- Animated the lobby dice display with a rolling number reveal for the latest roll. (File: `apps/web/src/components/LobbyDice.tsx`.) (owner: agent2)
 - Lobby map preview now rolls from the game seed and host can reroll the map during setup.
 - Lobby map reroll now locks after the first capital pick (server guard).
 - Replaced auto-start with host-controlled start, with a pre-game lobby snapshot + start button so up to 6 players can join before setup begins.

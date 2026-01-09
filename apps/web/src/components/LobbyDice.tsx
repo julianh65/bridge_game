@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import type { GameEvent, GameView } from "@bridgefront/engine";
 
 import type { RoomConnectionStatus } from "../lib/room-client";
+import { NumberRoll } from "./NumberRoll";
 
 type LobbyDiceProps = {
   view: GameView;
@@ -15,9 +16,10 @@ type DiceRoll = {
   playerId: string;
   roll: number;
   sides: number;
+  rollKey: string | number;
 };
 
-const readDiceRoll = (event: GameEvent): DiceRoll | null => {
+const readDiceRoll = (event: GameEvent, rollKey: string | number): DiceRoll | null => {
   if (event.type !== "lobby.diceRolled") {
     return null;
   }
@@ -28,14 +30,15 @@ const readDiceRoll = (event: GameEvent): DiceRoll | null => {
   if (!playerId || roll === null) {
     return null;
   }
-  return { playerId, roll, sides };
+  return { playerId, roll, sides, rollKey };
 };
 
 export const LobbyDice = ({ view, playerId, status, onRoll }: LobbyDiceProps) => {
   const canRoll = status === "connected" && Boolean(playerId);
   const lastRoll = useMemo(() => {
     for (let i = view.public.logs.length - 1; i >= 0; i -= 1) {
-      const roll = readDiceRoll(view.public.logs[i]);
+      const event = view.public.logs[i];
+      const roll = readDiceRoll(event, event.createdAt ?? i);
       if (roll) {
         return roll;
       }
@@ -47,11 +50,7 @@ export const LobbyDice = ({ view, playerId, status, onRoll }: LobbyDiceProps) =>
     [view.public.players]
   );
 
-  const lastRollLabel = lastRoll
-    ? `${playerNames.get(lastRoll.playerId) ?? lastRoll.playerId} rolled ${lastRoll.roll} (d${
-        lastRoll.sides
-      })`
-    : "No rolls yet.";
+  const lastRollName = lastRoll ? playerNames.get(lastRoll.playerId) ?? lastRoll.playerId : null;
 
   return (
     <section className="panel lobby-dice">
@@ -72,7 +71,20 @@ export const LobbyDice = ({ view, playerId, status, onRoll }: LobbyDiceProps) =>
       <p className="muted">Results are shared with everyone in the room.</p>
       <div className="resource-row">
         <span>Last roll</span>
-        <strong>{lastRollLabel}</strong>
+        {lastRoll ? (
+          <strong>
+            <NumberRoll
+              value={lastRoll.roll}
+              sides={lastRoll.sides}
+              rollKey={lastRoll.rollKey}
+              className="number-roll--lg"
+              label="Last roll"
+            />{" "}
+            {lastRollName} (d{lastRoll.sides})
+          </strong>
+        ) : (
+          <strong>No rolls yet.</strong>
+        )}
       </div>
     </section>
   );

@@ -623,6 +623,22 @@ export const BANNER_OF_RESOLVE: CardDef = {
   victoryPoints: 1
 };
 
+export const BIG_VP_GAINER: CardDef = {
+  id: "age2.big_vp_gainer",
+  name: "Big VP Gainer",
+  rulesText: "Gives +2 VP. When drawn: lose 1 gold.",
+  type: "Victory",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 75,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [],
+  onDraw: [{ kind: "loseGold", amount: 1 }],
+  victoryPoints: 2
+};
+
 export const JET_STRIKER: CardDef = {
   id: "champion.age2.jet_striker",
   name: "Jet Striker",
@@ -856,6 +872,7 @@ export const AGE2_CARDS: CardDef[] = [
   STRATEGIC_TRIUMPH,
   CENTER_DISPATCH,
   BANNER_OF_RESOLVE,
+  BIG_VP_GAINER,
   JET_STRIKER,
   GUERILLA_NATIVE_MERCENARY,
   TAX_REAVER,

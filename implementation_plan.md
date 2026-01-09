@@ -99,6 +99,7 @@ Goal: get the board game “moving pieces and fighting” ASAP.
   - [x] host-controlled start with pre-game lobby snapshot
 - [x] Lobby polish:
   - [x] board preview panel + reroll control
+  - [x] Animate lobby dice roll display
 ---
 
 ## Milestone 5 — Action Step system + hand + playing starter cards
@@ -584,7 +585,7 @@ Done
       - [x] Strategic Triumph.
       - [x] Center Dispatch.
       - [x] Banner of Resolve.
-      - [ ] Big VP Gainer.
+      - [x] Big VP Gainer.
     - [ ] Age II Champion card defs (8).
   - [ ] Define Age III card defs by category (movement/recruit/economy/deckcraft/combat/bridges/victory/champions).
     - [ ] Age III Movement card defs (4).
