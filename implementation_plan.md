@@ -403,6 +403,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Any number in a card description can we bold it?
 - [x] make the card text slightly slightly larger
 - [x] tighten setup deck preview/capital draft layout so the player panel stays narrow and the main panels fill more width
+- [x] add a visual indicator for the local player's capital draft slot and player row
 
 ### Refactor Milestone
 

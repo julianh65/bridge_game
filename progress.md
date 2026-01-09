@@ -24,6 +24,7 @@
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Tightened the setup lobby/deck preview layout so the player panel stays narrow and the main panels fill more width. (File: `apps/web/src/styles.css`.) (owner: agent2)
+- Added a visual indicator for the local player's capital draft slot and row. (Files: `apps/web/src/components/SetupCapitalDraft.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
 - Enabled champion stat blocks in the Quiet Study hand picker. (File: `apps/web/src/components/HandCardPickerModal.tsx`.) (owner: agent2)
 - Compressed setup player status pills into a stacked layout with a compact ready indicator. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
 - Hid the force stack marker when a hex only has champions, centering champion tokens instead. (File: `apps/web/src/components/BoardView.tsx`.) (owner: agent2)

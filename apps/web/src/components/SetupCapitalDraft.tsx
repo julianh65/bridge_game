@@ -169,11 +169,20 @@ export const SetupCapitalDraft = ({
           const labelText = label ? `Slot ${label}` : slot;
           const takenByName = takenBy ? playerNames.get(takenBy) ?? takenBy : null;
           const statusText = isTaken ? (isLocalPick ? " (Yours)" : " (Taken)") : "";
+          const slotClassName = [
+            "btn",
+            "btn-secondary",
+            "setup-draft__slot",
+            isTaken ? "setup-draft__slot--taken" : "",
+            isLocalPick ? "setup-draft__slot--local" : ""
+          ]
+            .filter(Boolean)
+            .join(" ");
           return (
             <button
               key={slot}
               type="button"
-              className="btn btn-secondary"
+              className={slotClassName}
               disabled={!canPick || isTaken}
               onClick={() => onSubmitChoice({ kind: "pickCapital", hexKey: slot })}
               title={
@@ -191,6 +200,7 @@ export const SetupCapitalDraft = ({
           const capitalHex = capitalByPlayer.get(player.id) ?? null;
           const capitalLabel = capitalHex ? slotLabels.get(capitalHex) : null;
           const isActive = waitingFor.has(player.id);
+          const isLocalPlayer = Boolean(playerId && player.id === playerId);
           return (
             <div
               key={player.id}
@@ -198,7 +208,10 @@ export const SetupCapitalDraft = ({
                 isActive ? " setup-draft__player-row--active" : ""
               }`}
             >
-              <span>{player.name}</span>
+              <span className="setup-draft__player-name">
+                {player.name}
+                {isLocalPlayer ? <span className="setup-draft__player-you">You</span> : null}
+              </span>
               <strong title={capitalHex ?? undefined}>
                 {capitalHex
                   ? capitalLabel
