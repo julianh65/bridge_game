@@ -17,11 +17,11 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- (owner: agent2) Adjust champion-only stack rendering so force marker doesn't show when only champions are present; scope: board unit stacks UI. Files: `apps/web/src/components/BoardView.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Enabled champion stat blocks in the Quiet Study hand picker. (File: `apps/web/src/components/HandCardPickerModal.tsx`.) (owner: agent2)
 - Compressed setup player status pills into a stacked layout with a compact ready indicator. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
+- Hid the force stack marker when a hex only has champions, centering champion tokens instead. (File: `apps/web/src/components/BoardView.tsx`.) (owner: agent2)
 - Enabled map-based combat retreat selection by highlighting valid retreat hexes, allowing board clicks to submit retreat choices, and letting the retreat overlay pass clicks through to the board; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5)
 - Showed capital draft picks on the map preview and kept slot buttons visible with taken/disabled state; marked plan items complete. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/components/SetupCapitalDraft.tsx`, `implementation_plan.md`.) (owner: agent1) (Overlap note: progress updates for Siege Writ active task wording and starter deck Scout Report removal were included.)
 - Removed Scout Report from the common starter deck and faction overrides, matching the updated core deck size. (File: `packages/engine/src/content/starter-decks.ts`.)

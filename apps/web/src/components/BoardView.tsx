@@ -1621,7 +1621,8 @@ export const BoardView = ({
         })();
         const tokenRadius = 8;
         const tokenGap = 6;
-        const tokenCenterY = -26;
+        const showForceToken = stack.forceCount > 0;
+        const tokenCenterY = showForceToken ? -26 : 0;
         const tokenDiameter = tokenRadius * 2;
         const totalTokenWidth =
           championTokens.length * tokenDiameter +
@@ -1637,7 +1638,7 @@ export const BoardView = ({
         const iconSize = badgeRadius * 1.6;
         const isArriving = recentStackKeySet.has(stack.key);
         const safeStackKey = toSvgId(stack.key);
-        const showForceArt = stack.forceCount > 0 && Boolean(FORCE_TOKEN_ART_URL);
+        const showForceArt = showForceToken && Boolean(FORCE_TOKEN_ART_URL);
         const forceArtClipId = showForceArt ? `unit-art-${safeStackKey}` : null;
         return (
           <g
@@ -1648,70 +1649,74 @@ export const BoardView = ({
             onClick={() => handleStackClick(stack.hexKey)}
           >
             <g className={`unit-stack__body${unitColorClass}`}>
-              <circle className="unit__rim" cx={0} cy={0} r={11} />
-              <circle
-                className="unit unit__core"
-                cx={0}
-                cy={0}
-                r={10}
-              />
-              {showForceArt && forceArtClipId ? (
+              {showForceToken ? (
                 <>
-                  <defs>
-                    <clipPath id={forceArtClipId}>
-                      <circle cx={0} cy={0} r={10} />
-                    </clipPath>
-                  </defs>
-                  <image
-                    className="unit__art"
-                    href={FORCE_TOKEN_ART_URL ?? undefined}
-                    x={-10}
-                    y={-10}
-                    width={20}
-                    height={20}
-                    preserveAspectRatio="xMidYMid slice"
-                    clipPath={`url(#${forceArtClipId})`}
-                    filter="url(#unit-art-filter)"
-                  />
-                  <circle className="unit__art-tint" cx={0} cy={0} r={10} />
-                </>
-              ) : null}
-              <circle className="unit__glow" cx={-2} cy={-2} r={4} />
-              {stack.forceCount > 0 ? (
-                <text x={0} y={3} className="unit__count">
-                  {stack.forceCount}
-                </text>
-              ) : null}
-              {factionSymbol || factionIconUrl ? (
-                <g className="unit-faction" aria-hidden="true">
+                  <circle className="unit__rim" cx={0} cy={0} r={11} />
                   <circle
-                    className="unit-faction__ring"
-                    cx={badgeX}
-                    cy={badgeY}
-                    r={badgeRadius}
+                    className="unit unit__core"
+                    cx={0}
+                    cy={0}
+                    r={10}
                   />
-                  {factionIconUrl ? (
-                    <image
-                      className="unit-faction__icon"
-                      href={factionIconUrl}
-                      x={badgeX - iconSize / 2}
-                      y={badgeY - iconSize / 2}
-                      width={iconSize}
-                      height={iconSize}
-                      preserveAspectRatio="xMidYMid meet"
-                    />
-                  ) : (
-                    <text
-                      className="unit-faction__text"
-                      x={badgeX}
-                      y={badgeY}
-                      dominantBaseline="middle"
-                    >
-                      {factionSymbol}
-                    </text>
-                  )}
-                </g>
-              ) : null}
+                  {showForceArt && forceArtClipId ? (
+                    <>
+                      <defs>
+                        <clipPath id={forceArtClipId}>
+                          <circle cx={0} cy={0} r={10} />
+                        </clipPath>
+                      </defs>
+                      <image
+                        className="unit__art"
+                        href={FORCE_TOKEN_ART_URL ?? undefined}
+                        x={-10}
+                        y={-10}
+                        width={20}
+                        height={20}
+                        preserveAspectRatio="xMidYMid slice"
+                        clipPath={`url(#${forceArtClipId})`}
+                        filter="url(#unit-art-filter)"
+                      />
+                      <circle className="unit__art-tint" cx={0} cy={0} r={10} />
+                    </>
+                  ) : null}
+                  <circle className="unit__glow" cx={-2} cy={-2} r={4} />
+                  <text x={0} y={3} className="unit__count">
+                    {stack.forceCount}
+                  </text>
+                  {factionSymbol || factionIconUrl ? (
+                    <g className="unit-faction" aria-hidden="true">
+                      <circle
+                        className="unit-faction__ring"
+                        cx={badgeX}
+                        cy={badgeY}
+                        r={badgeRadius}
+                      />
+                      {factionIconUrl ? (
+                        <image
+                          className="unit-faction__icon"
+                          href={factionIconUrl}
+                          x={badgeX - iconSize / 2}
+                          y={badgeY - iconSize / 2}
+                          width={iconSize}
+                          height={iconSize}
+                          preserveAspectRatio="xMidYMid meet"
+                        />
+                      ) : (
+                        <text
+                          className="unit-faction__text"
+                          x={badgeX}
+                          y={badgeY}
+                          dominantBaseline="middle"
+                        >
+                          {factionSymbol}
+                        </text>
+                      )}
+                    </g>
+                  ) : null}
+                </>
+              ) : (
+                <circle cx={0} cy={0} r={12} fill="transparent" />
+              )}
               {tokenLayout.map((token, index) => {
                 const artUrl = token.champion
                   ? getCardArtUrl(token.champion.cardDefId)
