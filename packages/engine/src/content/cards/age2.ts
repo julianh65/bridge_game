@@ -22,7 +22,7 @@ export const TRIPLE_MARCH: CardDef = {
 export const COORDINATED_ADVANCE: CardDef = {
   id: "age2.coordinated_advance",
   name: "Coordinated Advance",
-  rulesText: "Move 2 stacks up to 2 along Bridges each.",
+  rulesText: "Move up to 2 stacks up to 2 along Bridges each.",
   type: "Order",
   deck: "age2",
   tags: ["market", "age2"],
@@ -33,7 +33,7 @@ export const COORDINATED_ADVANCE: CardDef = {
     kind: "multiPath",
     owner: "self",
     maxDistance: 2,
-    minPaths: 2,
+    minPaths: 1,
     maxPaths: 2,
     requiresBridge: true
   },

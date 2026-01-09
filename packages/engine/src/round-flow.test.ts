@@ -252,6 +252,7 @@ describe("collection", () => {
     const created = createCollectionBlock(state);
     expect(created.block).not.toBeNull();
     const block = created.block!;
+    expect(block.payload.mineGoldByPlayer).toEqual({ p1: 2 });
     const prompts = block.payload.prompts.p1 ?? [];
     expect(prompts).toHaveLength(1);
     const promptMap = new Map(prompts.map((prompt) => [`${prompt.kind}:${prompt.hexKey}`, prompt]));

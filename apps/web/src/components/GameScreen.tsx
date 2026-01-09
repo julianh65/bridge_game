@@ -374,6 +374,7 @@ export const GameScreen = ({
   const localPlayer = view.public.players.find((player) => player.id === playerId);
   const localPlayerId = localPlayer?.id ?? null;
   const handCards = view.private?.handCards ?? [];
+  const deckCards = view.private?.deckCards ?? null;
   const deckCounts = view.private?.deckCounts ?? null;
   const quietStudy = view.private?.quietStudy ?? null;
   const scoutReport = view.private?.scoutReport ?? null;
@@ -4411,6 +4412,7 @@ export const GameScreen = ({
       players={view.public.players}
       status={status}
       handCards={handCards}
+      deckCards={deckCards}
       collectionPublic={view.public.collection}
       collectionPrivate={view.private?.collection ?? null}
       labelByHex={hexLabels}

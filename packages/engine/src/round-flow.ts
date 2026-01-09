@@ -19,7 +19,7 @@ import {
   discardCardFromHand,
   drawToHandSize,
   insertCardIntoDrawPileRandom,
-  scrapCardFromHand
+  scrapCardFromDeck
 } from "./cards";
 import { refreshChampionAbilityUsesForRound } from "./champions";
 import { hasCipherQuietStudy } from "./faction-passives";
@@ -323,12 +323,15 @@ const buildCollectionPrompts = (state: GameState): Record<PlayerID, CollectionPr
   return prompts;
 };
 
-const applyMineGoldCollection = (state: GameState): GameState => {
+const applyMineGoldCollection = (
+  state: GameState
+): { state: GameState; mineGoldByPlayer: Record<PlayerID, number> } => {
   const mineHexes = Object.values(state.board.hexes)
     .filter((hex) => hex.tile === "mine")
     .sort((a, b) => a.key.localeCompare(b.key));
 
   let nextState = state;
+  const mineGoldByPlayer: Record<PlayerID, number> = {};
   for (const hex of mineHexes) {
     const occupants = getPlayerIdsOnHex(hex);
     if (occupants.length !== 1) {
@@ -337,15 +340,18 @@ const applyMineGoldCollection = (state: GameState): GameState => {
     const playerId = occupants[0];
     const mineGold = getMineGoldValue(nextState, playerId, hex.key, hex.mineValue ?? 0);
     nextState = addGold(nextState, playerId, mineGold);
+    if (mineGold > 0) {
+      mineGoldByPlayer[playerId] = (mineGoldByPlayer[playerId] ?? 0) + mineGold;
+    }
   }
 
-  return nextState;
+  return { state: nextState, mineGoldByPlayer };
 };
 
 export const createCollectionBlock = (
   state: GameState
 ): { state: GameState; block: BlockState | null } => {
-  const stateWithMineGold = applyMineGoldCollection(state);
+  const { state: stateWithMineGold, mineGoldByPlayer } = applyMineGoldCollection(state);
   const promptsByPlayer = buildCollectionPrompts(stateWithMineGold);
   const playersInSeatOrder = getSeatOrderedPlayers(stateWithMineGold.players);
 
@@ -423,7 +429,8 @@ export const createCollectionBlock = (
         prompts: nextPrompts,
         choices: Object.fromEntries(
           stateWithMineGold.players.map((player) => [player.id, null])
-        ) as Record<PlayerID, CollectionChoice[] | null>
+        ) as Record<PlayerID, CollectionChoice[] | null>,
+        mineGoldByPlayer
       }
     }
   };
@@ -442,7 +449,11 @@ const isCollectionChoiceValid = (
   if (choice.kind === "forge") {
     if (choice.choice === "reforge") {
       const player = getPlayer(state, playerId);
-      return player.deck.hand.includes(choice.scrapCardId);
+      return (
+        player.deck.hand.includes(choice.scrapCardId) ||
+        player.deck.drawPile.includes(choice.scrapCardId) ||
+        player.deck.discardPile.includes(choice.scrapCardId)
+      );
     }
     return prompt.revealed.includes(choice.cardId);
   }
@@ -564,7 +575,7 @@ export const resolveCollectionChoices = (state: GameState): GameState => {
 
       if (choice.kind === "forge") {
         if (choice.choice === "reforge") {
-          nextState = scrapCardFromHand(nextState, player.id, choice.scrapCardId);
+          nextState = scrapCardFromDeck(nextState, player.id, choice.scrapCardId);
           const returned = returnToBottomRandom(nextState, marketDeck, prompt.revealed);
           nextState = returned.state;
           marketDeck = returned.deck;

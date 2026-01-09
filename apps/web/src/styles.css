@@ -825,7 +825,7 @@ body.is-game .status-pill--idle {
 }
 
 .setup-flow .lobby__grid {
-  grid-template-columns: minmax(0, 1fr) minmax(190px, 220px);
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 260px);
   align-items: start;
   gap: 16px;
 }
@@ -1070,7 +1070,7 @@ body.is-game .setup-card-pick__player-row--active {
 .setup-flow__players {
   grid-column: 2;
   grid-row: 1 / span 99;
-  max-width: 220px;
+  max-width: 260px;
   justify-self: end;
   width: 100%;
 }

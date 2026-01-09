@@ -480,7 +480,7 @@ Battle end:
 ### 8.8 Collection
 Collection is simultaneous per occupied special tile:
 - Mine: choose gain gold equal to mine value OR reveal 1 market card from current age and choose to gain it or not
-- Forge: choose Reforge (scrap 1 card from hand) OR Forge Draft (reveal 3 market cards current age, gain 1)
+- Forge: choose Reforge (scrap 1 card from your deck) OR Forge Draft (reveal 3 market cards current age, gain 1)
 - Center: Power Pick (reveal 2 power cards current age, gain 1)
 
 Implementation:

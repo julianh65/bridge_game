@@ -412,32 +412,36 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] could we have a small animation when we get a VP
 - [x] make slot 1, slot 2, slot n click the same button to unlock not a seperate unlock button in capital draft
 - [ ] i can still starting bridges up to 3 edges away, make it 2
-- [ ] allow me to adjust from config how many forces each faction starts with
+- [x] allow me to adjust from config how many forces each faction starts with
 - [x] MAJOR: after hitting done with cipher it just lets me continuously quiet study and never lets me advance
-- [ ] During setup phase the players connected and X still mess up the flow, make the overall players container just slightly wider
+- [x] During setup phase the players connected and X still mess up the flow, make the overall players container just slightly wider
 - [x] after the market is over we see the action phase and then the market modal briefly pops up again
-- [x] in the action reveals when a champion card is in the reveal I don’t see the champion stats or description
+- [ ] in the action reveals when a champion card is in the reveal I don’t see the champion stats or description
 - [ ] some cards still don’t let me select in the move forces pop up to move 0 forces, in the case I want to just move my champion
 - [x] allow me to have less mines than players in the config
-- [x] make sure the display of the draw pile in the UI is unordered and highlight somewhere by adding text that it’s unordered, something like (Unordered)
-- [x] make quick move 1 stack, add to the description text a note to the player that this card has very low initiative
-- [ ] the force chits can block the yield of the mine, make it so that in that hover over a hex where it says mine in a nice ui you also give the yield
-- [ ] in the collection phase make sure we show other players like what this person is collecting, like Waiting for Player1 to Pick from Forge
-- [ ] the collection phase also needs to show everyone who collected how much gold from the mines
-- [x] Major: spectators can’t exit the battle screen once it’s over
+- [ ] make sure the display of the draw pile in the UI is unordered and highlight somewhere by adding text that it’s unordered, something like (Unordered)
+- [ ] make quick move 1 stack, add to the description text a note to the player that this card has very low initiative
+- [x] the force chits can block the yield of the mine, make it so that in that hover over a hex where it says mine in a nice ui you also give the yield
+- [x] in the collection phase make sure we show other players like what this person is collecting, like Waiting for Player1 to Pick from Forge
+- [x] the collection phase also needs to show everyone who collected how much gold from the mines
+- [ ] Major: spectators can’t exit the battle screen once it’s over
 - [x] set to skirmish doesn’t work, just remove it for now and add it as a future todo
-- [ ] forge scrap should show you all cards anywhere in your deck
-- [ ] remove the yellow and blue gradient background color on cards of the mana and gold icons
+- [x] forge scrap should show you all cards anywhere in your deck
+- [x] remove the yellow and blue gradient background color on cards of the mana and gold icons
 - [ ] on the player display in the table make the numbers of everyones gold, mana, and hand slightly larger and easier to read without messing up the flow
-- [ ] cards like coordinated advance where it says up to 2 kind of force you to click twice in the UI, there’s no way to say okay just move 1
+- [x] cards like coordinated advance where it says up to 2 kind of force you to click twice in the UI, there’s no way to say okay just move 1
 - [ ] deep mine charter didn’t increase my VPs, although I added it from debug to test, so confirm that getting those cards will increase your VP
 - [ ] after i played gold plater armor and there was a battle the entire game just froze and there was no battle, reading the console (not sure if related) I’m getting a lot of maximum update depth exceeded at gamescreen
 - [ ] I got 9 VP and nothing happened, it didn’t detect that I won and no screen popped up
 - [ ] Be creative and add a balanced age 1 card of similar flavor to the Dice War Profiteer card
 - [ ] Dice war profiteer during the reveal stage needs to auto roll a dice for everyone to see
-- [x] When the cards pop up to reveal it needs to have their description text on them
+- [ ] When the cards pop up to reveal it needs to have their description text on them
 - [ ] Be creative and add a balanced age 2 card that gives VP, don't make it too crazy just make it basic, add it to the rules, the game and everywhere
 - [ ] Be creative and add to each age a balanced more "basic" champion card that dosen't do anything crazy but is balanced, add it to the rules, the game and everywhere
+- [x] add a cool favicon
+- [ ] remove the how it works on the main screen and "core loop" container
+- [ ] For cards that kind of "scale" like propoganda recruitment or future investment we need to represent on the card (in a very simple way, what the value would be if they played it is)
+
 
 
 ### Refactor Milestone
@@ -888,8 +892,41 @@ Can I somehow add analytics to this? see players where, etc etc...
 
 ## Milestone 13 -- Future stuff / not urgent now
 - [x] time how long every one takes to do their turns and have that be accessible somewhere
-- [ ] a turn timer that at the end picks a random valid card or something, this should be configurable from settings
-- [ ] add save / loading games
-  - [ ] Needs a serialization strategy for modifiers with hook functions (command replay vs modifier rehydration) before persistence.
-- [ ] make a public list of rooms
-- [ ] add stats tracking throughout the game
+- [ ] a turn timer that at the end picks a random valid card or something, this should be configurable from settings TODO LATER
+- [ ] make a public list of rooms TODO LATER
+- [ ] add stats tracking throughout the game 
+
+## TODO — Move static assets to CDN (Cloudflare R2)
+
+TODO LATER
+
+### Tasks
+- [ ] Create a Cloudflare R2 bucket (e.g. `bridgefront-assets`) and enable public access.
+- [ ] Set a custom domain for the bucket (e.g. `https://assets.example.com`) and configure default cache headers:
+  - `Cache-Control: public, max-age=31536000, immutable` (use new filenames when you update an asset).
+- [ ] Upload current assets to R2 with the same paths:
+  - `apps/web/public/card-art` -> `card-art/`
+  - `apps/web/public/tile-textures` -> `tile-textures/`
+  - `apps/web/src/assets/factions` -> `factions/`
+  - Optional: `apps/web/src/assets/sfx` -> `sfx/`
+  - Example (AWS CLI against R2):
+    - `aws s3 sync apps/web/public/card-art s3://bridgefront-assets/card-art --endpoint-url https://<account_id>.r2.cloudflarestorage.com --cache-control "public,max-age=31536000,immutable"`
+    - Repeat for `tile-textures`, `factions`, and `sfx`.
+- [ ] Update the web app to use a CDN base URL everywhere:
+  - Add `VITE_ASSET_BASE_URL=https://assets.example.com` to local `.env` and to Vercel env vars.
+  - Add a small helper (or inline) to prefix asset paths with `import.meta.env.VITE_ASSET_BASE_URL ?? ""`.
+  - Update `apps/web/src/lib/card-art.ts` to prefix `/card-art/...` with the base URL.
+  - Update `apps/web/src/components/BoardView.tsx` tile texture `src` values to prefix with the base URL.
+  - Update `apps/web/src/lib/factions.ts` to use `/factions/<id>.svg` URLs instead of Vite imports (so they can live on the CDN).
+  - Optional: update `apps/web/src/lib/sfx.ts` to use `/sfx/...` URLs if you move audio too.
+- [ ] Add `vercel.json` rewrites so old paths keep working in production:
+  - `/card-art/:path*` -> `https://assets.example.com/card-art/:path*`
+  - `/tile-textures/:path*` -> `https://assets.example.com/tile-textures/:path*`
+  - `/factions/:path*` -> `https://assets.example.com/factions/:path*`
+  - `/sfx/:path*` -> `https://assets.example.com/sfx/:path*` (if moved)
+- [ ] Remove large assets from git once verified:
+  - Delete the local folders above (or replace with a README placeholder).
+  - Add `.gitignore` entries so they do not get re-added.
+- [ ] Verify:
+  - Local: `VITE_ASSET_BASE_URL` set, `npm run dev:web`, confirm images load.
+  - Production: deploy to Vercel and confirm assets resolve from the CDN domain.

@@ -15,6 +15,7 @@ type GameScreenCollectionOverlayProps = {
   players: GameView["public"]["players"];
   status: RoomConnectionStatus;
   handCards: NonNullable<GameView["private"]>["handCards"];
+  deckCards: NonNullable<GameView["private"]>["deckCards"] | null;
   collectionPublic: GameView["public"]["collection"];
   collectionPrivate: NonNullable<GameView["private"]>["collection"] | null;
   labelByHex: Record<string, string>;
@@ -32,6 +33,7 @@ export const GameScreenCollectionOverlay = ({
   players,
   status,
   handCards,
+  deckCards,
   collectionPublic,
   collectionPrivate,
   labelByHex,
@@ -53,6 +55,7 @@ export const GameScreenCollectionOverlay = ({
               players={players}
               status={status}
               handCards={handCards}
+              deckCards={deckCards}
               collectionPublic={collectionPublic}
               collectionPrivate={collectionPrivate}
               labelByHex={labelByHex}

@@ -408,6 +408,7 @@ export type BlockState = {
   payload: {
     prompts: Record<PlayerID, CollectionPrompt[]>;
     choices: Record<PlayerID, CollectionChoice[] | null>;
+    mineGoldByPlayer: Record<PlayerID, number>;
   };
 } | {
   type: "actionStep.declarations";
@@ -630,6 +631,11 @@ export type CollectionPrompt =
       revealed: CardDefId[];
     };
 
+export type CollectionPromptSummary = {
+  kind: CollectionPrompt["kind"];
+  hexKey: HexKey;
+};
+
 export type CollectionChoice =
   | {
       kind: "forge";
@@ -651,6 +657,8 @@ export type CollectionChoice =
 
 export type CollectionPublicView = {
   waitingForPlayerIds: PlayerID[];
+  promptSummaryByPlayer: Record<PlayerID, CollectionPromptSummary[]>;
+  mineGoldByPlayer: Record<PlayerID, number>;
 };
 
 export type CollectionPrivateView = {

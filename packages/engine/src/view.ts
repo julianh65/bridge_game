@@ -1,6 +1,7 @@
 import type {
   BlockState,
   CombatRetreatPublicView,
+  CollectionPromptSummary,
   GameState,
   GameView,
   Modifier,
@@ -160,7 +161,19 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
       : null;
   const collectionPublic =
     state.phase === "round.collection" && state.blocks?.type === "collection.choices"
-      ? { waitingForPlayerIds: state.blocks.waitingFor }
+      ? {
+          waitingForPlayerIds: state.blocks.waitingFor,
+          promptSummaryByPlayer: Object.fromEntries(
+            Object.entries(state.blocks.payload.prompts).map(([playerId, prompts]) => [
+              playerId,
+              prompts.map((prompt) => ({
+                kind: prompt.kind,
+                hexKey: prompt.hexKey
+              }))
+            ])
+          ) as Record<PlayerID, CollectionPromptSummary[]>,
+          mineGoldByPlayer: state.blocks.payload.mineGoldByPlayer ?? {}
+        }
       : null;
   const collectionPrivate =
     viewer && state.phase === "round.collection" && state.blocks?.type === "collection.choices"

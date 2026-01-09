@@ -24,6 +24,7 @@ type CollectionPanelProps = {
   player: GameView["public"]["players"][number] | null;
   players: Array<{ id: string; name: string }>;
   handCards: CardInstance[];
+  deckCards: NonNullable<GameView["private"]>["deckCards"] | null;
   status: RoomConnectionStatus;
   labelByHex?: Record<string, string>;
   onSubmitChoices: (choices: CollectionChoice[]) => void;
@@ -42,7 +43,7 @@ const getPromptSignature = (prompt: CollectionPrompt) =>
 const isChoiceValid = (
   prompt: CollectionPrompt,
   choice: CollectionChoice,
-  handCardIds: Set<string>
+  scrapCardIds: Set<string>
 ) => {
   if (choice.kind !== prompt.kind || choice.hexKey !== prompt.hexKey) {
     return false;
@@ -50,7 +51,7 @@ const isChoiceValid = (
 
   if (choice.kind === "forge") {
     if (choice.choice === "reforge") {
-      return handCardIds.has(choice.scrapCardId);
+      return scrapCardIds.has(choice.scrapCardId);
     }
     return prompt.revealed.includes(choice.cardId);
   }
@@ -136,6 +137,7 @@ export const CollectionPanel = ({
   player,
   players,
   handCards,
+  deckCards,
   status,
   labelByHex,
   onSubmitChoices
@@ -153,11 +155,39 @@ export const CollectionPanel = ({
   const [selections, setSelections] = useState<Record<string, CollectionChoice | null>>({});
   const [promptRevealState, setPromptRevealState] = useState<Record<string, boolean>>({});
   const [highlightStage, setHighlightStage] = useState<CollectionPrompt["kind"] | null>(null);
-  const handCardIds = useMemo(() => new Set(handCards.map((card) => card.id)), [handCards]);
+  const scrapCardIds = useMemo(() => {
+    const ids = new Set<string>();
+    handCards.forEach((card) => ids.add(card.id));
+    deckCards?.drawPile.forEach((card) => ids.add(card.id));
+    deckCards?.discardPile.forEach((card) => ids.add(card.id));
+    return ids;
+  }, [deckCards, handCards]);
   const playerNames = useMemo(
     () => new Map(players.map((entry) => [entry.id, entry.name])),
     [players]
   );
+  const scrapSections = useMemo(() => {
+    return [
+      {
+        key: "hand",
+        label: "Hand",
+        emptyLabel: "No cards in hand.",
+        cards: handCards
+      },
+      {
+        key: "draw",
+        label: "Draw pile (unordered)",
+        emptyLabel: "No cards in draw pile.",
+        cards: deckCards?.drawPile ?? []
+      },
+      {
+        key: "discard",
+        label: "Discard pile",
+        emptyLabel: "No cards in discard pile.",
+        cards: deckCards?.discardPile ?? []
+      }
+    ];
+  }, [deckCards, handCards]);
   const waitingFor = collectionPublic?.waitingForPlayerIds ?? [];
   const promptSummary = useMemo(() => {
     return prompts.map((prompt) => {
@@ -165,7 +195,7 @@ export const CollectionPanel = ({
       const kindLabel = prompt.kind === "forge" ? "Forge" : "Center";
       let detail = "";
       if (prompt.kind === "forge") {
-        detail = "Scrap 1 to reforge or draft a card";
+        detail = "Scrap 1 from your deck to reforge or draft a card";
       } else {
         detail = "Pick 1 power card";
       }
@@ -176,6 +206,42 @@ export const CollectionPanel = ({
       };
     });
   }, [labelByHex, prompts]);
+  const mineGoldEntries = useMemo(() => {
+    const totals = collectionPublic?.mineGoldByPlayer;
+    if (!totals) {
+      return [];
+    }
+    return players
+      .map((entry) => {
+        const amount = totals[entry.id] ?? 0;
+        if (amount <= 0) {
+          return null;
+        }
+        return { playerId: entry.id, playerName: entry.name, amount };
+      })
+      .filter((entry): entry is { playerId: string; playerName: string; amount: number } =>
+        Boolean(entry)
+      );
+  }, [collectionPublic?.mineGoldByPlayer, players]);
+  const waitingDetails = useMemo(() => {
+    if (!collectionPublic) {
+      return [];
+    }
+    return waitingFor.map((playerId) => {
+      const playerName = playerNames.get(playerId) ?? playerId;
+      const promptsForPlayer = collectionPublic.promptSummaryByPlayer?.[playerId] ?? [];
+      const detail =
+        promptsForPlayer.length > 0
+          ? promptsForPlayer
+              .map((prompt) => {
+                const kindLabel = prompt.kind === "forge" ? "Forge" : "Center";
+                return `${kindLabel} ${formatHexLabel(prompt.hexKey, labelByHex)}`;
+              })
+              .join(", ")
+          : "Making collection choices";
+      return { playerId, playerName, detail };
+    });
+  }, [collectionPublic, labelByHex, playerNames, waitingFor]);
 
   useEffect(() => {
     const next: Record<string, boolean> = {};
@@ -263,7 +329,7 @@ export const CollectionPanel = ({
     for (const prompt of prompts) {
       const key = getPromptKey(prompt.kind, prompt.hexKey);
       const choice = selections[key];
-      if (!choice || !isChoiceValid(prompt, choice, handCardIds)) {
+      if (!choice || !isChoiceValid(prompt, choice, scrapCardIds)) {
         valid = false;
         continue;
       }
@@ -273,7 +339,7 @@ export const CollectionPanel = ({
       valid = false;
     }
     return { preparedChoices: prepared, allValid: valid };
-  }, [prompts, selections, handCardIds]);
+  }, [prompts, scrapCardIds, selections]);
 
   const canSubmit = canInteract && prompts.length > 0 && allValid;
 
@@ -318,32 +384,72 @@ export const CollectionPanel = ({
     <div className="sidebar-section">
       <h3>Collection</h3>
       {isCollectionPhase ? (
-        prompts.length === 0 ? (
-          <div className="hand-empty">No collection prompts for you this round.</div>
-        ) : (
-          <div className="collection-prompts">
+        <div className="collection-prompts">
+          {mineGoldEntries.length > 0 ? (
             <div className="collection-summary">
               <div className="collection-summary__header">
-                <span className="collection-summary__title">Your collection sites</span>
+                <span className="collection-summary__title">Mine income</span>
                 <span className="collection-summary__count">
-                  {prompts.length} to resolve
+                  {mineGoldEntries.length}{" "}
+                  {mineGoldEntries.length === 1 ? "player" : "players"}
                 </span>
               </div>
               <ul className="collection-summary__list">
-                {promptSummary.map((entry) => (
-                  <li key={entry.key} className="collection-summary__item">
-                    <span className="collection-summary__label">{entry.title}</span>
+                {mineGoldEntries.map((entry) => (
+                  <li key={entry.playerId} className="collection-summary__item">
+                    <span className="collection-summary__label">{entry.playerName}</span>
+                    <span className="collection-summary__detail">
+                      +{entry.amount} gold from mines
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+          {waitingDetails.length > 0 ? (
+            <div className="collection-summary">
+              <div className="collection-summary__header">
+                <span className="collection-summary__title">Waiting for</span>
+                <span className="collection-summary__count">
+                  {waitingDetails.length}
+                </span>
+              </div>
+              <ul className="collection-summary__list">
+                {waitingDetails.map((entry) => (
+                  <li key={entry.playerId} className="collection-summary__item">
+                    <span className="collection-summary__label">{entry.playerName}</span>
                     <span className="collection-summary__detail">{entry.detail}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            {prompts.map((prompt) => {
-              const key = getPromptKey(prompt.kind, prompt.hexKey);
-              const selection = selections[key];
-              const isRevealPending = Boolean(
-                promptRevealState[key] === false && prompt.revealed.length > 0
-              );
+          ) : null}
+          {prompts.length === 0 ? (
+            <div className="hand-empty">No collection prompts for you this round.</div>
+          ) : (
+            <>
+              <div className="collection-summary">
+                <div className="collection-summary__header">
+                  <span className="collection-summary__title">Your collection sites</span>
+                  <span className="collection-summary__count">
+                    {prompts.length} to resolve
+                  </span>
+                </div>
+                <ul className="collection-summary__list">
+                  {promptSummary.map((entry) => (
+                    <li key={entry.key} className="collection-summary__item">
+                      <span className="collection-summary__label">{entry.title}</span>
+                      <span className="collection-summary__detail">{entry.detail}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              {prompts.map((prompt) => {
+                const key = getPromptKey(prompt.kind, prompt.hexKey);
+                const selection = selections[key];
+                const isRevealPending = Boolean(
+                  promptRevealState[key] === false && prompt.revealed.length > 0
+                );
               const isStageActive = highlightStage === prompt.kind;
               const isStageDimmed = highlightStage !== null && !isStageActive;
               const hexLabel = formatHexLabel(prompt.hexKey, labelByHex);
@@ -376,36 +482,41 @@ export const CollectionPanel = ({
                       </span>
                       <p className="collection-prompt__note">
                         {revealCount > 0
-                          ? `Scrap 1 card to reforge, or draft 1 of ${revealLabel}.`
+                          ? `Scrap 1 card from your deck to reforge, or draft 1 of ${revealLabel}.`
                           : "No cards left to draft; reforge is still available."}
                       </p>
-                      {handCards.length === 0 ? (
-                        <div className="collection-prompt__note">
-                          No cards in hand.
+                      {scrapSections.map((section) => (
+                        <div key={section.key} className="collection-prompt__section">
+                          <span className="collection-prompt__label">{section.label}</span>
+                          {section.cards.length === 0 ? (
+                            <div className="collection-prompt__note">
+                              {section.emptyLabel}
+                            </div>
+                          ) : (
+                            <div className="collection-card-grid">
+                              {section.cards.map((card) => {
+                                const isSelected = selectedReforgeId === card.id;
+                                return (
+                                  <CollectionHandCardOption
+                                    key={card.id}
+                                    card={card}
+                                    isSelected={isSelected}
+                                    disabled={!canInteract}
+                                    onSelect={() =>
+                                      setChoice(prompt, {
+                                        kind: "forge",
+                                        hexKey: prompt.hexKey,
+                                        choice: "reforge",
+                                        scrapCardId: card.id
+                                      })
+                                    }
+                                  />
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
-                      ) : (
-                        <div className="collection-card-grid">
-                          {handCards.map((card) => {
-                            const isSelected = selectedReforgeId === card.id;
-                            return (
-                              <CollectionHandCardOption
-                                key={card.id}
-                                card={card}
-                                isSelected={isSelected}
-                                disabled={!canInteract}
-                                onSelect={() =>
-                                  setChoice(prompt, {
-                                    kind: "forge",
-                                    hexKey: prompt.hexKey,
-                                    choice: "reforge",
-                                    scrapCardId: card.id
-                                  })
-                                }
-                              />
-                            );
-                          })}
-                        </div>
-                      )}
+                      ))}
                     </div>
                     <div className="collection-prompt__section">
                       <span className="collection-prompt__label">
@@ -509,8 +620,9 @@ export const CollectionPanel = ({
 
               return null;
             })}
-          </div>
-        )
+            </>
+          )}
+        </div>
       ) : (
         <div className="hand-empty">Collection choices appear during the collection phase.</div>
       )}

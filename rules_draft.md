@@ -778,7 +778,7 @@ Cost: 1 mana — Init: 40 / 105 — Type: Order
 Move 1 stack up to 3 along Bridges.
 Coordinated Advance
 Cost: 2 mana — Init: 55 / 120 — Type: Order
-Move 2 stacks up to 2 along Bridges each.
+Move up to 2 stacks up to 2 along Bridges each.
 Rapid Redeploy
 Cost: 1 mana — Init: 65 / 135 — Type: Order
 Move 1 Champion to any occupied hex. Heal it 1 HP.
@@ -886,7 +886,7 @@ Foundry Heist
 Cost: 2 mana — Init: 50 / 120 — Type: Order
 If you occupy a Forge, choose one now:
 Forge Draft (reveal 3 Age II Market, gain 1), OR
-Reforge (scrap 1 from hand)
+Reforge (scrap 1 from your deck)
 Then draw 1.
 Deep Shaft Rig
 Cost: 2 mana + 1 gold — Init: 60 / 130 — Type: Order

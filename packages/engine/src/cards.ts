@@ -443,6 +443,29 @@ export const scrapCardFromHand = (
   });
 };
 
+export const scrapCardFromDeck = (
+  state: GameState,
+  playerId: PlayerID,
+  cardInstanceId: CardInstanceID
+): GameState => {
+  const player = getPlayer(state, playerId);
+  const { hand, drawPile, discardPile, scrapped } = player.deck;
+  const isInDeck =
+    hand.includes(cardInstanceId) ||
+    drawPile.includes(cardInstanceId) ||
+    discardPile.includes(cardInstanceId);
+  if (!isInDeck) {
+    return state;
+  }
+
+  return updatePlayerDeck(state, playerId, {
+    hand: hand.filter((id) => id !== cardInstanceId),
+    drawPile: drawPile.filter((id) => id !== cardInstanceId),
+    discardPile: discardPile.filter((id) => id !== cardInstanceId),
+    scrapped: [...scrapped, cardInstanceId]
+  });
+};
+
 export const addCardToDiscardPile = (
   state: GameState,
   playerId: PlayerID,
