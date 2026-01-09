@@ -629,6 +629,7 @@ none
 
 ## Milestone 6 progress
 - Added market deck scaffolding per age with shuffle on game creation (Age II/III placeholders for now).
+- Refactored market deck exports to avoid `AGE1_MARKET_DECK` runtime undefined errors during server startup. (File: `packages/engine/src/content/market-decks.ts`.)
 - Added market row prep using preview mapping + deck draws, plus cleanup resets to clear the row each round.
 - Added market row tests covering preview composition and no-op behavior when a row exists.
 - Market sidebar now shows card names and bid/pass status per player.
