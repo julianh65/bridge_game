@@ -333,7 +333,7 @@ export const runUntilBlocked = (state: GameState): GameState => {
           ...nextState,
           blocks: undefined
         };
-        nextState = enterPhase(nextState, "round.market");
+        nextState = enterPhase(nextState, "round.action");
         continue;
       }
 

@@ -18,11 +18,13 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- (owner: agent2) Investigate failing tests reported by user; capture failing output and likely root cause. Files: `progress.md`. (status: in progress)
+- (owner: agent2) Add Age III Elite Guard card (deploy 5 to capital + heal 2 in capital), including effect handling + tests. Files: `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-units.ts`, `packages/engine/src/card-effects.elite-guard.test.ts`, `implementation_plan.md`. Status: in progress.
+- (owner: agent3) [status: in-progress] Add setup view smoke coverage for setup gating/bridge reveal; files: `packages/engine/src/view.test.ts`, `implementation_plan.md`, `progress.md`.
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
 ## Test fixes
 - Updated engine tests for market bid winners, Quiet Study hand-size behavior, and setup flow expectations (deck preview gating + card totals) to match current config/flow. (Files: `packages/engine/src/market.test.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`.) (owner: agent1)
+- Investigated engine test failures: `action-flow.test.ts` fails in `pickNonAdjacentMinePair` because 2-player maps only place 2 mines and can be adjacent, so the test can't find a non-adjacent pair (seed 123). (owner: agent2)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Tightened the setup lobby/deck preview layout so the player panel stays narrow and the main panels fill more width. (File: `apps/web/src/styles.css`.) (owner: agent2)
@@ -58,6 +60,9 @@
 - Relaxed forge placement to fall back to any eligible distance when preferred center distances have no candidates (avoids dead-end placements on small maps), with a fallback test; marked the plan item complete. (Files: `packages/engine/src/board-generation.ts`, `packages/engine/src/board-generation.test.ts`, `implementation_plan.md`.) (owner: agent5)
 - Persisted combat RNG updates during no-hit rounds so dice rolls advance (prevents repeated roll stalls), with test coverage; marked the plan item complete. (Files: `packages/engine/src/combat.ts`, `packages/engine/src/combat.test.ts`, `implementation_plan.md`.) (owner: agent5)
 - Moved combat retreat decisions into the hand/actions panel with clear "one final round" messaging and removed the full-screen retreat overlay; marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5)
+
+## Milestone / tasks after third play test progress
+- Fixed Cipher Quiet Study loop by advancing from `round.study` to `round.action` after resolving choices so the block doesn't re-trigger. (File: `packages/engine/src/engine.ts`.) (owner: agent4)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.

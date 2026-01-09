@@ -405,6 +405,39 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] tighten setup deck preview/capital draft layout so the player panel stays narrow and the main panels fill more width
 - [x] add a visual indicator for the local player's capital draft slot and player row
 
+
+### Milestone / tasks after third play test
+- [ ] could we have, at the start a draw animation like the cards fill and get added to the hand
+- [ ] could we have an animation when we get gold
+- [ ] could we have a small animation when we get a VP
+- [ ] make slot 1, slot 2, slot n click the same button to unlock not a seperate unlock button in capital draft
+- [ ] i can still starting bridges up to 3 edges away, make it 2
+- [ ] allow me to adjust from config how many forces each faction starts with
+- [x] MAJOR: after hitting done with cipher it just lets me continuously quiet study and never lets me advance
+- [ ] During setup phase the players connected and X still mess up the flow, make the overall players container just slightly wider
+- [ ] after the market is over we see the action phase and then the market modal briefly pops up again
+- [ ] in the action reveals when a champion card is in the reveal I don’t see the champion stats or description
+- [ ] some cards still don’t let me select in the move forces pop up to move 0 forces, in the case I want to just move my champion
+- [ ] allow me to have less mines than players in the config
+- [ ] make sure the display of the draw pile in the UI is unordered and highlight somewhere by adding text that it’s unordered, something like (Unordered)
+- [ ] make quick move 1 stack, add to the description text a note to the player that this card has very low initiative
+- [ ] the force chits can block the yield of the mine, make it so that in that hover over a hex where it says mine in a nice ui you also give the yield
+- [ ] in the collection phase make sure we show other players like what this person is collecting, like Waiting for Player1 to Pick from Forge
+- [ ] the collection phase also needs to show everyone who collected how much gold from the mines
+- [ ] Major: spectators can’t exit the battle screen once it’s over
+- [ ] set to skirmish doesn’t work, just remove it for now and add it as a future todo
+- [ ] forge scrap should show you all cards anywhere in your deck
+- [ ] remove the yellow and blue gradient background color on cards of the mana and gold icons
+- [ ] on the player display in the table make the numbers of everyones gold, mana, and hand slightly larger and easier to read without messing up the flow
+- [ ] cards like coordinated advance where it says up to 2 kind of force you to click twice in the UI, there’s no way to say okay just move 1
+- [ ] deep mine charter didn’t increase my VPs, although I added it from debug to test, so confirm that getting those cards will increase your VP
+- [ ] after i played gold plater armor and there was a battle the entire game just froze and there was no battle, reading the console (not sure if related) I’m getting a lot of maximum update depth exceeded at gamescreen
+- [ ] I got 9 VP and nothing happened, it didn’t detect that I won and no screen popped up
+- [ ] Be creative and add a balanced age 1 card of similar flavor to the Dice War Profiteer card
+- [ ] Dice war profiteer during the reveal stage needs to auto roll a dice for everyone to see
+- [ ] When the cards pop up to reveal it needs to have their description text on them
+
+
 ### Refactor Milestone
 
 Note: hold off on doing these refactors until I specifically instruct
