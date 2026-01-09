@@ -17,10 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent1
-  scope: add multi-edge targeting summary + clear in action panel
-  files: apps/web/src/components/GameScreen.tsx, progress.md
-  status: in progress
 - owner: agent5
   scope: add Cataclysm Core power spell effect + Chronicle of War power victory card, update power deck list + plan
   files: packages/engine/src/card-effects.ts, packages/engine/src/card-effects-units.ts, packages/engine/src/content/cards/power.ts, packages/engine/src/content/power-decks.ts, implementation_plan.md, progress.md
@@ -731,6 +727,7 @@ none
 - Tightened hex-pair targeting flow in the UI (valid picks + range hints) so Wormhole Link/Gate selections align with rules. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`.)
 - Added multi-path targeting flow for multi-stack move cards with per-path add/remove controls, count hints, and board highlights; marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.) (owner: agent2)
 - Added bridge+move compound targeting controls for edge cards (pick bridge/move toggles + bridge/move summaries) and marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent2)
+- Added a bridge-pick button and explicit bridge label in the edge+move hand targets for Bridge Crew-style cards. (File: `apps/web/src/components/GameScreen.tsx`.) (Overlap note: pre-staged changes from agent2 were included.)
 - Enforced `maxDistanceFromCapital` for hex targeting in the UI and added a capital-range hint for eligible cards. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`.)
 - Added Mortar Shot scatter preview highlights on adjacent hexes when targeting and marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreen.tsx` is in agent2 scope.)
 - Deferred manual hit assignment UI for Focus Fire/Tactical Hand, disabled Focus Fire + Grand Strategist in card lists until the UI lands, and noted a future task in the plan. (Files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.)
