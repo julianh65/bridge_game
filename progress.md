@@ -40,6 +40,7 @@
 - Bolded numeric values in card rules text and marked the plan item complete. (Files: `apps/web/src/components/GameCard.tsx`, `implementation_plan.md`.) (owner: agent1) (Overlap note: includes agent2 active-task line and agent3 Scout Report progress entry already present in `progress.md`.)
 - Slightly increased card rules text size and marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent1) (Overlap note: includes agent4 plan/progress updates for champion-only move fixes.)
 - Removed dice-roll animations from forge/power reveal prompts; kept a short reveal pause with plain copy. (File: `apps/web/src/components/CollectionPanel.tsx`.)
+- Verified the Age II power deck list is present and marked the plan item complete. (File: `implementation_plan.md`.) (owner: agent1)
 - Delayed scout report + market/collection overlays until action reveal playback finishes so action previews are visible; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Converted hand-target panels (Bridge Crew edge/move) into overlays so the hand row no longer shifts upward. (File: `apps/web/src/styles.css`.)
 - Added a debug-hand overlay toggle via `?debugHand=1` or localStorage so hosts can access hand injection outside dev builds. (File: `apps/web/src/components/GameDebugOverlay.tsx`.)
