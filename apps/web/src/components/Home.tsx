@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import { getDefaultPartyHost } from "../lib/room-client";
+import { getDefaultPartyHost, getRejoinToken } from "../lib/room-client";
 
 export type RoomJoinParams = {
   roomId: string;
@@ -14,6 +14,7 @@ type HomeProps = {
 };
 
 const nameStorageKey = "bridgefront:playerName";
+const lastRoomStorageKey = "bridgefront:lastRoomId";
 
 const loadStoredName = () => {
   try {
@@ -31,6 +32,22 @@ const storeName = (name: string) => {
   }
 };
 
+const loadLastRoomId = () => {
+  try {
+    return window.localStorage.getItem(lastRoomStorageKey) ?? "";
+  } catch {
+    return "";
+  }
+};
+
+const storeLastRoomId = (roomId: string) => {
+  try {
+    window.localStorage.setItem(lastRoomStorageKey, roomId);
+  } catch {
+    // Ignore storage failures.
+  }
+};
+
 const generateRoomCode = () => {
   const seed = Math.random().toString(36).slice(2, 8);
   return `room-${seed}`;
@@ -42,6 +59,7 @@ export const Home = ({ onJoin }: HomeProps) => {
   const [roomId, setRoomId] = useState("");
   const [host, setHost] = useState(defaultHost);
   const [error, setError] = useState<string | null>(null);
+  const [lastRoomId, setLastRoomId] = useState(loadLastRoomId);
 
   const submit = (nextRoomId?: string) => {
     const trimmedName = name.trim();
@@ -59,6 +77,8 @@ export const Home = ({ onJoin }: HomeProps) => {
 
     setError(null);
     storeName(trimmedName);
+    storeLastRoomId(trimmedRoom);
+    setLastRoomId(trimmedRoom);
     onJoin({
       roomId: trimmedRoom,
       name: trimmedName,
@@ -70,6 +90,16 @@ export const Home = ({ onJoin }: HomeProps) => {
     const newRoom = generateRoomCode();
     setRoomId(newRoom);
     submit(newRoom);
+  };
+
+  const rejoinToken = lastRoomId ? getRejoinToken(lastRoomId) : null;
+  const canRejoin = Boolean(lastRoomId && rejoinToken);
+  const handleRejoin = () => {
+    if (!lastRoomId) {
+      return;
+    }
+    setRoomId(lastRoomId);
+    submit(lastRoomId);
   };
 
   return (
@@ -147,6 +177,18 @@ export const Home = ({ onJoin }: HomeProps) => {
               Join Room
             </button>
           </div>
+          {canRejoin ? (
+            <div className="home__actions">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-sfx="soft"
+                onClick={handleRejoin}
+              >
+                Rejoin {lastRoomId}
+              </button>
+            </div>
+          ) : null}
         </section>
       </header>
 

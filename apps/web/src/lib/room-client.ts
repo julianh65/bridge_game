@@ -125,6 +125,8 @@ const loadRejoinToken = (roomId: string) => {
   }
 };
 
+export const getRejoinToken = (roomId: string) => loadRejoinToken(roomId);
+
 const storeRejoinToken = (roomId: string, token: string) => {
   try {
     window.localStorage.setItem(storageKeyForRoom(roomId), token);

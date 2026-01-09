@@ -780,7 +780,7 @@ Done
 - [x] Make the cards slightly more readable, try to maximize space usage, make the font slightly larger, and it should be way more obvious the mana and gold cost, you can even put them in the bottom left and right corner like in hearthstone, to that end the entire hand area on the bottom can be made like 10% taller to accomodate
 - [x] Confirm that champion targetting cards have a UI and work such that you can target a specific champion if there are two in the same hex
 - [ ] Hard: What I'd really like is for the actions to happen on the board as they're revealed with the reveal thing. So after the card is revaled that player one built a bridge here then the bridge builds on the board, and after a player moves something it moves on the boards, and it should animate between the hexes (TODO LATER DON'T PICK THIS UP IT'S DANGEROUS)
-- [ ] add a rejoin game type logic
+- [x] add a rejoin game type logic
 
 ## Milestone 9.5 -- Card Art + Description
 
