@@ -23,11 +23,11 @@ import {
 
 import { type BasicActionIntent, type BoardPickMode } from "./ActionPanel";
 import { ActionRevealOverlay, type ActionRevealOverlayData } from "./ActionRevealOverlay";
-import { BoardView, type BoardActionAnimation } from "./BoardView";
+import { type BoardActionAnimation } from "./BoardView";
 import { CombatOverlay } from "./CombatOverlay";
 import { CombatRetreatOverlay } from "./CombatRetreatOverlay";
 import { GameScreenCues, type AgeCue, type PhaseCue } from "./GameScreenCues";
-import { GameScreenBoardLegend } from "./GameScreenBoardLegend";
+import { GameScreenBoardSection } from "./GameScreenBoardSection";
 import { GameScreenHandPanel } from "./GameScreenHandPanel";
 import { GameScreenHeader } from "./GameScreenHeader";
 import { GameScreenInfoDock } from "./GameScreenInfoDock";
@@ -3132,43 +3132,26 @@ export const GameScreen = ({
           isSidebarCollapsed ? "game-screen__layout--sidebar-collapsed" : ""
         }`}
       >
-        <section className="panel game-board">
-          <div className="game-board__placeholder">
-            <div className="game-board__viewport">
-              <BoardView
-                hexes={hexRender}
-                board={view.public.board}
-                modifiers={view.public.modifiers}
-                playerIndexById={playerColorIndexById}
-                playerFactionById={playerFactionById}
-                capitalOwnerByHex={capitalOwnerByHex}
-                homeCapitalHexKey={localCapitalHexKey}
-                showCoords={false}
-                showMineValues
-                labelByHex={hexLabels}
-                labelVariant="coords"
-                className="board-svg board-svg--game"
-                enablePanZoom
-                selectedHexKey={selectedHexKey}
-                highlightHexKeys={highlightHexKeys}
-                validHexKeys={isEdgePickMode ? [] : validHexKeys}
-                previewEdgeKeys={previewEdgeKeys}
-                isTargeting={isBoardTargeting}
-                onHexClick={isEdgePickMode ? undefined : handleBoardHexClick}
-                onEdgeClick={handleBoardEdgeClick}
-                showTags={false}
-                actionAnimations={actionAnimations}
-                actionAnimationDurationMs={actionRevealDurationMs}
-              />
-              {forceSplitPanel ? (
-                <div className="board-tools board-tools--overlay board-tools--split">
-                  {forceSplitPanel}
-                </div>
-              ) : null}
-            </div>
-            <GameScreenBoardLegend />
-          </div>
-        </section>
+        <GameScreenBoardSection
+          hexes={hexRender}
+          board={view.public.board}
+          modifiers={view.public.modifiers}
+          playerIndexById={playerColorIndexById}
+          playerFactionById={playerFactionById}
+          capitalOwnerByHex={capitalOwnerByHex}
+          homeCapitalHexKey={localCapitalHexKey}
+          labelByHex={hexLabels}
+          selectedHexKey={selectedHexKey}
+          highlightHexKeys={highlightHexKeys}
+          validHexKeys={isEdgePickMode ? [] : validHexKeys}
+          previewEdgeKeys={previewEdgeKeys}
+          isTargeting={isBoardTargeting}
+          onHexClick={isEdgePickMode ? undefined : handleBoardHexClick}
+          onEdgeClick={handleBoardEdgeClick}
+          actionAnimations={actionAnimations}
+          actionAnimationDurationMs={actionRevealDurationMs}
+          forceSplitPanel={forceSplitPanel}
+        />
 
         {!isSidebarCollapsed ? (
           <GameScreenSidebar

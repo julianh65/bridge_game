@@ -370,6 +370,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] GameScreen: extract info dock (log/effects) into component.
 - [x] GameScreen: extract phase/age cue overlays into component.
 - [x] GameScreen: extract board legend + sidebar toggle into components.
+- [x] GameScreen: extract board section (BoardView + legend + overlays) into component.
 - [ ] GameScreen: extract remaining HUD subsections into components.
 - [x] GameScreen: move label/target helper utilities into a shared module.
 - [ ] card-effects: split effect resolvers into categorized modules and re-export from a single index.
