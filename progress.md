@@ -560,6 +560,7 @@ none
 - Board inspector now labels special tiles (CAP/FORGE/MINE/CTR) on the hexes.
 - Fixed hex fill styles so tiles render in their intended colors.
 - Added dev-only room debug tools (state JSON fetch, advance phase, reset with seed) plus server debug commands for host-only use.
+- Added setup-flow auto-setup scenario controls (round/age presets + board JSON apply) so debug presets are accessible from the setup UI. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/App.tsx`.)
 - Added scenario presets (round/age) and board snapshot capture/apply helpers to the Room Debug panel for faster setup testing. (Files: `apps/web/src/components/RoomDebugPanel.tsx`, `implementation_plan.md`.)
 
 ## Milestone 4 progress

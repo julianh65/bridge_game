@@ -258,6 +258,7 @@ export default function App() {
             }
             onAutoSetup={() => room.sendLobbyCommand("autoSetup")}
             onAdvanceSetup={() => room.sendCommand({ type: "AdvanceSetup" })}
+            onDebugCommand={room.sendDebugCommand}
             onLeave={handleLeave}
           />
         </>

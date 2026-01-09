@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
-import type { GameView, PlayerID, SetupChoice } from "@bridgefront/engine";
+import type { BoardState, GameView, PlayerID, SetupChoice } from "@bridgefront/engine";
 
 import { BoardView } from "./BoardView";
 import { FactionSymbol } from "./FactionSymbol";
@@ -11,7 +11,39 @@ import { SetupFreeStartingCardPick } from "./SetupFreeStartingCardPick";
 import { SetupStartingBridges } from "./SetupStartingBridges";
 import { buildBoardPreview } from "../lib/board-preview";
 import { getFactionName } from "../lib/factions";
-import type { RoomConnectionStatus } from "../lib/room-client";
+import type { DebugCommand, RoomConnectionStatus } from "../lib/room-client";
+
+const getAgeForRound = (round: number) => {
+  if (round >= 8) {
+    return "III";
+  }
+  if (round >= 4) {
+    return "II";
+  }
+  return "I";
+};
+
+const isBoardSnapshot = (value: unknown): value is BoardState => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const record = value as Record<string, unknown>;
+  return (
+    typeof record.radius === "number" &&
+    typeof record.hexes === "object" &&
+    record.hexes !== null &&
+    typeof record.bridges === "object" &&
+    record.bridges !== null &&
+    typeof record.units === "object" &&
+    record.units !== null
+  );
+};
+
+const ROUND_PRESETS = [
+  { label: "Age I (Round 1)", round: 1 },
+  { label: "Age II (Round 4)", round: 4 },
+  { label: "Age III (Round 8)", round: 8 }
+];
 
 type SetupFlowProps = {
   view: GameView;
@@ -22,6 +54,7 @@ type SetupFlowProps = {
   onSubmitSetupChoice: (choice: SetupChoice) => void;
   onAutoSetup: () => void;
   onAdvanceSetup: () => void;
+  onDebugCommand: (command: DebugCommand) => void;
   onLeave: () => void;
 };
 
@@ -34,6 +67,7 @@ export const SetupFlow = ({
   onSubmitSetupChoice,
   onAutoSetup,
   onAdvanceSetup,
+  onDebugCommand,
   onLeave
 }: SetupFlowProps) => {
   const players = view.public.players;
@@ -65,6 +99,95 @@ export const SetupFlow = ({
   const advanceHint = canAdvanceSetup
     ? "Advance to the next setup phase."
     : "Waiting for all players to lock in.";
+  const [scenarioRoundInput, setScenarioRoundInput] = useState("");
+  const [scenarioAutoApply, setScenarioAutoApply] = useState(true);
+  const [boardSnapshotInput, setBoardSnapshotInput] = useState("");
+  const scenarioRoundValue =
+    scenarioRoundInput.trim() === "" ? null : Number(scenarioRoundInput);
+  const scenarioRoundValid =
+    scenarioRoundValue !== null &&
+    Number.isFinite(scenarioRoundValue) &&
+    scenarioRoundValue > 0;
+  const scenarioRoundNormalized = scenarioRoundValid
+    ? Math.max(1, Math.floor(scenarioRoundValue ?? 1))
+    : null;
+  const scenarioAge =
+    scenarioRoundNormalized !== null ? getAgeForRound(scenarioRoundNormalized) : null;
+  const boardSnapshotState = useMemo(() => {
+    const raw = boardSnapshotInput.trim();
+    if (!raw) {
+      return { value: null, valid: false, error: "Paste board JSON to apply." };
+    }
+    try {
+      const parsed = JSON.parse(raw);
+      if (!isBoardSnapshot(parsed)) {
+        return {
+          value: null,
+          valid: false,
+          error: "Board snapshot must include radius, hexes, bridges, and units."
+        };
+      }
+      return { value: parsed, valid: true, error: null };
+    } catch {
+      return { value: null, valid: false, error: "Invalid JSON in board snapshot." };
+    }
+  }, [boardSnapshotInput]);
+  const canDebug = isHost && status === "connected" && import.meta.env.DEV;
+  const canApplyScenario = canDebug && scenarioRoundNormalized !== null;
+  const canApplyBoard = canDebug && boardSnapshotState.valid;
+
+  const applyScenarioRound = (round: number) => {
+    if (!canDebug) {
+      return;
+    }
+    const normalized = Math.max(1, Math.floor(round));
+    const age = getAgeForRound(normalized);
+    const leadSeatIndex = players.length > 0 ? (normalized - 1) % players.length : 0;
+    onDebugCommand({ command: "patchState", path: "round", value: normalized });
+    onDebugCommand({ command: "patchState", path: "market.age", value: age });
+    onDebugCommand({ command: "patchState", path: "leadSeatIndex", value: leadSeatIndex });
+    onDebugCommand({ command: "state" });
+  };
+
+  const applyBoardSnapshot = (snapshot: BoardState) => {
+    if (!canDebug) {
+      return;
+    }
+    onDebugCommand({ command: "patchState", path: "board", value: snapshot });
+    onDebugCommand({ command: "state" });
+  };
+
+  const handleClearBlocks = () => {
+    if (!canDebug) {
+      return;
+    }
+    onDebugCommand({ command: "patchState", path: "blocks", value: null });
+    onDebugCommand({ command: "patchState", path: "actionResolution", value: null });
+    onDebugCommand({ command: "state" });
+  };
+
+  const handleApplyScenario = () => {
+    if (!canDebug) {
+      return;
+    }
+    if (scenarioRoundNormalized !== null) {
+      applyScenarioRound(scenarioRoundNormalized);
+    }
+    if (boardSnapshotState.valid && boardSnapshotState.value) {
+      applyBoardSnapshot(boardSnapshotState.value);
+    }
+  };
+
+  const handleAutoSetupScenario = () => {
+    if (!canAutoSetup) {
+      return;
+    }
+    onAutoSetup();
+    if (!scenarioAutoApply) {
+      return;
+    }
+    handleApplyScenario();
+  };
 
   let phaseLabel = "Setup Lobby";
   let phaseSubtitle = "Waiting for the host to start setup.";
@@ -162,6 +285,104 @@ export const SetupFlow = ({
                 </button>
               </div>
             ) : null}
+          </section>
+        ) : null}
+
+        {isHost && canDebug ? (
+          <section className="panel setup-flow__debug">
+            <h2>Setup Debug</h2>
+            <p className="muted">Auto-setup helpers for scenario testing (dev only).</p>
+            <div className="controls">
+              <label>
+                Round
+                <input
+                  type="number"
+                  value={scenarioRoundInput}
+                  onChange={(event) => setScenarioRoundInput(event.target.value)}
+                  placeholder="1"
+                />
+              </label>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleApplyScenario}
+                disabled={!canApplyScenario && !canApplyBoard}
+              >
+                Apply Scenario
+              </button>
+              {scenarioAge ? <span className="muted">Age {scenarioAge}</span> : null}
+            </div>
+            <div className="controls">
+              {ROUND_PRESETS.map((preset) => (
+                <button
+                  key={preset.round}
+                  type="button"
+                  className="btn btn-tertiary"
+                  onClick={() => applyScenarioRound(preset.round)}
+                >
+                  {preset.label}
+                </button>
+              ))}
+              <button
+                type="button"
+                className="btn btn-tertiary"
+                onClick={handleClearBlocks}
+              >
+                Clear Blocks
+              </button>
+            </div>
+            <label className="setup-flow__debug-toggle">
+              <input
+                type="checkbox"
+                checked={scenarioAutoApply}
+                onChange={(event) => setScenarioAutoApply(event.target.checked)}
+              />
+              Apply scenario after auto-setup
+            </label>
+            <div className="controls">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleAutoSetupScenario}
+                disabled={!canAutoSetup}
+                title={autoSetupHint}
+              >
+                Auto-setup + Scenario
+              </button>
+            </div>
+            <label>
+              Board JSON
+              <textarea
+                rows={6}
+                value={boardSnapshotInput}
+                onChange={(event) => setBoardSnapshotInput(event.target.value)}
+                placeholder='{"radius":4,"hexes":{...},"bridges":{...},"units":{...}}'
+              />
+            </label>
+            {boardSnapshotState.error ? (
+              <p className="muted">{boardSnapshotState.error}</p>
+            ) : null}
+            <div className="controls">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => {
+                  if (boardSnapshotState.value) {
+                    applyBoardSnapshot(boardSnapshotState.value);
+                  }
+                }}
+                disabled={!canApplyBoard}
+              >
+                Apply Board
+              </button>
+              <button
+                type="button"
+                className="btn btn-tertiary"
+                onClick={() => setBoardSnapshotInput("")}
+              >
+                Clear Board JSON
+              </button>
+            </div>
           </section>
         ) : null}
 
