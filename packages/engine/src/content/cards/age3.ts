@@ -119,6 +119,40 @@ export const LAST_LECTURE: CardDef = {
   effects: [{ kind: "drawCards", count: 5 }]
 };
 
+export const MASTER_PLAN: CardDef = {
+  id: "age3.master_plan",
+  name: "Master Plan",
+  rulesText: "Draw 4, discard 2.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 1 },
+  initiative: 30,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [
+    { kind: "drawCards", count: 4 },
+    { kind: "discardFromHand", count: 2 }
+  ]
+};
+
+export const PERFECT_CYCLE: CardDef = {
+  id: "age3.perfect_cycle",
+  name: "Perfect Cycle",
+  rulesText: "Draw 1, burn 1.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 1 },
+  initiative: 45,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [
+    { kind: "drawCards", count: 1 },
+    { kind: "burnFromHand", count: 1 }
+  ]
+};
+
 export const EXECUTION_ORDER: CardDef = {
   id: "age3.execution_order",
   name: "Execution Order",
@@ -402,6 +436,8 @@ export const AGE3_CARDS: CardDef[] = [
   ROYAL_MINT,
   TOME_OF_ORDERS,
   LAST_LECTURE,
+  MASTER_PLAN,
+  PERFECT_CYCLE,
   EXECUTION_ORDER,
   WORMHOLE_GATE,
   RUIN_THE_SPAN,

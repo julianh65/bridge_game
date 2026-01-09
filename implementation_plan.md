@@ -599,6 +599,8 @@ Done
     - [ ] Age III Deckcraft card defs (4).
       - [x] Tome of Orders.
       - [x] Last Lecture.
+      - [x] Master Plan.
+      - [x] Perfect Cycle.
     - [ ] Age III Combat/Tactics card defs (4).
       - [x] Execution Order.
     - [ ] Age III Bridges/Terrain card defs (2).
