@@ -20,7 +20,8 @@
 ## Active tasks
 - (owner: agent3) Add host-configurable setup controls for `MAX_MANA` + `VP_TO_WIN`, with a new setup config command in the engine and setup UI inputs. Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/App.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress)
 - (owner: agent5) Add champion relocation targeting (champion + destination hex) and implement Rapid Redeploy + Extraction Run card defs, with engine validation/resolution and UI targeting flow. Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-targeting.ts`, `packages/engine/src/card-effects-units.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress)
-- (owner: agent4) Add basic save/load support by persisting room state to PartyKit storage and restoring on server start. Files: `apps/server/src/server.ts`, `progress.md`, `implementation_plan.md`. (status: in progress)
+## Blockers
+- Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
 ## Test fixes
 - Updated engine tests for market bid winners, Quiet Study hand-size behavior, and setup flow expectations (deck preview gating + card totals) to match current config/flow. (Files: `packages/engine/src/market.test.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`.) (owner: agent1)
 ## Milestone After Second Full Test Play and Thinking progress

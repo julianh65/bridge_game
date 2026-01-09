@@ -603,7 +603,7 @@ Done
     - [ ] Age II Movement card defs (6).
       - [x] Triple March.
       - [x] Coordinated Advance.
-      - [ ] Rapid Redeploy.
+      - [x] Rapid Redeploy.
       - [x] Breakthrough Line.
       - [x] Set to Skirmish.
       - [x] Burn the Bridges.
@@ -656,7 +656,7 @@ Done
       - [x] Grand Maneuver.
       - [x] Ghost Step.
       - [x] Final Push.
-      - [ ] Extraction Run.
+      - [x] Extraction Run.
     - [ ] Age III Recruitment card defs (4).
       - [x] Deep Reserves.
       - [x] Endless Conscription.
@@ -855,5 +855,6 @@ Can I somehow add analytics to this? see players where, etc etc...
 - [x] time how long every one takes to do their turns and have that be accessible somewhere
 - [ ] a turn timer that at the end picks a random valid card or something, this should be configurable from settings
 - [ ] add save / loading games
+  - [ ] Needs a serialization strategy for modifiers with hook functions (command replay vs modifier rehydration) before persistence.
 - [ ] make a public list of rooms
 - [ ] add stats tracking throughout the game
