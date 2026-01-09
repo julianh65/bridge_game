@@ -719,6 +719,7 @@ none
 - Enforced champion target picker constraints (`requiresFriendlyChampion`, `maxDistance`) for Marked for Coin + Execution Order and updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Enforced `stopOnOccupied` during card path selection and added a hand-panel hint so Column Advance-style paths stop after occupied hexes; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.)
 - Tightened hex-pair targeting flow in the UI (valid picks + range hints) so Wormhole Link/Gate selections align with rules. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`.)
+- Enforced `maxDistanceFromCapital` for hex targeting in the UI and added a capital-range hint for eligible cards. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`.)
 
 ## Milestone 7.5 progress
 - Added a card-art manifest + helper, GameCard art rendering, and a CLI script to generate diffusion art and update the manifest. (Files: `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`.)

@@ -2625,6 +2625,10 @@ export const GameScreen = ({
       const requiresEmpty = targetSpec.requiresEmpty === true;
       const tile = typeof targetSpec.tile === "string" ? targetSpec.tile : null;
       const allowCapital = targetSpec.allowCapital !== false;
+      const maxDistanceFromCapital =
+        typeof targetSpec.maxDistanceFromCapital === "number"
+          ? targetSpec.maxDistanceFromCapital
+          : null;
       const maxDistanceFromChampion =
         typeof targetSpec.maxDistanceFromFriendlyChampion === "number"
           ? targetSpec.maxDistanceFromFriendlyChampion
@@ -2698,6 +2702,23 @@ export const GameScreen = ({
         return false;
       };
 
+      const isWithinCapitalRange = (hexKey: string) => {
+        if (maxDistanceFromCapital === null) {
+          return true;
+        }
+        if (!localCapitalHexKey || !hasHex(localCapitalHexKey)) {
+          return false;
+        }
+        try {
+          return (
+            axialDistance(parseHexKey(localCapitalHexKey), parseHexKey(hexKey)) <=
+            maxDistanceFromCapital
+          );
+        } catch {
+          return false;
+        }
+      };
+
       for (const key of hexKeys) {
         const hex = boardHexes[key];
         if (!hex) {
@@ -2722,6 +2743,9 @@ export const GameScreen = ({
           continue;
         }
         if (!allowCapital && hex.tile === "capital") {
+          continue;
+        }
+        if (!isWithinCapitalRange(key)) {
           continue;
         }
         if (!hasFriendlyChampionWithinRange(key)) {
