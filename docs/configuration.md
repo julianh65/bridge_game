@@ -15,6 +15,10 @@ Edit that file to adjust rules and regenerate the board in the debug UI.
 - `freeStartingCardEnabled`: whether the free starting card draft happens during setup (default true).
 - `freeStartingCardPool`: card IDs used to build the free starting card offers.
 
+### Starting forces
+- `startingForcesByFaction`: per-faction starting force counts (default 4 for each faction).
+  - Values are clamped to 0+ and rounded down.
+
 ### Action reveal timing
 - `ACTION_REVEAL_DURATION_MS`: how long the action reveal overlay stays on screen (milliseconds).
 - `ACTION_REVEAL_HIGHLIGHT_PAUSE_MS`: how long board highlights linger after the overlay fades (milliseconds).

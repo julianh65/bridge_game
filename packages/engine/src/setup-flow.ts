@@ -24,7 +24,7 @@ import {
   insertCardIntoDrawPileRandom,
   shuffleCardIds
 } from "./cards";
-import { resolveStarterFactionCards } from "./content/starter-decks";
+import { DEFAULT_FACTION_ID, resolveStarterFactionCards } from "./content/starter-decks";
 import { emit } from "./events";
 import { addFactionModifiers } from "./faction-passives";
 import { getCardChoiceCount } from "./modifiers";
@@ -58,6 +58,18 @@ const getFreeStartingCardWaitingFor = (
   chosen: Record<PlayerID, CardDefId | null>
 ): PlayerID[] => {
   return players.map((player) => player.id).filter((playerId) => !chosen[playerId]);
+};
+
+const resolveStartingForces = (config: GameState["config"], factionId: string): number => {
+  const configured = config.startingForcesByFaction[factionId];
+  if (Number.isFinite(configured)) {
+    return Math.max(0, Math.floor(configured));
+  }
+  const fallback = config.startingForcesByFaction[DEFAULT_FACTION_ID];
+  if (Number.isFinite(fallback)) {
+    return Math.max(0, Math.floor(fallback));
+  }
+  return 4;
 };
 
 export const createCapitalDraftBlock = (players: PlayerState[], availableSlots: HexKey[]): BlockState => ({
@@ -156,12 +168,12 @@ export const initializeStartingAssets = (state: GameState): GameState => {
       throw new Error("player has no capital to place starting forces");
     }
 
+    const starter = resolveStarterFactionCards(player.factionId);
+    const startingForces = resolveStartingForces(nextState.config, starter.factionId);
     nextState = {
       ...nextState,
-      board: addForcesToHex(nextState.board, playerId, player.capitalHex, 4)
+      board: addForcesToHex(nextState.board, playerId, player.capitalHex, startingForces)
     };
-
-    const starter = resolveStarterFactionCards(player.factionId);
     let workingState = nextState;
     if (starter.factionId !== player.factionId) {
       workingState = withUpdatedPlayer(workingState, playerId, (entry) => ({

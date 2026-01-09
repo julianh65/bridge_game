@@ -410,12 +410,12 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] could we have, at the start a draw animation like the cards fill and get added to the hand
 - [ ] could we have an animation when we get gold
 - [ ] could we have a small animation when we get a VP
-- [ ] make slot 1, slot 2, slot n click the same button to unlock not a seperate unlock button in capital draft
+- [x] make slot 1, slot 2, slot n click the same button to unlock not a seperate unlock button in capital draft
 - [ ] i can still starting bridges up to 3 edges away, make it 2
 - [ ] allow me to adjust from config how many forces each faction starts with
 - [x] MAJOR: after hitting done with cipher it just lets me continuously quiet study and never lets me advance
 - [ ] During setup phase the players connected and X still mess up the flow, make the overall players container just slightly wider
-- [ ] after the market is over we see the action phase and then the market modal briefly pops up again
+- [x] after the market is over we see the action phase and then the market modal briefly pops up again
 - [x] in the action reveals when a champion card is in the reveal I don’t see the champion stats or description
 - [ ] some cards still don’t let me select in the move forces pop up to move 0 forces, in the case I want to just move my champion
 - [x] allow me to have less mines than players in the config

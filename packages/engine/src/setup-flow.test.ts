@@ -1,7 +1,7 @@
 import { neighborHexKeys } from "@bridgefront/shared";
 import { describe, expect, it } from "vitest";
 
-import type { BoardState, EdgeKey, GameState, HexKey } from "./types";
+import type { BoardState, EdgeKey, GameState, HexKey, PlayerID } from "./types";
 import { DEFAULT_CONFIG, applyCommand, createNewGame, getBridgeKey, runUntilBlocked } from "./index";
 import { DEFAULT_FACTION_ID, resolveStarterFactionCards } from "./content/starter-decks";
 
@@ -34,6 +34,19 @@ const readyDeckPreview = (state: GameState): GameState => {
     );
   }
   return nextState;
+};
+
+const countForcesAtHex = (
+  state: GameState,
+  playerId: PlayerID,
+  hexKey: HexKey
+): number => {
+  const hex = state.board.hexes[hexKey];
+  if (!hex) {
+    return 0;
+  }
+  const occupantIds = hex.occupants[playerId] ?? [];
+  return occupantIds.filter((unitId) => state.board.units[unitId]?.kind === "force").length;
 };
 
 const advanceThroughMarket = (state: GameState): GameState => {
@@ -242,6 +255,58 @@ describe("setup flow", () => {
     expect(p2DrawDefs).toContain(p2Offer);
     expect(finalP1?.deck.drawPile.length).toBe(expectedDrawPile + 2);
     expect(finalP2?.deck.drawPile.length).toBe(expectedDrawPile + 2);
+  });
+
+  it("uses startingForcesByFaction to seed capital forces", () => {
+    const config = {
+      ...DEFAULT_CONFIG,
+      startingForcesByFaction: {
+        ...DEFAULT_CONFIG.startingForcesByFaction,
+        bastion: 2,
+        veil: 6
+      }
+    };
+    let state = createNewGame(config, 222, [
+      { id: "p1", name: "Player 1", factionId: "bastion" },
+      { id: "p2", name: "Player 2", factionId: "veil" }
+    ]);
+
+    state = runUntilBlocked(state);
+    state = readyDeckPreview(state);
+    state = advanceSetup(state);
+    state = runUntilBlocked(state);
+    expect(state.blocks?.type).toBe("setup.capitalDraft");
+
+    const slots = state.blocks?.payload.availableSlots ?? [];
+    const p1Slot = slots[0];
+    const p2Slot = slots[1] ?? slots[0];
+
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "pickCapital", hexKey: p1Slot } },
+      "p1"
+    );
+    state = runUntilBlocked(state);
+
+    state = applyCommand(
+      state,
+      { type: "SubmitSetupChoice", payload: { kind: "pickCapital", hexKey: p2Slot } },
+      "p2"
+    );
+    state = runUntilBlocked(state);
+
+    state = advanceSetup(state);
+    state = runUntilBlocked(state);
+    expect(state.blocks?.type).toBe("setup.startingBridges");
+
+    const p1Capital = state.players.find((player) => player.id === "p1")?.capitalHex;
+    const p2Capital = state.players.find((player) => player.id === "p2")?.capitalHex;
+    if (!p1Capital || !p2Capital) {
+      throw new Error("missing capitals for starting force test");
+    }
+
+    expect(countForcesAtHex(state, "p1", p1Capital)).toBe(2);
+    expect(countForcesAtHex(state, "p2", p2Capital)).toBe(6);
   });
 
   it("allows unlocking and repicking a capital before the draft completes", () => {
