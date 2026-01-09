@@ -46,6 +46,10 @@ export const SetupCapitalDraft = ({
   const setup = view.public.setup;
   const players = view.public.players;
   const playerCount = players.length;
+  const playerNames = useMemo(
+    () => new Map(players.map((player) => [player.id, player.name])),
+    [players]
+  );
   const radius = view.public.board.radius;
   const capitalSlots = useMemo(() => {
     if (setup?.type === "setup.capitalDraft") {
@@ -157,18 +161,27 @@ export const SetupCapitalDraft = ({
         ) : null}
       </div>
       <div className="setup-draft__slots">
-        {availableSlots.map((slot) => {
+        {capitalSlots.map((slot) => {
           const label = slotLabels.get(slot);
+          const takenBy = capitalByHex.get(slot) ?? null;
+          const isTaken = Boolean(takenBy);
+          const isLocalPick = Boolean(playerId && takenBy === playerId);
+          const labelText = label ? `Slot ${label}` : slot;
+          const takenByName = takenBy ? playerNames.get(takenBy) ?? takenBy : null;
+          const statusText = isTaken ? (isLocalPick ? " (Yours)" : " (Taken)") : "";
           return (
             <button
               key={slot}
               type="button"
               className="btn btn-secondary"
-              disabled={!canPick}
+              disabled={!canPick || isTaken}
               onClick={() => onSubmitChoice({ kind: "pickCapital", hexKey: slot })}
-              title={slot}
+              title={
+                isTaken && takenByName ? `${labelText} (Taken by ${takenByName})` : labelText
+              }
             >
-              {label ? `Slot ${label}` : slot}
+              {labelText}
+              {statusText}
             </button>
           );
         })}

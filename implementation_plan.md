@@ -372,10 +372,10 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 ### Tasks
 
 - [ ] in the setup phase the connected and waiting pills mess up the flow and the left side info is completely squished, maybe replace the waiting with just an x or check red or green, and connected pill can go above or below
-- [ ] need to remove one core deck card: probably scout report
+- [x] need to remove one core deck card: probably scout report
 - [ ] the reroll map button sends you back one screen
-- [ ] when you select a slot 1 or slot 2 during the capital draft it would be nice if it shows up on the board somehow so we can see who’s where
-	- [ ] also the button shouldn’t disappear it should just be like taken or not and unclickable if someone takes it
+- [x] when you select a slot 1 or slot 2 during the capital draft it would be nice if it shows up on the board somehow so we can see who’s where
+	- [x] also the button shouldn’t disappear it should just be like taken or not and unclickable if someone takes it
 - [x] in the quiet study i don’t see the champion stats
 - [ ] hitting done in quiet study doesn’t work nothing happens
 - [x] the rejoin button needs a bit of like top margin or something, it’s squished
@@ -467,7 +467,7 @@ Start going through the rules_draft and adding the logic for the different types
   - [x] Destroy bridge effect (adjacent/occupied-edge).
 - [ ] Add relocation effects: champion move to capital/occupied/mine, recall to hand, move stack ignoring bridges with stop-on-occupy rules.
 - [ ] Add deployment variants: champion-hex deploys, mines/forges deploys, empty-hex near capital deploys, deploy to all mines, deploy to any unoccupied hex.
-- [ ] Add AoE/encirclement effects: Mortar Shot scatter, Attrition, Encirclement/Complete Encirclement, Cataclysm Core, Siege Writ.
+- [x] Add AoE/encirclement effects: Mortar Shot scatter, Attrition, Encirclement/Complete Encirclement, Cataclysm Core, Siege Writ.
 - [ ] Add combat state modifiers:
   - [x] Smoke Screen: first battle this round enemy Forces hit on 1 only in combat round 1.
   - [x] Shock Drill: first battle this round your Forces hit on 1–5 in combat round 1.
@@ -655,9 +655,9 @@ Done
     - [ ] Age III Bridges/Terrain card defs (2).
       - [x] Wormhole Gate.
       - [x] Ruin the Span.
-    - [ ] Age III Synergy/Gambits card defs (2).
+    - [x] Age III Synergy/Gambits card defs (2).
       - [x] Last Contract.
-      - [ ] Siege Writ.
+      - [x] Siege Writ.
     - [ ] Age III Victory card defs (4+).
       - [x] Conquest Record.
       - [x] Final Oath.

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import type { BoardState, GameView, PlayerID, SetupChoice } from "@bridgefront/engine";
+import type { BoardState, GameView, HexKey, PlayerID, SetupChoice } from "@bridgefront/engine";
 
 import { BoardView } from "./BoardView";
 import { FactionSymbol } from "./FactionSymbol";
@@ -213,6 +213,34 @@ export const SetupFlow = ({
       mapPreview.capitals.map((slot, index) => [slot, String(index + 1)])
     );
   }, [mapPreview.capitals]);
+  const playerLabelById = useMemo(() => {
+    const labels: Record<string, string> = {};
+    for (const player of players) {
+      labels[player.id] = `P${player.seatIndex + 1}`;
+    }
+    return labels;
+  }, [players]);
+  const capitalPickLabels = useMemo(() => {
+    const labels: Record<string, string> = { ...capitalLabels };
+    if (setup?.type !== "setup.capitalDraft") {
+      return labels;
+    }
+    for (const [playerId, hexKey] of Object.entries(setup.choices)) {
+      if (!hexKey) {
+        continue;
+      }
+      const slotLabel = labels[hexKey] ?? "";
+      const playerLabel = playerLabelById[playerId] ?? playerId;
+      labels[hexKey] = slotLabel ? `${slotLabel}/${playerLabel}` : playerLabel;
+    }
+    return labels;
+  }, [capitalLabels, playerLabelById, setup]);
+  const pickedCapitals = useMemo(() => {
+    if (setup?.type !== "setup.capitalDraft") {
+      return [] as HexKey[];
+    }
+    return Object.values(setup.choices).filter(Boolean) as HexKey[];
+  }, [setup]);
   const showMapPreview = setup?.type === "setup.capitalDraft";
   const setupWaiting = useMemo(() => {
     return new Set(setupStatus?.waitingForPlayerIds ?? []);
@@ -375,7 +403,8 @@ export const SetupFlow = ({
                 showCoords={false}
                 showTags
                 showMineValues={false}
-                labelByHex={capitalLabels}
+                labelByHex={capitalPickLabels}
+                highlightHexKeys={pickedCapitals}
                 className="board-svg"
               />
             </div>
