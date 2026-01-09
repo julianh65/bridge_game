@@ -101,7 +101,7 @@ export const BRIDGE_CREW: CardDef = {
 export const QUICK_MOVE: CardDef = {
   id: "starter.quick_move",
   name: "Quick Move",
-  rulesText: "Move 1 Force you control 1 hex along Bridges.",
+  rulesText: "Move 1 Force you control 1 hex along Bridges. Low initiative.",
   type: "Order",
   deck: "starter",
   tags: ["starter"],

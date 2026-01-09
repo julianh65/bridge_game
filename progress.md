@@ -16,6 +16,7 @@
 - Clarified handling of other-agent changes in `agent_instructions.md` to avoid unnecessary escalation.
 - Updated `implementation_plan.md` checkboxes to reflect current milestone status through Milestone 3.
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
+- Added deployment docs covering PartyKit + Vercel setup and redeploy steps. (Files: `docs/deploy.md`, `docs/dev.md`.) (owner: codex)
 
 ## Active tasks
 - (owner: agent4) Allow spectators to close resolved combat overlays by exposing a Close button even in sync mode. Files: `apps/web/src/components/CombatOverlay.tsx`, `implementation_plan.md`, `progress.md`. Status: in progress.
@@ -67,6 +68,7 @@
 - Added card rules text to the action reveal overlay so card descriptions are visible during reveals; updated the plan checklist. (Files: `apps/web/src/components/ActionRevealOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 - Allowed spectators to close resolved combat overlays by showing a Close button even when synced; updated the plan checklist. (Files: `apps/web/src/components/CombatOverlay.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Marked the draw pile UI as unordered in the deck viewer (labels + flow). (Files: `apps/web/src/components/DeckViewer.tsx`, `implementation_plan.md`.) (owner: agent3)
+- Added low-initiative note to Quick Move rules text and checked off the plan item. (Files: `packages/engine/src/content/cards/starter.ts`, `implementation_plan.md`.) (owner: agent1)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
