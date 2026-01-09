@@ -15,6 +15,7 @@ import {
 } from "@bridgefront/engine";
 import { parseEdgeKey } from "@bridgefront/shared";
 
+import { getCardArtUrl } from "../lib/card-art";
 import { HEX_SIZE, hexPoints } from "../lib/hex-geometry";
 import { getFactionIconUrl, getFactionSymbol } from "../lib/factions";
 import type { HexRender } from "../lib/board-preview";
@@ -154,6 +155,9 @@ const TILE_TOOLTIP_PADDING_X = 6;
 const TILE_TOOLTIP_PADDING_Y = 4;
 const TILE_TOOLTIP_OFFSET_X = 10;
 const TILE_TOOLTIP_OFFSET_Y = 12;
+const FORCE_TOKEN_ART_CARD_ID = "age1.recruit_detachment";
+const FORCE_TOKEN_ART_URL = getCardArtUrl(FORCE_TOKEN_ART_CARD_ID);
+const toSvgId = (value: string) => value.replace(/[^a-zA-Z0-9_-]/g, "-");
 const UNIT_MOVE_PULSE_MS = 720;
 const EFFECT_BADGE_RADIUS = HEX_DRAW_SIZE * 0.12;
 const EFFECT_BADGE_OFFSET = HEX_DRAW_SIZE * 0.3;
@@ -1240,6 +1244,14 @@ export const BoardView = ({
       onPointerLeave={handlePointerLeave}
     >
       <defs>
+        <filter id="unit-art-filter" colorInterpolationFilters="sRGB">
+          <feColorMatrix type="saturate" values="0.45" />
+          <feComponentTransfer>
+            <feFuncR type="linear" slope="0.8" />
+            <feFuncG type="linear" slope="0.8" />
+            <feFuncB type="linear" slope="0.8" />
+          </feComponentTransfer>
+        </filter>
         <filter id="tile-texture-filter" colorInterpolationFilters="sRGB">
           <feColorMatrix type="saturate" values="0.7" />
           <feComponentTransfer>
@@ -1587,6 +1599,9 @@ export const BoardView = ({
         const badgeY = 7;
         const iconSize = badgeRadius * 1.6;
         const isArriving = recentStackKeySet.has(stack.key);
+        const safeStackKey = toSvgId(stack.key);
+        const showForceArt = stack.forceCount > 0 && Boolean(FORCE_TOKEN_ART_URL);
+        const forceArtClipId = showForceArt ? `unit-art-${safeStackKey}` : null;
         return (
           <g
             key={stack.key}
@@ -1603,6 +1618,27 @@ export const BoardView = ({
                 cy={0}
                 r={10}
               />
+              {showForceArt && forceArtClipId ? (
+                <>
+                  <defs>
+                    <clipPath id={forceArtClipId}>
+                      <circle cx={0} cy={0} r={10} />
+                    </clipPath>
+                  </defs>
+                  <image
+                    className="unit__art"
+                    href={FORCE_TOKEN_ART_URL ?? undefined}
+                    x={-10}
+                    y={-10}
+                    width={20}
+                    height={20}
+                    preserveAspectRatio="xMidYMid slice"
+                    clipPath={`url(#${forceArtClipId})`}
+                    filter="url(#unit-art-filter)"
+                  />
+                  <circle className="unit__art-tint" cx={0} cy={0} r={10} />
+                </>
+              ) : null}
               <circle className="unit__glow" cx={-2} cy={-2} r={4} />
               {stack.forceCount > 0 ? (
                 <text x={0} y={3} className="unit__count">
@@ -1640,9 +1676,19 @@ export const BoardView = ({
                 </g>
               ) : null}
               {tokenLayout.map((token, index) => {
+                const artUrl = token.champion
+                  ? getCardArtUrl(token.champion.cardDefId)
+                  : null;
+                const hasArt = Boolean(artUrl) && !token.isExtra;
+                const artClipId = hasArt
+                  ? `champion-art-${safeStackKey}-${index}`
+                  : null;
+                const artRadius = tokenRadius - 0.8;
+                const artDiameter = artRadius * 2;
                 const ringClass = [
                   "champion-token__ring",
                   colorIndex !== undefined ? `champion-token__ring--p${colorIndex}` : "",
+                  hasArt ? "champion-token__ring--art" : "",
                   token.isExtra ? "champion-token__ring--extra" : ""
                 ]
                   .filter(Boolean)
@@ -1683,6 +1729,26 @@ export const BoardView = ({
                     onMouseEnter={handleTokenEnter}
                     onMouseLeave={() => setChampionTooltip(null)}
                   >
+                    {hasArt && artClipId ? (
+                      <>
+                        <defs>
+                          <clipPath id={artClipId}>
+                            <circle cx={token.cx} cy={token.cy} r={artRadius} />
+                          </clipPath>
+                        </defs>
+                        <image
+                          className="champion-token__art"
+                          href={artUrl ?? undefined}
+                          x={token.cx - artRadius}
+                          y={token.cy - artRadius}
+                          width={artDiameter}
+                          height={artDiameter}
+                          preserveAspectRatio="xMidYMid slice"
+                          clipPath={`url(#${artClipId})`}
+                          filter="url(#unit-art-filter)"
+                        />
+                      </>
+                    ) : null}
                     <circle
                       className={ringClass}
                       cx={token.cx}
