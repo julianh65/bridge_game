@@ -17,6 +17,14 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- owner: agent1
+  scope: add multi-edge targeting summary + clear in action panel
+  files: apps/web/src/components/GameScreen.tsx, progress.md
+  status: in progress
+- owner: agent5
+  scope: add Cataclysm Core power spell effect + Chronicle of War power victory card, update power deck list + plan
+  files: packages/engine/src/card-effects.ts, packages/engine/src/card-effects-units.ts, packages/engine/src/content/cards/power.ts, packages/engine/src/content/power-decks.ts, implementation_plan.md, progress.md
+  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -722,6 +730,7 @@ none
 - Enforced `stopOnOccupied` during card path selection and added a hand-panel hint so Column Advance-style paths stop after occupied hexes; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.)
 - Tightened hex-pair targeting flow in the UI (valid picks + range hints) so Wormhole Link/Gate selections align with rules. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`.)
 - Added multi-path targeting flow for multi-stack move cards with per-path add/remove controls, count hints, and board highlights; marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.) (owner: agent2)
+- Added bridge+move compound targeting controls for edge cards (pick bridge/move toggles + bridge/move summaries) and marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent2)
 - Enforced `maxDistanceFromCapital` for hex targeting in the UI and added a capital-range hint for eligible cards. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`.)
 - Added Mortar Shot scatter preview highlights on adjacent hexes when targeting and marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreen.tsx` is in agent2 scope.)
 - Deferred manual hit assignment UI for Focus Fire/Tactical Hand, disabled Focus Fire + Grand Strategist in card lists until the UI lands, and noted a future task in the plan. (Files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.)
@@ -732,6 +741,7 @@ none
 - Documented OpenAI card-art generator usage, API key setup, and prompt tuning in `docs/cards.md`.
 - Added docs guidance on safe card renames and creating variant cards with unique ids in `docs/cards.md`.
 - Added a pre-check in the art generator to skip OpenAI calls when target filenames already exist; manifest still updated for single-image skips. (Overlap note: commit also picked up pre-staged changes in `packages/engine/src/champions.ts`, `packages/engine/src/champion-abilities.test.ts`, and `implementation_plan.md`.)
+- Added placeholder art mappings and copied base art for Black Market Pull and Pulling Strings so the new Age III economy cards render. (Files: `apps/web/src/data/card-art.json`, `apps/web/public/card-art/Black_Market_Pull.png`, `apps/web/public/card-art/Pulling_Strings.png`, `implementation_plan.md`.) (Overlap note: `apps/web/src/data/card-art.json` already had in-flight power/champion art entries.)
 
 ## Open decisions
 - Card data format confirmed: TypeScript data modules (data-first).

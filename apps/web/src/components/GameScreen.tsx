@@ -55,6 +55,7 @@ import {
   buildHexLabels,
   describeBasicAction,
   describeRevealTargets,
+  formatEdgeLabel,
   formatHexLabel,
   formatTileLabel,
   getTargetBoolean,
@@ -3069,6 +3070,10 @@ export const GameScreen = ({
     discardFromHandCount === 1 ? "1 card" : `${discardFromHandCount} cards`;
   const burnLimitLabel = burnFromHandCount === 1 ? "1 card" : `${burnFromHandCount} cards`;
   const edgeMovePayload = edgeMoveMode ? buildEdgeTargetPayload(targetRecord) : null;
+  const edgeMoveEdgeKey = getTargetString(targetRecord, "edgeKey");
+  const edgeMoveEdgeLabel = edgeMoveEdgeKey
+    ? formatEdgeLabel(edgeMoveEdgeKey, hexLabels)
+    : null;
   const edgeMovePath =
     edgeMoveMode === "cardPath" ? getTargetStringArray(targetRecord, "path") : [];
   const edgeMoveFrom = getTargetString(targetRecord, "from");
@@ -3291,10 +3296,18 @@ export const GameScreen = ({
         </div>
         <p className="hand-targets__hint">
           {edgeMovePayload
-            ? "Pick a stack to move after building the bridge (optional)."
-            : "Pick a bridge first to unlock the move."}
+            ? "Bridge selected. Pick a stack to move after building the bridge (optional)."
+            : "Pick a bridge first to unlock the optional move."}
         </p>
         <div className="hand-targets__actions">
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={!canSubmitAction}
+            onClick={() => setBoardPickModeSafe("cardEdge")}
+          >
+            Pick bridge
+          </button>
           <button
             type="button"
             className="btn btn-tertiary"
@@ -3313,7 +3326,10 @@ export const GameScreen = ({
           </button>
         </div>
         <p className="hand-targets__selected">
-          {edgeMoveSummary ? `Selected: ${edgeMoveSummary}` : "No move selected."}
+          {edgeMoveEdgeLabel ? `Bridge: ${edgeMoveEdgeLabel}` : "Bridge: none."}
+        </p>
+        <p className="hand-targets__selected">
+          {edgeMoveSummary ? `Move: ${edgeMoveSummary}` : "Move: none."}
         </p>
       </div>
     ) : null;
