@@ -27,6 +27,7 @@ import {
 } from "./card-effects-targets";
 import { resolveCapitalDeployHex } from "./deploy-utils";
 import { getDeployForcesCount } from "./modifiers";
+import { getCardScalingCounter, incrementCardScalingCounter } from "./player-flags";
 import {
   addChampionToHex,
   addForcesToHex,
@@ -198,6 +199,12 @@ export const resolveUnitEffect = (
         typeof effect.occupiedCount === "number" ? effect.occupiedCount : 1;
       const capitalCount = Math.max(0, Math.floor(capitalCountRaw));
       const occupiedCount = Math.max(0, Math.floor(occupiedCountRaw));
+      const scaleKey = typeof effect.scaleKey === "string" ? effect.scaleKey : null;
+      const scaleMaxRaw = typeof effect.scaleMax === "number" ? effect.scaleMax : NaN;
+      const scaleMax = Number.isFinite(scaleMaxRaw)
+        ? Math.max(0, Math.floor(scaleMaxRaw))
+        : null;
+      const scaleOnPlay = effect.scaleOnPlay === true;
       if (choice.kind === "capital") {
         if (!options.some((option) => option.kind === "capital")) {
           return nextState;
@@ -207,15 +214,34 @@ export const resolveUnitEffect = (
           return nextState;
         }
         const baseCount = capitalCount;
+        let scaledBase = baseCount;
+        let maxCounter: number | null = null;
+        if (scaleKey) {
+          const counter = getCardScalingCounter(nextState, playerId, scaleKey);
+          scaledBase = baseCount + counter;
+          if (scaleMax !== null) {
+            scaledBase = Math.min(scaleMax, scaledBase);
+            maxCounter = Math.max(0, scaleMax - baseCount);
+          }
+        }
         const count = getDeployForcesCount(
           nextState,
-          { playerId, hexKey: deployHex, baseCount },
-          baseCount
+          { playerId, hexKey: deployHex, baseCount: scaledBase },
+          scaledBase
         );
         nextState = {
           ...nextState,
           board: addForcesToHex(nextState.board, playerId, deployHex, count)
         };
+        if (scaleKey && scaleOnPlay) {
+          nextState = incrementCardScalingCounter(
+            nextState,
+            playerId,
+            scaleKey,
+            1,
+            maxCounter ?? undefined
+          );
+        }
         return nextState;
       }
       if (choice.kind === "occupiedHex") {

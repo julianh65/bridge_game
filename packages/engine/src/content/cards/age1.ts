@@ -230,6 +230,58 @@ export const FRONTIER_CLAIM: CardDef = {
   effects: [{ kind: "deployForces", count: 4 }]
 };
 
+export const PROPAGANDA_RECRUITMENT: CardDef = {
+  id: "age1.propaganda_recruitment",
+  name: "Propaganda Recruitment",
+  rulesText:
+    "Deploy 0 Forces to your Capital. Increase the amount by 1 each time this card is played (max 10).",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1, gold: 2 },
+  initiative: 55,
+  burn: false,
+  targetSpec: {
+    kind: "choice",
+    options: [{ kind: "capital" }]
+  },
+  effects: [
+    {
+      kind: "recruit",
+      capitalCount: 0,
+      scaleKey: "age1.propaganda_recruitment",
+      scaleMax: 10,
+      scaleOnPlay: true
+    }
+  ]
+};
+
+export const FUTURE_INVESTMENT: CardDef = {
+  id: "age1.future_investment",
+  name: "Future Investment",
+  rulesText:
+    "Deploy 2 Forces to your Capital. Increase the amount by 1 each time this card is discarded (max 10). Burn.",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1, gold: 2 },
+  initiative: 55,
+  burn: true,
+  targetSpec: {
+    kind: "choice",
+    options: [{ kind: "capital" }]
+  },
+  effects: [
+    {
+      kind: "recruit",
+      capitalCount: 2,
+      scaleKey: "age1.future_investment",
+      scaleMax: 10
+    }
+  ],
+  onDiscard: [{ kind: "incrementCardCounter", key: "age1.future_investment", max: 8 }]
+};
+
 export const SCAVENGERS_MARKET: CardDef = {
   id: "age1.scavengers_market",
   name: "Scavenger's Market",
@@ -706,6 +758,8 @@ export const AGE1_CARDS: CardDef[] = [
   ESCORT_DETAIL,
   NATIONAL_SERVICE,
   FRONTIER_CLAIM,
+  PROPAGANDA_RECRUITMENT,
+  FUTURE_INVESTMENT,
   SCAVENGERS_MARKET,
   TEMPORARY_BRIDGE,
   SABOTAGE_BRIDGE,

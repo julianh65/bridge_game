@@ -39,6 +39,7 @@ export type CardDef = {
   targetSpec: TargetSpec;
   effects?: EffectSpec[];
   onDraw?: EffectSpec[];
+  onDiscard?: EffectSpec[];
   resolve?: (ctx: unknown, state: unknown, card: unknown, targets: unknown) => unknown;
   champion?: ChampionSpec;
   victoryPoints?: number;

@@ -14,6 +14,7 @@ import type {
 } from "./types";
 import { getPlayerIdsOnHex, hasEnemyUnits } from "./board";
 import {
+  applyCardDiscardTriggers,
   createCardInstance,
   discardCardFromHand,
   drawToHandSize,
@@ -725,6 +726,10 @@ export const applyScoring = (state: GameState): GameState => {
 };
 
 export const applyCleanup = (state: GameState): GameState => {
+  const discardedHands = state.players.map((player) => ({
+    playerId: player.id,
+    hand: player.deck.hand
+  }));
   const players = state.players.map((player) => ({
     ...player,
     deck: {
@@ -739,6 +744,12 @@ export const applyCleanup = (state: GameState): GameState => {
     ...state,
     players
   };
+
+  for (const entry of discardedHands) {
+    for (const cardId of entry.hand) {
+      nextState = applyCardDiscardTriggers(nextState, entry.playerId, cardId);
+    }
+  }
 
   const roundEndContext: RoundEndContext = { round: state.round };
   nextState = runModifierEvents(

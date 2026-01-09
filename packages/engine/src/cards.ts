@@ -10,7 +10,7 @@ import type {
 import { getCardDef } from "./content/cards";
 import type { EffectSpec } from "./content/cards";
 import { runModifierEvents } from "./modifiers";
-import { incrementCardsDiscardedThisRound } from "./player-flags";
+import { incrementCardScalingCounter, incrementCardsDiscardedThisRound } from "./player-flags";
 
 const getPlayer = (state: GameState, playerId: PlayerID) => {
   const player = state.players.find((entry) => entry.id === playerId);
@@ -130,6 +130,50 @@ const applyCardDrawTriggers = (
   const cardDef = getCardDef(instance.defId);
   nextState = applyCardDrawEffects(nextState, playerId, cardDef?.onDraw);
   return nextState;
+};
+
+const applyCardDiscardEffects = (
+  state: GameState,
+  playerId: PlayerID,
+  cardDefId: CardDefId,
+  effects?: EffectSpec[]
+): GameState => {
+  if (!effects || effects.length === 0) {
+    return state;
+  }
+  let nextState = state;
+  for (const effect of effects) {
+    switch (effect.kind) {
+      case "incrementCardCounter": {
+        const key = typeof effect.key === "string" ? effect.key : cardDefId;
+        if (!key) {
+          break;
+        }
+        const max =
+          typeof effect.max === "number" && Number.isFinite(effect.max)
+            ? Math.max(0, Math.floor(effect.max))
+            : undefined;
+        nextState = incrementCardScalingCounter(nextState, playerId, key, 1, max);
+        break;
+      }
+      default:
+        break;
+    }
+  }
+  return nextState;
+};
+
+export const applyCardDiscardTriggers = (
+  state: GameState,
+  playerId: PlayerID,
+  cardInstanceId: CardInstanceID
+): GameState => {
+  const instance = state.cardsByInstanceId[cardInstanceId];
+  if (!instance) {
+    return state;
+  }
+  const cardDef = getCardDef(instance.defId);
+  return applyCardDiscardEffects(state, playerId, instance.defId, cardDef?.onDiscard);
 };
 
 type DiscardOptions = {
@@ -398,9 +442,10 @@ export const addCardToDiscardPile = (
   options: DiscardOptions = {}
 ): GameState => {
   const player = getPlayer(state, playerId);
-  const nextState = updatePlayerDeck(state, playerId, {
+  let nextState = updatePlayerDeck(state, playerId, {
     discardPile: [...player.deck.discardPile, cardInstanceId]
   });
+  nextState = applyCardDiscardTriggers(nextState, playerId, cardInstanceId);
   if (options.countAsDiscard) {
     return incrementCardsDiscardedThisRound(nextState, playerId);
   }

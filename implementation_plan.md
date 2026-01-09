@@ -426,7 +426,9 @@ Start going through the rules_draft and adding the logic for the different types
   - [x] Smuggling Ring (enemy capital bonus gold).
   - [x] Pulling Strings (other-players battle gold).
   - [x] Market Squeeze (opponent gold steal).
-- [ ] Add scaling/permanent counters tied to card state (Propaganda Recruitment, Future Investment).
+- [x] Add scaling/permanent counters tied to card state (Propaganda Recruitment, Future Investment).
+  - [x] Propaganda Recruitment scaling counter (increments on play).
+  - [x] Future Investment scaling counter (increments on discard).
 - [x] Add bridge manipulation suite: build multiple bridges, destroy adjacent/any bridges, pivot, temporary bridges, bridge lockdown/trap.
   - [x] Destroy bridge effect (adjacent/occupied-edge).
 - [ ] Add relocation effects: champion move to capital/occupied/mine, recall to hand, move stack ignoring bridges with stop-on-occupy rules.
