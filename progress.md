@@ -17,10 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent5
-  scope: add Cataclysm Core power spell effect + Chronicle of War power victory card, update power deck list + plan
-  files: packages/engine/src/card-effects.ts, packages/engine/src/card-effects-units.ts, packages/engine/src/content/cards/power.ts, packages/engine/src/content/power-decks.ts, implementation_plan.md, progress.md
-  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -167,6 +163,7 @@
 
 ## Milestone 8 progress
 - Added power card effects and defs for A Hero Joins the Battle (random 2-mana champion deploy), Last Stand (capital entry trap), and Siege Chronicle (capital siege reinforcements), and wired power deck entries; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-units.ts`, `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/power-decks.ts`, `implementation_plan.md`.)
+- Added Cataclysm Core power spell effect (hex wipe + champion damage) and Chronicle of War power victory card, updated power deck entries, and marked plan checklist items complete. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-units.ts`, `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/power-decks.ts`, `implementation_plan.md`.)
 - Added Big VP Gainer (Age II) victory card with on-draw gold loss support in card draw handling, plus plan update. (Files: `packages/engine/src/cards.ts`, `packages/engine/src/content/cards/types.ts`, `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added Age II market card defs (Set to Skirmish, Battalion Contract, Rally Where You Stand, Insight, Stall, Deep Shaft Rig, Strategic Triumph, Banner of Resolve) using existing effects; updated the plan checklist. (Files: `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.) (owner: agent4) (Overlap note: included a pre-staged `implementation_plan.md` edit about burn animation.)
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)

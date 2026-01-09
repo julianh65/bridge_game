@@ -20,9 +20,11 @@ export const AGE2_POWER_DECK: CardDefId[] = [
   "power.age2.writ_of_industry",
   "power.age2.bridge_charter",
   "power.age2.dispatch_to_front",
+  "power.age2.chronicle_of_war",
   "champion.power.bannerman"
 ];
 export const AGE3_POWER_DECK: CardDefId[] = [
+  "power.age3.cataclysm_core",
   "power.age3.quick_mobilization",
   "power.age3.final_funding",
   "power.age3.last_stand",

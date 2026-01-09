@@ -278,6 +278,25 @@ export const DISPATCH_TO_FRONT: CardDef = {
   victoryPoints: 1
 };
 
+export const CHRONICLE_OF_WAR: CardDef = {
+  id: "power.age2.chronicle_of_war",
+  name: "Chronicle of War",
+  rulesText: "When played: Draw 1; then you may discard 1 to gain +1 mana.",
+  type: "Victory",
+  deck: "power",
+  tags: ["power", "age2"],
+  cost: { mana: 1 },
+  initiative: 65,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [
+    { kind: "drawCards", count: 1 },
+    { kind: "discardFromHand", count: 1 },
+    { kind: "gainMana", amount: 1 }
+  ],
+  victoryPoints: 1
+};
+
 export const BANNERMAN: CardDef = {
   id: "champion.power.bannerman",
   name: "Bannerman",
@@ -300,6 +319,21 @@ export const BANNERMAN: CardDef = {
     bounty: 5,
     goldCostByChampionCount: [2, 4, 6]
   }
+};
+
+export const CATACLYSM_CORE: CardDef = {
+  id: "power.age3.cataclysm_core",
+  name: "Cataclysm Core",
+  rulesText:
+    "Choose hex: destroy all Forces there; Champions there take 3 damage. Burn.",
+  type: "Spell",
+  deck: "power",
+  tags: ["power", "age3"],
+  cost: { mana: 3 },
+  initiative: 45,
+  burn: true,
+  targetSpec: { kind: "hex" },
+  effects: [{ kind: "cataclysmCore", damage: 3 }]
 };
 
 export const QUICK_MOBILIZATION: CardDef = {
@@ -443,10 +477,12 @@ export const AGE2_POWER_CARDS: CardDef[] = [
   WRIT_OF_INDUSTRY,
   BRIDGE_CHARTER,
   DISPATCH_TO_FRONT,
+  CHRONICLE_OF_WAR,
   BANNERMAN
 ];
 
 export const AGE3_POWER_CARDS: CardDef[] = [
+  CATACLYSM_CORE,
   QUICK_MOBILIZATION,
   FINAL_FUNDING,
   LAST_STAND,

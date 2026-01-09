@@ -81,6 +81,7 @@ const SUPPORTED_EFFECTS = new Set([
   "healChampion",
   "healChampions",
   "dealChampionDamage",
+  "cataclysmCore",
   "goldPlatedArmor",
   "patchUp",
   "recruit",

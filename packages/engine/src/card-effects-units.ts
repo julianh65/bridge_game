@@ -647,6 +647,56 @@ export const resolveUnitEffect = (
       }
       return nextState;
     }
+    case "cataclysmCore": {
+      const target = getHexTarget(
+        nextState,
+        playerId,
+        card.targetSpec as TargetRecord,
+        targets ?? null
+      );
+      if (!target) {
+        return nextState;
+      }
+      const damageValue = typeof effect.damage === "number" ? effect.damage : 3;
+      const damage = Math.max(0, Math.floor(damageValue));
+      const targetHexKey = target.hexKey;
+      const hex = nextState.board.hexes[targetHexKey];
+      if (!hex) {
+        return nextState;
+      }
+      for (const [occupantId, unitIds] of Object.entries(hex.occupants)) {
+        if (unitIds.length === 0) {
+          continue;
+        }
+        const forceIds = unitIds.filter(
+          (unitId) => nextState.board.units[unitId]?.kind === "force"
+        );
+        if (forceIds.length === 0) {
+          continue;
+        }
+        nextState = removeForcesFromHex(
+          nextState,
+          occupantId,
+          targetHexKey,
+          forceIds,
+          forceIds.length
+        );
+      }
+      if (damage <= 0) {
+        return nextState;
+      }
+      const updatedHex = nextState.board.hexes[targetHexKey];
+      if (!updatedHex) {
+        return nextState;
+      }
+      const championIds = Object.values(updatedHex.occupants)
+        .flat()
+        .filter((unitId) => nextState.board.units[unitId]?.kind === "champion");
+      for (const unitId of championIds) {
+        nextState = dealChampionDamage(nextState, playerId, unitId, damage);
+      }
+      return nextState;
+    }
     case "dealChampionDamage": {
       const target = getChampionTarget(
         nextState,
