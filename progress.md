@@ -18,8 +18,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- (owner: agent2) Add Age III Elite Guard card (deploy 5 to capital + heal 2 in capital), including effect handling + tests. Files: `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-units.ts`, `packages/engine/src/card-effects.elite-guard.test.ts`, `implementation_plan.md`. Status: in progress.
-- (owner: agent3) [status: in-progress] Add setup view smoke coverage for setup gating/bridge reveal; files: `packages/engine/src/view.test.ts`, `implementation_plan.md`, `progress.md`.
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
 ## Test fixes
@@ -106,6 +104,7 @@
 
 ## Milestone After Full Test Play and Thinking progress
 - Tracked per-action decision timing (per-player totals/averages) and surfaced avg/last timing in the sidebar. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/GameScreenSidebar.tsx`.)
+- Added view smoke coverage for setup gating/bridge selection status during starting bridges, and marked the plan item complete. (Files: `packages/engine/src/view.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- view.test.ts`.) (owner: agent3)
 - Updated move resolution to stop early on newly occupied hexes (enemy or stopOnOccupied), so mid-path collisions trigger combat instead of cancelling moves; marked the plan item complete. (Files: `packages/engine/src/card-effects-movement.ts`, `implementation_plan.md`.)
 - Allowed no-op orders (Stall) to be playable while still resolving to a no-op; marked the plan item complete. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.stall.test.ts`, `implementation_plan.md`.)
 - Added `freeStartingCardEnabled` config toggle to skip the free starting card setup step, with docs; marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/config.ts`, `packages/engine/src/engine.ts`, `docs/configuration.md`, `implementation_plan.md`.)
@@ -224,6 +223,7 @@
 - Added a focused basic-action order unit test to validate faction-priority resolution. (File: `packages/engine/src/basic-action-order.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- basic-action-order.test.ts`.)
 
 ## Milestone 8 progress
+- Added Elite Guard (Age III) recruitment card with a capital-only champion heal effect, plus targeted card-effect test coverage; updated the plan checklist. (Files: `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-units.ts`, `packages/engine/src/card-effects.elite-guard.test.ts`, `implementation_plan.md`.)
 - Added Age I Cycle Notes and Age II Command Logistics card defs using existing effects; updated the plan checklist. (Files: `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.)
 - Added power card effects and defs for A Hero Joins the Battle (random 2-mana champion deploy), Last Stand (capital entry trap), and Siege Chronicle (capital siege reinforcements), and wired power deck entries; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-units.ts`, `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/power-decks.ts`, `implementation_plan.md`.)
 - Added Cataclysm Core power spell effect (hex wipe + champion damage) and Chronicle of War power victory card, updated power deck entries, and marked plan checklist items complete. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-units.ts`, `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/power-decks.ts`, `implementation_plan.md`.)

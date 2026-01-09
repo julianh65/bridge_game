@@ -277,7 +277,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Transition to main game after all setup steps complete.
   - [x] Engine: add setup host-advance gate + setup status view (AdvanceSetup + readiness), update setup tests.
   - [x] Engine: add secret starting-bridge selection + reveal flow, with setup tests.
-  - [ ] UI smoke coverage for setup gating/bridge reveal if feasible.
+  - [x] UI smoke coverage for setup gating/bridge reveal if feasible.
 - [x] Champion card UI shows iconography for health, dice, hits, and bounty.
 - [x] Market HUD shows current gold with the same emoji/visual language used elsewhere.
 - [x] Champion cards communicate gold cost scaling for the nth champion clearly.
@@ -690,10 +690,10 @@ Done
       - [x] Ghost Step.
       - [x] Final Push.
       - [x] Extraction Run.
-    - [ ] Age III Recruitment card defs (4).
+    - [x] Age III Recruitment card defs (4).
       - [x] Deep Reserves.
       - [x] Endless Conscription.
-      - [ ] Elite Guard.
+      - [x] Elite Guard.
       - [x] Forward Legion.
     - [ ] Age III Economy card defs (4).
       - [x] Royal Mint.
