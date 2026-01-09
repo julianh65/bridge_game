@@ -1012,8 +1012,7 @@ export const GameScreen = ({
     1200,
     view.public.config.MARKET_ROLLOFF_DURATION_MS + 400
   );
-  const shouldHoldMarketOverlay =
-    !isMarketPhase && (Boolean(marketWinner) || marketOutroHold);
+  const shouldHoldMarketOverlay = !isMarketPhase && marketOutroHold;
   const lastMarketCardIndex = view.public.market.currentRow.length - 1;
   const isLastMarketWinner =
     Boolean(marketWinner) &&
@@ -1434,6 +1433,15 @@ export const GameScreen = ({
           marketOverlayHoldTimeout.current = null;
         }
         setMarketOutroHold(false);
+        return;
+      }
+      if (overlayBlockers) {
+        if (marketOverlayHoldTimeout.current) {
+          window.clearTimeout(marketOverlayHoldTimeout.current);
+          marketOverlayHoldTimeout.current = null;
+        }
+        setMarketOutroHold(false);
+        setIsMarketOverlayOpen(false);
         return;
       }
 
