@@ -61,6 +61,7 @@ const createPlayerState = (player: LobbyPlayer, seatIndex: number, startingGold:
     resources: { gold: startingGold, mana: 0 },
     vp: { permanent: 0, control: 0, total: 0 },
     doneThisRound: false,
+    timing: { actionCount: 0, actionTotalMs: 0, lastActionMs: null },
     deck: {
       drawPile: [],
       discardPile: [],

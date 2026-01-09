@@ -21,6 +21,10 @@
   scope: require deck preview ready-up before host advance + add ready UI
   files: packages/engine/src/types.ts, packages/engine/src/setup-flow.ts, packages/engine/src/engine.ts, apps/web/src/components/SetupDeckPreview.tsx, apps/web/src/components/SetupFlow.tsx, apps/web/src/styles.css, packages/engine/src/setup-flow.test.ts, packages/engine/src/action-flow.test.ts, packages/engine/src/smoke.test.ts, packages/engine/src/index.test.ts, implementation_plan.md, progress.md
   status: in progress
+- owner: agent3
+  scope: add Spoils of War (battle-win gold) effect + card entry
+  files: packages/engine/src/card-effects.ts, packages/engine/src/card-effects-combat.ts, packages/engine/src/content/cards/age1.ts, implementation_plan.md, progress.md
+  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -50,7 +54,7 @@
 - Nudged the market overlay toggle lower and hard-centered it (reset top/right), and confirmed faction-specific card art mappings are already complete. (File: `apps/web/src/styles.css`.) (Audit: `apps/web/src/data/card-art.json`.)
 
 ## Milestone After Full Test Play and Thinking progress
-- Tracked per-action decision timing (per-player totals/averages) and surfaced avg/last timing in the sidebar; updated the plan checklist. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/GameScreenSidebar.tsx`, `implementation_plan.md`.)
+- Tracked per-action decision timing (per-player totals/averages) and surfaced avg/last timing in the sidebar. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/GameScreenSidebar.tsx`.)
 - Updated move resolution to stop early on newly occupied hexes (enemy or stopOnOccupied), so mid-path collisions trigger combat instead of cancelling moves; marked the plan item complete. (Files: `packages/engine/src/card-effects-movement.ts`, `implementation_plan.md`.)
 - Allowed no-op orders (Stall) to be playable while still resolving to a no-op; marked the plan item complete. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.stall.test.ts`, `implementation_plan.md`.)
 - Added `freeStartingCardEnabled` config toggle to skip the free starting card setup step, with docs; marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/config.ts`, `packages/engine/src/engine.ts`, `docs/configuration.md`, `implementation_plan.md`.)

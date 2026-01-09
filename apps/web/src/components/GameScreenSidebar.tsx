@@ -66,6 +66,22 @@ const formatSourceLabel = (modifier: ModifierView) => {
   }
 };
 
+const formatActionDuration = (durationMs: number | null): string => {
+  if (durationMs === null || !Number.isFinite(durationMs)) {
+    return "—";
+  }
+  if (durationMs < 1000) {
+    return `${Math.max(0, Math.round(durationMs))}ms`;
+  }
+  if (durationMs < 60000) {
+    const seconds = durationMs / 1000;
+    return `${seconds.toFixed(seconds < 10 ? 1 : 0)}s`;
+  }
+  const minutes = Math.floor(durationMs / 60000);
+  const seconds = Math.round((durationMs % 60000) / 1000);
+  return `${minutes}m ${String(seconds).padStart(2, "0")}s`;
+};
+
 export const GameScreenSidebar = ({
   connectionLabel,
   connectionClass,
@@ -243,6 +259,9 @@ export const GameScreenSidebar = ({
                       .filter(Boolean)
                       .join(" ")
                   : "";
+                const timingAverage = formatActionDuration(player.actionTiming.averageMs);
+                const timingLast = formatActionDuration(player.actionTiming.lastMs);
+                const timingTitle = `Last ${timingLast} · Avg ${timingAverage} · Turns ${player.actionTiming.count}`;
                 const rowClassName = [
                   "table-row",
                   actionStep
@@ -265,7 +284,9 @@ export const GameScreenSidebar = ({
                       <span className="player-swatch" style={playerSwatchStyle(player.seatIndex)} />
                       <div>
                         <span className="player-name">{player.name}</span>
-                        <span className="player-meta">Seat {player.seatIndex}</span>
+                        <span className="player-meta" title={timingTitle}>
+                          Seat {player.seatIndex} · Avg {timingAverage}
+                        </span>
                       </div>
                     </div>
                     <span className="table-stat" title="Gold">

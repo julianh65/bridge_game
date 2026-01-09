@@ -310,7 +310,8 @@ export const createActionStepBlock = (state: GameState): BlockState | null => {
     type: "actionStep.declarations",
     waitingFor: eligible,
     payload: {
-      declarations: Object.fromEntries(eligible.map((playerId) => [playerId, null]))
+      declarations: Object.fromEntries(eligible.map((playerId) => [playerId, null])),
+      startedAt: Date.now()
     }
   };
 };
@@ -424,15 +425,37 @@ export const applyActionDeclaration = (
     return state;
   }
 
+  const startedAt = block.payload.startedAt;
+  const elapsedMs =
+    typeof startedAt === "number" && Number.isFinite(startedAt)
+      ? Math.max(0, Date.now() - startedAt)
+      : null;
+
   const nextPlayers = state.players.map((entry) =>
     entry.id === playerId
-      ? {
-          ...entry,
-          resources: {
-            gold: entry.resources.gold - cost.gold,
-            mana: entry.resources.mana - cost.mana
-          }
-        }
+      ? (() => {
+          const timing = entry.timing ?? {
+            actionCount: 0,
+            actionTotalMs: 0,
+            lastActionMs: null
+          };
+          return {
+            ...entry,
+            resources: {
+              gold: entry.resources.gold - cost.gold,
+              mana: entry.resources.mana - cost.mana
+            },
+            timing:
+              elapsedMs === null
+                ? timing
+                : {
+                    ...timing,
+                    actionCount: timing.actionCount + 1,
+                    actionTotalMs: timing.actionTotalMs + elapsedMs,
+                    lastActionMs: elapsedMs
+                  }
+          };
+        })()
       : entry
   );
 

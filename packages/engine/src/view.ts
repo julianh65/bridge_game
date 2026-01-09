@@ -206,17 +206,34 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
       modifiers: state.modifiers.map(toModifierView),
       market: state.market,
       logs: state.logs,
-      players: state.players.map((player) => ({
-        id: player.id,
-        name: player.name,
-        seatIndex: player.seatIndex,
-        factionId: player.factionId,
-        resources: player.resources,
-        handCount: player.deck.hand.length,
-        vp: state.winnerPlayerId ? player.vp : null,
-        doneThisRound: player.doneThisRound,
-        connected: player.visibility.connected
-      })),
+      players: state.players.map((player) => {
+        const timing = player.timing ?? {
+          actionCount: 0,
+          actionTotalMs: 0,
+          lastActionMs: null
+        };
+
+        return {
+          id: player.id,
+          name: player.name,
+          seatIndex: player.seatIndex,
+          factionId: player.factionId,
+          resources: player.resources,
+          handCount: player.deck.hand.length,
+          vp: state.winnerPlayerId ? player.vp : null,
+          doneThisRound: player.doneThisRound,
+          actionTiming: {
+            lastMs: timing.lastActionMs,
+            averageMs:
+              timing.actionCount > 0
+                ? Math.round(timing.actionTotalMs / timing.actionCount)
+                : null,
+            totalMs: timing.actionTotalMs,
+            count: timing.actionCount
+          },
+          connected: player.visibility.connected
+        };
+      }),
       actionStep,
       combat: combatPublic,
       setup: setupPublic,

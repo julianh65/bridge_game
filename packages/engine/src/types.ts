@@ -80,6 +80,12 @@ export type ResourceState = {
   mana: number;
 };
 
+export type PlayerTimingState = {
+  actionCount: number;
+  actionTotalMs: number;
+  lastActionMs: number | null;
+};
+
 export type PlayerState = {
   id: PlayerID;
   name: string;
@@ -89,6 +95,7 @@ export type PlayerState = {
   resources: ResourceState;
   vp: { permanent: number; control: number; total: number };
   doneThisRound: boolean;
+  timing?: PlayerTimingState;
   deck: DeckState;
   burned: CardInstanceID[];
   flags: Record<string, unknown>;
@@ -407,6 +414,7 @@ export type BlockState = {
   waitingFor: PlayerID[];
   payload: {
     declarations: Record<PlayerID, ActionDeclaration | null>;
+    startedAt: number;
   };
 } | {
   type: "action.scoutReport";
@@ -553,6 +561,12 @@ export type PlayerPublicView = {
   handCount: number;
   vp: PlayerState["vp"] | null;
   doneThisRound: boolean;
+  actionTiming: {
+    lastMs: number | null;
+    averageMs: number | null;
+    totalMs: number;
+    count: number;
+  };
   connected: boolean;
 };
 
