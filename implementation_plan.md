@@ -402,6 +402,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Expose the debug hand-injection overlay via `?debugHand=1`/localStorage for easier in-game testing.
 - [x] Any number in a card description can we bold it?
 - [x] make the card text slightly slightly larger
+- [x] tighten setup deck preview/capital draft layout so the player panel stays narrow and the main panels fill more width
 
 ### Refactor Milestone
 
@@ -528,6 +529,7 @@ Done
   - [x] Added Roll Out with multi-stack movement support.
   - [x] Added Column Advance with stop-on-occupied movement support.
   - [x] Added Frontier Claim with empty-hex deployment near capital.
+  - [x] Added Roadblock Squad (mine/forge vs capital recruit) and Rapid Span (multi-bridge build).
 - Expand Age II/III market + power deck lists to match the latest rules_draft (including power champions and burn-heavy cards).
   - [ ] Age II market cards + champions (47 cards + 8 champions).
   - [ ] Age III market cards + champions (47 cards + 8 champions).
@@ -540,7 +542,7 @@ Done
     - [x] Age II power champion card defs (per rules_draft counts) and tagging.
     - [x] Age III power non-victory card defs (per rules_draft counts).
     - [x] Age III power victory card defs (per rules_draft counts, +1 VP on gain).
-    - [ ] Verify power/burn/victory tags on power cards.
+    - [x] Verify power/burn/victory tags on power cards.
     - [ ] Power pick card checklist (rules_draft §24).
       - [ ] Age I Power (11) — Non-victory (5).
         - [x] Command Surge.

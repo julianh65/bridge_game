@@ -22,6 +22,7 @@
 - Updated engine tests for market bid winners, Quiet Study hand-size behavior, and setup flow expectations (deck preview gating + card totals) to match current config/flow. (Files: `packages/engine/src/market.test.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`.) (owner: agent1)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
+- Tightened the setup lobby/deck preview layout so the player panel stays narrow and the main panels fill more width. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Enabled champion stat blocks in the Quiet Study hand picker. (File: `apps/web/src/components/HandCardPickerModal.tsx`.) (owner: agent2)
 - Compressed setup player status pills into a stacked layout with a compact ready indicator. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
 - Hid the force stack marker when a hex only has champions, centering champion tokens instead. (File: `apps/web/src/components/BoardView.tsx`.) (owner: agent2)
@@ -57,6 +58,7 @@
 - Added explicit power pick (power deck) card checklist tasks from `rules_draft.md` to `implementation_plan.md`, including missing-entry audit placeholders.
 - Added plan items for deckcraft post-draw choice prompts, optional discard handling, manual hit assignment UI, and Bridge Pivot UI validation in `implementation_plan.md`.
 - Verified faction passives against `rules_draft.md` and marked the checklist item complete. (File: `implementation_plan.md`.) (owner: agent1)
+- Verified derived power/burn/victory tags on power cards via card registry and checked off the plan item. (File: `implementation_plan.md`.) (owner: agent1)
 
 ## Refactor Milestone progress
 - Extracted market/collection overlay rendering into `apps/web/src/components/GameScreenOverlays.tsx` and shared the market winner highlight type; updated the refactor milestone checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenOverlays.tsx`, `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.)
@@ -637,6 +639,7 @@ none
 - Added Banner Claim (Victory: move 1 stack 1 hex along a Bridge) to the Age I market card list.
 - Added Age I bridge/terrain cards (Sabotage Bridge, Bridge Trap, Tunnel Network) using existing bridge effect primitives.
 - Added Age I recruitment cards (Recruit Detachment, Paid Volunteers, National Service) plus recruit effect custom counts with test coverage.
+- Added Age I Roadblock Squad and Rapid Span to the market list (recruit choice, multi-bridge build).
 - Added card registry tests for unique IDs and starter/free-start coverage.
 - Added an initial Age I market deck list export under `packages/engine/src/content/market-decks.ts`.
 - Added market deck tests to validate ids are unique, registered, and age-appropriate.
