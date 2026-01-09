@@ -21,7 +21,6 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-- (owner: agent3) [status: in progress] Ensure debug card injection awards VP for Victory cards (Deep Mine Charter report); files: `apps/web/src/components/GameDebugOverlay.tsx`, `progress.md`, `implementation_plan.md`.
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
 ## Test fixes
@@ -85,6 +84,7 @@
 - Widened the setup players panel (max width now 260px) so connected/offline and setup status pills have more room; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent1)
 - Removed the "How it works" panel and "Core loop" hero meta item from the home screen. (File: `apps/web/src/components/Home.tsx`.) (owner: agent2)
 - Increased player table stat chip size (gold/mana/hand) for readability without shifting the layout; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent1)
+- Debug card injection now adds permanent VP for Victory cards (e.g., Deep Mine Charter), keeping VP totals in sync when using the debug hand tool. (Files: `apps/web/src/components/GameDebugOverlay.tsx`, `implementation_plan.md`.) (owner: agent3)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.

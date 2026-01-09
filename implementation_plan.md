@@ -430,7 +430,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] remove the yellow and blue gradient background color on cards of the mana and gold icons
 - [x] on the player display in the table make the numbers of everyones gold, mana, and hand slightly larger and easier to read without messing up the flow
 - [x] cards like coordinated advance where it says up to 2 kind of force you to click twice in the UI, there’s no way to say okay just move 1
-- [ ] deep mine charter didn’t increase my VPs, although I added it from debug to test, so confirm that getting those cards will increase your VP
+- [x] deep mine charter didn’t increase my VPs, although I added it from debug to test, so confirm that getting those cards will increase your VP
 - [ ] after i played gold plater armor and there was a battle the entire game just froze and there was no battle, reading the console (not sure if related) I’m getting a lot of maximum update depth exceeded at gamescreen
 - [ ] I got 9 VP and nothing happened, it didn’t detect that I won and no screen popped up
 - [ ] Be creative and add a balanced age 1 card of similar flavor to the Dice War Profiteer card
