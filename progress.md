@@ -17,6 +17,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- owner: agent1; scope: split `card-effects` resolvers into categorized modules and re-export via a single index; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-*.ts`, `packages/engine/src/index.ts`, `implementation_plan.md`; status: in progress
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -136,6 +137,7 @@
 - Persisted market winner banners on resolved cards so each won card keeps its callout. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/MarketPanel.tsx`.)
 - Enlarged market roll-off dice chips and added clearer player labeling (seat tags + stronger rows); updated the plan checklist. (Files: `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` is in agent1 scope.)
 - Added per-player roll buttons for market roll-offs so each player clicks to animate their die; updated the plan checklist. (Files: `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` is in agent1 scope.)
+- Made market roll-off results stay static after resolution to avoid auto-replay animations while keeping manual roll buttons for active ties. (File: `apps/web/src/components/MarketPanel.tsx`.)
 - Fixed pass/confirm pass UX so the confirmation state only clears when action selections change, not every render. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.)
 - Added draw animations for newly dealt hand cards using per-card highlight timing and a hand draw keyframe. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` is in agent1 scope.)
 - Moved force-split controls to a board-adjacent popover for march + card moves, added overlay rendering in BoardView, and left a small split hint in the action/hand panels; updated the plan checklist. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/ForceSplitPopover.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)

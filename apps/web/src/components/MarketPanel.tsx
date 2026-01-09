@@ -84,6 +84,7 @@ export const MarketPanel = ({
   const [showWinner, setShowWinner] = useState(true);
   const activeRollOff = market.rollOff ?? null;
   const isRollOffActive = Boolean(activeRollOff);
+  const rollOffMode = isRollOffActive ? "active" : winnerHighlight?.rollOff ? "history" : "none";
   const rollOffKey = activeRollOff?.key ?? winnerHighlight?.rollOffKey ?? 0;
   const bidEntries = players.map((player) => {
     const bid = market.bids[player.id];
@@ -187,6 +188,10 @@ export const MarketPanel = ({
   });
   const showOrderRail = isOverlay && currentRow.length > 0;
   const rollDurationMs = Math.max(0, rollDurationOverride ?? 1000);
+  const animateHistoryRollOff = false;
+  const shouldAnimateRollOff =
+    isRollOffActive || (rollOffMode === "history" && animateHistoryRollOff);
+  const rollAnimationDurationMs = shouldAnimateRollOff ? rollDurationMs : 0;
   const rollDelayBaseMs = 120;
   const rollRoundGapMs = 260;
   const rollGapMs = 0;
@@ -271,12 +276,12 @@ export const MarketPanel = ({
       };
     }
 
-    if (isRollOffActive) {
+    if (isRollOffActive || !shouldAnimateRollOff) {
       return {
         rounds: rollOffRounds.map((round) => ({
           ...round,
           startMs: 0,
-          endMs: 0,
+          endMs: rollAnimationDurationMs,
           rollDelays: round.rolls.map(() => 0)
         })),
         nextStartMs: 0
@@ -289,7 +294,8 @@ export const MarketPanel = ({
         const rollDelays = round.rolls.map(
           (_roll, index) => schedule.nextStartMs + index * rollGapMs
         );
-        const endMs = schedule.nextStartMs + lastIndex * rollGapMs + rollDurationMs;
+        const endMs =
+          schedule.nextStartMs + lastIndex * rollGapMs + rollAnimationDurationMs;
         schedule.rounds.push({
           ...round,
           startMs: schedule.nextStartMs,
@@ -314,10 +320,11 @@ export const MarketPanel = ({
   }, [
     isRollOffActive,
     rollDelayBaseMs,
-    rollDurationMs,
+    rollAnimationDurationMs,
     rollGapMs,
     rollOffRounds,
-    rollRoundGapMs
+    rollRoundGapMs,
+    shouldAnimateRollOff
   ]);
   const showRollOff = rollOffSchedule.rounds.length > 0;
   const rollOffDurationMs =
@@ -329,7 +336,7 @@ export const MarketPanel = ({
   );
 
   useEffect(() => {
-    if (!winnerHighlight || !showRollOff) {
+    if (!winnerHighlight || !showRollOff || rollAnimationDurationMs === 0) {
       setShowWinner(true);
       return;
     }
@@ -340,10 +347,14 @@ export const MarketPanel = ({
     return () => {
       window.clearTimeout(timeout);
     };
-  }, [winnerHighlight?.rollOffKey, rollOffDurationMs, showRollOff]);
+  }, [winnerHighlight?.rollOffKey, rollAnimationDurationMs, rollOffDurationMs, showRollOff]);
 
   useEffect(() => {
-    if (rollOffSchedule.rounds.length === 0 || isRollOffActive) {
+    if (
+      rollOffSchedule.rounds.length === 0 ||
+      isRollOffActive ||
+      rollAnimationDurationMs === 0
+    ) {
       setVisibleRollRounds(rollOffSchedule.rounds.length);
       return;
     }
@@ -362,7 +373,7 @@ export const MarketPanel = ({
     return () => {
       timeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
     };
-  }, [isRollOffActive, rollOffSchedule, winnerHighlight?.rollOffKey]);
+  }, [isRollOffActive, rollAnimationDurationMs, rollOffSchedule, winnerHighlight?.rollOffKey]);
 
   let bidHint = "Enter a bid amount to buy or pass.";
   if (status !== "connected") {
@@ -458,7 +469,7 @@ export const MarketPanel = ({
                       <NumberRoll
                         value={rollValue}
                         sides={6}
-                        durationMs={rollDurationMs}
+                        durationMs={rollAnimationDurationMs}
                         delayMs={effectiveDelayMs}
                         rollKey={`${rollKey}-ready`}
                         className="number-roll--lg"

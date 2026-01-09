@@ -359,12 +359,15 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] The pass and confirm pass button is bugged
 - [x] The forge scrap doesn't look right, i just see a bunch of pills with random card ids
 - [x] remove the mine draft, it should just give gold, and update the rules
-- [ ] The market click to roll for ties for each player still does it automatically and doesn't look right
+- [x] The market click to roll for ties for each player still does it automatically and doesn't look right
 - [x] Can the champion chits on the map have the background image of their image? Same desaturated style of the board hexes
 - [x] Can the forces on the map have the background image as well? same desaturated style of the board hexes, pick a random soldier type image for now
 - [ ] During the small action preview phase on the board while cards are being played keep the highlighting paths and indicators on the board during that little pause between 
 
 ### Refactor Milestone
+
+Note: hold off on doing these refactors until I specifically instruct
+
 - Refactor massive files into smaller components and be very smart about it so we don't break any behavior, the biggest offenders are gamescreen.tsx, card-effects.ts, styles.css those files are huge and need to be broken up (BUT IN A SMART WAY SO WE DON't BREAK ANYTHING)
 - [x] GameScreen: extract market/collection overlay rendering into dedicated overlay components.
 - [x] GameScreen: extract info dock (log/effects) into component.
@@ -375,8 +378,8 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] card-effects: extract target parsing helpers into a shared module.
 - [x] card-effects: extract targeting helper utilities into a shared module.
 - [x] card-effects: extract economy/hand effect handlers into a dedicated module.
-- [ ] card-effects: split effect resolvers into categorized modules and re-export from a single index.
-- [ ] styles.css: split into logical partials (base/layout/components/overlays) and import in main.
+- [ ] card-effects: split effect resolvers into categorized modules and re-export from a single index. hold off on this for now
+- [ ] styles.css: split into logical partials (base/layout/components/overlays) and import in main. hold off on this for now
 
 ### Mini Milestone For Me
 I need some sort of script or way to edit the cards and decks in a nice UI with some nice to have features. I don't really know how this will work because the cards are kind of defined in typescript files not in JSON or anything. So help me think through this. There could be two options which is just a UI that loads in the the current deck and lets me view things and edit things and then saves it as a list of edits / changes that I can then take and make manually in the code, or we have a way such that it somehow writes back to the files? But if that's too tricky / dangerous then we should just do the first approach. The editor should let me view all cards, create copies of cards. I should be able to modify the attributes of cards easily, like health, gold, mana costs, scaling etc... but not like the names of cards or the effects, for bigger changes like that I will need to do that myself manually in the code. I also need some helpful helper functions / code to be able to run. One to show me all the colissions in initiative numbers, one to automatically decollide the deck, so it goes through and for any colissions that there are it decollides them by incrementing initiatives until there are no more colissions, and then one to "compress" initiative numbers so if I have like only 3 cards for example 10, 90, 30 it should compress them so the inititatives are 1, 3, 2. Maybe I can somehow build off the cards viewer screen I have but have a debug / dev version of it?
@@ -640,7 +643,7 @@ Done
   - force advance to next phase
   - seed controls
 - [x] Set explicit Victory card VP values in card defs and surface them in card UI.
-- [ ] Right now it's possible for the cards in the hand if there are too many or on certain screens to not be seen, requiring left and right scrolling, I don't want the card sizes to be changed but I want this to be fixed
+- [x] Right now it's possible for the cards in the hand if there are too many or on certain screens to not be seen, requiring left and right scrolling, I don't want the card sizes to be changed but I want this to be fixed
 - [x] It would be nice if the background of the champions in the battle modal had the background image like the champions on the board chits
 
 ## Milestone 8.5 -- Things I've noticed and nice to haves
