@@ -399,6 +399,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] game breaking: after several rolls sometimes the forces keep rolling the same numbers? and then the whole fight just stalls out?
 - [x] why is there a dice roll for revealing forge draw / power deck?
 - [ ] power deck for age 2 isn’t there yet
+- [x] Expose the debug hand-injection overlay via `?debugHand=1`/localStorage for easier in-game testing.
 - [x] Any number in a card description can we bold it?
 - [x] make the card text slightly slightly larger
 

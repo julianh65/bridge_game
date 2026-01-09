@@ -17,6 +17,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- (owner: agent2) Investigate why some cards do not show during action reveal playback and add guards/log rendering fix. Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionRevealOverlay.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress)
 ## Test fixes
 - Updated engine tests for market bid winners, Quiet Study hand-size behavior, and setup flow expectations (deck preview gating + card totals) to match current config/flow. (Files: `packages/engine/src/market.test.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`.) (owner: agent1)
 ## Milestone After Second Full Test Play and Thinking progress
@@ -41,6 +42,7 @@
 - Removed dice-roll animations from forge/power reveal prompts; kept a short reveal pause with plain copy. (File: `apps/web/src/components/CollectionPanel.tsx`.)
 - Delayed scout report + market/collection overlays until action reveal playback finishes so action previews are visible; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Converted hand-target panels (Bridge Crew edge/move) into overlays so the hand row no longer shifts upward. (File: `apps/web/src/styles.css`.)
+- Added a debug-hand overlay toggle via `?debugHand=1` or localStorage so hosts can access hand injection outside dev builds. (File: `apps/web/src/components/GameDebugOverlay.tsx`.)
 - Allowed capital-only choice cards (Banner of Sparks) to resolve without manual targets so they can be played. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-units.ts`.)
 - Fixed hand-card hover stacking by basing z-index on a CSS variable so hover brings cards to the front; updated the plan checklist. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
 - Roll-off ties now award the highest die roll (not lowest), with market roll-off tests updated; marked the plan item complete. (Files: `packages/engine/src/market.ts`, `packages/engine/src/market.test.ts`, `implementation_plan.md`.) (owner: agent5)

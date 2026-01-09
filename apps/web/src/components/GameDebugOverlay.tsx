@@ -10,8 +10,28 @@ type GameDebugOverlayProps = {
   room: RoomClient;
 };
 
+const isDebugOverlayEnabled = (): boolean => {
+  if (import.meta.env.DEV) {
+    return true;
+  }
+  if (typeof window === "undefined") {
+    return false;
+  }
+  const params = new URLSearchParams(window.location.search);
+  const flag = params.get("debugHand");
+  if (flag === "1" || flag === "true") {
+    window.localStorage.setItem("debugHand", "1");
+    return true;
+  }
+  if (flag === "0" || flag === "false") {
+    window.localStorage.removeItem("debugHand");
+    return false;
+  }
+  return window.localStorage.getItem("debugHand") === "1";
+};
+
 export const GameDebugOverlay = ({ room }: GameDebugOverlayProps) => {
-  if (!import.meta.env.DEV) {
+  if (!isDebugOverlayEnabled()) {
     return null;
   }
   if (!room.view || room.view.public.phase === "setup") {
