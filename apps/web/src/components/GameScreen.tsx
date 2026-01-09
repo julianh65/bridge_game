@@ -28,6 +28,10 @@ import { CombatOverlay } from "./CombatOverlay";
 import { CombatRetreatOverlay } from "./CombatRetreatOverlay";
 import { GameScreenCues, type AgeCue, type PhaseCue } from "./GameScreenCues";
 import { GameScreenBoardSection } from "./GameScreenBoardSection";
+import {
+  GameScreenChampionTargetOverlay,
+  type ChampionTargetOverlayOption
+} from "./GameScreenChampionTargetOverlay";
 import { GameScreenHandPanel } from "./GameScreenHandPanel";
 import { GameScreenHeader } from "./GameScreenHeader";
 import { GameScreenInfoDock } from "./GameScreenInfoDock";
@@ -2818,59 +2822,26 @@ export const GameScreen = ({
         onToggleChampions={setMarchIncludeChampions}
       />
     ) : null;
-  const championTargetPanel =
-    selectedCardDef && cardTargetKind === "champion" ? (
-      <div className="hand-targets hand-targets--overlay">
-        <div className="hand-targets__header">
-          <strong>Target champion</strong>
-          <span className="hand-targets__meta">
-            {championTargetScopeLabel ?? "Champion"} ({eligibleChampionTargets.length})
-          </span>
-        </div>
-        <p className="hand-targets__hint">
-          Click a champion on the board, or pick one below. Clicking a hex cycles
-          between champions on that hex.
-        </p>
-        {eligibleChampionTargets.length > 0 ? (
-          <div className="hand-targets__list">
-            {eligibleChampionTargets.map((unit) => {
-              const hexLabel = hexLabels[unit.hex] ?? unit.hex;
-              const isSelected = unit.id === selectedChampionId;
-              return (
-                <button
-                  key={unit.id}
-                  type="button"
-                  className={`btn btn-tertiary hand-targets__option${
-                    isSelected ? " is-active" : ""
-                  }`}
-                  aria-pressed={isSelected}
-                  onClick={() => {
-                    setSelectedHexKey(unit.hex);
-                    setBoardPickModeSafe("cardChampion");
-                    setCardTargetsObject({ unitId: unit.id });
-                  }}
-                >
-                  <span className="hand-targets__option-name">{unit.name}</span>
-                  <span className="hand-targets__option-meta">
-                    {unit.ownerName} · {hexLabel} · HP {unit.hp}/{unit.maxHp}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="hand-targets__selected">No eligible champions on the board.</p>
-        )}
-        {selectedChampionLabel ? (
-          <p className="hand-targets__selected">
-            Selected: {selectedChampionLabel}
-            {selectedChampionHexLabel ? ` @ ${selectedChampionHexLabel}` : ""}.
-          </p>
-        ) : (
-          <p className="hand-targets__selected">No champion selected yet.</p>
-        )}
-      </div>
-    ) : null;
+  const championTargetOptions = useMemo<ChampionTargetOverlayOption[]>(() => {
+    if (!selectedCardDef || cardTargetKind !== "champion") {
+      return [];
+    }
+    return eligibleChampionTargets.map((unit) => ({
+      id: unit.id,
+      name: unit.name,
+      ownerName: unit.ownerName,
+      hex: unit.hex,
+      hexLabel: hexLabels[unit.hex] ?? unit.hex,
+      hp: unit.hp,
+      maxHp: unit.maxHp
+    }));
+  }, [cardTargetKind, eligibleChampionTargets, hexLabels, selectedCardDef]);
+  const showChampionTargetOverlay = Boolean(selectedCardDef && cardTargetKind === "champion");
+  const handleChampionTargetSelect = (unit: ChampionTargetOverlayOption) => {
+    setSelectedHexKey(unit.hex);
+    setBoardPickModeSafe("cardChampion");
+    setCardTargetsObject({ unitId: unit.id });
+  };
   const handTargetsPanel =
     topdeckPanel || handDiscardPanel || handBurnPanel || edgeMovePanel || cardMovePanel ? (
       <>
@@ -2881,16 +2852,17 @@ export const GameScreen = ({
         {cardMovePanel}
       </>
     ) : null;
-  const championTargetOverlay = championTargetPanel ? (
-    <div
-      className="champion-target-overlay"
-      role="dialog"
-      aria-modal="false"
-      aria-label="Champion target selection"
-    >
-      <div className="champion-target-overlay__panel">{championTargetPanel}</div>
-    </div>
-  ) : null;
+  const championTargetOverlay = (
+    <GameScreenChampionTargetOverlay
+      isOpen={showChampionTargetOverlay}
+      scopeLabel={championTargetScopeLabel}
+      options={championTargetOptions}
+      selectedChampionId={selectedChampionId}
+      selectedLabel={selectedChampionLabel}
+      selectedHexLabel={selectedChampionHexLabel}
+      onSelect={handleChampionTargetSelect}
+    />
+  );
   const handPickerCount =
     handPickerMode === "topdeck"
       ? topdeckCount

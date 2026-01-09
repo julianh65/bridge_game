@@ -375,11 +375,12 @@ Note: hold off on doing these refactors until I specifically instruct
 - [x] GameScreen: extract phase/age cue overlays into component.
 - [x] GameScreen: extract board legend + sidebar toggle into components.
 - [x] GameScreen: extract board section (BoardView + legend + overlays) into component.
+- [x] GameScreen: extract champion target overlay into component.
 - [x] GameScreen: move label/target helper utilities into a shared module.
 - [x] card-effects: extract target parsing helpers into a shared module.
 - [x] card-effects: extract targeting helper utilities into a shared module.
 - [x] card-effects: extract economy/hand effect handlers into a dedicated module.
-- [ ] card-effects: split effect resolvers into categorized modules and re-export from a single index. hold off on this for now
+- [x] card-effects: split effect resolvers into categorized modules and re-export from a single index.
 - [ ] styles.css: split into logical partials (base/layout/components/overlays) and import in main. hold off on this for now
 
 ### Mini Milestone For Me

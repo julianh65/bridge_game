@@ -18,6 +18,7 @@
 
 ## Active tasks
 - owner: agent1; scope: split `card-effects` resolvers into categorized modules (bridges/movement/combat/units) and re-export via a single index; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-*.ts`, `packages/engine/src/index.ts`, `implementation_plan.md`; status: in progress
+- owner: agent5; scope: add rollGold dice log + overlay UI for random card rolls (overlap note: `apps/web/src/components/GameScreen.tsx` also touched by agent3); files: `packages/engine/src/card-effects-economy.ts`, `packages/engine/src/content/cards/age2.ts`, `apps/web/src/components/DiceRollOverlay.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/lib/event-format.ts`, `apps/web/src/styles.css`, `implementation_plan.md`; status: in progress
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -34,6 +35,7 @@
 - Extracted card-effects target parsing helpers into `packages/engine/src/card-effects-targets.ts` and updated the refactor milestone checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-targets.ts`, `implementation_plan.md`.)
 - Extracted card-effects targeting helpers into `packages/engine/src/card-effects-targeting.ts` and updated the refactor milestone checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-targeting.ts`, `implementation_plan.md`.)
 - Extracted economy/hand effect resolvers into `packages/engine/src/card-effects-economy.ts` and updated the refactor milestone checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-economy.ts`, `implementation_plan.md`.)
+- Extracted the champion target overlay into `apps/web/src/components/GameScreenChampionTargetOverlay.tsx` and updated the refactor checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenChampionTargetOverlay.tsx`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreen.tsx` is also in agent5 scope.)
 
 ## Mini Milestone For Me progress
 - Added a dev-only Card Editor view with inline numeric edits, copy flow, initiative tools (collision listing + decollide/compress), and patch export; wired into the app nav and documented in the plan checklist. (Files: `apps/web/src/components/CardEditor.tsx`, `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` overlaps agent2/agent4 scope.)
