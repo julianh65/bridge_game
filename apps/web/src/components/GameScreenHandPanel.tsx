@@ -13,6 +13,7 @@ import { GameCard } from "./GameCard";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 const CARD_DRAW_ANIMATION_MS = 900;
+const CARD_BURN_ANIMATION_MS = 650;
 
 const isEditableTarget = (target: EventTarget | null): boolean => {
   if (!target || !(target instanceof HTMLElement)) {
@@ -109,6 +110,14 @@ const getChampionGoldCost = (cardDef: CardDef | null, championCount: number): nu
 };
 
 type DeckPulseKey = "draw" | "discard" | "scrapped" | "burned";
+
+type HandCard = NonNullable<GameView["private"]>["handCards"][number];
+
+type BurnedGhost = {
+  id: string;
+  card: HandCard;
+  index: number;
+};
 
 type CombatRetreatPanelOption = {
   edgeKey: string;
@@ -232,10 +241,14 @@ export const GameScreenHandPanel = ({
   const [deckPulse, setDeckPulse] = useState({ draw: 0, discard: 0, scrapped: 0, burned: 0 });
   const [deckDelta, setDeckDelta] = useState({ draw: 0, discard: 0, scrapped: 0, burned: 0 });
   const deckPrevRef = useRef<NonNullable<GameView["private"]>["deckCounts"] | null>(null);
+  const prevDeckCountsRef = useRef<NonNullable<GameView["private"]>["deckCounts"] | null>(null);
   const deckTimersRef = useRef<Partial<Record<DeckPulseKey, number>>>({});
   const prevHandIdsRef = useRef<string[]>([]);
+  const prevHandCardsRef = useRef<HandCard[]>([]);
   const drawTimersRef = useRef<Record<string, number>>({});
+  const burnTimersRef = useRef<Record<string, number>>({});
   const [recentDrawnIds, setRecentDrawnIds] = useState<Set<string>>(new Set());
+  const [burnedGhosts, setBurnedGhosts] = useState<BurnedGhost[]>([]);
   const handRowRef = useRef<HTMLDivElement | null>(null);
   const [handOverlap, setHandOverlap] = useState<number | null>(null);
 
@@ -303,7 +316,13 @@ export const GameScreenHandPanel = ({
   useEffect(() => {
     const currentIds = handCards.map((card) => card.id);
     const previousIds = prevHandIdsRef.current;
+    const previousCards = prevHandCardsRef.current;
+    const previousDeckCounts = prevDeckCountsRef.current;
+    const currentSet = new Set(currentIds);
+    const previousSet = new Set(previousIds);
     prevHandIdsRef.current = currentIds;
+    prevHandCardsRef.current = handCards;
+    prevDeckCountsRef.current = deckCounts;
     if (previousIds.length === 0) {
       if (currentIds.length === 0) {
         return;
@@ -328,11 +347,43 @@ export const GameScreenHandPanel = ({
       });
       return;
     }
-    const previousSet = new Set(previousIds);
     const newIds = currentIds.filter((id) => !previousSet.has(id));
+    const removedIds = previousIds.filter((id) => !currentSet.has(id));
+    const burnDelta =
+      deckCounts && previousDeckCounts ? deckCounts.burned - previousDeckCounts.burned : 0;
+    if (burnDelta > 0 && removedIds.length > 0) {
+      const burnCount = Math.min(burnDelta, removedIds.length);
+      const burnedIds = removedIds.slice(0, burnCount);
+      const previousIndexMap = new Map(previousIds.map((id, index) => [id, index]));
+      const ghostEntries: BurnedGhost[] = [];
+      burnedIds.forEach((id) => {
+        const index = previousIndexMap.get(id);
+        const card = previousCards.find((entry) => entry.id === id);
+        if (index === undefined || !card) {
+          return;
+        }
+        ghostEntries.push({ id, card, index });
+      });
+      if (ghostEntries.length > 0) {
+        const burnedSet = new Set(burnedIds);
+        setBurnedGhosts((current) => [
+          ...current.filter((entry) => !burnedSet.has(entry.id)),
+          ...ghostEntries
+        ]);
+        ghostEntries.forEach((ghost) => {
+          const existing = burnTimersRef.current[ghost.id];
+          if (existing) {
+            window.clearTimeout(existing);
+          }
+          burnTimersRef.current[ghost.id] = window.setTimeout(() => {
+            setBurnedGhosts((current) => current.filter((entry) => entry.id !== ghost.id));
+            delete burnTimersRef.current[ghost.id];
+          }, CARD_BURN_ANIMATION_MS);
+        });
+      }
+    }
     if (newIds.length === 0) {
       setRecentDrawnIds((current) => {
-        const currentSet = new Set(currentIds);
         const trimmed = new Set(Array.from(current).filter((id) => currentSet.has(id)));
         return trimmed.size === current.size ? current : trimmed;
       });
@@ -361,7 +412,7 @@ export const GameScreenHandPanel = ({
         delete drawTimersRef.current[id];
       }, CARD_DRAW_ANIMATION_MS);
     });
-  }, [handCards]);
+  }, [handCards, deckCounts]);
 
   useEffect(() => {
     if (!showHandPanel) {
@@ -441,6 +492,11 @@ export const GameScreenHandPanel = ({
         }
       });
       Object.values(drawTimersRef.current).forEach((timer) => {
+        if (timer) {
+          window.clearTimeout(timer);
+        }
+      });
+      Object.values(burnTimersRef.current).forEach((timer) => {
         if (timer) {
           window.clearTimeout(timer);
         }
@@ -535,6 +591,21 @@ export const GameScreenHandPanel = ({
       ]
     : [];
 
+  const displayCards = (() => {
+    if (burnedGhosts.length === 0) {
+      return handCards.map((card) => ({ card, isGhost: false }));
+    }
+    const next = handCards.map((card) => ({ card, isGhost: false }));
+    const sortedGhosts = [...burnedGhosts].sort((a, b) => a.index - b.index);
+    let insertedCount = 0;
+    sortedGhosts.forEach((ghost) => {
+      const insertAt = Math.min(Math.max(ghost.index + insertedCount, 0), next.length);
+      next.splice(insertAt, 0, { card: ghost.card, isGhost: true });
+      insertedCount += 1;
+    });
+    return next;
+  })();
+
   return (
     <>
       {showHandPanel ? (
@@ -596,13 +667,15 @@ export const GameScreenHandPanel = ({
               ) : (
                 <>
                   <div className="hand-row" ref={handRowRef} style={handRowStyle}>
-                    {handCards.map((card, index) => {
+                    {displayCards.map((entry, index) => {
+                      const card = entry.card;
+                      const isGhost = entry.isGhost;
                       const baseDef = CARD_DEFS_BY_ID.get(card.defId) ?? null;
                       const def = baseDef
                         ? applyCardInstanceOverrides(baseDef, card.overrides)
                         : null;
                       const label = def?.name ?? card.defId;
-                      const isSelected = card.id === selectedCardId;
+                      const isSelected = !isGhost && card.id === selectedCardId;
                       const manaCost = def?.cost.mana ?? 0;
                       const baseGoldCost = def?.cost.gold ?? 0;
                       const championGoldCost = getChampionGoldCost(def, championCount);
@@ -610,10 +683,10 @@ export const GameScreenHandPanel = ({
                       const hasMana = availableMana >= manaCost;
                       const hasGold = availableGold >= goldCost;
                       const canAfford = hasMana && hasGold;
-                      const showManaWarning = canDeclareAction && manaCost > 0 && !hasMana;
-                      const isPlayable = canDeclareAction && canAfford;
-                      const isDrawn = recentDrawnIds.has(card.id);
-                      const totalCards = handCards.length;
+                      const showManaWarning = !isGhost && canDeclareAction && manaCost > 0 && !hasMana;
+                      const isPlayable = !isGhost && canDeclareAction && canAfford;
+                      const isDrawn = !isGhost && recentDrawnIds.has(card.id);
+                      const totalCards = displayCards.length;
                       const centerIndex = (totalCards - 1) / 2;
                       const offset = index - centerIndex;
                       const fanRotation = totalCards > 1 ? offset * 4 : 0;
@@ -624,6 +697,31 @@ export const GameScreenHandPanel = ({
                         "--hand-rotate": `${fanRotation}deg`,
                         "--hand-lift": `${fanLift}px`
                       } as CSSProperties;
+                      if (isGhost) {
+                        return (
+                          <div
+                            key={`burn-${card.id}`}
+                            className={`hand-card hand-card--ghost is-burned`}
+                            style={handStyle}
+                            aria-hidden="true"
+                          >
+                            <GameCard
+                              as="div"
+                              variant="hand"
+                              card={def ?? null}
+                              cardId={card.defId}
+                              displayName={label}
+                              eyebrow={null}
+                              showId={false}
+                              showTags={false}
+                              showChampionStats
+                              rulesFallback="Unknown card data."
+                              scalingCounters={cardScalingCounters}
+                            />
+                          </div>
+                        );
+                      }
+
                       return (
                         <button
                           key={card.id}

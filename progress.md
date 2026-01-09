@@ -21,7 +21,7 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-- (owner: agent4) [status: in progress] Add hand burn animation for cards sent to the burned pile; files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`.
+- (none)
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -867,6 +867,7 @@ none
 - Added player-target card support (engine validation + UI picker) and Market Squeeze steal-gold card/effect; marked the plan subtask complete. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-targets.ts`, `packages/engine/src/card-effects-economy.ts`, `packages/engine/src/content/cards/age3.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.) (Overlap note: `packages/engine/src/card-effects-economy.ts` includes in-flight changes from agent4.)
 - Added per-instance card overrides (cost/initiative/burn/tags) so Forge Miracle can grant discounted burn cards; wired overrides through action cost/initiative resolution and hand/collection/deck UI rendering, and added Forge Miracle to the Age III power deck. (Files: `packages/engine/src/types.ts`, `packages/engine/src/content/cards/index.ts`, `packages/engine/src/cards.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/card-effects-economy.ts`, `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/power-decks.ts`, `packages/engine/src/index.ts`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/components/DeckViewer.tsx`, `implementation_plan.md`.) (owner: agent5)
 - Added champion relocation targeting (champion + destination hex) with engine validation/resolution and UI selection flow, plus Rapid Redeploy (Age II) + Extraction Run (Age III) card defs. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-targeting.ts`, `packages/engine/src/card-effects-units.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.) (owner: agent5) (Overlap note: includes pre-existing optional discard UI tweaks in `apps/web/src/components/GameScreen.tsx`.)
+- Added a burn-out animation for hand cards moved to the burned pile and marked the burn animation plan item complete. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
 
 ## Milestone 7.5 progress
 - Added a card-art manifest + helper, GameCard art rendering, and a CLI script to generate diffusion art and update the manifest. (Files: `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`.)

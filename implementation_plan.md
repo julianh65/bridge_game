@@ -528,7 +528,7 @@ Start going through the rules_draft and adding the logic for the different types
 - [x] Add random card generation effects (Black Market Pull, Forge Miracle).
   - [x] Black Market Pull draws random cards from the market deck (not top-of-deck).
   - [x] Forge Miracle: grant Age I market cards with burn + cost/initiative overrides.
-- [ ] Add burn keyword enforcement for granted cards (Forge Miracle, power deck burn effects). and an animation on burn
+- [x] Add burn keyword enforcement for granted cards (Forge Miracle, power deck burn effects). and an animation on burn
   - [x] Forge Miracle grants burn/cost/initiative overrides on generated cards.
 - [x] Bridge crew is supposed to let you immediately move over the bridge you are going to construct
 - [x] I still don't see the champion gold scaling with /'s inbetween the cost for the n'th champion, and validate that logic works
