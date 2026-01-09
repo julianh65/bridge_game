@@ -1,3 +1,6 @@
+import { randInt, shuffle } from "@bridgefront/shared";
+
+import { CARD_DEFS } from "./content/cards";
 import type { CardDef } from "./content/cards";
 import type { CardPlayTargets, GameState, PlayerID } from "./types";
 import {
@@ -27,6 +30,7 @@ import { getDeployForcesCount } from "./modifiers";
 import {
   addChampionToHex,
   addForcesToHex,
+  countPlayerChampions,
   moveUnitToHex
 } from "./units";
 
@@ -333,6 +337,147 @@ export const resolveUnitEffect = (
       nextState = {
         ...nextState,
         board: addForcesToHex(nextState.board, playerId, targetHexKey, count)
+      };
+      return nextState;
+    }
+    case "deployRandomChampion": {
+      const manaCostRaw = typeof effect.manaCost === "number" ? effect.manaCost : 2;
+      const manaCost = Math.max(0, Math.floor(manaCostRaw));
+      if (countPlayerChampions(nextState.board, playerId) >= nextState.config.CHAMPION_LIMIT) {
+        return nextState;
+      }
+      const candidates = CARD_DEFS.filter(
+        (entry) => entry.type === "Champion" && entry.champion && entry.cost.mana === manaCost
+      );
+      if (candidates.length === 0) {
+        return nextState;
+      }
+      const deployHex = resolveCapitalDeployHex(nextState, playerId, null);
+      if (!deployHex) {
+        return nextState;
+      }
+      const pick = randInt(nextState.rngState, 0, candidates.length - 1);
+      nextState = { ...nextState, rngState: pick.next };
+      const chosen = candidates[pick.value];
+      if (!chosen?.champion) {
+        return nextState;
+      }
+      const deployed = addChampionToHex(nextState.board, playerId, deployHex, {
+        cardDefId: chosen.id,
+        hp: chosen.champion.hp,
+        attackDice: chosen.champion.attackDice,
+        hitFaces: chosen.champion.hitFaces,
+        bounty: chosen.champion.bounty
+      });
+      nextState = { ...nextState, board: deployed.board };
+      nextState = applyChampionDeployment(nextState, deployed.unitId, chosen.id, playerId);
+      return nextState;
+    }
+    case "deployForcesIfEnemyInCapital": {
+      const baseCount = typeof effect.count === "number" ? effect.count : 3;
+      if (baseCount <= 0) {
+        return nextState;
+      }
+      const player = nextState.players.find((entry) => entry.id === playerId);
+      if (!player?.capitalHex) {
+        return nextState;
+      }
+      const capitalHex = nextState.board.hexes[player.capitalHex];
+      if (!capitalHex) {
+        return nextState;
+      }
+      const hasEnemy = Object.entries(capitalHex.occupants).some(
+        ([occupantId, units]) => occupantId !== playerId && units.length > 0
+      );
+      if (!hasEnemy) {
+        return nextState;
+      }
+      const deployHex = resolveCapitalDeployHex(nextState, playerId, player.capitalHex);
+      if (!deployHex) {
+        return nextState;
+      }
+      const count = getDeployForcesCount(
+        nextState,
+        { playerId, hexKey: deployHex, baseCount },
+        baseCount
+      );
+      if (count <= 0) {
+        return nextState;
+      }
+      nextState = {
+        ...nextState,
+        board: addForcesToHex(nextState.board, playerId, deployHex, count)
+      };
+      return nextState;
+    }
+    case "lastStand": {
+      const player = nextState.players.find((entry) => entry.id === playerId);
+      if (!player?.capitalHex) {
+        return nextState;
+      }
+      if (!nextState.board.hexes[player.capitalHex]) {
+        return nextState;
+      }
+      const lossValue =
+        typeof effect.forceLoss === "number"
+          ? effect.forceLoss
+          : typeof effect.loss === "number"
+            ? effect.loss
+            : 3;
+      const loss = Math.max(0, Math.floor(lossValue));
+      if (loss <= 0) {
+        return nextState;
+      }
+      const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.${player.capitalHex}.last_stand`;
+      nextState = {
+        ...nextState,
+        modifiers: [
+          ...nextState.modifiers,
+          {
+            id: modifierId,
+            source: { type: "card", sourceId: card.id },
+            ownerPlayerId: playerId,
+            attachedHex: player.capitalHex,
+            duration: { type: "endOfRound" },
+            hooks: {
+              onMove: ({
+                state,
+                modifier,
+                playerId: movingPlayerId,
+                to,
+                movingUnitIds
+              }) => {
+                if (!modifier.attachedHex || to !== modifier.attachedHex) {
+                  return state;
+                }
+                if (modifier.ownerPlayerId && modifier.ownerPlayerId === movingPlayerId) {
+                  return state;
+                }
+                const forces = movingUnitIds.filter(
+                  (unitId) => state.board.units[unitId]?.kind === "force"
+                );
+                let nextState = state;
+                if (forces.length > 0) {
+                  const shuffled = shuffle(state.rngState, forces);
+                  nextState = { ...state, rngState: shuffled.next };
+                  nextState = removeForcesFromHex(
+                    nextState,
+                    movingPlayerId,
+                    to,
+                    shuffled.value,
+                    loss
+                  );
+                }
+                const nextModifiers = nextState.modifiers.filter(
+                  (entry) => entry.id !== modifier.id
+                );
+                return nextModifiers.length === nextState.modifiers.length
+                  ? nextState
+                  : { ...nextState, modifiers: nextModifiers };
+              }
+            }
+          }
+        ]
       };
       return nextState;
     }

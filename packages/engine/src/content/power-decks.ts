@@ -16,6 +16,7 @@ export const AGE1_POWER_DECK: CardDefId[] = [
 export const AGE2_POWER_DECK: CardDefId[] = [
   "power.age2.immunity_field",
   "power.age2.rapid_reinforcements",
+  "power.age2.hero_joins_battle",
   "power.age2.writ_of_industry",
   "power.age2.bridge_charter",
   "power.age2.dispatch_to_front",
@@ -24,9 +25,11 @@ export const AGE2_POWER_DECK: CardDefId[] = [
 export const AGE3_POWER_DECK: CardDefId[] = [
   "power.age3.quick_mobilization",
   "power.age3.final_funding",
+  "power.age3.last_stand",
   "power.age3.imperial_warrant",
   "power.age3.crown_coin",
-  "power.age3.deep_mine_charter"
+  "power.age3.deep_mine_charter",
+  "power.age3.siege_chronicle"
 ];
 
 export const POWER_DECKS_BY_AGE: Record<Age, CardDefId[]> = {

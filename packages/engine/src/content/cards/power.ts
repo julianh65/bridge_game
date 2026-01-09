@@ -210,6 +210,21 @@ export const RAPID_REINFORCEMENTS: CardDef = {
   effects: [{ kind: "deployForces", count: 6 }]
 };
 
+export const HERO_JOINS_BATTLE: CardDef = {
+  id: "power.age2.hero_joins_battle",
+  name: "A Hero Joins the Battle",
+  rulesText:
+    "Randomly select from all 2 mana heroes and deploy them for free into your capital. Burn.",
+  type: "Order",
+  deck: "power",
+  tags: ["power", "age2"],
+  cost: { mana: 1 },
+  initiative: 55,
+  burn: true,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "deployRandomChampion", manaCost: 2 }]
+};
+
 export const WRIT_OF_INDUSTRY: CardDef = {
   id: "power.age2.writ_of_industry",
   name: "Writ of Industry",
@@ -321,6 +336,21 @@ export const FINAL_FUNDING: CardDef = {
   effects: [{ kind: "gainGold", amount: 15 }]
 };
 
+export const LAST_STAND: CardDef = {
+  id: "power.age3.last_stand",
+  name: "Last Stand",
+  rulesText:
+    "Until end of round, the first time an enemy stack enters your Capital, destroy 3 entering enemy Forces (random) before the siege. Burn.",
+  type: "Spell",
+  deck: "power",
+  tags: ["power", "age3"],
+  cost: { mana: 2 },
+  initiative: 75,
+  burn: true,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "lastStand", forceLoss: 3 }]
+};
+
 export const IMPERIAL_WARRANT: CardDef = {
   id: "power.age3.imperial_warrant",
   name: "Imperial Warrant",
@@ -376,6 +406,22 @@ export const DEEP_MINE_CHARTER: CardDef = {
   victoryPoints: 1
 };
 
+export const SIEGE_CHRONICLE: CardDef = {
+  id: "power.age3.siege_chronicle",
+  name: "Siege Chronicle",
+  rulesText:
+    "When played: If your Capital currently contains enemy units, deploy 3 Forces to your Capital.",
+  type: "Victory",
+  deck: "power",
+  tags: ["power", "age3"],
+  cost: { mana: 1 },
+  initiative: 70,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "deployForcesIfEnemyInCapital", count: 3 }],
+  victoryPoints: 1
+};
+
 export const AGE1_POWER_CARDS: CardDef[] = [
   COMMAND_SURGE,
   INSTANT_BRIDGE_NET,
@@ -393,6 +439,7 @@ export const AGE1_POWER_CARDS: CardDef[] = [
 export const AGE2_POWER_CARDS: CardDef[] = [
   IMMUNITY_FIELD,
   RAPID_REINFORCEMENTS,
+  HERO_JOINS_BATTLE,
   WRIT_OF_INDUSTRY,
   BRIDGE_CHARTER,
   DISPATCH_TO_FRONT,
@@ -402,9 +449,11 @@ export const AGE2_POWER_CARDS: CardDef[] = [
 export const AGE3_POWER_CARDS: CardDef[] = [
   QUICK_MOBILIZATION,
   FINAL_FUNDING,
+  LAST_STAND,
   IMPERIAL_WARRANT,
   CROWN_COIN,
-  DEEP_MINE_CHARTER
+  DEEP_MINE_CHARTER,
+  SIEGE_CHRONICLE
 ];
 
 export const POWER_CARDS: CardDef[] = [

@@ -17,10 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent5
-  scope: add power card effects for A Hero Joins the Battle, Last Stand, and Siege Chronicle
-  files: packages/engine/src/card-effects.ts, packages/engine/src/card-effects-units.ts, packages/engine/src/content/cards/power.ts, packages/engine/src/content/power-decks.ts, implementation_plan.md, progress.md
-  status: in progress
 - owner: agent4
   scope: add Age III economy cards Pulling Strings + Black Market Pull and effect support
   files: packages/engine/src/content/cards/age3.ts, packages/engine/src/card-effects-combat.ts, packages/engine/src/card-effects-economy.ts, implementation_plan.md, progress.md
@@ -170,6 +166,7 @@
 - Added a focused basic-action order unit test to validate faction-priority resolution. (File: `packages/engine/src/basic-action-order.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- basic-action-order.test.ts`.)
 
 ## Milestone 8 progress
+- Added power card effects and defs for A Hero Joins the Battle (random 2-mana champion deploy), Last Stand (capital entry trap), and Siege Chronicle (capital siege reinforcements), and wired power deck entries; updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-units.ts`, `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/power-decks.ts`, `implementation_plan.md`.)
 - Added Big VP Gainer (Age II) victory card with on-draw gold loss support in card draw handling, plus plan update. (Files: `packages/engine/src/cards.ts`, `packages/engine/src/content/cards/types.ts`, `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added Age II market card defs (Set to Skirmish, Battalion Contract, Rally Where You Stand, Insight, Stall, Deep Shaft Rig, Strategic Triumph, Banner of Resolve) using existing effects; updated the plan checklist. (Files: `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.) (owner: agent4) (Overlap note: included a pre-staged `implementation_plan.md` edit about burn animation.)
 - Added Escort Detail (Age I) with champion-targeted deploy support and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
