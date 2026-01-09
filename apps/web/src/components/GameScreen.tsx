@@ -29,6 +29,7 @@ import { CombatOverlay } from "./CombatOverlay";
 import { CombatRetreatOverlay } from "./CombatRetreatOverlay";
 import { GameScreenHandPanel } from "./GameScreenHandPanel";
 import { GameScreenHeader } from "./GameScreenHeader";
+import { GameScreenInfoDock } from "./GameScreenInfoDock";
 import {
   GameScreenCollectionOverlay,
   GameScreenMarketOverlay
@@ -3410,46 +3411,18 @@ export const GameScreen = ({
       </ul>
     );
 
-  const infoDock = isInfoDockOpen ? (
-    <section className="panel game-dock" aria-live="polite">
-      <div className="game-dock__header">
-        <div className="game-dock__title">
-          <span className="game-dock__eyebrow">Table intel</span>
-          <strong className="game-dock__label">
-            {infoDockTab === "effects" ? "Active effects" : "Log"}
-          </strong>
-        </div>
-        <div className="game-dock__tabs">
-          <button
-            type="button"
-            className={`btn btn-tertiary ${infoDockTab === "log" ? "is-active" : ""}`}
-            aria-pressed={infoDockTab === "log"}
-            onClick={() => setInfoDockTab("log")}
-          >
-            Log <span className="dock-count">{logCount}</span>
-          </button>
-          <button
-            type="button"
-            className={`btn btn-tertiary ${infoDockTab === "effects" ? "is-active" : ""}`}
-            aria-pressed={infoDockTab === "effects"}
-            onClick={() => setInfoDockTab("effects")}
-          >
-            Effects <span className="dock-count">{activeEffects.length}</span>
-          </button>
-        </div>
-        <button
-          type="button"
-          className="btn btn-tertiary game-dock__close"
-          onClick={() => setIsInfoDockOpen(false)}
-        >
-          Close
-        </button>
-      </div>
-      <div className="game-dock__body">
-        {infoDockTab === "effects" ? effectsContent : logContent}
-      </div>
-    </section>
-  ) : null;
+  const infoDock = (
+    <GameScreenInfoDock
+      isOpen={isInfoDockOpen}
+      activeTab={infoDockTab}
+      logCount={logCount}
+      effectsCount={activeEffects.length}
+      logContent={logContent}
+      effectsContent={effectsContent}
+      onTabChange={setInfoDockTab}
+      onClose={() => setIsInfoDockOpen(false)}
+    />
+  );
   const sidebarToggle = isSidebarCollapsed ? (
     <button
       type="button"

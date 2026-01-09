@@ -367,7 +367,8 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 ### Refactor Milestone
 - Refactor massive files into smaller components and be very smart about it so we don't break any behavior, the biggest offenders are gamescreen.tsx, card-effects.ts, styles.css those files are huge and need to be broken up (BUT IN A SMART WAY SO WE DON't BREAK ANYTHING)
 - [x] GameScreen: extract market/collection overlay rendering into dedicated overlay components.
-- [ ] GameScreen: extract info dock (log/effects) and other HUD subsections into components.
+- [x] GameScreen: extract info dock (log/effects) into component.
+- [ ] GameScreen: extract other HUD subsections into components.
 - [ ] GameScreen: move label/target helper utilities into a shared module.
 - [ ] card-effects: split effect resolvers into categorized modules and re-export from a single index.
 - [ ] styles.css: split into logical partials (base/layout/components/overlays) and import in main.
