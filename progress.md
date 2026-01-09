@@ -17,12 +17,12 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- (owner: agent2) Fix Quiet Study Done action so submitting with zero picks advances; scope: round.study UI/command wiring. Files: `apps/web/src/components/HandCardPickerModal.tsx`, `apps/web/src/components/GameScreen.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Enabled champion stat blocks in the Quiet Study hand picker. (File: `apps/web/src/components/HandCardPickerModal.tsx`.) (owner: agent2)
 - Compressed setup player status pills into a stacked layout with a compact ready indicator. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
 - Hid the force stack marker when a hex only has champions, centering champion tokens instead. (File: `apps/web/src/components/BoardView.tsx`.) (owner: agent2)
+- Quiet Study submissions now always register (no-op selections no longer get ignored); marked the plan item complete. (Files: `packages/engine/src/round-flow.ts`, `implementation_plan.md`.) (owner: agent2)
 - Enabled champion-only moves (forceCount 0) and bridge-bypass targeting so Skystriker/Bridge Runner can move without bridges when selected; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Enabled map-based combat retreat selection by highlighting valid retreat hexes, allowing board clicks to submit retreat choices, and letting the retreat overlay pass clicks through to the board; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5)
 - Cleared basic-action selection state on round change so March doesn’t stay selected across rounds; updated the plan checklist. (File: `apps/web/src/components/GameScreen.tsx`.) (owner: agent5)

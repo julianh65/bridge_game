@@ -138,10 +138,6 @@ export const applyQuietStudyChoice = (
     return state;
   }
 
-  if (block.payload.choices[playerId]) {
-    return state;
-  }
-
   if (!isQuietStudyChoiceValid(state, playerId, cardInstanceIds, block.payload.maxDiscard)) {
     return state;
   }
