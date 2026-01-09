@@ -27,6 +27,7 @@ import { BoardView, type BoardActionAnimation } from "./BoardView";
 import { CombatOverlay } from "./CombatOverlay";
 import { CombatRetreatOverlay } from "./CombatRetreatOverlay";
 import { GameScreenCues, type AgeCue, type PhaseCue } from "./GameScreenCues";
+import { GameScreenBoardLegend } from "./GameScreenBoardLegend";
 import { GameScreenHandPanel } from "./GameScreenHandPanel";
 import { GameScreenHeader } from "./GameScreenHeader";
 import { GameScreenInfoDock } from "./GameScreenInfoDock";
@@ -35,6 +36,7 @@ import {
   GameScreenMarketOverlay
 } from "./GameScreenOverlays";
 import { GameScreenSidebar } from "./GameScreenSidebar";
+import { GameScreenSidebarToggle } from "./GameScreenSidebarToggle";
 import { ForceSplitPopover } from "./ForceSplitPopover";
 import { HandCardPickerModal } from "./HandCardPickerModal";
 import type { MarketWinnerHighlight } from "./MarketPanel";
@@ -3002,16 +3004,6 @@ export const GameScreen = ({
       onClose={() => setIsInfoDockOpen(false)}
     />
   );
-  const sidebarToggle = isSidebarCollapsed ? (
-    <button
-      type="button"
-      className="btn btn-tertiary game-screen__sidebar-toggle"
-      onClick={expandSidebar}
-    >
-      Show Command Center
-    </button>
-  ) : null;
-
   return (
     <section className="game-screen">
       <GameScreenCues
@@ -3131,7 +3123,10 @@ export const GameScreen = ({
 
       {championTargetOverlay}
 
-      {sidebarToggle}
+      <GameScreenSidebarToggle
+        isCollapsed={isSidebarCollapsed}
+        onExpand={expandSidebar}
+      />
       <div
         className={`game-screen__layout ${showPhaseFocus ? "game-screen__layout--focus" : ""} ${
           isSidebarCollapsed ? "game-screen__layout--sidebar-collapsed" : ""
@@ -3171,12 +3166,7 @@ export const GameScreen = ({
                 </div>
               ) : null}
             </div>
-            <div className="legend legend--compact game-board__legend">
-              <div className="legend__item legend__item--capital">Capital</div>
-              <div className="legend__item legend__item--forge">Forge</div>
-              <div className="legend__item legend__item--mine">Mine</div>
-              <div className="legend__item legend__item--center">Center</div>
-            </div>
+            <GameScreenBoardLegend />
           </div>
         </section>
 

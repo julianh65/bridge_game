@@ -369,7 +369,8 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] GameScreen: extract market/collection overlay rendering into dedicated overlay components.
 - [x] GameScreen: extract info dock (log/effects) into component.
 - [x] GameScreen: extract phase/age cue overlays into component.
-- [ ] GameScreen: extract other HUD subsections into components.
+- [x] GameScreen: extract board legend + sidebar toggle into components.
+- [ ] GameScreen: extract remaining HUD subsections into components.
 - [x] GameScreen: move label/target helper utilities into a shared module.
 - [ ] card-effects: split effect resolvers into categorized modules and re-export from a single index.
 - [ ] styles.css: split into logical partials (base/layout/components/overlays) and import in main.
