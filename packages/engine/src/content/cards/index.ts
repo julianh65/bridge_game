@@ -3,6 +3,7 @@ import { AGE1_CARDS } from "./age1";
 import { AGE2_CARDS } from "./age2";
 import { AGE3_CARDS } from "./age3";
 import { FACTION_CARDS } from "./faction";
+import { POWER_CARDS } from "./power";
 import { STARTER_CARDS } from "./starter";
 
 export * from "./types";
@@ -10,6 +11,7 @@ export * from "./age1";
 export * from "./age2";
 export * from "./age3";
 export * from "./faction";
+export * from "./power";
 export * from "./starter";
 
 const addDerivedTags = (card: CardDef): CardDef => {
@@ -35,7 +37,8 @@ export const CARD_DEFS: CardDef[] = [
   ...FACTION_CARDS,
   ...AGE1_CARDS,
   ...AGE2_CARDS,
-  ...AGE3_CARDS
+  ...AGE3_CARDS,
+  ...POWER_CARDS
 ].map(addDerivedTags);
 
 export const CARD_DEFS_BY_ID: Record<CardDefId, CardDef> = CARD_DEFS.reduce(

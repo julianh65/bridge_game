@@ -75,6 +75,7 @@ const SUPPORTED_TARGET_KINDS = new Set([
 const SUPPORTED_EFFECTS = new Set([
   "gainGold",
   "gainMana",
+  "gainManaIfTile",
   "drawCards",
   "drawCardsOtherPlayers",
   "rollGold",
@@ -1737,6 +1738,17 @@ export const resolveCardEffects = (
       case "gainMana": {
         const amount = typeof effect.amount === "number" ? effect.amount : 0;
         nextState = addMana(nextState, playerId, amount);
+        break;
+      }
+      case "gainManaIfTile": {
+        const tile = typeof effect.tile === "string" ? effect.tile : null;
+        const amount = typeof effect.amount === "number" ? effect.amount : 0;
+        if (!tile || amount <= 0) {
+          break;
+        }
+        if (playerOccupiesTile(nextState, playerId, tile as TileType)) {
+          nextState = addMana(nextState, playerId, amount);
+        }
         break;
       }
       case "drawCards": {

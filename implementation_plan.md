@@ -488,7 +488,7 @@ Done
   - [ ] Power decks card defs and wiring (counts per `rules_draft.md`).
     - [ ] Audit `rules_draft.md` power lists and record exact counts per age.
     - [ ] Age I power non-victory card defs (per rules_draft counts).
-    - [ ] Age I power victory card defs (per rules_draft counts, +1 VP on gain).
+    - [x] Age I power victory card defs (per rules_draft counts, +1 VP on gain).
     - [ ] Age II power non-victory card defs (per rules_draft counts).
     - [ ] Age II power victory card defs (per rules_draft counts, +1 VP on gain).
     - [ ] Age II power champion card defs (per rules_draft counts) and tagging.
@@ -497,19 +497,19 @@ Done
     - [ ] Verify power/burn/victory tags on power cards.
     - [ ] Power pick card checklist (rules_draft §24).
       - [ ] Age I Power (12) — Non-victory (6).
-        - [ ] Command Surge.
-        - [ ] Instant Bridge Net.
-        - [ ] Secret Plans.
-        - [ ] Emergency Pay.
-        - [ ] Shock Drill.
+        - [x] Command Surge.
+        - [x] Instant Bridge Net.
+        - [x] Secret Plans.
+        - [x] Emergency Pay.
+        - [x] Shock Drill.
         - [ ] TBD: fill missing Age I non-victory entry after rules audit.
-      - [ ] Age I Power Victory (6).
-        - [ ] Bridge Deed.
-        - [ ] Mine Charter.
-        - [ ] Forge Sketch.
-        - [ ] Center Writ.
-        - [ ] Oathstone.
-        - [ ] Banner of Sparks.
+      - [x] Age I Power Victory (6).
+        - [x] Bridge Deed.
+        - [x] Mine Charter.
+        - [x] Forge Sketch.
+        - [x] Center Writ.
+        - [x] Oathstone.
+        - [x] Banner of Sparks.
       - [ ] Age II Power (12) — Non-victory (6).
         - [ ] Immunity Field.
         - [ ] Rapid Reinforcements.

@@ -18,7 +18,6 @@
 
 ## Active tasks
 - owner: agent1; scope: implement server-synced market roll-off clicks (engine roll-off block + UI command wiring); files: `packages/engine/src/types.ts`, `packages/engine/src/market.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/market.test.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/round-flow.test.ts` (if needed), `apps/web/src/components/MarketPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/App.tsx`; status: in progress (overlap: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/App.tsx`, `packages/engine/src/types.ts` are in other agents' scopes; keeping edits minimal).
-- owner: agent5; scope: add Age I power card defs + real Age I power deck list (incl. Center Writ mana-if-center effect); files: `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/cards/index.ts`, `packages/engine/src/content/power-decks.ts`, `packages/engine/src/card-effects.ts`, `implementation_plan.md`, `progress.md`; status: in progress.
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -568,6 +567,7 @@ none
 - Wired Age II/III market decks to their card lists and expanded deck tests to cover all ages. (Files: `packages/engine/src/content/market-decks.ts`, `packages/engine/src/content/market-decks.test.ts`, `implementation_plan.md`.) (owner: agent4)
 - Added derived card tags for burn/power/victory/champion in the registry, with tests.
 - Added Age I champion cards for Bounty Hunter, Sergeant, and Traitor to the Age I market list.
+- Added Age I power card defs (Command Surge, Instant Bridge Net, Secret Plans, Emergency Pay, Shock Drill, Bridge Deed, Mine Charter, Forge Sketch, Center Writ, Oathstone, Banner of Sparks), wired the Age I power deck list, and added a Center Writ mana-if-center effect; Age II/III power decks still clone market lists and one Age I non-victory slot remains TBD. (Files: `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/cards/index.ts`, `packages/engine/src/content/power-decks.ts`, `packages/engine/src/card-effects.ts`.) (Plan: `implementation_plan.md`.)
 
 ## Debug UI progress
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.
