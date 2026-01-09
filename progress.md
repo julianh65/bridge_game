@@ -63,7 +63,7 @@
 
 ## Milestone / tasks after third play test progress
 - Fixed Cipher Quiet Study loop by advancing from `round.study` to `round.action` after resolving choices so the block doesn't re-trigger. (File: `packages/engine/src/engine.ts`.) (owner: agent4)
-- Allowed mine counts below player count by assigning home mines to a subset of capitals and keeping placement logic consistent; added coverage. (Files: `packages/engine/src/board-generation.ts`, `packages/engine/src/board-generation.test.ts`.) (owner: agent4)
+- Allowed mine counts below player count by assigning home mines to a subset of capitals and keeping placement logic consistent; added coverage. (Files: `packages/engine/src/board-generation.ts`, `packages/engine/src/board-generation.test.ts`.) (owner: agent4) (Overlap note: commit also captured pre-staged Elite Guard card changes in `packages/engine/src/card-effects-units.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/card-effects.elite-guard.test.ts`.)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
