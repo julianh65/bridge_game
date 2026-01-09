@@ -18,6 +18,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- (owner: agent2) Investigate failing tests reported by user; capture failing output and likely root cause. Files: `progress.md`. (status: in progress)
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
 ## Test fixes
@@ -747,6 +748,7 @@ none
 
 ## Milestone 7 progress
 - Added host-only setup controls to update `MAX_MANA` and `VP_TO_WIN`, wiring a setup config command in the engine and setup UI inputs; updated plan checklist. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/index.ts`, `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.) (owner: agent3)
+- Setup flow now lets the host apply match settings (max mana, VP to win) during setup via an explicit command hook. (Files: `packages/engine/src/engine.ts`, `apps/web/src/components/SetupFlow.tsx`.) (owner: agent3)
 - Implemented champion card play (hex targeting validation + deployment), champion gold cost scaling, and champion limit checks in engine with tests.
 - Added champion HP details to board stack tooltips in the UI.
 - Added Leadbound Shield Wall passive as a permanent faction modifier, wired during setup, with setup/combat coverage.

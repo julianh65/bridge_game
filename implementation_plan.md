@@ -559,7 +559,7 @@ Done
         - [x] Bridge Deed.
         - [x] Mine Charter.
         - [x] Forge Sketch.
-        - [x] Audit Forge Sketch rules alignment (optional discard for draw; fixed).
+        - [ ] Audit Forge Sketch rules alignment (optional discard for draw; currently required).
         - [x] Center Writ.
         - [x] Oathstone.
         - [x] Banner of Sparks.

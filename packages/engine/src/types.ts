@@ -498,6 +498,11 @@ export type SetupChoice =
   | { kind: "pickFreeStartingCard"; cardId: CardDefId }
   | { kind: "unpickFreeStartingCard" };
 
+export type SetupConfigUpdate = {
+  maxMana?: number;
+  vpToWin?: number;
+};
+
 export type BasicAction =
   | { kind: "buildBridge"; edgeKey: EdgeKey }
   | {
@@ -542,6 +547,9 @@ export type Command = {
   payload: SetupChoice;
 } | {
   type: "AdvanceSetup";
+} | {
+  type: "UpdateSetupConfig";
+  payload: SetupConfigUpdate;
 } | {
   type: "SubmitQuietStudy";
   payload: { cardInstanceIds: CardInstanceID[] };

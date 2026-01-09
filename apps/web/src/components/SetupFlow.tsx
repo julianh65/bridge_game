@@ -1,6 +1,13 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import type { BoardState, GameView, HexKey, PlayerID, SetupChoice } from "@bridgefront/engine";
+import type {
+  BoardState,
+  GameView,
+  HexKey,
+  PlayerID,
+  SetupChoice,
+  SetupConfigUpdate
+} from "@bridgefront/engine";
 
 import { BoardView } from "./BoardView";
 import { FactionSymbol } from "./FactionSymbol";
@@ -52,6 +59,7 @@ type SetupFlowProps = {
   status: RoomConnectionStatus;
   onRerollMap: () => void;
   onSubmitSetupChoice: (choice: SetupChoice) => void;
+  onSubmitSetupConfig: (update: SetupConfigUpdate) => void;
   onAutoSetup: () => void;
   onAdvanceSetup: () => void;
   onDebugCommand: (command: DebugCommand) => void;
@@ -65,6 +73,7 @@ export const SetupFlow = ({
   status,
   onRerollMap,
   onSubmitSetupChoice,
+  onSubmitSetupConfig,
   onAutoSetup,
   onAdvanceSetup,
   onDebugCommand,
@@ -102,6 +111,9 @@ export const SetupFlow = ({
   const [scenarioRoundInput, setScenarioRoundInput] = useState("");
   const [scenarioAutoApply, setScenarioAutoApply] = useState(true);
   const [boardSnapshotInput, setBoardSnapshotInput] = useState("");
+  const [maxManaInput, setMaxManaInput] = useState(String(view.public.config.MAX_MANA));
+  const [vpToWinInput, setVpToWinInput] = useState(String(view.public.config.VP_TO_WIN));
+  const [configDirty, setConfigDirty] = useState(false);
   const scenarioRoundValue =
     scenarioRoundInput.trim() === "" ? null : Number(scenarioRoundInput);
   const scenarioRoundValid =
@@ -113,6 +125,17 @@ export const SetupFlow = ({
     : null;
   const scenarioAge =
     scenarioRoundNormalized !== null ? getAgeForRound(scenarioRoundNormalized) : null;
+  const maxManaValue = maxManaInput.trim() === "" ? null : Number(maxManaInput);
+  const maxManaValid = maxManaValue !== null && Number.isFinite(maxManaValue) && maxManaValue > 0;
+  const maxManaNormalized = maxManaValid ? Math.max(1, Math.floor(maxManaValue)) : null;
+  const vpToWinValue = vpToWinInput.trim() === "" ? null : Number(vpToWinInput);
+  const vpToWinValid = vpToWinValue !== null && Number.isFinite(vpToWinValue) && vpToWinValue > 0;
+  const vpToWinNormalized = vpToWinValid ? Math.max(1, Math.floor(vpToWinValue)) : null;
+  const hasConfigChanges =
+    (maxManaNormalized !== null && maxManaNormalized !== view.public.config.MAX_MANA) ||
+    (vpToWinNormalized !== null && vpToWinNormalized !== view.public.config.VP_TO_WIN);
+  const canApplyConfig =
+    isHost && status === "connected" && hasConfigChanges && maxManaValid && vpToWinValid;
   const boardSnapshotState = useMemo(() => {
     const raw = boardSnapshotInput.trim();
     if (!raw) {
@@ -132,6 +155,32 @@ export const SetupFlow = ({
       return { value: null, valid: false, error: "Invalid JSON in board snapshot." };
     }
   }, [boardSnapshotInput]);
+
+  useEffect(() => {
+    if (configDirty) {
+      return;
+    }
+    setMaxManaInput(String(view.public.config.MAX_MANA));
+    setVpToWinInput(String(view.public.config.VP_TO_WIN));
+  }, [configDirty, view.public.config.MAX_MANA, view.public.config.VP_TO_WIN]);
+
+  const handleApplyConfig = () => {
+    if (!canApplyConfig) {
+      return;
+    }
+    const update: SetupConfigUpdate = {};
+    if (maxManaNormalized !== null) {
+      update.maxMana = maxManaNormalized;
+    }
+    if (vpToWinNormalized !== null) {
+      update.vpToWin = vpToWinNormalized;
+    }
+    if (Object.keys(update).length === 0) {
+      return;
+    }
+    onSubmitSetupConfig(update);
+    setConfigDirty(false);
+  };
   const canDebug = isHost && status === "connected" && import.meta.env.DEV;
   const canApplyScenario = canDebug && scenarioRoundNormalized !== null;
   const canApplyBoard = canDebug && boardSnapshotState.valid;
@@ -286,6 +335,47 @@ export const SetupFlow = ({
           >
             Auto-setup
           </button>
+          <div className="panel">
+            <h3>Match Settings</h3>
+            <div className="controls">
+              <label>
+                Max Mana
+                <input
+                  type="number"
+                  min={1}
+                  value={maxManaInput}
+                  onChange={(event) => {
+                    setMaxManaInput(event.target.value);
+                    setConfigDirty(true);
+                  }}
+                />
+              </label>
+              <label>
+                VP to Win
+                <input
+                  type="number"
+                  min={1}
+                  value={vpToWinInput}
+                  onChange={(event) => {
+                    setVpToWinInput(event.target.value);
+                    setConfigDirty(true);
+                  }}
+                />
+              </label>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleApplyConfig}
+                disabled={!canApplyConfig}
+              >
+                Apply Settings
+              </button>
+            </div>
+            <p className="muted">
+              Current: {view.public.config.MAX_MANA} max mana,{" "}
+              {view.public.config.VP_TO_WIN} VP to win.
+            </p>
+          </div>
           {canDebug ? (
             <details className="setup-flow__debug-details">
               <summary>Scenario tools (dev)</summary>

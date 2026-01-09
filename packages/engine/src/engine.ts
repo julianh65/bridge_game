@@ -101,6 +101,41 @@ const requestSetupAdvance = (state: GameState, playerId: PlayerID): GameState =>
   };
 };
 
+const applySetupConfigUpdate = (
+  state: GameState,
+  playerId: PlayerID,
+  update: { maxMana?: number; vpToWin?: number }
+): GameState => {
+  if (state.phase !== "setup") {
+    throw new Error("setup config updates are only available during setup");
+  }
+  const hostPlayerId = getHostPlayerId(state);
+  if (!hostPlayerId || hostPlayerId !== playerId) {
+    throw new Error("only the host can update setup config");
+  }
+
+  let nextConfig = state.config;
+  let changed = false;
+
+  if (typeof update.maxMana === "number" && Number.isFinite(update.maxMana)) {
+    const normalized = Math.max(1, Math.floor(update.maxMana));
+    if (normalized !== nextConfig.MAX_MANA) {
+      nextConfig = { ...nextConfig, MAX_MANA: normalized };
+      changed = true;
+    }
+  }
+
+  if (typeof update.vpToWin === "number" && Number.isFinite(update.vpToWin)) {
+    const normalized = Math.max(1, Math.floor(update.vpToWin));
+    if (normalized !== nextConfig.VP_TO_WIN) {
+      nextConfig = { ...nextConfig, VP_TO_WIN: normalized };
+      changed = true;
+    }
+  }
+
+  return changed ? { ...state, config: nextConfig } : state;
+};
+
 const normalizeSeed = (seed: GameState["seed"]): number => {
   if (typeof seed === "number") {
     if (!Number.isFinite(seed)) {
@@ -184,6 +219,10 @@ export const applyCommand = (
 
   if (_command.type === "AdvanceSetup") {
     return requestSetupAdvance(state, _playerId);
+  }
+
+  if (_command.type === "UpdateSetupConfig") {
+    return applySetupConfigUpdate(state, _playerId, _command.payload);
   }
 
   if (_command.type === "SubmitQuietStudy") {

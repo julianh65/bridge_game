@@ -74,6 +74,7 @@ export type {
   PlayerState,
   ResourceState,
   SetupChoice,
+  SetupConfigUpdate,
   SetupPhase,
   SetupPrivateView,
   SetupPublicView,

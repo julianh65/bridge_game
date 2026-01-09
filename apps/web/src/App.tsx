@@ -257,6 +257,9 @@ export default function App() {
             onSubmitSetupChoice={(choice) =>
               room.sendCommand({ type: "SubmitSetupChoice", payload: choice })
             }
+            onSubmitSetupConfig={(update) =>
+              room.sendCommand({ type: "UpdateSetupConfig", payload: update })
+            }
             onAutoSetup={() => room.sendLobbyCommand("autoSetup")}
             onAdvanceSetup={() => room.sendCommand({ type: "AdvanceSetup" })}
             onDebugCommand={room.sendDebugCommand}
