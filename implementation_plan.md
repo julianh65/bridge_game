@@ -266,7 +266,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Lobby waiting room view for join/ready state.
   - [x] Faction selection screen with faction abilities visible; host advances once all lock.
     - [x] Add faction ability copy data (passive + starter spell/champion text) for UI display.
-  - [ ] Starting deck preview screen (card components) showing faction abilities; all ready -> host advance.
+  - [x] Starting deck preview screen (card components) showing faction abilities; all ready -> host advance.
     - [x] Show starter deck composition (counts) + champion/spell callouts.
   - [x] Map screen with two sub-steps:
     - [x] Capital selection (simultaneous, no turn order).
@@ -358,9 +358,9 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] The forge scrap doesn't look right, i just see a bunch of pills with random card ids
 - [x] remove the mine draft, it should just give gold, and update the rules
 
-### Mini Milestone For Me
-### Mini Milestone For Me
 
+
+### Mini Milestone For Me
 I need some sort of script or way to edit the cards and decks in a nice UI with some nice to have features. I don't really know how this will work because the cards are kind of defined in typescript files not in JSON or anything. So help me think through this. There could be two options which is just a UI that loads in the the current deck and lets me view things and edit things and then saves it as a list of edits / changes that I can then take and make manually in the code, or we have a way such that it somehow writes back to the files? But if that's too tricky / dangerous then we should just do the first approach. The editor should let me view all cards, create copies of cards. I should be able to modify the attributes of cards easily, like health, gold, mana costs, scaling etc... but not like the names of cards or the effects, for bigger changes like that I will need to do that myself manually in the code. I also need some helpful helper functions / code to be able to run. One to show me all the colissions in initiative numbers, one to automatically decollide the deck, so it goes through and for any colissions that there are it decollides them by incrementing initiatives until there are no more colissions, and then one to "compress" initiative numbers so if I have like only 3 cards for example 10, 90, 30 it should compress them so the inititatives are 1, 3, 2. Maybe I can somehow build off the cards viewer screen I have but have a debug / dev version of it?
 
 #### Scope (proposed)

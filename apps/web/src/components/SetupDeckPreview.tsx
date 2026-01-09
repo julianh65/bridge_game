@@ -9,7 +9,7 @@ import {
 
 import { FactionSymbol } from "./FactionSymbol";
 import { GameCard } from "./GameCard";
-import { getFactionName } from "../lib/factions";
+import { FACTIONS, getFactionName } from "../lib/factions";
 
 type SetupDeckPreviewProps = {
   view: GameView;
@@ -74,6 +74,7 @@ export const SetupDeckPreview = ({ view, playerId }: SetupDeckPreviewProps) => {
   const coreDeckCount = starter.deck.length;
   const totalDeckCount = coreDeckCount + 1;
   const factionName = getFactionName(starter.factionId);
+  const factionOption = FACTIONS.find((entry) => entry.id === starter.factionId) ?? null;
 
   return (
     <section className="panel setup-deck-preview">
@@ -146,6 +147,20 @@ export const SetupDeckPreview = ({ view, playerId }: SetupDeckPreviewProps) => {
               <strong>{starterChampion?.name ?? starter.championId}</strong>
             </div>
           </div>
+          {factionOption ? (
+            <div className="setup-deck-preview__abilities faction-card__section">
+              <span className="faction-card__section-title">Faction passives</span>
+              <div className="faction-card__desc">{factionOption.description}</div>
+              <ul className="faction-card__list">
+                {factionOption.passives.map((passive) => (
+                  <li key={passive.name}>
+                    <span className="faction-card__passive-name">{passive.name}</span>
+                    <span className="faction-card__passive-desc">{passive.description}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </aside>
       </div>
     </section>
