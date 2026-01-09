@@ -17,6 +17,10 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- owner: agent2
+  scope: add multiPath targeting UI flow with selection summary and hints
+  files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/GameScreenHandPanel.tsx, implementation_plan.md, progress.md
+  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -608,6 +612,7 @@ none
 - Added scenario presets (round/age) and board snapshot capture/apply helpers to the Room Debug panel for faster setup testing. (Files: `apps/web/src/components/RoomDebugPanel.tsx`, `implementation_plan.md`.)
 - Added a Jump to Action debug button that sets the phase to action and creates a fresh action declaration block. (File: `apps/web/src/components/RoomDebugPanel.tsx`.) (owner: agent2)
 - Added a compact setup-flow scenario drawer and a floating in-game hand injector overlay for dev hosts. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/App.tsx`, `apps/web/src/components/GameDebugOverlay.tsx`.)
+- Refined the in-game hand injector with searchable card results, queued add/replace actions, and a slimmer overlay footprint. (Files: `apps/web/src/components/GameDebugOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.)
 
 ## Milestone 4 progress
 - Added a game screen placeholder layout in `apps/web` (board area + sidebar stubs), no server wiring yet.
@@ -720,6 +725,7 @@ none
 - Enforced `stopOnOccupied` during card path selection and added a hand-panel hint so Column Advance-style paths stop after occupied hexes; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.)
 - Tightened hex-pair targeting flow in the UI (valid picks + range hints) so Wormhole Link/Gate selections align with rules. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`.)
 - Enforced `maxDistanceFromCapital` for hex targeting in the UI and added a capital-range hint for eligible cards. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`.)
+- Added Mortar Shot scatter preview highlights on adjacent hexes when targeting and marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreen.tsx` is in agent2 scope.)
 
 ## Milestone 7.5 progress
 - Added a card-art manifest + helper, GameCard art rendering, and a CLI script to generate diffusion art and update the manifest. (Files: `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`.)

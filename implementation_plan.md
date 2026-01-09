@@ -441,7 +441,7 @@ Start going through the rules_draft and adding the logic for the different types
 - [ ] UI: support compound targets for edge+move cards (Bridge Crew: `edgeKey` + optional `from/to` or `path`) with a stepper or dual-mode picker.
 - [x] UI: enforce `stopOnOccupied` during path selection (Column Advance): block path continuation past occupied hexes and surface a hint.
 - [x] UI: enforce champion targeting constraints in picker (`requiresFriendlyChampion`, `maxDistance`) for Marked for Coin + Execution Order.
-- [ ] UI: Mortar Shot targeting helpers (force-range gating + scatter preview ring) and block invalid picks.
+- [x] UI: Mortar Shot targeting helpers (force-range gating + scatter preview ring) and block invalid picks.
 - [ ] UI: manual hit assignment overlay for Focus Fire + Tactical Hand (pick targets for assigned hits, show remaining hits).
 - [x] Engine: decide on no-op orders (Stall) — allow playable no-effect cards or remove the card.
 
@@ -624,6 +624,7 @@ Done
   - show full state JSON
   - force advance to next phase
   - seed controls
+- [x] Improve in-game debug hand injector with searchable card queue + add/replace actions.
 - [x] Set explicit Victory card VP values in card defs and surface them in card UI.
 - [x] Right now it's possible for the cards in the hand if there are too many or on certain screens to not be seen, requiring left and right scrolling, I don't want the card sizes to be changed but I want this to be fixed
 - [x] It would be nice if the background of the champions in the battle modal had the background image like the champions on the board chits

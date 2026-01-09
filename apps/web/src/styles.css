@@ -1986,6 +1986,113 @@ body.is-game .card-editor__filters {
   align-items: center;
 }
 
+.debug-overlay {
+  position: fixed;
+  left: 24px;
+  left: calc(24px + env(safe-area-inset-left));
+  bottom: 120px;
+  bottom: calc(120px + env(safe-area-inset-bottom));
+  z-index: 70;
+  width: min(320px, 90vw);
+}
+
+.debug-overlay__toggle {
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 999px;
+}
+
+.debug-overlay__panel {
+  display: grid;
+  gap: 12px;
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.debug-overlay__header {
+  justify-content: space-between;
+}
+
+.debug-overlay__results {
+  display: grid;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  max-height: 200px;
+  overflow: auto;
+}
+
+.debug-overlay__result {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 12px;
+  align-items: center;
+  text-align: left;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.debug-overlay__result-name {
+  font-weight: 600;
+}
+
+.debug-overlay__result-id {
+  font-size: 11px;
+  color: var(--muted);
+  grid-column: 1 / 2;
+}
+
+.debug-overlay__result-action {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  grid-column: 2 / 3;
+  grid-row: 1 / span 2;
+}
+
+.debug-overlay__queue {
+  display: grid;
+  gap: 8px;
+}
+
+.debug-overlay__queue-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.debug-overlay__queue-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  max-height: 180px;
+  overflow: auto;
+}
+
+.debug-overlay__queue-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.debug-overlay__queue-id {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+}
+
 .deck-flow {
   display: grid;
   gap: 12px;

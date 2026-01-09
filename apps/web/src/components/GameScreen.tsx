@@ -2369,7 +2369,8 @@ export const GameScreen = ({
     if (boardPickMode === "cardPath") {
       const isEdgeMove =
         cardTargetKind === "edge" && edgeMoveMode === "cardPath" && moveStackEffect;
-      if (!selectedCardDef || (!isEdgeMove && cardTargetKind !== "path")) {
+      const isPathTarget = cardTargetKind === "path" || cardTargetKind === "multiPath";
+      if (!selectedCardDef || (!isEdgeMove && !isPathTarget)) {
         return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
       if (isEdgeMove) {
@@ -2931,6 +2932,22 @@ export const GameScreen = ({
 
   const revealHexKeys = activeCardReveal?.targetHexKeys ?? [];
   const revealEdgeKeys = activeCardReveal?.targetEdgeKeys ?? [];
+  const mortarScatterHexKeys = useMemo(() => {
+    if (!selectedCardDef || cardTargetKind !== "hex") {
+      return [];
+    }
+    const mortarEffect = selectedCardDef.effects?.find(
+      (effect) => effect.kind === "mortarShot"
+    );
+    if (!mortarEffect) {
+      return [];
+    }
+    const targetHex = getTargetString(targetRecord, "hexKey");
+    if (!targetHex || !view.public.board.hexes[targetHex]) {
+      return [];
+    }
+    return neighborHexKeys(targetHex).filter((key) => view.public.board.hexes[key]);
+  }, [cardTargetKind, selectedCardDef, targetRecord, view.public.board.hexes]);
   const previewHexPair = useMemo(() => {
     if (cardTargetKind !== "hexPair") {
       return null;

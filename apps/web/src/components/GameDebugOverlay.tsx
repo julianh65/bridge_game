@@ -25,8 +25,8 @@ export const GameDebugOverlay = ({ room }: GameDebugOverlayProps) => {
   }
 
   const [isOpen, setIsOpen] = useState(false);
-  const [handCardInput, setHandCardInput] = useState("");
-  const [injectMode, setInjectMode] = useState<"add" | "replace">("add");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [queuedCardIds, setQueuedCardIds] = useState<CardDefId[]>([]);
   const canSend = room.status === "connected" && Boolean(room.playerId);
 
   useEffect(() => {
@@ -35,22 +35,26 @@ export const GameDebugOverlay = ({ room }: GameDebugOverlayProps) => {
     }
   }, [isOpen, canSend, room]);
 
-  const parsedHandCards = useMemo(() => {
-    const rawIds = handCardInput
-      .split(/[\s,]+/)
-      .map((entry) => entry.trim())
-      .filter(Boolean);
-    const valid: CardDefId[] = [];
-    const invalid: string[] = [];
-    rawIds.forEach((id) => {
-      if (CARD_DEFS_BY_ID.has(id as CardDefId)) {
-        valid.push(id as CardDefId);
-      } else {
-        invalid.push(id);
+  const sortedCards = useMemo(() => {
+    return [...CARD_DEFS].sort((a, b) => {
+      if (a.name !== b.name) {
+        return a.name.localeCompare(b.name);
       }
+      return a.id.localeCompare(b.id);
     });
-    return { rawIds, valid, invalid };
-  }, [handCardInput]);
+  }, []);
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const matchingCards = useMemo(() => {
+    if (!normalizedQuery) {
+      return [];
+    }
+    return sortedCards.filter((card) => {
+      if (card.id.toLowerCase().includes(normalizedQuery)) {
+        return true;
+      }
+      return card.name.toLowerCase().includes(normalizedQuery);
+    });
+  }, [normalizedQuery, sortedCards]);
 
   const playerIndex = useMemo(() => {
     if (!room.debugState || !room.playerId) {
@@ -60,31 +64,31 @@ export const GameDebugOverlay = ({ room }: GameDebugOverlayProps) => {
   }, [room.debugState, room.playerId]);
 
   const canInjectHand =
-    canSend &&
-    Boolean(room.debugState) &&
-    playerIndex >= 0 &&
-    parsedHandCards.valid.length > 0 &&
-    parsedHandCards.invalid.length === 0;
+    canSend && Boolean(room.debugState) && playerIndex >= 0 && queuedCardIds.length > 0;
 
-  const handleInjectHand = () => {
+  const handleInjectHand = (mode: "add" | "replace") => {
     if (!canInjectHand || !room.debugState) {
       return;
     }
     const state = room.debugState;
+    const validQueue = queuedCardIds.filter((id) => CARD_DEFS_BY_ID.has(id));
+    if (validQueue.length === 0) {
+      return;
+    }
     const existingHand = state.players[playerIndex].deck.hand;
     const nextCardsByInstanceId: Record<string, CardInstance> = {
       ...state.cardsByInstanceId
     };
     let nextIndex = Object.keys(nextCardsByInstanceId).length + 1;
     const newInstanceIds: string[] = [];
-    parsedHandCards.valid.forEach((defId) => {
+    validQueue.forEach((defId) => {
       const instanceId = `ci_${nextIndex}`;
       nextIndex += 1;
       nextCardsByInstanceId[instanceId] = { id: instanceId, defId };
       newInstanceIds.push(instanceId);
     });
     const nextHand =
-      injectMode === "replace" ? newInstanceIds : [...existingHand, ...newInstanceIds];
+      mode === "replace" ? newInstanceIds : [...existingHand, ...newInstanceIds];
     room.sendDebugCommand({
       command: "patchState",
       path: "cardsByInstanceId",
@@ -98,64 +102,125 @@ export const GameDebugOverlay = ({ room }: GameDebugOverlayProps) => {
     room.sendDebugCommand({ command: "state" });
   };
 
+  const handleQueueCard = (cardId: CardDefId) => {
+    setQueuedCardIds((current) => [...current, cardId]);
+  };
+
+  const handleQueueRemove = (index: number) => {
+    setQueuedCardIds((current) => current.filter((_, idx) => idx !== index));
+  };
+
   return (
-    <div
-      style={{
-        position: "fixed",
-        right: 16,
-        bottom: 16,
-        zIndex: 40,
-        maxWidth: 320
-      }}
-    >
+    <div className="debug-overlay">
       {!isOpen ? (
-        <button type="button" className="btn btn-tertiary" onClick={() => setIsOpen(true)}>
+        <button
+          type="button"
+          className="btn btn-tertiary debug-overlay__toggle"
+          onClick={() => setIsOpen(true)}
+        >
           Debug
         </button>
       ) : (
-        <section className="panel">
-          <div className="controls" style={{ justifyContent: "space-between" }}>
+        <section className="panel debug-overlay__panel">
+          <div className="controls debug-overlay__header">
             <strong>Debug Hand</strong>
             <button type="button" className="btn btn-tertiary" onClick={() => setIsOpen(false)}>
               Close
             </button>
           </div>
-          <p className="muted">Add card ids to your hand (dev host only).</p>
+          <p className="muted">
+            Search cards, queue them, and add or replace your hand (dev host only).
+          </p>
           <label>
-            Card ids
+            Find card
             <input
               type="text"
-              value={handCardInput}
-              onChange={(event) => setHandCardInput(event.target.value)}
-              placeholder="age1.scavengers_market, starter.supply_cache"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search by name or id"
             />
           </label>
+          {normalizedQuery ? (
+            <div className="debug-overlay__results">
+              {matchingCards.length > 0 ? (
+                matchingCards.slice(0, 10).map((card) => (
+                  <button
+                    key={card.id}
+                    type="button"
+                    className="debug-overlay__result"
+                    onClick={() => handleQueueCard(card.id)}
+                  >
+                    <span className="debug-overlay__result-name">{card.name}</span>
+                    <span className="debug-overlay__result-id">{card.id}</span>
+                    <span className="debug-overlay__result-action">Add</span>
+                  </button>
+                ))
+              ) : (
+                <p className="muted">No cards match that search.</p>
+              )}
+            </div>
+          ) : null}
+          <div className="debug-overlay__queue">
+            <div className="debug-overlay__queue-header">
+              <span>Queued cards</span>
+              <span className="muted">{queuedCardIds.length}</span>
+            </div>
+            {queuedCardIds.length > 0 ? (
+              <ul className="debug-overlay__queue-list">
+                {queuedCardIds.map((cardId, index) => {
+                  const card = CARD_DEFS_BY_ID.get(cardId);
+                  return (
+                    <li key={`${cardId}-${index}`} className="debug-overlay__queue-item">
+                      <span>
+                        {card?.name ?? cardId}
+                        <span className="debug-overlay__queue-id">{cardId}</span>
+                      </span>
+                      <button
+                        type="button"
+                        className="btn btn-tertiary"
+                        onClick={() => handleQueueRemove(index)}
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <p className="muted">No cards queued yet.</p>
+            )}
+          </div>
           <div className="controls">
-            <label>
-              Mode
-              <select
-                value={injectMode}
-                onChange={(event) => setInjectMode(event.target.value as "add" | "replace")}
-              >
-                <option value="add">Add to hand</option>
-                <option value="replace">Replace hand</option>
-              </select>
-            </label>
-            <button type="button" className="btn btn-secondary" onClick={handleInjectHand}>
-              Apply
+            <button
+              type="button"
+              className="btn btn-secondary"
+              disabled={!canInjectHand}
+              onClick={() => handleInjectHand("add")}
+            >
+              Add to hand
             </button>
-            <button type="button" className="btn btn-tertiary" onClick={() => setHandCardInput("")}>
-              Clear
+            <button
+              type="button"
+              className="btn btn-secondary"
+              disabled={!canInjectHand}
+              onClick={() => handleInjectHand("replace")}
+            >
+              Replace hand
+            </button>
+            <button
+              type="button"
+              className="btn btn-tertiary"
+              disabled={queuedCardIds.length === 0}
+              onClick={() => setQueuedCardIds([])}
+            >
+              Clear queue
             </button>
           </div>
-          {parsedHandCards.invalid.length > 0 ? (
-            <p className="muted">Unknown card ids: {parsedHandCards.invalid.join(", ")}</p>
-          ) : null}
           {!room.debugState ? (
             <p className="muted">Fetching debug state…</p>
           ) : null}
           {!canInjectHand && room.debugState ? (
-            <p className="muted">Enter valid card ids to enable apply.</p>
+            <p className="muted">Queue cards to enable hand injection.</p>
           ) : null}
         </section>
       )}
