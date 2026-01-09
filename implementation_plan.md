@@ -375,6 +375,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] GameScreen: move label/target helper utilities into a shared module.
 - [x] card-effects: extract target parsing helpers into a shared module.
 - [x] card-effects: extract targeting helper utilities into a shared module.
+- [x] card-effects: extract economy/hand effect handlers into a dedicated module.
 - [ ] card-effects: split effect resolvers into categorized modules and re-export from a single index.
 - [ ] styles.css: split into logical partials (base/layout/components/overlays) and import in main.
 

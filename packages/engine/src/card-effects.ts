@@ -7,15 +7,7 @@ import {
   randInt
 } from "@bridgefront/shared";
 
-import type {
-  BlockState,
-  CardInstanceID,
-  CardPlayTargets,
-  GameState,
-  Modifier,
-  PlayerID,
-  TileType
-} from "./types";
+import type { BlockState, CardInstanceID, CardPlayTargets, GameState, Modifier, PlayerID } from "./types";
 import {
   countPlayersOnHex,
   getCenterHexKey,
@@ -26,15 +18,10 @@ import {
   wouldExceedTwoPlayers
 } from "./board";
 import {
-  addCardToBurned,
   addCardToDiscardPile,
   addCardToHandWithOverflow,
   createCardInstance,
-  discardCardFromHand,
-  drawCards,
-  removeCardFromHand,
-  takeTopCards,
-  topdeckCardFromHand
+  drawCards
 } from "./cards";
 import {
   applyChampionDeployment,
@@ -60,6 +47,7 @@ import {
   getHexTarget,
   hasFriendlyForceWithinRange
 } from "./card-effects-targeting";
+import { resolveEconomyEffect } from "./card-effects-economy";
 import {
   addChampionToHex,
   addForcesToHex,
@@ -1184,70 +1172,6 @@ export const isCardPlayable = (
   return false;
 };
 
-const addGold = (state: GameState, playerId: PlayerID, amount: number): GameState => {
-  if (!Number.isFinite(amount) || amount <= 0) {
-    return state;
-  }
-
-  return {
-    ...state,
-    players: state.players.map((player) =>
-      player.id === playerId
-        ? {
-            ...player,
-            resources: {
-              ...player.resources,
-              gold: player.resources.gold + amount
-            }
-          }
-        : player
-    )
-  };
-};
-
-const addMana = (state: GameState, playerId: PlayerID, amount: number): GameState => {
-  if (!Number.isFinite(amount) || amount <= 0) {
-    return state;
-  }
-
-  return {
-    ...state,
-    players: state.players.map((player) =>
-      player.id === playerId
-        ? {
-            ...player,
-            resources: {
-              ...player.resources,
-              mana: player.resources.mana + amount
-            }
-          }
-        : player
-    )
-  };
-};
-
-const playerOccupiesTile = (
-  state: GameState,
-  playerId: PlayerID,
-  tileType: TileType
-): boolean => {
-  return Object.values(state.board.hexes).some(
-    (hex) => hex.tile === tileType && (hex.occupants[playerId]?.length ?? 0) > 0
-  );
-};
-
-const playerOccupiesEnemyCapital = (state: GameState, playerId: PlayerID): boolean => {
-  return Object.values(state.board.hexes).some((hex) => {
-    if (hex.tile !== "capital") {
-      return false;
-    }
-    if (!hex.ownerPlayerId || hex.ownerPlayerId === playerId) {
-      return false;
-    }
-    return (hex.occupants[playerId]?.length ?? 0) > 0;
-  });
-};
-
 export const resolveCardEffects = (
   state: GameState,
   playerId: PlayerID,
@@ -1280,230 +1204,12 @@ export const resolveCardEffects = (
   }
 
   for (const effect of card.effects ?? []) {
+    const economyResult = resolveEconomyEffect(nextState, playerId, effect, targets ?? null);
+    if (economyResult !== null) {
+      nextState = economyResult;
+      continue;
+    }
     switch (effect.kind) {
-      case "gainGold": {
-        const amount = typeof effect.amount === "number" ? effect.amount : 0;
-        nextState = addGold(nextState, playerId, amount);
-        break;
-      }
-      case "gainGoldIfEnemyCapital": {
-        const amount = typeof effect.amount === "number" ? effect.amount : 0;
-        if (amount <= 0) {
-          break;
-        }
-        if (!playerOccupiesEnemyCapital(nextState, playerId)) {
-          break;
-        }
-        nextState = addGold(nextState, playerId, amount);
-        break;
-      }
-      case "gainMana": {
-        const amount = typeof effect.amount === "number" ? effect.amount : 0;
-        nextState = addMana(nextState, playerId, amount);
-        break;
-      }
-      case "gainManaIfTile": {
-        const tile = typeof effect.tile === "string" ? effect.tile : null;
-        const amount = typeof effect.amount === "number" ? effect.amount : 0;
-        if (!tile || amount <= 0) {
-          break;
-        }
-        if (playerOccupiesTile(nextState, playerId, tile as TileType)) {
-          nextState = addMana(nextState, playerId, amount);
-        }
-        break;
-      }
-      case "drawCards": {
-        const count = typeof effect.count === "number" ? effect.count : 0;
-        nextState = drawCards(nextState, playerId, count);
-        break;
-      }
-      case "discardFromHand": {
-        const count = typeof effect.count === "number" ? effect.count : 1;
-        if (count <= 0) {
-          break;
-        }
-        const targetIds = getCardInstanceTargets(targets ?? null);
-        if (targetIds.length === 0) {
-          break;
-        }
-        const player = nextState.players.find((entry) => entry.id === playerId);
-        if (!player) {
-          break;
-        }
-        const uniqueTargets = [...new Set(targetIds)];
-        const validTargets = uniqueTargets.filter((id) => player.deck.hand.includes(id));
-        if (validTargets.length < count) {
-          break;
-        }
-        for (const cardInstanceId of validTargets.slice(0, count)) {
-          nextState = discardCardFromHand(nextState, playerId, cardInstanceId, {
-            countAsDiscard: true
-          });
-        }
-        break;
-      }
-      case "burnFromHand": {
-        const count = typeof effect.count === "number" ? effect.count : 1;
-        if (count <= 0) {
-          break;
-        }
-        const targetIds = getCardInstanceTargets(targets ?? null);
-        if (targetIds.length === 0) {
-          break;
-        }
-        const player = nextState.players.find((entry) => entry.id === playerId);
-        if (!player) {
-          break;
-        }
-        const uniqueTargets = [...new Set(targetIds)];
-        const validTargets = uniqueTargets.filter((id) => player.deck.hand.includes(id));
-        if (validTargets.length < count) {
-          break;
-        }
-        for (const cardInstanceId of validTargets.slice(0, count)) {
-          const removed = removeCardFromHand(nextState, playerId, cardInstanceId);
-          nextState = addCardToBurned(removed, playerId, cardInstanceId);
-        }
-        break;
-      }
-      case "drawCardsOtherPlayers": {
-        const count = typeof effect.count === "number" ? effect.count : 0;
-        if (count <= 0) {
-          break;
-        }
-        for (const player of nextState.players) {
-          if (player.id === playerId) {
-            continue;
-          }
-          nextState = drawCards(nextState, player.id, count);
-        }
-        break;
-      }
-      case "rollGold": {
-        const sides = Number.isFinite(effect.sides) ? Math.max(1, Math.floor(effect.sides)) : 6;
-        const highMin =
-          Number.isFinite(effect.highMin) && Number(effect.highMin) >= 1
-            ? Math.floor(effect.highMin)
-            : 5;
-        const lowGain = typeof effect.lowGain === "number" ? effect.lowGain : 0;
-        const highGain = typeof effect.highGain === "number" ? effect.highGain : 0;
-        if (sides <= 0 || (lowGain <= 0 && highGain <= 0)) {
-          break;
-        }
-        const threshold = Math.min(highMin, sides);
-        const roll = randInt(nextState.rngState, 1, sides);
-        nextState = { ...nextState, rngState: roll.next };
-        const amount = roll.value >= threshold ? highGain : lowGain;
-        if (amount > 0) {
-          nextState = addGold(nextState, playerId, amount);
-        }
-        break;
-      }
-      case "drawCardsIfTile": {
-        const tile = typeof effect.tile === "string" ? effect.tile : null;
-        const count = typeof effect.count === "number" ? Math.max(0, Math.floor(effect.count)) : 0;
-        if (!tile || count <= 0) {
-          break;
-        }
-        if (playerOccupiesTile(nextState, playerId, tile as TileType)) {
-          nextState = drawCards(nextState, playerId, count);
-        }
-        break;
-      }
-      case "drawCardsIfHandEmpty": {
-        const count = typeof effect.count === "number" ? effect.count : 0;
-        if (count <= 0) {
-          break;
-        }
-        const player = nextState.players.find((entry) => entry.id === playerId);
-        if (!player) {
-          break;
-        }
-        if (player.deck.hand.length > 0) {
-          break;
-        }
-        nextState = drawCards(nextState, playerId, count);
-        break;
-      }
-      case "topdeckFromHand": {
-        const count = typeof effect.count === "number" ? Math.max(0, Math.floor(effect.count)) : 1;
-        if (count <= 0) {
-          break;
-        }
-        const targetIds = getCardInstanceTargets(targets ?? null);
-        if (targetIds.length === 0) {
-          break;
-        }
-        const player = nextState.players.find((entry) => entry.id === playerId);
-        if (!player) {
-          break;
-        }
-        const validTargets = targetIds.filter((id) => player.deck.hand.includes(id));
-        if (validTargets.length === 0) {
-          break;
-        }
-        for (const cardInstanceId of validTargets.slice(0, count)) {
-          nextState = topdeckCardFromHand(nextState, playerId, cardInstanceId);
-        }
-        break;
-      }
-      case "scoutReport": {
-        const lookCount = Math.max(0, Number(effect.lookCount) || 0);
-        const keepCount = Math.max(0, Number(effect.keepCount) || 0);
-        if (lookCount <= 0) {
-          break;
-        }
-        const taken = takeTopCards(nextState, playerId, lookCount);
-        nextState = taken.state;
-        const maxKeep = Math.min(keepCount, taken.cards.length);
-        if (maxKeep <= 0) {
-          for (const cardId of taken.cards) {
-            nextState = addCardToDiscardPile(nextState, playerId, cardId, {
-              countAsDiscard: true
-            });
-          }
-          break;
-        }
-        if (maxKeep >= taken.cards.length || nextState.blocks) {
-          const keep = taken.cards.slice(0, maxKeep);
-          const discard = taken.cards.filter((cardId) => !keep.includes(cardId));
-          for (const cardId of keep) {
-            nextState = addCardToHandWithOverflow(nextState, playerId, cardId);
-          }
-          for (const cardId of discard) {
-            nextState = addCardToDiscardPile(nextState, playerId, cardId, {
-              countAsDiscard: true
-            });
-          }
-          break;
-        }
-        nextState = {
-          ...nextState,
-          blocks: {
-            type: "action.scoutReport",
-            waitingFor: [playerId],
-            payload: {
-              playerId,
-              offers: taken.cards,
-              keepCount: maxKeep,
-              chosen: null
-            }
-          }
-        };
-        break;
-      }
-      case "prospecting": {
-        const baseGold = typeof effect.baseGold === "number" ? effect.baseGold : 0;
-        const bonusIfMine = typeof effect.bonusIfMine === "number" ? effect.bonusIfMine : 0;
-        const amount =
-          baseGold +
-          (bonusIfMine > 0 && playerOccupiesTile(nextState, playerId, "mine")
-            ? bonusIfMine
-            : 0);
-        nextState = addGold(nextState, playerId, amount);
-        break;
-      }
       case "recruit": {
         const choice = getChoiceTarget(targets ?? null);
         if (!choice) {
