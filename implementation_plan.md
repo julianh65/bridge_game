@@ -263,7 +263,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 ### Milestone After Full Test Play and Thinking
 ### Tasks
 - [x] Capital draft selection is simultaneous (no ordered picking); allow lock/unlock freely.
-- [ ] Setup flow overhaul into full-screen phases with host-advanced gates:
+- [x] Setup flow overhaul into full-screen phases with host-advanced gates:
   - [x] Lobby waiting room view for join/ready state.
   - [x] Faction selection screen with faction abilities visible; host advances once all lock.
     - [x] Add faction ability copy data (passive + starter spell/champion text) for UI display.
@@ -286,7 +286,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Center collection offers power picks (not normal card draft).
 - [x] Market dice roll animation feels smoother and more synchronized.
 - [x] Board generation spawns a fixed number of random bridges at setup (per updated rules).
-- [ ] Combat and combat overlay redesign:
+- [x] Combat and combat overlay redesign:
  - [x] Change the coords to the tile type and our labelling system e.g. Battle at A1 Mine
  - [x] Make Faction Icons Bigger
    - [x] Each force alive should be represented by a circle and should have a die under it (unrolled)
@@ -435,7 +435,9 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] I got 9 VP and nothing happened, it didn’t detect that I won and no screen popped up
 - [ ] Be creative and add a balanced age 1 card of similar flavor to the Dice War Profiteer card
 - [ ] Dice war profiteer during the reveal stage needs to auto roll a dice for everyone to see
-- [ ] When the cards pop up to reveal it needs to have their description text on them
+- [x] When the cards pop up to reveal it needs to have their description text on them
+- [ ] Be creative and add a balanced age 2 card that gives VP, don't make it too crazy just make it basic, add it to the rules, the game and everywhere
+- [ ] Be creative and add to each age a balanced more "basic" champion card that dosen't do anything crazy but is balanced, add it to the rules, the game and everywhere
 
 
 ### Refactor Milestone
@@ -611,7 +613,7 @@ Done
         - [x] Audit Writ of Industry rules alignment (mine gold bonus).
         - [x] Audit Bridge Charter rules alignment (build 2 bridges touching occupied hex).
         - [x] Audit Dispatch to Front rules alignment (deploy 2 to friendly champion hex).
-        - [ ] Audit Chronicle of War rules alignment (optional discard for mana; currently required).
+        - [x] Audit Chronicle of War rules alignment (optional discard for mana; currently required).
       - [x] Age II Power Champions (verify deck size inclusion).
         - [x] Bannerman.
       - [x] Age III Power (9) — Non-victory (5).
@@ -839,7 +841,7 @@ Done
     - [ ] Bridge trap force-loss trigger.
     - [ ] Wormhole adjacency override.
     - [x] Dice roll gold thresholds.
-    - [ ] Cost override/scaling primitives.
+    - [x] Cost override/scaling primitives.
 - [x] At the end of the market phase we don't see the nice animation and transition for the last player who auto gets it
 - [x] It needs to be much more clear that Done is like "Pass" and won't let you go again
 - [ ] Do a targetted review and cleanup of the codebase, try to find things that aren't being used anymore, are wrong etc... and clean it up, without breaking behavior.

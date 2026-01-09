@@ -18,8 +18,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- (owner: agent5) Add card instance override coverage (cost/initiative/burn) in action-flow tests and update the plan checklist. Files: `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md`. Status: in progress.
-- (owner: agent1) Fix Chronicle of War optional discard + mana gating and add tests. Files: `packages/engine/src/content/cards/power.ts`, `packages/engine/src/card-effects-economy.ts`, `packages/engine/src/card-effects.chronicle-of-war.test.ts`, `implementation_plan.md`, `progress.md`. Status: in progress.
+- (owner: agent4) Allow spectators to close resolved combat overlays by exposing a Close button even in sync mode. Files: `apps/web/src/components/CombatOverlay.tsx`, `implementation_plan.md`, `progress.md`. Status: in progress.
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
 ## Test fixes
@@ -63,6 +62,7 @@
 
 ## Milestone / tasks after third play test progress
 - Fixed Cipher Quiet Study loop by advancing from `round.study` to `round.action` after resolving choices so the block doesn't re-trigger. (File: `packages/engine/src/engine.ts`.) (owner: agent4)
+- Fixed Chronicle of War optional discard + mana gating, with card-effect tests. (Files: `packages/engine/src/content/cards/power.ts`, `packages/engine/src/card-effects-economy.ts`, `packages/engine/src/card-effects.chronicle-of-war.test.ts`, `implementation_plan.md`.) (owner: agent1)
 - Allowed mine counts below player count by assigning home mines to a subset of capitals and keeping placement logic consistent; added coverage. (Files: `packages/engine/src/board-generation.ts`, `packages/engine/src/board-generation.test.ts`.) (owner: agent4) (Overlap note: commit also captured pre-staged Elite Guard card changes in `packages/engine/src/card-effects-units.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/card-effects.elite-guard.test.ts`.)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -107,6 +107,7 @@
 
 ## Milestone After Full Test Play and Thinking progress
 - Tracked per-action decision timing (per-player totals/averages) and surfaced avg/last timing in the sidebar. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/GameScreenSidebar.tsx`.)
+- Marked the setup flow overhaul + combat overlay redesign parent tasks complete now that all subitems are done. (File: `implementation_plan.md`.) (owner: agent3)
 - Added view smoke coverage for setup gating/bridge selection status during starting bridges, and marked the plan item complete. (Files: `packages/engine/src/view.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- view.test.ts`.) (owner: agent3)
 - Updated move resolution to stop early on newly occupied hexes (enemy or stopOnOccupied), so mid-path collisions trigger combat instead of cancelling moves; marked the plan item complete. (Files: `packages/engine/src/card-effects-movement.ts`, `implementation_plan.md`.)
 - Allowed no-op orders (Stall) to be playable while still resolving to a no-op; marked the plan item complete. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.stall.test.ts`, `implementation_plan.md`.)
@@ -319,6 +320,7 @@
 - Rebalanced dark-theme contrast by lifting card/hand surfaces and adding a themed board background + hex strokes for clearer board readability. (Files: `apps/web/src/styles.css`.) (owner: agent2)
 - Restyled phase cue and action reveal overlays for dark theme with warmer panels and higher-contrast text. (Files: `apps/web/src/styles.css`.) (owner: agent2)
 - Applied the dark-fantasy theme to cards/deck views, setup screens, and combat/hand-picker overlays; enabled theme class for non-game views. (Files: `apps/web/src/App.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
+- Added action-flow tests for card instance overrides (cost/initiative/burn) and marked the cost override/scaling primitives checklist complete. (Files: `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- action-flow.test.ts -t "overrides"`.) (owner: agent5) (Overlap note: commit includes pre-existing `implementation_plan.md`/`progress.md` edits from other agents.)
 
 ## Milestone After Full Test Play and Thinking progress
 - Added the gold emoji chip in the market bid HUD to match the resource iconography used elsewhere; updated the plan checklist. (Files: `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.) (owner: agent4) (Overlap note: `progress.md` includes agent2 active-task update.)

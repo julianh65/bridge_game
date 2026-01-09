@@ -8,7 +8,14 @@ import {
 } from "@bridgefront/shared";
 import { describe, expect, it } from "vitest";
 
-import type { ActionDeclaration, BoardState, EdgeKey, GameState, HexKey } from "./types";
+import type {
+  ActionDeclaration,
+  BoardState,
+  CardInstanceOverrides,
+  EdgeKey,
+  GameState,
+  HexKey
+} from "./types";
 import { createBaseBoard } from "./board-generation";
 import { createCardInstance, createCardInstances } from "./cards";
 import { createActionResolutionState } from "./action-flow";
@@ -271,6 +278,37 @@ const addCardToHand = (
   cardDefId: string
 ): { state: GameState; instanceId: string } => {
   const created = createCardInstance(state, cardDefId);
+  const player = created.state.players.find((entry) => entry.id === playerId);
+  if (!player) {
+    throw new Error(`missing player: ${playerId}`);
+  }
+
+  return {
+    state: {
+      ...created.state,
+      players: created.state.players.map((entry) =>
+        entry.id === playerId
+          ? {
+              ...entry,
+              deck: {
+                ...entry.deck,
+                hand: [...entry.deck.hand, created.instanceId]
+              }
+            }
+          : entry
+      )
+    },
+    instanceId: created.instanceId
+  };
+};
+
+const addCardToHandWithOverrides = (
+  state: GameState,
+  playerId: string,
+  cardDefId: string,
+  overrides: CardInstanceOverrides
+): { state: GameState; instanceId: string } => {
+  const created = createCardInstance(state, cardDefId, overrides);
   const player = created.state.players.find((entry) => entry.id === playerId);
   if (!player) {
     throw new Error(`missing player: ${playerId}`);
@@ -2235,6 +2273,125 @@ describe("action flow", () => {
     expect(deployed.hex).toBe(p1Capital);
     expect(deployed.hp).toBe(cardDef.champion.hp);
     expect(deployed.maxHp).toBe(cardDef.champion.hp);
+  });
+
+  it("applies card instance cost overrides when declaring actions", () => {
+    let { state } = setupToActionPhase();
+    state = {
+      ...state,
+      players: state.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              resources: {
+                ...player.resources,
+                mana: 0,
+                gold: 0
+              }
+            }
+          : player
+      )
+    };
+
+    const injected = addCardToHandWithOverrides(state, "p1", "starter.supply_cache", {
+      cost: { mana: 0 }
+    });
+    state = injected.state;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: { kind: "card", cardInstanceId: injected.instanceId }
+      },
+      "p1"
+    );
+
+    const block = state.blocks;
+    if (!block || block.type !== "actionStep.declarations") {
+      throw new Error("expected action declaration block");
+    }
+    expect(block.payload.declarations["p1"]).not.toBeNull();
+    expect(block.waitingFor).not.toContain("p1");
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state");
+    }
+    expect(p1After.resources.mana).toBe(0);
+    expect(p1After.resources.gold).toBe(0);
+  });
+
+  it("uses card instance initiative overrides for action ordering", () => {
+    let { state } = setupToActionPhase();
+    const p1Card = addCardToHandWithOverrides(state, "p1", "starter.supply_cache", {
+      initiative: 999
+    });
+    state = p1Card.state;
+    const p2Card = addCardToHandWithOverrides(state, "p2", "starter.supply_cache", {
+      initiative: 1
+    });
+    state = p2Card.state;
+
+    const declarations: Record<string, ActionDeclaration> = {
+      p1: { kind: "card", cardInstanceId: p1Card.instanceId },
+      p2: { kind: "card", cardInstanceId: p2Card.instanceId }
+    };
+
+    const resolution = createActionResolutionState(state, declarations);
+    const [first, second] = resolution.entries;
+    expect(first).toMatchObject({
+      kind: "card",
+      playerId: "p2",
+      cardInstanceId: p2Card.instanceId
+    });
+    expect(second).toMatchObject({
+      kind: "card",
+      playerId: "p1",
+      cardInstanceId: p1Card.instanceId
+    });
+  });
+
+  it("respects burn overrides when finalizing card plays", () => {
+    let { state } = setupToActionPhase();
+    state = {
+      ...state,
+      players: state.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              resources: {
+                ...player.resources,
+                mana: Math.max(1, player.resources.mana),
+                gold: player.resources.gold
+              }
+            }
+          : player
+      )
+    };
+
+    const injected = addCardToHandWithOverrides(state, "p1", "starter.supply_cache", {
+      burn: true
+    });
+    state = injected.state;
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: { kind: "card", cardInstanceId: injected.instanceId }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+    state = runUntilBlocked(state);
+
+    const p1After = state.players.find((player) => player.id === "p1");
+    if (!p1After) {
+      throw new Error("missing p1 state");
+    }
+    expect(p1After.burned).toContain(injected.instanceId);
+    expect(p1After.deck.discardPile).not.toContain(injected.instanceId);
   });
 
   it("blocks champion play when at the champion limit", () => {
