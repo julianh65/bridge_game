@@ -408,8 +408,8 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 
 ### Milestone / tasks after third play test
 - [ ] could we have, at the start a draw animation like the cards fill and get added to the hand
-- [ ] could we have an animation when we get gold
-- [ ] could we have a small animation when we get a VP
+- [x] could we have an animation when we get gold
+- [x] could we have a small animation when we get a VP
 - [x] make slot 1, slot 2, slot n click the same button to unlock not a seperate unlock button in capital draft
 - [ ] i can still starting bridges up to 3 edges away, make it 2
 - [x] allow me to adjust from config how many forces each faction starts with

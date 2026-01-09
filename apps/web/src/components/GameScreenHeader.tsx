@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from "react";
+
 type GameScreenHeaderProps = {
   isCollapsed: boolean;
   connectionLabel: string;
@@ -39,13 +41,78 @@ export const GameScreenHeader = ({
   localVpTotal,
   onToggle
 }: GameScreenHeaderProps) => {
+  const [goldPulse, setGoldPulse] = useState(false);
+  const [vpPulse, setVpPulse] = useState(false);
+  const previousGold = useRef<number | null>(null);
+  const previousVp = useRef<number | null>(null);
+  const goldPulseTimeout = useRef<number | null>(null);
+  const vpPulseTimeout = useRef<number | null>(null);
+  const pulseDurationMs = 650;
+
+  useEffect(() => {
+    if (localGold === null) {
+      previousGold.current = null;
+      setGoldPulse(false);
+      return;
+    }
+    const prev = previousGold.current;
+    previousGold.current = localGold;
+    if (prev === null || localGold <= prev) {
+      return;
+    }
+    setGoldPulse(true);
+    if (goldPulseTimeout.current) {
+      window.clearTimeout(goldPulseTimeout.current);
+    }
+    goldPulseTimeout.current = window.setTimeout(() => {
+      setGoldPulse(false);
+      goldPulseTimeout.current = null;
+    }, pulseDurationMs);
+  }, [localGold]);
+
+  useEffect(() => {
+    if (localVpTotal === null) {
+      previousVp.current = null;
+      setVpPulse(false);
+      return;
+    }
+    const prev = previousVp.current;
+    previousVp.current = localVpTotal;
+    if (prev === null || localVpTotal <= prev) {
+      return;
+    }
+    setVpPulse(true);
+    if (vpPulseTimeout.current) {
+      window.clearTimeout(vpPulseTimeout.current);
+    }
+    vpPulseTimeout.current = window.setTimeout(() => {
+      setVpPulse(false);
+      vpPulseTimeout.current = null;
+    }, pulseDurationMs);
+  }, [localVpTotal]);
+
+  useEffect(() => {
+    return () => {
+      if (goldPulseTimeout.current) {
+        window.clearTimeout(goldPulseTimeout.current);
+      }
+      if (vpPulseTimeout.current) {
+        window.clearTimeout(vpPulseTimeout.current);
+      }
+    };
+  }, []);
+
   const showConnectionStatus = connectionLabel !== "Live";
   const activePhaseIndex = PHASE_TRACKER_STEPS.findIndex((step) => step.key === phase);
   const resourceChips =
     localGold === null && localVpTotal === null ? null : (
       <div className="game-screen__resources">
         {localGold !== null ? (
-          <div className="resource-chip resource-chip--gold">
+          <div
+            className={`resource-chip resource-chip--gold${
+              goldPulse ? " resource-chip--pulse" : ""
+            }`}
+          >
             <span className="resource-chip__icon" aria-hidden="true">
               🟡
             </span>
@@ -55,7 +122,11 @@ export const GameScreenHeader = ({
           </div>
         ) : null}
         {localVpTotal !== null ? (
-          <div className="resource-chip resource-chip--vp">
+          <div
+            className={`resource-chip resource-chip--vp${
+              vpPulse ? " resource-chip--pulse" : ""
+            }`}
+          >
             <span className="resource-chip__icon" aria-hidden="true">
               🟢
             </span>
