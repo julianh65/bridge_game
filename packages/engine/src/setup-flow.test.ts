@@ -21,6 +21,21 @@ const advanceSetup = (state: GameState): GameState => {
   return applyCommand(state, { type: "AdvanceSetup" }, hostId);
 };
 
+const readyDeckPreview = (state: GameState): GameState => {
+  if (state.blocks?.type !== "setup.deckPreview") {
+    return state;
+  }
+  let nextState = state;
+  for (const player of state.players) {
+    nextState = applyCommand(
+      nextState,
+      { type: "SubmitSetupChoice", payload: { kind: "readyDeckPreview" } },
+      player.id
+    );
+  }
+  return nextState;
+};
+
 const advanceThroughMarket = (state: GameState): GameState => {
   let nextState = state;
 
@@ -68,6 +83,7 @@ describe("setup flow", () => {
     state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.deckPreview");
 
+    state = readyDeckPreview(state);
     state = advanceSetup(state);
     state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.capitalDraft");
@@ -235,6 +251,7 @@ describe("setup flow", () => {
     state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.deckPreview");
 
+    state = readyDeckPreview(state);
     state = advanceSetup(state);
     state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.capitalDraft");
@@ -293,6 +310,7 @@ describe("setup flow", () => {
     state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.deckPreview");
 
+    state = readyDeckPreview(state);
     state = advanceSetup(state);
     state = runUntilBlocked(state);
     expect(state.blocks?.type).toBe("setup.capitalDraft");

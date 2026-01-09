@@ -108,11 +108,21 @@ const resolveFreeStartingCardBlock = (state: GameState): GameState => {
 };
 
 const advanceSetupGate = (state: GameState): GameState => {
-  const hostId = state.players.find((player) => player.seatIndex === 0)?.id;
+  let nextState = state;
+  if (nextState.blocks?.type === "setup.deckPreview") {
+    for (const playerId of nextState.blocks.waitingFor) {
+      nextState = applyCommand(
+        nextState,
+        { type: "SubmitSetupChoice", payload: { kind: "readyDeckPreview" } },
+        playerId
+      );
+    }
+  }
+  const hostId = nextState.players.find((player) => player.seatIndex === 0)?.id;
   if (!hostId) {
     throw new Error("no host available to advance setup");
   }
-  return applyCommand(state, { type: "AdvanceSetup" }, hostId);
+  return applyCommand(nextState, { type: "AdvanceSetup" }, hostId);
 };
 
 const resolveMarketBidBlock = (state: GameState): GameState => {

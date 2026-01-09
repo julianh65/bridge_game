@@ -69,9 +69,9 @@ export const createCapitalDraftBlock = (players: PlayerState[], availableSlots: 
   }
 });
 
-export const createDeckPreviewBlock = (): BlockState => ({
+export const createDeckPreviewBlock = (players: PlayerState[]): BlockState => ({
   type: "setup.deckPreview",
-  waitingFor: [],
+  waitingFor: players.map((player) => player.id),
   payload: {}
 });
 
@@ -328,6 +328,35 @@ export const applySetupChoice = (state: GameState, choice: SetupChoice, playerId
   const block = state.blocks;
   if (!block) {
     throw new Error("no active block to accept setup choice");
+  }
+
+  if (block.type === "setup.deckPreview") {
+    const waitingSet = new Set(block.waitingFor);
+    if (choice.kind === "readyDeckPreview") {
+      if (!waitingSet.has(playerId)) {
+        return state;
+      }
+      waitingSet.delete(playerId);
+    } else if (choice.kind === "unreadyDeckPreview") {
+      if (waitingSet.has(playerId)) {
+        return state;
+      }
+      waitingSet.add(playerId);
+    } else {
+      throw new Error("expected deck preview ready choice");
+    }
+
+    const nextWaitingFor = state.players
+      .map((player) => player.id)
+      .filter((id) => waitingSet.has(id));
+
+    return {
+      ...state,
+      blocks: {
+        ...block,
+        waitingFor: nextWaitingFor
+      }
+    };
   }
 
   if (block.type === "setup.capitalDraft") {

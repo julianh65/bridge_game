@@ -269,6 +269,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
     - [x] Add faction ability copy data (passive + starter spell/champion text) for UI display.
   - [x] Starting deck preview screen (card components) showing faction abilities; all ready -> host advance.
     - [x] Show starter deck composition (counts) + champion/spell callouts.
+    - [x] Require player ready-up before host can advance from deck preview.
   - [x] Map screen with two sub-steps:
     - [x] Capital selection (simultaneous, no turn order).
     - [x] Initial bridge placement: secret selection of two bridges, reveal simultaneously.

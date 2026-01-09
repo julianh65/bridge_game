@@ -48,6 +48,21 @@ const advanceSetup = (state: GameState): GameState => {
   return applyCommand(state, { type: "AdvanceSetup" }, hostId);
 };
 
+const readyDeckPreview = (state: GameState): GameState => {
+  if (state.blocks?.type !== "setup.deckPreview") {
+    return state;
+  }
+  let nextState = state;
+  for (const player of state.players) {
+    nextState = applyCommand(
+      nextState,
+      { type: "SubmitSetupChoice", payload: { kind: "readyDeckPreview" } },
+      player.id
+    );
+  }
+  return nextState;
+};
+
 const pickOpenBridgeEdge = (capital: HexKey, board: BoardState): EdgeKey => {
   const neighbors = neighborHexKeys(capital).filter((key) => Boolean(board.hexes[key]));
   for (const neighbor of neighbors) {
@@ -175,6 +190,7 @@ const setupToActionPhase = (
 
   state = runUntilBlocked(state);
   if (state.blocks?.type === "setup.deckPreview") {
+    state = readyDeckPreview(state);
     state = advanceSetup(state);
     state = runUntilBlocked(state);
   }

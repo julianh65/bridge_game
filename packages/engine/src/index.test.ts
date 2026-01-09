@@ -12,6 +12,6 @@ describe("engine", () => {
 
     expect(next.phase).toBe("setup");
     expect(next.blocks?.type).toBe("setup.deckPreview");
-    expect(next.blocks?.waitingFor).toEqual([]);
+    expect(next.blocks?.waitingFor).toEqual(["p1", "p2"]);
   });
 });

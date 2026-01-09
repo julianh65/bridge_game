@@ -479,6 +479,8 @@ export type LobbyPlayer = {
 };
 
 export type SetupChoice =
+  | { kind: "readyDeckPreview" }
+  | { kind: "unreadyDeckPreview" }
   | { kind: "pickCapital"; hexKey: HexKey }
   | { kind: "unlockCapital" }
   | { kind: "placeStartingBridge"; edgeKey: EdgeKey }

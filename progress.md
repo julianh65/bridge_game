@@ -17,10 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent5
-  scope: require deck preview ready-up before host advance + add ready UI
-  files: packages/engine/src/types.ts, packages/engine/src/setup-flow.ts, packages/engine/src/engine.ts, apps/web/src/components/SetupDeckPreview.tsx, apps/web/src/components/SetupFlow.tsx, apps/web/src/styles.css, packages/engine/src/setup-flow.test.ts, packages/engine/src/action-flow.test.ts, packages/engine/src/smoke.test.ts, packages/engine/src/index.test.ts, implementation_plan.md, progress.md
-  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -77,6 +73,7 @@
 - Slowed action reveal pacing to reduce fast market transitions by extending reveal timing in config. (File: `packages/engine/src/config.ts`.) (owner: agent2)
 - Added setup host-advance gating in the engine (AdvanceSetup command + setup status view), updated setup/action/smoke tests plus server auto-setup + sample-game helpers, and added a host-only Advance Setup button in the lobby; updated the plan checklist. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/action-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/index.ts`, `apps/server/src/server.ts`, `apps/web/src/lib/sample-game.ts`, `apps/web/src/components/Lobby.tsx`, `apps/web/src/App.tsx`, `implementation_plan.md`.)
 - Added a setup deck preview step before capital draft with starter deck counts plus starter spell/champion callouts, and updated setup tests + setup flow UI; marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/view.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/index.ts`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/index.test.ts`, `apps/web/src/components/SetupDeckPreview.tsx`, `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
+- Added deck preview ready-up gating so players must confirm before host advance, with ready/unready setup choices, a ready status panel, and updated setup/action/smoke/index tests. (Files: `packages/engine/src/types.ts`, `packages/engine/src/setup-flow.ts`, `packages/engine/src/engine.ts`, `apps/web/src/components/SetupDeckPreview.tsx`, `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/styles.css`, `packages/engine/src/setup-flow.test.ts`, `packages/engine/src/action-flow.test.ts`, `packages/engine/src/smoke.test.ts`, `packages/engine/src/index.test.ts`, `implementation_plan.md`.)
 - Added faction passive summaries to the setup deck preview sidebar for quick reference before the map draft. (File: `apps/web/src/components/SetupDeckPreview.tsx`.) (owner: agent2)
 - Added basic action order info to the setup deck preview summary. (File: `apps/web/src/components/SetupDeckPreview.tsx`.) (owner: agent2)
 - Restored setup deck preview as the initial setup block (createNewGame now starts at `setup.deckPreview`) and verified setup/index tests. (Files: `packages/engine/src/engine.ts`.) (Test: `npm run -w @bridgefront/engine test -- setup-flow.test.ts index.test.ts`.) (owner: agent2)

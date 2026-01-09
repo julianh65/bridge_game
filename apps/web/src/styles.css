@@ -965,6 +965,48 @@ body.is-game .setup-card-pick__player-row--active {
   gap: 8px;
 }
 
+.setup-deck-preview__ready {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel-soft-alt);
+}
+
+.setup-deck-preview__ready-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.setup-deck-preview__ready-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.setup-deck-preview__players {
+  display: grid;
+  gap: 8px;
+}
+
+.setup-deck-preview__player-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--panel-soft);
+  font-size: 13px;
+}
+
+.setup-deck-preview__player-row--active {
+  border: 1px solid rgba(180, 83, 9, 0.35);
+  background: var(--panel-soft-active);
+}
+
 .setup-flow__host-actions {
   align-self: flex-end;
   display: flex;

@@ -163,7 +163,7 @@ export const createNewGame = (
     powerDecks: { I: [], II: [], III: [] },
     logs: [],
     modifiers: [],
-    blocks: createDeckPreviewBlock(),
+    blocks: createDeckPreviewBlock(players),
     cardsByInstanceId: {},
     winnerPlayerId: null
   };
@@ -446,7 +446,7 @@ export const runUntilBlocked = (state: GameState): GameState => {
     if (!nextState.blocks) {
       return {
         ...nextState,
-        blocks: createDeckPreviewBlock()
+        blocks: createDeckPreviewBlock(nextState.players)
       };
     }
 

@@ -401,7 +401,12 @@ export const SetupFlow = ({
           onSubmitChoice={onSubmitSetupChoice}
         />
 
-        <SetupDeckPreview view={view} playerId={playerId} />
+        <SetupDeckPreview
+          view={view}
+          playerId={playerId}
+          status={status}
+          onSubmitChoice={onSubmitSetupChoice}
+        />
 
         <SetupStartingBridges
           view={view}
