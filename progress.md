@@ -17,6 +17,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- owner: agent4 | scope: add draw-pile-empty economy effects + Spellcaster card/effect (Precise Planning support) | files: packages/engine/src/card-effects.ts, packages/engine/src/card-effects-economy.ts, packages/engine/src/content/cards/age1.ts, implementation_plan.md, progress.md
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -736,6 +737,7 @@ none
 - Added a multi-edge targeting summary panel with min/max hints and a clear action for multi-bridge cards. (File: `apps/web/src/components/GameScreen.tsx`.)
 - Gated card play on multi-edge/multi-path min/max target counts so the Play Card action stays disabled until counts are valid. (File: `apps/web/src/components/GameScreen.tsx`.)
 - Synced `SUPPORTED_EFFECTS` with effect resolvers so attrition/slow/gainMarketCards/pullingStrings cards remain playable. (Files: `packages/engine/src/card-effects.ts`, `implementation_plan.md`.)
+- Marked movement/adjacency modifiers and multi-target/multi-stack actions as complete in the plan. (File: `implementation_plan.md`.)
 - Deferred manual hit assignment UI for Focus Fire/Tactical Hand, disabled Focus Fire + Grand Strategist in card lists until the UI lands, and noted a future task in the plan. (Files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.)
 
 ## Milestone 7.5 progress

@@ -405,7 +405,7 @@ Start going through the rules_draft and adding the logic for the different types
 - [ ] Add draw/round-end triggers (on-draw penalties, end-of-round VP awards, marked champion payouts).
   - [x] Engine hooks for on-card-draw + end-of-round modifier events (cards/cleanup integration).
 - [x] Add targeting immunities and marked/contract flags (Ward, Immunity Field, Marked for Coin).
-- [ ] Add movement/adjacency modifiers (bridge lockdown/trap, wormhole links, tunnel network).
+- [x] Add movement/adjacency modifiers (bridge lockdown/trap, wormhole links, tunnel network).
   - [x] Bridge lockdown effect (lock a bridge until end of round).
   - [x] Bridge trap (first enemy crossing loses a force).
   - [x] Wormhole links (treat two hexes as adjacent for a round).
@@ -415,7 +415,7 @@ Start going through the rules_draft and adding the logic for the different types
   - [x] Set to Skirmish retreat-on-battle modifier.
   - [x] Focus Fire hit assignment control.
   - [x] Tactical Hand hit assignment control.
-- [ ] Add multi-target/multi-stack actions (move two stacks, build multiple bridges, deploy to multiple mines).
+- [x] Add multi-target/multi-stack actions (move two stacks, build multiple bridges, deploy to multiple mines).
 - [ ] Add variable VP sources (Victory +2, center-based VP, timer VP).
 - [ ] Add champion recall + removal effects (return champion to hand, on-death penalties).
 - [ ] Add deckcraft primitives: draw/discard mixes, discard up to N, burn from hand, conditional draw, scry/topdeck (Quick Study, Cycle Notes, Hard Mulligan, Tome of Orders, War Chronicle, Precise Planning, Small Hands, Spellcaster).
