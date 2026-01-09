@@ -2672,7 +2672,7 @@ body.is-game .game-card[data-type="Order"] {
 
 .game-card__rules {
   margin: 0;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--ink);
   line-height: 1.4;
   text-align: center;
@@ -4888,7 +4888,7 @@ body.is-game .game-card--market .card-tag {
 .market-card__rules,
 .game-card--market .game-card__rules {
   margin: 0;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--ink);
   display: -webkit-box;
   -webkit-line-clamp: 5;
