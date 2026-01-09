@@ -711,6 +711,7 @@ none
 - Added Focus Fire hit-assignment support (next-battle modifier + combat policy) with bodyguard-aware targeting and tests; updated `implementation_plan.md`. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/champions.ts`, `packages/engine/src/types.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.)
 - Added Shock Drill first-battle force hit-face boost with tests; updated `implementation_plan.md`. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.shock-drill.test.ts`, `implementation_plan.md`.)
 - Added Frenzy combat modifier effect (dice bonus + self-damage) with tests; updated `implementation_plan.md`. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.) (Overlap note: `implementation_plan.md` also had pre-existing edits.)
+- Enforced champion target picker constraints (`requiresFriendlyChampion`, `maxDistance`) for Marked for Coin + Execution Order and updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 
 ## Milestone 7.5 progress
 - Added a card-art manifest + helper, GameCard art rendering, and a CLI script to generate diffusion art and update the manifest. (Files: `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`.)

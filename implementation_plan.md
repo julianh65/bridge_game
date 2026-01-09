@@ -364,6 +364,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Can the forces on the map have the background image as well? same desaturated style of the board hexes, pick a random soldier type image for now
 - [x] During the small action preview phase on the board while cards are being played keep the highlighting paths and indicators on the board during that little pause between 
 - [x] Can we make the amount of cards we draw configurable from the config
+- [ ] Make whether or not they get the first "free card add" during setup phase configurable and make sure it doesn't break the tests
 
 ### Refactor Milestone
 
@@ -464,7 +465,7 @@ Start going through the rules_draft and adding the logic for the different types
 - [ ] UI: add `hexPair` targeting flow (pick two hexes, show linkage preview, enforce allowSame/maxDistanceFromFriendlyChampion) for Wormhole Link + Wormhole Gate.
 - [ ] UI: support compound targets for edge+move cards (Bridge Crew: `edgeKey` + optional `from/to` or `path`) with a stepper or dual-mode picker.
 - [ ] UI: enforce `stopOnOccupied` during path selection (Column Advance): block path continuation past occupied hexes and surface a hint.
-- [ ] UI: enforce champion targeting constraints in picker (`requiresFriendlyChampion`, `maxDistance`) for Marked for Coin + Execution Order.
+- [x] UI: enforce champion targeting constraints in picker (`requiresFriendlyChampion`, `maxDistance`) for Marked for Coin + Execution Order.
 - [ ] UI: Mortar Shot targeting helpers (force-range gating + scatter preview ring) and block invalid picks.
 - [ ] UI: manual hit assignment overlay for Focus Fire + Tactical Hand (pick targets for assigned hits, show remaining hits).
 - [ ] Engine: decide on no-op orders (Stall) — allow playable no-effect cards or remove the card.

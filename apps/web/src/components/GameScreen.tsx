@@ -2591,6 +2591,49 @@ export const GameScreen = ({
       if (owner !== "self" && owner !== "enemy" && owner !== "any") {
         return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
+      const requiresFriendlyChampion = targetSpec.requiresFriendlyChampion === true;
+      const maxDistance =
+        typeof targetSpec.maxDistance === "number" ? targetSpec.maxDistance : NaN;
+      const friendlyChampionCoords =
+        requiresFriendlyChampion && localPlayerId
+          ? Object.values(board.units)
+              .filter(
+                (unit) => unit.kind === "champion" && unit.ownerPlayerId === localPlayerId
+              )
+              .map((unit) => {
+                try {
+                  return parseHexKey(unit.hex);
+                } catch {
+                  return null;
+                }
+              })
+              .filter(
+                (coord): coord is { q: number; r: number } => coord !== null
+              )
+          : [];
+      const hasFriendlyChampionWithinRange = (hexKey: string) => {
+        if (!requiresFriendlyChampion) {
+          return true;
+        }
+        if (!Number.isFinite(maxDistance) || maxDistance < 0) {
+          return false;
+        }
+        if (friendlyChampionCoords.length === 0) {
+          return false;
+        }
+        let targetCoord: { q: number; r: number } | null = null;
+        try {
+          targetCoord = parseHexKey(hexKey);
+        } catch {
+          return false;
+        }
+        if (!targetCoord) {
+          return false;
+        }
+        return friendlyChampionCoords.some(
+          (coord) => axialDistance(coord, targetCoord) <= maxDistance
+        );
+      };
       for (const unit of Object.values(board.units)) {
         if (unit.kind !== "champion") {
           continue;
@@ -2601,9 +2644,13 @@ export const GameScreen = ({
         if (owner === "enemy" && unit.ownerPlayerId === localPlayerId) {
           continue;
         }
-        if (boardHexes[unit.hex]) {
-          validTargets.add(unit.hex);
+        if (!boardHexes[unit.hex]) {
+          continue;
         }
+        if (!hasFriendlyChampionWithinRange(unit.hex)) {
+          continue;
+        }
+        validTargets.add(unit.hex);
       }
     }
 
