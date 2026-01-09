@@ -498,6 +498,26 @@ export const GameScreen = ({
     return map;
   }, [localPlayerId, view.public.board.hexes, view.public.modifiers]);
 
+  const bridgeBypassUnitIds = useMemo(() => {
+    const ids = new Set<string>();
+    if (!localPlayerId) {
+      return ids;
+    }
+    for (const modifier of view.public.modifiers) {
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== localPlayerId) {
+        continue;
+      }
+      if (!modifier.id.endsWith(".bridge_bypass")) {
+        continue;
+      }
+      const unitId = modifier.data?.unitId;
+      if (typeof unitId === "string" && unitId.length > 0) {
+        ids.add(unitId);
+      }
+    }
+    return ids;
+  }, [localPlayerId, view.public.modifiers]);
+
   const reinforceOptions = useMemo(() => {
     if (!localPlayerId) {
       return [];
@@ -2318,6 +2338,75 @@ export const GameScreen = ({
       const hex = boardHexes[key];
       return hex ? !wouldExceedTwoPlayers(hex, localPlayerId) : false;
     };
+    const getLocalUnitsAt = (key: string) => {
+      const hex = boardHexes[key];
+      if (!hex) {
+        return { forceUnits: [] as string[], championUnits: [] as string[] };
+      }
+      const unitIds = hex.occupants[localPlayerId] ?? [];
+      const forceUnits: string[] = [];
+      const championUnits: string[] = [];
+      for (const unitId of unitIds) {
+        const unit = board.units[unitId];
+        if (!unit) {
+          continue;
+        }
+        if (unit.kind === "force") {
+          forceUnits.push(unitId);
+        } else if (unit.kind === "champion") {
+          championUnits.push(unitId);
+        }
+      }
+      return { forceUnits, championUnits };
+    };
+    const canBypassBridges = (
+      key: string,
+      forceCount: number | null,
+      includeChampions?: boolean,
+      allowChampionOnly = false
+    ) => {
+      if (bridgeBypassUnitIds.size === 0) {
+        return false;
+      }
+      const { forceUnits, championUnits } = getLocalUnitsAt(key);
+      if (championUnits.length === 0) {
+        return false;
+      }
+      if (!championUnits.every((unitId) => bridgeBypassUnitIds.has(unitId))) {
+        return false;
+      }
+      const include =
+        typeof includeChampions === "boolean" ? includeChampions : forceCount == null;
+      if (!include) {
+        return false;
+      }
+      if (forceCount === null || forceCount === undefined) {
+        if (forceUnits.length === 0) {
+          return true;
+        }
+        return allowChampionOnly;
+      }
+      if (!Number.isFinite(forceCount)) {
+        return false;
+      }
+      const normalized = Math.floor(forceCount);
+      if (normalized > 0) {
+        return false;
+      }
+      return normalized === 0;
+    };
+    const resolveRequiresBridge = (
+      key: string,
+      baseRequiresBridge: boolean,
+      forceCount: number | null,
+      includeChampions?: boolean,
+      allowChampionOnly = false
+    ) => {
+      if (!baseRequiresBridge) {
+        return false;
+      }
+      return !canBypassBridges(key, forceCount, includeChampions, allowChampionOnly);
+    };
     const neighbors = (key: string) =>
       neighborHexKeys(key).filter((neighbor) => hasHex(neighbor));
     const getLinkedNeighbors = (key: string) => {
@@ -2426,8 +2515,9 @@ export const GameScreen = ({
         if (!isOccupied(key)) {
           continue;
         }
+        const requiresBridge = resolveRequiresBridge(key, true, null, true, true);
         const canMarchFrom = getMoveNeighbors(key).some((neighbor) =>
-          canMoveBetween(key, neighbor, true)
+          canMoveBetween(key, neighbor, requiresBridge)
         );
         if (canMarchFrom) {
           validTargets.add(key);
@@ -2439,8 +2529,15 @@ export const GameScreen = ({
       if (!marchFrom || !hasHex(marchFrom) || !isOccupied(marchFrom)) {
         return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
       }
+      const requiresBridge = resolveRequiresBridge(
+        marchFrom,
+        true,
+        marchForceCount,
+        resolvedMarchIncludeChampions,
+        false
+      );
       for (const neighbor of getMoveNeighbors(marchFrom)) {
-        if (!canMoveBetween(marchFrom, neighbor, true)) {
+        if (!canMoveBetween(marchFrom, neighbor, requiresBridge)) {
           continue;
         }
         validTargets.add(neighbor);
@@ -2521,7 +2618,7 @@ export const GameScreen = ({
         }
       }
       const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
-      const requiresBridge =
+      const baseRequiresBridge =
         moveStackEffect && moveStackEffect.requiresBridge === false
           ? false
           : targetSpec.requiresBridge !== false;
@@ -2530,6 +2627,13 @@ export const GameScreen = ({
         if (!isOccupied(key)) {
           continue;
         }
+        const requiresBridge = resolveRequiresBridge(
+          key,
+          baseRequiresBridge,
+          cardMoveForceCount,
+          cardMoveIncludeChampions,
+          cardMoveSupportsSplit
+        );
         const hasDestination = getMoveNeighbors(key).some((neighbor) =>
           canMoveBetween(key, neighbor, requiresBridge)
         );
@@ -2540,6 +2644,13 @@ export const GameScreen = ({
       }
       const fromKey = pendingStackFrom;
       if (fromKey && hasHex(fromKey)) {
+        const requiresBridge = resolveRequiresBridge(
+          fromKey,
+          baseRequiresBridge,
+          cardMoveForceCount,
+          cardMoveIncludeChampions,
+          false
+        );
         for (const neighbor of getMoveNeighbors(fromKey)) {
           if (!canMoveBetween(fromKey, neighbor, requiresBridge)) {
             continue;
@@ -2568,7 +2679,7 @@ export const GameScreen = ({
         }
       }
       const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
-      const requiresBridge =
+      const baseRequiresBridge =
         moveStackEffect && moveStackEffect.requiresBridge === false
           ? false
           : targetSpec.requiresBridge !== false;
@@ -2587,6 +2698,13 @@ export const GameScreen = ({
           if (!isOccupied(key)) {
             continue;
           }
+          const requiresBridge = resolveRequiresBridge(
+            key,
+            baseRequiresBridge,
+            cardMoveForceCount,
+            cardMoveIncludeChampions,
+            cardMoveSupportsSplit
+          );
           const hasStep = getMoveNeighbors(key).some((neighbor) =>
             canMoveBetween(key, neighbor, requiresBridge)
           );
@@ -2634,6 +2752,13 @@ export const GameScreen = ({
             startHexKeys: Array.from(startTargets)
           };
         }
+        const requiresBridge = resolveRequiresBridge(
+          pendingPath[0] ?? last,
+          baseRequiresBridge,
+          cardMoveForceCount,
+          cardMoveIncludeChampions,
+          false
+        );
         for (const neighbor of getMoveNeighbors(last)) {
           if (!canMoveBetween(last, neighbor, requiresBridge)) {
             continue;
@@ -3104,14 +3229,20 @@ export const GameScreen = ({
     localPlayerId,
     view.public.board,
     linkedNeighborsByHex,
+    bridgeBypassUnitIds,
     boardPickMode,
     marchFrom,
+    marchForceCount,
+    resolvedMarchIncludeChampions,
     pendingEdgeStart,
     pendingStackFrom,
     pendingPath,
     pendingHexPair,
     selectedCardDef,
     cardTargetKind,
+    cardMoveForceCount,
+    cardMoveIncludeChampions,
+    cardMoveSupportsSplit,
     moveStackEffect,
     edgeMoveMode,
     targetRecord
