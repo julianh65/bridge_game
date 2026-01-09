@@ -3187,6 +3187,10 @@ body.is-game .action-reveal__meta {
   color: rgba(248, 227, 199, 0.7);
 }
 
+body.is-game .action-reveal__rules {
+  color: rgba(255, 236, 214, 0.85);
+}
+
 body.is-game .action-reveal__targets {
   color: rgba(255, 236, 214, 0.92);
 }
@@ -3221,6 +3225,13 @@ body.is-game .action-reveal__targets--empty {
 .action-reveal__meta {
   font-size: 12px;
   color: var(--muted);
+}
+
+.action-reveal__rules {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #3a2f22;
 }
 
 .action-reveal__targets {

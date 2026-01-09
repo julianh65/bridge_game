@@ -36,6 +36,7 @@ export const ActionRevealOverlay = ({ reveal, durationMs }: ActionRevealOverlayP
     ["--action-reveal-duration" as string]: `${durationMs}ms`
   } as CSSProperties;
   const showCardPreview = Boolean(reveal.cardDef);
+  const rulesText = reveal.cardDef?.rulesText ?? null;
 
   return (
     <div className="action-reveal" role="status" aria-live="polite" style={revealStyle}>
@@ -66,6 +67,7 @@ export const ActionRevealOverlay = ({ reveal, durationMs }: ActionRevealOverlayP
               <strong>{reveal.cardName}</strong>
             </div>
             {metaLine ? <div className="action-reveal__meta">{metaLine}</div> : null}
+            {rulesText ? <p className="action-reveal__rules">{rulesText}</p> : null}
             {reveal.targetLines.length > 0 ? (
               <ul className="action-reveal__targets">
                 {reveal.targetLines.map((line, index) => (
