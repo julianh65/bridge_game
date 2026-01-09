@@ -70,6 +70,7 @@
 - Audited Bridge Charter power card vs `rules_draft.md` and noted alignment in the plan. (File: `implementation_plan.md`.) (owner: agent1)
 - Audited Dispatch to Front power card vs `rules_draft.md` and noted alignment in the plan. (File: `implementation_plan.md`.) (owner: agent1)
 - Audited Chronicle of War power card vs `rules_draft.md` and added a plan note to address the optional discard + mana behavior mismatch. (File: `implementation_plan.md`.) (owner: agent1)
+- Audited Forge Sketch power card vs `rules_draft.md` and added a plan note about the optional discard mismatch. (File: `implementation_plan.md`.) (owner: agent1)
 
 ## Refactor Milestone progress
 - Extracted market/collection overlay rendering into `apps/web/src/components/GameScreenOverlays.tsx` and shared the market winner highlight type; updated the refactor milestone checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenOverlays.tsx`, `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.)
