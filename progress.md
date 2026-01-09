@@ -69,6 +69,7 @@
 - Added card rules text to the action reveal overlay so card descriptions are visible during reveals; updated the plan checklist. (Files: `apps/web/src/components/ActionRevealOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 - Enabled champion stat blocks in the action reveal preview when a champion card is revealed; updated the plan checklist. (Files: `apps/web/src/components/ActionRevealOverlay.tsx`, `implementation_plan.md`.) (owner: agent2)
 - Allowed spectators to close resolved combat overlays by showing a Close button even when synced; updated the plan checklist. (Files: `apps/web/src/components/CombatOverlay.tsx`, `implementation_plan.md`.) (owner: agent4)
+- Prevented the market overlay from reopening after market ends by skipping outro holds during overlay blockers and only holding when explicitly set; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Marked the draw pile UI as unordered in the deck viewer (labels + flow). (Files: `apps/web/src/components/DeckViewer.tsx`, `implementation_plan.md`.) (owner: agent3)
 - Clarified Quick Move rules text to emphasize very low initiative. (File: `packages/engine/src/content/cards/starter.ts`.) (owner: agent3)
 ## Planning updates
