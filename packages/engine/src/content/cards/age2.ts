@@ -387,6 +387,23 @@ export const GUILD_FAVOR: CardDef = {
   ]
 };
 
+export const CYCLE_PROTOCOL: CardDef = {
+  id: "age2.cycle_protocol",
+  name: "Cycle Protocol",
+  rulesText: "Draw 3, discard 2.",
+  type: "Order",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 25,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [
+    { kind: "drawCards", count: 3 },
+    { kind: "discardFromHand", count: 2 }
+  ]
+};
+
 export const INSIGHT: CardDef = {
   id: "age2.insight",
   name: "Insight",
@@ -867,6 +884,7 @@ export const AGE2_CARDS: CardDef[] = [
   SMUGGLING_RING,
   REFINED_INGOTS,
   GUILD_FAVOR,
+  CYCLE_PROTOCOL,
   INSIGHT,
   CLEAN_CUTS,
   STALL,

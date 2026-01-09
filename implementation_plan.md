@@ -420,6 +420,7 @@ Start going through the rules_draft and adding the logic for the different types
 - [ ] Add champion recall + removal effects (return champion to hand, on-death penalties).
 - [ ] Add deckcraft primitives: draw/discard mixes, discard up to N, burn from hand, conditional draw, scry/topdeck (Quick Study, Cycle Notes, Hard Mulligan, Tome of Orders, War Chronicle, Precise Planning, Small Hands, Spellcaster).
   - [x] Precise Planning (draw pile empty conditional draw + mana).
+  - [x] Spellcaster (draw 1; if it is a Spell, draw 2 more).
 - [ ] Add conditional economy triggers: battle-won gold, enemy capital bonuses, opponent gold steal, other-players battle gold (Spoils of War, Smuggling Ring, Market Squeeze, Pulling Strings).
   - [x] Spoils of War (battle-win gold).
   - [x] Smuggling Ring (enemy capital bonus gold).
