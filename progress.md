@@ -34,6 +34,7 @@
 - Bolded numeric values in card rules text and marked the plan item complete. (Files: `apps/web/src/components/GameCard.tsx`, `implementation_plan.md`.) (owner: agent1) (Overlap note: includes agent2 active-task line and agent3 Scout Report progress entry already present in `progress.md`.)
 - Slightly increased card rules text size and marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent1) (Overlap note: includes agent4 plan/progress updates for champion-only move fixes.)
 - Removed dice-roll animations from forge/power reveal prompts; kept a short reveal pause with plain copy. (File: `apps/web/src/components/CollectionPanel.tsx`.)
+- Roll-off ties now award the highest die roll (not lowest), with market roll-off tests updated; marked the plan item complete. (Files: `packages/engine/src/market.ts`, `packages/engine/src/market.test.ts`, `implementation_plan.md`.) (owner: agent5)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.

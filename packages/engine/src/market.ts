@@ -496,8 +496,8 @@ export const resolveMarketRollOff = (state: GameState): GameState => {
   }
 
   const rounds = [...rollOff.rounds, roundValues];
-  const lowest = Math.min(...Object.values(roundValues));
-  const tied = rollOff.eligiblePlayerIds.filter((playerId) => roundValues[playerId] === lowest);
+  const highest = Math.max(...Object.values(roundValues));
+  const tied = rollOff.eligiblePlayerIds.filter((playerId) => roundValues[playerId] === highest);
 
   if (tied.length > 1) {
     const nextRollOff: MarketRollOffState = {
