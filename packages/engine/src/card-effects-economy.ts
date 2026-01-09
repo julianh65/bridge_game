@@ -283,6 +283,12 @@ export const resolveEconomyEffect = (
     }
     case "drawCards": {
       const count = typeof effect.count === "number" ? effect.count : 0;
+      if (effect.requiresDiscardTargets === true) {
+        const targetIds = getCardInstanceTargets(targets ?? null);
+        if (targetIds.length === 0) {
+          return nextState;
+        }
+      }
       return drawCards(nextState, playerId, count);
     }
     case "discardFromHand": {

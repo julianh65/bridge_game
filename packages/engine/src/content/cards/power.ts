@@ -121,8 +121,8 @@ export const FORGE_SKETCH: CardDef = {
   burn: false,
   targetSpec: { kind: "none" },
   effects: [
-    { kind: "discardFromHand", count: 1 },
-    { kind: "drawCards", count: 2 }
+    { kind: "discardFromHand", count: 1, optional: true },
+    { kind: "drawCards", count: 2, requiresDiscardTargets: true }
   ],
   victoryPoints: 1
 };
