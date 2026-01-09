@@ -37,6 +37,7 @@ export const ActionRevealOverlay = ({ reveal, durationMs }: ActionRevealOverlayP
   } as CSSProperties;
   const showCardPreview = Boolean(reveal.cardDef);
   const rulesText = reveal.cardDef?.rulesText ?? null;
+  const showChampionStats = Boolean(reveal.cardDef?.champion);
 
   return (
     <div className="action-reveal" role="status" aria-live="polite" style={revealStyle}>
@@ -57,7 +58,7 @@ export const ActionRevealOverlay = ({ reveal, durationMs }: ActionRevealOverlayP
                 showRules={false}
                 showTags={false}
                 showFaction={false}
-                showChampionStats={false}
+                showChampionStats={showChampionStats}
                 showStats={true}
               />
             </div>
