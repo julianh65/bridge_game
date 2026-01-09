@@ -71,6 +71,7 @@ type BoardViewProps = {
   highlightHexKeys?: string[];
   validHexKeys?: string[];
   previewEdgeKeys?: string[];
+  previewHexPair?: { from: string; to: string } | null;
   isTargeting?: boolean;
   actionAnimations?: BoardActionAnimation[];
   actionAnimationDurationMs?: number;
@@ -438,6 +439,7 @@ export const BoardView = ({
   highlightHexKeys = [],
   validHexKeys = [],
   previewEdgeKeys = [],
+  previewHexPair = null,
   isTargeting = false,
   actionAnimations = [],
   actionAnimationDurationMs,
@@ -572,6 +574,19 @@ export const BoardView = ({
     }
     return segments;
   }, [previewEdgeKeys, hexCenters]);
+
+  const previewHexLink = useMemo(() => {
+    if (!previewHexPair) {
+      return null;
+    }
+    const from = hexCenters.get(previewHexPair.from);
+    const to = hexCenters.get(previewHexPair.to);
+    if (!from || !to) {
+      return null;
+    }
+    const shortened = shortenSegment(from, to, BRIDGE_INSET);
+    return { from: shortened.from, to: shortened.to };
+  }, [hexCenters, previewHexPair]);
 
   const bridgeSegmentByKey = useMemo(() => {
     const map = new Map<string, (typeof bridgeSegments)[number]>();
@@ -1451,6 +1466,18 @@ export const BoardView = ({
           />
         </g>
       ))}
+
+      {previewHexLink ? (
+        <g className="hex-link-preview" aria-hidden="true">
+          <line
+            className="hex-link-preview__line"
+            x1={previewHexLink.from.x}
+            y1={previewHexLink.from.y}
+            x2={previewHexLink.to.x}
+            y2={previewHexLink.to.y}
+          />
+        </g>
+      ) : null}
 
       {bridgeSegments.map((bridge) => {
         if (bridge.length <= 0.01) {

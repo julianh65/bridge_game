@@ -19,6 +19,7 @@ type GameScreenBoardSectionProps = {
   highlightHexKeys: string[];
   validHexKeys: string[];
   previewEdgeKeys: string[];
+  previewHexPair?: { from: string; to: string } | null;
   isTargeting: boolean;
   onHexClick?: (hexKey: string) => void;
   onEdgeClick: (edgeKey: string) => void;
@@ -41,6 +42,7 @@ export const GameScreenBoardSection = ({
   highlightHexKeys,
   validHexKeys,
   previewEdgeKeys,
+  previewHexPair,
   isTargeting,
   onHexClick,
   onEdgeClick,
@@ -71,6 +73,7 @@ export const GameScreenBoardSection = ({
             highlightHexKeys={highlightHexKeys}
             validHexKeys={validHexKeys}
             previewEdgeKeys={previewEdgeKeys}
+            previewHexPair={previewHexPair}
             isTargeting={isTargeting}
             onHexClick={onHexClick}
             onEdgeClick={onEdgeClick}

@@ -6831,6 +6831,24 @@ body.is-game .btn-secondary:active:not(:disabled) {
   filter: drop-shadow(0 0 6px rgba(37, 99, 235, 0.28));
 }
 
+.hex-link-preview {
+  pointer-events: none;
+}
+
+.hex-link-preview__line {
+  stroke: rgba(251, 191, 36, 0.85);
+  stroke-width: 3;
+  stroke-dasharray: 6 6;
+  opacity: 0.9;
+  animation: targetPulse 1.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(217, 119, 6, 0.35));
+}
+
+body.is-game .hex-link-preview__line {
+  stroke: rgba(253, 224, 71, 0.9);
+  filter: drop-shadow(0 0 10px rgba(217, 119, 6, 0.45));
+}
+
 .bridge--p0 {
   color: var(--player-color-0);
 }
