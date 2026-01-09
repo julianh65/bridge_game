@@ -904,7 +904,7 @@ export const AGE2_CARDS: CardDef[] = [
   COORDINATED_ADVANCE,
   RAPID_REDEPLOY,
   BREAKTHROUGH_LINE,
-  SET_TO_SKIRMISH,
+  // TODO: Re-enable Set to Skirmish once combat retreat flow is fixed.
   BATTALION_CONTRACT,
   RALLY_WHERE_YOU_STAND,
   FORWARD_BARRACKS,

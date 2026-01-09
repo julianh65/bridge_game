@@ -18,6 +18,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 - Added deployment docs covering PartyKit + Vercel setup and redeploy steps. (Files: `docs/deploy.md`, `docs/dev.md`.) (owner: codex)
 - Stopped ignoring card art assets so images can be deployed with the web build. (File: `.gitignore`.) (owner: codex)
+- Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
 ## Blockers
@@ -74,7 +75,7 @@
 - Clarified Quick Move rules text to emphasize very low initiative. (File: `packages/engine/src/content/cards/starter.ts`.) (owner: agent3)
 - Capital draft slots now toggle unlock by clicking the same slot button (removed the separate unlock button). (Files: `apps/web/src/components/SetupCapitalDraft.tsx`, `implementation_plan.md`.) (owner: agent3)
 - Applied per-faction starting force counts from config during setup (fallback to default faction), added config docs + setup-flow coverage; marked plan item complete. (Files: `packages/engine/src/setup-flow.ts`, `packages/engine/src/setup-flow.test.ts`, `docs/configuration.md`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- setup-flow.test.ts -t "startingForcesByFaction"`.) (owner: agent5)
-- Removed gradient backgrounds from mana/gold cost chips on cards. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent1)
+- Disabled Set to Skirmish in the Age II deck and left a TODO to re-enable once fixed. (Files: `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.) (owner: agent1)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.

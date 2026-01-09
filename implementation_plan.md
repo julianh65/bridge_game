@@ -425,7 +425,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] in the collection phase make sure we show other players like what this person is collecting, like Waiting for Player1 to Pick from Forge
 - [ ] the collection phase also needs to show everyone who collected how much gold from the mines
 - [x] Major: spectators can’t exit the battle screen once it’s over
-- [ ] set to skirmish doesn’t work, just remove it for now and add it as a future todo
+- [x] set to skirmish doesn’t work, just remove it for now and add it as a future todo
 - [ ] forge scrap should show you all cards anywhere in your deck
 - [ ] remove the yellow and blue gradient background color on cards of the mana and gold icons
 - [ ] on the player display in the table make the numbers of everyones gold, mana, and hand slightly larger and easier to read without messing up the flow
