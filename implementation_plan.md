@@ -376,7 +376,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] the reroll map button sends you back one screen
 - [ ] when you select a slot 1 or slot 2 during the capital draft it would be nice if it shows up on the board somehow so we can see who’s where
 	- [ ] also the button shouldn’t disappear it should just be like taken or not and unclickable if someone takes it
-- [ ] in the quiet study i don’t see the champion stats
+- [x] in the quiet study i don’t see the champion stats
 - [ ] hitting done in quiet study doesn’t work nothing happens
 - [x] the rejoin button needs a bit of like top margin or something, it’s squished
 - [ ] right now with the split there’s no option to move 0 forces and move just the champion
@@ -398,6 +398,8 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] game breaking: after several rolls sometimes the forces keep rolling the same numbers? and then the whole fight just stalls out?
 - [ ] why is there a dice roll for revealing forge draw / power deck?
 - [ ] power deck for age 2 isn’t there yet
+- [ ] Any number in a card description can we bold it?
+- [ ] make the card text slightly slightly larger
 
 ### Refactor Milestone
 

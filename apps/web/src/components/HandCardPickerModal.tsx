@@ -101,6 +101,7 @@ export const HandCardPickerModal = ({
                     showRules={true}
                     showArt={true}
                     showStats={true}
+                    showChampionStats={true}
                   />
                 </button>
               );

@@ -17,8 +17,11 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- [agent4] Implement Siege Writ effect + targeting constraint (adjacent to any capital) and add Age III card def; update plan. Files: `packages/engine/src/card-effects-combat.ts`, `packages/engine/src/card-effects-targeting.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age3.ts`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`. Status: in progress.
+- [in progress] owner: agent5; scope: enable map-based combat retreat selection + highlight retreat hexes; files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `implementation_plan.md`.
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
+- Enabled champion stat blocks in the Quiet Study hand picker. (File: `apps/web/src/components/HandCardPickerModal.tsx`.) (owner: agent2)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
