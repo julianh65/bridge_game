@@ -39,6 +39,26 @@ export const GHOST_STEP: CardDef = {
   effects: [{ kind: "moveStack", maxDistance: 2, requiresBridge: false }]
 };
 
+export const FINAL_PUSH: CardDef = {
+  id: "age3.final_push",
+  name: "Final Push",
+  rulesText:
+    "Move 1 stack up to 1 along Bridges. If it wins a battle this round, draw 2 at Cleanup.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 1 },
+  initiative: 55,
+  burn: false,
+  targetSpec: {
+    kind: "path",
+    owner: "self",
+    maxDistance: 1,
+    requiresBridge: true
+  },
+  effects: [{ kind: "battleWinDraw", drawCount: 2 }, { kind: "moveStack", maxDistance: 1 }]
+};
+
 export const DEEP_RESERVES: CardDef = {
   id: "age3.deep_reserves",
   name: "Deep Reserves",
@@ -431,6 +451,7 @@ export const CAPITAL_BREAKER: CardDef = {
 export const AGE3_CARDS: CardDef[] = [
   GRAND_MANEUVER,
   GHOST_STEP,
+  FINAL_PUSH,
   DEEP_RESERVES,
   FORWARD_LEGION,
   ROYAL_MINT,
