@@ -814,7 +814,7 @@ Done
     - [x] Sidebar sections, intel cards, player rows, and empty-state surfaces now use dark overrides.
     - [x] Hand/action panels, card surfaces, and command table rows now use theme variables.
 - [x] For cards with victory points we need to denote how many VP's they're worth on the card
-- [ ] We need to add logic and look for escalating champion costs as per the rules
+- [x] We need to add logic and look for escalating champion costs as per the rules
 - [x] Slightly make the images a bit bigger and for all images it will crop, but I want it to crop like 10% higher than it is now, that is to say i want it centered 10% higher than it is now for all cards
 - [x] Make the cards slightly more readable, try to maximize space usage, make the font slightly larger, and it should be way more obvious the mana and gold cost, you can even put them in the bottom left and right corner like in hearthstone, to that end the entire hand area on the bottom can be made like 10% taller to accomodate
 - [x] Confirm that champion targetting cards have a UI and work such that you can target a specific champion if there are two in the same hex

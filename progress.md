@@ -284,6 +284,7 @@
 
 ## Milestone 9 progress
 - Added a rejoin-last-room action on the Home screen that uses stored rejoin tokens for quick reconnection; updated the plan checklist. (Files: `apps/web/src/components/Home.tsx`, `apps/web/src/lib/room-client.ts`, `implementation_plan.md`.)
+- Verified champion gold cost scaling is already implemented and checked off the Milestone 9 checklist item. (File: `implementation_plan.md`.) (owner: agent1)
 - Shifted GameCard art cropping upward (~10%) with a slight zoom across variants; updated the plan checklist. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
 - Improved GameCard readability with larger fonts, cost chips in bottom corners, and taller hand cards; updated the plan checklist. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 - Added champion-target selection UI with an in-hand list and explicit selection indicator to disambiguate multiple champions on one hex; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
