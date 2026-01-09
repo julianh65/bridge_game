@@ -15,7 +15,7 @@ import {
   topdeckCardFromHand
 } from "./cards";
 import { emit } from "./events";
-import { getCardInstanceTargets } from "./card-effects-targets";
+import { getCardInstanceTargets, getPlayerIdTarget } from "./card-effects-targets";
 
 const addGold = (state: GameState, playerId: PlayerID, amount: number): GameState => {
   if (!Number.isFinite(amount) || amount <= 0) {
@@ -31,6 +31,27 @@ const addGold = (state: GameState, playerId: PlayerID, amount: number): GameStat
             resources: {
               ...player.resources,
               gold: player.resources.gold + amount
+            }
+          }
+        : player
+    )
+  };
+};
+
+const adjustGold = (state: GameState, playerId: PlayerID, delta: number): GameState => {
+  if (!Number.isFinite(delta) || delta === 0) {
+    return state;
+  }
+
+  return {
+    ...state,
+    players: state.players.map((player) =>
+      player.id === playerId
+        ? {
+            ...player,
+            resources: {
+              ...player.resources,
+              gold: Math.max(0, player.resources.gold + delta)
             }
           }
         : player
@@ -147,7 +168,6 @@ const drawCardsWithIds = (
   return { state: nextState, cards };
 };
 
-
 export const resolveEconomyEffect = (
   state: GameState,
   playerId: PlayerID,
@@ -160,6 +180,26 @@ export const resolveEconomyEffect = (
     case "gainGold": {
       const amount = typeof effect.amount === "number" ? effect.amount : 0;
       return addGold(nextState, playerId, amount);
+    }
+    case "stealGold": {
+      const amount = typeof effect.amount === "number" ? effect.amount : 0;
+      if (amount <= 0) {
+        return nextState;
+      }
+      const targetPlayerId = getPlayerIdTarget(targets ?? null);
+      if (!targetPlayerId || targetPlayerId === playerId) {
+        return nextState;
+      }
+      const target = nextState.players.find((entry) => entry.id === targetPlayerId);
+      if (!target) {
+        return nextState;
+      }
+      const stealAmount = Math.min(target.resources.gold, Math.floor(amount));
+      if (stealAmount <= 0) {
+        return nextState;
+      }
+      nextState = adjustGold(nextState, targetPlayerId, -stealAmount);
+      return adjustGold(nextState, playerId, stealAmount);
     }
     case "gainGoldIfEnemyCapital": {
       const amount = typeof effect.amount === "number" ? effect.amount : 0;
@@ -322,7 +362,6 @@ export const resolveEconomyEffect = (
       }
       return drawCards(nextState, playerId, count);
     }
-
     case "gainManaIfDrawPileEmpty": {
       const amount =
         typeof effect.amount === "number" ? Math.max(0, Math.floor(effect.amount)) : 0;
@@ -334,7 +373,6 @@ export const resolveEconomyEffect = (
       }
       return addMana(nextState, playerId, amount);
     }
-
     case "spellcaster": {
       const firstDraw = drawCardsWithIds(nextState, playerId, 1);
       nextState = firstDraw.state;
@@ -350,7 +388,6 @@ export const resolveEconomyEffect = (
       const extraDraw = drawCardsWithIds(nextState, playerId, 2);
       return extraDraw.state;
     }
-
     case "topdeckFromHand": {
       const count = typeof effect.count === "number" ? Math.max(0, Math.floor(effect.count)) : 1;
       if (count <= 0) {
@@ -442,8 +479,18 @@ export const resolveEconomyEffect = (
         return nextState;
       }
       const drawCount = Math.min(count, deck.length);
-      const drawn = deck.slice(0, drawCount);
-      const remaining = deck.slice(drawCount);
+      let rngState = nextState.rngState;
+      const remaining = deck.slice();
+      const drawn: typeof deck = [];
+      for (let i = 0; i < drawCount; i += 1) {
+        const roll = randInt(rngState, 0, remaining.length - 1);
+        rngState = roll.next;
+        const [picked] = remaining.splice(roll.value, 1);
+        if (picked) {
+          drawn.push(picked);
+        }
+      }
+      nextState = { ...nextState, rngState };
       const created = createCardInstances(nextState, drawn);
       nextState = created.state;
       nextState = {

@@ -480,6 +480,8 @@ Start going through the rules_draft and adding the logic for the different types
   - [x] Gold Plated Armor: prevent champion damage at gold cost for the round.
 - [x] Add cost overrides/free-play effects (Last Contract, A Hero Joins the Battle).
 - [ ] Add random card generation effects (Black Market Pull, Forge Miracle).
+  - [x] Black Market Pull draws random cards from the market deck (not top-of-deck).
+  - [ ] Forge Miracle: grant Age I market cards with burn + cost/initiative overrides.
 - [ ] Add burn keyword enforcement for granted cards (Forge Miracle, power deck burn effects). and an animation on burn
 - [x] Bridge crew is supposed to let you immediately move over the bridge you are going to construct
 

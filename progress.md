@@ -18,7 +18,6 @@
 
 ## Active tasks
 - (owner: agent4) Add Bridge Pivot multi-edge UI validation (1 existing + 1 new bridge sharing a hex) and update target gating. Files: `apps/web/src/components/GameScreen.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress) (overlap: `apps/web/src/components/GameScreen.tsx` with agent2)
-- (owner: agent5) Make gainMarketCards draw random cards (Black Market Pull accuracy); update plan note. Files: `packages/engine/src/card-effects-economy.ts`, `implementation_plan.md`, `progress.md`. (status: in progress) (overlap: `packages/engine/src/card-effects-economy.ts` has in-flight edits)
 ## Test fixes
 - Updated engine tests for market bid winners, Quiet Study hand-size behavior, and setup flow expectations (deck preview gating + card totals) to match current config/flow. (Files: `packages/engine/src/market.test.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`.) (owner: agent1)
 ## Milestone After Second Full Test Play and Thinking progress
@@ -745,6 +744,7 @@ none
 - Verified engine coverage with `npm run -w @bridgefront/engine test`.
 - Added targeting immunity modifiers (Ward/Immunity Field), attached Marked-for-Coin flags to champions, and added action-flow tests for enemy targeting blocks.
 - Added modifier hooks for on-card-draw and end-of-round events, wired draw/cleanup dispatch, and covered with engine tests.
+- Made `gainMarketCards` draw random cards from the market deck (Black Market Pull now random) and advanced RNG state; updated plan note. (File: `packages/engine/src/card-effects-economy.ts`.) (owner: agent5) (Overlap note: file had in-flight edits.)
 - Added lock-bridge card effect support (locks an existing bridge until end of round) with action-flow coverage; marked subtask in `implementation_plan.md`. (Overlap note: touched `implementation_plan.md` while agent3 active.)
 - Added destroy-bridge card effect support for edge-targeted cards with action-flow coverage; marked subtask in `implementation_plan.md`. (Overlap note: touched `implementation_plan.md` while agent3/agent2 active.)
 - Added Age I champion cards for Skirmisher Captain + Bridge Runner, with on-deploy force add and pathfinder movement support, plus engine tests.
