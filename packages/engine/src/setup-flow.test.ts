@@ -122,14 +122,15 @@ describe("setup flow", () => {
 
     const starter = resolveStarterFactionCards(DEFAULT_FACTION_ID);
     const expectedDeckSize = starter.deck.length + 1;
-    const expectedDrawPile = expectedDeckSize - 5;
+    const expectedHandSize = DEFAULT_CONFIG.HAND_DRAW_SIZE;
+    const expectedDrawPile = expectedDeckSize - (expectedHandSize - 1);
 
     const p1 = state.players.find((player) => player.id === "p1");
     const p2 = state.players.find((player) => player.id === "p2");
     expect(p1?.factionId).toBe(DEFAULT_FACTION_ID);
     expect(p2?.factionId).toBe(DEFAULT_FACTION_ID);
-    expect(p1?.deck.hand.length).toBe(6);
-    expect(p2?.deck.hand.length).toBe(6);
+    expect(p1?.deck.hand.length).toBe(expectedHandSize);
+    expect(p2?.deck.hand.length).toBe(expectedHandSize);
     expect(p1?.deck.drawPile.length).toBe(expectedDrawPile);
     expect(p2?.deck.drawPile.length).toBe(expectedDrawPile);
 
@@ -226,7 +227,8 @@ describe("setup flow", () => {
     expect(p1AfterReset?.resources.mana).toBe(DEFAULT_CONFIG.MAX_MANA);
     expect(p2AfterReset?.resources.mana).toBe(DEFAULT_CONFIG.MAX_MANA);
     const totalCards = Object.keys(state.cardsByInstanceId).length;
-    expect(totalCards).toBe(26);
+    const expectedTotalCards = state.players.length * (expectedDeckSize + 3);
+    expect(totalCards).toBe(expectedTotalCards);
 
     const finalP1 = state.players.find((player) => player.id === "p1");
     const finalP2 = state.players.find((player) => player.id === "p2");
@@ -380,6 +382,7 @@ describe("setup flow", () => {
     ]);
 
     state = runUntilBlocked(state);
+    state = readyDeckPreview(state);
     state = advanceSetup(state);
     state = runUntilBlocked(state);
     const slots = state.blocks?.payload.availableSlots ?? [];
@@ -443,6 +446,7 @@ describe("setup flow", () => {
     ]);
 
     state = runUntilBlocked(state);
+    state = readyDeckPreview(state);
     state = advanceSetup(state);
     state = runUntilBlocked(state);
     const slots = state.blocks?.payload.availableSlots ?? [];

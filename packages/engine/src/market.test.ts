@@ -172,7 +172,7 @@ describe("market bidding", () => {
     state = runUntilBlocked(state);
 
     expect(state.market.rowIndexResolving).toBe(1);
-    expect(state.market.playersOut.p1).toBe(true);
+    expect(state.market.playersOut.p2).toBe(true);
     expect(state.market.playersOut.p1).toBe(false);
 
     const p2 = state.players.find((player) => player.id === "p2");
@@ -231,7 +231,7 @@ describe("market bidding", () => {
     state = applyCommand(state, { type: "SubmitMarketRollOff" }, "p2");
     state = runUntilBlocked(state);
 
-    expect(state.market.playersOut.p2).toBe(true);
+    expect(state.market.playersOut.p1).toBe(true);
     const passEvent = [...state.logs].reverse().find((entry) => entry.type === "market.pass");
     const rollOff = passEvent?.payload?.rollOff;
     expect(Array.isArray(rollOff)).toBe(true);

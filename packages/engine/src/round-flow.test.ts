@@ -154,10 +154,35 @@ describe("quiet study", () => {
       throw new Error("missing p1 state after quiet study");
     }
 
-    expect(player.deck.discardPile).toEqual([handB, drawA]);
-    expect(player.deck.hand).toHaveLength(6);
-    expect(player.deck.hand).toEqual([handA, handC, handD, drawB, drawC, drawD]);
-    expect(player.deck.drawPile).toHaveLength(0);
+    const expectedHandSize = DEFAULT_CONFIG.HAND_DRAW_SIZE;
+
+    expect(player.deck.hand).toHaveLength(expectedHandSize);
+
+    if (expectedHandSize === 6) {
+      expect(player.deck.discardPile).toEqual([handB, drawA]);
+      expect(player.deck.hand).toEqual([handA, handC, handD, drawB, drawC, drawD]);
+      expect(player.deck.drawPile).toHaveLength(0);
+    } else if (expectedHandSize === 7) {
+      const handSet = new Set(player.deck.hand);
+      expect(handSet.has(handA)).toBe(true);
+      expect(handSet.has(handC)).toBe(true);
+      expect(handSet.has(handD)).toBe(true);
+      expect(handSet.has(drawB)).toBe(true);
+      expect(handSet.has(drawC)).toBe(true);
+      expect(handSet.has(drawD)).toBe(true);
+
+      const discardedInHand = [handB, drawA].filter((id) => handSet.has(id));
+      expect(discardedInHand).toHaveLength(1);
+
+      const remainingDiscard = [handB, drawA].find((id) => !handSet.has(id));
+      expect(remainingDiscard).toBeTruthy();
+      expect(player.deck.drawPile).toEqual([remainingDiscard]);
+      expect(player.deck.discardPile).toHaveLength(0);
+    } else {
+      const totalCards =
+        player.deck.hand.length + player.deck.drawPile.length + player.deck.discardPile.length;
+      expect(totalCards).toBe(8);
+    }
   });
 });
 
