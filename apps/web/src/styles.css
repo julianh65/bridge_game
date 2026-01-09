@@ -421,6 +421,10 @@ h1 {
   flex-wrap: wrap;
 }
 
+.home__actions + .home__actions {
+  margin-top: 12px;
+}
+
 .home__panel {
   display: grid;
   gap: 14px;

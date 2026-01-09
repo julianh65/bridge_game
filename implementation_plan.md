@@ -367,6 +367,38 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Can we make the amount of cards we draw configurable from the config
 - [x] Make whether or not they get the first "free card add" during setup phase configurable and make sure it doesn't break the tests
 
+
+### Milestone After Second Full Test Play and Thinking
+### Tasks
+
+- [ ] in the setup phase the connected and waiting pills mess up the flow and the left side info is completely squished, maybe replace the waiting with just an x or check red or green, and connected pill can go above or below
+- [ ] need to remove one core deck card: probably scout report
+- [ ] the reroll map button sends you back one screen
+- [ ] when you select a slot 1 or slot 2 during the capital draft it would be nice if it shows up on the board somehow so we can see who’s where
+	- [ ] also the button shouldn’t disappear it should just be like taken or not and unclickable if someone takes it
+- [ ] in the quiet study i don’t see the champion stats
+- [ ] hitting done in quiet study doesn’t work nothing happens
+- [x] the rejoin button needs a bit of like top margin or something, it’s squished
+- [ ] right now with the split there’s no option to move 0 forces and move just the champion
+- [ ] there’s an edge case with skystriker ace and other cards that move without bridges where you should be allowed to, if you just select them, move them with more options
+- [ ] right now if there’s just a champion in the hex the force market still shows, it should just be the champion marker
+- [ ] certain cards won’t show like i did scout report and it didn’t show up in the action show phase
+- [ ] cards that are being hovered over sometimes don’t move “on top” of other cards in z axis in hand, it works on the first round but after you play cards I think it stops working?
+- [ ] after the last action while the actions are showing the market phase modal instantly pops up covering everything
+- [ ] we should make it higher dice roll wins the card
+- [ ] bridge crew card pop up affects ui flow of hand area and pushes all cards up
+- [ ] I shrank the radii and adjusted the capital slots in the config, the board generation algorithm could be reworked slightly to try to make it more fair and reduce massive empty chances or one spawn that’s particularly bad, the mine placement is fine more the forges have to be fair, especially on 5 player maps, I get that it’s hard though, maybe relax the rule (but try to not prefer it) such that forges are allowed to go next to the center
+- [ ] reduce the range of bridges you can place in the starting bridge setup from 3 to 2
+- [ ] the retreat options need to not just list the cell you need to be able to pick on the map which hex you retreat to if you pick that option
+	- [ ] and the retreat shouldn’t be on a separate screen it should be something you click on the main panel, and it should make it clear in the button that you still do one round of combat
+- [ ] the scout report hand picker UI instantly pops up not letting that player see what happened on the board during the action reveal part
+- [ ] the collection modal also instantly pops up not letting you see what happened during the action phase
+- [ ] can’t play banner of sparks power card
+- [ ] between rounds if you click march once we go to the next round the march action is still selected
+- [ ] game breaking: after several rolls sometimes the forces keep rolling the same numbers? and then the whole fight just stalls out?
+- [ ] why is there a dice roll for revealing forge draw / power deck?
+- [ ] power deck for age 2 isn’t there yet
+
 ### Refactor Milestone
 
 Note: hold off on doing these refactors until I specifically instruct
