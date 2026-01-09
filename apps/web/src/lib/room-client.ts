@@ -43,6 +43,7 @@ export type CombatSyncState = {
   roundIndex: number;
   readyByPlayerId: Record<PlayerID, boolean>;
   phaseStartAt: number | null;
+  stage: "idle" | "rolling" | "assigned";
 };
 
 export type CombatSyncMap = Record<string, CombatSyncState>;

@@ -292,8 +292,8 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
    - [x] Each champion should also be represented by a circle and should have their stats and dice under them (unrolled) it should be obvious their health
    - [x] Then each player clicks roll and all the dice roll
    - [x] at the bottom it shows the cumulative hits each side did
-   - [ ] then both players hit like “next” and the engine randomly assigns hits, putting x’s over forces and displaying how many hits were assigned to the champions
-   - [ ] then players hit next again and the forces that were hit are removed and the champions take damage and the loop continues again where they roll again
+   - [x] then both players hit like “next” and the engine randomly assigns hits, putting x’s over forces and displaying how many hits were assigned to the champions
+   - [x] then players hit next again and the forces that were hit are removed and the champions take damage and the loop continues again where they roll again
  - [x] Each consecutive round shouldn’t be like a new div / container appended to the bottom, the UI should just update to reflect the changes
  - [x] Right now there are issues with syncing, it should show who has rolled and who hasn’t and the outcomes should only show after both players hit roll and they should be synchronized in terms of going to the next round of the battle or retreating for all players
  - [x] Make combat overlay timing configurable (roll lock/assign/done/auto-close) and align server sync with config.

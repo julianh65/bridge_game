@@ -336,8 +336,8 @@ export const CombatOverlay = ({
         onClose();
         return;
       }
-      if (onRequestRoll && rollRoundIndex < sequence.rounds.length) {
-        onRequestRoll(rollRoundIndex);
+      if (onRequestRoll) {
+        onRequestRoll(combatSync.roundIndex);
       }
       return;
     }
@@ -384,6 +384,7 @@ export const CombatOverlay = ({
   }, [serverTimeOffset, syncTick]);
   const hasSync = Boolean(combatSync && combatSync.sequenceId === sequence.id);
   const syncInfo = hasSync ? combatSync : null;
+  const syncStage = syncInfo?.stage ?? "idle";
   const maxRoundIndex = sequence.rounds.length - 1;
   const syncRoundIndexRaw = syncInfo ? syncInfo.roundIndex : null;
   const syncRoundIndex =
@@ -391,25 +392,24 @@ export const CombatOverlay = ({
       ? Math.min(syncRoundIndexRaw ?? 0, maxRoundIndex)
       : null;
   const syncElapsed =
-    syncInfo && syncInfo.phaseStartAt !== null
+    syncInfo && syncStage === "rolling" && syncInfo.phaseStartAt !== null
       ? Math.max(0, syncNow - syncInfo.phaseStartAt)
       : null;
   const syncPhase =
-    syncElapsed === null
-      ? null
+    syncStage !== "rolling" || syncElapsed === null
+      ? syncStage === "assigned"
+        ? "assigned"
+        : null
       : syncElapsed < rollLockMs
         ? "rolling"
-        : syncElapsed < rollAssignMs
-          ? "locked"
-          : "assigned";
-  const syncRoundDone = syncElapsed !== null && syncElapsed >= rollDoneMs;
-  const hasMoreRounds = syncInfo ? syncInfo.roundIndex < sequence.rounds.length - 1 : false;
-  const readyForNextRound = Boolean(syncInfo && syncRoundDone && hasMoreRounds);
+        : "locked";
+  const syncRollDone =
+    syncStage === "rolling" && syncElapsed !== null && syncElapsed >= rollDoneMs;
   const isResolving = hasSync
-    ? Boolean(syncPhase) && !syncRoundDone
+    ? syncStage === "rolling" && !syncRollDone
     : Boolean(roundStage);
   const canAdvance = hasSync
-    ? Boolean(syncInfo && syncInfo.roundIndex < sequence.rounds.length) && !isResolving
+    ? Boolean(syncInfo && syncInfo.roundIndex <= sequence.rounds.length) && !isResolving
     : revealedRounds < sequence.rounds.length && !isResolving;
   const currentRoundIndex = hasSync
     ? syncRoundIndex
@@ -422,9 +422,9 @@ export const CombatOverlay = ({
     currentRoundIndex !== null ? sequence.rounds[currentRoundIndex] : null;
   const isResolved = hasSync
     ? Boolean(
-        syncRoundDone &&
-          currentRoundIndex !== null &&
-          currentRoundIndex >= sequence.rounds.length - 1
+        syncStage === "idle" &&
+          syncRoundIndexRaw !== null &&
+          syncRoundIndexRaw >= sequence.rounds.length
       )
     : revealedRounds >= sequence.rounds.length && !roundStage;
   const roundPhase = hasSync
@@ -451,15 +451,34 @@ export const CombatOverlay = ({
   }, [autoCloseMs, onClose, isResolved, sequence.rounds.length]);
   const showHits = roundPhase === "locked" || roundPhase === "assigned";
   const showHitMarkers = roundPhase === "assigned";
-  const stageLabel =
-    roundPhase === "waiting"
+  const stageLabel = hasSync
+    ? syncStage === "idle"
+      ? "Awaiting rolls"
+      : syncStage === "rolling"
+        ? syncRollDone
+          ? "Awaiting hit assignment"
+          : syncPhase === "rolling"
+            ? "Rolling"
+            : "Locked"
+        : "Hit assignment"
+    : roundPhase === "waiting"
       ? "Awaiting rolls"
       : roundPhase === "rolling"
         ? "Rolling"
         : roundPhase === "locked"
           ? "Locked"
           : "Hit assignment";
-  const pendingHitsLabel = roundPhase === "waiting" ? "Awaiting roll" : "Rolling...";
+  const pendingHitsLabel = hasSync
+    ? syncStage === "idle"
+      ? "Awaiting roll"
+      : syncStage === "rolling"
+        ? syncRollDone
+          ? "Awaiting assignment"
+          : "Rolling..."
+        : "Assigning..."
+    : roundPhase === "waiting"
+      ? "Awaiting roll"
+      : "Rolling...";
   const attackersHaveUnits = Boolean(
     currentRound?.attackers.units && currentRound.attackers.units.length > 0
   );
@@ -482,18 +501,17 @@ export const CombatOverlay = ({
   const rawLocalReady = Boolean(
     viewerId && syncInfo?.readyByPlayerId && syncInfo.readyByPlayerId[viewerId]
   );
-  const localReady = readyForNextRound ? false : rawLocalReady;
-  const rollRoundIndex = syncInfo
-    ? readyForNextRound
-      ? syncInfo.roundIndex + 1
-      : syncInfo.roundIndex
-    : 0;
+  const localReady = rawLocalReady;
   const canRequestRoll =
     Boolean(syncInfo) &&
     isLocalParticipant &&
     !localReady &&
-    (!syncInfo?.phaseStartAt || syncRoundDone) &&
-    rollRoundIndex < sequence.rounds.length;
+    !isResolved &&
+    (syncStage === "idle"
+      ? syncInfo.roundIndex < sequence.rounds.length
+      : syncStage === "rolling"
+        ? syncRollDone
+        : syncStage === "assigned");
 
   let rollLabel = "Roll dice";
   let rollDisabled = false;
@@ -504,21 +522,20 @@ export const CombatOverlay = ({
     } else if (isResolved) {
       rollLabel = "Close";
       rollDisabled = false;
-    } else if (syncInfo?.phaseStartAt && !syncRoundDone) {
-      rollLabel =
-        syncPhase === "rolling"
-          ? "Rolling..."
-          : syncPhase === "locked"
-            ? "Locking..."
-            : "Assigning...";
-      rollDisabled = true;
     } else if (localReady) {
       rollLabel = "Waiting for opponent";
       rollDisabled = true;
+    } else if (syncStage === "rolling" && !syncRollDone) {
+      rollLabel = syncPhase === "rolling" ? "Rolling..." : "Locking...";
+      rollDisabled = true;
+    } else if (syncStage === "rolling" && syncRollDone) {
+      rollLabel = "Assign hits";
+      rollDisabled = !canRequestRoll;
+    } else if (syncStage === "assigned") {
+      rollLabel = "Resolve hits";
+      rollDisabled = !canRequestRoll;
     } else if (syncInfo) {
-      rollLabel = readyForNextRound
-        ? `Next round ${rollRoundIndex + 1}`
-        : `Roll round ${rollRoundIndex + 1}`;
+      rollLabel = `Roll round ${syncInfo.roundIndex + 1}`;
       rollDisabled = !canRequestRoll;
     }
   } else if (isResolving) {
@@ -731,9 +748,17 @@ export const CombatOverlay = ({
       return null;
     }
     const ready = Boolean(syncInfo.readyByPlayerId[playerId]);
+    if (syncStage === "rolling" && !syncRollDone) {
+      return <span className="combat-ready combat-ready--ready">Rolling</span>;
+    }
+    const label = ready
+      ? syncStage === "idle"
+        ? "Rolled"
+        : "Ready"
+      : "Waiting";
     return (
       <span className={`combat-ready${ready ? " combat-ready--ready" : ""}`}>
-        {ready ? "Rolled" : "Waiting"}
+        {label}
       </span>
     );
   };

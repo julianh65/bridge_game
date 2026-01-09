@@ -92,6 +92,7 @@ type CombatSyncState = {
   roundIndex: number;
   readyByPlayerId: Record<PlayerID, boolean>;
   phaseStartAt: number | null;
+  stage: "idle" | "rolling" | "assigned";
 };
 
 const MIN_PLAYERS = 2;
@@ -566,7 +567,8 @@ export default class Server implements Party.Server {
         playerIds,
         roundIndex: 0,
         readyByPlayerId,
-        phaseStartAt: null
+        phaseStartAt: null,
+        stage: "idle"
       };
       this.combatSyncById.set(sequenceId, sync);
       this.combatSyncOrder.push(sequenceId);
@@ -994,29 +996,72 @@ export default class Server implements Party.Server {
     }
 
     const now = Date.now();
+    const rollDoneMs = this.state.config.COMBAT_ROLL_DONE_MS ?? COMBAT_ROLL_DONE_MS;
+    const stage = sync.stage ?? "idle";
+    if (roundIndex < sync.roundIndex) {
+      this.sendError(connection, "combat round already resolved");
+      return;
+    }
+    if (roundIndex > sync.roundIndex + 1) {
+      this.sendError(connection, "combat round out of range");
+      return;
+    }
+
+    const rollElapsed =
+      stage === "rolling" && sync.phaseStartAt ? now - sync.phaseStartAt : null;
+    const rollDone = rollElapsed !== null && rollElapsed >= rollDoneMs;
+
     if (roundIndex > sync.roundIndex) {
-      const rollDoneMs = this.state.config.COMBAT_ROLL_DONE_MS ?? COMBAT_ROLL_DONE_MS;
-      if (!sync.phaseStartAt || now - sync.phaseStartAt < rollDoneMs) {
+      if (stage !== "assigned") {
         this.sendError(connection, "combat round is still resolving");
         return;
       }
       sync.roundIndex = roundIndex;
+      sync.stage = "idle";
       sync.phaseStartAt = null;
       sync.readyByPlayerId = Object.fromEntries(
         sync.playerIds.map((playerId) => [playerId, false])
       );
-    } else if (roundIndex < sync.roundIndex) {
-      this.sendError(connection, "combat round already resolved");
-      return;
-    }
-
-    if (!sync.phaseStartAt) {
+    } else if (stage === "idle") {
       sync.readyByPlayerId[meta.playerId] = true;
       const allReady = sync.playerIds.every(
         (playerId) => sync.readyByPlayerId[playerId]
       );
       if (allReady) {
+        sync.stage = "rolling";
         sync.phaseStartAt = now;
+        sync.readyByPlayerId = Object.fromEntries(
+          sync.playerIds.map((playerId) => [playerId, false])
+        );
+      }
+    } else if (stage === "rolling") {
+      if (!rollDone) {
+        this.sendError(connection, "combat round is still resolving");
+        return;
+      }
+      sync.readyByPlayerId[meta.playerId] = true;
+      const allReady = sync.playerIds.every(
+        (playerId) => sync.readyByPlayerId[playerId]
+      );
+      if (allReady) {
+        sync.stage = "assigned";
+        sync.phaseStartAt = null;
+        sync.readyByPlayerId = Object.fromEntries(
+          sync.playerIds.map((playerId) => [playerId, false])
+        );
+      }
+    } else {
+      sync.readyByPlayerId[meta.playerId] = true;
+      const allReady = sync.playerIds.every(
+        (playerId) => sync.readyByPlayerId[playerId]
+      );
+      if (allReady) {
+        sync.roundIndex += 1;
+        sync.stage = "idle";
+        sync.phaseStartAt = null;
+        sync.readyByPlayerId = Object.fromEntries(
+          sync.playerIds.map((playerId) => [playerId, false])
+        );
       }
     }
 
