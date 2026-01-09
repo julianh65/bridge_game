@@ -483,13 +483,21 @@ export const SetupFlow = ({
                   </span>
                   {showSetupStatus ? (
                     <span
-                      className={`status-pill ${
-                        setupWaiting.has(player.id)
-                          ? "status-pill--waiting"
-                          : "status-pill--ready"
+                      className={`seat__setup-indicator ${
+                        setupWaiting.has(player.id) ? "is-waiting" : "is-ready"
                       }`}
+                      title={
+                        setupWaiting.has(player.id)
+                          ? "Waiting on setup choice"
+                          : "Ready for setup"
+                      }
+                      aria-label={
+                        setupWaiting.has(player.id)
+                          ? "Waiting on setup choice"
+                          : "Ready for setup"
+                      }
                     >
-                      {setupWaiting.has(player.id) ? "Waiting" : "Ready"}
+                      {setupWaiting.has(player.id) ? "x" : "ok"}
                     </span>
                   ) : null}
                 </div>
