@@ -267,7 +267,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] Lobby waiting room view for join/ready state.
   - [x] Faction selection screen with faction abilities visible; host advances once all lock.
     - [x] Add faction ability copy data (passive + starter spell/champion text) for UI display.
-  - [ ] Starting deck preview screen (card components) showing faction abilities; all ready -> host advance.
+  - [x] Starting deck preview screen (card components) showing faction abilities; all ready -> host advance.
     - [x] Show starter deck composition (counts) + champion/spell callouts.
   - [x] Map screen with two sub-steps:
     - [x] Capital selection (simultaneous, no turn order).

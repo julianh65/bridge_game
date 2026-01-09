@@ -17,6 +17,10 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- owner: agent4
+  scope: track action-step decision timing + surface in GameView/sidebar
+  files: packages/engine/src/types.ts, packages/engine/src/engine.ts, packages/engine/src/action-flow.ts, packages/engine/src/view.ts, apps/web/src/components/GameScreenSidebar.tsx, implementation_plan.md, progress.md
+  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -75,6 +79,7 @@
 - Added faction passive summaries to the setup deck preview sidebar for quick reference before the map draft. (File: `apps/web/src/components/SetupDeckPreview.tsx`.) (owner: agent2)
 - Added basic action order info to the setup deck preview summary. (File: `apps/web/src/components/SetupDeckPreview.tsx`.) (owner: agent2)
 - Restored setup deck preview as the initial setup block (createNewGame now starts at `setup.deckPreview`) and verified setup/index tests. (Files: `packages/engine/src/engine.ts`.) (Test: `npm run -w @bridgefront/engine test -- setup-flow.test.ts index.test.ts`.) (owner: agent2)
+- Added setup-phase readiness pills in the setup players list to show who is waiting vs ready for the current step. (File: `apps/web/src/components/SetupFlow.tsx`.) (owner: agent2)
 - Updated action-flow test setup to advance past deck preview before capital draft; action-flow suite passes again. (File: `packages/engine/src/action-flow.test.ts`.) (Test: `npm run -w @bridgefront/engine test -- action-flow.test.ts`.) (owner: agent2)
 - Widened setup layout so the players panel fills its grid column beside deck preview/capital draft instead of hugging the far edge. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Rebalanced setup layout so the players panel stays narrow on the right while setup panels get the main column width. (File: `apps/web/src/styles.css`.) (owner: agent2)

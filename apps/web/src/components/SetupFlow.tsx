@@ -214,6 +214,10 @@ export const SetupFlow = ({
     );
   }, [mapPreview.capitals]);
   const showMapPreview = setup?.type === "setup.capitalDraft";
+  const setupWaiting = useMemo(() => {
+    return new Set(setupStatus?.waitingForPlayerIds ?? []);
+  }, [setupStatus]);
+  const showSetupStatus = Boolean(setupStatus);
 
   return (
     <section className="lobby setup-flow">
@@ -443,6 +447,17 @@ export const SetupFlow = ({
                   >
                     {player.connected ? "Connected" : "Offline"}
                   </span>
+                  {showSetupStatus ? (
+                    <span
+                      className={`status-pill ${
+                        setupWaiting.has(player.id)
+                          ? "status-pill--waiting"
+                          : "status-pill--ready"
+                      }`}
+                    >
+                      {setupWaiting.has(player.id) ? "Waiting" : "Ready"}
+                    </span>
+                  ) : null}
                 </div>
               </li>
             ))}
