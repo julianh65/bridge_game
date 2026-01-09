@@ -73,6 +73,7 @@ export type GameConfig = {
   marketPreviewByRound: Record<number, number>;
   freeStartingCardEnabled: boolean;
   freeStartingCardPool: CardDefId[];
+  startingForcesByFaction?: Record<string, number>;
 };
 
 export type ResourceState = {

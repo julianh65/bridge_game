@@ -61,11 +61,12 @@ const getFreeStartingCardWaitingFor = (
 };
 
 const resolveStartingForces = (config: GameState["config"], factionId: string): number => {
-  const configured = config.startingForcesByFaction[factionId];
+  const startingForcesByFaction = config.startingForcesByFaction ?? {};
+  const configured = startingForcesByFaction[factionId];
   if (Number.isFinite(configured)) {
     return Math.max(0, Math.floor(configured));
   }
-  const fallback = config.startingForcesByFaction[DEFAULT_FACTION_ID];
+  const fallback = startingForcesByFaction[DEFAULT_FACTION_ID];
   if (Number.isFinite(fallback)) {
     return Math.max(0, Math.floor(fallback));
   }
