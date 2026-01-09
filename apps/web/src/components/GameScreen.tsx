@@ -1840,6 +1840,14 @@ export const GameScreen = ({
     setPendingStackFrom(null);
     setPendingPath([]);
   };
+  const clearMultiEdgeTargets = () => {
+    const nextTargets = targetRecord ? { ...targetRecord } : {};
+    delete nextTargets.edgeKey;
+    delete nextTargets.edgeKeys;
+    const hasTargets = Object.keys(nextTargets).length > 0;
+    setCardTargetsRaw(hasTargets ? JSON.stringify(nextTargets) : "");
+    setPendingEdgeStart(null);
+  };
 
   const clearMultiPathTargets = () => {
     const nextTargets = targetRecord ? { ...targetRecord } : {};
@@ -3088,6 +3096,59 @@ export const GameScreen = ({
             hexLabels[edgeMoveTo] ?? edgeMoveTo
           }`
         : null;
+  const multiEdgeTargets = useMemo(() => {
+    if (cardTargetKind !== "multiEdge") {
+      return [];
+    }
+    return getTargetStringArray(targetRecord, "edgeKeys");
+  }, [cardTargetKind, targetRecord]);
+  const multiEdgeLimits = useMemo(() => {
+    if (!selectedCardDef || cardTargetKind !== "multiEdge") {
+      return null;
+    }
+    const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
+    const minEdgesRaw =
+      typeof targetSpec.minEdges === "number" ? Math.floor(targetSpec.minEdges) : null;
+    const maxEdgesRaw =
+      typeof targetSpec.maxEdges === "number" ? Math.floor(targetSpec.maxEdges) : null;
+    const minEdges =
+      minEdgesRaw !== null && Number.isFinite(minEdgesRaw) && minEdgesRaw >= 0
+        ? minEdgesRaw
+        : null;
+    const maxEdges =
+      maxEdgesRaw !== null && Number.isFinite(maxEdgesRaw) && maxEdgesRaw >= 0
+        ? maxEdgesRaw
+        : null;
+    return { minEdges, maxEdges };
+  }, [cardTargetKind, selectedCardDef]);
+  const multiEdgeLabels = useMemo(
+    () => multiEdgeTargets.map((edgeKey) => formatEdgeLabel(edgeKey, hexLabels)),
+    [hexLabels, multiEdgeTargets]
+  );
+  const multiEdgeCountLabel =
+    multiEdgeTargets.length === 1 ? "1 edge" : `${multiEdgeTargets.length} edges`;
+  const pendingMultiEdgeStart = pendingEdgeStart
+    ? formatHexLabel(pendingEdgeStart, hexLabels)
+    : null;
+  const multiEdgeHint = useMemo(() => {
+    if (!multiEdgeLimits) {
+      return "Pick multiple edges on the board.";
+    }
+    const { minEdges, maxEdges } = multiEdgeLimits;
+    if (minEdges !== null && maxEdges !== null) {
+      if (minEdges === maxEdges) {
+        return `Pick ${minEdges} edges on the board.`;
+      }
+      return `Pick ${minEdges}-${maxEdges} edges on the board.`;
+    }
+    if (minEdges !== null) {
+      return `Pick at least ${minEdges} edges on the board.`;
+    }
+    if (maxEdges !== null) {
+      return `Pick up to ${maxEdges} edges on the board.`;
+    }
+    return "Pick multiple edges on the board.";
+  }, [multiEdgeLimits]);
   const multiPathTargets = useMemo(() => {
     if (cardTargetKind !== "multiPath") {
       return [];
@@ -3333,6 +3394,33 @@ export const GameScreen = ({
         </p>
       </div>
     ) : null;
+  const multiEdgePanel =
+    selectedCardDef && cardTargetKind === "multiEdge" ? (
+      <div className="hand-targets">
+        <div className="hand-targets__header">
+          <strong>Edges</strong>
+          <span className="hand-targets__meta">{multiEdgeCountLabel}</span>
+        </div>
+        <p className="hand-targets__hint">{multiEdgeHint}</p>
+        <div className="hand-targets__actions">
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={multiEdgeTargets.length === 0 && !pendingEdgeStart}
+            onClick={clearMultiEdgeTargets}
+          >
+            Clear edges
+          </button>
+        </div>
+        <p className="hand-targets__selected">
+          {multiEdgeLabels.length > 0
+            ? `Selected: ${multiEdgeLabels.join(", ")}`
+            : pendingMultiEdgeStart
+              ? `Start: ${pendingMultiEdgeStart}`
+              : "No edges selected."}
+        </p>
+      </div>
+    ) : null;
   const multiPathPanel =
     selectedCardDef && cardTargetKind === "multiPath" ? (
       <div className="hand-targets">
@@ -3430,6 +3518,7 @@ export const GameScreen = ({
     handDiscardPanel ||
     handBurnPanel ||
     edgeMovePanel ||
+    multiEdgePanel ||
     multiPathPanel ||
     cardMovePanel ? (
       <>
@@ -3437,6 +3526,7 @@ export const GameScreen = ({
         {handDiscardPanel}
         {handBurnPanel}
         {edgeMovePanel}
+        {multiEdgePanel}
         {multiPathPanel}
         {cardMovePanel}
       </>
