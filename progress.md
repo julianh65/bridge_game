@@ -18,6 +18,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- (owner: agent5) Add champion relocation targeting (champion + destination hex) and implement Rapid Redeploy + Extraction Run card defs, with engine validation/resolution and UI targeting flow. Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-targeting.ts`, `packages/engine/src/card-effects-units.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `apps/web/src/components/GameScreen.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress)
 ## Test fixes
 - Updated engine tests for market bid winners, Quiet Study hand-size behavior, and setup flow expectations (deck preview gating + card totals) to match current config/flow. (Files: `packages/engine/src/market.test.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`.) (owner: agent1)
 ## Milestone After Second Full Test Play and Thinking progress
@@ -68,6 +69,7 @@
 - Audited Writ of Industry power card vs `rules_draft.md` and noted alignment in the plan. (File: `implementation_plan.md`.) (owner: agent1)
 - Audited Bridge Charter power card vs `rules_draft.md` and noted alignment in the plan. (File: `implementation_plan.md`.) (owner: agent1)
 - Audited Dispatch to Front power card vs `rules_draft.md` and noted alignment in the plan. (File: `implementation_plan.md`.) (owner: agent1)
+- Audited Chronicle of War power card vs `rules_draft.md` and added a plan note to address the optional discard + mana behavior mismatch. (File: `implementation_plan.md`.) (owner: agent1)
 
 ## Refactor Milestone progress
 - Extracted market/collection overlay rendering into `apps/web/src/components/GameScreenOverlays.tsx` and shared the market winner highlight type; updated the refactor milestone checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenOverlays.tsx`, `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.)
