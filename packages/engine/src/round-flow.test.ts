@@ -280,6 +280,56 @@ describe("collection", () => {
     expect([...resolved.marketDecks.I].sort()).toEqual([deck[0], deck[2], deck[3]].sort());
   });
 
+  it("skips forge prompts when no draft cards and no scrap candidates exist", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    board.hexes["1,0"] = {
+      ...board.hexes["1,0"],
+      tile: "forge",
+      occupants: {
+        p1: ["u1"]
+      }
+    };
+    board.units = {
+      u1: {
+        id: "u1",
+        ownerPlayerId: "p1",
+        kind: "force",
+        hex: "1,0"
+      }
+    };
+
+    const state = {
+      ...base,
+      phase: "round.collection" as const,
+      board,
+      market: {
+        ...base.market,
+        age: "I"
+      },
+      marketDecks: {
+        I: [],
+        II: [],
+        III: []
+      },
+      players: base.players.map((player) =>
+        player.id === "p1"
+          ? {
+              ...player,
+              deck: { ...player.deck, hand: [], drawPile: [], discardPile: [] }
+            }
+          : player
+      )
+    };
+
+    const created = createCollectionBlock(state);
+    expect(created.block).toBeNull();
+  });
+
   it("expands collection reveal counts for cipher expanded choice", () => {
     const base = createNewGame(DEFAULT_CONFIG, 2, [
       { id: "p1", name: "Player 1" },

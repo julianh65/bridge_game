@@ -348,6 +348,11 @@ const applyMineGoldCollection = (
   return { state: nextState, mineGoldByPlayer };
 };
 
+const hasForgeScrapCandidates = (player: PlayerState): boolean => {
+  const deck = player.deck;
+  return deck.hand.length + deck.drawPile.length + deck.discardPile.length > 0;
+};
+
 export const createCollectionBlock = (
   state: GameState
 ): { state: GameState; block: BlockState | null } => {
@@ -366,6 +371,7 @@ export const createCollectionBlock = (
       continue;
     }
     const resolved: CollectionPrompt[] = [];
+    const canReforge = hasForgeScrapCandidates(player);
     for (const prompt of prompts) {
       let drawn: CardDefId[] = [];
       if (prompt.kind === "forge") {
@@ -380,6 +386,9 @@ export const createCollectionBlock = (
         powerDeck = draw.remaining;
       }
       if (prompt.kind === "center" && drawn.length === 0) {
+        continue;
+      }
+      if (prompt.kind === "forge" && drawn.length === 0 && !canReforge) {
         continue;
       }
       resolved.push({ ...prompt, revealed: drawn });

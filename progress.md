@@ -101,6 +101,7 @@
 - Adjusted the rounds-left countdown to avoid showing an extra round during setup (clamp round to at least 1 for the label); plan item was already checked. (File: `apps/web/src/components/GameScreenHeader.tsx`.) (owner: agent1)
 ## Planning updates
 - Added plan TODOs for the forge collection hard-lock audit + backup plan. (File: `implementation_plan.md`.) (owner: codex)
+- Prevented forge collection hard-locks by skipping forge prompts when no draft cards and no scrap candidates exist; updated the plan checklist. (Files: `packages/engine/src/round-flow.ts`, `packages/engine/src/round-flow.test.ts`, `implementation_plan.md`.) (owner: agent3)
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
 - Added explicit power pick (power deck) card checklist tasks from `rules_draft.md` to `implementation_plan.md`, including missing-entry audit placeholders.
