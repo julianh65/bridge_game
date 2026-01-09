@@ -17,10 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent4
-  scope: refactor GameScreen HUD cues (phase/age overlays) into component
-  files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/GameScreenCues.tsx, implementation_plan.md, progress.md
-  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -29,6 +25,7 @@
 ## Refactor Milestone progress
 - Extracted market/collection overlay rendering into `apps/web/src/components/GameScreenOverlays.tsx` and shared the market winner highlight type; updated the refactor milestone checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenOverlays.tsx`, `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.)
 - Extracted the info dock (log/effects) into `apps/web/src/components/GameScreenInfoDock.tsx` and checked the refactor milestone item. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenInfoDock.tsx`, `implementation_plan.md`.)
+- Extracted phase/age cue overlays into `apps/web/src/components/GameScreenCues.tsx` and updated the refactor milestone checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenCues.tsx`, `implementation_plan.md`.)
 
 ## Mini Milestone For Me progress
 - Added a dev-only Card Editor view with inline numeric edits, copy flow, initiative tools (collision listing + decollide/compress), and patch export; wired into the app nav and documented in the plan checklist. (Files: `apps/web/src/components/CardEditor.tsx`, `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` overlaps agent2/agent4 scope.)

@@ -27,6 +27,7 @@ import { ActionRevealOverlay, type ActionRevealOverlayData } from "./ActionRevea
 import { BoardView, type BoardActionAnimation } from "./BoardView";
 import { CombatOverlay } from "./CombatOverlay";
 import { CombatRetreatOverlay } from "./CombatRetreatOverlay";
+import { GameScreenCues, type AgeCue, type PhaseCue } from "./GameScreenCues";
 import { GameScreenHandPanel } from "./GameScreenHandPanel";
 import { GameScreenHeader } from "./GameScreenHeader";
 import { GameScreenInfoDock } from "./GameScreenInfoDock";
@@ -74,12 +75,6 @@ type ActionCardReveal = ActionRevealOverlayData & {
   movePaths: string[][];
   moveUnitKind: "force" | "champion" | null;
   moveUnitLabel: string | null;
-};
-
-type AgeCue = {
-  label: string;
-  round: number;
-  kind: "start" | "shift";
 };
 
 type HandPickerMode = "none" | "topdeck" | "discard" | "burn";
@@ -813,7 +808,7 @@ export const GameScreen = ({
   const [isActionRevealOverlayVisible, setIsActionRevealOverlayVisible] = useState(false);
   const [cardRevealKey, setCardRevealKey] = useState(0);
   const [combatQueue, setCombatQueue] = useState<CombatSequence[]>([]);
-  const [phaseCue, setPhaseCue] = useState<{ label: string; round: number } | null>(null);
+  const [phaseCue, setPhaseCue] = useState<PhaseCue | null>(null);
   const [phaseCueKey, setPhaseCueKey] = useState(0);
   const [ageCue, setAgeCue] = useState<AgeCue | null>(null);
   const [ageCueKey, setAgeCueKey] = useState(0);
@@ -3435,31 +3430,12 @@ export const GameScreen = ({
 
   return (
     <section className="game-screen">
-      {phaseCue ? (
-        <div key={phaseCueKey} className="phase-cue" role="status" aria-live="polite">
-          <div className="phase-cue__panel">
-            <span className="phase-cue__eyebrow">Phase change</span>
-            <strong className="phase-cue__label">{phaseCue.label}</strong>
-            <span className="phase-cue__round">Round {phaseCue.round}</span>
-          </div>
-        </div>
-      ) : null}
-      {ageCue ? (
-        <div
-          key={ageCueKey}
-          className="phase-cue phase-cue--age"
-          role="status"
-          aria-live="polite"
-        >
-          <div className="phase-cue__panel">
-            <span className="phase-cue__eyebrow">
-              {ageCue.kind === "start" ? "Game start" : "New age"}
-            </span>
-            <strong className="phase-cue__label">{ageCue.label}</strong>
-            <span className="phase-cue__round">Round {ageCue.round}</span>
-          </div>
-        </div>
-      ) : null}
+      <GameScreenCues
+        phaseCue={phaseCue}
+        phaseCueKey={phaseCueKey}
+        ageCue={ageCue}
+        ageCueKey={ageCueKey}
+      />
       {activeCardReveal && isActionRevealOverlayVisible ? (
         <ActionRevealOverlay
           key={activeCardReveal.key}
