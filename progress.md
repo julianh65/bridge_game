@@ -17,7 +17,8 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- (owner: agent2) Investigate why some cards do not show during action reveal playback and add guards/log rendering fix. Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ActionRevealOverlay.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress)
+- (owner: agent4) Add Bridge Pivot multi-edge UI validation (1 existing + 1 new bridge sharing a hex) and update target gating. Files: `apps/web/src/components/GameScreen.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress) (overlap: `apps/web/src/components/GameScreen.tsx` with agent2)
+- (owner: agent5) Make gainMarketCards draw random cards (Black Market Pull accuracy); update plan note. Files: `packages/engine/src/card-effects-economy.ts`, `implementation_plan.md`, `progress.md`. (status: in progress) (overlap: `packages/engine/src/card-effects-economy.ts` has in-flight edits)
 ## Test fixes
 - Updated engine tests for market bid winners, Quiet Study hand-size behavior, and setup flow expectations (deck preview gating + card totals) to match current config/flow. (Files: `packages/engine/src/market.test.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`.) (owner: agent1)
 ## Milestone After Second Full Test Play and Thinking progress
@@ -29,6 +30,7 @@
 - Increased card rules text size slightly for readability. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Anchored the hand cards to the bottom of the hand panel so Bridge Crew target popups no longer shift the row. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Boosted hand-card hover/selection z-index so hovered cards consistently rise above the fan after actions. (File: `apps/web/src/styles.css`.) (owner: agent2)
+- Fixed action reveal playback when logs rotate by tracking the last reveal via log keys, so cards like Scout Report continue to show after longer sessions; marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent2)
 - Enabled champion-only moves (forceCount 0) and bridge-bypass targeting so Skystriker/Bridge Runner can move without bridges when selected; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Enabled map-based combat retreat selection by highlighting valid retreat hexes, allowing board clicks to submit retreat choices, and letting the retreat overlay pass clicks through to the board; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5)
 - Cleared basic-action selection state on round change so March doesn’t stay selected across rounds; updated the plan checklist. (File: `apps/web/src/components/GameScreen.tsx`.) (owner: agent5)

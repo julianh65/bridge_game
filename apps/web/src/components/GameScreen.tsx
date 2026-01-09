@@ -105,6 +105,11 @@ type ActiveEffectEntry = {
   detail: string;
 };
 
+const buildLogKey = (event: GameView["public"]["logs"][number]) => {
+  const payload = event.payload ? JSON.stringify(event.payload) : "";
+  return `${event.type}|${payload}`;
+};
+
 const formatPhaseLabel = (phase: string) => {
   const trimmed = phase.replace("round.", "");
   const spaced = trimmed.replace(/([a-z])([A-Z])/g, "$1 $2").replace(".", " ");
@@ -586,6 +591,7 @@ export const GameScreen = ({
   const hasMarketLogBaseline = useRef(false);
   const hasRollLogBaseline = useRef(false);
   const hasCardRevealBaseline = useRef(false);
+  const lastCardRevealKeyRef = useRef<string | null>(null);
   const hasPhaseCueBaseline = useRef(false);
   const hasAgeIntroShown = useRef(Boolean(storedAgeCue) || suppressEntryCues);
   const lastPhaseRef = useRef(view.public.phase);
@@ -839,6 +845,7 @@ export const GameScreen = ({
   const leadPlayer = view.public.players.find((player) => player.seatIndex === leadSeatIndex) ?? null;
   const logCount = view.public.logs.length;
   const lastLogEntry = logCount > 0 ? view.public.logs[logCount - 1] : null;
+  const lastLogKey = lastLogEntry ? buildLogKey(lastLogEntry) : null;
   const lastLogLabel = lastLogEntry
     ? formatGameEvent(lastLogEntry, playerNames, hexLabels, CARD_DEFS_BY_ID)
     : null;
@@ -847,8 +854,7 @@ export const GameScreen = ({
   const activeCombatSync =
     activeCombat && combatSync ? combatSync[activeCombat.id] ?? null : null;
   const hasPendingCardReveal =
-    hasCardRevealBaseline.current &&
-    view.public.logs.length - 1 > lastCardRevealIndex.current;
+    hasCardRevealBaseline.current && lastLogKey !== lastCardRevealKeyRef.current;
   const actionRevealInFlight = Boolean(
     activeCardReveal || cardRevealQueue.length > 0 || hasPendingCardReveal
   );
@@ -1670,22 +1676,42 @@ export const GameScreen = ({
     if (!hasCardRevealBaseline.current) {
       hasCardRevealBaseline.current = true;
       lastCardRevealIndex.current = logs.length - 1;
+      lastCardRevealKeyRef.current =
+        logs.length > 0 ? buildLogKey(logs[logs.length - 1]) : null;
       return;
     }
     if (logs.length === 0) {
       lastCardRevealIndex.current = -1;
+      lastCardRevealKeyRef.current = null;
       setCardRevealQueue([]);
       setActiveCardReveal(null);
       return;
     }
-    if (logs.length - 1 < lastCardRevealIndex.current) {
-      lastCardRevealIndex.current = logs.length - 1;
-      setCardRevealQueue([]);
-      setActiveCardReveal(null);
-      return;
+    const lastKey = lastCardRevealKeyRef.current;
+    let startIndex = 0;
+    if (lastKey) {
+      let foundIndex = -1;
+      for (let i = logs.length - 1; i >= 0; i -= 1) {
+        if (buildLogKey(logs[i]) === lastKey) {
+          foundIndex = i;
+          break;
+        }
+      }
+      if (foundIndex >= 0) {
+        if (foundIndex === logs.length - 1) {
+          return;
+        }
+        startIndex = foundIndex + 1;
+      } else {
+        setCardRevealQueue([]);
+        setActiveCardReveal(null);
+        startIndex = Math.max(0, logs.length - 1);
+      }
+    } else {
+      startIndex = Math.max(0, logs.length - 1);
     }
     const newReveals: ActionCardReveal[] = [];
-    for (let i = lastCardRevealIndex.current + 1; i < logs.length; i += 1) {
+    for (let i = startIndex; i < logs.length; i += 1) {
       const event = logs[i];
       if (event.type.startsWith("action.card.")) {
         const payload = event.payload ?? {};
@@ -1776,6 +1802,7 @@ export const GameScreen = ({
       }
     }
     lastCardRevealIndex.current = logs.length - 1;
+    lastCardRevealKeyRef.current = buildLogKey(logs[logs.length - 1]);
     if (newReveals.length > 0) {
       setCardRevealQueue((queue) => [...queue, ...newReveals]);
     }
