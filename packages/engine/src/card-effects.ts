@@ -64,6 +64,8 @@ const SUPPORTED_EFFECTS = new Set([
   "rollGold",
   "drawCardsIfTile",
   "drawCardsIfHandEmpty",
+  "drawCardsIfDrawPileEmpty",
+  "gainManaIfDrawPileEmpty",
   "discardFromHand",
   "burnFromHand",
   "scoutReport",

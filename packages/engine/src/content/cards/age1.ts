@@ -417,6 +417,23 @@ export const SMALL_HANDS: CardDef = {
   effects: [{ kind: "drawCardsIfHandEmpty", count: 3 }]
 };
 
+export const PRECISE_PLANNING: CardDef = {
+  id: "age1.precise_planning",
+  name: "Precise Planning",
+  rulesText: "If your draw pile is empty, draw 3 cards and gain 1 mana.",
+  type: "Spell",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1 },
+  initiative: 70,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [
+    { kind: "drawCardsIfDrawPileEmpty", count: 3 },
+    { kind: "gainManaIfDrawPileEmpty", amount: 1 }
+  ]
+};
+
 export const SUPPLY_LEDGER: CardDef = {
   id: "age1.supply_ledger",
   name: "Supply Ledger",
@@ -687,6 +704,7 @@ export const AGE1_CARDS: CardDef[] = [
   MAKE_A_PLAY,
   PAID_LOGISTICS,
   SMALL_HANDS,
+  PRECISE_PLANNING,
   SUPPLY_LEDGER,
   PATROL_RECORD,
   BANNER_CLAIM,

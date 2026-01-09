@@ -280,6 +280,34 @@ export const resolveEconomyEffect = (
       }
       return drawCards(nextState, playerId, count);
     }
+    case "drawCardsIfDrawPileEmpty": {
+      const count = typeof effect.count === "number" ? effect.count : 0;
+      if (count <= 0) {
+        return nextState;
+      }
+      const player = nextState.players.find((entry) => entry.id === playerId);
+      if (!player) {
+        return nextState;
+      }
+      if (player.deck.drawPile.length > 0) {
+        return nextState;
+      }
+      return drawCards(nextState, playerId, count);
+    }
+    case "gainManaIfDrawPileEmpty": {
+      const amount = typeof effect.amount === "number" ? effect.amount : 0;
+      if (amount <= 0) {
+        return nextState;
+      }
+      const player = nextState.players.find((entry) => entry.id === playerId);
+      if (!player) {
+        return nextState;
+      }
+      if (player.deck.drawPile.length > 0) {
+        return nextState;
+      }
+      return addMana(nextState, playerId, amount);
+    }
     case "topdeckFromHand": {
       const count = typeof effect.count === "number" ? Math.max(0, Math.floor(effect.count)) : 1;
       if (count <= 0) {

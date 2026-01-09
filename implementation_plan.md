@@ -419,6 +419,7 @@ Start going through the rules_draft and adding the logic for the different types
 - [ ] Add variable VP sources (Victory +2, center-based VP, timer VP).
 - [ ] Add champion recall + removal effects (return champion to hand, on-death penalties).
 - [ ] Add deckcraft primitives: draw/discard mixes, discard up to N, burn from hand, conditional draw, scry/topdeck (Quick Study, Cycle Notes, Hard Mulligan, Tome of Orders, War Chronicle, Precise Planning, Small Hands, Spellcaster).
+  - [x] Precise Planning (draw pile empty conditional draw + mana).
 - [ ] Add conditional economy triggers: battle-won gold, enemy capital bonuses, opponent gold steal, other-players battle gold (Spoils of War, Smuggling Ring, Market Squeeze, Pulling Strings).
   - [x] Spoils of War (battle-win gold).
   - [x] Smuggling Ring (enemy capital bonus gold).
@@ -713,6 +714,7 @@ Done
   - [x] Age I market: Temporary Bridge (temporary flag on bridge).
   - [x] Age I market: Paid Volunteers / National Service recruit coverage.
   - [x] Age I market: Small Hands (draw 3 if last card).
+  - [x] Age I market: Spoils of War (battle-win gold).
   - [x] Age I market: Roll Out (move two stacks).
   - [x] Starter: Bridge Crew build + move across a newly built bridge.
   - [ ] Age II/III market + power deck card tests (as content lands).
