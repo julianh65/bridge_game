@@ -2069,9 +2069,19 @@ export const GameScreen = ({
       delete nextTargets.forceCount;
     } else {
       nextTargets.forceCount = value;
+      if (value === 0 && cardMoveChampionCount > 0) {
+        nextTargets.includeChampions = true;
+      }
     }
     const hasTargets = Object.keys(nextTargets).length > 0;
     setCardTargetsRaw(hasTargets ? JSON.stringify(nextTargets) : "");
+  };
+
+  const setMarchForceCountSafe = (value: number | null) => {
+    setMarchForceCount(value);
+    if (value === 0 && marchChampionCount > 0) {
+      setMarchIncludeChampions(true);
+    }
   };
 
   const setCardIncludeChampions = (value: boolean) => {
@@ -4279,7 +4289,7 @@ export const GameScreen = ({
         forceMax={marchForceMax}
         championCount={marchChampionCount}
         includeChampions={resolvedMarchIncludeChampions}
-        onChange={setMarchForceCount}
+        onChange={setMarchForceCountSafe}
         onToggleChampions={setMarchIncludeChampions}
       />
     ) : null;

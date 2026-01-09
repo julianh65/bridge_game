@@ -417,7 +417,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] During setup phase the players connected and X still mess up the flow, make the overall players container just slightly wider
 - [x] after the market is over we see the action phase and then the market modal briefly pops up again
 - [ ] in the action reveals when a champion card is in the reveal I don’t see the champion stats or description
-- [ ] some cards still don’t let me select in the move forces pop up to move 0 forces, in the case I want to just move my champion
+- [x] some cards still don’t let me select in the move forces pop up to move 0 forces, in the case I want to just move my champion
 - [x] allow me to have less mines than players in the config
 - [ ] make sure the display of the draw pile in the UI is unordered and highlight somewhere by adding text that it’s unordered, something like (Unordered)
 - [ ] make quick move 1 stack, add to the description text a note to the player that this card has very low initiative

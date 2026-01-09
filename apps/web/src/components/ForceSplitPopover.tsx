@@ -22,7 +22,7 @@ export const ForceSplitPopover = ({
   const resolvedChampionCount = championCount ?? 0;
   const canToggleChampions = resolvedChampionCount > 0 && Boolean(onToggleChampions);
   const include = includeChampions ?? forceCount === null;
-  const allowZero = include && resolvedChampionCount > 0;
+  const allowZero = resolvedChampionCount > 0;
   const showForceControls = forceMax > 1 || (allowZero && forceMax > 0);
   if (!showForceControls && !canToggleChampions) {
     return null;

@@ -21,7 +21,6 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-- (owner: agent4) [status: in progress] Allow move splits to select 0 forces when champions are present (champion-only move); files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/ForceSplitPopover.tsx`, `implementation_plan.md`, `progress.md`.
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -98,6 +97,7 @@
 - Debug card injection now adds permanent VP for Victory cards (e.g., Deep Mine Charter), keeping VP totals in sync when using the debug hand tool. (Files: `apps/web/src/components/GameDebugOverlay.tsx`, `implementation_plan.md`.) (owner: agent3)
 - Debug room hand injection now adds Victory VP when injecting cards from the Room Debug panel, matching the in-game debug hand tool. (File: `apps/web/src/components/RoomDebugPanel.tsx`.) (owner: agent2)
 - Added War Bonds as an additional Age II Victory card (+1 gold, +1 mana) while keeping Big VP Gainer, updated rules, art mapping, and plan checklist. (Files: `packages/engine/src/content/cards/age2.ts`, `apps/web/src/data/card-art.json`, `rules_draft.md`, `implementation_plan.md`.) (owner: agent4)
+- Allowed force split popovers to select 0 forces when champions are present (champion-only moves), auto-including champions on zero; marked the plan item complete. (Files: `apps/web/src/components/ForceSplitPopover.tsx`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Adjusted the rounds-left countdown to avoid showing an extra round during setup (clamp round to at least 1 for the label); plan item was already checked. (File: `apps/web/src/components/GameScreenHeader.tsx`.) (owner: agent1)
 ## Planning updates
 - Added plan TODOs for the forge collection hard-lock audit + backup plan. (File: `implementation_plan.md`.) (owner: codex)
