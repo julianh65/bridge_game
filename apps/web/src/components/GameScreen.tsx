@@ -1225,6 +1225,21 @@ export const GameScreen = ({
   }, [isActionPhase]);
 
   useEffect(() => {
+    setBasicActionIntent("none");
+    setBoardPickMode("none");
+    setPendingEdgeStart(null);
+    setPendingStackFrom(null);
+    setPendingPath([]);
+    setPendingHexPair(null);
+    setEdgeKey("");
+    setMarchFrom("");
+    setMarchTo("");
+    setMarchForceCount(null);
+    setMarchIncludeChampions(null);
+    setReinforceHex("");
+  }, [view.public.round]);
+
+  useEffect(() => {
     const allowSplit = marchForceMax > 1 || marchChampionCount > 0;
     if (!marchFrom || !allowSplit) {
       if (marchForceCount !== null) {
