@@ -17,10 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent2
-  scope: add champion art backgrounds to combat overlay unit tokens
-  files: apps/web/src/components/CombatOverlay.tsx (avoid styles.css if possible)
-  status: planning (no code changes yet)
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -119,6 +115,7 @@
 - Updated combat overlay headers to include tile labels (A1 Mine) and enlarged faction symbols; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5) (Overlap note: `apps/web/src/styles.css` overlaps other in-flight styling.)
 - Added per-unit combat roll logging plus a single-round combat overlay view with force/champion tokens, HP, and per-unit dice; updated the plan checklist. (Files: `packages/engine/src/combat.ts`, `apps/web/src/lib/combat-log.ts`, `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/styles.css` has other in-flight edits.)
 - Added shared combat roll readiness + synced reveal timing with server-coordinated combat sync and ready indicators in the overlay; updated the plan checklist. (Files: `apps/server/src/server.ts`, `apps/web/src/lib/room-client.ts`, `apps/web/src/App.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreen.tsx` also in agent3 scope.)
+- Added champion art backgrounds to combat overlay champion tokens using card art URLs. (File: `apps/web/src/components/CombatOverlay.tsx`.) (owner: agent2)
 - Fixed CombatOverlay crash by moving the auto-close effect below `isResolved` initialization. (File: `apps/web/src/components/CombatOverlay.tsx`.)
 - Fixed combat sync flow so the roll button advances to the next round after the shared reveal finishes instead of staying in "Waiting for opponent". (File: `apps/web/src/components/CombatOverlay.tsx`.)
 - Removed the combat overlay Skip button and added hit pip visuals above hit summaries for clearer attacker/defender impact. (Files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/styles.css`.)

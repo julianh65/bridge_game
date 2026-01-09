@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { CardDef, GameConfig, ModifierView } from "@bridgefront/engine";
 
 import { FactionSymbol } from "./FactionSymbol";
+import { getCardArtUrl } from "../lib/card-art";
 import type {
   CombatSequence,
   CombatSideSummary,
@@ -600,6 +601,17 @@ export const CombatOverlay = ({
     const name = getUnitDisplayName(unit, cardDefsById);
     const glyph = getUnitGlyph(unit, cardDefsById);
     const showHit = showMarkers && hitCount > 0;
+    const championArtUrl =
+      unit.kind === "champion" ? getCardArtUrl(unit.cardDefId) : null;
+    const championArtStyle =
+      unit.kind === "champion" && championArtUrl
+        ? {
+            backgroundImage: `linear-gradient(180deg, rgba(24, 16, 10, 0.35), rgba(24, 16, 10, 0.85)), url("${championArtUrl}")`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat"
+          }
+        : undefined;
     const displayGlyph = showHit && unit.kind === "force" ? "X" : glyph;
     const hpLabel =
       unit.kind === "champion" && unit.hp !== undefined && unit.maxHp !== undefined
@@ -612,6 +624,7 @@ export const CombatOverlay = ({
         <div
           className={`combat-unit__token${showHit ? " is-hit" : ""}`}
           title={title}
+          style={championArtStyle}
         >
           <span className="combat-unit__glyph">{displayGlyph}</span>
           {showHit && unit.kind === "champion" ? (
