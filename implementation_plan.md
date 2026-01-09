@@ -388,7 +388,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] after the last action while the actions are showing the market phase modal instantly pops up covering everything
 - [x] we should make it higher dice roll wins the card
 - [ ] bridge crew card pop up affects ui flow of hand area and pushes all cards up
-- [ ] I shrank the radii and adjusted the capital slots in the config, the board generation algorithm could be reworked slightly to try to make it more fair and reduce massive empty chances or one spawn that’s particularly bad, the mine placement is fine more the forges have to be fair, especially on 5 player maps, I get that it’s hard though, maybe relax the rule (but try to not prefer it) such that forges are allowed to go next to the center
+- [x] I shrank the radii and adjusted the capital slots in the config, the board generation algorithm could be reworked slightly to try to make it more fair and reduce massive empty chances or one spawn that’s particularly bad, the mine placement is fine more the forges have to be fair, especially on 5 player maps, I get that it’s hard though, maybe relax the rule (but try to not prefer it) such that forges are allowed to go next to the center
 - [x] reduce the range of bridges you can place in the starting bridge setup from 3 to 2
 - [x] the retreat options need to not just list the cell you need to be able to pick on the map which hex you retreat to if you pick that option
 	- [ ] and the retreat shouldn’t be on a separate screen it should be something you click on the main panel, and it should make it clear in the button that you still do one round of combat

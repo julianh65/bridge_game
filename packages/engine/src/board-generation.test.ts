@@ -139,6 +139,30 @@ describe("board generation", () => {
     }
   });
 
+  it("falls back to any distance when preferred forge distances are unavailable", () => {
+    const { board, capitals } = withCapitals(2);
+    const rng = createRngState(4242);
+    const rules = {
+      ...DEFAULT_CONFIG.boardGenerationRules,
+      minDistanceFromCapital: 0,
+      homeMineDistanceFromCapital: 1,
+      homeMineMinDistanceFromOtherCapitals: 0,
+      mineDistanceFromCenter: [1, 2],
+      forgeDistanceFromCenter: [99]
+    };
+    const result = placeSpecialTiles(board, rng, {
+      capitalHexes: capitals,
+      forgeCount: 1,
+      mineCount: capitals.length,
+      rules
+    });
+    expect(result.forgeKeys).toHaveLength(1);
+    const forgeKey = result.forgeKeys[0];
+    const dist = distanceBetween(forgeKey, "0,0");
+    expect(rules.forgeDistanceFromCenter).not.toContain(dist);
+    expect(result.board.hexes[forgeKey].tile).toBe("forge");
+  });
+
   it("places random bridges away from capitals deterministically", () => {
     const { board, capitals } = withCapitals(3);
     const rng = createRngState(777);

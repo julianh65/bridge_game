@@ -435,7 +435,7 @@ export const placeSpecialTiles = (
     let rng = state;
 
     for (let i = 0; i < forgeCount; i += 1) {
-      const remaining = eligibleKeys.filter((key) => {
+      let remaining = eligibleKeys.filter((key) => {
         if (!isEligibleForSpecialTile(key, working, capitalSet, rules)) {
           return false;
         }
@@ -445,6 +445,15 @@ export const placeSpecialTiles = (
         }
         return respectsMinDistance(key, forgeKeys, rules.minForgeSpacing);
       });
+      if (remaining.length === 0) {
+        // Fall back to any eligible distance if preferred center distances are impossible.
+        remaining = eligibleKeys.filter((key) => {
+          if (!isEligibleForSpecialTile(key, working, capitalSet, rules)) {
+            return false;
+          }
+          return respectsMinDistance(key, forgeKeys, rules.minForgeSpacing);
+        });
+      }
       if (remaining.length === 0) {
         placementFailed = true;
         break;
