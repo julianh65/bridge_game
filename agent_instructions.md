@@ -29,3 +29,6 @@ Use common sense to keep work moving without pulling the user in for routine git
 - It's fine to include other agents' unclaimed changes in your commit when working in the same area; keep a note in `progress.md`.
 - Avoid deleting/overwriting other agents' work; never use destructive git commands unless explicitly asked.
 - Escalate to the user only when a git issue blocks progress, risks data loss, or policy requires it (still follow the stop rule for truly unexpected changes).
+
+
+If (and only if) there are no more tasks then we should confirm that everything works, look for bugs, compare to the ruleset to ensure everything works as expected, add new tasks if needed, add more tests, make sure all cards work and that the UI's are polished.

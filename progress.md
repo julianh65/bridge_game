@@ -17,6 +17,10 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- owner: agent2
+  scope: add champion art backgrounds to combat overlay unit tokens
+  files: apps/web/src/components/CombatOverlay.tsx (avoid styles.css if possible)
+  status: planning (no code changes yet)
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
