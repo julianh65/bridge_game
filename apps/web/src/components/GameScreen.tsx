@@ -246,6 +246,8 @@ const getDefaultCardPickMode = (cardDef: CardDef | null): BoardPickMode => {
       return "cardStack";
     case "path":
       return "cardPath";
+    case "multiPath":
+      return "cardPath";
     case "champion":
       return "cardChampion";
     case "hex":
@@ -1838,12 +1840,45 @@ export const GameScreen = ({
     setPendingPath([]);
   };
 
+  const clearMultiPathTargets = () => {
+    const nextTargets = targetRecord ? { ...targetRecord } : {};
+    delete nextTargets.path;
+    delete nextTargets.paths;
+    const hasTargets = Object.keys(nextTargets).length > 0;
+    setCardTargetsRaw(hasTargets ? JSON.stringify(nextTargets) : "");
+    setPendingPath([]);
+  };
+
+  const removeMultiPathAt = (index: number) => {
+    if (index < 0 || cardTargetKind !== "multiPath") {
+      return;
+    }
+    const nextPaths = multiPathTargets.filter((_, pathIndex) => pathIndex !== index);
+    setCardTargetsObject(nextPaths.length > 0 ? { paths: nextPaths } : null);
+    const removed = multiPathTargets[index];
+    if (removed && arePathsEqual(removed, pendingPath)) {
+      setPendingPath([]);
+    }
+  };
+
   const isAdjacent = (from: string, to: string) => {
     try {
       return areAdjacent(parseHexKey(from), parseHexKey(to));
     } catch {
       return false;
     }
+  };
+
+  const arePathsEqual = (left: string[], right: string[]) => {
+    if (left.length !== right.length) {
+      return false;
+    }
+    for (let index = 0; index < left.length; index += 1) {
+      if (left[index] !== right[index]) {
+        return false;
+      }
+    }
+    return true;
   };
 
   const isMoveAdjacent = (from: string, to: string) => {
@@ -1964,6 +1999,31 @@ export const GameScreen = ({
       return;
     }
     if (boardPickMode === "cardPath") {
+      if (cardTargetKind === "multiPath") {
+        setPendingPath((current) => {
+          if (current.length === 0) {
+            return [hexKey];
+          }
+          const last = current[current.length - 1];
+          if (last === hexKey) {
+            return current;
+          }
+          const currentPaths = getTargetPaths(targetRecord);
+          if (!isMoveAdjacent(last, hexKey)) {
+            return [hexKey];
+          }
+          const next = [...current, hexKey];
+          const shouldReplace =
+            current.length >= 2 &&
+            currentPaths.length > 0 &&
+            arePathsEqual(currentPaths[currentPaths.length - 1], current);
+          const basePaths = shouldReplace ? currentPaths.slice(0, -1) : currentPaths;
+          const nextPaths = next.length >= 2 ? [...basePaths, next] : basePaths;
+          setCardTargetsObject(nextPaths.length > 0 ? { paths: nextPaths } : null);
+          return next;
+        });
+        return;
+      }
       setPendingPath((current) => {
         if (current.length === 0) {
           const next = [hexKey];
@@ -2092,6 +2152,12 @@ export const GameScreen = ({
     if (cardTargetKind === "hexPair") {
       const selectedPair = getTargetStringArray(targetRecord, "hexKeys");
       selectedPair.forEach((hexKey) => keys.add(hexKey));
+    }
+    if (cardTargetKind === "multiPath") {
+      const selectedPaths = getTargetPaths(targetRecord);
+      selectedPaths.forEach((path) => {
+        path.forEach((hexKey) => keys.add(hexKey));
+      });
     }
     for (const key of pendingPath) {
       keys.add(key);
@@ -2959,15 +3025,15 @@ export const GameScreen = ({
     return null;
   }, [cardTargetKind, targetRecord]);
   const highlightHexKeys = useMemo(() => {
-    if (revealHexKeys.length === 0) {
-      return targetHighlightHexKeys;
-    }
     const merged = new Set(targetHighlightHexKeys);
     for (const key of revealHexKeys) {
       merged.add(key);
     }
+    for (const key of mortarScatterHexKeys) {
+      merged.add(key);
+    }
     return Array.from(merged);
-  }, [targetHighlightHexKeys, revealHexKeys]);
+  }, [targetHighlightHexKeys, revealHexKeys, mortarScatterHexKeys]);
   const previewEdgeKeys = useMemo(() => {
     if (revealEdgeKeys.length === 0) {
       return targetPreviewEdgeKeys;
@@ -3017,6 +3083,59 @@ export const GameScreen = ({
             hexLabels[edgeMoveTo] ?? edgeMoveTo
           }`
         : null;
+  const multiPathTargets = useMemo(() => {
+    if (cardTargetKind !== "multiPath") {
+      return [];
+    }
+    return getTargetPaths(targetRecord);
+  }, [cardTargetKind, targetRecord]);
+  const multiPathLimits = useMemo(() => {
+    if (!selectedCardDef || cardTargetKind !== "multiPath") {
+      return null;
+    }
+    const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
+    const minPathsRaw =
+      typeof targetSpec.minPaths === "number" ? Math.floor(targetSpec.minPaths) : null;
+    const maxPathsRaw =
+      typeof targetSpec.maxPaths === "number" ? Math.floor(targetSpec.maxPaths) : null;
+    const minPaths =
+      minPathsRaw !== null && Number.isFinite(minPathsRaw) && minPathsRaw >= 0
+        ? minPathsRaw
+        : null;
+    const maxPaths =
+      maxPathsRaw !== null && Number.isFinite(maxPathsRaw) && maxPathsRaw >= 0
+        ? maxPathsRaw
+        : null;
+    return { minPaths, maxPaths };
+  }, [cardTargetKind, selectedCardDef]);
+  const multiPathLabels = useMemo(() => {
+    return multiPathTargets.map((path) =>
+      path.map((hexKey) => hexLabels[hexKey] ?? hexKey).join(" → ")
+    );
+  }, [hexLabels, multiPathTargets]);
+  const multiPathCountLabel =
+    multiPathTargets.length === 1 ? "1 path" : `${multiPathTargets.length} paths`;
+  const pendingMultiPathStart =
+    pendingPath.length === 1 ? hexLabels[pendingPath[0]] ?? pendingPath[0] : null;
+  const multiPathHint = useMemo(() => {
+    if (!multiPathLimits) {
+      return "Pick multiple paths on the board. Click a new start hex to add another path.";
+    }
+    const { minPaths, maxPaths } = multiPathLimits;
+    if (minPaths !== null && maxPaths !== null) {
+      if (minPaths === maxPaths) {
+        return `Pick ${minPaths} paths on the board. Click a new start hex to add another path.`;
+      }
+      return `Pick ${minPaths}-${maxPaths} paths on the board. Click a new start hex to add another path.`;
+    }
+    if (minPaths !== null) {
+      return `Pick at least ${minPaths} paths on the board. Click a new start hex to add another path.`;
+    }
+    if (maxPaths !== null) {
+      return `Pick up to ${maxPaths} paths on the board. Click a new start hex to add another path.`;
+    }
+    return "Pick multiple paths on the board. Click a new start hex to add another path.";
+  }, [multiPathLimits]);
   const cardMoveStartLabel = cardMoveStartHex
     ? hexLabels[cardMoveStartHex] ?? cardMoveStartHex
     : null;
@@ -3198,6 +3317,43 @@ export const GameScreen = ({
         </p>
       </div>
     ) : null;
+  const multiPathPanel =
+    selectedCardDef && cardTargetKind === "multiPath" ? (
+      <div className="hand-targets">
+        <div className="hand-targets__header">
+          <strong>Paths</strong>
+          <span className="hand-targets__meta">{multiPathCountLabel}</span>
+        </div>
+        <p className="hand-targets__hint">{multiPathHint}</p>
+        <div className="hand-targets__actions">
+          <button
+            type="button"
+            className="btn btn-tertiary"
+            disabled={multiPathTargets.length === 0 && pendingPath.length === 0}
+            onClick={clearMultiPathTargets}
+          >
+            Clear paths
+          </button>
+          {multiPathTargets.map((path, index) => (
+            <button
+              key={`${path.join("|")}-${index}`}
+              type="button"
+              className="btn btn-tertiary"
+              onClick={() => removeMultiPathAt(index)}
+            >
+              Remove path {index + 1}
+            </button>
+          ))}
+        </div>
+        <p className="hand-targets__selected">
+          {multiPathLabels.length > 0
+            ? `Selected: ${multiPathLabels.join(" | ")}`
+            : pendingMultiPathStart
+              ? `Start: ${pendingMultiPathStart}`
+              : "No paths selected."}
+        </p>
+      </div>
+    ) : null;
   const cardMovePanel = showCardMoveSplitControls ? (
     <div className="hand-targets">
       <div className="hand-targets__header">
@@ -3254,12 +3410,18 @@ export const GameScreen = ({
     setCardTargetsObject({ unitId: unit.id });
   };
   const handTargetsPanel =
-    topdeckPanel || handDiscardPanel || handBurnPanel || edgeMovePanel || cardMovePanel ? (
+    topdeckPanel ||
+    handDiscardPanel ||
+    handBurnPanel ||
+    edgeMovePanel ||
+    multiPathPanel ||
+    cardMovePanel ? (
       <>
         {topdeckPanel}
         {handDiscardPanel}
         {handBurnPanel}
         {edgeMovePanel}
+        {multiPathPanel}
         {cardMovePanel}
       </>
     ) : null;

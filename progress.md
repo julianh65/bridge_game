@@ -17,9 +17,9 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent2
-  scope: add multiPath targeting UI flow with selection summary and hints
-  files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/GameScreenHandPanel.tsx, implementation_plan.md, progress.md
+- owner: agent4
+  scope: stop movement paths early on newly occupied hexes during resolution (enemy/stopOnOccupied) + plan update
+  files: packages/engine/src/card-effects-movement.ts, implementation_plan.md, progress.md
   status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -724,6 +724,7 @@ none
 - Enforced champion target picker constraints (`requiresFriendlyChampion`, `maxDistance`) for Marked for Coin + Execution Order and updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Enforced `stopOnOccupied` during card path selection and added a hand-panel hint so Column Advance-style paths stop after occupied hexes; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.)
 - Tightened hex-pair targeting flow in the UI (valid picks + range hints) so Wormhole Link/Gate selections align with rules. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`.)
+- Added multi-path targeting flow for multi-stack move cards with per-path add/remove controls, count hints, and board highlights; marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.) (owner: agent2)
 - Enforced `maxDistanceFromCapital` for hex targeting in the UI and added a capital-range hint for eligible cards. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`.)
 - Added Mortar Shot scatter preview highlights on adjacent hexes when targeting and marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreen.tsx` is in agent2 scope.)
 - Deferred manual hit assignment UI for Focus Fire/Tactical Hand, disabled Focus Fire + Grand Strategist in card lists until the UI lands, and noted a future task in the plan. (Files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.)

@@ -53,6 +53,8 @@ const getCardTargetHint = (cardDef: CardDef | null): string | null => {
       return stopOnOccupied
         ? "Pick a path on the board. Movement stops when entering an occupied hex."
         : "Pick a path on the board.";
+    case "multiPath":
+      return "Pick multiple paths on the board.";
     case "hex": {
       const targetSpec = cardDef.targetSpec as Record<string, unknown>;
       const maxDistanceFromCapital =
