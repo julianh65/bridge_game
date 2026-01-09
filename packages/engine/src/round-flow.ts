@@ -767,7 +767,8 @@ export const applyCleanup = (state: GameState): GameState => {
       rowIndexResolving: 0,
       passPot: 0,
       bids: Object.fromEntries(nextState.players.map((player) => [player.id, null])),
-      playersOut: Object.fromEntries(nextState.players.map((player) => [player.id, false]))
+      playersOut: Object.fromEntries(nextState.players.map((player) => [player.id, false])),
+      rollOff: null
     }
   };
 };

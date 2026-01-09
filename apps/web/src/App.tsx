@@ -6,6 +6,7 @@ import { CardsBrowser } from "./components/CardsBrowser";
 import { DeckViewer } from "./components/DeckViewer";
 import { DebugBoard } from "./components/DebugBoard";
 import { BattleDebug } from "./components/BattleDebug";
+import { GameDebugOverlay } from "./components/GameDebugOverlay";
 import { GameScreen } from "./components/GameScreen";
 import { Home, type RoomJoinParams } from "./components/Home";
 import { LobbyDice } from "./components/LobbyDice";
@@ -265,42 +266,46 @@ export default function App() {
       ) : null}
 
       {view === "play" && room.view && showGame ? (
-        <GameScreen
-          view={room.view}
-          playerId={room.playerId}
-          roomId={roomConfig.roomId}
-          status={room.status}
-          suppressEntryCues={suppressEntryCues}
-          onSubmitAction={(declaration) =>
-            room.sendCommand({ type: "SubmitAction", payload: declaration })
-          }
-          onSubmitMarketBid={(bid) =>
-            room.sendCommand({ type: "SubmitMarketBid", payload: bid })
-          }
-          onSubmitCollectionChoices={(choices) =>
-            room.sendCommand({ type: "SubmitCollectionChoices", payload: choices })
-          }
-          onSubmitQuietStudy={(cardInstanceIds) =>
-            room.sendCommand({ type: "SubmitQuietStudy", payload: { cardInstanceIds } })
-          }
-          onSubmitScoutReportChoice={(cardInstanceIds) =>
-            room.sendCommand({
-              type: "SubmitScoutReportChoice",
-              payload: { cardInstanceIds }
-            })
-          }
-          onSubmitCombatRetreat={(hexKey, edgeKey) =>
-            room.sendCommand({ type: "SubmitCombatRetreat", payload: { hexKey, edgeKey } })
-          }
-          combatSync={room.combatSync}
-          serverTimeOffset={room.serverTimeOffset}
-          onCombatRoll={(sequenceId, roundIndex) =>
-            room.sendCombatCommand({ command: "roll", sequenceId, roundIndex })
-          }
-          onResetGame={() => room.sendDebugCommand({ command: "resetGame" })}
-          onLeave={handleLeave}
-          onOpenDeck={handleOpenDeck}
-        />
+        <>
+          <GameScreen
+            view={room.view}
+            playerId={room.playerId}
+            roomId={roomConfig.roomId}
+            status={room.status}
+            suppressEntryCues={suppressEntryCues}
+            onSubmitAction={(declaration) =>
+              room.sendCommand({ type: "SubmitAction", payload: declaration })
+            }
+            onSubmitMarketBid={(bid) =>
+              room.sendCommand({ type: "SubmitMarketBid", payload: bid })
+            }
+            onSubmitMarketRollOff={() => room.sendCommand({ type: "SubmitMarketRollOff" })}
+            onSubmitCollectionChoices={(choices) =>
+              room.sendCommand({ type: "SubmitCollectionChoices", payload: choices })
+            }
+            onSubmitQuietStudy={(cardInstanceIds) =>
+              room.sendCommand({ type: "SubmitQuietStudy", payload: { cardInstanceIds } })
+            }
+            onSubmitScoutReportChoice={(cardInstanceIds) =>
+              room.sendCommand({
+                type: "SubmitScoutReportChoice",
+                payload: { cardInstanceIds }
+              })
+            }
+            onSubmitCombatRetreat={(hexKey, edgeKey) =>
+              room.sendCommand({ type: "SubmitCombatRetreat", payload: { hexKey, edgeKey } })
+            }
+            combatSync={room.combatSync}
+            serverTimeOffset={room.serverTimeOffset}
+            onCombatRoll={(sequenceId, roundIndex) =>
+              room.sendCombatCommand({ command: "roll", sequenceId, roundIndex })
+            }
+            onResetGame={() => room.sendDebugCommand({ command: "resetGame" })}
+            onLeave={handleLeave}
+            onOpenDeck={handleOpenDeck}
+          />
+          <GameDebugOverlay room={room} />
+        </>
       ) : null}
     </main>
   );

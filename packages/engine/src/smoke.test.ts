@@ -133,6 +133,20 @@ const resolveMarketBidBlock = (state: GameState): GameState => {
   return nextState;
 };
 
+const resolveMarketRollOffBlock = (state: GameState): GameState => {
+  let nextState = state;
+  const block = nextState.blocks;
+  if (!block || block.type !== "market.rollOff") {
+    return nextState;
+  }
+
+  for (const playerId of block.waitingFor) {
+    nextState = applyCommand(nextState, { type: "SubmitMarketRollOff" }, playerId);
+  }
+
+  return nextState;
+};
+
 const resolveActionStepBlock = (state: GameState): GameState => {
   let nextState = state;
   const block = nextState.blocks;
@@ -280,6 +294,8 @@ const resolveBlock = (state: GameState): GameState => {
       return resolveFreeStartingCardBlock(state);
     case "market.bidsForCard":
       return resolveMarketBidBlock(state);
+    case "market.rollOff":
+      return resolveMarketRollOffBlock(state);
     case "actionStep.declarations":
       return resolveActionStepBlock(state);
     case "action.scoutReport":
@@ -612,6 +628,28 @@ const resolveMarketBidBlockRandom = (state: GameState, picker: DecisionPicker): 
   return nextState;
 };
 
+const resolveMarketRollOffBlockRandom = (
+  state: GameState,
+  _picker: DecisionPicker
+): GameState => {
+  let nextState = state;
+  const block = nextState.blocks;
+  if (!block || block.type !== "market.rollOff") {
+    return nextState;
+  }
+
+  for (const playerId of block.waitingFor) {
+    nextState = applyCommandOrThrow(
+      nextState,
+      { type: "SubmitMarketRollOff" },
+      playerId,
+      "market roll-off"
+    );
+  }
+
+  return nextState;
+};
+
 const resolveActionStepBlockRandom = (state: GameState, picker: DecisionPicker): GameState => {
   let nextState = state;
   const block = nextState.blocks;
@@ -795,6 +833,8 @@ const resolveBlockRandom = (state: GameState, picker: DecisionPicker): GameState
       return resolveFreeStartingCardBlockRandom(state, picker);
     case "market.bidsForCard":
       return resolveMarketBidBlockRandom(state, picker);
+    case "market.rollOff":
+      return resolveMarketRollOffBlockRandom(state, picker);
     case "actionStep.declarations":
       return resolveActionStepBlockRandom(state, picker);
     case "action.scoutReport":

@@ -688,6 +688,7 @@ type GameScreenProps = {
   suppressEntryCues?: boolean;
   onSubmitAction: (declaration: ActionDeclaration) => void;
   onSubmitMarketBid: (bid: Bid) => void;
+  onSubmitMarketRollOff?: () => void;
   onSubmitCollectionChoices: (choices: CollectionChoice[]) => void;
   onSubmitQuietStudy: (cardInstanceIds: string[]) => void;
   onSubmitScoutReportChoice: (cardInstanceIds: string[]) => void;
@@ -708,6 +709,7 @@ export const GameScreen = ({
   suppressEntryCues = false,
   onSubmitAction,
   onSubmitMarketBid,
+  onSubmitMarketRollOff,
   onSubmitCollectionChoices,
   onSubmitQuietStudy,
   onSubmitScoutReportChoice,
@@ -3399,6 +3401,7 @@ export const GameScreen = ({
               player={localPlayer ?? null}
               status={status}
               onSubmitBid={onSubmitMarketBid}
+              onSubmitRollOff={onSubmitMarketRollOff}
               winnerHighlight={marketWinner}
               winnerHistory={marketWinnerHistory}
               rollDurationMs={view.public.config.MARKET_ROLLOFF_DURATION_MS}

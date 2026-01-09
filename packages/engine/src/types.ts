@@ -160,6 +160,19 @@ export type Bid = {
   amount: number;
 };
 
+export type MarketRollOffRound = Record<PlayerID, number>;
+
+export type MarketRollOffState = {
+  key: number;
+  cardIndex: number;
+  kind: "buy" | "pass";
+  bidAmount: number | null;
+  passBids?: Record<PlayerID, number>;
+  eligiblePlayerIds: PlayerID[];
+  rounds: MarketRollOffRound[];
+  currentRolls: Record<PlayerID, number | null>;
+};
+
 export type MarketState = {
   age: Age;
   currentRow: MarketRowCard[];
@@ -167,6 +180,7 @@ export type MarketState = {
   passPot: number;
   bids: Record<PlayerID, Bid | null>;
   playersOut: Record<PlayerID, boolean>;
+  rollOff?: MarketRollOffState | null;
 };
 
 export type MarketDeckState = Record<Age, CardDefId[]>;
@@ -374,6 +388,12 @@ export type BlockState = {
     cardIndex: number;
   };
 } | {
+  type: "market.rollOff";
+  waitingFor: PlayerID[];
+  payload: {
+    cardIndex: number;
+  };
+} | {
   type: "collection.choices";
   waitingFor: PlayerID[];
   payload: {
@@ -512,6 +532,8 @@ export type Command = {
 } | {
   type: "SubmitMarketBid";
   payload: Bid;
+} | {
+  type: "SubmitMarketRollOff";
 } | {
   type: "SubmitCollectionChoices";
   payload: CollectionChoice[];

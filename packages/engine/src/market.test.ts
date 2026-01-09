@@ -20,8 +20,8 @@ describe("market", () => {
     ]);
 
     expect(state.marketDecks.I.length).toBe(AGE1_MARKET_DECK.length);
-    expect(state.marketDecks.II.length).toBe(0);
-    expect(state.marketDecks.III.length).toBe(0);
+    expect(state.marketDecks.II.length).toBe(AGE1_MARKET_DECK.length);
+    expect(state.marketDecks.III.length).toBe(AGE1_MARKET_DECK.length);
     expect([...state.marketDecks.I].sort()).toEqual([...AGE1_MARKET_DECK].sort());
     expect(state.powerDecks.I.length).toBe(AGE1_POWER_DECK.length);
     expect(state.powerDecks.II.length).toBe(0);
@@ -215,6 +215,9 @@ describe("market bidding", () => {
       "p2"
     );
     state = runUntilBlocked(state);
+    state = applyCommand(state, { type: "SubmitMarketRollOff" }, "p1");
+    state = applyCommand(state, { type: "SubmitMarketRollOff" }, "p2");
+    state = runUntilBlocked(state);
 
     expect(state.market.playersOut.p2).toBe(true);
     const passEvent = [...state.logs].reverse().find((entry) => entry.type === "market.pass");
@@ -240,6 +243,9 @@ describe("market bidding", () => {
       { type: "SubmitMarketBid", payload: { kind: "buy", amount: 2 } },
       "p2"
     );
+    state = runUntilBlocked(state);
+    state = applyCommand(state, { type: "SubmitMarketRollOff" }, "p1");
+    state = applyCommand(state, { type: "SubmitMarketRollOff" }, "p2");
     state = runUntilBlocked(state);
 
     expect(state.market.playersOut.p2).toBe(true);

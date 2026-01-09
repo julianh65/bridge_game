@@ -2,7 +2,17 @@ import { rollDie, shuffle } from "@bridgefront/shared";
 
 import { MARKET_DECKS_BY_AGE } from "./content/market-decks";
 import { POWER_DECKS_BY_AGE } from "./content/power-decks";
-import type { Age, Bid, BlockState, CardDefId, GameState, MarketRowCard, PlayerID } from "./types";
+import type {
+  Age,
+  Bid,
+  BlockState,
+  CardDefId,
+  GameState,
+  MarketRollOffRound,
+  MarketRollOffState,
+  MarketRowCard,
+  PlayerID
+} from "./types";
 import { createCardInstance, insertCardIntoDrawPileRandom } from "./cards";
 import { emit } from "./events";
 
@@ -64,39 +74,47 @@ type BidEntry = {
   bid: Bid;
 };
 
-type RollOffRound = Record<PlayerID, number>;
+const createPendingRolls = (playerIds: PlayerID[]) =>
+  Object.fromEntries(playerIds.map((playerId) => [playerId, null])) as Record<
+    PlayerID,
+    number | null
+  >;
 
-type RollOffResult = {
-  winnerId: PlayerID;
-  rounds: RollOffRound[];
-  rngState: GameState["rngState"];
-};
+const createRollOffKey = (state: GameState, cardIndex: number) =>
+  state.round * 100 + cardIndex;
 
-const resolveRollOff = (state: GameState, playerIds: PlayerID[]): RollOffResult => {
-  let tied = [...playerIds];
-  let rngState = state.rngState;
-  const rounds: RollOffRound[] = [];
+const createMarketRollOffState = ({
+  state,
+  cardIndex,
+  kind,
+  bidAmount,
+  passBids,
+  eligiblePlayerIds
+}: {
+  state: GameState;
+  cardIndex: number;
+  kind: "buy" | "pass";
+  bidAmount: number | null;
+  passBids?: Record<PlayerID, number>;
+  eligiblePlayerIds: PlayerID[];
+}): MarketRollOffState => ({
+  key: createRollOffKey(state, cardIndex),
+  cardIndex,
+  kind,
+  bidAmount,
+  passBids,
+  eligiblePlayerIds,
+  rounds: [],
+  currentRolls: createPendingRolls(eligiblePlayerIds)
+});
 
-  while (tied.length > 1) {
-    const round: RollOffRound = {};
-    for (const playerId of tied) {
-      const roll = rollDie(rngState);
-      rngState = roll.next;
-      round[playerId] = roll.value;
-    }
-    rounds.push(round);
-    const lowest = Math.min(...Object.values(round));
-    tied = Object.entries(round)
-      .filter(([, value]) => value === lowest)
-      .map(([playerId]) => playerId);
+const createMarketRollOffBlock = (rollOff: MarketRollOffState): BlockState => ({
+  type: "market.rollOff",
+  waitingFor: [...rollOff.eligiblePlayerIds],
+  payload: {
+    cardIndex: rollOff.cardIndex
   }
-
-  return {
-    winnerId: tied[0],
-    rounds,
-    rngState
-  };
-};
+});
 
 export const initializeMarketDecks = (state: GameState): GameState => {
   let nextState = state;
@@ -190,7 +208,8 @@ export const prepareMarketRow = (state: GameState): GameState => {
       rowIndexResolving: 0,
       passPot: 0,
       bids: createBids(state),
-      playersOut: createPlayersOut(state)
+      playersOut: createPlayersOut(state),
+      rollOff: null
     },
     marketDecks: {
       ...state.marketDecks,
@@ -211,6 +230,9 @@ export const createMarketBidBlock = (state: GameState): BlockState | null => {
   const cardIndex = state.market.rowIndexResolving;
   const currentCard = state.market.currentRow[cardIndex];
   if (!currentCard) {
+    return null;
+  }
+  if (state.market.rollOff) {
     return null;
   }
 
@@ -283,122 +305,135 @@ export const applyMarketBid = (
   };
 };
 
-export const resolveMarketBids = (state: GameState): GameState => {
-  const cardIndex = state.market.rowIndexResolving;
+export const applyMarketRollOff = (state: GameState, playerId: PlayerID): GameState => {
+  if (state.phase !== "round.market") {
+    return state;
+  }
+
+  const block = state.blocks;
+  if (!block || block.type !== "market.rollOff") {
+    return state;
+  }
+
+  const rollOff = state.market.rollOff;
+  if (!rollOff) {
+    return state;
+  }
+
+  if (!block.waitingFor.includes(playerId)) {
+    return state;
+  }
+
+  if (!rollOff.eligiblePlayerIds.includes(playerId)) {
+    return state;
+  }
+
+  if (typeof rollOff.currentRolls[playerId] === "number") {
+    return state;
+  }
+
+  const roll = rollDie(state.rngState);
+  return {
+    ...state,
+    rngState: roll.next,
+    market: {
+      ...state.market,
+      rollOff: {
+        ...rollOff,
+        currentRolls: {
+          ...rollOff.currentRolls,
+          [playerId]: roll.value
+        }
+      }
+    },
+    blocks: {
+      ...block,
+      waitingFor: block.waitingFor.filter((id) => id !== playerId)
+    }
+  };
+};
+
+const applyMarketBuyWinner = ({
+  state,
+  winnerId,
+  amount,
+  cardIndex,
+  rollOffRounds
+}: {
+  state: GameState;
+  winnerId: PlayerID;
+  amount: number;
+  cardIndex: number;
+  rollOffRounds: MarketRollOffRound[];
+}): GameState => {
   const currentCard = state.market.currentRow[cardIndex];
   if (!currentCard) {
     return state;
   }
 
-  const eligiblePlayerIds = getEligibleMarketPlayers(state);
-  if (eligiblePlayerIds.length === 0) {
-    return {
-      ...state,
-      market: {
-        ...state.market,
-        rowIndexResolving: state.market.currentRow.length,
-        bids: createBids(state),
-        passPot: 0
-      }
-    };
-  }
+  const players = state.players.map((player) =>
+    player.id === winnerId
+      ? {
+          ...player,
+          resources: {
+            ...player.resources,
+            gold: player.resources.gold - amount
+          }
+        }
+      : player
+  );
 
-  const bidEntries: BidEntry[] = eligiblePlayerIds.map((playerId) => {
-    const bid = state.market.bids[playerId];
-    return {
-      playerId,
-      bid: bid ?? { kind: "pass", amount: 0 }
-    };
-  });
-
-  const buyBids = bidEntries.filter((entry) => entry.bid.kind === "buy" && entry.bid.amount > 0);
-  const baseMarket = {
-    ...state.market,
-    rowIndexResolving: cardIndex + 1,
-    bids: createBids(state),
-    passPot: 0
+  let nextState: GameState = {
+    ...state,
+    players,
+    market: {
+      ...state.market,
+      rowIndexResolving: cardIndex + 1,
+      bids: createBids(state),
+      passPot: 0,
+      playersOut: {
+        ...state.market.playersOut,
+        [winnerId]: true
+      },
+      rollOff: null
+    }
   };
 
-  if (buyBids.length > 0) {
-    const highest = Math.max(...buyBids.map((entry) => entry.bid.amount));
-    const topBids = buyBids.filter((entry) => entry.bid.amount === highest);
-    let winnerId = topBids[0].playerId;
-    let rngState = state.rngState;
-    let rollOffRounds: RollOffRound[] = [];
-
-    if (topBids.length > 1) {
-      const rollOff = resolveRollOff(state, topBids.map((entry) => entry.playerId));
-      winnerId = rollOff.winnerId;
-      rngState = rollOff.rngState;
-      rollOffRounds = rollOff.rounds;
+  const created = createCardInstance(nextState, currentCard.cardId);
+  nextState = insertCardIntoDrawPileRandom(created.state, winnerId, created.instanceId);
+  return emit(nextState, {
+    type: "market.buy",
+    payload: {
+      playerId: winnerId,
+      cardId: currentCard.cardId,
+      amount,
+      cardIndex,
+      rollOff: rollOffRounds.length > 0 ? rollOffRounds : undefined
     }
+  });
+};
 
-    const players = state.players.map((player) =>
-      player.id === winnerId
-        ? {
-            ...player,
-            resources: {
-              ...player.resources,
-              gold: player.resources.gold - highest
-            }
-          }
-        : player
-    );
-
-    let nextState: GameState = {
-      ...state,
-      rngState,
-      players,
-      market: {
-        ...baseMarket,
-        playersOut: {
-          ...state.market.playersOut,
-          [winnerId]: true
-        }
-      }
-    };
-
-    const created = createCardInstance(nextState, currentCard.cardId);
-    nextState = insertCardIntoDrawPileRandom(created.state, winnerId, created.instanceId);
-    nextState = emit(nextState, {
-      type: "market.buy",
-      payload: {
-        playerId: winnerId,
-        cardId: currentCard.cardId,
-        amount: highest,
-        cardIndex,
-        rollOff: rollOffRounds.length > 0 ? rollOffRounds : undefined
-      }
-    });
-
-    return nextState;
+const applyMarketPassWinner = ({
+  state,
+  winnerId,
+  passBids,
+  cardIndex,
+  rollOffRounds
+}: {
+  state: GameState;
+  winnerId: PlayerID;
+  passBids: Record<PlayerID, number>;
+  cardIndex: number;
+  rollOffRounds: MarketRollOffRound[];
+}): GameState => {
+  const currentCard = state.market.currentRow[cardIndex];
+  if (!currentCard) {
+    return state;
   }
 
-  const passBids = bidEntries.map((entry) => ({
-    playerId: entry.playerId,
-    amount: entry.bid.amount
-  }));
-  const passBidByPlayer = Object.fromEntries(
-    passBids.map((entry) => [entry.playerId, entry.amount])
-  ) as Record<PlayerID, number>;
-  const lowest = Math.min(...passBids.map((entry) => entry.amount));
-  const eligibleWinners = passBids
-    .filter((entry) => entry.amount === lowest)
-    .map((entry) => entry.playerId);
-
-  let rngState = state.rngState;
-  let winnerId = eligibleWinners[0];
-  let rollOffRounds: RollOffRound[] = [];
-  if (eligibleWinners.length > 1) {
-    const rollOff = resolveRollOff(state, eligibleWinners);
-    winnerId = rollOff.winnerId;
-    rngState = rollOff.rngState;
-    rollOffRounds = rollOff.rounds;
-  }
-
-  const passPot = Object.values(passBidByPlayer).reduce((total, amount) => total + amount, 0);
+  const passPot = Object.values(passBids).reduce((total, amount) => total + amount, 0);
   const players = state.players.map((player) => {
-    const bidAmount = passBidByPlayer[player.id] ?? 0;
+    const bidAmount = passBids[player.id] ?? 0;
     let gold = player.resources.gold;
     if (bidAmount > 0) {
       gold -= bidAmount;
@@ -417,20 +452,23 @@ export const resolveMarketBids = (state: GameState): GameState => {
 
   let nextState: GameState = {
     ...state,
-    rngState,
     players,
     market: {
-      ...baseMarket,
+      ...state.market,
+      rowIndexResolving: cardIndex + 1,
+      bids: createBids(state),
+      passPot: 0,
       playersOut: {
         ...state.market.playersOut,
         [winnerId]: true
-      }
+      },
+      rollOff: null
     }
   };
 
   const created = createCardInstance(nextState, currentCard.cardId);
   nextState = insertCardIntoDrawPileRandom(created.state, winnerId, created.instanceId);
-  nextState = emit(nextState, {
+  return emit(nextState, {
     type: "market.pass",
     payload: {
       playerId: winnerId,
@@ -440,6 +478,170 @@ export const resolveMarketBids = (state: GameState): GameState => {
       rollOff: rollOffRounds.length > 0 ? rollOffRounds : undefined
     }
   });
+};
 
-  return nextState;
+export const resolveMarketRollOff = (state: GameState): GameState => {
+  const rollOff = state.market.rollOff;
+  if (!rollOff) {
+    return state;
+  }
+
+  const roundValues: MarketRollOffRound = {};
+  for (const playerId of rollOff.eligiblePlayerIds) {
+    const value = rollOff.currentRolls[playerId];
+    if (typeof value !== "number") {
+      return state;
+    }
+    roundValues[playerId] = value;
+  }
+
+  const rounds = [...rollOff.rounds, roundValues];
+  const lowest = Math.min(...Object.values(roundValues));
+  const tied = rollOff.eligiblePlayerIds.filter((playerId) => roundValues[playerId] === lowest);
+
+  if (tied.length > 1) {
+    const nextRollOff: MarketRollOffState = {
+      ...rollOff,
+      rounds,
+      eligiblePlayerIds: tied,
+      currentRolls: createPendingRolls(tied)
+    };
+    return {
+      ...state,
+      market: {
+        ...state.market,
+        rollOff: nextRollOff
+      },
+      blocks: createMarketRollOffBlock(nextRollOff)
+    };
+  }
+
+  const winnerId = tied[0];
+  if (rollOff.kind === "buy") {
+    if (typeof rollOff.bidAmount !== "number") {
+      return state;
+    }
+    return {
+      ...applyMarketBuyWinner({
+        state,
+        winnerId,
+        amount: rollOff.bidAmount,
+        cardIndex: rollOff.cardIndex,
+        rollOffRounds: rounds
+      }),
+      blocks: undefined
+    };
+  }
+
+  return {
+    ...applyMarketPassWinner({
+      state,
+      winnerId,
+      passBids: rollOff.passBids ?? {},
+      cardIndex: rollOff.cardIndex,
+      rollOffRounds: rounds
+    }),
+    blocks: undefined
+  };
+};
+
+export const resolveMarketBids = (state: GameState): GameState => {
+  const cardIndex = state.market.rowIndexResolving;
+  const currentCard = state.market.currentRow[cardIndex];
+  if (!currentCard) {
+    return state;
+  }
+
+  const eligiblePlayerIds = getEligibleMarketPlayers(state);
+  if (eligiblePlayerIds.length === 0) {
+    return {
+      ...state,
+      market: {
+        ...state.market,
+        rowIndexResolving: state.market.currentRow.length,
+        bids: createBids(state),
+        passPot: 0,
+        rollOff: null
+      }
+    };
+  }
+
+  const bidEntries: BidEntry[] = eligiblePlayerIds.map((playerId) => {
+    const bid = state.market.bids[playerId];
+    return {
+      playerId,
+      bid: bid ?? { kind: "pass", amount: 0 }
+    };
+  });
+
+  const buyBids = bidEntries.filter((entry) => entry.bid.kind === "buy" && entry.bid.amount > 0);
+
+  if (buyBids.length > 0) {
+    const highest = Math.max(...buyBids.map((entry) => entry.bid.amount));
+    const topBids = buyBids.filter((entry) => entry.bid.amount === highest);
+    if (topBids.length > 1) {
+      const rollOff = createMarketRollOffState({
+        state,
+        cardIndex,
+        kind: "buy",
+        bidAmount: highest,
+        eligiblePlayerIds: topBids.map((entry) => entry.playerId)
+      });
+      return {
+        ...state,
+        market: {
+          ...state.market,
+          rollOff
+        },
+        blocks: createMarketRollOffBlock(rollOff)
+      };
+    }
+
+    return applyMarketBuyWinner({
+      state,
+      winnerId: topBids[0].playerId,
+      amount: highest,
+      cardIndex,
+      rollOffRounds: []
+    });
+  }
+
+  const passBids = bidEntries.map((entry) => ({
+    playerId: entry.playerId,
+    amount: entry.bid.amount
+  }));
+  const passBidByPlayer = Object.fromEntries(
+    passBids.map((entry) => [entry.playerId, entry.amount])
+  ) as Record<PlayerID, number>;
+  const lowest = Math.min(...passBids.map((entry) => entry.amount));
+  const eligibleWinners = passBids
+    .filter((entry) => entry.amount === lowest)
+    .map((entry) => entry.playerId);
+
+  if (eligibleWinners.length > 1) {
+    const rollOff = createMarketRollOffState({
+      state,
+      cardIndex,
+      kind: "pass",
+      bidAmount: null,
+      passBids: passBidByPlayer,
+      eligiblePlayerIds: eligibleWinners
+    });
+    return {
+      ...state,
+      market: {
+        ...state.market,
+        rollOff
+      },
+      blocks: createMarketRollOffBlock(rollOff)
+    };
+  }
+
+  return applyMarketPassWinner({
+    state,
+    winnerId: eligibleWinners[0],
+    passBids: passBidByPlayer,
+    cardIndex,
+    rollOffRounds: []
+  });
 };

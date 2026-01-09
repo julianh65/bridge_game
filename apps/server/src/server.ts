@@ -361,6 +361,14 @@ const resolveDebugBlock = (state: GameState): GameState => {
     return nextState;
   }
 
+  if (block.type === "market.rollOff") {
+    let nextState = state;
+    for (const playerId of block.waitingFor) {
+      nextState = applyCommand(nextState, { type: "SubmitMarketRollOff" }, playerId);
+    }
+    return nextState;
+  }
+
   if (block.type === "collection.choices") {
     let nextState = state;
     for (const playerId of block.waitingFor) {

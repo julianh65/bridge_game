@@ -42,11 +42,13 @@ import { applyCombatRetreatChoice, resolveCombatRetreatBlock, resolveSieges } fr
 import { emit } from "./events";
 import {
   applyMarketBid,
+  applyMarketRollOff,
   createMarketBidBlock,
   initializeMarketDecks,
   initializePowerDecks,
   prepareMarketRow,
-  resolveMarketBids
+  resolveMarketBids,
+  resolveMarketRollOff
 } from "./market";
 
 const createPlayerState = (player: LobbyPlayer, seatIndex: number, startingGold: number): PlayerState => {
@@ -153,7 +155,8 @@ export const createNewGame = (
       rowIndexResolving: 0,
       passPot: 0,
       bids: Object.fromEntries(players.map((player) => [player.id, null])),
-      playersOut: Object.fromEntries(players.map((player) => [player.id, false]))
+      playersOut: Object.fromEntries(players.map((player) => [player.id, false])),
+      rollOff: null
     },
     marketDecks: { I: [], II: [], III: [] },
     powerDecks: { I: [], II: [], III: [] },
@@ -198,6 +201,10 @@ export const applyCommand = (
     return applyMarketBid(state, _command.payload, _playerId);
   }
 
+  if (_command.type === "SubmitMarketRollOff") {
+    return applyMarketRollOff(state, _playerId);
+  }
+
   if (_command.type === "SubmitCollectionChoices") {
     return applyCollectionChoice(state, _command.payload, _playerId);
   }
@@ -238,6 +245,17 @@ export const runUntilBlocked = (state: GameState): GameState => {
         ...nextState,
         blocks: undefined
       };
+      continue;
+    }
+
+    if (nextState.blocks?.type === "market.rollOff") {
+      if (nextState.blocks.waitingFor.length > 0) {
+        return nextState;
+      }
+      nextState = resolveMarketRollOff(nextState);
+      if (nextState.blocks?.type === "market.rollOff") {
+        return nextState;
+      }
       continue;
     }
 
@@ -307,6 +325,9 @@ export const runUntilBlocked = (state: GameState): GameState => {
           return nextState;
         }
         nextState = resolveMarketBids(nextState);
+        if (nextState.blocks?.type === "market.rollOff") {
+          return nextState;
+        }
         nextState = {
           ...nextState,
           blocks: undefined

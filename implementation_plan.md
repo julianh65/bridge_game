@@ -663,7 +663,7 @@ Done
 - [x] Dice roll in the market and in general needs to be a bit bigger and clearly mark who is who.
 - [x] Market roll-offs: each player clicks to roll their respective die.
   - [x] Enlarge market roll-off dice UI and add clearer player labels.
-  - [ ] Allow each player to click to roll their die (sync with server).
+  - [x] Allow each player to click to roll their die (sync with server).
 - [x] In the market or on the card I don't see the nice champion stats that we created
 ### Other
 - [x] The champion needs to be more obvious, like a seperate thing with its health and name and stuff, and they can hover over it to see the stats

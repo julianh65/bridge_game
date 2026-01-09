@@ -28,6 +28,7 @@ type MarketPanelProps = {
   player: GameView["public"]["players"][number] | null;
   status: RoomConnectionStatus;
   onSubmitBid: (bid: Bid) => void;
+  onSubmitRollOff?: () => void;
   winnerHighlight?: MarketWinnerHighlight | null;
   winnerHistory?: Record<number, MarketWinnerHighlight> | null;
   rollDurationMs?: number;
@@ -42,6 +43,7 @@ export const MarketPanel = ({
   player,
   status,
   onSubmitBid,
+  onSubmitRollOff,
   winnerHighlight,
   winnerHistory = null,
   rollDurationMs: rollDurationOverride,
@@ -80,7 +82,9 @@ export const MarketPanel = ({
   );
   const [bidAmount, setBidAmount] = useState(0);
   const [showWinner, setShowWinner] = useState(true);
-  const [localRollReady, setLocalRollReady] = useState<Record<string, boolean>>({});
+  const activeRollOff = market.rollOff ?? null;
+  const isRollOffActive = Boolean(activeRollOff);
+  const rollOffKey = activeRollOff?.key ?? winnerHighlight?.rollOffKey ?? 0;
   const bidEntries = players.map((player) => {
     const bid = market.bids[player.id];
     const isOut = market.playersOut[player.id];
@@ -187,76 +191,134 @@ export const MarketPanel = ({
   const rollRoundGapMs = 260;
   const rollGapMs = 0;
   const rollOffRounds = useMemo(() => {
+    const playerNameById = new Map(players.map((entry) => [entry.id, entry.name]));
+    const buildRolls = (round: Record<string, number | null>) => {
+      const rolls: Array<{ playerId: string; name: string; value: number | null }> = [];
+      const seen = new Set<string>();
+      for (const player of players) {
+        const value = round[player.id];
+        if (typeof value === "number" || value === null) {
+          rolls.push({ playerId: player.id, name: player.name, value });
+          seen.add(player.id);
+        }
+      }
+      for (const [playerId, value] of Object.entries(round)) {
+        if (seen.has(playerId) || (typeof value !== "number" && value !== null)) {
+          continue;
+        }
+        rolls.push({
+          playerId,
+          name: playerNameById.get(playerId) ?? playerId,
+          value
+        });
+      }
+      return rolls;
+    };
+
+    if (activeRollOff) {
+      const rounds = activeRollOff.rounds.map((round, roundIndex) => ({
+        roundIndex,
+        rolls: buildRolls(round),
+        isPending: false
+      }));
+      const currentRolls = activeRollOff.currentRolls ?? {};
+      if (Object.keys(currentRolls).length > 0) {
+        rounds.push({
+          roundIndex: rounds.length,
+          rolls: buildRolls(currentRolls),
+          isPending: true
+        });
+      }
+      return rounds.filter((round) => round.rolls.length > 0);
+    }
+
     const rollOff = winnerHighlight?.rollOff;
     if (!rollOff || rollOff.length === 0) {
       return [];
     }
-    const playerNameById = new Map(players.map((entry) => [entry.id, entry.name]));
+
     return rollOff
       .map((round, roundIndex) => {
         if (!round || typeof round !== "object") {
           return null;
         }
-        const rolls: Array<{ playerId: string; name: string; value: number }> = [];
-        const seen = new Set<string>();
-        for (const player of players) {
-          const value = round[player.id];
-          if (typeof value === "number") {
-            rolls.push({ playerId: player.id, name: player.name, value });
-            seen.add(player.id);
-          }
-        }
-        for (const [playerId, value] of Object.entries(round)) {
-          if (seen.has(playerId) || typeof value !== "number") {
-            continue;
-          }
-          rolls.push({
-            playerId,
-            name: playerNameById.get(playerId) ?? playerId,
-            value
-          });
-        }
-        return rolls.length > 0 ? { roundIndex, rolls } : null;
+        const rolls = buildRolls(round);
+        return rolls.length > 0 ? { roundIndex, rolls, isPending: false } : null;
       })
       .filter(
         (
           round
-        ): round is { roundIndex: number; rolls: Array<{ playerId: string; name: string; value: number }> } =>
-          Boolean(round)
+        ): round is {
+          roundIndex: number;
+          rolls: Array<{ playerId: string; name: string; value: number | null }>;
+          isPending: boolean;
+        } => Boolean(round)
       );
-  }, [players, winnerHighlight?.rollOff]);
+  }, [activeRollOff, players, winnerHighlight?.rollOff]);
 
-  const rollOffSchedule = useMemo(
-    () =>
-      rollOffRounds.reduce(
-        (schedule, round) => {
-          const lastIndex = Math.max(round.rolls.length - 1, 0);
-          const rollDelays = round.rolls.map(
-            (_roll, index) => schedule.nextStartMs + index * rollGapMs
-          );
-          const endMs = schedule.nextStartMs + lastIndex * rollGapMs + rollDurationMs;
-          schedule.rounds.push({
-            ...round,
-            startMs: schedule.nextStartMs,
-            endMs,
-            rollDelays
-          });
-          schedule.nextStartMs = endMs + rollRoundGapMs;
-          return schedule;
-        },
-        {
-          rounds: [] as Array<{
-            roundIndex: number;
-            rolls: Array<{ playerId: string; name: string; value: number }>;
-            startMs: number;
-            endMs: number;
-            rollDelays: number[];
-          }>,
-          nextStartMs: rollDelayBaseMs
-        }
-      ),
-    [rollDelayBaseMs, rollDurationMs, rollGapMs, rollOffRounds, rollRoundGapMs]
-  );
+  const rollOffSchedule = useMemo(() => {
+    if (rollOffRounds.length === 0) {
+      return {
+        rounds: [] as Array<{
+          roundIndex: number;
+          rolls: Array<{ playerId: string; name: string; value: number | null }>;
+          isPending: boolean;
+          startMs: number;
+          endMs: number;
+          rollDelays: number[];
+        }>,
+        nextStartMs: rollDelayBaseMs
+      };
+    }
+
+    if (isRollOffActive) {
+      return {
+        rounds: rollOffRounds.map((round) => ({
+          ...round,
+          startMs: 0,
+          endMs: 0,
+          rollDelays: round.rolls.map(() => 0)
+        })),
+        nextStartMs: 0
+      };
+    }
+
+    return rollOffRounds.reduce(
+      (schedule, round) => {
+        const lastIndex = Math.max(round.rolls.length - 1, 0);
+        const rollDelays = round.rolls.map(
+          (_roll, index) => schedule.nextStartMs + index * rollGapMs
+        );
+        const endMs = schedule.nextStartMs + lastIndex * rollGapMs + rollDurationMs;
+        schedule.rounds.push({
+          ...round,
+          startMs: schedule.nextStartMs,
+          endMs,
+          rollDelays
+        });
+        schedule.nextStartMs = endMs + rollRoundGapMs;
+        return schedule;
+      },
+      {
+        rounds: [] as Array<{
+          roundIndex: number;
+          rolls: Array<{ playerId: string; name: string; value: number | null }>;
+          isPending: boolean;
+          startMs: number;
+          endMs: number;
+          rollDelays: number[];
+        }>,
+        nextStartMs: rollDelayBaseMs
+      }
+    );
+  }, [
+    isRollOffActive,
+    rollDelayBaseMs,
+    rollDurationMs,
+    rollGapMs,
+    rollOffRounds,
+    rollRoundGapMs
+  ]);
   const showRollOff = rollOffSchedule.rounds.length > 0;
   const rollOffDurationMs =
     rollOffSchedule.rounds.length > 0
@@ -281,15 +343,11 @@ export const MarketPanel = ({
   }, [winnerHighlight?.rollOffKey, rollOffDurationMs, showRollOff]);
 
   useEffect(() => {
-    if (!winnerHighlight || !showRollOff) {
-      setLocalRollReady({});
+    if (rollOffSchedule.rounds.length === 0 || isRollOffActive) {
+      setVisibleRollRounds(rollOffSchedule.rounds.length);
       return;
     }
-    setLocalRollReady({});
-  }, [winnerHighlight?.rollOffKey, showRollOff]);
-
-  useEffect(() => {
-    if (!winnerHighlight || rollOffSchedule.rounds.length === 0) {
+    if (!winnerHighlight) {
       setVisibleRollRounds(rollOffSchedule.rounds.length);
       return;
     }
@@ -304,7 +362,7 @@ export const MarketPanel = ({
     return () => {
       timeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
     };
-  }, [rollOffSchedule, winnerHighlight?.rollOffKey]);
+  }, [isRollOffActive, rollOffSchedule, winnerHighlight?.rollOffKey]);
 
   let bidHint = "Enter a bid amount to buy or pass.";
   if (status !== "connected") {
@@ -335,34 +393,43 @@ export const MarketPanel = ({
       "--player-color": `var(--player-color-${index})`
     } as CSSProperties;
   };
+  const rollOffHint = isRollOffActive
+    ? "Waiting for tied players to roll."
+    : "Dice roll tiebreaker resolved for this card.";
   const rollOffPanel = showRollOff ? (
     <div className="market-rolloff-panel">
       <div className="market-bid__header">
         <h4>Roll-off</h4>
         <span className="market-pill">Tie-break</span>
       </div>
-      <p className="action-panel__hint">Dice roll tiebreaker resolved for this card.</p>
+      <p className="action-panel__hint">{rollOffHint}</p>
       <div className="market-rolloff market-rolloff--center">
         {rollOffRoundsToShow.map((round) => (
           <div
-            key={`rolloff-${winnerHighlight?.rollOffKey ?? 0}-${round.roundIndex}`}
+            key={`rolloff-${rollOffKey}-${round.roundIndex}`}
             className="market-rolloff__round"
           >
             <span className="market-rolloff__label">Round {round.roundIndex + 1}</span>
             <div className="market-rolloff__rolls">
               {round.rolls.map((roll, index) => {
-                const rollKey = `${winnerHighlight?.rollOffKey ?? 0}-${round.roundIndex}-${
-                  roll.playerId
-                }`;
+                const rollKey = `${rollOffKey}-${round.roundIndex}-${roll.playerId}`;
                 const isLocalRoll = roll.playerId === playerId;
-                const hasRolled = !isLocalRoll || localRollReady[rollKey];
+                const rollValue = roll.value;
+                const hasValue = typeof rollValue === "number";
                 const isWinner = roll.playerId === winnerHighlight?.playerId;
                 const delayMs = round.rollDelays[index] ?? round.startMs;
-                const effectiveDelayMs = isLocalRoll ? 0 : delayMs;
+                const effectiveDelayMs = round.isPending ? 0 : delayMs;
                 const seatIndex = playerSeatIndexById.get(roll.playerId);
                 const swatchStyle = playerSwatchStyle(seatIndex);
                 const factionId = playerFactionById.get(roll.playerId);
                 const seatLabel = typeof seatIndex === "number" ? `P${seatIndex + 1}` : null;
+                const canRoll =
+                  isRollOffActive &&
+                  isLocalRoll &&
+                  !hasValue &&
+                  status === "connected" &&
+                  Boolean(onSubmitRollOff);
+                const rollButtonLabel = isLocalRoll ? "Roll" : "Waiting";
                 return (
                   <div
                     key={`roll-${roll.playerId}-${round.roundIndex}`}
@@ -387,9 +454,9 @@ export const MarketPanel = ({
                         </span>
                       ) : null}
                     </span>
-                    {hasRolled ? (
+                    {hasValue ? (
                       <NumberRoll
-                        value={roll.value}
+                        value={rollValue}
                         sides={6}
                         durationMs={rollDurationMs}
                         delayMs={effectiveDelayMs}
@@ -401,11 +468,14 @@ export const MarketPanel = ({
                       <button
                         type="button"
                         className="market-rolloff__roll-button"
-                        onClick={() =>
-                          setLocalRollReady((current) => ({ ...current, [rollKey]: true }))
-                        }
+                        disabled={!canRoll}
+                        onClick={() => {
+                          if (canRoll && onSubmitRollOff) {
+                            onSubmitRollOff();
+                          }
+                        }}
                       >
-                        Roll
+                        {rollButtonLabel}
                       </button>
                     )}
                   </div>
