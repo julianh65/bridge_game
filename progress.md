@@ -18,13 +18,13 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- (owner: agent2) Show champion cost scaling with slash formatting in card UI (and verify cost display) for better clarity from second playtest feedback. Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/DeckViewer.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `progress.md`, `implementation_plan.md`. (status: in progress)
 ## Test fixes
 - Updated engine tests for market bid winners, Quiet Study hand-size behavior, and setup flow expectations (deck preview gating + card totals) to match current config/flow. (Files: `packages/engine/src/market.test.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`.) (owner: agent1)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Tightened the setup lobby/deck preview layout so the player panel stays narrow and the main panels fill more width. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Added a visual indicator for the local player's capital draft slot and row. (Files: `apps/web/src/components/SetupCapitalDraft.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
+- Displayed champion gold cost scaling with slash notation in card costs, updated action-reveal cost labels, and used scaled gold costs for hand affordance checks. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`.) (owner: agent2)
 - Enabled champion stat blocks in the Quiet Study hand picker. (File: `apps/web/src/components/HandCardPickerModal.tsx`.) (owner: agent2)
 - Compressed setup player status pills into a stacked layout with a compact ready indicator. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
 - Hid the force stack marker when a hex only has champions, centering champion tokens instead. (File: `apps/web/src/components/BoardView.tsx`.) (owner: agent2)

@@ -60,8 +60,8 @@ const formatTypeLabel = (type?: string | null) => {
   return normalized.replace(/\b\w/g, (match) => match.toUpperCase());
 };
 
-const formatChampionGoldScale = (values: number[]) =>
-  values.map((value) => `+${value}`).join(" / ");
+const formatChampionGoldCosts = (baseGold: number, values: number[]) =>
+  values.map((value) => String(baseGold + value)).join("/");
 
 const boldRuleNumbers = (text: string): ReactNode[] => {
   const parts = text.split(/(\d+)/g);
@@ -108,20 +108,22 @@ export const GameCard = ({
   const resolvedArtUrl = artUrl ?? getCardArtUrl(cardId);
   const showArtImage = Boolean(resolvedArtUrl) && !isHidden;
   const initiativeLabel = showStats ? (showUnknown ? "?" : `${card?.initiative ?? "?"}`) : null;
+  const baseGoldCost = card?.cost.gold ?? 0;
+  const championGoldCosts =
+    !showUnknown && card?.champion?.goldCostByChampionCount?.length
+      ? formatChampionGoldCosts(baseGoldCost, card.champion.goldCostByChampionCount)
+      : null;
   const manaLabel = showUnknown ? "?" : `${card?.cost.mana ?? 0}`;
-  const goldLabel = showUnknown ? "?" : `${card?.cost.gold ?? 0}`;
+  const goldLabel = showUnknown ? "?" : championGoldCosts ?? `${baseGoldCost}`;
   const artText = artLabel ?? (isHidden ? "Face down" : "Art");
   const showFactionLabel = showFaction && !isHidden && Boolean(card?.factionId);
   const factionName = showFactionLabel ? getFactionName(card?.factionId) : null;
   const victoryPoints =
     !isHidden && card?.type === "Victory" ? card.victoryPoints ?? 1 : null;
-  const championGoldScale =
-    showChampionStats && !isHidden && card?.champion?.goldCostByChampionCount?.length
-      ? formatChampionGoldScale(card.champion.goldCostByChampionCount)
+  const championScaleLabel =
+    showChampionStats && championGoldCosts
+      ? `Gold cost ${championGoldCosts} (champions owned)`
       : null;
-  const championScaleLabel = championGoldScale
-    ? `Gold scales ${championGoldScale} (champions owned)`
-    : null;
 
   const classes = [
     "game-card",

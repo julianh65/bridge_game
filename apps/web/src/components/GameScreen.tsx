@@ -127,13 +127,23 @@ const formatUnitCounts = (forceCount: number, championCount: number) => {
   return parts.join(", ");
 };
 
+const formatChampionGoldCosts = (baseGold: number, values: number[]) =>
+  values.map((value) => String(baseGold + value)).join("/");
+
 const buildCardCostLabel = (cardDef: CardDef | null): string | null => {
   if (!cardDef) {
     return null;
   }
   const parts = [`${cardDef.cost.mana} mana`];
-  if (cardDef.cost.gold) {
-    parts.push(`${cardDef.cost.gold} gold`);
+  const baseGold = cardDef.cost.gold ?? 0;
+  if (cardDef.champion?.goldCostByChampionCount?.length) {
+    const goldLabel = formatChampionGoldCosts(
+      baseGold,
+      cardDef.champion.goldCostByChampionCount
+    );
+    parts.push(`${goldLabel} gold`);
+  } else if (cardDef.cost.gold) {
+    parts.push(`${baseGold} gold`);
   }
   return parts.join(", ");
 };
@@ -835,6 +845,12 @@ export const GameScreen = ({
         return a.id.localeCompare(b.id);
       });
   }, [view.public.board.units, playerNames]);
+  const localChampionCount = useMemo(() => {
+    if (!localPlayerId) {
+      return 0;
+    }
+    return championUnits.filter((unit) => unit.ownerId === localPlayerId).length;
+  }, [championUnits, localPlayerId]);
   const eligibleChampionTargets = useMemo(() => {
     if (!championTargetOwner) {
       return [];
@@ -4532,6 +4548,7 @@ export const GameScreen = ({
         availableMana={availableMana}
         maxMana={maxMana}
         availableGold={availableGold}
+        championCount={localChampionCount}
         vpTotal={localVpTotal}
         canDeclareAction={canDeclareAction}
         canSubmitAction={canSubmitAction}

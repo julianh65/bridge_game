@@ -93,6 +93,19 @@ const getCardTargetHint = (cardDef: CardDef | null): string | null => {
   }
 };
 
+const getChampionGoldCost = (cardDef: CardDef | null, championCount: number): number => {
+  if (!cardDef || cardDef.type !== "Champion" || !cardDef.champion) {
+    return 0;
+  }
+  const costs = cardDef.champion.goldCostByChampionCount;
+  if (!Array.isArray(costs) || costs.length === 0) {
+    return 0;
+  }
+  const index = Math.min(Math.max(0, championCount), costs.length - 1);
+  const cost = Number(costs[index]);
+  return Number.isFinite(cost) && cost > 0 ? cost : 0;
+};
+
 type DeckPulseKey = "draw" | "discard" | "scrapped" | "burned";
 
 type CombatRetreatPanelOption = {
@@ -118,6 +131,7 @@ type GameScreenHandPanelProps = {
   availableMana: number;
   maxMana: number;
   availableGold: number;
+  championCount: number;
   vpTotal: number | null;
   canDeclareAction: boolean;
   canSubmitAction: boolean;
@@ -154,6 +168,7 @@ export const GameScreenHandPanel = ({
   availableMana,
   maxMana,
   availableGold,
+  championCount,
   vpTotal,
   canDeclareAction,
   canSubmitAction,
@@ -564,7 +579,9 @@ export const GameScreenHandPanel = ({
                       const label = def?.name ?? card.defId;
                       const isSelected = card.id === selectedCardId;
                       const manaCost = def?.cost.mana ?? 0;
-                      const goldCost = def?.cost.gold ?? 0;
+                      const baseGoldCost = def?.cost.gold ?? 0;
+                      const championGoldCost = getChampionGoldCost(def, championCount);
+                      const goldCost = baseGoldCost + championGoldCost;
                       const hasMana = availableMana >= manaCost;
                       const hasGold = availableGold >= goldCost;
                       const canAfford = hasMana && hasGold;
