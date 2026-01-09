@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import { createBaseBoard } from "./board-generation";
-import { isCardPlayable, resolveCardEffects } from "./card-effects";
+import { isCardPlayable, resolveCardEffects, validateMovePath } from "./card-effects";
 import { WORMHOLE_LINK } from "./content/cards/age2";
 import { createNewGame, DEFAULT_CONFIG } from "./index";
-import { addChampionToHex } from "./units";
+import { addChampionToHex, addForcesToHex } from "./units";
 import type { GameState } from "./types";
 
 describe("Wormhole Link", () => {
@@ -80,5 +80,48 @@ describe("Wormhole Link", () => {
     expect(isCardPlayable(state, "p1", WORMHOLE_LINK, { from: "4,0", to: "0,0" })).toBe(
       false
     );
+  });
+
+  it("treats linked hexes as adjacent for movement", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 17, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const from = "0,3";
+    const to = "3,0";
+
+    let board = createBaseBoard(3);
+    board = addForcesToHex(board, "p1", from, 1);
+    const deployed = addChampionToHex(board, "p1", "0,0", {
+      cardDefId: "test.champion",
+      hp: 3,
+      attackDice: 2,
+      hitFaces: 3,
+      bounty: 1
+    });
+    board = deployed.board;
+
+    const state: GameState = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      board
+    };
+
+    const before = validateMovePath(state, "p1", [from, to], {
+      maxDistance: 1,
+      requiresBridge: true,
+      requireStartOccupied: true
+    });
+    expect(before).toBeNull();
+
+    const linked = resolveCardEffects(state, "p1", WORMHOLE_LINK, { from, to });
+    const after = validateMovePath(linked, "p1", [from, to], {
+      maxDistance: 1,
+      requiresBridge: true,
+      requireStartOccupied: true
+    });
+    expect(after).toEqual([from, to]);
   });
 });

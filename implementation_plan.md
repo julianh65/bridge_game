@@ -849,7 +849,7 @@ Done
   - [ ] Card primitive tests for new mechanics.
     - [x] Bridge lockdown movement block.
     - [x] Bridge trap force-loss trigger.
-    - [ ] Wormhole adjacency override.
+    - [x] Wormhole adjacency override.
     - [x] Dice roll gold thresholds.
     - [x] Cost override/scaling primitives.
 - [x] Stabilize Prospect deep tunnels coverage by allowing the test helper to fall back to adjacent mines on tiny maps.

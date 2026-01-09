@@ -21,7 +21,7 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-- (owner: agent5) Add/confirm wormhole adjacency override test coverage and mark the plan checkbox complete. Files: `packages/engine/src/card-effects.wormhole-link.test.ts`, `implementation_plan.md`.
+- (none)
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -31,6 +31,7 @@
 - Stabilized the Prospect deep tunnels action-flow test by letting `pickNonAdjacentMinePair` fall back to any mine pair when non-adjacent mines are unavailable on small maps. (File: `packages/engine/src/action-flow.test.ts`.) (owner: agent2)
 - Prevented setup flow from crashing when `startingForcesByFaction` is missing by making the config optional in types and guarding access in `resolveStartingForces`. (Files: `packages/engine/src/types.ts`, `packages/engine/src/setup-flow.ts`.) (owner: agent2)
 - Added a bridge trap consumption test to ensure the modifier clears after the first enemy crossing; marked the plan checkbox complete. (Files: `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent5)
+- Added a Wormhole Link movement adjacency test to cover linked-hex adjacency overrides; marked the plan checkbox complete. (Files: `packages/engine/src/card-effects.wormhole-link.test.ts`, `implementation_plan.md`.) (owner: agent5)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Tightened the setup lobby/deck preview layout so the player panel stays narrow and the main panels fill more width. (File: `apps/web/src/styles.css`.) (owner: agent2)
