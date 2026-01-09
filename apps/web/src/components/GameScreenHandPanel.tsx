@@ -1,11 +1,4 @@
-import {
-  type CSSProperties,
-  type ReactNode,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from "react";
+import { type CSSProperties, type ReactNode, useEffect, useRef, useState } from "react";
 
 import {
   CARD_DEFS,
@@ -153,9 +146,7 @@ export const GameScreenHandPanel = ({
   const drawTimersRef = useRef<Record<string, number>>({});
   const [recentDrawnIds, setRecentDrawnIds] = useState<Set<string>>(new Set());
   const handRowRef = useRef<HTMLDivElement | null>(null);
-  const [cardsPerRow, setCardsPerRow] = useState(() =>
-    Math.max(1, handCards.length)
-  );
+  const [handOverlap, setHandOverlap] = useState<number | null>(null);
 
   useEffect(() => {
     if (!canSubmitDone || !shouldConfirmPass) {
@@ -285,21 +276,22 @@ export const GameScreenHandPanel = ({
       if (cardWidth <= 0) {
         return;
       }
-      const secondCard = firstCard.nextElementSibling as HTMLElement | null;
-      const overlap =
-        secondCard && secondCard instanceof HTMLElement
-          ? Number.parseFloat(getComputedStyle(secondCard).marginLeft) || 0
-          : 0;
-      const effective = cardWidth + overlap;
-      if (effective <= 0) {
+      const totalCards = handCards.length;
+      if (totalCards <= 1) {
+        setHandOverlap((current) => (current === null ? current : null));
         return;
       }
-      const perRow = Math.max(
-        1,
-        Math.floor(1 + (availableWidth - cardWidth) / effective)
+      const defaultOverlap =
+        Number.parseFloat(styles.getPropertyValue("--hand-card-overlap")) ||
+        -cardWidth * 0.18;
+      const neededOverlap =
+        (availableWidth - cardWidth) / (totalCards - 1) - cardWidth;
+      const maxCompression = -cardWidth * 0.72;
+      const nextOverlap = Math.max(
+        maxCompression,
+        Math.min(defaultOverlap, neededOverlap)
       );
-      const nextPerRow = Math.min(perRow, Math.max(1, handCards.length || 1));
-      setCardsPerRow((current) => (current === nextPerRow ? current : nextPerRow));
+      setHandOverlap((current) => (current === nextOverlap ? current : nextOverlap));
     };
     let frame: number | null = null;
     const schedule = () => {
@@ -344,18 +336,10 @@ export const GameScreenHandPanel = ({
     };
   }, []);
 
-  const handRows = useMemo(() => {
-    type HandCard = (typeof handCards)[number];
-    if (handCards.length === 0) {
-      return [] as HandCard[][];
-    }
-    const perRow = Math.max(1, cardsPerRow);
-    const rows: HandCard[][] = [];
-    for (let i = 0; i < handCards.length; i += perRow) {
-      rows.push(handCards.slice(i, i + perRow));
-    }
-    return rows;
-  }, [handCards, cardsPerRow]);
+  const handRowStyle =
+    handOverlap !== null
+      ? ({ ["--hand-card-overlap" as string]: `${handOverlap}px` } as CSSProperties)
+      : undefined;
 
   const handlePassClick = () => {
     if (!canSubmitDone) {
@@ -499,72 +483,66 @@ export const GameScreenHandPanel = ({
                 <div className="hand-empty">No cards yet.</div>
               ) : (
                 <>
-                  {handRows.map((rowCards, rowIndex) => (
-                    <div
-                      key={`hand-row-${rowIndex}`}
-                      className="hand-row"
-                      ref={rowIndex === 0 ? handRowRef : undefined}
-                    >
-                      {rowCards.map((card, index) => {
-                        const def = CARD_DEFS_BY_ID.get(card.defId);
-                        const label = def?.name ?? card.defId;
-                        const isSelected = card.id === selectedCardId;
-                        const manaCost = def?.cost.mana ?? 0;
-                        const goldCost = def?.cost.gold ?? 0;
-                        const hasMana = availableMana >= manaCost;
-                        const hasGold = availableGold >= goldCost;
-                        const canAfford = hasMana && hasGold;
-                        const showManaWarning = canDeclareAction && manaCost > 0 && !hasMana;
-                        const isPlayable = canDeclareAction && canAfford;
-                        const isDrawn = recentDrawnIds.has(card.id);
-                        const totalCards = rowCards.length;
-                        const centerIndex = (totalCards - 1) / 2;
-                        const offset = index - centerIndex;
-                        const fanRotation = totalCards > 1 ? offset * 4 : 0;
-                        const fanLift = Math.abs(offset) * 4;
-                        const depth = totalCards - Math.abs(offset);
-                        const handStyle = {
-                          zIndex: 10 + depth,
-                          "--hand-rotate": `${fanRotation}deg`,
-                          "--hand-lift": `${fanLift}px`
-                        } as CSSProperties;
-                        return (
-                          <button
-                            key={card.id}
-                            type="button"
-                            className={`hand-card ${isSelected ? "is-selected" : ""} ${
-                              isPlayable ? "" : "is-disabled"
-                            } ${showManaWarning ? "is-mana-short" : ""} ${
-                              isDrawn ? "is-drawn" : ""
-                            }`}
-                            style={handStyle}
-                            aria-pressed={isSelected}
-                            aria-disabled={!isPlayable}
-                            title={`${label} (${card.id})`}
-                            onClick={() => onSelectCard(card.id)}
-                          >
-                            {showManaWarning ? (
-                              <span className="hand-card__mana-warning" aria-hidden="true">
-                                Need Mana
-                              </span>
-                            ) : null}
-                            <GameCard
-                              as="div"
-                              variant="hand"
-                              card={def ?? null}
-                              cardId={card.defId}
-                              displayName={label}
-                              eyebrow={null}
-                              showId={false}
-                              showTags={false}
-                              showChampionStats
-                              rulesFallback="Unknown card data."
-                            />
-                          </button>
-                        );
-                      })}
-                    </div>
-                  ))}
+                  <div className="hand-row" ref={handRowRef} style={handRowStyle}>
+                    {handCards.map((card, index) => {
+                      const def = CARD_DEFS_BY_ID.get(card.defId);
+                      const label = def?.name ?? card.defId;
+                      const isSelected = card.id === selectedCardId;
+                      const manaCost = def?.cost.mana ?? 0;
+                      const goldCost = def?.cost.gold ?? 0;
+                      const hasMana = availableMana >= manaCost;
+                      const hasGold = availableGold >= goldCost;
+                      const canAfford = hasMana && hasGold;
+                      const showManaWarning = canDeclareAction && manaCost > 0 && !hasMana;
+                      const isPlayable = canDeclareAction && canAfford;
+                      const isDrawn = recentDrawnIds.has(card.id);
+                      const totalCards = handCards.length;
+                      const centerIndex = (totalCards - 1) / 2;
+                      const offset = index - centerIndex;
+                      const fanRotation = totalCards > 1 ? offset * 4 : 0;
+                      const fanLift = Math.abs(offset) * 4;
+                      const depth = totalCards - Math.abs(offset);
+                      const handStyle = {
+                        zIndex: 10 + depth,
+                        "--hand-rotate": `${fanRotation}deg`,
+                        "--hand-lift": `${fanLift}px`
+                      } as CSSProperties;
+                      return (
+                        <button
+                          key={card.id}
+                          type="button"
+                          className={`hand-card ${isSelected ? "is-selected" : ""} ${
+                            isPlayable ? "" : "is-disabled"
+                          } ${showManaWarning ? "is-mana-short" : ""} ${
+                            isDrawn ? "is-drawn" : ""
+                          }`}
+                          style={handStyle}
+                          aria-pressed={isSelected}
+                          aria-disabled={!isPlayable}
+                          title={`${label} (${card.id})`}
+                          onClick={() => onSelectCard(card.id)}
+                        >
+                          {showManaWarning ? (
+                            <span className="hand-card__mana-warning" aria-hidden="true">
+                              Need Mana
+                            </span>
+                          ) : null}
+                          <GameCard
+                            as="div"
+                            variant="hand"
+                            card={def ?? null}
+                            cardId={card.defId}
+                            displayName={label}
+                            eyebrow={null}
+                            showId={false}
+                            showTags={false}
+                            showChampionStats
+                            rulesFallback="Unknown card data."
+                          />
+                        </button>
+                      );
+                    })}
+                  </div>
                   {handTargets ? <div className="game-hand__targets">{handTargets}</div> : null}
                 </>
               )}
