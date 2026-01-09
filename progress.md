@@ -17,7 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- (owner: agent5) Persist combat RNG across no-hit rounds to avoid repeated rolls/stalls; scope: combat resolution RNG updates + test. Files: `packages/engine/src/combat.ts`, `packages/engine/src/combat.test.ts`, `implementation_plan.md`, `progress.md`. (status: in progress)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Enabled champion stat blocks in the Quiet Study hand picker. (File: `apps/web/src/components/HandCardPickerModal.tsx`.) (owner: agent2)
@@ -38,6 +37,7 @@
 - Converted hand-target panels (Bridge Crew edge/move) into overlays so the hand row no longer shifts upward. (File: `apps/web/src/styles.css`.)
 - Roll-off ties now award the highest die roll (not lowest), with market roll-off tests updated; marked the plan item complete. (Files: `packages/engine/src/market.ts`, `packages/engine/src/market.test.ts`, `implementation_plan.md`.) (owner: agent5)
 - Relaxed forge placement to fall back to any eligible distance when preferred center distances have no candidates (avoids dead-end placements on small maps), with a fallback test; marked the plan item complete. (Files: `packages/engine/src/board-generation.ts`, `packages/engine/src/board-generation.test.ts`, `implementation_plan.md`.) (owner: agent5)
+- Persisted combat RNG updates during no-hit rounds so dice rolls advance (prevents repeated roll stalls), with test coverage; marked the plan item complete. (Files: `packages/engine/src/combat.ts`, `packages/engine/src/combat.test.ts`, `implementation_plan.md`.) (owner: agent5)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.

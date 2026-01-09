@@ -212,6 +212,47 @@ describe("combat resolution", () => {
     expect(hex.occupants["p2"]).toEqual(["f2"]);
   });
 
+  it("persists RNG advances when combat rounds miss", () => {
+    vi.spyOn(shared, "rollDie").mockImplementation((rng) => ({
+      value: 6,
+      next: { state: rng.state + 1 }
+    }));
+
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        p1: ["f1"],
+        p2: ["f2"]
+      }
+    };
+
+    board.units = {
+      f1: { id: "f1", ownerPlayerId: "p1", kind: "force", hex: hexKey },
+      f2: { id: "f2", ownerPlayerId: "p2", kind: "force", hex: hexKey }
+    };
+
+    const rngState = createRngState(7);
+    const state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState,
+      board
+    };
+
+    const resolved = resolveBattleAtHex(state, hexKey);
+
+    expect(resolved.rngState.state).toBeGreaterThan(rngState.state);
+  });
+
   it("resolves sieges on contested capitals", () => {
     const base = createNewGame(DEFAULT_CONFIG, 1, [
       { id: "p1", name: "Player 1" },

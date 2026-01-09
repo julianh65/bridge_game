@@ -947,6 +947,10 @@ export const resolveBattleAtHex = (
           hitsToDefenders: createEmptyHitSummary()
         }
       });
+      nextState = {
+        ...nextState,
+        rngState
+      };
       if (retreatAfterRound) {
         nextState = applyRetreatMoves(nextState, hexKey, retreatPlans);
         nextBoard = nextState.board;
