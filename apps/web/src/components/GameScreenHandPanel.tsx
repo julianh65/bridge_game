@@ -31,6 +31,12 @@ const getCardTargetHint = (cardDef: CardDef | null): string | null => {
   const mortarEffect = cardDef.effects?.find((effect) => effect.kind === "mortarShot") as
     | { maxDistance?: number }
     | undefined;
+  const moveStackEffect = cardDef.effects?.find((effect) => effect.kind === "moveStack") as
+    | { stopOnOccupied?: boolean }
+    | undefined;
+  const stopOnOccupied =
+    moveStackEffect?.stopOnOccupied === true ||
+    (cardDef.targetSpec as Record<string, unknown>).stopOnOccupied === true;
   if (mortarEffect) {
     const maxDistance =
       typeof mortarEffect.maxDistance === "number" ? mortarEffect.maxDistance : 2;
@@ -44,7 +50,9 @@ const getCardTargetHint = (cardDef: CardDef | null): string | null => {
     case "stack":
       return "Pick a stack, then a destination.";
     case "path":
-      return "Pick a path on the board.";
+      return stopOnOccupied
+        ? "Pick a path on the board. Movement stops when entering an occupied hex."
+        : "Pick a path on the board.";
     case "hex":
       return "Pick a hex on the board.";
     case "hexPair":

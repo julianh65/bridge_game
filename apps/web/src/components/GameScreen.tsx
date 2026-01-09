@@ -2390,6 +2390,8 @@ export const GameScreen = ({
           : typeof targetSpec.maxDistance === "number"
             ? targetSpec.maxDistance
             : null;
+      const stopOnOccupied =
+        moveStackEffect?.stopOnOccupied === true || targetSpec.stopOnOccupied === true;
       const canStart = maxDistance === null || maxDistance >= 1;
       const startCandidates = new Set<string>();
       if (canStart) {
@@ -2424,6 +2426,13 @@ export const GameScreen = ({
         }
         const last = pendingPath[pendingPath.length - 1];
         if (!last || !hasHex(last)) {
+          return {
+            validHexKeys: [],
+            previewEdgeKeys: [],
+            startHexKeys: Array.from(startTargets)
+          };
+        }
+        if (pendingPath.length > 1 && stopOnOccupied && hasAnyOccupants(last)) {
           return {
             validHexKeys: [],
             previewEdgeKeys: [],
@@ -2792,6 +2801,16 @@ export const GameScreen = ({
 
   const revealHexKeys = activeCardReveal?.targetHexKeys ?? [];
   const revealEdgeKeys = activeCardReveal?.targetEdgeKeys ?? [];
+  const previewHexPair = useMemo(() => {
+    if (cardTargetKind !== "hexPair") {
+      return null;
+    }
+    const selectedPair = getTargetStringArray(targetRecord, "hexKeys");
+    if (selectedPair.length === 2) {
+      return { from: selectedPair[0], to: selectedPair[1] };
+    }
+    return null;
+  }, [cardTargetKind, targetRecord]);
   const highlightHexKeys = useMemo(() => {
     if (revealHexKeys.length === 0) {
       return targetHighlightHexKeys;
@@ -3394,6 +3413,7 @@ export const GameScreen = ({
           highlightHexKeys={highlightHexKeys}
           validHexKeys={isEdgePickMode ? [] : validHexKeys}
           previewEdgeKeys={previewEdgeKeys}
+          previewHexPair={previewHexPair}
           isTargeting={isBoardTargeting}
           onHexClick={isEdgePickMode ? undefined : handleBoardHexClick}
           onEdgeClick={handleBoardEdgeClick}
