@@ -254,6 +254,108 @@ export const SetupFlow = ({
           >
             Auto-setup
           </button>
+          {canDebug ? (
+            <details className="setup-flow__debug-details">
+              <summary>Scenario tools (dev)</summary>
+              <div className="panel">
+                <p className="muted">
+                  Set a round (1, 4, 8) and optionally paste a board snapshot.
+                </p>
+                <div className="controls">
+                  <label>
+                    Round
+                    <input
+                      type="number"
+                      value={scenarioRoundInput}
+                      onChange={(event) => setScenarioRoundInput(event.target.value)}
+                      placeholder="1"
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={handleApplyScenario}
+                    disabled={!canApplyScenario && !canApplyBoard}
+                  >
+                    Apply Scenario
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={handleAutoSetupScenario}
+                    disabled={!canAutoSetup}
+                    title={autoSetupHint}
+                  >
+                    Auto-setup + Scenario
+                  </button>
+                  {scenarioAge ? <span className="muted">Age {scenarioAge}</span> : null}
+                </div>
+                <div className="controls">
+                  {ROUND_PRESETS.map((preset) => (
+                    <button
+                      key={preset.round}
+                      type="button"
+                      className="btn btn-tertiary"
+                      onClick={() => setScenarioRoundInput(String(preset.round))}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    className="btn btn-tertiary"
+                    onClick={handleClearBlocks}
+                  >
+                    Clear Blocks
+                  </button>
+                </div>
+                <label className="setup-flow__debug-toggle">
+                  <input
+                    type="checkbox"
+                    checked={scenarioAutoApply}
+                    onChange={(event) => setScenarioAutoApply(event.target.checked)}
+                  />
+                  Auto-apply after auto-setup
+                </label>
+                <details>
+                  <summary>Board JSON</summary>
+                  <label>
+                    Board snapshot
+                    <textarea
+                      rows={6}
+                      value={boardSnapshotInput}
+                      onChange={(event) => setBoardSnapshotInput(event.target.value)}
+                      placeholder='{"radius":4,"hexes":{...},"bridges":{...},"units":{...}}'
+                    />
+                  </label>
+                  {boardSnapshotState.error ? (
+                    <p className="muted">{boardSnapshotState.error}</p>
+                  ) : null}
+                  <div className="controls">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => {
+                        if (boardSnapshotState.value) {
+                          applyBoardSnapshot(boardSnapshotState.value);
+                        }
+                      }}
+                      disabled={!canApplyBoard}
+                    >
+                      Apply Board
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-tertiary"
+                      onClick={() => setBoardSnapshotInput("")}
+                    >
+                      Clear Board JSON
+                    </button>
+                  </div>
+                </details>
+              </div>
+            </details>
+          ) : null}
         </div>
       ) : null}
 
@@ -285,104 +387,6 @@ export const SetupFlow = ({
                 </button>
               </div>
             ) : null}
-          </section>
-        ) : null}
-
-        {isHost && canDebug ? (
-          <section className="panel setup-flow__debug">
-            <h2>Setup Debug</h2>
-            <p className="muted">Auto-setup helpers for scenario testing (dev only).</p>
-            <div className="controls">
-              <label>
-                Round
-                <input
-                  type="number"
-                  value={scenarioRoundInput}
-                  onChange={(event) => setScenarioRoundInput(event.target.value)}
-                  placeholder="1"
-                />
-              </label>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={handleApplyScenario}
-                disabled={!canApplyScenario && !canApplyBoard}
-              >
-                Apply Scenario
-              </button>
-              {scenarioAge ? <span className="muted">Age {scenarioAge}</span> : null}
-            </div>
-            <div className="controls">
-              {ROUND_PRESETS.map((preset) => (
-                <button
-                  key={preset.round}
-                  type="button"
-                  className="btn btn-tertiary"
-                  onClick={() => applyScenarioRound(preset.round)}
-                >
-                  {preset.label}
-                </button>
-              ))}
-              <button
-                type="button"
-                className="btn btn-tertiary"
-                onClick={handleClearBlocks}
-              >
-                Clear Blocks
-              </button>
-            </div>
-            <label className="setup-flow__debug-toggle">
-              <input
-                type="checkbox"
-                checked={scenarioAutoApply}
-                onChange={(event) => setScenarioAutoApply(event.target.checked)}
-              />
-              Apply scenario after auto-setup
-            </label>
-            <div className="controls">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={handleAutoSetupScenario}
-                disabled={!canAutoSetup}
-                title={autoSetupHint}
-              >
-                Auto-setup + Scenario
-              </button>
-            </div>
-            <label>
-              Board JSON
-              <textarea
-                rows={6}
-                value={boardSnapshotInput}
-                onChange={(event) => setBoardSnapshotInput(event.target.value)}
-                placeholder='{"radius":4,"hexes":{...},"bridges":{...},"units":{...}}'
-              />
-            </label>
-            {boardSnapshotState.error ? (
-              <p className="muted">{boardSnapshotState.error}</p>
-            ) : null}
-            <div className="controls">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => {
-                  if (boardSnapshotState.value) {
-                    applyBoardSnapshot(boardSnapshotState.value);
-                  }
-                }}
-                disabled={!canApplyBoard}
-              >
-                Apply Board
-              </button>
-              <button
-                type="button"
-                className="btn btn-tertiary"
-                onClick={() => setBoardSnapshotInput("")}
-              >
-                Clear Board JSON
-              </button>
-            </div>
           </section>
         ) : null}
 

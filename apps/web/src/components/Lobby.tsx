@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import type { GameView, SetupChoice } from "@bridgefront/engine";
 
 import { BoardView } from "./BoardView";
+import { FactionSymbol } from "./FactionSymbol";
 import { RoomCodeCopy } from "./RoomCodeCopy";
 import { SetupCapitalDraft } from "./SetupCapitalDraft";
 import { SetupFreeStartingCardPick } from "./SetupFreeStartingCardPick";
@@ -19,6 +20,7 @@ type LobbyProps = {
   onRerollMap: () => void;
   onSubmitSetupChoice: (choice: SetupChoice) => void;
   onAutoSetup: () => void;
+  onAdvanceSetup: () => void;
   onLeave: () => void;
 };
 
@@ -116,24 +118,20 @@ export const Lobby = ({
           <h2>Factions</h2>
           <p className="muted">Chosen in the pre-game lobby.</p>
           <div className="settings-grid">
-            {players.map((player) => {
-              const factionSymbol = getFactionSymbol(player.factionId);
-              return (
-                <div key={player.id} className="settings-row">
-                  <span className="settings-label">{player.name}</span>
-                  <span className="settings-value">
-                    <span className="faction-inline">
-                      {factionSymbol ? (
-                        <span className="faction-symbol faction-symbol--small" aria-hidden="true">
-                          {factionSymbol}
-                        </span>
-                      ) : null}
-                      {getFactionName(player.factionId)}
-                    </span>
+            {players.map((player) => (
+              <div key={player.id} className="settings-row">
+                <span className="settings-label">{player.name}</span>
+                <span className="settings-value">
+                  <span className="faction-inline">
+                    <FactionSymbol
+                      factionId={player.factionId}
+                      className="faction-symbol--small"
+                    />
+                    {getFactionName(player.factionId)}
                   </span>
-                </div>
-              );
-            })}
+                </span>
+              </div>
+            ))}
           </div>
         </section>
 

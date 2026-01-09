@@ -1,6 +1,7 @@
 import type { GameView } from "@bridgefront/engine";
 
-import { getFactionName, getFactionSymbol } from "../lib/factions";
+import { FactionSymbol } from "./FactionSymbol";
+import { getFactionName } from "../lib/factions";
 
 type VictoryScreenProps = {
   winnerId: string;
@@ -26,7 +27,6 @@ export const VictoryScreen = ({
   const winner = players.find((player) => player.id === winnerId) ?? null;
   const winnerName = winner?.name ?? winnerId;
   const winnerFaction = winner ? getFactionName(winner.factionId) : null;
-  const winnerFactionSymbol = winner ? getFactionSymbol(winner.factionId) : null;
   const sortedPlayers = [...players].sort(
     (a, b) => (b.vp?.total ?? 0) - (a.vp?.total ?? 0)
   );
@@ -43,11 +43,7 @@ export const VictoryScreen = ({
             {winnerName}
             {winnerFaction ? (
               <span className="victory-screen__winner-faction">
-                {winnerFactionSymbol ? (
-                  <span className="faction-symbol faction-symbol--small" aria-hidden="true">
-                    {winnerFactionSymbol}
-                  </span>
-                ) : null}
+                <FactionSymbol factionId={winner?.factionId} className="faction-symbol--small" />
                 {winnerFaction}
               </span>
             ) : null}
@@ -61,17 +57,12 @@ export const VictoryScreen = ({
             const isViewer = player.id === viewerId;
             const vp = player.vp ?? { permanent: 0, control: 0, total: 0 };
             const factionName = getFactionName(player.factionId);
-            const factionSymbol = getFactionSymbol(player.factionId);
             return (
               <li key={player.id} className={`victory-score ${isWinner ? "is-winner" : ""}`}>
                 <div className="victory-score__identity">
                   <span className="victory-score__name">{player.name}</span>
                   <span className="victory-score__faction">
-                    {factionSymbol ? (
-                      <span className="faction-symbol faction-symbol--mini" aria-hidden="true">
-                        {factionSymbol}
-                      </span>
-                    ) : null}
+                    <FactionSymbol factionId={player.factionId} className="faction-symbol--mini" />
                     {factionName}
                   </span>
                   {isViewer ? <span className="victory-score__you">You</span> : null}

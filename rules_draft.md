@@ -2,8 +2,8 @@ The Plot / Story / Vibe 🙂
 Name:
 The Last Tether
 Setting
-World is called Orodin
-Orodin is an ancient prison made of basalt and aurum that the gods used to bind together a chaotic force called The Roil.
+World is called Oradion
+Oradion is an ancient prison made of basalt and aurum (gold lmao) that the gods used to bind together a chaotic force called The Roil.
 The energy from the Roil created life and all chaos on the planet.
 For thousands of years the prison held, but as humanity began to (without understanding) mine the aurum out of the earth we began to weaken and cannibalize the prison. Without the aurum the prison structure weakened until it shattered.
 Over the ages the energy from The Roil sparked life on the surface of the basalt prison.
@@ -15,38 +15,37 @@ To survive the great houses are fighting for Permanence, the energy the gods inf
 Forges are massive industrial complexes left by the gods.
 Age Names
 Age I: The fracture
-The “Great Groan” is heard. The outer crust begins to flake off into the sky. The Roil seeps up through the cracks.
-The Great Houses realize the prison is failing, they scramble to secure gold and build the first bridges to secure their immediate surroundings.
-Cracks appear, scramble to secure surroundings
+The “Great Crack” is heard. The outer crust begins to flake off. The Roil seeps up through the cracks.
+The Great Houses realize their prison world is cracking, they scramble to secure gold and build the first bridges to secure their immediate surroundings.
 Age II: The Drift
 The gaps widen and the mist rises.
 Age III: The dissolution
 The outer world is gone, knife-fight to the end. Unleash your most powerful relics to ensure your house is the only one left standing on the last solid ground.
 Factions (right now the ones below are just shitty placeholders)
-Leadbound ->
+Bastion -> The Lead Bound
 Zealots of gravity, they worship weight.
 Lore: They believe that if they build their walls thick and heavy enough the Roil cannot move them. They sew lead into their skin and make armor of basalt.
 Champion: The Anchorite: A warrior that has chained a massive slab of basalt to his back, dragging it into battle.
 Assassins -> The Virteous Court
 They believe that the world is breaking because there is too much noise and too much life. To save the prison they must kill and silence everyone.
-Mobile Guys -> idk yet
+Mobile Guys -> The Vaperborn
 They inhale The Roil and use it to move faster and energize themselves and fly. At great personal cost.
-Miners -> idk yet
+Miners -> The Refiner Collective
 They believe and know that Aurum is the only material that can resist The Roil. The only way to save themselves is to construct a fortress made of Gold.
-Card MFs ->
-They have realized that Orodin and The Roil are governed by strict mathematical laws. They believe the world is ending because the equation has an error. They accumulate knowledge to calculate the final formulate that will stop The Roil.
-Bridge / Aggros
-They believe that Pain is another form of Permanence. 
+Card MFs -> The Calculators
+They have realized that Oradion and The Roil are governed by strict mathematical laws. They believe the world is ending because the equation has an error. They accumulate knowledge to calculate the final formulate that will stop The Roil.
+Bridge / Aggros -> The Agony
+They believe that Pain is another form of Permanence. Causing and taking enough pain will do xyz.
 Redfines To Do:
-Victory Points / Permanence
+Victory Points -> Permanence
 Center -> Axis Mundi
 Market -> The Archive
 Burn -> Entropy
 Forces -> Cohorts
-Aurum -> Gold
+Gold -> Aurum
 All VP cards will need to be renamed to something more “permanence” ish
 
-Bridgefront — Complete Ruleset (Stand‑Alone v3)
+The Last Tether — Complete Ruleset (Stand‑Alone v3)
 A simultaneous‑planning, hex‑board, bridge‑network, deck‑building wargame for 2–6 players.
 1) Core Idea
 You expand from your Capital, fight over Mines (primary gold), Forges (deck shaping + pressure), and the Center (power cards). You build/destroy Bridges to create routes and choke points.
@@ -148,26 +147,32 @@ Players
 Mines
 Forges
 Center
+Random Bridges
 2
 3
 1
 1
+6
 3
 4
 2
 1
+6
 4
 5
 2
 1
+10
 5
 6
 3
 1
+10
 6
 7
 3
 1
+10
 
 6.2 Tile Descriptions
 Capital
@@ -218,9 +223,10 @@ Prefer spread and roughly equal access
 Sanity check
 For each player, compute distance from their Capital to nearest Mine.
 If max − min > 2, reroll placement.
+After this randomly place Random Bridges count of bridges on the board on any edges not connected to a players capital
 8) Setup
 Choose factions.
-Seating order follows lobby seat assignment (no randomization yet).
+Randomize seating order. TODO: Think about what this means and how it should pass around
 Capital draft: in reverse seating order, each player chooses a Capital slot.
 Generate the board:
 Place Center
@@ -229,11 +235,14 @@ Assign Mine Values
 Starting units: each player starts with 4 Forces in their Capital.
 Starting resources: each player starts with 4 gold.
 Deck setup:
-Take the common starter deck (§22.1) shared across factions.
-Add your faction starter spell (§22.2) and faction Champion (§22.3).
-If no faction is chosen, default to Leadbound.
+TODO: Probably just have a starter deck for each faction
+Take your common starter deck (§22.1)
+Add your faction starter spell (§22.2)
+Add your faction Champion (§22.3)
 Shuffle to form your draw pile
-Put your faction Champion card into your hand first, then draw until you have 6 cards in hand total.
+Put your faction Champion card into your hand first
+TODO: Should this be the case?
+Then draw until you have 6 cards in hand total
 Starting bridges: each player places 2 Bridges simultaneously.
 Each Bridge must have at least one endpoint within distance 2 of your Capital.
 If multiple players place the same Bridge, it is placed once.
@@ -356,8 +365,9 @@ Default: random assignment
 Each hit is randomly assigned to one enemy unit among all surviving enemy units in that battle.
 A Force assigned a hit dies.
 A Champion assigned a hit takes 1 damage.
-14.3 Repeat to the Death
-Remove casualties. If both sides still have units, repeat another combat round.
+14.3 Retreat
+Both parties will have the retreat option if there are any bridges connecting to the hex they are on and the person choosing the retreat has at least 1 mana → the retreater can choose a bridge and they move all forces there and they spend 1 mana to do so. If there are no connected bridges or the player who would like to choose to retreat has 0 mana then no retreat is possible.
+
 14.4 Champion Death and Bounty
 If a Champion reaches 0 HP:
 Remove it from the board immediately.
@@ -433,7 +443,7 @@ Each faction has:
 Passive abilities
 One unique starter spell
 One faction Champion (starts in your opening hand)
-21.1 Leadbound (Defense / Troops)
+21.1 Bastion (Defense / Troops)
 Passive A — Shield Wall: In the first combat round of each battle where you are the Defender, your Forces hit on 1–3.
 Passive B — Home Guard: Each time you deploy Forces into your Capital, deploy +1 extra Force.
 21.2 Assassins (Champions + Champion Killing)
@@ -507,22 +517,22 @@ Init: 20 / 100
 Type: Order
 Deal 1 damage to any Champion within 1 cell of a cell you occupy.
 22.2 Faction Unique Starter Spells (1 each)
-Leadbound — Hold the Line
+Bastion — Hold the Line
 Cost: 1 mana
 Init: 35 / 105
 Type: Spell
 Choose a hex you occupy. Until end of round, when you defend in that hex, your Forces hit on 1–3.
-Virteous — Marked for Coin
+Veil — Marked for Coin
 Cost: 1 mana
 Init: 35 / 105
 Type: Spell
 Mark an enemy Champion within distance 2 of one of your Champions. If it dies before end of round, gain +4 gold.
-Vapourborn — Air Drop
+Aerial — Air Drop
 Cost: 2 mana + 1 gold
 Init: 30 / 100
 Type: Spell
 Deploy 3 Forces into any non‑Capital hex within distance 1 of one of your Champions (ignores Bridges).
-Refiner — Rich Veins
+Prospect — Rich Veins
 Cost: 2 mana
 Init: 45 / 120
 Type: Spell
@@ -538,7 +548,7 @@ Init: 50 / 125
 Type: Spell
 Build 1 Bridge anywhere on the board.
 22.3 Faction Champions (Start‑of‑Game Champions)
-Leadbound — Ironclad Warden
+Bastion — Ironclad Warden
 Cost: 2 mana
 Gold (1st/2nd/3rd): 1 / 3 / 5
 Init: 70 / 135
@@ -547,7 +557,7 @@ HP 6
 Attack: 2 dice, hits on 1–2
 Bounty: 3
 Bodyguard — In battles with Ironclad, the first hit that would be assigned to a friendly Champion is assigned to a friendly Force instead (if any).
-Virteous — Shadeblade
+Veil — Shadeblade
 Cost: 2 mana
 Gold: 0 / 2 / 4
 Init: 55 / 115
@@ -556,7 +566,7 @@ HP 3
 Attack: 5 dice, hits on 1
 Bounty: 3
 Assassin’s Edge (1/round) — Before combat round 1 of a battle Shadeblade is in, deal 1 damage to an enemy Champion in that hex.
-Vapourborn — Skystriker Ace
+Aerial — Skystriker Ace
 Cost: 2 mana
 Gold: 0 / 2 / 4
 Init: 60 / 120
@@ -565,7 +575,7 @@ HP 4
 Attack: 2 dice, hits on 1–3
 Bounty: 3
 Flight — May move to adjacent hexes without Bridges.
-Refiner — Mine Overseer
+Prospect — Mine Overseer
 Cost: 2 mana
 Gold: 1 / 3 / 5
 Init: 65 / 125
@@ -642,7 +652,7 @@ Cost: 1 mana + 2 gold — Init: 55 / 130 — Type: Order
 Deploy 2 forcs into your capital. Increase the amount of forces by 1 every time this card is discarded. (Max 10). Burn.
 
 C) Economy (5)
-Refinering
+Prospecting
 Cost: 1 mana — Init: 30 / 100 — Type: Order
 Gain +2 gold. If you occupy a Mine, gain +3 gold instead.
 Trade Caravan
@@ -778,6 +788,9 @@ Move 1 stack up to 2 along Bridges. If it wins a battle this round, draw 2 at Cl
 Set to Skirmish
 Cost: 1 mana — Init: 75 / 145 — Type: Order
 Select a hex, until the end of the round iif a battle were to happen in that hex with your forces, all forces and your champion retreat to a random unoccupied adjacent hex (ignoring bridges). If no hexes are unoccupied all forces and champion die.
+Burn The Bridges
+Cost: 2 mana — Init: 75 / 145 — Type: Order
+Move 1 stack up to 1 along bridges. After moving destroy every bridge connected to the hex you have selected. Burn.
 B) Recruitment (5)
 Battalion Contract
 Cost: 3 mana + 2 gold — Init: 80 / 155 — Type: Order
