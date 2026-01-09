@@ -268,6 +268,12 @@ export const resolveEconomyEffect = (
     }
     case "gainMana": {
       const amount = typeof effect.amount === "number" ? effect.amount : 0;
+      if (effect.requiresDiscardTargets === true) {
+        const targetIds = getCardInstanceTargets(targets ?? null);
+        if (targetIds.length === 0) {
+          return nextState;
+        }
+      }
       return addMana(nextState, playerId, amount);
     }
     case "gainManaIfTile": {

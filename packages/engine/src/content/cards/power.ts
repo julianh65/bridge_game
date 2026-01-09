@@ -291,8 +291,8 @@ export const CHRONICLE_OF_WAR: CardDef = {
   targetSpec: { kind: "none" },
   effects: [
     { kind: "drawCards", count: 1 },
-    { kind: "discardFromHand", count: 1 },
-    { kind: "gainMana", amount: 1 }
+    { kind: "discardFromHand", count: 1, optional: true },
+    { kind: "gainMana", amount: 1, requiresDiscardTargets: true }
   ],
   victoryPoints: 1
 };
