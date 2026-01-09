@@ -434,6 +434,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] after i played gold plated armor and there was a battle the entire game just froze and there was no battle, reading the console (not sure if related) I’m getting a lot of maximum update depth exceeded at gamescreen
   - [ ] (Owner-only / Julian) Re-enable Gold Plated Armor once the freeze is fixed; card disabled temporarily.
 - [x] I got 9 VP and nothing happened, it didn’t detect that I won and no screen popped up (HUD now surfaces capital safety status.)
+- [x] HUD shows capital safe/contested status so the victory gate is visible at a glance.
 - [x] Be creative and add a balanced age 1 card of similar flavor to the Dice War Profiteer card
 - [x] Dice war profiteer during the reveal stage needs to auto roll a dice for everyone to see
 - [x] When the cards pop up to reveal it needs to have their description text on them

@@ -463,6 +463,20 @@ export const GameScreen = ({
     }
     return null;
   }, [localPlayerId, view.public.board.hexes]);
+  const localCapitalSafe = useMemo(() => {
+    if (!localPlayerId || !localCapitalHexKey) {
+      return null;
+    }
+    const capitalHex = view.public.board.hexes[localCapitalHexKey];
+    if (!capitalHex) {
+      return null;
+    }
+    const hasEnemy = Object.entries(capitalHex.occupants).some(
+      ([playerId, unitIds]) =>
+        playerId !== localPlayerId && (unitIds?.length ?? 0) > 0
+    );
+    return !hasEnemy;
+  }, [localCapitalHexKey, localPlayerId, view.public.board.hexes]);
 
   const centerHexKey = useMemo(() => {
     for (const hex of Object.values(view.public.board.hexes)) {
@@ -4595,6 +4609,7 @@ export const GameScreen = ({
         localGold={localGold}
         localVpTotal={localVpTotal}
         vpToWin={view.public.config.VP_TO_WIN ?? null}
+        capitalSafe={localCapitalSafe}
         onToggle={toggleHeaderCollapsed}
       />
 

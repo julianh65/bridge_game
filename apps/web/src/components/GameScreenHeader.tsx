@@ -14,6 +14,7 @@ type GameScreenHeaderProps = {
   localGold: number | null;
   localVpTotal: number | null;
   vpToWin: number | null;
+  capitalSafe: boolean | null;
   onToggle: () => void;
 };
 
@@ -43,6 +44,7 @@ export const GameScreenHeader = ({
   localGold,
   localVpTotal,
   vpToWin,
+  capitalSafe,
   onToggle
 }: GameScreenHeaderProps) => {
   const [goldPulse, setGoldPulse] = useState(false);
@@ -110,6 +112,13 @@ export const GameScreenHeader = ({
   const activePhaseIndex = PHASE_TRACKER_STEPS.findIndex((step) => step.key === phase);
   const roundsLeft = Math.max(0, roundsMax - Math.max(1, round) + 1);
   const roundsLeftLabel = roundsLeft === 1 ? "Final round" : `Rounds left: ${roundsLeft}`;
+  const capitalStatusLabel =
+    capitalSafe === null ? null : capitalSafe ? "Capital safe" : "Capital contested";
+  const capitalStatusClass =
+    capitalSafe === null ? "" : capitalSafe ? "status-pill--ready" : "status-pill--error";
+  const capitalStatusPill = capitalStatusLabel ? (
+    <span className={`status-pill ${capitalStatusClass}`}>{capitalStatusLabel}</span>
+  ) : null;
   const vpTargetLabel =
     typeof vpToWin === "number" && Number.isFinite(vpToWin) ? `/${vpToWin}` : "";
   const resourceChips =
@@ -189,6 +198,7 @@ export const GameScreenHeader = ({
             ) : null}
             {phaseTracker}
             <span className="status-pill">Round {round}</span>
+            {capitalStatusPill}
             <span className="status-pill">{roundsLeftLabel}</span>
           </div>
           <div className="game-screen__collapsed-actions">
@@ -214,6 +224,7 @@ export const GameScreenHeader = ({
             ) : null}
             <span className="status-pill status-pill--phase">Phase: {phaseLabel}</span>
             <span className="status-pill">Round {round}</span>
+            {capitalStatusPill}
             <span className="status-pill">{roundsLeftLabel}</span>
             <span className="status-pill">Players: {playerCount}</span>
             {winnerPlayerId ? (
