@@ -32,6 +32,13 @@ export { emit } from "./events";
 export { resolveBattleAtHex } from "./combat";
 export { applyChampionDeployment } from "./champions";
 export { addChampionToHex, addForcesToHex } from "./units";
+export {
+  applyScoutReportChoice,
+  isCardPlayable,
+  resolveCardEffects,
+  resolveScoutReportBlock,
+  validateMovePath
+} from "./card-effects";
 export type {
   Age,
   ActionDeclaration,

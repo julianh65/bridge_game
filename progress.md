@@ -17,7 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent1; scope: split `card-effects` resolvers into categorized modules (bridges/movement/combat/units) and re-export via a single index; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-*.ts`, `packages/engine/src/index.ts`, `implementation_plan.md`; status: in progress
 - owner: agent5; scope: add rollGold dice log + overlay UI for random card rolls (overlap note: `apps/web/src/components/GameScreen.tsx` also touched by agent3); files: `packages/engine/src/card-effects-economy.ts`, `packages/engine/src/content/cards/age2.ts`, `apps/web/src/components/DiceRollOverlay.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/lib/event-format.ts`, `apps/web/src/styles.css`, `implementation_plan.md`; status: in progress
 
 ## Planning updates
@@ -27,6 +26,7 @@
 
 ## Refactor Milestone progress
 - Extracted market/collection overlay rendering into `apps/web/src/components/GameScreenOverlays.tsx` and shared the market winner highlight type; updated the refactor milestone checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenOverlays.tsx`, `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.)
+- Split `card-effects` resolvers into categorized modules (bridges/movement/combat/units), added shared modifier/movement helpers, re-exported `validateMovePath`, and surfaced card-effect exports from the engine index; checked off the refactor milestone item. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-bridges.ts`, `packages/engine/src/card-effects-combat.ts`, `packages/engine/src/card-effects-movement.ts`, `packages/engine/src/card-effects-units.ts`, `packages/engine/src/card-effects-modifiers.ts`, `packages/engine/src/index.ts`, `implementation_plan.md`.)
 - Extracted the info dock (log/effects) into `apps/web/src/components/GameScreenInfoDock.tsx` and checked the refactor milestone item. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenInfoDock.tsx`, `implementation_plan.md`.)
 - Extracted phase/age cue overlays into `apps/web/src/components/GameScreenCues.tsx` and updated the refactor milestone checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenCues.tsx`, `implementation_plan.md`.)
 - Moved label/target helper utilities into `apps/web/src/lib/game-screen-targets.ts` and updated the refactor milestone checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/lib/game-screen-targets.ts`, `implementation_plan.md`.)
