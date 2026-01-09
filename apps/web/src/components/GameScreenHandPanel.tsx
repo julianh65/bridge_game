@@ -56,7 +56,18 @@ const getCardTargetHint = (cardDef: CardDef | null): string | null => {
     case "hex":
       return "Pick a hex on the board.";
     case "hexPair":
-      return "Pick two hexes on the board.";
+      {
+        const targetSpec = cardDef.targetSpec as Record<string, unknown>;
+        const allowSame = targetSpec.allowSame === true;
+        const maxDistance =
+          typeof targetSpec.maxDistanceFromFriendlyChampion === "number"
+            ? targetSpec.maxDistanceFromFriendlyChampion
+            : null;
+        const rangeHint =
+          maxDistance === null ? "" : ` within ${maxDistance} of your champions`;
+        const sameHint = allowSame ? " (same hex allowed)." : ".";
+        return `Pick two hexes${rangeHint}${sameHint}`;
+      }
     case "choice":
       return "Pick a capital or occupied hex.";
     case "champion":

@@ -17,11 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent1
-  scope: add hex-pair targeting flow constraints + hint (Wormhole Link/Gate)
-  files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/GameScreenHandPanel.tsx, implementation_plan.md, progress.md
-  status: in progress
-
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -723,6 +718,7 @@ none
 - Added Frenzy combat modifier effect (dice bonus + self-damage) with tests; updated `implementation_plan.md`. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.combat-modifiers.test.ts`, `implementation_plan.md`.) (Overlap note: `implementation_plan.md` also had pre-existing edits.)
 - Enforced champion target picker constraints (`requiresFriendlyChampion`, `maxDistance`) for Marked for Coin + Execution Order and updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Enforced `stopOnOccupied` during card path selection and added a hand-panel hint so Column Advance-style paths stop after occupied hexes; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.)
+- Tightened hex-pair targeting flow in the UI (valid picks + range hints) so Wormhole Link/Gate selections align with rules. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`.)
 
 ## Milestone 7.5 progress
 - Added a card-art manifest + helper, GameCard art rendering, and a CLI script to generate diffusion art and update the manifest. (Files: `scripts/generate-card-art.js`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/data/card-art.json`, `apps/web/src/lib/card-art.ts`, `.gitignore`.)
