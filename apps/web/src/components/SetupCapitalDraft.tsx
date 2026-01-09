@@ -132,6 +132,12 @@ export const SetupCapitalDraft = ({
             {lockedCount}/{players.length}
           </strong>
         </div>
+        <div className="resource-row">
+          <span>Available slots</span>
+          <strong>
+            {availableSlots.length}/{capitalSlots.length}
+          </strong>
+        </div>
         {localCapital ? (
           <div className="resource-row">
             <span>Your pick</span>
