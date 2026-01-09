@@ -537,7 +537,7 @@ export const GameScreenHandPanel = ({
                       const fanLift = Math.abs(offset) * 4;
                       const depth = totalCards - Math.abs(offset);
                       const handStyle = {
-                        zIndex: 10 + depth,
+                        "--hand-z": `${10 + depth}`,
                         "--hand-rotate": `${fanRotation}deg`,
                         "--hand-lift": `${fanLift}px`
                       } as CSSProperties;

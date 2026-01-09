@@ -17,6 +17,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- (owner: agent2) Stop Bridge Crew card popup from pushing the hand UI upward; scope: hand panel layout. Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `progress.md`, `implementation_plan.md`. (status: in progress)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Enabled champion stat blocks in the Quiet Study hand picker. (File: `apps/web/src/components/HandCardPickerModal.tsx`.) (owner: agent2)
@@ -35,6 +36,7 @@
 - Slightly increased card rules text size and marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent1) (Overlap note: includes agent4 plan/progress updates for champion-only move fixes.)
 - Removed dice-roll animations from forge/power reveal prompts; kept a short reveal pause with plain copy. (File: `apps/web/src/components/CollectionPanel.tsx`.)
 - Converted hand-target panels (Bridge Crew edge/move) into overlays so the hand row no longer shifts upward. (File: `apps/web/src/styles.css`.)
+- Fixed hand-card hover stacking by basing z-index on a CSS variable so hover brings cards to the front; updated the plan checklist. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
 - Roll-off ties now award the highest die roll (not lowest), with market roll-off tests updated; marked the plan item complete. (Files: `packages/engine/src/market.ts`, `packages/engine/src/market.test.ts`, `implementation_plan.md`.) (owner: agent5)
 - Relaxed forge placement to fall back to any eligible distance when preferred center distances have no candidates (avoids dead-end placements on small maps), with a fallback test; marked the plan item complete. (Files: `packages/engine/src/board-generation.ts`, `packages/engine/src/board-generation.test.ts`, `implementation_plan.md`.) (owner: agent5)
 - Persisted combat RNG updates during no-hit rounds so dice rolls advance (prevents repeated roll stalls), with test coverage; marked the plan item complete. (Files: `packages/engine/src/combat.ts`, `packages/engine/src/combat.test.ts`, `implementation_plan.md`.) (owner: agent5)

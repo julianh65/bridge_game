@@ -4338,6 +4338,7 @@ body.is-game .log-empty {
 
 .hand-card {
   position: relative;
+  z-index: var(--hand-z, 1);
   border: none;
   background: transparent;
   padding: 0;

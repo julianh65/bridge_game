@@ -384,7 +384,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] there’s an edge case with skystriker ace and other cards that move without bridges where you should be allowed to, if you just select them, move them with more options
 - [x] right now if there’s just a champion in the hex the force market still shows, it should just be the champion marker
 - [ ] certain cards won’t show like i did scout report and it didn’t show up in the action show phase
-- [ ] cards that are being hovered over sometimes don’t move “on top” of other cards in z axis in hand, it works on the first round but after you play cards I think it stops working?
+- [x] cards that are being hovered over sometimes don’t move “on top” of other cards in z axis in hand, it works on the first round but after you play cards I think it stops working?
 - [ ] after the last action while the actions are showing the market phase modal instantly pops up covering everything
 - [x] we should make it higher dice roll wins the card
 - [x] bridge crew card pop up affects ui flow of hand area and pushes all cards up
