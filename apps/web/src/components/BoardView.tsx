@@ -1314,11 +1314,15 @@ export const BoardView = ({
         const tag = showTags ? tileTag(hex.tile) : "";
         const isHomeCapital = homeCapitalHexKey === hex.key;
         const capitalOwner = hex.tile === "capital" ? capitalOwnerByHex?.[hex.key] : null;
-        const tileLabelText = capitalOwner
+        const baseTileLabelText = capitalOwner
           ? `Capital: ${capitalOwner}${isHomeCapital ? " (Home)" : ""}`
           : isHomeCapital
             ? "Home Capital"
             : tileLabel(hex.tile);
+        const tileLabelText =
+          hex.tile === "mine" && hex.mineValue
+            ? `${baseTileLabelText} +${hex.mineValue}`
+            : baseTileLabelText;
         const labelText = labelByHex?.[hex.key];
         const labelClassName =
           labelVariant === "coords"
