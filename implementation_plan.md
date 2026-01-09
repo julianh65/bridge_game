@@ -434,13 +434,14 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] after i played gold plater armor and there was a battle the entire game just froze and there was no battle, reading the console (not sure if related) I’m getting a lot of maximum update depth exceeded at gamescreen
 - [ ] I got 9 VP and nothing happened, it didn’t detect that I won and no screen popped up
 - [ ] Be creative and add a balanced age 1 card of similar flavor to the Dice War Profiteer card
-- [ ] Dice war profiteer during the reveal stage needs to auto roll a dice for everyone to see
+- [x] Dice war profiteer during the reveal stage needs to auto roll a dice for everyone to see
 - [ ] When the cards pop up to reveal it needs to have their description text on them
 - [ ] Be creative and add a balanced age 2 card that gives VP, don't make it too crazy just make it basic, add it to the rules, the game and everywhere
 - [ ] Be creative and add to each age a balanced more "basic" champion card that dosen't do anything crazy but is balanced, add it to the rules, the game and everywhere
 - [x] add a cool favicon
 - [x] remove the how it works on the main screen and "core loop" container
 - [ ] For cards that kind of "scale" like propoganda recruitment or future investment we need to represent on the card (in a very simple way, what the value would be if they played it is)
+- [ ] Add a small countdown of how many rounds are left in the game
 
 
 
@@ -883,12 +884,6 @@ Add a way for each card to have related card art and a card description that is 
 
 ## Milestone 10 -- Basic AI to play against
 Something that just takes random actions is fine
-
-## Milestone 11 -- Give me a way to balance the game in terms of running n where n is a large number of games where they all take random actions and give me win stats per card and faction and other important metrics
-
-## Milestone 12 -- Host it
-What do I need to do to host this?
-Can I somehow add analytics to this? see players where, etc etc...
 
 ## Milestone 13 -- Future stuff / not urgent now
 - [x] time how long every one takes to do their turns and have that be accessible somewhere

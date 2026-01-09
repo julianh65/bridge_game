@@ -21,6 +21,7 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
+- [agent5] Show live scaling values on cards like Propaganda Recruitment/Future Investment (simple value hint based on player counters). Files: `packages/engine/src/view.ts`, `packages/engine/src/types.ts`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `implementation_plan.md`, `progress.md`. (status: in progress)
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
 ## Test fixes
@@ -82,6 +83,7 @@
 - Added a dark-fantasy favicon and wired it into the web entrypoint; marked the plan item complete. (Files: `apps/web/public/favicon.svg`, `apps/web/index.html`, `implementation_plan.md`.) (owner: agent2)
 - Added collection-phase public summaries for mine gold income and waiting players’ forge/center prompts; surfaced in the collection overlay and added mine-gold block coverage. (Files: `packages/engine/src/round-flow.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/CollectionPanel.tsx`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- round-flow.test.ts -t "collects mine gold"`.) (owner: agent5)
 - Widened the setup players panel (max width now 260px) so connected/offline and setup status pills have more room; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent1)
+- Raised the dice roll overlay above action reveals so War Profiteers rolls are visible during reveal playback; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 - Removed the "How it works" panel and "Core loop" hero meta item from the home screen. (File: `apps/web/src/components/Home.tsx`.) (owner: agent2)
 - Increased player table stat chip size (gold/mana/hand) for readability without shifting the layout; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent1)
 - Debug card injection now adds permanent VP for Victory cards (e.g., Deep Mine Charter), keeping VP totals in sync when using the debug hand tool. (Files: `apps/web/src/components/GameDebugOverlay.tsx`, `implementation_plan.md`.) (owner: agent3)
