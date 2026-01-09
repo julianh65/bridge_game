@@ -118,6 +118,7 @@ const SUPPORTED_EFFECTS = new Set([
   "shockDrill",
   "focusFire",
   "attrition",
+  "siegeWrit",
   "encirclement",
   "mortarShot",
   "setToSkirmish",

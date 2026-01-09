@@ -325,6 +325,25 @@ export const RUIN_THE_SPAN: CardDef = {
   effects: [{ kind: "destroyBridge" }]
 };
 
+export const SIEGE_WRIT: CardDef = {
+  id: "age3.siege_writ",
+  name: "Siege Writ",
+  rulesText:
+    "If you occupy a hex adjacent to a capital, destroy 4 enemy Forces in that hex.",
+  type: "Spell",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 1 },
+  initiative: 70,
+  burn: false,
+  targetSpec: {
+    kind: "hex",
+    owner: "self",
+    allowCapital: false
+  },
+  effects: [{ kind: "siegeWrit", forceLoss: 4 }]
+};
+
 export const LAST_CONTRACT: CardDef = {
   id: "age3.last_contract",
   name: "Last Contract",
@@ -595,6 +614,7 @@ export const AGE3_CARDS: CardDef[] = [
   COMPLETE_ENCIRCLEMENT,
   WORMHOLE_GATE,
   RUIN_THE_SPAN,
+  SIEGE_WRIT,
   LAST_CONTRACT,
   CONQUEST_RECORD,
   FINAL_OATH,

@@ -117,6 +117,57 @@ export const resolveCombatEffect = (
       }
       return nextState;
     }
+    case "siegeWrit": {
+      const target = getHexTarget(
+        nextState,
+        playerId,
+        card.targetSpec as TargetRecord,
+        targets ?? null
+      );
+      if (!target) {
+        return nextState;
+      }
+      const isAdjacentToCapital = neighborHexKeys(target.hexKey).some((hexKey) => {
+        const neighbor = nextState.board.hexes[hexKey];
+        return neighbor?.tile === "capital";
+      });
+      if (!isAdjacentToCapital) {
+        return nextState;
+      }
+      const forceLoss =
+        typeof effect.forceLoss === "number" ? Math.max(0, Math.floor(effect.forceLoss)) : 4;
+      if (forceLoss <= 0) {
+        return nextState;
+      }
+      const hex = nextState.board.hexes[target.hexKey];
+      if (!hex) {
+        return nextState;
+      }
+      const enemyEntry = Object.entries(hex.occupants).find(
+        ([occupantId, units]) => occupantId !== playerId && units.length > 0
+      );
+      if (!enemyEntry) {
+        return nextState;
+      }
+      const [enemyId, unitIds] = enemyEntry;
+      const enemyForces = unitIds.filter(
+        (unitId) => nextState.board.units[unitId]?.kind === "force"
+      );
+      if (enemyForces.length === 0) {
+        return nextState;
+      }
+      const removeCount = Math.min(forceLoss, enemyForces.length);
+      if (removeCount <= 0) {
+        return nextState;
+      }
+      return removeForcesFromHex(
+        nextState,
+        enemyId,
+        target.hexKey,
+        unitIds,
+        removeCount
+      );
+    }
     case "attrition": {
       const target = getHexTarget(
         nextState,
