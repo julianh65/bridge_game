@@ -428,7 +428,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] set to skirmish doesn’t work, just remove it for now and add it as a future todo
 - [x] forge scrap should show you all cards anywhere in your deck
 - [x] remove the yellow and blue gradient background color on cards of the mana and gold icons
-- [ ] on the player display in the table make the numbers of everyones gold, mana, and hand slightly larger and easier to read without messing up the flow
+- [x] on the player display in the table make the numbers of everyones gold, mana, and hand slightly larger and easier to read without messing up the flow
 - [x] cards like coordinated advance where it says up to 2 kind of force you to click twice in the UI, there’s no way to say okay just move 1
 - [ ] deep mine charter didn’t increase my VPs, although I added it from debug to test, so confirm that getting those cards will increase your VP
 - [ ] after i played gold plater armor and there was a battle the entire game just froze and there was no battle, reading the console (not sure if related) I’m getting a lot of maximum update depth exceeded at gamescreen
