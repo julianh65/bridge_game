@@ -18,6 +18,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- (owner: agent5) Implement Forge Miracle power card with per-instance card overrides (cost/initiative/burn), update engine card instance handling + action cost/initiative, and update hand/selection/deck UI to honor overrides. Files: `packages/engine/src/types.ts`, `packages/engine/src/content/cards/index.ts`, `packages/engine/src/cards.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/card-effects-economy.ts`, `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/power-decks.ts`, `packages/engine/src/index.ts`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/components/DeckViewer.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress)
 ## Test fixes
 - Updated engine tests for market bid winners, Quiet Study hand-size behavior, and setup flow expectations (deck preview gating + card totals) to match current config/flow. (Files: `packages/engine/src/market.test.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`.) (owner: agent1)
 ## Milestone After Second Full Test Play and Thinking progress
