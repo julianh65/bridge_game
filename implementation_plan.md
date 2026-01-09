@@ -347,7 +347,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] for the bridges that generate and randomly get placed try to wire it up so it's a bit more "intelligent" in that it balances out the board, place bridges not conected to the center and try to place them on more empty parts of the board
 - [x] sometimes the texts on cards are cut off and turn into ...
 - [x] the bridge card didn't give me the option to move 1 stack 1 hex
-- [ ] needs to be a way for me to test different cards in different board states, like a debug play game where i straight launch to age n with whatever cards in my hand i want
+- [x] needs to be a way for me to test different cards in different board states, like a debug play game where i straight launch to age n with whatever cards in my hand i want
   - [x] Add dev-only hand injector in the Room Debug panel to append/replace hand cards quickly.
   - [x] Add quick age/round presets and board-state snapshot helpers for scenario testing.
 - [x] The UI in the cards for mana and gold needs to be slightly larger and more readable, background gradient makes it hard to read slightly

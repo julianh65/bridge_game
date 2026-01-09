@@ -597,6 +597,7 @@ none
 - Added dev-only room debug tools (state JSON fetch, advance phase, reset with seed) plus server debug commands for host-only use.
 - Added setup-flow auto-setup scenario controls (round/age presets + board JSON apply) so debug presets are accessible from the setup UI. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/App.tsx`.)
 - Added scenario presets (round/age) and board snapshot capture/apply helpers to the Room Debug panel for faster setup testing. (Files: `apps/web/src/components/RoomDebugPanel.tsx`, `implementation_plan.md`.)
+- Added a Jump to Action debug button that sets the phase to action and creates a fresh action declaration block. (File: `apps/web/src/components/RoomDebugPanel.tsx`.) (owner: agent2)
 - Added a compact setup-flow scenario drawer and a floating in-game hand injector overlay for dev hosts. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/App.tsx`, `apps/web/src/components/GameDebugOverlay.tsx`.)
 
 ## Milestone 4 progress

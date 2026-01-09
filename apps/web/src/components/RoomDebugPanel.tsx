@@ -210,6 +210,35 @@ export const RoomDebugPanel = ({ room }: RoomDebugPanelProps) => {
     room.sendDebugCommand({ command: "state" });
   };
 
+  const handleJumpToAction = () => {
+    if (!canSend || !room.debugState) {
+      return;
+    }
+    const playerIds = room.debugState.players.map((player) => player.id);
+    const declarations = Object.fromEntries(playerIds.map((id) => [id, null]));
+    const actionBlock = {
+      type: "actionStep.declarations",
+      waitingFor: playerIds,
+      payload: { declarations }
+    };
+    room.sendDebugCommand({
+      command: "patchState",
+      path: "phase",
+      value: "round.action"
+    });
+    room.sendDebugCommand({
+      command: "patchState",
+      path: "blocks",
+      value: actionBlock
+    });
+    room.sendDebugCommand({
+      command: "patchState",
+      path: "actionResolution",
+      value: null
+    });
+    room.sendDebugCommand({ command: "state" });
+  };
+
   const handleInjectHand = (mode: "add" | "replace") => {
     if (!canInjectHand || !room.debugState) {
       return;
@@ -352,6 +381,13 @@ export const RoomDebugPanel = ({ room }: RoomDebugPanelProps) => {
         ))}
         <button type="button" onClick={handleClearBlocks} disabled={!canSend}>
           Clear Blocks
+        </button>
+        <button
+          type="button"
+          onClick={handleJumpToAction}
+          disabled={!canSend || !room.debugState}
+        >
+          Jump to Action
         </button>
       </div>
       <h3>Hand Injector</h3>
