@@ -28,6 +28,9 @@
 - Lint:
   - `npm run lint`
 
+## Deployment
+- See `docs/deploy.md` for PartyKit + Vercel steps and redeploy instructions.
+
 ## Owner-only TODOs (Julian - not for agents, do later)
 - Replace placeholder faction symbols with final icons once art is ready (not a current task).
   - Add icon files to `apps/web/public/factions/` named by faction id, e.g. `leadbound.svg`.
