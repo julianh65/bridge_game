@@ -687,6 +687,24 @@ export const BANNER_OF_RESOLVE: CardDef = {
   victoryPoints: 1
 };
 
+export const WAR_BONDS: CardDef = {
+  id: "age2.war_bonds",
+  name: "War Bonds",
+  rulesText: "When played: Gain +1 gold and +1 mana.",
+  type: "Victory",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 1 },
+  initiative: 65,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [
+    { kind: "gainGold", amount: 1 },
+    { kind: "gainMana", amount: 1 }
+  ],
+  victoryPoints: 1
+};
+
 export const BIG_VP_GAINER: CardDef = {
   id: "age2.big_vp_gainer",
   name: "Big VP Gainer",
@@ -939,6 +957,7 @@ export const AGE2_CARDS: CardDef[] = [
   STRATEGIC_TRIUMPH,
   CENTER_DISPATCH,
   BANNER_OF_RESOLVE,
+  WAR_BONDS,
   BIG_VP_GAINER,
   JET_STRIKER,
   GUERILLA_NATIVE_MERCENARY,

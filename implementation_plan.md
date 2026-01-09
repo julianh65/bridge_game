@@ -436,7 +436,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Be creative and add a balanced age 1 card of similar flavor to the Dice War Profiteer card
 - [x] Dice war profiteer during the reveal stage needs to auto roll a dice for everyone to see
 - [ ] When the cards pop up to reveal it needs to have their description text on them
-- [ ] Be creative and add a balanced age 2 card that gives VP, don't make it too crazy just make it basic, add it to the rules, the game and everywhere
+- [x] Be creative and add a balanced age 2 card that gives VP, don't make it too crazy just make it basic, add it to the rules, the game and everywhere (War Bonds).
 - [ ] Be creative and add to each age a balanced more "basic" champion card that dosen't do anything crazy but is balanced, add it to the rules, the game and everywhere
 - [x] add a cool favicon
 - [x] remove the how it works on the main screen and "core loop" container
