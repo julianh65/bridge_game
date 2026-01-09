@@ -4594,6 +4594,7 @@ export const GameScreen = ({
         winnerPlayerId={view.public.winnerPlayerId ?? null}
         localGold={localGold}
         localVpTotal={localVpTotal}
+        vpToWin={view.public.config.VP_TO_WIN ?? null}
         onToggle={toggleHeaderCollapsed}
       />
 

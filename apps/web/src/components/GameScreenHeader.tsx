@@ -13,6 +13,7 @@ type GameScreenHeaderProps = {
   winnerPlayerId: string | null;
   localGold: number | null;
   localVpTotal: number | null;
+  vpToWin: number | null;
   onToggle: () => void;
 };
 
@@ -41,6 +42,7 @@ export const GameScreenHeader = ({
   winnerPlayerId,
   localGold,
   localVpTotal,
+  vpToWin,
   onToggle
 }: GameScreenHeaderProps) => {
   const [goldPulse, setGoldPulse] = useState(false);
@@ -108,6 +110,8 @@ export const GameScreenHeader = ({
   const activePhaseIndex = PHASE_TRACKER_STEPS.findIndex((step) => step.key === phase);
   const roundsLeft = Math.max(0, roundsMax - Math.max(1, round) + 1);
   const roundsLeftLabel = roundsLeft === 1 ? "Final round" : `Rounds left: ${roundsLeft}`;
+  const vpTargetLabel =
+    typeof vpToWin === "number" && Number.isFinite(vpToWin) ? `/${vpToWin}` : "";
   const resourceChips =
     localGold === null && localVpTotal === null ? null : (
       <div className="game-screen__resources">
@@ -138,7 +142,10 @@ export const GameScreenHeader = ({
               Victory Points
             </span>
             <span className="resource-chip__label resource-chip__label--short">VP</span>
-            <strong className="resource-chip__value">{localVpTotal}</strong>
+            <strong className="resource-chip__value">
+              {localVpTotal}
+              {vpTargetLabel}
+            </strong>
           </div>
         ) : null}
       </div>

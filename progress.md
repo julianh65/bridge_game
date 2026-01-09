@@ -21,7 +21,7 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-- (owner: agent3) [status: in progress] Group Board Debug + Battle Debug under a Debug dropdown in the top nav; files: `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`.
+- (owner: agent5) [status: in progress] Add asset base URL helper + wire card art and tile textures through it; update CDN docs/plan; files: `apps/web/src/lib/asset-url.ts`, `apps/web/src/lib/card-art.ts`, `apps/web/src/components/BoardView.tsx`, `docs/deploy.md`, `implementation_plan.md`, `progress.md`.
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -102,6 +102,7 @@
 - Added War Bonds as an additional Age II Victory card (+1 gold, +1 mana) while keeping Big VP Gainer, updated rules, art mapping, and plan checklist. (Files: `packages/engine/src/content/cards/age2.ts`, `apps/web/src/data/card-art.json`, `rules_draft.md`, `implementation_plan.md`.) (owner: agent4)
 - Allowed force split popovers to select 0 forces when champions are present (champion-only moves), auto-including champions on zero; marked the plan item complete. (Files: `apps/web/src/components/ForceSplitPopover.tsx`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Adjusted the rounds-left countdown to avoid showing an extra round during setup (clamp round to at least 1 for the label); plan item was already checked. (File: `apps/web/src/components/GameScreenHeader.tsx`.) (owner: agent1)
+- HUD VP chip now shows current VP alongside the win threshold to clarify when victories trigger; updated the plan checklist. (Files: `apps/web/src/components/GameScreenHeader.tsx`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent3)
 - Checked off remaining after-third-play-test checklist items already implemented (action reveal champion stats + rules, draw pile unordered label, Quick Move initiative note, spectator battle close). (File: `implementation_plan.md`.) (owner: agent1)
 ## Planning updates
 - Added plan TODOs for the forge collection hard-lock audit + backup plan. (File: `implementation_plan.md`.) (owner: codex)

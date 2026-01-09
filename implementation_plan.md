@@ -432,7 +432,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] cards like coordinated advance where it says up to 2 kind of force you to click twice in the UI, there’s no way to say okay just move 1
 - [x] deep mine charter didn’t increase my VPs, although I added it from debug to test, so confirm that getting those cards will increase your VP
 - [ ] after i played gold plated armor and there was a battle the entire game just froze and there was no battle, reading the console (not sure if related) I’m getting a lot of maximum update depth exceeded at gamescreen
-- [ ] I got 9 VP and nothing happened, it didn’t detect that I won and no screen popped up
+- [x] I got 9 VP and nothing happened, it didn’t detect that I won and no screen popped up
 - [x] Be creative and add a balanced age 1 card of similar flavor to the Dice War Profiteer card
 - [x] Dice war profiteer during the reveal stage needs to auto roll a dice for everyone to see
 - [x] When the cards pop up to reveal it needs to have their description text on them
@@ -443,7 +443,6 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] For cards that kind of "scale" like propoganda recruitment or future investment we need to represent on the card (in a very simple way, what the value would be if they played it is)
 - [x] Add a small countdown of how many rounds are left in the game
 - [x] put the two debug board debug and battle debug under a little dropdown menu that's like debug
-- [ ] Move card art + tile textures to CDN with asset base config, upload tooling, and git ignore cleanup
 
 
 
