@@ -575,6 +575,7 @@ Done
         - [x] Dispatch to Front.
         - [x] Chronicle of War.
         - [x] Audit Writ of Industry rules alignment (mine gold bonus).
+        - [x] Audit Bridge Charter rules alignment (build 2 bridges touching occupied hex).
       - [x] Age II Power Champions (verify deck size inclusion).
         - [x] Bannerman.
       - [x] Age III Power (9) — Non-victory (5).
