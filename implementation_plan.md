@@ -400,6 +400,7 @@ Start going through the rules_draft and adding the logic for the different types
 
 ### Tasks
 - [x] Add per-round counters for cards played/discarded (cards played now tracked for Archivist Prime; discard tracking + other cards pending).
+- [x] Keep `SUPPORTED_EFFECTS` allowlist synced with effect resolvers so new effect kinds remain playable.
 - [ ] Add draw/round-end triggers (on-draw penalties, end-of-round VP awards, marked champion payouts).
   - [x] Engine hooks for on-card-draw + end-of-round modifier events (cards/cleanup integration).
 - [x] Add targeting immunities and marked/contract flags (Ward, Immunity Field, Marked for Coin).
@@ -782,7 +783,7 @@ What do I need to do to host this?
 Can I somehow add analytics to this? see players where, etc etc...
 
 ## Milestone 13 -- Future stuff / not urgent now
-- [ ] time how long every one takes to do their turns and have that be accessible somewhere
+- [x] time how long every one takes to do their turns and have that be accessible somewhere
 - [ ] a turn timer that at the end picks a random valid card or something, this should be configurable from settings
 - [ ] add save / loading games
 - [ ] make a public list of rooms

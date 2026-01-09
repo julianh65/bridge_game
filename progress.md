@@ -17,9 +17,9 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent4
-  scope: track action-step decision timing + surface in GameView/sidebar
-  files: packages/engine/src/types.ts, packages/engine/src/engine.ts, packages/engine/src/action-flow.ts, packages/engine/src/view.ts, apps/web/src/components/GameScreenSidebar.tsx, implementation_plan.md, progress.md
+- owner: agent5
+  scope: require deck preview ready-up before host advance + add ready UI
+  files: packages/engine/src/types.ts, packages/engine/src/setup-flow.ts, packages/engine/src/engine.ts, apps/web/src/components/SetupDeckPreview.tsx, apps/web/src/components/SetupFlow.tsx, apps/web/src/styles.css, packages/engine/src/setup-flow.test.ts, packages/engine/src/action-flow.test.ts, packages/engine/src/smoke.test.ts, packages/engine/src/index.test.ts, implementation_plan.md, progress.md
   status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -50,6 +50,7 @@
 - Nudged the market overlay toggle lower and hard-centered it (reset top/right), and confirmed faction-specific card art mappings are already complete. (File: `apps/web/src/styles.css`.) (Audit: `apps/web/src/data/card-art.json`.)
 
 ## Milestone After Full Test Play and Thinking progress
+- Tracked per-action decision timing (per-player totals/averages) and surfaced avg/last timing in the sidebar; updated the plan checklist. (Files: `packages/engine/src/types.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/GameScreenSidebar.tsx`, `implementation_plan.md`.)
 - Updated move resolution to stop early on newly occupied hexes (enemy or stopOnOccupied), so mid-path collisions trigger combat instead of cancelling moves; marked the plan item complete. (Files: `packages/engine/src/card-effects-movement.ts`, `implementation_plan.md`.)
 - Allowed no-op orders (Stall) to be playable while still resolving to a no-op; marked the plan item complete. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects.stall.test.ts`, `implementation_plan.md`.)
 - Added `freeStartingCardEnabled` config toggle to skip the free starting card setup step, with docs; marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/config.ts`, `packages/engine/src/engine.ts`, `docs/configuration.md`, `implementation_plan.md`.)
@@ -734,6 +735,7 @@ none
 - Added Mortar Shot scatter preview highlights on adjacent hexes when targeting and marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreen.tsx` is in agent2 scope.)
 - Added a multi-edge targeting summary panel with min/max hints and a clear action for multi-bridge cards. (File: `apps/web/src/components/GameScreen.tsx`.)
 - Gated card play on multi-edge/multi-path min/max target counts so the Play Card action stays disabled until counts are valid. (File: `apps/web/src/components/GameScreen.tsx`.)
+- Synced `SUPPORTED_EFFECTS` with effect resolvers so attrition/slow/gainMarketCards/pullingStrings cards remain playable. (Files: `packages/engine/src/card-effects.ts`, `implementation_plan.md`.)
 - Deferred manual hit assignment UI for Focus Fire/Tactical Hand, disabled Focus Fire + Grand Strategist in card lists until the UI lands, and noted a future task in the plan. (Files: `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.)
 
 ## Milestone 7.5 progress
