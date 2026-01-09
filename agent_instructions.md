@@ -32,3 +32,5 @@ Use common sense to keep work moving without pulling the user in for routine git
 
 
 If (and only if) there are no more tasks then we should confirm that everything works, look for bugs, compare to the ruleset to ensure everything works as expected, add new tasks if needed, add more tests, make sure all cards work and that the UI's are polished.
+
+If you make a new HUD or UI try to be smart about it, generally for new screens try to make them overlays.

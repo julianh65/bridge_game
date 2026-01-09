@@ -106,7 +106,7 @@ export const Home = ({ onJoin }: HomeProps) => {
     <section className="home">
       <header className="home__hero">
         <div className="home__hero-copy">
-          <p className="eyebrow">Bridgefront</p>
+          <p className="eyebrow">Bridgefront Alpha (1.0.1)</p>
           <h1>Enter the War Table</h1>
           <p className="subhead">
             Create a room for friends or join an existing command to sync the battlefield.

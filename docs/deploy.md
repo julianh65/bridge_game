@@ -27,6 +27,8 @@ Copy the host printed by the CLI (no protocol).
 4) Deploy.
 
 ## Updating / redeploying
+One-line checklist: `git push` (frontend) + `npx partykit@latest deploy` (server).
+
 ### PartyKit server
 Run after any server or engine changes:
 ```bash

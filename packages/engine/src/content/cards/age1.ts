@@ -8,7 +8,7 @@ export const QUICK_MARCH: CardDef = {
   deck: "age1",
   tags: ["market", "age1"],
   cost: { mana: 1 },
-  initiative: 40,
+  initiative: 28,
   burn: false,
   targetSpec: {
     kind: "path",
@@ -27,7 +27,7 @@ export const ROLL_OUT: CardDef = {
   deck: "age1",
   tags: ["market", "age1"],
   cost: { mana: 1 },
-  initiative: 60,
+  initiative: 150,
   burn: false,
   targetSpec: {
     kind: "multiPath",
@@ -47,7 +47,7 @@ export const FLANK_STEP: CardDef = {
   deck: "age1",
   tags: ["market", "age1"],
   cost: { mana: 1 },
-  initiative: 35,
+  initiative: 90,
   burn: false,
   targetSpec: {
     kind: "stack",
@@ -66,7 +66,7 @@ export const EMERGENCY_EVAC: CardDef = {
   deck: "age1",
   tags: ["market", "age1"],
   cost: { mana: 1 },
-  initiative: 45,
+  initiative: 80,
   burn: false,
   targetSpec: {
     kind: "champion",
@@ -83,7 +83,7 @@ export const COLUMN_ADVANCE: CardDef = {
   type: "Order",
   deck: "age1",
   tags: ["market", "age1"],
-  cost: { mana: 2 },
+  cost: { mana: 2, gold: 1 },
   initiative: 55,
   burn: false,
   targetSpec: {
@@ -117,7 +117,7 @@ export const TRADE_CARAVAN: CardDef = {
   type: "Order",
   deck: "age1",
   tags: ["market", "age1"],
-  cost: { mana: 1 },
+  cost: { mana: 2 },
   initiative: 75,
   burn: false,
   targetSpec: { kind: "none" },
@@ -168,7 +168,7 @@ export const RECRUIT_DETACHMENT: CardDef = {
   type: "Order",
   deck: "age1",
   tags: ["market", "age1"],
-  cost: { mana: 2, gold: 1 },
+  cost: { mana: 2, gold: 2 },
   initiative: 45,
   burn: false,
   targetSpec: {
@@ -189,7 +189,7 @@ export const PAID_VOLUNTEERS: CardDef = {
   deck: "age1",
   tags: ["market", "age1"],
   cost: { mana: 1, gold: 2 },
-  initiative: 65,
+  initiative: 110,
   burn: false,
   targetSpec: {
     kind: "choice",
@@ -222,7 +222,7 @@ export const ROADBLOCK_SQUAD: CardDef = {
   type: "Order",
   deck: "age1",
   tags: ["market", "age1"],
-  cost: { mana: 1, gold: 1 },
+  cost: { mana: 1, gold: 2 },
   initiative: 70,
   burn: false,
   targetSpec: {
@@ -261,7 +261,7 @@ export const FRONTIER_CLAIM: CardDef = {
   type: "Order",
   deck: "age1",
   tags: ["market", "age1"],
-  cost: { mana: 2, gold: 2 },
+  cost: { mana: 2, gold: 3 },
   initiative: 55,
   burn: false,
   targetSpec: {
@@ -304,7 +304,7 @@ export const FUTURE_INVESTMENT: CardDef = {
   id: "age1.future_investment",
   name: "Future Investment",
   rulesText:
-    "Deploy 2 Forces to your Capital. Increase the amount by 1 each time this card is discarded (max 10). Burn.",
+    "Deploy 2 Forces to your Capital. Increase the amount by 1 each time this card is discarded (max 8). Burn.",
   type: "Order",
   deck: "age1",
   tags: ["market", "age1"],
@@ -320,7 +320,7 @@ export const FUTURE_INVESTMENT: CardDef = {
       kind: "recruit",
       capitalCount: 2,
       scaleKey: "age1.future_investment",
-      scaleMax: 10
+      scaleMax: 8
     }
   ],
   onDiscard: [{ kind: "incrementCardCounter", key: "age1.future_investment", max: 8 }]
@@ -351,7 +351,7 @@ export const TEMPORARY_BRIDGE: CardDef = {
   type: "Order",
   deck: "age1",
   tags: ["market", "age1"],
-  cost: { mana: 1 },
+  cost: { mana: 1, gold: 1 },
   initiative: 50,
   burn: false,
   targetSpec: {
@@ -368,7 +368,7 @@ export const RAPID_SPAN: CardDef = {
   type: "Order",
   deck: "age1",
   tags: ["market", "age1"],
-  cost: { mana: 1 },
+  cost: { mana: 1, gold: 1 },
   initiative: 80,
   burn: false,
   targetSpec: {
@@ -527,7 +527,7 @@ export const MAKE_A_PLAY: CardDef = {
   type: "Spell",
   deck: "age1",
   tags: ["market", "age1"],
-  cost: { mana: 0 },
+  cost: { mana: 0, gold: 2 },
   initiative: 70,
   burn: true,
   targetSpec: { kind: "none" },

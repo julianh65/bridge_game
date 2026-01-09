@@ -1,0 +1,323 @@
+Balance Simulation Report
+=========================
+
+Run
+----
+Games per count: 400
+Player counts: 2, 3, 4, 5, 6
+Seed base: 1
+Max steps: 5000
+Max rounds override: none
+VP to win override: none
+Max targets per card: 16
+Factions: bastion, veil, aerial, prospect, cipher, gatewright
+Started: 2026-01-09T22:41:13.354Z
+Finished: 2026-01-09T22:42:25.604Z
+
+Outcomes
+--------
+Games: 2000
+Wins: 2000
+No winner: 0 (round limit: 0, step limit: 0)
+
+Rounds & Steps
+--------------
+Rounds: min 6, avg 9.98, median 10, max 10
+Steps: min 65, avg 142.10, median 141, max 212
+
+Actions & Combat
+----------------
+Card actions/game: 50.19
+Basic actions/game: 47.02
+Combats/game: 4.29
+Combat rounds/game: 8.60
+
+Market
+------
+Avg buy amount: 2.34
+Avg pass pot: 0.60
+Avg roll-off rounds per roll-off: 1.25
+
+Faction Win Rates
+-----------------
+Faction     Games  Wins  Win%   AvgGold  AvgMana  AvgVP
+----------  -----  ----  -----  -------  -------  -----
+gatewright  1325   354   26.7%  2.12     1.19     1.56 
+aerial      1314   335   25.5%  2        1.29     1.48 
+prospect    1337   334   25.0%  2.04     1.45     1.52 
+bastion     1343   332   24.7%  1.98     1.23     1.48 
+cipher      1358   327   24.1%  1.90     1.40     1.50 
+veil        1323   318   24.0%  1.93     1.43     1.46 
+
+Seat Win Rates
+--------------
+Seat  Games  Wins  Win% 
+----  -----  ----  -----
+0     2000   589   29.4%
+1     2000   587   29.3%
+2     1600   364   22.8%
+3     1200   254   21.2%
+4     800    142   17.8%
+5     400    64    16.0%
+
+Economy (Avg per player)
+------------------------
+Phase: setup
+Round  Gold min  Gold avg  Gold max  Mana min  Mana avg  Mana max  VP min  VP avg  VP max  VP+perm min  VP+perm avg  VP+perm max  VP+ctrl min  VP+ctrl avg  VP+ctrl max  Hand min  Hand avg  Hand max
+-----  --------  --------  --------  --------  --------  --------  ------  ------  ------  -----------  -----------  -----------  -----------  -----------  -----------  --------  --------  --------
+0      4         4         4         0         0         0         0       0       0       0            0            0            0            0            0            0         0         0       
+
+Phase: round.study
+Round  Gold min  Gold avg  Gold max  Mana min  Mana avg  Mana max  VP min  VP avg  VP max  VP+perm min  VP+perm avg  VP+perm max  VP+ctrl min  VP+ctrl avg  VP+ctrl max  Hand min  Hand avg  Hand max
+-----  --------  --------  --------  --------  --------  --------  ------  ------  ------  -----------  -----------  -----------  -----------  -----------  -----------  --------  --------  --------
+1      0         1.81      21        6         6         6         0       0       0       0            0.07         1            0            0            0            7         7         7       
+2      0         0.82      21        6         6         6         0       0.10    2       0            0.15         3            0            0.03         2            7         7         7       
+3      0         0.63      17        6         6         6         0       0.22    3       0            0.23         3            0            0.06         2            7         7         7       
+4      0         0.56      16        6         6         6         0       0.34    4       0            0.32         4            0            0.10         3            7         7         7       
+5      0         0.67      18        6         6         6         0       0.47    5       0            0.46         5            0            0.13         3            7         7         7       
+6      0         0.73      17        6         6         6         0       0.62    6       0            0.61         5            0            0.15         4            7         7         7       
+7      0         0.77      17        6         6         6         0       0.80    6       0            0.76         6            0            0.17         4            7         7         7       
+8      0         0.86      18        6         6         6         0       0.95    6       0            0.90         6            0            0.17         3            7         7         7       
+9      0         0.89      21        6         6         6         0       1.10    6       0            1.08         7            0            0.18         3            7         7         7       
+10     0         0.95      18        6         6         6         0       1.28    6       0            1.24         7            0            0.18         4            7         7         7       
+
+Phase: round.market
+Round  Gold min  Gold avg  Gold max  Mana min  Mana avg  Mana max  VP min  VP avg  VP max  VP+perm min  VP+perm avg  VP+perm max  VP+ctrl min  VP+ctrl avg  VP+ctrl max  Hand min  Hand avg  Hand max
+-----  --------  --------  --------  --------  --------  --------  ------  ------  ------  -----------  -----------  -----------  -----------  -----------  -----------  --------  --------  --------
+1      4         4         4         6         6         6         0       0       0       0            0            0            0            0            0            7         7         7       
+2      0         1.68      22        6         6         6         0       0.10    3       0            0.07         2            0            0.02         2            7         7         7       
+3      0         1.32      21        6         6         6         0       0.23    4       0            0.16         3            0            0.06         2            7         7         7       
+4      0         1.17      21        6         6         6         0       0.35    5       0            0.25         4            0            0.10         3            7         7         7       
+5      0         1.36      22        6         6         6         0       0.48    5       0            0.35         4            0            0.12         3            7         7         7       
+6      0         1.47      24        6         6         6         0       0.64    6       0            0.49         5            0            0.14         4            7         7         7       
+7      0         1.60      23        6         6         6         0       0.82    6       0            0.65         5            0            0.16         4            7         7         7       
+8      0         1.73      24        6         6         6         0       0.97    6       0            0.80         6            0            0.17         3            7         7         7       
+9      0         1.81      26        6         6         6         0       1.13    6       0            0.95         6            0            0.17         3            7         7         7       
+10     0         1.90      19        6         6         6         0       1.31    6       0            1.13         6            0            0.18         4            7         7         7       
+
+Phase: round.action
+Round  Gold min  Gold avg  Gold max  Mana min  Mana avg  Mana max  VP min  VP avg  VP max  VP+perm min  VP+perm avg  VP+perm max  VP+ctrl min  VP+ctrl avg  VP+ctrl max  Hand min  Hand avg  Hand max
+-----  --------  --------  --------  --------  --------  --------  ------  ------  ------  -----------  -----------  -----------  -----------  -----------  -----------  --------  --------  --------
+1      0         1.89      21        6         6         6         0       0       0       0            0.07         1            0            0            0            7         7         7       
+2      0         0.87      21        6         6         6         0       0.10    3       0            0.16         3            0            0.02         2            7         7         7       
+3      0         0.66      17        6         6         6         0       0.23    4       0            0.24         4            0            0.06         2            7         7         7       
+4      0         0.59      17        6         6         6         0       0.35    5       0            0.34         4            0            0.10         3            7         7         7       
+5      0         0.69      18        6         6         6         0       0.48    5       0            0.48         5            0            0.12         3            7         7         7       
+6      0         0.75      18        6         6         6         0       0.64    6       0            0.63         5            0            0.14         4            7         7         7       
+7      0         0.81      20        6         6         6         0       0.82    6       0            0.78         6            0            0.16         4            7         7         7       
+8      0         0.90      18        6         6         6         0       0.97    6       0            0.93         7            0            0.17         3            7         7         7       
+9      0         0.94      21        6         6         6         0       1.13    6       0            1.11         7            0            0.17         3            7         7         7       
+10     0         0.99      19        6         6         6         0       1.31    6       0            1.29         7            0            0.18         4            7         7         7       
+
+Phase: round.sieges
+Round  Gold min  Gold avg  Gold max  Mana min  Mana avg  Mana max  VP min  VP avg  VP max  VP+perm min  VP+perm avg  VP+perm max  VP+ctrl min  VP+ctrl avg  VP+ctrl max  Hand min  Hand avg  Hand max
+-----  --------  --------  --------  --------  --------  --------  ------  ------  ------  -----------  -----------  -----------  -----------  -----------  -----------  --------  --------  --------
+1      0         1.39      13        0         1.89      6         0       0       0       0            0.12         1            0            0            0            2         5.03      7       
+2      0         1.02      8         0         1.62      6         0       0.12    1       0            0.14         1            0            0.04         1            2         4.86      8       
+3      0         0.80      11        0         1.65      6         0       0.26    2       0            0.20         2            0            0.13         2            2         4.83      8       
+4      0         0.93      8         0         1.20      6         0       0.30    2       0            0.26         3            0            0.12         2            2         4.63      8       
+5      0         0.90      10        0         1.58      6         0       0.48    3       0            0.41         2            0            0.17         2            2         4.90      8       
+6      0         0.99      15        0         1.39      6         0       0.61    4       0            0.61         4            0            0.16         2            1         4.79      8       
+7      0         1.05      13        0         1.72      6         0       0.89    4       0            0.77         4            0            0.21         3            1         5.04      8       
+8      0         1.11      10        0         1.54      6         0       1.03    5       0            0.93         5            0            0.21         2            2         4.87      8       
+9      0         1.19      15        0         1.80      6         0       1.10    6       0            1.03         6            0            0.21         2            1         5.17      10      
+10     0         1.31      14        0         1.47      6         0       1.29    6       0            1.23         5            0            0.23         2            2         5.12      9       
+
+Phase: round.collection
+Round  Gold min  Gold avg  Gold max  Mana min  Mana avg  Mana max  VP min  VP avg  VP max  VP+perm min  VP+perm avg  VP+perm max  VP+ctrl min  VP+ctrl avg  VP+ctrl max  Hand min  Hand avg  Hand max
+-----  --------  --------  --------  --------  --------  --------  ------  ------  ------  -----------  -----------  -----------  -----------  -----------  -----------  --------  --------  --------
+1      0         1.55      22        0         1.22      6         0       0       0       0            0.06         1            0            0            0            2         4.75      7       
+2      0         1.23      14        0         1.17      6         0       0.14    3       0            0.16         2            0            0.05         2            1         4.70      8       
+3      0         1.18      18        0         1.21      6         0       0.27    4       0            0.25         3            0            0.10         2            1         4.78      8       
+4      0         1.29      18        0         1.22      7         0       0.39    4       0            0.33         4            0            0.14         3            1         4.73      9       
+5      0         1.44      17        0         1.29      6         0       0.53    5       0            0.48         5            0            0.18         2            1         4.83      10      
+6      0         1.59      21        0         1.30      6         0       0.68    6       0            0.63         5            0            0.19         4            1         4.86      9       
+7      0         1.69      24        0         1.25      6         0       0.86    6       0            0.78         6            0            0.21         3            1         4.90      9       
+8      0         1.78      26        0         1.34      7         0       1.02    6       0            0.95         6            0            0.21         3            1         4.94      10      
+9      0         1.87      19        0         1.35      6         0       1.16    6       0            1.11         6            0            0.22         3            1         4.97      10      
+10     0         2         22        0         1.28      6         0       1.34    6       0            1.27         7            0            0.22         4            1         5         10      
+
+Card Win Rates (games with card played)
+---------------------------------------
+Card                                     Games  Wins  Win%    Plays  PlayWin%  Buys  BuyWin%
+---------------------------------------  -----  ----  ------  -----  --------  ----  -------
+power.age2.bridge_charter                1      1     100.0%  1      100.0%    0     0.0%   
+starter.march_orders                     2000   1880  94.0%   14461  28.7%     0     0.0%   
+power.age1.bridge_deed                   19     17    89.5%   22     90.9%     0     0.0%   
+power.age2.dispatch_to_front             28     20    71.4%   35     62.9%     0     0.0%   
+starter.field_medic                      1859   1283  69.0%   7450   24.8%     0     0.0%   
+power.age3.quick_mobilization            19     13    68.4%   19     68.4%     0     0.0%   
+power.age3.crown_coin                    6      4     66.7%   6      66.7%     0     0.0%   
+power.age2.chronicle_of_war              65     43    66.2%   78     66.7%     0     0.0%   
+age3.monument_plan                       136    89    65.4%   145    65.5%     231   68.8%  
+power.age1.forge_sketch                  39     24    61.5%   62     64.5%     0     0.0%   
+power.age1.mine_charter                  26     16    61.5%   36     66.7%     0     0.0%   
+age2.big_vp_gainer                       288    176   61.1%   343    62.1%     116   69.8%  
+power.age1.banner_of_sparks              23     14    60.9%   27     55.6%     0     0.0%   
+power.age1.center_writ                   33     20    60.6%   38     57.9%     0     0.0%   
+starter.recruit                          1920   1159  60.4%   6119   29.2%     0     0.0%   
+power.age1.oathstone                     10     6     60.0%   11     63.6%     0     0.0%   
+power.age2.writ_of_industry              50     29    58.0%   54     57.4%     0     0.0%   
+champion.power.bannerman                 7      4     57.1%   7      57.1%     0     0.0%   
+power.age3.forge_miracle                 7      4     57.1%   7      57.1%     0     0.0%   
+starter.supply_cache                     1892   1070  56.6%   5287   27.6%     0     0.0%   
+power.age3.imperial_warrant              26     14    53.8%   26     53.8%     0     0.0%   
+power.age1.command_surge                 26     13    50.0%   26     50.0%     0     0.0%   
+power.age3.final_funding                 6      3     50.0%   6      50.0%     0     0.0%   
+power.age1.instant_bridge_net            2      1     50.0%   2      50.0%     0     0.0%   
+power.age2.rapid_reinforcements          50     24    48.0%   50     48.0%     0     0.0%   
+age1.banner_claim                        467    216   46.3%   753    47.9%     16    81.3%  
+starter.bridge_crew                      1413   650   46.0%   2428   33.7%     0     0.0%   
+age3.conquest_record                     129    59    45.7%   142    45.1%     213   43.2%  
+champion.age3.center_bannerman           18     8     44.4%   18     44.4%     235   21.7%  
+power.age1.secret_plans                  18     8     44.4%   18     44.4%     0     0.0%   
+age1.supply_ledger                       269    118   43.9%   336    42.9%     11    63.6%  
+age1.patrol_record                       302    130   43.0%   390    43.3%     10    60.0%  
+age2.war_bonds                           303    126   41.6%   358    40.2%     124   50.8%  
+power.age1.shock_drill                   17     7     41.2%   17     41.2%     0     0.0%   
+age2.banner_of_resolve                   318    130   40.9%   381    43.0%     119   44.5%  
+power.age3.last_stand                    5      2     40.0%   5      40.0%     0     0.0%   
+age2.center_dispatch                     295    117   39.7%   349    41.0%     140   38.6%  
+age3.timer                               56     22    39.3%   56     39.3%     236   37.3%  
+power.age2.immunity_field                28     11    39.3%   28     39.3%     0     0.0%   
+age3.final_oath                          49     19    38.8%   54     37.0%     218   41.3%  
+champion.age3.stormcaller                13     5     38.5%   13     38.5%     211   21.3%  
+champion.cipher.archivist_prime          153    58    37.9%   154    37.7%     0     0.0%   
+champion.age1.skirmisher_captain         117    43    36.8%   118    37.3%     11    72.7%  
+faction.aerial.air_drop                  264    96    36.4%   320    37.8%     0     0.0%   
+champion.prospect.mine_overseer          171    61    35.7%   171    35.7%     0     0.0%   
+champion.age2.capturer                   100    35    35.0%   100    35.0%     128   25.8%  
+power.age2.hero_joins_battle             43     15    34.9%   43     34.9%     0     0.0%   
+age2.strategic_triumph                   295    101   34.2%   347    35.2%     121   45.5%  
+champion.age1.traitor                    120    41    34.2%   120    34.2%     11    54.5%  
+champion.age1.bridge_runner              114    39    34.2%   114    34.2%     9     44.4%  
+champion.gatewright.wormhole_artificer   177    60    33.9%   177    33.9%     0     0.0%   
+age1.trade_caravan                       808    270   33.4%   1225   29.1%     13    61.5%  
+age3.forward_legion                      33     11    33.3%   33     33.3%     210   23.8%  
+age3.elite_guard                         15     5     33.3%   15     33.3%     227   22.0%  
+champion.age3.capital_breaker            15     5     33.3%   15     33.3%     237   19.4%  
+power.age3.siege_chronicle               3      1     33.3%   3      33.3%     0     0.0%   
+age3.endless_conscription                31     10    32.3%   31     32.3%     215   23.7%  
+age1.quick_march                         1225   393   32.1%   3215   28.7%     13    61.5%  
+faction.prospect.rich_veins              53     17    32.1%   54     31.5%     0     0.0%   
+age3.execution_order                     28     9     32.1%   29     31.0%     234   21.4%  
+age1.prospecting                         837    268   32.0%   1254   29.3%     8     87.5%  
+age2.rally_where_you_stand               25     8     32.0%   26     34.6%     130   20.0%  
+age1.paid_volunteers                     85     27    31.8%   91     33.0%     11    36.4%  
+age1.temporary_bridge                    1271   402   31.6%   3385   26.3%     9     77.8%  
+age1.patch_up                            405    127   31.4%   538    30.7%     9     44.4%  
+champion.aerial.skystriker_ace           258    81    31.4%   261    31.8%     0     0.0%   
+age3.black_market_pull                   121    38    31.4%   121    31.4%     229   24.9%  
+champion.veil.shadeblade                 253    79    31.2%   254    31.1%     0     0.0%   
+age1.roadblock_squad                     127    39    30.7%   141    32.6%     10    70.0%  
+age2.bridge_lockdown                     233    71    30.5%   271    30.6%     140   31.4%  
+age2.champion_recall                     92     28    30.4%   96     30.2%     142   21.8%  
+champion.age3.blood_banker               23     7     30.4%   23     30.4%     219   22.4%  
+power.age3.cataclysm_core                23     7     30.4%   23     30.4%     0     0.0%   
+age2.conscription_drive                  127    38    29.9%   135    29.6%     126   26.2%  
+champion.age2.jet_striker                77     23    29.9%   77     29.9%     150   26.7%  
+starter.quick_move.gatewright            1047   307   29.3%   1794   31.3%     0     0.0%   
+champion.age1.sergeant                   120    35    29.2%   120    29.2%     6     66.7%  
+age1.rapid_span                          7      2     28.6%   7      28.6%     9     22.2%  
+age1.future_investment                   81     23    28.4%   81     28.4%     14    28.6%  
+age2.wormhole_link                       230    65    28.3%   230    28.3%     121   22.3%  
+faction.veil.marked_for_coin             146    41    28.1%   155    29.7%     0     0.0%   
+age3.deep_reserves                       32     9     28.1%   32     28.1%     238   24.8%  
+faction.gatewright.bridgeborn_path       1201   331   27.6%   2266   29.6%     0     0.0%   
+age2.frenzy                              153    42    27.5%   169    26.6%     130   30.8%  
+faction.bastion.hold_the_line            784    215   27.4%   1087   30.2%     0     0.0%   
+champion.age1.bounty_hunter              85     23    27.1%   85     27.1%     14    42.9%  
+age1.quick_study                         789    213   27.0%   1146   24.3%     10    30.0%  
+age2.rapid_redeploy                      312    84    26.9%   395    25.8%     114   19.3%  
+starter.quick_move.cipher                1044   280   26.8%   1805   30.1%     0     0.0%   
+starter.zap.gatewright                   857    230   26.8%   1226   26.8%     0     0.0%   
+starter.quick_move.aerial                1061   281   26.5%   1837   30.2%     0     0.0%   
+starter.quick_move.prospect              1051   278   26.5%   1754   28.6%     0     0.0%   
+age3.final_push                          278    73    26.3%   311    26.4%     238   24.4%  
+starter.quick_move                       1089   285   26.2%   1846   28.1%     0     0.0%   
+age3.wormhole_gate                       329    86    26.1%   329    26.1%     226   21.7%  
+champion.age2.tax_reaver                 46     12    26.1%   46     26.1%     116   30.2%  
+age1.make_a_play                         192    50    26.0%   192    26.0%     14    28.6%  
+age2.smuggling_ring                      293    76    25.9%   341    26.7%     111   24.3%  
+age3.perfect_cycle                       132    34    25.8%   140    25.0%     229   19.2%  
+age3.ghost_step                          342    88    25.7%   342    25.7%     227   22.9%  
+age2.coordinated_advance                 645    165   25.6%   978    26.4%     126   29.4%  
+age2.insight                             278    71    25.5%   278    25.5%     136   34.6%  
+age2.battalion_contract                  59     15    25.4%   61     27.9%     111   27.9%  
+starter.quick_move.veil                  1067   270   25.3%   1841   27.3%     0     0.0%   
+starter.zap.prospect                     898    227   25.3%   1303   25.9%     0     0.0%   
+age1.salvage_wager                       296    75    25.3%   365    26.0%     12    50.0%  
+starter.zap                              897    226   25.2%   1256   26.3%     0     0.0%   
+age1.battle_cry                          268    67    25.0%   341    23.5%     13    38.5%  
+age3.siege_writ                          112    28    25.0%   118    26.3%     210   22.4%  
+age1.escort_detail                       40     10    25.0%   45     28.9%     17    35.3%  
+champion.age3.logistics_officer          20     5     25.0%   20     25.0%     239   19.2%  
+age1.small_hands                         257    64    24.9%   335    27.5%     7     28.6%  
+age1.flank_step                          515    127   24.7%   868    27.2%     11    45.5%  
+starter.zap.cipher                       894    220   24.6%   1268   24.8%     0     0.0%   
+age2.war_taxes                           293    72    24.6%   344    24.1%     152   30.9%  
+champion.age2.duelist_exemplar           65     16    24.6%   65     24.6%     116   26.7%  
+age3.grand_maneuver                      298    73    24.5%   350    23.7%     231   23.8%  
+age2.guild_favor                         261    64    24.5%   294    25.5%     142   23.9%  
+champion.age2.reliable_veteran           49     12    24.5%   49     24.5%     143   18.2%  
+age2.miner_army                          127    31    24.4%   131    25.2%     121   25.6%  
+starter.zap.aerial                       889    216   24.3%   1281   24.7%     0     0.0%   
+age1.smoke_screen                        267    65    24.3%   329    23.7%     8     50.0%  
+champion.bastion.ironclad_warden         173    42    24.3%   174    24.7%     0     0.0%   
+age2.forward_barracks                    83     20    24.1%   87     23.0%     139   28.8%  
+starter.zap.veil                         920    221   24.0%   1326   24.2%     0     0.0%   
+faction.cipher.perfect_recall            942    225   23.9%   1406   25.2%     0     0.0%   
+age2.refined_ingots                      281    67    23.8%   328    24.4%     135   25.2%  
+age3.royal_mint                          126    30    23.8%   129    24.8%     223   23.8%  
+age1.emergency_evac                      122    29    23.8%   148    25.7%     17    41.2%  
+age3.master_plan                         118    28    23.7%   125    23.2%     225   20.0%  
+age2.command_logistics                   59     14    23.7%   61     26.2%     128   21.1%  
+age1.bridge_trap                         225    53    23.6%   274    23.0%     15    53.3%  
+age2.slow                                374    88    23.5%   452    22.8%     120   28.3%  
+age1.precise_planning                    277    65    23.5%   353    25.2%     14    14.3%  
+age3.ruin_the_span                       272    64    23.5%   302    23.2%     219   24.7%  
+age1.frontier_claim                      98     23    23.5%   108    22.2%     12    25.0%  
+age2.clean_cuts                          286    67    23.4%   348    22.7%     151   26.5%  
+age1.spoils_of_war                       273    64    23.4%   339    24.5%     9     55.6%  
+age2.ward                                128    30    23.4%   145    24.8%     117   29.9%  
+age2.interrupt                           336    78    23.2%   395    24.6%     147   28.6%  
+age2.burn_the_bridges                    424    98    23.1%   424    23.1%     140   23.6%  
+age1.scavengers_market                   266    61    22.9%   324    23.8%     14    28.6%  
+age1.national_service                    105    24    22.9%   114    22.8%     12    16.7%  
+age2.stall                               352    80    22.7%   415    22.9%     139   25.9%  
+age1.cycle_notes                         273    62    22.7%   347    22.5%     10    40.0%  
+age1.column_advance                      521    118   22.6%   933    25.8%     13    53.8%  
+age2.war_profiteers                      292    66    22.6%   342    24.3%     117   23.9%  
+champion.age2.guerilla_native_mercenary  266    60    22.6%   266    22.6%     135   25.2%  
+age3.market_squeeze                      208    47    22.6%   237    21.9%     214   21.5%  
+age3.last_contract                       133    30    22.6%   133    22.6%     249   27.7%  
+age1.propaganda_recruitment              84     19    22.6%   86     23.3%     6     16.7%  
+age2.mortar_shot                         569    128   22.5%   851    24.0%     116   27.6%  
+age1.spellcaster                         293    66    22.5%   376    22.6%     14    42.9%  
+age1.tunnel_network                      191    43    22.5%   191    22.5%     19    42.1%  
+age1.sabotage_bridge                     187    42    22.5%   231    22.5%     8     0.0%   
+champion.age1.inspiring_geezer           71     16    22.5%   71     22.5%     8     25.0%  
+age2.repair_orders                       317    71    22.4%   359    23.1%     118   25.4%  
+champion.age1.stoneguard                 135    30    22.2%   135    22.2%     18    55.6%  
+age1.paid_logistics                      9      2     22.2%   9      22.2%     9     55.6%  
+champion.age2.siege_engineer             74     16    21.6%   74     21.6%     111   27.9%  
+age1.recruit_detachment                  149    32    21.5%   165    21.2%     23    52.2%  
+age2.bridge_pivot                        14     3     21.4%   14     21.4%     122   20.5%  
+power.age1.emergency_pay                 14     3     21.4%   14     21.4%     0     0.0%   
+age2.triple_march                        621    132   21.3%   951    22.9%     134   18.7%  
+age1.scout_report                        301    64    21.3%   378    25.1%     8     37.5%  
+age1.roll_out                            489    103   21.1%   869    23.5%     12    50.0%  
+age2.breakthrough_line                   620    129   20.8%   955    20.7%     117   18.8%  
+age3.last_lecture                        107    22    20.6%   107    20.6%     224   21.4%  
+age2.cycle_protocol                      313    64    20.4%   370    21.9%     119   28.6%  
+champion.age1.brute                      54     11    20.4%   54     20.4%     14    28.6%  
+age3.complete_encirclement               245    49    20.0%   273    19.0%     214   26.2%  
+champion.age1.field_surgeon              65     13    20.0%   66     19.7%     13    30.8%  
+champion.age2.lone_wolf                  55     11    20.0%   55     20.0%     135   23.7%  
+age2.encirclement                        590    117   19.8%   851    20.2%     124   25.8%  
+age3.extraction_run                      141    27    19.1%   153    18.3%     239   29.3%  
+age2.deep_shaft_rig                      22     4     18.2%   23     17.4%     129   33.3%  
+age3.pulling_strings                     94     17    18.1%   106    17.9%     208   25.5%  
+age3.tome_of_orders                      206    37    18.0%   227    17.2%     206   21.8%  
+age3.attrition                           13     2     15.4%   13     15.4%     239   23.0%  
+champion.age3.titan_vanguard             17     2     11.8%   17     11.8%     226   21.2%  

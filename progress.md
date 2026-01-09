@@ -21,7 +21,7 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-- (none)
+- (owner: agent5) Add/confirm wormhole adjacency override test coverage and mark the plan checkbox complete. Files: `packages/engine/src/card-effects.wormhole-link.test.ts`, `implementation_plan.md`.
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
