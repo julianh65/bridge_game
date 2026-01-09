@@ -557,6 +557,8 @@ Done
 - Add a structured workflow for adding cards:
   - card def file
   - minimal tests per card
+- [ ] Audit forge collection hard-lock edge case (empty market deck + no scrap candidates).
+  - [ ] Decide on a backup plan (auto-skip prompt or allow a safe no-op choice) and document it.
 - Expand Age I market cards first (the ones that touch your most-used primitives).
   - [x] Added Flank Step, Scavenger's Market, Supply Ledger, Patrol Record (existing effects only).
   - [x] Added Banner Claim (Victory: move 1 stack 1 hex along a Bridge).

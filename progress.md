@@ -89,6 +89,7 @@
 - Increased player table stat chip size (gold/mana/hand) for readability without shifting the layout; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent1)
 - Debug card injection now adds permanent VP for Victory cards (e.g., Deep Mine Charter), keeping VP totals in sync when using the debug hand tool. (Files: `apps/web/src/components/GameDebugOverlay.tsx`, `implementation_plan.md`.) (owner: agent3)
 ## Planning updates
+- Added plan TODOs for the forge collection hard-lock audit + backup plan. (File: `implementation_plan.md`.) (owner: codex)
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
 - Added explicit power pick (power deck) card checklist tasks from `rules_draft.md` to `implementation_plan.md`, including missing-entry audit placeholders.
