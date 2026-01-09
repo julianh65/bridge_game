@@ -18,7 +18,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- (owner: agent4) Add Bridge Pivot multi-edge UI validation (1 existing + 1 new bridge sharing a hex) and update target gating. Files: `apps/web/src/components/GameScreen.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress) (overlap: `apps/web/src/components/GameScreen.tsx` with agent2)
 ## Test fixes
 - Updated engine tests for market bid winners, Quiet Study hand-size behavior, and setup flow expectations (deck preview gating + card totals) to match current config/flow. (Files: `packages/engine/src/market.test.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`.) (owner: agent1)
 ## Milestone After Second Full Test Play and Thinking progress
@@ -778,6 +777,7 @@ none
 - Added Mortar Shot scatter preview highlights on adjacent hexes when targeting and marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (Overlap note: `apps/web/src/components/GameScreen.tsx` is in agent2 scope.)
 - Added a multi-edge targeting summary panel with min/max hints and a clear action for multi-bridge cards. (File: `apps/web/src/components/GameScreen.tsx`.)
 - Gated card play on multi-edge/multi-path min/max target counts so the Play Card action stays disabled until counts are valid. (File: `apps/web/src/components/GameScreen.tsx`.)
+- Added Bridge Pivot edge-target validation (1 existing + 1 new bridge sharing an occupied hex) and blocked invalid edge pairs; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Synced `SUPPORTED_EFFECTS` with effect resolvers so attrition/slow/gainMarketCards/pullingStrings cards remain playable. (Files: `packages/engine/src/card-effects.ts`, `implementation_plan.md`.)
 - Marked movement/adjacency modifiers and multi-target/multi-stack actions as complete in the plan. (File: `implementation_plan.md`.)
 - Added the Timer victory card with a center-occupy end-of-round VP bonus and a 5+ mana play gate; marked variable VP sources complete. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-victory.ts`, `packages/engine/src/content/cards/age3.ts`, `implementation_plan.md`.)

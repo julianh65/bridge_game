@@ -490,7 +490,7 @@ Start going through the rules_draft and adding the logic for the different types
 - [x] UI: add `multiPath` targeting flow with per-path add/remove, min/max path counts, and per-path highlights (Roll Out, Coordinated Advance, Grand Maneuver).
 - [x] UI: add `hexPair` targeting flow (pick two hexes, show linkage preview, enforce allowSame/maxDistanceFromFriendlyChampion) for Wormhole Link + Wormhole Gate.
 - [x] UI: support compound targets for edge+move cards (Bridge Crew: `edgeKey` + optional `from/to` or `path`) with a stepper or dual-mode picker.
-- [ ] UI: Bridge Pivot edge picking must be exactly 1 existing + 1 new bridge that share a hex; block invalid edge pairs.
+- [x] UI: Bridge Pivot edge picking must be exactly 1 existing + 1 new bridge that share a hex; block invalid edge pairs.
 - [x] UI: enforce `stopOnOccupied` during path selection (Column Advance): block path continuation past occupied hexes and surface a hint.
 - [x] UI: enforce champion targeting constraints in picker (`requiresFriendlyChampion`, `maxDistance`) for Marked for Coin + Execution Order.
 - [x] UI: Mortar Shot targeting helpers (force-range gating + scatter preview ring) and block invalid picks.

@@ -609,6 +609,22 @@ export const GameScreen = ({
     ? CARD_DEFS_BY_ID.get(selectedCard.defId) ?? null
     : null;
   const cardTargetKind = selectedCardDef?.targetSpec.kind ?? "none";
+  const isBridgePivotCard =
+    selectedCardDef?.effects?.some((effect) => effect.kind === "bridgePivot") ?? false;
+  const bridgePivotAllowAnywhere =
+    isBridgePivotCard &&
+    ((selectedCardDef?.targetSpec as Record<string, unknown> | undefined)?.anywhere === true);
+  const selectedMultiEdgeKeys = useMemo(() => {
+    if (cardTargetKind !== "multiEdge") {
+      return [];
+    }
+    const edgeKeys = getTargetStringArray(targetRecord, "edgeKeys");
+    const edgeKey = getTargetString(targetRecord, "edgeKey");
+    if (edgeKey && !edgeKeys.includes(edgeKey)) {
+      return [...edgeKeys, edgeKey];
+    }
+    return edgeKeys;
+  }, [cardTargetKind, targetRecord]);
   const championTargetOwner =
     cardTargetKind === "champion" && selectedCardDef
       ? (() => {
@@ -1059,11 +1075,7 @@ export const GameScreen = ({
     }
     const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
     if (cardTargetKind === "multiEdge") {
-      const edgeKeys = new Set(getTargetStringArray(targetRecord, "edgeKeys"));
-      const edgeKey = getTargetString(targetRecord, "edgeKey");
-      if (edgeKey) {
-        edgeKeys.add(edgeKey);
-      }
+      const edgeKeys = new Set(selectedMultiEdgeKeys);
       const count = edgeKeys.size;
       const minEdges =
         typeof targetSpec.minEdges === "number"
@@ -1073,7 +1085,22 @@ export const GameScreen = ({
         typeof targetSpec.maxEdges === "number"
           ? Math.max(0, Math.floor(targetSpec.maxEdges))
           : Number.POSITIVE_INFINITY;
-      return count >= minEdges && count <= maxEdges;
+      if (count < minEdges || count > maxEdges) {
+        return false;
+      }
+      if (isBridgePivotCard) {
+        if (edgeKeys.size !== 2) {
+          return false;
+        }
+        const [firstKey, secondKey] = Array.from(edgeKeys);
+        const first = getBridgePivotEdgeMeta(firstKey);
+        const second = getBridgePivotEdgeMeta(secondKey);
+        if (!first || !second) {
+          return false;
+        }
+        return isBridgePivotPairValid(first, second);
+      }
+      return true;
     }
     if (cardTargetKind === "multiPath") {
       const paths = getTargetPaths(targetRecord);
@@ -1105,7 +1132,17 @@ export const GameScreen = ({
       return owner === "any";
     }
     return true;
-  }, [cardTargetKind, localPlayerId, selectedCardDef, selectedTargetPlayerId, targetRecord]);
+  }, [
+    cardTargetKind,
+    localPlayerId,
+    selectedCardDef,
+    selectedMultiEdgeKeys,
+    selectedTargetPlayerId,
+    isBridgePivotCard,
+    bridgePivotAllowAnywhere,
+    targetRecord,
+    view.public.board
+  ]);
   const canPlayCard =
     canSubmitAction &&
     trimmedCardId.length > 0 &&
@@ -2073,6 +2110,97 @@ export const GameScreen = ({
     }
   };
 
+  const normalizeEdgeKey = (edgeKey: string) => {
+    try {
+      const [from, to] = parseEdgeKey(edgeKey);
+      return getBridgeKey(from, to);
+    } catch {
+      return edgeKey;
+    }
+  };
+
+  const getBridgePivotEdgeMeta = (edgeKey: string) => {
+    try {
+      const [from, to] = parseEdgeKey(edgeKey);
+      const key = getBridgeKey(from, to);
+      return {
+        key,
+        from,
+        to,
+        hasBridge: hasBridge(view.public.board, from, to)
+      };
+    } catch {
+      return null;
+    }
+  };
+
+  const getBridgePivotSharedHex = (
+    left: { from: string; to: string },
+    right: { from: string; to: string }
+  ) => {
+    if (left.from === right.from || left.from === right.to) {
+      return left.from;
+    }
+    if (left.to === right.from || left.to === right.to) {
+      return left.to;
+    }
+    return null;
+  };
+
+  const isBridgePivotSharedHexValid = (hexKey: string | null) => {
+    if (!hexKey) {
+      return false;
+    }
+    if (bridgePivotAllowAnywhere) {
+      return true;
+    }
+    if (!localPlayerId) {
+      return false;
+    }
+    const hex = view.public.board.hexes[hexKey];
+    return hex ? isOccupiedByPlayer(hex, localPlayerId) : false;
+  };
+
+  const isBridgePivotPairValid = (
+    left: { from: string; to: string; hasBridge: boolean },
+    right: { from: string; to: string; hasBridge: boolean }
+  ) => {
+    if (left.hasBridge === right.hasBridge) {
+      return false;
+    }
+    const sharedHex = getBridgePivotSharedHex(left, right);
+    return isBridgePivotSharedHexValid(sharedHex);
+  };
+
+  const hasBridgePivotPartner = (edgeMeta: {
+    key: string;
+    from: string;
+    to: string;
+    hasBridge: boolean;
+  }) => {
+    const needsBridge = !edgeMeta.hasBridge;
+    const endpoints = [edgeMeta.from, edgeMeta.to];
+    for (const endpoint of endpoints) {
+      if (!isBridgePivotSharedHexValid(endpoint)) {
+        continue;
+      }
+      for (const neighbor of neighborHexKeys(endpoint)) {
+        if (!view.public.board.hexes[neighbor]) {
+          continue;
+        }
+        const candidateKey = getBridgeKey(endpoint, neighbor);
+        if (candidateKey === edgeMeta.key) {
+          continue;
+        }
+        const isBridge = hasBridge(view.public.board, endpoint, neighbor);
+        if (isBridge === needsBridge) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
   const arePathsEqual = (left: string[], right: string[]) => {
     if (left.length !== right.length) {
       return false;
@@ -2090,6 +2218,47 @@ export const GameScreen = ({
       return true;
     }
     return linkedNeighborsByHex.get(from)?.has(to) ?? false;
+  };
+
+  const applyBridgePivotSelection = (edgeKey: string) => {
+    const normalized = normalizeEdgeKey(edgeKey);
+    const currentEdges = Array.from(
+      new Set(selectedMultiEdgeKeys.map((entry) => normalizeEdgeKey(entry)))
+    );
+    if (currentEdges.includes(normalized)) {
+      const nextEdges = currentEdges.filter((entry) => entry !== normalized);
+      setCardTargetsObject(nextEdges.length > 0 ? { edgeKeys: nextEdges } : null);
+      return;
+    }
+    const edgeMeta = getBridgePivotEdgeMeta(normalized);
+    if (!edgeMeta) {
+      return;
+    }
+    const currentMetas = currentEdges
+      .map((entry) => getBridgePivotEdgeMeta(entry))
+      .filter(
+        (entry): entry is { key: string; from: string; to: string; hasBridge: boolean } =>
+          Boolean(entry)
+      );
+    if (currentMetas.length === 0) {
+      if (!hasBridgePivotPartner(edgeMeta)) {
+        return;
+      }
+      setCardTargetsObject({ edgeKeys: [edgeMeta.key] });
+      return;
+    }
+    if (currentMetas.length === 1) {
+      if (!isBridgePivotPairValid(currentMetas[0], edgeMeta)) {
+        return;
+      }
+      setCardTargetsObject({ edgeKeys: [currentMetas[0].key, edgeMeta.key] });
+      return;
+    }
+    const partner = currentMetas.find((meta) => isBridgePivotPairValid(meta, edgeMeta));
+    if (!partner) {
+      return;
+    }
+    setCardTargetsObject({ edgeKeys: [partner.key, edgeMeta.key] });
   };
 
   const handleBoardHexClick = (hexKey: string) => {
@@ -2168,18 +2337,22 @@ export const GameScreen = ({
       const edge = getBridgeKey(pendingEdgeStart, hexKey);
       if (isCardEdge) {
         if (isMultiEdge) {
-          const currentEdges = getTargetStringArray(targetRecord, "edgeKeys");
-          const nextEdges = currentEdges.includes(edge)
-            ? currentEdges.filter((entry) => entry !== edge)
-            : [...currentEdges, edge];
-          const targetSpec = selectedCardDef?.targetSpec as Record<string, unknown> | undefined;
-          const maxEdges =
-            typeof targetSpec?.maxEdges === "number" ? Math.floor(targetSpec.maxEdges) : null;
-          const limited =
-            maxEdges && maxEdges > 0 && nextEdges.length > maxEdges
-              ? nextEdges.slice(nextEdges.length - maxEdges)
-              : nextEdges;
-          setCardTargetsObject(limited.length > 0 ? { edgeKeys: limited } : null);
+          if (isBridgePivotCard) {
+            applyBridgePivotSelection(edge);
+          } else {
+            const currentEdges = getTargetStringArray(targetRecord, "edgeKeys");
+            const nextEdges = currentEdges.includes(edge)
+              ? currentEdges.filter((entry) => entry !== edge)
+              : [...currentEdges, edge];
+            const targetSpec = selectedCardDef?.targetSpec as Record<string, unknown> | undefined;
+            const maxEdges =
+              typeof targetSpec?.maxEdges === "number" ? Math.floor(targetSpec.maxEdges) : null;
+            const limited =
+              maxEdges && maxEdges > 0 && nextEdges.length > maxEdges
+                ? nextEdges.slice(nextEdges.length - maxEdges)
+                : nextEdges;
+            setCardTargetsObject(limited.length > 0 ? { edgeKeys: limited } : null);
+          }
         } else {
           setCardTargetsObject({ edgeKey: edge });
         }
@@ -2332,18 +2505,22 @@ export const GameScreen = ({
     }
     if (boardPickMode === "cardEdge") {
       if (cardTargetKind === "multiEdge") {
-        const currentEdges = getTargetStringArray(targetRecord, "edgeKeys");
-        const nextEdges = currentEdges.includes(edgeKey)
-          ? currentEdges.filter((entry) => entry !== edgeKey)
-          : [...currentEdges, edgeKey];
-        const targetSpec = selectedCardDef?.targetSpec as Record<string, unknown> | undefined;
-        const maxEdges =
-          typeof targetSpec?.maxEdges === "number" ? Math.floor(targetSpec.maxEdges) : null;
-        const limited =
-          maxEdges && maxEdges > 0 && nextEdges.length > maxEdges
-            ? nextEdges.slice(nextEdges.length - maxEdges)
-            : nextEdges;
-        setCardTargetsObject(limited.length > 0 ? { edgeKeys: limited } : null);
+        if (isBridgePivotCard) {
+          applyBridgePivotSelection(edgeKey);
+        } else {
+          const currentEdges = getTargetStringArray(targetRecord, "edgeKeys");
+          const nextEdges = currentEdges.includes(edgeKey)
+            ? currentEdges.filter((entry) => entry !== edgeKey)
+            : [...currentEdges, edgeKey];
+          const targetSpec = selectedCardDef?.targetSpec as Record<string, unknown> | undefined;
+          const maxEdges =
+            typeof targetSpec?.maxEdges === "number" ? Math.floor(targetSpec.maxEdges) : null;
+          const limited =
+            maxEdges && maxEdges > 0 && nextEdges.length > maxEdges
+              ? nextEdges.slice(nextEdges.length - maxEdges)
+              : nextEdges;
+          setCardTargetsObject(limited.length > 0 ? { edgeKeys: limited } : null);
+        }
       } else {
         setCardTargetsObject({ edgeKey });
       }
@@ -2648,6 +2825,7 @@ export const GameScreen = ({
       const allowAnywhere = edgeSpec.anywhere === true;
       const requiresOccupiedEndpoint =
         allowAnywhere || edgeSpec.requiresOccupiedEndpoint === false ? false : true;
+      const hasBridgePivot = isBridgePivotCard && cardTargetKind === "multiEdge";
       const hasBuildBridge =
         selectedCardDef.effects?.some((effect) => effect.kind === "buildBridge") ?? false;
       const hasExistingBridgeEffect =
@@ -2658,20 +2836,123 @@ export const GameScreen = ({
             effect.kind === "destroyBridge"
         ) ?? false;
       const requiresExistingBridge = !hasBuildBridge && hasExistingBridgeEffect;
-      const startCandidates = new Set<string>();
-      for (const key of hexKeys) {
-        if (!hasAnyEdgeCandidate(key, requiresOccupiedEndpoint, requiresExistingBridge)) {
-          continue;
+      if (hasBridgePivot) {
+        const candidateEdges = new Set<string>();
+        const selectedEdges = selectedMultiEdgeKeys
+          .map((edgeKey) => getBridgePivotEdgeMeta(edgeKey))
+          .filter(
+            (
+              entry
+            ): entry is { key: string; from: string; to: string; hasBridge: boolean } =>
+              Boolean(entry)
+          );
+        const addCandidatesForEdge = (edgeMeta: {
+          key: string;
+          from: string;
+          to: string;
+          hasBridge: boolean;
+        }) => {
+          const needsBridge = !edgeMeta.hasBridge;
+          const endpoints = [edgeMeta.from, edgeMeta.to];
+          for (const endpoint of endpoints) {
+            if (!isBridgePivotSharedHexValid(endpoint)) {
+              continue;
+            }
+            for (const neighbor of neighbors(endpoint)) {
+              const candidateKey = getBridgeKey(endpoint, neighbor);
+              if (candidateKey === edgeMeta.key) {
+                continue;
+              }
+              const isBridge = hasBridge(board, endpoint, neighbor);
+              if (isBridge === needsBridge) {
+                candidateEdges.add(candidateKey);
+              }
+            }
+          }
+        };
+
+        if (selectedEdges.length === 0) {
+          for (const key of hexKeys) {
+            if (!isBridgePivotSharedHexValid(key)) {
+              continue;
+            }
+            let hasExisting = false;
+            let hasOpen = false;
+            for (const neighbor of neighbors(key)) {
+              if (hasBridge(board, key, neighbor)) {
+                hasExisting = true;
+              } else {
+                hasOpen = true;
+              }
+              if (hasExisting && hasOpen) {
+                break;
+              }
+            }
+            if (!hasExisting || !hasOpen) {
+              continue;
+            }
+            for (const neighbor of neighbors(key)) {
+              candidateEdges.add(getBridgeKey(key, neighbor));
+            }
+          }
+        } else {
+          for (const edgeMeta of selectedEdges) {
+            addCandidatesForEdge(edgeMeta);
+          }
         }
-        startCandidates.add(key);
-        startTargets.add(key);
-      }
-      if (pendingEdgeStart && hasHex(pendingEdgeStart)) {
-        addEdgeCandidatesFrom(pendingEdgeStart, requiresOccupiedEndpoint, requiresExistingBridge);
-      } else {
+
+        const startCandidates = new Set<string>();
+        for (const edgeKey of candidateEdges) {
+          try {
+            const [from, to] = parseEdgeKey(edgeKey);
+            startCandidates.add(from);
+            startCandidates.add(to);
+          } catch {
+            // Ignore malformed edge keys.
+          }
+        }
+
+        for (const edgeKey of selectedMultiEdgeKeys) {
+          previewEdges.add(normalizeEdgeKey(edgeKey));
+        }
+
+        if (pendingEdgeStart && hasHex(pendingEdgeStart) && startCandidates.has(pendingEdgeStart)) {
+          for (const neighbor of neighbors(pendingEdgeStart)) {
+            const candidateKey = getBridgeKey(pendingEdgeStart, neighbor);
+            if (!candidateEdges.has(candidateKey)) {
+              continue;
+            }
+            previewEdges.add(candidateKey);
+            validTargets.add(neighbor);
+          }
+        } else {
+          for (const edgeKey of candidateEdges) {
+            previewEdges.add(edgeKey);
+          }
+          for (const key of startCandidates) {
+            validTargets.add(key);
+          }
+        }
+
         for (const key of startCandidates) {
-          validTargets.add(key);
-          addEdgeCandidatesFrom(key, requiresOccupiedEndpoint, requiresExistingBridge, false);
+          startTargets.add(key);
+        }
+      } else {
+        const startCandidates = new Set<string>();
+        for (const key of hexKeys) {
+          if (!hasAnyEdgeCandidate(key, requiresOccupiedEndpoint, requiresExistingBridge)) {
+            continue;
+          }
+          startCandidates.add(key);
+          startTargets.add(key);
+        }
+        if (pendingEdgeStart && hasHex(pendingEdgeStart)) {
+          addEdgeCandidatesFrom(pendingEdgeStart, requiresOccupiedEndpoint, requiresExistingBridge);
+        } else {
+          for (const key of startCandidates) {
+            validTargets.add(key);
+            addEdgeCandidatesFrom(key, requiresOccupiedEndpoint, requiresExistingBridge, false);
+          }
         }
       }
     }
@@ -3317,7 +3598,9 @@ export const GameScreen = ({
     cardMoveSupportsSplit,
     moveStackEffect,
     edgeMoveMode,
-    targetRecord
+    targetRecord,
+    selectedMultiEdgeKeys,
+    isBridgePivotCard
   ]);
   const boardValidHexKeys = useMemo(() => {
     if (isCombatRetreatWaiting) {
@@ -3421,8 +3704,8 @@ export const GameScreen = ({
     if (cardTargetKind !== "multiEdge") {
       return [];
     }
-    return getTargetStringArray(targetRecord, "edgeKeys");
-  }, [cardTargetKind, targetRecord]);
+    return selectedMultiEdgeKeys;
+  }, [cardTargetKind, selectedMultiEdgeKeys]);
   const multiEdgeLimits = useMemo(() => {
     if (!selectedCardDef || cardTargetKind !== "multiEdge") {
       return null;
@@ -3455,6 +3738,11 @@ export const GameScreen = ({
     if (!multiEdgeLimits) {
       return "Pick multiple edges on the board.";
     }
+    if (isBridgePivotCard) {
+      return bridgePivotAllowAnywhere
+        ? "Pick 1 existing bridge and 1 new edge that share a hex."
+        : "Pick 1 existing bridge and 1 new edge sharing an occupied hex.";
+    }
     const { minEdges, maxEdges } = multiEdgeLimits;
     if (minEdges !== null && maxEdges !== null) {
       if (minEdges === maxEdges) {
@@ -3469,7 +3757,7 @@ export const GameScreen = ({
       return `Pick up to ${maxEdges} edges on the board.`;
     }
     return "Pick multiple edges on the board.";
-  }, [multiEdgeLimits]);
+  }, [multiEdgeLimits, isBridgePivotCard, bridgePivotAllowAnywhere]);
   const multiPathTargets = useMemo(() => {
     if (cardTargetKind !== "multiPath") {
       return [];
