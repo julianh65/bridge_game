@@ -670,7 +670,7 @@ Done
 - [x] Add clearer phase transition cues between round phases. Make it flash on screen in big text slowly to everyone simultaneously.
 - [ ] we need a few UI's still, like dice rolling for draws and cards and other stuff
   - [x] Add collection draw roll reveals (mine/forge/center) with NumberRoll animations.
-  - [ ] Add dice roll UI for other random draws as they are identified.
+  - [x] Add dice roll UI for other random draws as they are identified.
 - [x] Add market roll-off dice display with suspenseful rolling numbers.
 - [x] The placing starting bridge UI needs to be on the board not picking a bunch of axial coords.
 - [x] We should have nice transitions between ages and at the start of the game

@@ -551,7 +551,16 @@ export const WAR_PROFITEERS: CardDef = {
   initiative: 45,
   burn: false,
   targetSpec: { kind: "none" },
-  effects: [{ kind: "rollGold", sides: 6, highMin: 5, lowGain: 1, highGain: 6 }]
+  effects: [
+    {
+      kind: "rollGold",
+      sides: 6,
+      highMin: 5,
+      lowGain: 1,
+      highGain: 6,
+      sourceCardId: "age2.war_profiteers"
+    }
+  ]
 };
 
 export const ENCIRCLEMENT: CardDef = {

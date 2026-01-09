@@ -17,7 +17,6 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent5; scope: add rollGold dice log + overlay UI for random card rolls (overlap note: `apps/web/src/components/GameScreen.tsx` also touched by agent3); files: `packages/engine/src/card-effects-economy.ts`, `packages/engine/src/content/cards/age2.ts`, `apps/web/src/components/DiceRollOverlay.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/lib/event-format.ts`, `apps/web/src/styles.css`, `implementation_plan.md`; status: in progress
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -263,6 +262,7 @@
 - Added Mortar Shot target hint text explaining scatter/aoe in the hand target UI. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.) (Overlap note: commit also picked up pre-staged Age II movement card work in `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age2.ts`, and `packages/engine/src/card-effects.breakthrough-line.test.ts`.)
 - Limited Mortar Shot card hex highlights to tiles within range of friendly forces. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
 - Added collection draw roll reveal animations (mine/forge/center) with `NumberRoll` styling and plan subtask updates. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
+- Added rollGold dice-roll log events + overlay (War Profiteers) using `NumberRoll` and marked the random-draw dice UI plan subtask complete. (Files: `packages/engine/src/card-effects-economy.ts`, `packages/engine/src/content/cards/age2.ts`, `apps/web/src/components/DiceRollOverlay.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/lib/event-format.ts`, `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Thickened power/champion GameCard borders for clearer differentiation and marked the plan item complete. (Overlap note: `apps/web/src/styles.css` touched.)
 - Simplified the basic actions UI: removed pick/clear buttons, made march/bridge targets clickable fields, and auto-clear march destination when the start changes; marked the plan item complete in `implementation_plan.md`. (Overlap note: touched `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`.)
 - Extended the market overlay outro hold so the hand panel stays hidden briefly after market phase ends if the overlay was open; marked the plan item complete in `implementation_plan.md`. (Overlap note: `implementation_plan.md` had pre-existing edits; touched `apps/web/src/components/GameScreen.tsx`.)

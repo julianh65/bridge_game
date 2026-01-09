@@ -2982,6 +2982,113 @@ body.is-game .action-reveal__targets--empty {
   color: var(--muted);
 }
 
+.dice-reveal {
+  --dice-reveal-duration: 1600ms;
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 61;
+  background: radial-gradient(
+    circle at center,
+    rgba(251, 191, 36, 0.18),
+    rgba(255, 255, 255, 0) 60%
+  );
+  animation: actionRevealFade var(--dice-reveal-duration, 1600ms) ease-in-out forwards;
+}
+
+.dice-reveal__panel {
+  width: min(360px, 92vw);
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(180, 83, 9, 0.32);
+  background: rgba(255, 250, 240, 0.96);
+  box-shadow: 0 18px 32px rgba(46, 32, 12, 0.28);
+  display: grid;
+  gap: 10px;
+  text-align: center;
+  animation: actionRevealPop var(--dice-reveal-duration, 1600ms) ease-in-out forwards;
+}
+
+.dice-reveal__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 10px;
+  font-weight: 600;
+  color: #b45309;
+}
+
+.dice-reveal__player {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.dice-reveal__content {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+}
+
+.dice-reveal__roll {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dice-reveal__sides {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(71, 85, 105, 0.8);
+}
+
+.dice-reveal__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(71, 85, 105, 0.78);
+}
+
+.dice-reveal__gain {
+  color: #15803d;
+  font-weight: 700;
+}
+
+body.is-game .dice-reveal {
+  background: radial-gradient(
+    circle at center,
+    rgba(251, 191, 36, 0.16),
+    rgba(15, 23, 42, 0) 60%
+  );
+}
+
+body.is-game .dice-reveal__panel {
+  background: rgba(24, 16, 10, 0.94);
+  border-color: rgba(120, 53, 15, 0.45);
+  color: rgba(248, 250, 252, 0.9);
+}
+
+body.is-game .dice-reveal__eyebrow {
+  color: rgba(251, 191, 36, 0.9);
+}
+
+body.is-game .dice-reveal__player {
+  color: rgba(254, 240, 138, 0.95);
+}
+
+body.is-game .dice-reveal__sides,
+body.is-game .dice-reveal__meta {
+  color: rgba(226, 232, 240, 0.75);
+}
+
+body.is-game .dice-reveal__gain {
+  color: #86efac;
+}
+
 @media (max-width: 720px) {
   .action-reveal__content--with-card {
     grid-template-columns: 1fr;

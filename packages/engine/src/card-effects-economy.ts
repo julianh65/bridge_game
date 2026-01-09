@@ -12,6 +12,7 @@ import {
   takeTopCards,
   topdeckCardFromHand
 } from "./cards";
+import { emit } from "./events";
 import { getCardInstanceTargets } from "./card-effects-targets";
 
 const addGold = (state: GameState, playerId: PlayerID, amount: number): GameState => {
@@ -197,6 +198,21 @@ export const resolveEconomyEffect = (
       const roll = randInt(nextState.rngState, 1, sides);
       nextState = { ...nextState, rngState: roll.next };
       const amount = roll.value >= threshold ? highGain : lowGain;
+      const sourceCardId =
+        typeof effect.sourceCardId === "string" ? effect.sourceCardId : null;
+      nextState = emit(nextState, {
+        type: "card.rollGold",
+        payload: {
+          playerId,
+          cardId: sourceCardId ?? undefined,
+          roll: roll.value,
+          sides,
+          amount,
+          threshold,
+          lowGain,
+          highGain
+        }
+      });
       if (amount > 0) {
         nextState = addGold(nextState, playerId, amount);
       }

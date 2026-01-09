@@ -201,6 +201,16 @@ export const formatGameEvent = (
       const cardLabel = formatCardId(cardId, cardDefsById);
       return `${formatPlayer(playerId, playersById)} took ${cardLabel} on pass${potLabel}${rollOffLabel}`;
     }
+    case "card.rollGold": {
+      const roll = readNumber(payload.roll);
+      const sides = readNumber(payload.sides) ?? 6;
+      const amount = readNumber(payload.amount);
+      const cardId = readString(payload.cardId);
+      const cardLabel = cardId ? formatCardId(cardId, cardDefsById) : "gold roll";
+      const rollLabel = roll !== null ? roll : "?";
+      const amountLabel = amount !== null ? ` (+${amount}g)` : "";
+      return `${formatPlayer(playerId, playersById)} rolled ${rollLabel} (d${sides}) for ${cardLabel}${amountLabel}`;
+    }
     default:
       break;
   }

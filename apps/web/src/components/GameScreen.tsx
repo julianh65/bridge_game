@@ -26,6 +26,7 @@ import { ActionRevealOverlay, type ActionRevealOverlayData } from "./ActionRevea
 import { type BoardActionAnimation } from "./BoardView";
 import { CombatOverlay } from "./CombatOverlay";
 import { CombatRetreatOverlay } from "./CombatRetreatOverlay";
+import { DiceRollOverlay, type DiceRollOverlayData } from "./DiceRollOverlay";
 import { GameScreenCues, type AgeCue, type PhaseCue } from "./GameScreenCues";
 import { GameScreenBoardSection } from "./GameScreenBoardSection";
 import {
@@ -394,6 +395,7 @@ export const GameScreen = ({
   >({});
   const [cardRevealQueue, setCardRevealQueue] = useState<ActionCardReveal[]>([]);
   const [activeCardReveal, setActiveCardReveal] = useState<ActionCardReveal | null>(null);
+  const [rollReveal, setRollReveal] = useState<DiceRollOverlayData | null>(null);
   const [isActionRevealOverlayVisible, setIsActionRevealOverlayVisible] = useState(false);
   const [cardRevealKey, setCardRevealKey] = useState(0);
   const [combatQueue, setCombatQueue] = useState<CombatSequence[]>([]);
@@ -414,8 +416,10 @@ export const GameScreen = ({
   const [basicActionIntent, setBasicActionIntent] = useState<BasicActionIntent>("none");
   const storedAgeCue = useMemo(() => readStoredAgeCue(roomId), [roomId]);
   const lastMarketEventIndex = useRef(-1);
+  const lastRollEventIndex = useRef(-1);
   const lastCardRevealIndex = useRef(-1);
   const marketOverlayHoldTimeout = useRef<number | null>(null);
+  const rollRevealTimeout = useRef<number | null>(null);
   const wasMarketPhaseRef = useRef(false);
   const wasCollectionPhaseRef = useRef(false);
   const marketRowKey = useMemo(() => {
@@ -554,6 +558,7 @@ export const GameScreen = ({
   const lastCombatEndIndex = useRef(-1);
   const hasCombatLogBaseline = useRef(false);
   const hasMarketLogBaseline = useRef(false);
+  const hasRollLogBaseline = useRef(false);
   const hasCardRevealBaseline = useRef(false);
   const hasPhaseCueBaseline = useRef(false);
   const hasAgeIntroShown = useRef(Boolean(storedAgeCue) || suppressEntryCues);
@@ -842,6 +847,10 @@ export const GameScreen = ({
   const actionRevealHighlightPauseMs = Math.max(
     0,
     view.public.config.ACTION_REVEAL_HIGHLIGHT_PAUSE_MS
+  );
+  const rollRevealDurationMs = Math.max(
+    1200,
+    Math.min(actionRevealDurationMs, 1800)
   );
   const shouldHoldActionReveal =
     Boolean(activeCardReveal) && !isActionRevealOverlayVisible && actionRevealHighlightPauseMs > 0;
@@ -1430,6 +1439,57 @@ export const GameScreen = ({
 
   useEffect(() => {
     const logs = view.public.logs;
+    if (!hasRollLogBaseline.current) {
+      hasRollLogBaseline.current = true;
+      if (logs.length > 0) {
+        lastRollEventIndex.current = logs.length - 1;
+        return;
+      }
+    }
+    if (logs.length === 0) {
+      lastRollEventIndex.current = -1;
+      setRollReveal(null);
+      return;
+    }
+    if (logs.length - 1 < lastRollEventIndex.current) {
+      lastRollEventIndex.current = logs.length - 1;
+      setRollReveal(null);
+      return;
+    }
+    let latestRoll: DiceRollOverlayData | null = null;
+    for (let i = lastRollEventIndex.current + 1; i < logs.length; i += 1) {
+      const event = logs[i];
+      if (event.type !== "card.rollGold") {
+        continue;
+      }
+      const payload = event.payload ?? {};
+      const roll = typeof payload.roll === "number" ? payload.roll : null;
+      if (roll === null) {
+        continue;
+      }
+      const sides = typeof payload.sides === "number" ? payload.sides : 6;
+      const amount = typeof payload.amount === "number" ? payload.amount : null;
+      const playerId = typeof payload.playerId === "string" ? payload.playerId : null;
+      const playerName = playerId ? playerNames.get(playerId) ?? playerId : "Unknown player";
+      const cardId = typeof payload.cardId === "string" ? payload.cardId : null;
+      const cardName = cardId ? CARD_DEFS_BY_ID.get(cardId)?.name ?? cardId : "Gold roll";
+      latestRoll = {
+        key: `${i}-${roll}`,
+        playerName,
+        cardName,
+        roll,
+        sides,
+        amount
+      };
+    }
+    if (latestRoll) {
+      setRollReveal(latestRoll);
+    }
+    lastRollEventIndex.current = logs.length - 1;
+  }, [playerNames, view.public.logs]);
+
+  useEffect(() => {
+    const logs = view.public.logs;
     if (!hasCardRevealBaseline.current) {
       hasCardRevealBaseline.current = true;
       lastCardRevealIndex.current = logs.length - 1;
@@ -1643,6 +1703,29 @@ export const GameScreen = ({
     actionRevealHighlightPauseMs,
     cardRevealKey
   ]);
+
+  useEffect(() => {
+    if (!rollReveal) {
+      if (rollRevealTimeout.current) {
+        window.clearTimeout(rollRevealTimeout.current);
+        rollRevealTimeout.current = null;
+      }
+      return;
+    }
+    if (rollRevealTimeout.current) {
+      window.clearTimeout(rollRevealTimeout.current);
+    }
+    rollRevealTimeout.current = window.setTimeout(() => {
+      setRollReveal(null);
+      rollRevealTimeout.current = null;
+    }, rollRevealDurationMs);
+    return () => {
+      if (rollRevealTimeout.current) {
+        window.clearTimeout(rollRevealTimeout.current);
+        rollRevealTimeout.current = null;
+      }
+    };
+  }, [rollReveal, rollRevealDurationMs]);
 
   const actionAnimations = useMemo<BoardActionAnimation[]>(() => {
     if (!activeCardReveal) {
@@ -3019,6 +3102,9 @@ export const GameScreen = ({
           reveal={activeCardReveal}
           durationMs={actionRevealDurationMs}
         />
+      ) : null}
+      {rollReveal ? (
+        <DiceRollOverlay reveal={rollReveal} durationMs={rollRevealDurationMs} />
       ) : null}
       {pendingCombat ? (
         <CombatRetreatOverlay
