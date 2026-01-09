@@ -373,6 +373,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 
 - [x] in the setup phase the connected and waiting pills mess up the flow and the left side info is completely squished, maybe replace the waiting with just an x or check red or green, and connected pill can go above or below
 - [x] need to remove one core deck card: probably scout report
+- [x] move Scout Report into the Age I market deck as a normal card
 - [x] the reroll map button sends you back one screen
 - [x] when you select a slot 1 or slot 2 during the capital draft it would be nice if it shows up on the board somehow so we can see who’s where
 	- [x] also the button shouldn’t disappear it should just be like taken or not and unclickable if someone takes it
@@ -398,7 +399,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] game breaking: after several rolls sometimes the forces keep rolling the same numbers? and then the whole fight just stalls out?
 - [ ] why is there a dice roll for revealing forge draw / power deck?
 - [ ] power deck for age 2 isn’t there yet
-- [ ] Any number in a card description can we bold it?
+- [x] Any number in a card description can we bold it?
 - [ ] make the card text slightly slightly larger
 
 ### Refactor Milestone

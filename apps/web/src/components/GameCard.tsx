@@ -63,6 +63,13 @@ const formatTypeLabel = (type?: string | null) => {
 const formatChampionGoldScale = (values: number[]) =>
   values.map((value) => `+${value}`).join(" / ");
 
+const boldRuleNumbers = (text: string): ReactNode[] => {
+  const parts = text.split(/(\d+)/g);
+  return parts.map((part, index) =>
+    /^\d+$/.test(part) ? <strong key={`num-${index}`}>{part}</strong> : part
+  );
+};
+
 export const GameCard = ({
   card,
   cardId,
@@ -172,7 +179,7 @@ export const GameCard = ({
             className={`game-card__rules${isHidden ? " game-card__rules--hidden" : ""}`}
             title={!isHidden ? rulesText : undefined}
           >
-            {rulesText}
+            {boldRuleNumbers(rulesText)}
           </p>
           {victoryPoints !== null ? (
             <p className="game-card__vp game-card__vp--inline">+{victoryPoints} VP</p>

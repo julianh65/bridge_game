@@ -17,6 +17,7 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- (owner: agent2) Adjust champion-only stack rendering so force marker doesn't show when only champions are present; scope: board unit stacks UI. Files: `apps/web/src/components/BoardView.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Enabled champion stat blocks in the Quiet Study hand picker. (File: `apps/web/src/components/HandCardPickerModal.tsx`.) (owner: agent2)
@@ -24,8 +25,10 @@
 - Enabled map-based combat retreat selection by highlighting valid retreat hexes, allowing board clicks to submit retreat choices, and letting the retreat overlay pass clicks through to the board; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5)
 - Showed capital draft picks on the map preview and kept slot buttons visible with taken/disabled state; marked plan items complete. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/components/SetupCapitalDraft.tsx`, `implementation_plan.md`.) (owner: agent1) (Overlap note: progress updates for Siege Writ active task wording and starter deck Scout Report removal were included.)
 - Removed Scout Report from the common starter deck and faction overrides, matching the updated core deck size. (File: `packages/engine/src/content/starter-decks.ts`.)
+- Moved Scout Report into the Age I market deck (new `age1.scout_report` id) and removed starter variants; updated art mapping and test references. (Files: `packages/engine/src/content/cards/starter.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`, `apps/web/src/data/card-art.json`.)
 - Reroll map now keeps the setup flow on capital draft by restoring the capital-draft block after regeneration; marked the plan item complete. (Files: `apps/server/src/server.ts`, `implementation_plan.md`.) (owner: agent1) (Overlap note: includes staged plan checks for setup status pills and map-based retreat selection.)
 - Marked starting bridge placement range reduction as complete (engine/UI already enforce distance 2). (File: `implementation_plan.md`.) (owner: agent1)
+- Bolded numeric values in card rules text and marked the plan item complete. (Files: `apps/web/src/components/GameCard.tsx`, `implementation_plan.md`.) (owner: agent1) (Overlap note: includes agent2 active-task line and agent3 Scout Report progress entry already present in `progress.md`.)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
