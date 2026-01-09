@@ -124,6 +124,20 @@ export const TRADE_CARAVAN: CardDef = {
   effects: [{ kind: "gainGold", amount: 3 }]
 };
 
+export const SPOILS_OF_WAR: CardDef = {
+  id: "age1.spoils_of_war",
+  name: "Spoils of War",
+  rulesText: "If you win a battle this round, gain +3 gold.",
+  type: "Order",
+  deck: "age1",
+  tags: ["market", "age1"],
+  cost: { mana: 1 },
+  initiative: 80,
+  burn: false,
+  targetSpec: { kind: "none" },
+  effects: [{ kind: "battleWinGold", amount: 3 }]
+};
+
 export const RECRUIT_DETACHMENT: CardDef = {
   id: "age1.recruit_detachment",
   name: "Recruit Detachment",
@@ -655,6 +669,7 @@ export const AGE1_CARDS: CardDef[] = [
   COLUMN_ADVANCE,
   PROSPECTING,
   TRADE_CARAVAN,
+  SPOILS_OF_WAR,
   RECRUIT_DETACHMENT,
   PAID_VOLUNTEERS,
   ESCORT_DETAIL,

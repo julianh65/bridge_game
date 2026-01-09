@@ -21,10 +21,6 @@
   scope: require deck preview ready-up before host advance + add ready UI
   files: packages/engine/src/types.ts, packages/engine/src/setup-flow.ts, packages/engine/src/engine.ts, apps/web/src/components/SetupDeckPreview.tsx, apps/web/src/components/SetupFlow.tsx, apps/web/src/styles.css, packages/engine/src/setup-flow.test.ts, packages/engine/src/action-flow.test.ts, packages/engine/src/smoke.test.ts, packages/engine/src/index.test.ts, implementation_plan.md, progress.md
   status: in progress
-- owner: agent3
-  scope: add Spoils of War (battle-win gold) effect + card entry
-  files: packages/engine/src/card-effects.ts, packages/engine/src/card-effects-combat.ts, packages/engine/src/content/cards/age1.ts, implementation_plan.md, progress.md
-  status: in progress
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.
@@ -183,6 +179,7 @@
 - Added gain-mana card effect support plus Age I Make a Play/Paid Logistics cards with action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`.)
 - Added Emergency Evac (Age I) with champion recall-to-capital effect + unit move helper and targeted tests; updated the plan checklist. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside any in-flight edits.)
 - Added Small Hands (Age I) with hand-empty draw effect and action-flow coverage. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.)
+- Added Spoils of War (Age I) with battle-win gold trigger and updated the plan checklist. (Files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-combat.ts`, `packages/engine/src/content/cards/age1.ts`, `implementation_plan.md`.) (Overlap note: `packages/engine/src/card-effects.ts` is also in agent5 scope.)
 - Added action-flow tests for Age I Paid Volunteers + National Service recruit cards; updated the plan checklist. (Files: `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (Overlap note: `progress.md` includes agent4 active-task update.)
 - Added Roll Out (Age I) with multi-stack move targeting/effect support and tests. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside any in-flight edits.)
 - Added Column Advance (Age I) with stop-on-occupied path validation and tests. (Overlap note: touched `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age1.ts` alongside any in-flight edits.)

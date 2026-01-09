@@ -96,6 +96,7 @@ const SUPPORTED_EFFECTS = new Set([
   "destroyBridge",
   "bridgePivot",
   "battleWinDraw",
+  "battleWinGold",
   "pullingStrings",
   "destroyConnectedBridges",
   "linkHexes",

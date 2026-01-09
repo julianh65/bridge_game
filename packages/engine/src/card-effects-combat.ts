@@ -448,6 +448,37 @@ export const resolveCombatEffect = (
       };
       return nextState;
     }
+    case "battleWinGold": {
+      const amount =
+        typeof effect.amount === "number" ? Math.max(0, Math.floor(effect.amount)) : 0;
+      if (amount <= 0) {
+        return nextState;
+      }
+      const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.battle_win_gold`;
+      nextState = {
+        ...nextState,
+        modifiers: [
+          ...nextState.modifiers,
+          {
+            id: modifierId,
+            source: { type: "card", sourceId: card.id },
+            ownerPlayerId: playerId,
+            duration: { type: "endOfRound" },
+            hooks: {
+              afterBattle: ({ state, modifier, winnerPlayerId }) => {
+                const ownerId = modifier.ownerPlayerId;
+                if (!ownerId || winnerPlayerId !== ownerId) {
+                  return state;
+                }
+                const paid = addGold(state, ownerId, amount);
+                return removeModifierById(paid, modifier.id);
+              }
+            }
+          }
+        ]
+      };
+      return nextState;
+    }
     case "battleCry": {
       const modifierId = `card.${card.id}.${playerId}.${nextState.revision}.battle_cry`;
       nextState = {
