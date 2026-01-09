@@ -82,7 +82,7 @@ export default function App() {
     view === "deck" ||
     view === "battle" ||
     view === "editor";
-  const isDebugView = view === "debug" || view === "battle";
+  const isDebugView = view === "debug" || view === "battle" || view === "editor";
   const handleSelectView = (nextView: AppView) => {
     if (nextView === "play" && view === "deck") {
       setSuppressEntryCues(true);
@@ -195,19 +195,19 @@ export default function App() {
                 >
                   Battle Debug
                 </button>
+                {showEditor ? (
+                  <button
+                    type="button"
+                    className={view === "editor" ? "is-active" : ""}
+                    data-sfx="soft"
+                    onClick={() => handleSelectView("editor")}
+                  >
+                    Card Editor
+                  </button>
+                ) : null}
               </div>
             ) : null}
           </div>
-          {showEditor ? (
-            <button
-              type="button"
-              className={view === "editor" ? "is-active" : ""}
-              data-sfx="soft"
-              onClick={() => handleSelectView("editor")}
-            >
-              Card Editor
-            </button>
-          ) : null}
         </div>
       </nav>
 
