@@ -27,6 +27,7 @@ export type BoardPickMode =
   | "cardEdge"
   | "cardChampion"
   | "cardHex"
+  | "cardHexPair"
   | "cardStack"
   | "cardPath"
   | "cardChoice";

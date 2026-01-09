@@ -213,7 +213,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
   - [x] duration expiry
   - [x] query application pipeline (combat queries wired)
   - [x] event trigger dispatch (combat before/after hooks)
-- [ ] Implement faction passives as permanent modifiers:
+- [x] Implement faction passives as permanent modifiers:
   - [x] Leadbound Shield Wall
   - [x] Refiner Ore Cut / Mine Militia
   - [x] Leadbound Home Guard (extra force on capital deploy)
@@ -247,7 +247,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
     - [x] On-battle-win/kill triggers: Bounty Hunter (bonus gold on champion kill in battle)
     - [x] On-battle-win/kill triggers: Capturer (deploy 1 Force on win), Tax Reaver (steal gold on champion kill)
     - [x] Movement exceptions: Bridge Runner pathfinder (adjacent moves ignore bridges).
-    - [ ] Movement/deploy exceptions:
+    - [x] Movement/deploy exceptions:
       - [x] Guerilla Native Mercenary (deploy to any unoccupied hex)
       - [x] Logistics Officer (deploy as capital)
     - [x] Dice mods/thresholds: Inspiring Geezer (forces hit 1-3), Brute (extra dice if no enemy champion).
@@ -255,7 +255,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
     - [x] Siege modifiers: Capital Breaker (siege hit buff)
     - [x] VP modifiers: Bannerman/Center Bannerman (VP while on board/center)
     - [x] Active abilities: Field Surgeon (heal champion in hex 1/round)
-    - [ ] Active abilities:
+    - [x] Active abilities:
       - [x] Stormcaller (Tempest AoE)
       - [x] Grand Strategist (Tactical Hand hit assignment)
 - [ ] Quick check in, the rules in rules_draft are kind of living and breathing as I update things or change balance so make sure that everything is still correct, and add a few more champions and their abilities and everything in to test
@@ -437,7 +437,7 @@ Start going through the rules_draft and adding the logic for the different types
 
 ### Punchlist — Done cards blocked by UI/validation
 - [ ] UI: add `multiPath` targeting flow with per-path add/remove, min/max path counts, and per-path highlights (Roll Out, Coordinated Advance, Grand Maneuver).
-- [ ] UI: add `hexPair` targeting flow (pick two hexes, show linkage preview, enforce allowSame/maxDistanceFromFriendlyChampion) for Wormhole Link + Wormhole Gate.
+- [x] UI: add `hexPair` targeting flow (pick two hexes, show linkage preview, enforce allowSame/maxDistanceFromFriendlyChampion) for Wormhole Link + Wormhole Gate.
 - [ ] UI: support compound targets for edge+move cards (Bridge Crew: `edgeKey` + optional `from/to` or `path`) with a stepper or dual-mode picker.
 - [ ] UI: enforce `stopOnOccupied` during path selection (Column Advance): block path continuation past occupied hexes and surface a hint.
 - [x] UI: enforce champion targeting constraints in picker (`requiresFriendlyChampion`, `maxDistance`) for Marked for Coin + Execution Order.
@@ -755,7 +755,6 @@ Done
 - [x] Slightly make the images a bit bigger and for all images it will crop, but I want it to crop like 10% higher than it is now, that is to say i want it centered 10% higher than it is now for all cards
 - [x] Make the cards slightly more readable, try to maximize space usage, make the font slightly larger, and it should be way more obvious the mana and gold cost, you can even put them in the bottom left and right corner like in hearthstone, to that end the entire hand area on the bottom can be made like 10% taller to accomodate
 - [x] Confirm that champion targetting cards have a UI and work such that you can target a specific champion if there are two in the same hex
-- [ ] Hard: What I'd really like is for the actions to happen on the board as they're revealed with the reveal thing. So after the card is revaled that player one built a bridge here then the bridge builds on the board, and after a player moves something it moves on the boards, and it should animate between the hexes (TODO LATER DON'T PICK THIS UP IT'S DANGEROUS)
 - [x] add a rejoin game type logic
 
 ## Milestone 9.5 -- Card Art + Description
@@ -764,8 +763,6 @@ Add a way for each card to have related card art and a card description that is 
 
 - [x] Cards browser denotes faction-specific cards with a faction label.
 
-## Milestone 9.7 -- Get all cards in
-Go through rules and add all cards in lol
 
 ## Milestone 10 -- Basic AI to play against
 Something that just takes random actions is fine
@@ -782,12 +779,3 @@ Can I somehow add analytics to this? see players where, etc etc...
 - [ ] add save / loading games
 - [ ] make a public list of rooms
 - [ ] add stats tracking throughout the game
-
-### Acceptance criteria
-- 2–4 friends can play a complete game session without needing a restart.
-- Adding a new card usually requires:
-  - adding a CardDef
-  - (sometimes) adding a modifier
-  - rarely adding a new query/hook/event
-
----

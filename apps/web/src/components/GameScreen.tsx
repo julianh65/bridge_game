@@ -250,6 +250,8 @@ const getDefaultCardPickMode = (cardDef: CardDef | null): BoardPickMode => {
       return "cardChampion";
     case "hex":
       return "cardHex";
+    case "hexPair":
+      return "cardHexPair";
     case "choice":
       return "cardChoice";
     default:
@@ -410,6 +412,7 @@ export const GameScreen = ({
   const [pendingEdgeStart, setPendingEdgeStart] = useState<string | null>(null);
   const [pendingStackFrom, setPendingStackFrom] = useState<string | null>(null);
   const [pendingPath, setPendingPath] = useState<string[]>([]);
+  const [pendingHexPair, setPendingHexPair] = useState<string | null>(null);
   const [isInfoDockOpen, setIsInfoDockOpen] = useState(false);
   const [infoDockTab, setInfoDockTab] = useState<"log" | "effects">("log");
   const [isHandPanelOpen, setIsHandPanelOpen] = useState(true);
@@ -1041,6 +1044,7 @@ export const GameScreen = ({
     setPendingEdgeStart(null);
     setPendingStackFrom(null);
     setPendingPath([]);
+    setPendingHexPair(null);
   };
 
   const handleMarchFromChange = (value: string) => {
@@ -1085,6 +1089,7 @@ export const GameScreen = ({
     setPendingEdgeStart(null);
     setPendingStackFrom(null);
     setPendingPath([]);
+    setPendingHexPair(null);
     if (mode === "bridgeEdge") {
       setBasicActionIntent("bridge");
     } else if (mode === "marchFrom" || mode === "marchTo") {
@@ -1116,6 +1121,7 @@ export const GameScreen = ({
       setPendingEdgeStart(null);
       setPendingStackFrom(null);
       setPendingPath([]);
+      setPendingHexPair(null);
       setCardInstanceId("");
       setCardTargetsRaw("");
       setReinforceHex("");
@@ -1994,6 +2000,30 @@ export const GameScreen = ({
       });
       return;
     }
+    if (boardPickMode === "cardHexPair") {
+      if (!selectedCardDef || cardTargetKind !== "hexPair") {
+        return;
+      }
+      const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
+      const allowSame = targetSpec.allowSame === true;
+      if (!pendingHexPair) {
+        setPendingHexPair(hexKey);
+        setCardTargetsObject(null);
+        return;
+      }
+      if (pendingHexPair === hexKey) {
+        if (allowSame) {
+          setCardTargetsObject({ hexKeys: [hexKey, hexKey] });
+        } else {
+          setCardTargetsObject(null);
+        }
+        setPendingHexPair(null);
+        return;
+      }
+      setCardTargetsObject({ hexKeys: [pendingHexPair, hexKey] });
+      setPendingHexPair(null);
+      return;
+    }
     if (boardPickMode === "cardChoice") {
       if (selectedCardDef && cardTargetKind === "choice") {
         const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
@@ -2056,11 +2086,18 @@ export const GameScreen = ({
     if (pendingStackFrom) {
       keys.add(pendingStackFrom);
     }
+    if (pendingHexPair) {
+      keys.add(pendingHexPair);
+    }
+    if (cardTargetKind === "hexPair") {
+      const selectedPair = getTargetStringArray(targetRecord, "hexKeys");
+      selectedPair.forEach((hexKey) => keys.add(hexKey));
+    }
     for (const key of pendingPath) {
       keys.add(key);
     }
     return Array.from(keys);
-  }, [pendingEdgeStart, pendingStackFrom, pendingPath]);
+  }, [cardTargetKind, pendingEdgeStart, pendingHexPair, pendingPath, pendingStackFrom, targetRecord]);
 
   const { validHexKeys, previewEdgeKeys: targetPreviewEdgeKeys, startHexKeys } = useMemo(() => {
     if (!localPlayerId) {
@@ -2582,6 +2619,83 @@ export const GameScreen = ({
       }
     }
 
+    if (boardPickMode === "cardHexPair") {
+      if (!selectedCardDef || cardTargetKind !== "hexPair") {
+        return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
+      }
+      const targetSpec = selectedCardDef.targetSpec as Record<string, unknown>;
+      const owner = typeof targetSpec.owner === "string" ? targetSpec.owner : "any";
+      if (owner !== "self" && owner !== "enemy" && owner !== "any") {
+        return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
+      }
+      const allowEmpty = targetSpec.allowEmpty === true;
+      const requiresOccupied = targetSpec.occupied === true;
+      const requiresEmpty = targetSpec.requiresEmpty === true;
+      const tile = typeof targetSpec.tile === "string" ? targetSpec.tile : null;
+      const allowCapital = targetSpec.allowCapital !== false;
+      const allowSame = targetSpec.allowSame === true;
+      const maxDistanceFromChampion =
+        typeof targetSpec.maxDistanceFromFriendlyChampion === "number"
+          ? targetSpec.maxDistanceFromFriendlyChampion
+          : null;
+      const hasFriendlyChampionWithinRange = (hexKey: string) => {
+        if (maxDistanceFromChampion === null) {
+          return true;
+        }
+        for (const unit of Object.values(board.units)) {
+          if (unit.kind !== "champion") {
+            continue;
+          }
+          if (unit.ownerPlayerId !== localPlayerId) {
+            continue;
+          }
+          try {
+            if (
+              axialDistance(parseHexKey(unit.hex), parseHexKey(hexKey)) <=
+              maxDistanceFromChampion
+            ) {
+              return true;
+            }
+          } catch {
+            continue;
+          }
+        }
+        return false;
+      };
+
+      for (const key of hexKeys) {
+        const hex = boardHexes[key];
+        if (!hex) {
+          continue;
+        }
+        const isEmpty = !hasAnyOccupants(key);
+        if (owner === "self" && !isOccupiedByPlayer(hex, localPlayerId)) {
+          if (!(allowEmpty || requiresEmpty) || !isEmpty) {
+            continue;
+          }
+        }
+        if (owner === "enemy" && !hasEnemyUnits(hex, localPlayerId)) {
+          continue;
+        }
+        if (requiresOccupied && isEmpty) {
+          continue;
+        }
+        if (requiresEmpty && !isEmpty) {
+          continue;
+        }
+        if (tile && hex.tile !== tile) {
+          continue;
+        }
+        if (!allowCapital && hex.tile === "capital") {
+          continue;
+        }
+        if (!hasFriendlyChampionWithinRange(key)) {
+          continue;
+        }
+        validTargets.add(key);
+      }
+    }
+
     if (boardPickMode === "cardChampion") {
       if (!selectedCardDef || cardTargetKind !== "champion") {
         return { validHexKeys: [], previewEdgeKeys: [], startHexKeys: [] };
@@ -2668,6 +2782,7 @@ export const GameScreen = ({
     pendingEdgeStart,
     pendingStackFrom,
     pendingPath,
+    pendingHexPair,
     selectedCardDef,
     cardTargetKind,
     moveStackEffect,

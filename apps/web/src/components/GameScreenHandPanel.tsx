@@ -47,6 +47,8 @@ const getCardTargetHint = (cardDef: CardDef | null): string | null => {
       return "Pick a path on the board.";
     case "hex":
       return "Pick a hex on the board.";
+    case "hexPair":
+      return "Pick two hexes on the board.";
     case "choice":
       return "Pick a capital or occupied hex.";
     case "champion":

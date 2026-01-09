@@ -17,9 +17,9 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
-- owner: agent2
-  scope: add hex-pair targeting support for wormhole cards
-  files: apps/web/src/components/GameScreen.tsx, apps/web/src/components/ActionPanel.tsx, apps/web/src/components/GameScreenHandPanel.tsx, implementation_plan.md, progress.md
+- owner: agent4
+  scope: add Age III combat cards (Attrition + Complete Encirclement) and resolve effects
+  files: packages/engine/src/content/cards/age3.ts, packages/engine/src/card-effects-combat.ts, implementation_plan.md, progress.md
   status: in progress
 
 ## Planning updates
@@ -548,6 +548,7 @@ none
 - Upgraded collection prompts to show full card tiles (initiative/rules/costs) for revealed picks instead of tag buttons.
 - Added a collapsible Command Center sidebar toggle so the board can expand when the right panel is hidden; marked the plan item complete in `implementation_plan.md`.
 - Added a champion-target card pick mode with valid-target highlights so Emergency Evac (and other champion cards) can be selected from the board; updated `implementation_plan.md`. (Files: `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.)
+- Added hex-pair targeting support for wormhole cards with a two-step board pick flow and updated target hints. (Files: `apps/web/src/components/ActionPanel.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`.) (owner: agent2)
 - Fixed hand/hand-picker card art lookups by using defIds for GameCard art and marked the plan item complete. (Files: `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `implementation_plan.md`.)
 - Enlarged hand card mana/gold cost display for better readability; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
 - Restyled card type labels with larger, colored pills for Champion/Victory/Spell/Order cards; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
