@@ -106,8 +106,8 @@ export const GameScreenHeader = ({
 
   const showConnectionStatus = connectionLabel !== "Live";
   const activePhaseIndex = PHASE_TRACKER_STEPS.findIndex((step) => step.key === phase);
-  const roundsLeft = Math.max(0, roundsMax - round + 1);
-  const roundsLeftLabel = roundsLeft <= 1 ? "Final round" : `Rounds left: ${roundsLeft}`;
+  const roundsLeft = Math.max(0, roundsMax - Math.max(1, round) + 1);
+  const roundsLeftLabel = roundsLeft === 1 ? "Final round" : `Rounds left: ${roundsLeft}`;
   const resourceChips =
     localGold === null && localVpTotal === null ? null : (
       <div className="game-screen__resources">
