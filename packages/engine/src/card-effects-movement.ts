@@ -189,6 +189,128 @@ export const validateMovePath = (
   return path;
 };
 
+type ResolvedMovePath = {
+  path: string[];
+  movingUnitIds: string[];
+};
+
+const resolveMovePath = (
+  state: GameState,
+  playerId: PlayerID,
+  path: string[],
+  options: MoveValidation
+): ResolvedMovePath | null => {
+  if (path.length < 2) {
+    return null;
+  }
+
+  for (const hexKey of path) {
+    if (!state.board.hexes[hexKey]) {
+      return null;
+    }
+  }
+
+  const fromHex = state.board.hexes[path[0]];
+  if (!fromHex) {
+    return null;
+  }
+
+  const providedUnits =
+    Array.isArray(options.movingUnitIds) && options.movingUnitIds.length > 0
+      ? options.movingUnitIds
+      : null;
+  const movingUnitIds = providedUnits
+    ? providedUnits
+    : selectMovingUnits(
+        state.board,
+        playerId,
+        path[0],
+        options.forceCount,
+        options.includeChampions
+      );
+  if (providedUnits) {
+    const occupantSet = new Set(fromHex.occupants[playerId] ?? []);
+    if (!providedUnits.every((unitId) => occupantSet.has(unitId))) {
+      return null;
+    }
+  }
+  if (options.requireStartOccupied && movingUnitIds.length === 0) {
+    return null;
+  }
+
+  let maxDistance = options.maxDistance;
+  if (typeof maxDistance === "number") {
+    maxDistance = getMoveMaxDistance(
+      state,
+      {
+        playerId,
+        from: path[0],
+        to: path[path.length - 1],
+        path,
+        movingUnitIds
+      },
+      maxDistance
+    );
+    if (maxDistance <= 0 || path.length - 1 > maxDistance) {
+      return null;
+    }
+  }
+  const requiresBridge = getMoveRequiresBridge(
+    state,
+    {
+      playerId,
+      from: path[0],
+      to: path[path.length - 1],
+      path,
+      movingUnitIds
+    },
+    options.requiresBridge
+  );
+
+  const stopOnOccupied = options.stopOnOccupied === true;
+  let stopIndex: number | null = null;
+
+  for (let index = 0; index < path.length - 1; index += 1) {
+    const from = path[index];
+    const to = path[index + 1];
+    let baseAdjacent = false;
+    try {
+      baseAdjacent = areAdjacent(parseHexKey(from), parseHexKey(to));
+    } catch {
+      return null;
+    }
+    const isAdjacent = getMoveAdjacency(
+      state,
+      { playerId, from, to, path, movingUnitIds },
+      baseAdjacent
+    );
+    if (!isAdjacent) {
+      return null;
+    }
+    if (requiresBridge && baseAdjacent && !hasBridge(state.board, from, to)) {
+      return null;
+    }
+    const hex = state.board.hexes[to];
+    if (!hex) {
+      return null;
+    }
+    const hasEnemy = hasEnemyUnits(hex, playerId);
+    const isOccupied = countPlayersOnHex(hex) > 0;
+    if (hasEnemy || (stopOnOccupied && isOccupied)) {
+      stopIndex = index + 1;
+      break;
+    }
+  }
+
+  const resolvedPath = stopIndex === null ? path : path.slice(0, stopIndex + 1);
+  const destination = state.board.hexes[resolvedPath[resolvedPath.length - 1]];
+  if (destination && wouldExceedTwoPlayers(destination, playerId)) {
+    return null;
+  }
+
+  return { path: resolvedPath, movingUnitIds };
+};
+
 export const moveUnits = (
   state: GameState,
   playerId: PlayerID,
@@ -252,35 +374,6 @@ export const moveUnits = (
       }
     }
   };
-};
-
-const moveUnitsAlongPath = (
-  state: GameState,
-  playerId: PlayerID,
-  path: string[],
-  forceCount?: number,
-  includeChampions?: boolean
-): GameState => {
-  const movingUnitIds = selectMovingUnits(
-    state.board,
-    playerId,
-    path[0],
-    forceCount,
-    includeChampions
-  );
-  if (movingUnitIds.length === 0) {
-    return state;
-  }
-
-  let nextState = state;
-  for (let index = 0; index < path.length - 1; index += 1) {
-    const from = path[index];
-    const to = path[index + 1];
-    nextState = moveUnits(nextState, playerId, movingUnitIds, from, to);
-    nextState = runMoveEvents(nextState, { playerId, from, to, path, movingUnitIds });
-  }
-
-  return nextState;
 };
 
 const moveUnitIdsAlongPath = (
@@ -456,18 +549,18 @@ export const resolveMovementEffect = (
           movePlans.length = 0;
           break;
         }
-        const validPath = validateMovePath(validationState, playerId, path, {
+        const resolved = resolveMovePath(validationState, playerId, path, {
           maxDistance,
           requiresBridge,
           requireStartOccupied: true,
           movingUnitIds: unitIds,
           stopOnOccupied
         });
-        if (!validPath) {
+        if (!resolved) {
           movePlans.length = 0;
           break;
         }
-        movePlans.push({ path: validPath, unitIds });
+        movePlans.push({ path: resolved.path, unitIds: resolved.movingUnitIds });
         validationState = markPlayerMovedThisRound(validationState, playerId);
       }
       if (movePlans.length === 0) {
@@ -497,7 +590,7 @@ export const resolveMovementEffect = (
         (card.targetSpec as TargetRecord | undefined)?.stopOnOccupied === true;
       const forceCount = getMoveStackForceCount(card, effect, targets ?? null);
       const includeChampions = getMoveStackIncludeChampions(card, effect, targets ?? null);
-      const validPath = validateMovePath(nextState, playerId, movePath, {
+      const resolved = resolveMovePath(nextState, playerId, movePath, {
         maxDistance,
         requiresBridge,
         requireStartOccupied: true,
@@ -505,15 +598,14 @@ export const resolveMovementEffect = (
         includeChampions,
         stopOnOccupied
       });
-      if (!validPath) {
+      if (!resolved) {
         return nextState;
       }
-      nextState = moveUnitsAlongPath(
+      nextState = moveUnitIdsAlongPath(
         nextState,
         playerId,
-        validPath,
-        forceCount,
-        includeChampions
+        resolved.path,
+        resolved.movingUnitIds
       );
       nextState = markPlayerMovedThisRound(nextState, playerId);
       return nextState;
