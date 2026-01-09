@@ -76,6 +76,24 @@ export const DEEP_RESERVES: CardDef = {
   effects: [{ kind: "recruit", capitalCount: 8 }]
 };
 
+export const ENDLESS_CONSCRIPTION: CardDef = {
+  id: "age3.endless_conscription",
+  name: "Endless Conscription",
+  rulesText:
+    "Deploy X Forces to your Capital, where X is the number of cards in your hand.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 2, gold: 1 },
+  initiative: 60,
+  burn: false,
+  targetSpec: {
+    kind: "choice",
+    options: [{ kind: "capital" }]
+  },
+  effects: [{ kind: "recruitByHandSize" }]
+};
+
 export const FORWARD_LEGION: CardDef = {
   id: "age3.forward_legion",
   name: "Forward Legion",
@@ -453,6 +471,7 @@ export const AGE3_CARDS: CardDef[] = [
   GHOST_STEP,
   FINAL_PUSH,
   DEEP_RESERVES,
+  ENDLESS_CONSCRIPTION,
   FORWARD_LEGION,
   ROYAL_MINT,
   TOME_OF_ORDERS,

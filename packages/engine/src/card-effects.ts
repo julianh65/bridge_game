@@ -89,6 +89,7 @@ const SUPPORTED_EFFECTS = new Set([
   "moveStack",
   "moveStacks",
   "deployForces",
+  "recruitByHandSize",
   "deployForcesOnMines",
   "increaseMineValue",
   "healChampion",
@@ -1995,6 +1996,40 @@ export const resolveCardEffects = (
             board: addForcesToHex(nextState.board, playerId, choice.hexKey, count)
           };
         }
+        break;
+      }
+      case "recruitByHandSize": {
+        const choice = getChoiceTarget(targets ?? null);
+        if (!choice || choice.kind !== "capital") {
+          break;
+        }
+        const options = Array.isArray(card.targetSpec.options)
+          ? (card.targetSpec.options as TargetRecord[])
+          : [];
+        if (!options.some((option) => option.kind === "capital")) {
+          break;
+        }
+        const deployHex = resolveCapitalDeployHex(nextState, playerId, choice.hexKey ?? null);
+        if (!deployHex) {
+          break;
+        }
+        const player = nextState.players.find((entry) => entry.id === playerId);
+        if (!player) {
+          break;
+        }
+        const baseCount = Math.max(0, Math.floor(player.deck.hand.length));
+        const count = getDeployForcesCount(
+          nextState,
+          { playerId, hexKey: deployHex, baseCount },
+          baseCount
+        );
+        if (count <= 0) {
+          break;
+        }
+        nextState = {
+          ...nextState,
+          board: addForcesToHex(nextState.board, playerId, deployHex, count)
+        };
         break;
       }
       case "deployForces": {

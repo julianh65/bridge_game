@@ -599,6 +599,8 @@ Done
       - [ ] Extraction Run.
     - [ ] Age III Recruitment card defs (4).
       - [x] Deep Reserves.
+      - [x] Endless Conscription.
+      - [ ] Elite Guard.
       - [x] Forward Legion.
     - [ ] Age III Economy card defs (4).
       - [x] Royal Mint.
