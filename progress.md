@@ -67,6 +67,7 @@
 - Audited Rapid Reinforcements power card vs `rules_draft.md` and noted alignment in the plan. (File: `implementation_plan.md`.) (owner: agent1)
 - Audited Writ of Industry power card vs `rules_draft.md` and noted alignment in the plan. (File: `implementation_plan.md`.) (owner: agent1)
 - Audited Bridge Charter power card vs `rules_draft.md` and noted alignment in the plan. (File: `implementation_plan.md`.) (owner: agent1)
+- Audited Dispatch to Front power card vs `rules_draft.md` and noted alignment in the plan. (File: `implementation_plan.md`.) (owner: agent1)
 
 ## Refactor Milestone progress
 - Extracted market/collection overlay rendering into `apps/web/src/components/GameScreenOverlays.tsx` and shared the market winner highlight type; updated the refactor milestone checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenOverlays.tsx`, `apps/web/src/components/MarketPanel.tsx`, `implementation_plan.md`.)
