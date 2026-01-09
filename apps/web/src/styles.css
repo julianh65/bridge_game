@@ -5955,7 +5955,7 @@ body.is-game .player-row--idle {
 .table-list {
   display: grid;
   gap: 5px;
-  --table-columns: minmax(0, 1fr) repeat(3, minmax(30px, 36px)) minmax(0, 0.9fr);
+  --table-columns: minmax(0, 1fr) repeat(3, minmax(32px, 40px)) minmax(0, 0.9fr);
 }
 
 .table-header {
@@ -6038,11 +6038,11 @@ body.is-game .player-row--idle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 30px;
-  padding: 3px 6px;
+  min-width: 32px;
+  padding: 4px 6px;
   border-radius: 999px;
   background: #f1e6d3;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: #6c4a2f;
   text-align: center;

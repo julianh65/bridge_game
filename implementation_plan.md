@@ -428,7 +428,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] set to skirmish doesn’t work, just remove it for now and add it as a future todo
 - [x] forge scrap should show you all cards anywhere in your deck
 - [x] remove the yellow and blue gradient background color on cards of the mana and gold icons
-- [x] on the player display in the table make the numbers of everyones gold, mana, and hand slightly larger and easier to read without messing up the flow
+- [x] on the player display in the table make the numbers of everyones gold, mana, and hand slightly larger and easier to read without messing up the flow (follow-up size tune)
 - [x] cards like coordinated advance where it says up to 2 kind of force you to click twice in the UI, there’s no way to say okay just move 1
 - [x] deep mine charter didn’t increase my VPs, although I added it from debug to test, so confirm that getting those cards will increase your VP
 - [ ] after i played gold plated armor and there was a battle the entire game just froze and there was no battle, reading the console (not sure if related) I’m getting a lot of maximum update depth exceeded at gamescreen
@@ -438,7 +438,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Dice war profiteer during the reveal stage needs to auto roll a dice for everyone to see
 - [x] When the cards pop up to reveal it needs to have their description text on them
 - [x] Be creative and add a balanced age 2 card that gives VP, don't make it too crazy just make it basic, add it to the rules, the game and everywhere (War Bonds).
-- [ ] Be creative and add to each age a balanced more "basic" champion card that dosen't do anything crazy but is balanced, add it to the rules, the game and everywhere
+- [x] Be creative and add to each age a balanced more "basic" champion card that dosen't do anything crazy but is balanced, add it to the rules, the game and everywhere
 - [x] add a cool favicon
 - [x] remove the how it works on the main screen and "core loop" container
 - [x] For cards that kind of "scale" like propoganda recruitment or future investment we need to represent on the card (in a very simple way, what the value would be if they played it is)

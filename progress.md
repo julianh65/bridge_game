@@ -21,9 +21,8 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-- (owner: agent3) [status: in progress] Group Board Debug + Battle Debug under a Debug dropdown in the top nav; files: `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`.
-- (owner: agent2) [status: in progress] Add one basic champion card per age (Age I/II/III) and update rules/plan; files: `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `rules_draft.md`, `implementation_plan.md`, `progress.md`.
-- (owner: agent5) [status: in progress] Temporarily disable Gold Plated Armor card (owner-only TODO to re-enable); files: `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`, `progress.md`. (Overlap: `packages/engine/src/content/cards/age2.ts` with agent2.)
+- (none)
+- (owner: agent1) [status: in progress] Add HUD win-condition context (VP target + capital safety indicator) to clarify victory trigger; files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHeader.tsx`, `implementation_plan.md`, `progress.md`.
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -72,6 +71,8 @@
 
 ## Milestone / tasks after third play test progress
 - Added scaling-value callouts on cards with scaling counters (Propaganda Recruitment/Future Investment) by surfacing counters in the private view and rendering a simple "Deploy X" badge on cards in hand, hand pickers, and deck viewer; marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `apps/web/src/components/DeckViewer.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5)
+- Retuned table stat chip sizing so gold/mana/hand values read larger without shifting the layout; noted the follow-up in the plan. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
+- Added one basic champion card per age (Stoneguard, Iron Sentinel, Obsidian Sentinel), updated rules counts, and marked the plan item complete. (Files: `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `rules_draft.md`, `implementation_plan.md`.) (owner: agent2)
 - Restricted starting bridge placement to edges where both endpoints are within distance 2 of the capital; updated engine validation, server auto-pick, UI highlights/copy, and setup-flow coverage; marked the plan item complete. (Files: `packages/engine/src/setup-flow.ts`, `packages/engine/src/setup-flow.test.ts`, `apps/server/src/server.ts`, `apps/web/src/components/SetupStartingBridges.tsx`, `implementation_plan.md`.) (owner: agent2)
 - Added a rounds-left HUD countdown using the configured max rounds; marked the plan item complete. (Files: `apps/web/src/components/GameScreenHeader.tsx`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent5)
 - Grouped Board Debug + Battle Debug under a Debug dropdown in the top nav; marked the plan item complete. (Files: `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5) (Overlap note: agent2 had an in-progress entry for the same scope.)
