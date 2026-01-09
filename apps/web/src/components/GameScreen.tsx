@@ -2028,6 +2028,28 @@ export const GameScreen = ({
       }
       return Array.from(merged);
     };
+    const hasBuildAndMoveEdge =
+      Boolean(selectedCardDef) &&
+      cardTargetKind === "edge" &&
+      Boolean(moveStackEffect) &&
+      (selectedCardDef?.effects?.some((effect) => effect.kind === "buildBridge") ?? false);
+    const pendingBridgeEdges = new Set<string>();
+    if (hasBuildAndMoveEdge) {
+      const edgeKey = getTargetString(targetRecord, "edgeKey");
+      if (edgeKey) {
+        pendingBridgeEdges.add(edgeKey);
+      }
+      const edgeKeys = getTargetStringArray(targetRecord, "edgeKeys");
+      for (const key of edgeKeys) {
+        pendingBridgeEdges.add(key);
+      }
+    }
+    const hasPendingBridge = (from: string, to: string) => {
+      if (pendingBridgeEdges.size === 0) {
+        return false;
+      }
+      return pendingBridgeEdges.has(getBridgeKey(from, to));
+    };
     const canMoveBetween = (from: string, to: string, requiresBridge: boolean) => {
       const baseNeighbors = neighbors(from);
       const baseNeighborSet = new Set(baseNeighbors);
@@ -2036,7 +2058,12 @@ export const GameScreen = ({
       if (!isBaseAdjacent && !isLinked) {
         return false;
       }
-      if (requiresBridge && isBaseAdjacent && !hasBridge(board, from, to)) {
+      if (
+        requiresBridge &&
+        isBaseAdjacent &&
+        !hasBridge(board, from, to) &&
+        !hasPendingBridge(from, to)
+      ) {
         return false;
       }
       return canEnter(to);
