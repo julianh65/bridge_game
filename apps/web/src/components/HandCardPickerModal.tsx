@@ -12,6 +12,7 @@ type HandCardPickerModalProps = {
   cardDefsById: Map<string, CardDef>;
   selectedIds: string[];
   maxSelect: number;
+  scalingCounters?: Record<string, number> | null;
   onSelectionChange: (nextSelection: string[]) => void;
   onClose: () => void;
 };
@@ -24,6 +25,7 @@ export const HandCardPickerModal = ({
   cardDefsById,
   selectedIds,
   maxSelect,
+  scalingCounters = null,
   onSelectionChange,
   onClose
 }: HandCardPickerModalProps) => {
@@ -103,6 +105,7 @@ export const HandCardPickerModal = ({
                     showArt={true}
                     showStats={true}
                     showChampionStats={true}
+                    scalingCounters={scalingCounters}
                   />
                 </button>
               );

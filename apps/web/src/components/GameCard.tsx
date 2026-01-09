@@ -32,6 +32,7 @@ type GameCardProps = {
   rulesFallback?: string;
   hiddenRules?: string;
   artLabel?: string;
+  scalingCounters?: Record<string, number> | null;
 };
 
 const formatDeckLabel = (deck?: string | null) => {
@@ -70,6 +71,54 @@ const boldRuleNumbers = (text: string): ReactNode[] => {
   );
 };
 
+type ScalingInfo = {
+  label: string;
+  value: number;
+};
+
+const getScalingInfo = (
+  card: CardDef | null,
+  scalingCounters: Record<string, number> | null | undefined
+): ScalingInfo | null => {
+  if (!card || !scalingCounters || !Array.isArray(card.effects)) {
+    return null;
+  }
+  const recruitEffect = card.effects.find(
+    (effect) =>
+      effect &&
+      typeof effect === "object" &&
+      "kind" in effect &&
+      effect.kind === "recruit" &&
+      typeof (effect as { scaleKey?: unknown }).scaleKey === "string"
+  ) as
+    | {
+        scaleKey?: string;
+        scaleMax?: number;
+        capitalCount?: number;
+        occupiedCount?: number;
+      }
+    | undefined;
+  if (!recruitEffect?.scaleKey) {
+    return null;
+  }
+  const baseCountRaw =
+    typeof recruitEffect.capitalCount === "number"
+      ? recruitEffect.capitalCount
+      : typeof recruitEffect.occupiedCount === "number"
+      ? recruitEffect.occupiedCount
+      : 0;
+  const baseCount = Math.max(0, Math.floor(baseCountRaw));
+  const counter = scalingCounters[recruitEffect.scaleKey] ?? 0;
+  let scaledValue = baseCount + Math.max(0, Math.floor(counter));
+  if (typeof recruitEffect.scaleMax === "number" && Number.isFinite(recruitEffect.scaleMax)) {
+    scaledValue = Math.min(scaledValue, Math.max(0, Math.floor(recruitEffect.scaleMax)));
+  }
+  return {
+    label: `Deploy ${scaledValue}`,
+    value: scaledValue
+  };
+};
+
 export const GameCard = ({
   card,
   cardId,
@@ -93,7 +142,8 @@ export const GameCard = ({
   overlay,
   rulesFallback = "Rules pending.",
   hiddenRules = "Unrevealed market card.",
-  artLabel
+  artLabel,
+  scalingCounters = null
 }: GameCardProps) => {
   const deck = card?.deck ?? "unknown";
   const type = card?.type ?? "unknown";
@@ -125,6 +175,8 @@ export const GameCard = ({
     showChampionStats && championGoldCosts
       ? `Gold cost ${championGoldCosts} (champions owned)`
       : null;
+  const scalingInfo = !isHidden ? getScalingInfo(card, scalingCounters) : null;
+  const scalingLabel = scalingInfo?.label ?? null;
 
   const classes = [
     "game-card",
@@ -185,6 +237,7 @@ export const GameCard = ({
           >
             {boldRuleNumbers(rulesText)}
           </p>
+          {scalingLabel ? <p className="game-card__scale">{scalingLabel}</p> : null}
           {victoryPoints !== null ? (
             <p className="game-card__vp game-card__vp--inline">+{victoryPoints} VP</p>
           ) : null}

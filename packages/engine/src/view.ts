@@ -13,6 +13,7 @@ import type {
 } from "./types";
 import { getControlBonus } from "./modifiers";
 import { getControlTotals } from "./round-flow";
+import { CARD_SCALING_COUNTERS_FLAG } from "./player-flags";
 
 type SetupBlockState = Extract<
   BlockState,
@@ -126,6 +127,27 @@ const mapCardInstances = (state: GameState, instanceIds: string[]) => {
 const toModifierView = (modifier: Modifier): ModifierView => {
   const { hooks, ...rest } = modifier;
   return rest;
+};
+
+const readCardScalingCounters = (
+  player: GameState["players"][number]
+): Record<string, number> => {
+  const rawCounters = player.flags[CARD_SCALING_COUNTERS_FLAG];
+  if (!rawCounters || typeof rawCounters !== "object") {
+    return {};
+  }
+  const record = rawCounters as Record<string, unknown>;
+  const counters: Record<string, number> = {};
+  for (const [key, value] of Object.entries(record)) {
+    if (typeof value !== "number" || !Number.isFinite(value)) {
+      continue;
+    }
+    const normalized = Math.max(0, Math.floor(value));
+    if (normalized > 0) {
+      counters[key] = normalized;
+    }
+  }
+  return counters;
 };
 
 export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): GameView => {
@@ -272,6 +294,7 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
             scrapped: mapCardInstances(state, viewer.deck.scrapped),
             burned: mapCardInstances(state, viewer.burned)
           },
+          cardScalingCounters: readCardScalingCounters(viewer),
           vp: viewerVp,
           setup: setupPrivate,
           collection: collectionPrivate,

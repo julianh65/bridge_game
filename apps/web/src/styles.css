@@ -2749,6 +2749,15 @@ body.is-game .game-card__burn-badge {
   overflow: hidden;
 }
 
+.game-card__scale {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .game-card__rules--hidden {
   color: var(--muted);
   font-style: italic;

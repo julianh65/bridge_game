@@ -85,6 +85,7 @@ export const DeckViewer = ({
   const deckCards = privateView?.deckCards ?? null;
   const deckCounts = privateView?.deckCounts ?? null;
   const handCount = privateView?.handCards.length ?? 0;
+  const cardScalingCounters = privateView?.cardScalingCounters ?? null;
 
   const piles = useMemo(() => {
     if (!privateView || !deckCards) {
@@ -260,6 +261,7 @@ export const DeckViewer = ({
                         showId
                         showChampionStats
                         rulesFallback="Unknown card data."
+                        scalingCounters={cardScalingCounters}
                       />
                     );
                   })}

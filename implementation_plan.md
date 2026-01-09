@@ -407,7 +407,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 
 
 ### Milestone / tasks after third play test
-- [ ] could we have, at the start a draw animation like the cards fill and get added to the hand
+ - [x] could we have, at the start a draw animation like the cards fill and get added to the hand
 - [x] could we have an animation when we get gold
 - [x] could we have a small animation when we get a VP
 - [x] make slot 1, slot 2, slot n click the same button to unlock not a seperate unlock button in capital draft
@@ -433,14 +433,14 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] deep mine charter didn’t increase my VPs, although I added it from debug to test, so confirm that getting those cards will increase your VP
 - [ ] after i played gold plater armor and there was a battle the entire game just froze and there was no battle, reading the console (not sure if related) I’m getting a lot of maximum update depth exceeded at gamescreen
 - [ ] I got 9 VP and nothing happened, it didn’t detect that I won and no screen popped up
-- [ ] Be creative and add a balanced age 1 card of similar flavor to the Dice War Profiteer card
+- [x] Be creative and add a balanced age 1 card of similar flavor to the Dice War Profiteer card
 - [x] Dice war profiteer during the reveal stage needs to auto roll a dice for everyone to see
 - [ ] When the cards pop up to reveal it needs to have their description text on them
 - [ ] Be creative and add a balanced age 2 card that gives VP, don't make it too crazy just make it basic, add it to the rules, the game and everywhere
 - [ ] Be creative and add to each age a balanced more "basic" champion card that dosen't do anything crazy but is balanced, add it to the rules, the game and everywhere
 - [x] add a cool favicon
 - [x] remove the how it works on the main screen and "core loop" container
-- [ ] For cards that kind of "scale" like propoganda recruitment or future investment we need to represent on the card (in a very simple way, what the value would be if they played it is)
+- [x] For cards that kind of "scale" like propoganda recruitment or future investment we need to represent on the card (in a very simple way, what the value would be if they played it is)
 - [ ] Add a small countdown of how many rounds are left in the game
 
 

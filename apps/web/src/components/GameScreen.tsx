@@ -4543,6 +4543,7 @@ export const GameScreen = ({
         cardDefsById={CARD_DEFS_BY_ID}
         selectedIds={quietStudySelectedIds}
         maxSelect={Math.max(quietStudyMaxDiscard, 1)}
+        scalingCounters={view.private?.cardScalingCounters ?? null}
         onSelectionChange={setQuietStudySelectedIds}
         onClose={handleSubmitQuietStudy}
       />
@@ -4554,6 +4555,7 @@ export const GameScreen = ({
         cardDefsById={CARD_DEFS_BY_ID}
         selectedIds={scoutReportSelectedIds}
         maxSelect={Math.max(scoutReportKeepCount, 1)}
+        scalingCounters={view.private?.cardScalingCounters ?? null}
         onSelectionChange={setScoutReportSelectedIds}
         onClose={handleSubmitScoutReport}
       />
@@ -4565,6 +4567,7 @@ export const GameScreen = ({
         cardDefsById={CARD_DEFS_BY_ID}
         selectedIds={selectedHandCardIds}
         maxSelect={Math.max(handPickerCount, 1)}
+        scalingCounters={view.private?.cardScalingCounters ?? null}
         onSelectionChange={setCardInstanceTargets}
         onClose={() => setHandPickerMode("none")}
       />
@@ -4663,6 +4666,7 @@ export const GameScreen = ({
         onHideHandPanel={() => setIsHandPanelOpen(false)}
         handCards={handCards}
         deckCounts={deckCounts}
+        cardScalingCounters={view.private?.cardScalingCounters ?? null}
         availableMana={availableMana}
         maxMana={maxMana}
         availableGold={availableGold}

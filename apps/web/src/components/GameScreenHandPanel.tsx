@@ -130,6 +130,7 @@ type GameScreenHandPanelProps = {
   onHideHandPanel: () => void;
   handCards: NonNullable<GameView["private"]>["handCards"];
   deckCounts: NonNullable<GameView["private"]>["deckCounts"] | null;
+  cardScalingCounters: Record<string, number> | null;
   availableMana: number;
   maxMana: number;
   availableGold: number;
@@ -167,6 +168,7 @@ export const GameScreenHandPanel = ({
   onHideHandPanel,
   handCards,
   deckCounts,
+  cardScalingCounters,
   availableMana,
   maxMana,
   availableGold,
@@ -303,6 +305,27 @@ export const GameScreenHandPanel = ({
     const previousIds = prevHandIdsRef.current;
     prevHandIdsRef.current = currentIds;
     if (previousIds.length === 0) {
+      if (currentIds.length === 0) {
+        return;
+      }
+      setRecentDrawnIds(new Set(currentIds));
+      currentIds.forEach((id) => {
+        const existing = drawTimersRef.current[id];
+        if (existing) {
+          window.clearTimeout(existing);
+        }
+        drawTimersRef.current[id] = window.setTimeout(() => {
+          setRecentDrawnIds((current) => {
+            if (!current.has(id)) {
+              return current;
+            }
+            const next = new Set(current);
+            next.delete(id);
+            return next;
+          });
+          delete drawTimersRef.current[id];
+        }, CARD_DRAW_ANIMATION_MS);
+      });
       return;
     }
     const previousSet = new Set(previousIds);
@@ -632,6 +655,7 @@ export const GameScreenHandPanel = ({
                             showTags={false}
                             showChampionStats
                             rulesFallback="Unknown card data."
+                            scalingCounters={cardScalingCounters}
                           />
                         </button>
                       );

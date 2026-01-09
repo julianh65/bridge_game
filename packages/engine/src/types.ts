@@ -607,6 +607,7 @@ export type PlayerPrivateView = {
     scrapped: CardInstance[];
     burned: CardInstance[];
   };
+  cardScalingCounters: Record<string, number>;
   vp: { permanent: number; control: number; total: number };
   setup: SetupPrivateView | null;
   collection: CollectionPrivateView | null;

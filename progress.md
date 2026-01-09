@@ -21,7 +21,8 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-- [agent5] Show live scaling values on cards like Propaganda Recruitment/Future Investment (simple value hint based on player counters). Files: `packages/engine/src/view.ts`, `packages/engine/src/types.ts`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `implementation_plan.md`, `progress.md`. (status: in progress)
+- (owner: agent4) [status: in progress] Replace the Age II placeholder victory card with a new balanced VP card (update rules + card data + art mapping); files: `packages/engine/src/content/cards/age2.ts`, `apps/web/src/data/card-art.json`, `rules_draft.md`, `implementation_plan.md`, `progress.md`.
+- (owner: agent1) [status: in progress] Add a new Age I dice-roll economy card (War Profiteers flavor) and update rules/plan; files: `packages/engine/src/content/cards/age1.ts`, `rules_draft.md`, `implementation_plan.md`, `progress.md`.
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
 ## Test fixes
@@ -64,6 +65,7 @@
 - Moved combat retreat decisions into the hand/actions panel with clear "one final round" messaging and removed the full-screen retreat overlay; marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5)
 
 ## Milestone / tasks after third play test progress
+- Added scaling-value callouts on cards with scaling counters (Propaganda Recruitment/Future Investment) by surfacing counters in the private view and rendering a simple "Deploy X" badge on cards in hand, hand pickers, and deck viewer; marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/GameCard.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/HandCardPickerModal.tsx`, `apps/web/src/components/DeckViewer.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5)
 - Fixed Cipher Quiet Study loop by advancing from `round.study` to `round.action` after resolving choices so the block doesn't re-trigger. (File: `packages/engine/src/engine.ts`.) (owner: agent4)
 - Fixed Chronicle of War optional discard + mana gating, with card-effect tests. (Files: `packages/engine/src/content/cards/power.ts`, `packages/engine/src/card-effects-economy.ts`, `packages/engine/src/card-effects.chronicle-of-war.test.ts`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- card-effects.chronicle-of-war.test.ts`.) (owner: agent1)
 - Allowed mine counts below player count by assigning home mines to a subset of capitals and keeping placement logic consistent; added coverage. (Files: `packages/engine/src/board-generation.ts`, `packages/engine/src/board-generation.test.ts`.) (owner: agent4) (Overlap note: commit also captured pre-staged Elite Guard card changes in `packages/engine/src/card-effects-units.ts`, `packages/engine/src/card-effects.ts`, `packages/engine/src/content/cards/age3.ts`, `packages/engine/src/card-effects.elite-guard.test.ts`.)
