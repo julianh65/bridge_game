@@ -3887,6 +3887,13 @@ body.is-game .dice-reveal__gain {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  transform: translateX(-50%);
+  width: min(520px, 100%);
+  z-index: 40;
+  pointer-events: auto;
 }
 
 .game-hand__actions {
