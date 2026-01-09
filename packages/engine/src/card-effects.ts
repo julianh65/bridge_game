@@ -135,6 +135,7 @@ type MoveValidation = {
   requiresBridge: boolean;
   requireStartOccupied: boolean;
   forceCount?: number;
+  includeChampions?: boolean;
   movingUnitIds?: string[];
   stopOnOccupied?: boolean;
 };
@@ -150,6 +151,12 @@ const getForceCountTarget = (targets: CardPlayTargets): number | null => {
   const record = getTargetRecord(targets);
   const forceCount = record?.forceCount;
   return typeof forceCount === "number" && Number.isFinite(forceCount) ? forceCount : null;
+};
+
+const getBooleanTarget = (targets: CardPlayTargets, key: string): boolean | null => {
+  const record = getTargetRecord(targets);
+  const value = record?.[key];
+  return typeof value === "boolean" ? value : null;
 };
 
 const getMoveStackForceCount = (
@@ -168,6 +175,26 @@ const getMoveStackForceCount = (
   const specCount = (card.targetSpec as TargetRecord | undefined)?.forceCount;
   if (typeof specCount === "number") {
     return specCount;
+  }
+  return undefined;
+};
+
+const getMoveStackIncludeChampions = (
+  card: CardDef,
+  effect?: TargetRecord,
+  targets?: CardPlayTargets
+): boolean | undefined => {
+  const targetInclude = getBooleanTarget(targets ?? null, "includeChampions");
+  if (targetInclude !== null) {
+    return targetInclude;
+  }
+  const effectInclude = effect?.includeChampions;
+  if (typeof effectInclude === "boolean") {
+    return effectInclude;
+  }
+  const specInclude = (card.targetSpec as TargetRecord | undefined)?.includeChampions;
+  if (typeof specInclude === "boolean") {
+    return specInclude;
   }
   return undefined;
 };
@@ -906,7 +933,13 @@ export const validateMovePath = (
       : null;
   const movingUnitIds = providedUnits
     ? providedUnits
-    : selectMovingUnits(state.board, playerId, path[0], options.forceCount);
+    : selectMovingUnits(
+        state.board,
+        playerId,
+        path[0],
+        options.forceCount,
+        options.includeChampions
+      );
   if (providedUnits) {
     const occupantSet = new Set(fromHex.occupants[playerId] ?? []);
     if (!providedUnits.every((unitId) => occupantSet.has(unitId))) {
@@ -1160,9 +1193,16 @@ const moveUnitsAlongPath = (
   state: GameState,
   playerId: PlayerID,
   path: string[],
-  forceCount?: number
+  forceCount?: number,
+  includeChampions?: boolean
 ): GameState => {
-  const movingUnitIds = selectMovingUnits(state.board, playerId, path[0], forceCount);
+  const movingUnitIds = selectMovingUnits(
+    state.board,
+    playerId,
+    path[0],
+    forceCount,
+    includeChampions
+  );
   if (movingUnitIds.length === 0) {
     return state;
   }
@@ -3373,17 +3413,25 @@ export const resolveCardEffects = (
           effect.stopOnOccupied === true ||
           (card.targetSpec as TargetRecord | undefined)?.stopOnOccupied === true;
         const forceCount = getMoveStackForceCount(card, effect, targets ?? null);
+        const includeChampions = getMoveStackIncludeChampions(card, effect, targets ?? null);
         const validPath = validateMovePath(nextState, playerId, movePath, {
           maxDistance,
           requiresBridge,
           requireStartOccupied: true,
           forceCount,
+          includeChampions,
           stopOnOccupied
         });
         if (!validPath) {
           break;
         }
-        nextState = moveUnitsAlongPath(nextState, playerId, validPath, forceCount);
+        nextState = moveUnitsAlongPath(
+          nextState,
+          playerId,
+          validPath,
+          forceCount,
+          includeChampions
+        );
         nextState = markPlayerMovedThisRound(nextState, playerId);
         break;
       }

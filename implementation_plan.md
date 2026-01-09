@@ -359,6 +359,10 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] The pass and confirm pass button is bugged
 - [x] The forge scrap doesn't look right, i just see a bunch of pills with random card ids
 - [x] remove the mine draft, it should just give gold, and update the rules
+- [ ] The market click to roll for ties for each player still does it automatically and doesn't look right
+- [ ] Can the champion chits on the map have the background image of their image? Same desaturated style of the board hexes
+- [ ] Can the forces on the map have the background image as well? same desaturated style of the board hexes, pick a random soldier type image for now
+- [ ] During the small action preview phase on the board while cards are being played keep the highlighting paths and indicators on the board during that little pause between 
 
 ### Refactor Milestone
 - Refactor massive files into smaller components and be very smart about it so we don't break any behavior, the biggest offenders are gamescreen.tsx, card-effects.ts, styles.css those files are huge and need to be broken up (BUT IN A SMART WAY SO WE DON't BREAK ANYTHING)
@@ -591,6 +595,8 @@ Done
     - [ ] Age III Movement card defs (4).
       - [x] Grand Maneuver.
       - [x] Ghost Step.
+      - [x] Final Push.
+      - [ ] Extraction Run.
     - [ ] Age III Recruitment card defs (4).
       - [x] Deep Reserves.
       - [x] Forward Legion.
@@ -650,7 +656,7 @@ Done
 - [x] We should have nice transitions between ages and at the start of the game
 - [x] The bottom hand modal part is still a tiny bit clunky in that it can block stuff, maybe try to clean it up a bit and make it shorter and a bit more compact?
 - [x] The mana and gold costs on the cards in hand needs to be much larger and easier to see
-- [ ] When moving between hexes we need to also be able to determine if we want to move just troops, champion, champion plus split of troops etc
+- [x] When moving between hexes we need to also be able to determine if we want to move just troops, champion, champion plus split of troops etc
 - [ ] The market transition can happen to fast while we're still waiting to see what all the actions were.
 - [x] Dice roll in the market and in general needs to be a bit bigger and clearly mark who is who.
 - [x] Market roll-offs: each player clicks to roll their respective die.

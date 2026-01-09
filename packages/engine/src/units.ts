@@ -1,11 +1,24 @@
 import type { BoardState, CardDefId, HexKey, PlayerID, UnitID } from "./types";
 
-const normalizeForceCount = (forceCount?: number): number | null => {
+type ForceCountOptions = {
+  allowZero?: boolean;
+};
+
+const normalizeForceCount = (
+  forceCount?: number,
+  options?: ForceCountOptions
+): number | null => {
   if (typeof forceCount !== "number" || !Number.isFinite(forceCount)) {
     return null;
   }
   const normalized = Math.floor(forceCount);
-  return normalized > 0 ? normalized : null;
+  if (normalized > 0) {
+    return normalized;
+  }
+  if (options?.allowZero && normalized === 0) {
+    return 0;
+  }
+  return null;
 };
 
 const getForceUnitsAtHex = (
@@ -27,21 +40,43 @@ const getForceUnitsAtHex = (
   return forceUnits;
 };
 
+const getChampionUnitsAtHex = (
+  board: BoardState,
+  playerId: PlayerID,
+  hexKey: HexKey
+): UnitID[] => {
+  const hex = board.hexes[hexKey];
+  if (!hex) {
+    return [];
+  }
+  const occupants = hex.occupants[playerId] ?? [];
+  const championUnits: UnitID[] = [];
+  for (const unitId of occupants) {
+    if (board.units[unitId]?.kind === "champion") {
+      championUnits.push(unitId);
+    }
+  }
+  return championUnits;
+};
+
 export const selectMovingUnits = (
   board: BoardState,
   playerId: PlayerID,
   from: HexKey,
-  forceCount?: number
+  forceCount?: number,
+  includeChampions?: boolean
 ): UnitID[] => {
   const fromHex = board.hexes[from];
   if (!fromHex) {
     return [];
   }
   const occupants = fromHex.occupants[playerId] ?? [];
+  const include =
+    typeof includeChampions === "boolean" ? includeChampions : forceCount == null;
   if (forceCount === undefined || forceCount === null) {
-    return occupants;
+    return include ? occupants : getForceUnitsAtHex(board, playerId, from);
   }
-  const normalized = normalizeForceCount(forceCount);
+  const normalized = normalizeForceCount(forceCount, { allowZero: include });
   if (normalized === null) {
     return [];
   }
@@ -49,7 +84,12 @@ export const selectMovingUnits = (
   if (forceUnits.length < normalized) {
     return [];
   }
-  return forceUnits.slice(0, normalized);
+  const selectedForces = forceUnits.slice(0, normalized);
+  if (!include) {
+    return selectedForces;
+  }
+  const championUnits = getChampionUnitsAtHex(board, playerId, from);
+  return [...selectedForces, ...championUnits];
 };
 
 type ChampionDeployment = {
@@ -238,7 +278,8 @@ export const moveStack = (
   playerId: PlayerID,
   from: HexKey,
   to: HexKey,
-  forceCount?: number
+  forceCount?: number,
+  includeChampions?: boolean
 ): BoardState => {
   if (from === to) {
     return board;
@@ -250,7 +291,13 @@ export const moveStack = (
     return board;
   }
 
-  const movingUnits = selectMovingUnits(board, playerId, from, forceCount);
+  const movingUnits = selectMovingUnits(
+    board,
+    playerId,
+    from,
+    forceCount,
+    includeChampions
+  );
   if (movingUnits.length === 0) {
     return board;
   }

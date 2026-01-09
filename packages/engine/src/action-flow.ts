@@ -130,7 +130,8 @@ const canMarch = (
   playerId: PlayerID,
   from: string,
   to: string,
-  forceCount?: number
+  forceCount?: number,
+  includeChampions?: boolean
 ): boolean => {
   const fromHex = state.board.hexes[from];
   const toHex = state.board.hexes[to];
@@ -144,7 +145,13 @@ const canMarch = (
 
   const options = { maxDistance: 1, requiresBridge: true, requireStartOccupied: true };
 
-  if (validateMovePath(state, playerId, [from, to], { ...options, forceCount })) {
+  if (
+    validateMovePath(state, playerId, [from, to], {
+      ...options,
+      forceCount,
+      includeChampions
+    })
+  ) {
     return true;
   }
 
@@ -166,7 +173,13 @@ const canMarch = (
     } catch {
       continue;
     }
-    if (validateMovePath(state, playerId, [from, mid, to], { ...options, forceCount })) {
+    if (
+      validateMovePath(state, playerId, [from, mid, to], {
+        ...options,
+        forceCount,
+        includeChampions
+      })
+    ) {
       return true;
     }
   }
@@ -185,7 +198,14 @@ const isBasicActionValid = (state: GameState, playerId: PlayerID, action: BasicA
     case "buildBridge":
       return Boolean(getBuildBridgePlan(state, playerId, action.edgeKey));
     case "march":
-      return canMarch(state, playerId, action.from, action.to, action.forceCount);
+      return canMarch(
+        state,
+        playerId,
+        action.from,
+        action.to,
+        action.forceCount,
+        action.includeChampions
+      );
     case "capitalReinforce":
       return Boolean(getCapitalReinforceHex(state, playerId, action.hexKey));
     default: {
@@ -461,7 +481,14 @@ const resolveBasicAction = (state: GameState, playerId: PlayerID, action: BasicA
     case "buildBridge":
       return resolveBuildBridge(state, playerId, action.edgeKey);
     case "march":
-      return resolveMarch(state, playerId, action.from, action.to, action.forceCount);
+      return resolveMarch(
+        state,
+        playerId,
+        action.from,
+        action.to,
+        action.forceCount,
+        action.includeChampions
+      );
     case "capitalReinforce":
       return resolveCapitalReinforce(state, playerId, action.hexKey);
     default: {
@@ -571,20 +598,27 @@ const resolveMarch = (
   playerId: PlayerID,
   from: string,
   to: string,
-  forceCount?: number
+  forceCount?: number,
+  includeChampions?: boolean
 ): GameState => {
-  if (!canMarch(state, playerId, from, to, forceCount)) {
+  if (!canMarch(state, playerId, from, to, forceCount, includeChampions)) {
     return state;
   }
 
-  const movingUnitIds = selectMovingUnits(state.board, playerId, from, forceCount);
+  const movingUnitIds = selectMovingUnits(
+    state.board,
+    playerId,
+    from,
+    forceCount,
+    includeChampions
+  );
   if (movingUnitIds.length === 0) {
     return state;
   }
 
   let nextState: GameState = {
     ...state,
-    board: moveStack(state.board, playerId, from, to, forceCount)
+    board: moveStack(state.board, playerId, from, to, forceCount, includeChampions)
   };
   nextState = runMoveEvents(nextState, { playerId, from, to, path: [from, to], movingUnitIds });
   return markPlayerMovedThisRound(nextState, playerId);

@@ -215,6 +215,17 @@ const getTargetNumber = (
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 };
 
+const getTargetBoolean = (
+  record: Record<string, unknown> | null,
+  key: string
+): boolean | null => {
+  if (!record) {
+    return null;
+  }
+  const value = record[key];
+  return typeof value === "boolean" ? value : null;
+};
+
 const getTargetStringArray = (
   record: Record<string, unknown> | null,
   key: string
@@ -309,7 +320,14 @@ const resolveMoveUnitMeta = (
   }
   const forceCount = getTargetNumber(record, "forceCount");
   if (forceCount !== null) {
-    return { unitKind: "force", unitLabel: String(forceCount) };
+    const includeChampions = getTargetBoolean(record, "includeChampions") ?? false;
+    if (forceCount === 0 && includeChampions) {
+      return { unitKind: "champion", unitLabel: "C" };
+    }
+    return {
+      unitKind: includeChampions ? "champion" : "force",
+      unitLabel: String(forceCount)
+    };
   }
   return { unitKind: null, unitLabel: null };
 };
@@ -330,6 +348,17 @@ const formatPhaseLabel = (phase: string) => {
   const trimmed = phase.replace("round.", "");
   const spaced = trimmed.replace(/([a-z])([A-Z])/g, "$1 $2").replace(".", " ");
   return spaced.replace(/^\w/, (value) => value.toUpperCase());
+};
+
+const formatUnitCounts = (forceCount: number, championCount: number) => {
+  const parts: string[] = [];
+  if (forceCount > 0 || championCount === 0) {
+    parts.push(`${forceCount} force${forceCount === 1 ? "" : "s"}`);
+  }
+  if (championCount > 0) {
+    parts.push(`${championCount} champion${championCount === 1 ? "" : "s"}`);
+  }
+  return parts.join(", ");
 };
 
 const buildCardCostLabel = (cardDef: CardDef | null): string | null => {
@@ -491,6 +520,9 @@ const describeBasicAction = (
       const lines = [`From ${fromLabel} to ${toLabel}`];
       if (typeof action.forceCount === "number") {
         lines.push(`Forces: ${action.forceCount}`);
+      }
+      if (typeof action.includeChampions === "boolean") {
+        lines.push(`Champions: ${action.includeChampions ? "Move" : "Hold"}`);
       }
       return {
         label: "March",
@@ -761,6 +793,9 @@ export const GameScreen = ({
   const [marchFrom, setMarchFrom] = useState("");
   const [marchTo, setMarchTo] = useState("");
   const [marchForceCount, setMarchForceCount] = useState<number | null>(null);
+  const [marchIncludeChampions, setMarchIncludeChampions] = useState<boolean | null>(
+    null
+  );
   const [reinforceHex, setReinforceHex] = useState("");
   const [cardInstanceId, setCardInstanceId] = useState("");
   const [cardTargetsRaw, setCardTargetsRaw] = useState("");
@@ -918,6 +953,24 @@ export const GameScreen = ({
     return count;
   }, [localPlayerId, marchFrom, view.public.board.hexes, view.public.board.units]);
 
+  const marchChampionCount = useMemo(() => {
+    if (!localPlayerId || !marchFrom) {
+      return 0;
+    }
+    const hex = view.public.board.hexes[marchFrom];
+    if (!hex) {
+      return 0;
+    }
+    const unitIds = hex.occupants[localPlayerId] ?? [];
+    let count = 0;
+    for (const unitId of unitIds) {
+      if (view.public.board.units[unitId]?.kind === "champion") {
+        count += 1;
+      }
+    }
+    return count;
+  }, [localPlayerId, marchFrom, view.public.board.hexes, view.public.board.units]);
+
   const selectedReinforce =
     reinforceOptions.find((option) => option.key === reinforceHex) ?? reinforceOptions[0] ?? null;
   const lastCombatEndIndex = useRef(-1);
@@ -981,8 +1034,18 @@ export const GameScreen = ({
       return null;
     }
     const normalized = Math.floor(rawCount);
-    return normalized > 0 ? normalized : null;
+    return normalized >= 0 ? normalized : null;
   }, [cardMoveSupportsSplit, targetRecord]);
+  const cardMoveIncludeChampions = useMemo(() => {
+    if (!cardMoveSupportsSplit) {
+      return false;
+    }
+    const rawInclude = getTargetBoolean(targetRecord, "includeChampions");
+    if (rawInclude !== null) {
+      return rawInclude;
+    }
+    return cardMoveForceCount === null;
+  }, [cardMoveForceCount, cardMoveSupportsSplit, targetRecord]);
   const cardMoveStartHex = useMemo(() => {
     if (!cardMoveSupportsSplit || !targetRecord) {
       return null;
@@ -1008,6 +1071,23 @@ export const GameScreen = ({
     let count = 0;
     for (const unitId of unitIds) {
       if (view.public.board.units[unitId]?.kind === "force") {
+        count += 1;
+      }
+    }
+    return count;
+  }, [cardMoveStartHex, localPlayerId, view.public.board.hexes, view.public.board.units]);
+  const cardMoveChampionCount = useMemo(() => {
+    if (!localPlayerId || !cardMoveStartHex) {
+      return 0;
+    }
+    const hex = view.public.board.hexes[cardMoveStartHex];
+    if (!hex) {
+      return 0;
+    }
+    const unitIds = hex.occupants[localPlayerId] ?? [];
+    let count = 0;
+    for (const unitId of unitIds) {
+      if (view.public.board.units[unitId]?.kind === "champion") {
         count += 1;
       }
     }
@@ -1267,6 +1347,8 @@ export const GameScreen = ({
   const canBuildBridge = canSubmitAction && edgeKey.trim().length > 0;
   const canMarch =
     canSubmitAction && marchFrom.trim().length > 0 && marchTo.trim().length > 0;
+  const resolvedMarchIncludeChampions =
+    marchIncludeChampions ?? marchForceCount === null;
   const requiredHandSelectionCount = Math.max(discardFromHandCount, burnFromHandCount);
   const hasRequiredHandTargets =
     requiredHandSelectionCount === 0 ||
@@ -1305,9 +1387,15 @@ export const GameScreen = ({
               kind: "march",
               from: marchFrom.trim(),
               to: marchTo.trim(),
-              forceCount: marchForceCount
+              forceCount: marchForceCount,
+              includeChampions: resolvedMarchIncludeChampions
             }
-          : { kind: "march", from: marchFrom.trim(), to: marchTo.trim() }
+          : {
+              kind: "march",
+              from: marchFrom.trim(),
+              to: marchTo.trim(),
+              includeChampions: resolvedMarchIncludeChampions
+            }
     };
     primaryActionLabel = "March";
   } else if (basicActionIntent === "reinforce" && canReinforce && selectedReinforce) {
@@ -1372,6 +1460,7 @@ export const GameScreen = ({
       setMarchTo("");
     }
     setMarchForceCount(null);
+    setMarchIncludeChampions(null);
   };
 
   useEffect(() => {
@@ -1445,11 +1534,13 @@ export const GameScreen = ({
       setIsHandPanelOpen(true);
       setBasicActionIntent("none");
       setMarchForceCount(null);
+      setMarchIncludeChampions(null);
     }
   }, [isActionPhase]);
 
   useEffect(() => {
-    if (!marchFrom || marchForceMax <= 1) {
+    const allowSplit = marchForceMax > 1 || marchChampionCount > 0;
+    if (!marchFrom || !allowSplit) {
       if (marchForceCount !== null) {
         setMarchForceCount(null);
       }
@@ -1458,10 +1549,12 @@ export const GameScreen = ({
     if (marchForceCount !== null && marchForceCount > marchForceMax) {
       setMarchForceCount(marchForceMax);
     }
-  }, [marchForceCount, marchForceMax, marchFrom]);
+  }, [marchChampionCount, marchForceCount, marchForceMax, marchFrom]);
 
   useEffect(() => {
-    if (!cardMoveSupportsSplit || !cardMoveStartHex || cardMoveForceMax <= 1) {
+    const allowSplit =
+      cardMoveForceMax > 1 || cardMoveChampionCount > 0;
+    if (!cardMoveSupportsSplit || !cardMoveStartHex || !allowSplit) {
       if (cardMoveForceCount !== null) {
         setCardForceCount(null);
       }
@@ -1473,6 +1566,7 @@ export const GameScreen = ({
   }, [
     cardMoveForceCount,
     cardMoveForceMax,
+    cardMoveChampionCount,
     cardMoveStartHex,
     cardMoveSupportsSplit
   ]);
@@ -1832,10 +1926,17 @@ export const GameScreen = ({
         const action = actionRaw as BasicAction;
         const basicReveal = describeBasicAction(action, hexLabels);
         const movePaths = action.kind === "march" ? [[action.from, action.to]] : [];
-        const moveUnitKind = action.kind === "march" ? "force" : null;
+        const moveUnitKind =
+          action.kind === "march"
+            ? action.includeChampions
+              ? "champion"
+              : "force"
+            : null;
         const moveUnitLabel =
           action.kind === "march" && typeof action.forceCount === "number"
-            ? String(action.forceCount)
+            ? action.includeChampions && action.forceCount === 0
+              ? "C"
+              : String(action.forceCount)
             : null;
         newReveals.push({
           key: `${i}-${event.type}`,
@@ -1998,11 +2099,19 @@ export const GameScreen = ({
     return animations;
   }, [activeCardReveal]);
 
-  const applyCardMoveForceCount = (targets: Record<string, unknown>) => {
-    if (!cardMoveSupportsSplit || cardMoveForceCount === null) {
+  const applyCardMoveUnitSelection = (targets: Record<string, unknown>) => {
+    if (!cardMoveSupportsSplit) {
       return targets;
     }
-    return { ...targets, forceCount: cardMoveForceCount };
+    const nextTargets = { ...targets };
+    if (cardMoveForceCount !== null) {
+      nextTargets.forceCount = cardMoveForceCount;
+    }
+    const includeChampions = getTargetBoolean(targetRecord, "includeChampions");
+    if (includeChampions !== null) {
+      nextTargets.includeChampions = includeChampions;
+    }
+    return nextTargets;
   };
 
   const setCardTargetsObject = (targets: Record<string, unknown> | null) => {
@@ -2010,7 +2119,7 @@ export const GameScreen = ({
       setCardTargetsRaw("");
       return;
     }
-    const nextTargets = applyCardMoveForceCount(targets);
+    const nextTargets = applyCardMoveUnitSelection(targets);
     setCardTargetsRaw(JSON.stringify(nextTargets));
   };
 
@@ -2021,6 +2130,13 @@ export const GameScreen = ({
     } else {
       nextTargets.forceCount = value;
     }
+    const hasTargets = Object.keys(nextTargets).length > 0;
+    setCardTargetsRaw(hasTargets ? JSON.stringify(nextTargets) : "");
+  };
+
+  const setCardIncludeChampions = (value: boolean) => {
+    const nextTargets = targetRecord ? { ...targetRecord } : {};
+    nextTargets.includeChampions = value;
     const hasTargets = Object.keys(nextTargets).length > 0;
     setCardTargetsRaw(hasTargets ? JSON.stringify(nextTargets) : "");
   };
@@ -2886,16 +3002,26 @@ export const GameScreen = ({
     ? hexLabels[cardMoveStartHex] ?? cardMoveStartHex
     : null;
   const showCardMoveSplitControls =
-    cardMoveSupportsSplit && Boolean(cardMoveStartHex) && cardMoveForceMax > 1;
+    cardMoveSupportsSplit &&
+    Boolean(cardMoveStartHex) &&
+    (cardMoveForceMax > 1 || cardMoveChampionCount > 0);
   const showMarchSplitControls =
-    basicActionIntent === "march" && marchFrom.trim().length > 0 && marchForceMax > 1;
+    basicActionIntent === "march" &&
+    marchFrom.trim().length > 0 &&
+    (marchForceMax > 1 || marchChampionCount > 0);
   const marchFromLabel = marchFrom ? hexLabels[marchFrom] ?? marchFrom : null;
   const cardMoveMeta = cardMoveStartLabel
-    ? `From ${cardMoveStartLabel} (${cardMoveForceMax} forces)`
-    : `${cardMoveForceMax} forces`;
+    ? `From ${cardMoveStartLabel} (${formatUnitCounts(
+        cardMoveForceMax,
+        cardMoveChampionCount
+      )})`
+    : formatUnitCounts(cardMoveForceMax, cardMoveChampionCount);
   const marchMoveMeta = marchFromLabel
-    ? `From ${marchFromLabel} (${marchForceMax} forces)`
-    : `${marchForceMax} forces`;
+    ? `From ${marchFromLabel} (${formatUnitCounts(
+        marchForceMax,
+        marchChampionCount
+      )})`
+    : formatUnitCounts(marchForceMax, marchChampionCount);
   const championTargetScopeLabel =
     championTargetOwner === "self"
       ? "Your champions"
@@ -3071,7 +3197,10 @@ export const GameScreen = ({
         meta={cardMoveMeta}
         forceCount={cardMoveForceCount}
         forceMax={cardMoveForceMax}
+        championCount={cardMoveChampionCount}
+        includeChampions={cardMoveIncludeChampions}
         onChange={setCardForceCount}
+        onToggleChampions={setCardIncludeChampions}
       />
     ) : showMarchSplitControls ? (
       <ForceSplitPopover
@@ -3079,7 +3208,10 @@ export const GameScreen = ({
         meta={marchMoveMeta}
         forceCount={marchForceCount}
         forceMax={marchForceMax}
+        championCount={marchChampionCount}
+        includeChampions={resolvedMarchIncludeChampions}
         onChange={setMarchForceCount}
+        onToggleChampions={setMarchIncludeChampions}
       />
     ) : null;
   const championTargetPanel =
