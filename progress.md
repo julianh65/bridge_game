@@ -18,11 +18,6 @@
 
 ## Active tasks
 - owner: agent1; scope: split `card-effects` resolvers into categorized modules (bridges/movement/combat/units) and re-export via a single index; files: `packages/engine/src/card-effects.ts`, `packages/engine/src/card-effects-*.ts`, `packages/engine/src/index.ts`, `implementation_plan.md`; status: in progress
-- owner: agent5; scope: add Age II/III power card defs that use existing effects (incl. Bannerman champion) and wire partial power deck lists; files: `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/power-decks.ts`, `implementation_plan.md`; status: in progress
-- owner: agent2
-  scope: keep hand in single row and compress overlap to avoid horizontal scroll
-  files: apps/web/src/components/GameScreenHandPanel.tsx, progress.md
-  status: in progress
 
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
@@ -113,7 +108,7 @@
 - Confirmed the market overlay hotkey exists, lightened the market scrim, added special-tile hover labels on the board, and marked mana-short cards in hand; updated the plan checklist. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4) (Overlap note: `apps/web/src/styles.css` overlap agent2 scope.)
 - Centered card face text, added gold/VP chips to the hand header, and constrained grid card sizing to avoid stretched cards on large screens; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4) (Overlap note: `apps/web/src/styles.css` overlaps agent2 scope.)
 - Standardized card sizing across hand/market/collection/setup using shared CSS sizing variables and marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.)
-- Split the hand into multiple rows based on available width to avoid horizontal scrolling without shrinking cards. (File: `apps/web/src/components/GameScreenHandPanel.tsx`.) (owner: agent2)
+- Compressed the hand overlap on narrow widths to keep a single row while avoiding horizontal scroll. (File: `apps/web/src/components/GameScreenHandPanel.tsx`.) (owner: agent2)
 - Increased card height/art visibility and compacted champion stat blocks while removing emojis from the stat labels. (Files: `apps/web/src/styles.css`, `apps/web/src/components/GameCard.tsx`.)
 - Enabled champion stat blocks in the deck viewer card grid so champions show their numbers in deck view. (File: `apps/web/src/components/DeckViewer.tsx`.)
 - Added a dev-only hand injector in the Room Debug panel for quick append/replace of hand cards; expanded the debug play-game checklist. (Files: `apps/web/src/components/RoomDebugPanel.tsx`, `implementation_plan.md`.) (Overlap note: `implementation_plan.md` also had pre-existing mine-draft checklist edits.)
@@ -591,6 +586,7 @@ none
 - Added derived card tags for burn/power/victory/champion in the registry, with tests.
 - Added Age I champion cards for Bounty Hunter, Sergeant, and Traitor to the Age I market list.
 - Added Age I power card defs (Command Surge, Instant Bridge Net, Secret Plans, Emergency Pay, Shock Drill, Bridge Deed, Mine Charter, Forge Sketch, Center Writ, Oathstone, Banner of Sparks), wired the Age I power deck list, and added a Center Writ mana-if-center effect; Age II/III power decks still clone market lists and one Age I non-victory slot remains TBD. (Files: `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/cards/index.ts`, `packages/engine/src/content/power-decks.ts`, `packages/engine/src/card-effects.ts`.) (Plan: `implementation_plan.md`.)
+- Added partial Age II/III power card defs using existing effects (Immunity Field, Rapid Reinforcements, Writ of Industry, Bridge Charter, Dispatch to Front, Bannerman; Quick Mobilization, Final Funding, Imperial Warrant, Crown Coin, Deep Mine Charter) and replaced Age II/III power deck lists with the implemented IDs. Missing power cards that need new effect support remain. (Files: `packages/engine/src/content/cards/power.ts`, `packages/engine/src/content/power-decks.ts`, `implementation_plan.md`.)
 
 ## Debug UI progress
 - Added local board inspector in `apps/web` with seed + player count controls and SVG rendering of capitals/forges/mines.
