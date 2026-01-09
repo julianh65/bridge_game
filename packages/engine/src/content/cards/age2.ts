@@ -286,6 +286,7 @@ export const REPAIR_ORDERS: CardDef = {
   effects: [{ kind: "healChampions", amount: 1 }]
 };
 
+// TODO(Julian only): Re-enable Gold Plated Armor after resolving the combat freeze.
 export const GOLD_PLATED_ARMOR: CardDef = {
   id: "age2.gold_plated_armor",
   name: "Gold Plated Armor",
@@ -892,6 +893,30 @@ export const RELIABLE_VETERAN: CardDef = {
   }
 };
 
+export const IRON_SENTINEL: CardDef = {
+  id: "champion.age2.iron_sentinel",
+  name: "Iron Sentinel",
+  rulesText: "No special ability.",
+  type: "Champion",
+  deck: "age2",
+  tags: ["market", "age2"],
+  cost: { mana: 2 },
+  initiative: 55,
+  burn: true,
+  targetSpec: {
+    kind: "hex",
+    owner: "self",
+    occupied: true
+  },
+  champion: {
+    hp: 6,
+    attackDice: 2,
+    hitFaces: 3,
+    bounty: 3,
+    goldCostByChampionCount: [1, 3, 5]
+  }
+};
+
 export const CAPTURER: CardDef = {
   id: "champion.age2.capturer",
   name: "Capturer",
@@ -934,7 +959,8 @@ export const AGE2_CARDS: CardDef[] = [
   WARD,
   FRENZY,
   REPAIR_ORDERS,
-  GOLD_PLATED_ARMOR,
+  // TODO(Julian only): Re-enable Gold Plated Armor after resolving the combat freeze.
+  // GOLD_PLATED_ARMOR,
   MORTAR_SHOT,
   CHAMPION_RECALL,
   BURN_THE_BRIDGES,
@@ -966,5 +992,6 @@ export const AGE2_CARDS: CardDef[] = [
   DUELIST_EXEMPLAR,
   LONE_WOLF,
   RELIABLE_VETERAN,
+  IRON_SENTINEL,
   CAPTURER
 ];

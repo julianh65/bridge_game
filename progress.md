@@ -22,6 +22,8 @@
 
 ## Active tasks
 - (owner: agent3) [status: in progress] Group Board Debug + Battle Debug under a Debug dropdown in the top nav; files: `apps/web/src/App.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`.
+- (owner: agent2) [status: in progress] Add one basic champion card per age (Age I/II/III) and update rules/plan; files: `packages/engine/src/content/cards/age1.ts`, `packages/engine/src/content/cards/age2.ts`, `packages/engine/src/content/cards/age3.ts`, `rules_draft.md`, `implementation_plan.md`, `progress.md`.
+- (owner: agent5) [status: in progress] Temporarily disable Gold Plated Armor card (owner-only TODO to re-enable); files: `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`, `progress.md`. (Overlap: `packages/engine/src/content/cards/age2.ts` with agent2.)
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -39,6 +41,7 @@
 - Added a burn badge on hand cards so burn status is visible even when tags are hidden. (Files: `apps/web/src/components/GameCard.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
 - Enabled champion stat blocks in the Quiet Study hand picker. (File: `apps/web/src/components/HandCardPickerModal.tsx`.) (owner: agent2)
 - Compressed setup player status pills into a stacked layout with a compact ready indicator. (Files: `apps/web/src/components/SetupFlow.tsx`, `apps/web/src/styles.css`.) (owner: agent2)
+- Temporarily disabled Gold Plated Armor from the Age II market deck with an owner-only TODO to re-enable after the freeze bug is fixed. (Files: `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.) (owner: agent5) (Overlap note: `packages/engine/src/content/cards/age2.ts` also in agent2 scope.)
 - Hid the force stack marker when a hex only has champions, centering champion tokens instead. (File: `apps/web/src/components/BoardView.tsx`.) (owner: agent2)
 - Quiet Study submissions now always register (no-op selections no longer get ignored); marked the plan item complete. (Files: `packages/engine/src/round-flow.ts`, `implementation_plan.md`.) (owner: agent2)
 - Increased card rules text size slightly for readability. (File: `apps/web/src/styles.css`.) (owner: agent2)
