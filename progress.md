@@ -73,9 +73,11 @@
 - Prevented the market overlay from reopening after market ends by skipping outro holds during overlay blockers and only holding when explicitly set; updated the plan checklist. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Marked the draw pile UI as unordered in the deck viewer (labels + flow). (Files: `apps/web/src/components/DeckViewer.tsx`, `implementation_plan.md`.) (owner: agent3)
 - Clarified Quick Move rules text to emphasize very low initiative. (File: `packages/engine/src/content/cards/starter.ts`.) (owner: agent3)
-- Capital draft slots now toggle unlock by clicking the same slot button (removed the separate unlock button). (Files: `apps/web/src/components/SetupCapitalDraft.tsx`, `implementation_plan.md`.) (owner: agent3)
+- Capital draft slots now toggle unlock on the slot button itself, removing the separate unlock control. (Files: `apps/web/src/components/SetupCapitalDraft.tsx`, `implementation_plan.md`.) (owner: agent3)
 - Applied per-faction starting force counts from config during setup (fallback to default faction), added config docs + setup-flow coverage; marked plan item complete. (Files: `packages/engine/src/setup-flow.ts`, `packages/engine/src/setup-flow.test.ts`, `docs/configuration.md`, `implementation_plan.md`.) (Test: `npm run -w @bridgefront/engine test -- setup-flow.test.ts -t "startingForcesByFaction"`.) (owner: agent5)
 - Disabled Set to Skirmish in the Age II deck and left a TODO to re-enable once fixed. (Files: `packages/engine/src/content/cards/age2.ts`, `implementation_plan.md`.) (owner: agent1)
+- Added a dark-fantasy favicon and wired it into the web entrypoint; marked the plan item complete. (Files: `apps/web/public/favicon.svg`, `apps/web/index.html`, `implementation_plan.md`.) (owner: agent2)
+- Widened the setup players panel so connected/offline and setup status pills have more room; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent1)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.

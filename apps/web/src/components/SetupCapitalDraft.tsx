@@ -115,10 +115,10 @@ export const SetupCapitalDraft = ({
       return "Spectators can watch the draft but cannot pick.";
     }
     if (canPick) {
-      return "Select a capital slot to lock in. You can unlock to change while others pick.";
+      return "Select a capital slot to lock in. Click your slot again to unlock.";
     }
     if (canUnlock) {
-      return "Capital locked. Unlock to change your slot.";
+      return "Capital locked. Click your slot again to unlock.";
     }
     return "Waiting for other players to lock in.";
   })();
@@ -148,15 +148,6 @@ export const SetupCapitalDraft = ({
             <strong title={localCapital}>
               {localCapitalLabel ? `Slot ${localCapitalLabel}` : localCapital}
             </strong>
-            {canUnlock ? (
-              <button
-                type="button"
-                className="btn btn-tertiary"
-                onClick={() => onSubmitChoice({ kind: "unlockCapital" })}
-              >
-                Unlock
-              </button>
-            ) : null}
           </div>
         ) : null}
       </div>
@@ -166,6 +157,8 @@ export const SetupCapitalDraft = ({
           const takenBy = capitalByHex.get(slot) ?? null;
           const isTaken = Boolean(takenBy);
           const isLocalPick = Boolean(playerId && takenBy === playerId);
+          const canToggleLocal = Boolean(canUnlock && isLocalPick);
+          const canSelectSlot = (canPick && !isTaken) || canToggleLocal;
           const labelText = label ? `Slot ${label}` : slot;
           const takenByName = takenBy ? playerNames.get(takenBy) ?? takenBy : null;
           const statusText = isTaken ? (isLocalPick ? " (Yours)" : " (Taken)") : "";
@@ -183,8 +176,12 @@ export const SetupCapitalDraft = ({
               key={slot}
               type="button"
               className={slotClassName}
-              disabled={!canPick || isTaken}
-              onClick={() => onSubmitChoice({ kind: "pickCapital", hexKey: slot })}
+              disabled={!canSelectSlot}
+              onClick={() =>
+                onSubmitChoice(
+                  canToggleLocal ? { kind: "unlockCapital" } : { kind: "pickCapital", hexKey: slot }
+                )
+              }
               title={
                 isTaken && takenByName ? `${labelText} (Taken by ${takenByName})` : labelText
               }
