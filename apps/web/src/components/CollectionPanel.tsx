@@ -10,12 +10,10 @@ import {
 
 import type { RoomConnectionStatus } from "../lib/room-client";
 import { GameCard } from "./GameCard";
-import { NumberRoll } from "./NumberRoll";
 
 const CARD_DEFS_BY_ID = new Map(CARD_DEFS.map((card) => [card.id, card]));
 
-const COLLECTION_ROLL_SIDES = 6;
-const COLLECTION_ROLL_DURATION_MS = 900;
+const COLLECTION_REVEAL_DELAY_MS = 1050;
 const COLLECTION_HIGHLIGHT_STEP_MS = 1200;
 
 type CollectionPanelProps = {
@@ -151,9 +149,7 @@ export const CollectionPanel = ({
     [prompts]
   );
   const [selections, setSelections] = useState<Record<string, CollectionChoice | null>>({});
-  const [promptRolls, setPromptRolls] = useState<
-    Record<string, { revealed: boolean; roll: number; rollKey: string }>
-  >({});
+  const [promptRevealState, setPromptRevealState] = useState<Record<string, boolean>>({});
   const [highlightStage, setHighlightStage] = useState<CollectionPrompt["kind"] | null>(null);
   const handCardIds = useMemo(() => new Set(handCards.map((card) => card.id)), [handCards]);
   const playerNames = useMemo(
@@ -180,18 +176,13 @@ export const CollectionPanel = ({
   }, [labelByHex, prompts]);
 
   useEffect(() => {
-    const next: Record<string, { revealed: boolean; roll: number; rollKey: string }> = {};
-    prompts.forEach((prompt, index) => {
+    const next: Record<string, boolean> = {};
+    prompts.forEach((prompt) => {
       const key = getPromptKey(prompt.kind, prompt.hexKey);
       const hasReveal = prompt.revealed.length > 0;
-      const roll = Math.floor(Math.random() * COLLECTION_ROLL_SIDES) + 1;
-      next[key] = {
-        revealed: !hasReveal,
-        roll,
-        rollKey: `${promptSignature}-${index}-${roll}`
-      };
+      next[key] = !hasReveal;
     });
-    setPromptRolls(next);
+    setPromptRevealState(next);
   }, [promptSignature, prompts]);
 
   useEffect(() => {
@@ -232,14 +223,14 @@ export const CollectionPanel = ({
       return;
     }
     const timeout = window.setTimeout(() => {
-      setPromptRolls((current) => {
+      setPromptRevealState((current) => {
         const next = { ...current };
         for (const key of Object.keys(next)) {
-          next[key] = { ...next[key], revealed: true };
+          next[key] = true;
         }
         return next;
       });
-    }, COLLECTION_ROLL_DURATION_MS + 150);
+    }, COLLECTION_REVEAL_DELAY_MS);
     return () => {
       window.clearTimeout(timeout);
     };
@@ -348,9 +339,8 @@ export const CollectionPanel = ({
             {prompts.map((prompt) => {
               const key = getPromptKey(prompt.kind, prompt.hexKey);
               const selection = selections[key];
-              const rollState = promptRolls[key];
               const isRevealPending = Boolean(
-                rollState && !rollState.revealed && prompt.revealed.length > 0
+                promptRevealState[key] === false && prompt.revealed.length > 0
               );
               const isStageActive = highlightStage === prompt.kind;
               const isStageDimmed = highlightStage !== null && !isStageActive;
@@ -425,14 +415,6 @@ export const CollectionPanel = ({
                         </div>
                       ) : isRevealPending ? (
                         <div className="collection-roll">
-                          <NumberRoll
-                            value={rollState?.roll ?? 1}
-                            sides={COLLECTION_ROLL_SIDES}
-                            durationMs={COLLECTION_ROLL_DURATION_MS}
-                            rollKey={rollState?.rollKey}
-                            className="number-roll--lg"
-                            label="Forge draw roll"
-                          />
                           <span className="collection-roll__label">
                             Revealing forge draw...
                           </span>
@@ -492,14 +474,6 @@ export const CollectionPanel = ({
                         </div>
                       ) : isRevealPending ? (
                         <div className="collection-roll">
-                          <NumberRoll
-                            value={rollState?.roll ?? 1}
-                            sides={COLLECTION_ROLL_SIDES}
-                            durationMs={COLLECTION_ROLL_DURATION_MS}
-                            rollKey={rollState?.rollKey}
-                            className="number-roll--lg"
-                            label="Power draw roll"
-                          />
                           <span className="collection-roll__label">
                             Revealing power deck...
                           </span>

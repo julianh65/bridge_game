@@ -17,6 +17,8 @@
 - Converted "Milestone After Full Test Play and Thinking" into clarified checklist tasks in `implementation_plan.md`.
 
 ## Active tasks
+- (owner: agent2) Fix Quiet Study Done action so submitting with zero picks advances; scope: round.study UI/command wiring. Files: `apps/web/src/components/HandCardPickerModal.tsx`, `apps/web/src/components/GameScreen.tsx`, `progress.md`, `implementation_plan.md`. (status: in progress)
+- (owner: agent4) Fix champion-only move selection (forceCount 0) and bridge-bypass targeting for march/card moves. Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`, `progress.md`. (status: in progress)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Enabled champion stat blocks in the Quiet Study hand picker. (File: `apps/web/src/components/HandCardPickerModal.tsx`.) (owner: agent2)
@@ -30,6 +32,7 @@
 - Reroll map now keeps the setup flow on capital draft by restoring the capital-draft block after regeneration; marked the plan item complete. (Files: `apps/server/src/server.ts`, `implementation_plan.md`.) (owner: agent1) (Overlap note: includes staged plan checks for setup status pills and map-based retreat selection.)
 - Marked starting bridge placement range reduction as complete (engine/UI already enforce distance 2). (File: `implementation_plan.md`.) (owner: agent1)
 - Bolded numeric values in card rules text and marked the plan item complete. (Files: `apps/web/src/components/GameCard.tsx`, `implementation_plan.md`.) (owner: agent1) (Overlap note: includes agent2 active-task line and agent3 Scout Report progress entry already present in `progress.md`.)
+- Removed dice-roll animations from forge/power reveal prompts; kept a short reveal pause with plain copy. (File: `apps/web/src/components/CollectionPanel.tsx`.)
 ## Planning updates
 - Scoped and broke down tasks for "Mini Milestone For Me" (card/deck editor + initiative tooling) in `implementation_plan.md` with scope, tasks, and acceptance criteria.
 - Expanded the setup flow overhaul checklist (full-screen setup phases + host-advanced gates) with engine/server/UI subtasks in `implementation_plan.md`.

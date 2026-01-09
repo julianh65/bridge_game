@@ -397,7 +397,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] can’t play banner of sparks power card
 - [x] between rounds if you click march once we go to the next round the march action is still selected
 - [ ] game breaking: after several rolls sometimes the forces keep rolling the same numbers? and then the whole fight just stalls out?
-- [ ] why is there a dice roll for revealing forge draw / power deck?
+- [x] why is there a dice roll for revealing forge draw / power deck?
 - [ ] power deck for age 2 isn’t there yet
 - [x] Any number in a card description can we bold it?
 - [ ] make the card text slightly slightly larger
