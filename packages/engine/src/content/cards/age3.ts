@@ -114,6 +114,26 @@ export const ENDLESS_CONSCRIPTION: CardDef = {
   effects: [{ kind: "recruitByHandSize" }]
 };
 
+export const ELITE_GUARD: CardDef = {
+  id: "age3.elite_guard",
+  name: "Elite Guard",
+  rulesText: "Deploy 5 Forces to your Capital. Heal a Champion there 2.",
+  type: "Order",
+  deck: "age3",
+  tags: ["market", "age3"],
+  cost: { mana: 2, gold: 3 },
+  initiative: 50,
+  burn: false,
+  targetSpec: {
+    kind: "choice",
+    options: [{ kind: "capital" }]
+  },
+  effects: [
+    { kind: "recruit", capitalCount: 5 },
+    { kind: "healChampionInCapital", amount: 2 }
+  ]
+};
+
 export const FORWARD_LEGION: CardDef = {
   id: "age3.forward_legion",
   name: "Forward Legion",
@@ -621,6 +641,7 @@ export const AGE3_CARDS: CardDef[] = [
   EXTRACTION_RUN,
   DEEP_RESERVES,
   ENDLESS_CONSCRIPTION,
+  ELITE_GUARD,
   FORWARD_LEGION,
   ROYAL_MINT,
   MARKET_SQUEEZE,

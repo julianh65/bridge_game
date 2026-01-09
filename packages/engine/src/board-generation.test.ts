@@ -139,6 +139,28 @@ describe("board generation", () => {
     }
   });
 
+  it("allows fewer mines than capitals", () => {
+    const { board, capitals } = withCapitals(4);
+    const rng = createRngState(2024);
+    const rules = {
+      ...DEFAULT_CONFIG.boardGenerationRules,
+      minDistanceFromCapital: 1,
+      homeMineDistanceFromCapital: 1,
+      homeMineMinDistanceFromOtherCapitals: 0,
+      mineDistanceFromCenter: [1, 2, 3]
+    };
+
+    const result = placeSpecialTiles(board, rng, {
+      capitalHexes: capitals,
+      forgeCount: 0,
+      mineCount: 2,
+      rules
+    });
+
+    expect(result.mineKeys).toHaveLength(2);
+    expect(result.homeMineKeys).toHaveLength(2);
+  });
+
   it("falls back to any distance when preferred forge distances are unavailable", () => {
     const { board, capitals } = withCapitals(2);
     const rng = createRngState(4242);

@@ -686,6 +686,42 @@ export const resolveUnitEffect = (
       nextState = healChampion(nextState, target.unitId, amount);
       return nextState;
     }
+    case "healChampionInCapital": {
+      const rawAmount = typeof effect.amount === "number" ? effect.amount : 0;
+      const amount = Math.max(0, Math.floor(rawAmount));
+      if (amount <= 0) {
+        return nextState;
+      }
+      const player = nextState.players.find((entry) => entry.id === playerId);
+      const capitalHex = player?.capitalHex;
+      if (!capitalHex) {
+        return nextState;
+      }
+      const candidates = Object.values(nextState.board.units).filter(
+        (unit) =>
+          unit?.kind === "champion" &&
+          unit.ownerPlayerId === playerId &&
+          unit.hex === capitalHex
+      );
+      if (candidates.length === 0) {
+        return nextState;
+      }
+      let chosen = candidates[0];
+      let maxMissing = chosen.maxHp - chosen.hp;
+      for (const candidate of candidates.slice(1)) {
+        const missing = candidate.maxHp - candidate.hp;
+        if (missing > maxMissing) {
+          chosen = candidate;
+          maxMissing = missing;
+          continue;
+        }
+        if (missing === maxMissing && candidate.id < chosen.id) {
+          chosen = candidate;
+        }
+      }
+      nextState = healChampion(nextState, chosen.id, amount);
+      return nextState;
+    }
     case "healChampions": {
       const amount = typeof effect.amount === "number" ? effect.amount : 0;
       if (amount <= 0) {

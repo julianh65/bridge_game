@@ -89,6 +89,7 @@ const SUPPORTED_EFFECTS = new Set([
   "deployForcesIfEnemyInCapital",
   "increaseMineValue",
   "healChampion",
+  "healChampionInCapital",
   "healChampions",
   "dealChampionDamage",
   "moveChampion",

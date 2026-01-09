@@ -409,9 +409,7 @@ export const placeSpecialTiles = (
   if (!Number.isInteger(mineCount) || mineCount < 0) {
     throw new Error("mineCount must be a non-negative integer");
   }
-  if (mineCount < capitalHexes.length) {
-    throw new Error("mineCount must be >= number of capitals");
-  }
+  const homeMineTargetCount = Math.min(mineCount, capitalHexes.length);
 
   const capitalSet = new Set(capitalHexes);
   for (const capital of capitalHexes) {
@@ -475,7 +473,8 @@ export const placeSpecialTiles = (
     const { value: capitalOrder, next: shuffledState } = shuffle(rng, capitalHexes);
     rng = shuffledState;
 
-    for (const capital of capitalOrder) {
+    const homeMineTargets = capitalOrder.slice(0, homeMineTargetCount);
+    for (const capital of homeMineTargets) {
       const candidates = eligibleKeys.filter((key) => {
         if (!isEligibleForSpecialTile(key, working, capitalSet, rules)) {
           return false;
