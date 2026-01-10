@@ -223,6 +223,12 @@ export type CombatSideSummary = {
 
 export type CombatRetreatSelection = EdgeKey | "stay" | null;
 
+export type CombatRoundState = {
+  round: number;
+  staleRounds: number;
+  bodyguardUsed: Record<CombatSide, boolean>;
+};
+
 export type CombatContext = {
   hexKey: HexKey;
   attackerPlayerId: PlayerID;
@@ -432,6 +438,9 @@ export type BlockState = {
   waitingFor: PlayerID[];
   payload: {
     hexKey: HexKey;
+    round: number;
+    staleRounds: number;
+    bodyguardUsed: Record<CombatSide, boolean>;
     attackers: CombatSideSummary;
     defenders: CombatSideSummary;
     eligiblePlayerIds: PlayerID[];
@@ -688,6 +697,7 @@ export type ScoutReportPrivateView = {
 
 export type CombatRetreatPublicView = {
   hexKey: HexKey;
+  round: number;
   attackers: CombatSideSummary;
   defenders: CombatSideSummary;
   waitingForPlayerIds: PlayerID[];

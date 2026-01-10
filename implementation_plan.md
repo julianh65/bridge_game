@@ -475,7 +475,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] URGENT During combat I only see the retreat options at the start, this is a regression, the retreat options should be clickable from the combat modal URGENT (retreat prompt always shown in combat overlay)
 - [x] Restrict combat retreat destinations to unoccupied hexes to avoid retreating into occupied hexes that can leave contested hexes unresolved
 - [ ] The combat overlay should be hideable and unhideable to see the board, importantly when there are the retreat buttons this needs to be a thing
-- [ ] I STILL don't see mid combat round retreat options, like i see the initial retreat options but not during combat, this is very important to get right, make sure that there are no bugs and most importantly that this cannot enter a bad state with the UI or something such that the game halts
+- [x] I STILL don't see mid combat round retreat options, like i see the initial retreat options but not during combat, this is very important to get right, make sure that there are no bugs and most importantly that this cannot enter a bad state with the UI or something such that the game halts (combat retreat blocks now re-prompt each round with round label)
 - [x] Sabotage bridge doesn't let me select a bridge to destroy
 
 
@@ -844,6 +844,7 @@ Done
 - [x] Upgrade on-board visuals for units/champions/factions (distinct tokens, faction badges).
 - [x] Add bridge art assets (top-down) and render them in BoardView (SVG symbol/pattern instead of plain lines).
 - [ ] Add combat flow failsafes (timeouts/host override) for combat roll sync and retreat decisions so the UI never stalls on disconnects.
+- [ ] Add block timeouts/host override for action/market/collection/scout report/quiet study so phases can advance if a player drops.
 - [ ] Low priority: add at least one targeted test for each card effect/card.
   - [x] Age I market: Flank Step movement without bridges.
   - [x] Age I market: Scavenger's Market gold + draw.

@@ -7,6 +7,7 @@ import type {
   CombatContext,
   CombatEndContext,
   CombatEndReason,
+  CombatRoundState,
   CombatRoundContext,
   CombatSide,
   CombatSideSummary,
@@ -658,6 +659,57 @@ const applyRetreatMoves = (
   return nextState;
 };
 
+const buildRetreatPlans = (
+  state: GameState,
+  hexKey: HexKey,
+  participants: [PlayerID, PlayerID],
+  retreatChoices?: Record<PlayerID, EdgeKey>
+): { state: GameState; plans: Array<{ playerId: PlayerID; destination: HexKey }> } => {
+  const plans: Array<{ playerId: PlayerID; destination: HexKey }> = [];
+  if (retreatChoices) {
+    for (const playerId of participants) {
+      const edgeKey = retreatChoices[playerId];
+      if (!edgeKey) {
+        continue;
+      }
+      const bridge = state.board.bridges[edgeKey];
+      if (!bridge || bridge.locked) {
+        continue;
+      }
+      const destination = getRetreatDestination(hexKey, edgeKey);
+      if (!destination || !canRetreatToHex(state, playerId, destination)) {
+        continue;
+      }
+      const player = state.players.find((entry) => entry.id === playerId);
+      if (!player || player.resources.mana < 1) {
+        continue;
+      }
+      plans.push({ playerId, destination });
+    }
+  }
+
+  let nextState = state;
+  if (plans.length > 0) {
+    const retreating = new Set(plans.map((plan) => plan.playerId));
+    nextState = {
+      ...nextState,
+      players: nextState.players.map((player) =>
+        retreating.has(player.id)
+          ? {
+              ...player,
+              resources: {
+                ...player.resources,
+                mana: Math.max(0, player.resources.mana - 1)
+              }
+            }
+          : player
+      )
+    };
+  }
+
+  return { state: nextState, plans };
+};
+
 const createEmptyHitSummary = (): HitAssignmentSummary => ({
   forces: 0,
   champions: []
@@ -694,22 +746,38 @@ const summarizeHitAssignments = (
   return { forces, champions };
 };
 
+type CombatRetreatSeed = {
+  roundState?: CombatRoundState;
+  participants?: [PlayerID, PlayerID];
+};
+
 export const createCombatRetreatBlock = (
   state: GameState,
-  hexKey: HexKey
+  hexKey: HexKey,
+  seed?: CombatRetreatSeed
 ): BlockState | null => {
   const hex = state.board.hexes[hexKey];
   if (!hex) {
     return null;
   }
 
-  const participants = getPlayerIdsOnHex(hex);
+  const participants = seed?.participants ?? getPlayerIdsOnHex(hex);
   if (participants.length !== 2) {
     return null;
   }
 
   const attackersId = participants[0];
   const defendersId = participants[1];
+  const attackerUnits = hex.occupants[attackersId] ?? [];
+  const defenderUnits = hex.occupants[defendersId] ?? [];
+  if (attackerUnits.length === 0 || defenderUnits.length === 0) {
+    return null;
+  }
+  const roundState: CombatRoundState = seed?.roundState ?? {
+    round: 1,
+    staleRounds: 0,
+    bodyguardUsed: { attackers: false, defenders: false }
+  };
   const availableEdges: Record<PlayerID, EdgeKey[]> = {
     [attackersId]: getRetreatEdgesForPlayer(state, hexKey, attackersId),
     [defendersId]: getRetreatEdgesForPlayer(state, hexKey, defendersId)
@@ -730,14 +798,20 @@ export const createCombatRetreatBlock = (
     waitingFor: eligiblePlayerIds,
     payload: {
       hexKey,
+      round: roundState.round,
+      staleRounds: roundState.staleRounds,
+      bodyguardUsed: {
+        attackers: roundState.bodyguardUsed.attackers,
+        defenders: roundState.bodyguardUsed.defenders
+      },
       attackers: buildSideSummary(
         attackersId,
-        hex.occupants[attackersId] ?? [],
+        attackerUnits,
         state.board.units
       ),
       defenders: buildSideSummary(
         defendersId,
-        hex.occupants[defendersId] ?? [],
+        defenderUnits,
         state.board.units
       ),
       eligiblePlayerIds,
@@ -745,6 +819,462 @@ export const createCombatRetreatBlock = (
       choices
     }
   };
+};
+
+type CombatRoundResult = {
+  state: GameState;
+  roundState: CombatRoundState;
+  endReason: CombatEndReason | null;
+  resolvedRound: number;
+};
+
+const emitCombatStart = (
+  state: GameState,
+  hexKey: HexKey,
+  participants: [PlayerID, PlayerID]
+): GameState => {
+  const hex = state.board.hexes[hexKey];
+  if (!hex) {
+    return state;
+  }
+  const initialAttackers = hex.occupants[participants[0]] ?? [];
+  const initialDefenders = hex.occupants[participants[1]] ?? [];
+  return emit(state, {
+    type: "combat.start",
+    payload: {
+      hexKey,
+      attackers: {
+        playerId: participants[0],
+        ...summarizeUnits(initialAttackers, state.board.units)
+      },
+      defenders: {
+        playerId: participants[1],
+        ...summarizeUnits(initialDefenders, state.board.units)
+      }
+    }
+  });
+};
+
+const resolveCombatRoundAtHex = (
+  state: GameState,
+  hexKey: HexKey,
+  participants: [PlayerID, PlayerID],
+  roundState: CombatRoundState,
+  retreatPlans: Array<{ playerId: PlayerID; destination: HexKey }>
+): CombatRoundResult => {
+  let nextState: GameState = state;
+  let nextBoard = nextState.board;
+  let nextUnits = nextState.board.units;
+  let rngState = nextState.rngState;
+  let staleRounds = roundState.staleRounds;
+  let bodyguardUsed: Record<CombatSide, boolean> = {
+    attackers: roundState.bodyguardUsed.attackers,
+    defenders: roundState.bodyguardUsed.defenders
+  };
+  const battleRound = roundState.round;
+  const retreatAfterRound = retreatPlans.length > 0;
+
+  const currentHex = nextBoard.hexes[hexKey];
+  if (!currentHex) {
+    return {
+      state: nextState,
+      roundState: { round: battleRound + 1, staleRounds, bodyguardUsed },
+      endReason: "eliminated",
+      resolvedRound: battleRound
+    };
+  }
+
+  let attackers = currentHex.occupants[participants[0]] ?? [];
+  let defenders = currentHex.occupants[participants[1]] ?? [];
+  if (attackers.length === 0 || defenders.length === 0) {
+    return {
+      state: nextState,
+      roundState: { round: battleRound + 1, staleRounds, bodyguardUsed },
+      endReason: "eliminated",
+      resolvedRound: battleRound
+    };
+  }
+
+  const contextBase: CombatContext = {
+    hexKey,
+    attackerPlayerId: participants[0],
+    defenderPlayerId: participants[1],
+    round: battleRound
+  };
+  let modifiers = getCombatModifiers(nextState, hexKey);
+
+  const roundContext: CombatRoundContext = {
+    ...contextBase,
+    attackers,
+    defenders
+  };
+  nextState = runModifierEvents(
+    nextState,
+    modifiers,
+    (hooks) => hooks.beforeCombatRound,
+    roundContext
+  );
+  nextBoard = nextState.board;
+  nextUnits = nextState.board.units;
+  rngState = nextState.rngState;
+
+  const afterRoundHex = nextBoard.hexes[hexKey];
+  if (!afterRoundHex) {
+    return {
+      state: nextState,
+      roundState: { round: battleRound + 1, staleRounds, bodyguardUsed },
+      endReason: "eliminated",
+      resolvedRound: battleRound
+    };
+  }
+  attackers = afterRoundHex.occupants[participants[0]] ?? [];
+  defenders = afterRoundHex.occupants[participants[1]] ?? [];
+  if (attackers.length === 0 || defenders.length === 0) {
+    return {
+      state: nextState,
+      roundState: { round: battleRound + 1, staleRounds, bodyguardUsed },
+      endReason: "eliminated",
+      resolvedRound: battleRound
+    };
+  }
+
+  modifiers = getCombatModifiers(nextState, hexKey);
+
+  const attackersCanHit = attackers.some((unitId) =>
+    unitCanHit(nextState, modifiers, contextBase, "attackers", unitId, nextUnits[unitId])
+  );
+  const defendersCanHit = defenders.some((unitId) =>
+    unitCanHit(nextState, modifiers, contextBase, "defenders", unitId, nextUnits[unitId])
+  );
+  if (!attackersCanHit && !defendersCanHit && !retreatAfterRound) {
+    return {
+      state: nextState,
+      roundState: { round: battleRound + 1, staleRounds, bodyguardUsed },
+      endReason: "noHits",
+      resolvedRound: battleRound
+    };
+  }
+
+  const attackerRoll = rollHitsForUnits(
+    attackers,
+    nextUnits,
+    nextState,
+    modifiers,
+    contextBase,
+    "attackers",
+    rngState
+  );
+  rngState = attackerRoll.nextState;
+  const defenderRoll = rollHitsForUnits(
+    defenders,
+    nextUnits,
+    nextState,
+    modifiers,
+    contextBase,
+    "defenders",
+    rngState
+  );
+  rngState = defenderRoll.nextState;
+
+  const roundPayloadBase = {
+    hexKey,
+    round: battleRound,
+    attackers: {
+      playerId: participants[0],
+      dice: attackerRoll.rolls,
+      hits: attackerRoll.hits,
+      units: attackerRoll.unitRolls
+    },
+    defenders: {
+      playerId: participants[1],
+      dice: defenderRoll.rolls,
+      hits: defenderRoll.hits,
+      units: defenderRoll.unitRolls
+    }
+  };
+
+  if (attackerRoll.hits + defenderRoll.hits === 0) {
+    staleRounds += 1;
+    nextState = emit(nextState, {
+      type: "combat.round",
+      payload: {
+        ...roundPayloadBase,
+        hitsToAttackers: createEmptyHitSummary(),
+        hitsToDefenders: createEmptyHitSummary()
+      }
+    });
+    nextState = {
+      ...nextState,
+      rngState
+    };
+    let endReason: CombatEndReason | null = null;
+    if (retreatAfterRound) {
+      nextState = applyRetreatMoves(nextState, hexKey, retreatPlans);
+      endReason = "retreated";
+    } else if (staleRounds >= MAX_STALE_COMBAT_ROUNDS) {
+      endReason = "stale";
+    }
+    return {
+      state: nextState,
+      roundState: { round: battleRound + 1, staleRounds, bodyguardUsed },
+      endReason,
+      resolvedRound: battleRound
+    };
+  }
+  staleRounds = 0;
+
+  const defenderTacticalSource =
+    attackerRoll.hits > 0
+      ? findTacticalHandSource(nextState, hexKey, participants[0])
+      : null;
+  const attackerTacticalSource =
+    defenderRoll.hits > 0
+      ? findTacticalHandSource(nextState, hexKey, participants[1])
+      : null;
+
+  const defenderAssignmentContext: CombatAssignmentContext = {
+    ...contextBase,
+    targetSide: "defenders",
+    targetUnitIds: defenders,
+    hits: attackerRoll.hits
+  };
+  const defenderBasePolicy = getHitAssignmentPolicy(
+    nextState,
+    modifiers,
+    defenderAssignmentContext
+  );
+  const defenderPolicy = defenderTacticalSource ? "tacticalHand" : defenderBasePolicy;
+  const defenderBodyguardActive =
+    defenderBasePolicy === "bodyguard" ||
+    hasBodyguardModifier(modifiers, defenders, nextUnits);
+  const assignedToDefenders = assignHits(
+    defenders,
+    attackerRoll.hits,
+    defenderPolicy,
+    nextUnits,
+    rngState,
+    bodyguardUsed.defenders,
+    defenderBodyguardActive
+  );
+  rngState = assignedToDefenders.nextState;
+  bodyguardUsed.defenders =
+    assignedToDefenders.bodyguardUsed ?? bodyguardUsed.defenders;
+  const attackerAssignmentContext: CombatAssignmentContext = {
+    ...contextBase,
+    targetSide: "attackers",
+    targetUnitIds: attackers,
+    hits: defenderRoll.hits
+  };
+  const attackerBasePolicy = getHitAssignmentPolicy(
+    nextState,
+    modifiers,
+    attackerAssignmentContext
+  );
+  const attackerPolicy = attackerTacticalSource ? "tacticalHand" : attackerBasePolicy;
+  const attackerBodyguardActive =
+    attackerBasePolicy === "bodyguard" ||
+    hasBodyguardModifier(modifiers, attackers, nextUnits);
+  const assignedToAttackers = assignHits(
+    attackers,
+    defenderRoll.hits,
+    attackerPolicy,
+    nextUnits,
+    rngState,
+    bodyguardUsed.attackers,
+    attackerBodyguardActive
+  );
+  rngState = assignedToAttackers.nextState;
+  bodyguardUsed.attackers =
+    assignedToAttackers.bodyguardUsed ?? bodyguardUsed.attackers;
+
+  if (defenderTacticalSource) {
+    nextState = consumeChampionAbilityUse(
+      nextState,
+      defenderTacticalSource,
+      TACTICAL_HAND_KEY
+    );
+    nextUnits = nextState.board.units;
+  }
+  if (attackerTacticalSource) {
+    nextState = consumeChampionAbilityUse(
+      nextState,
+      attackerTacticalSource,
+      TACTICAL_HAND_KEY
+    );
+    nextUnits = nextState.board.units;
+  }
+
+  const defenderArmor = applyGoldArmorToHits(nextState, assignedToDefenders.hitsByUnit);
+  nextState = defenderArmor.state;
+  const defenderHitsByUnit = defenderArmor.hitsByUnit;
+  const attackerArmor = applyGoldArmorToHits(nextState, assignedToAttackers.hitsByUnit);
+  nextState = attackerArmor.state;
+  const attackerHitsByUnit = attackerArmor.hitsByUnit;
+
+  nextState = emit(nextState, {
+    type: "combat.round",
+    payload: {
+      ...roundPayloadBase,
+      hitsToDefenders: summarizeHitAssignments(defenderHitsByUnit, nextUnits),
+      hitsToAttackers: summarizeHitAssignments(attackerHitsByUnit, nextUnits)
+    }
+  });
+
+  const attackerHits = resolveHits(attackers, attackerHitsByUnit, nextUnits);
+  const defenderHits = resolveHits(defenders, defenderHitsByUnit, nextUnits);
+
+  const removedSet = new Set<UnitID>([
+    ...attackerHits.removedUnitIds,
+    ...defenderHits.removedUnitIds
+  ]);
+  const removedChampionIds = [
+    ...attackerHits.killedChampions.map((unit) => unit.id),
+    ...defenderHits.killedChampions.map((unit) => unit.id)
+  ];
+  const uniqueChampionIds = [...new Set(removedChampionIds)];
+
+  const updatedUnits: Record<UnitID, UnitState> = { ...nextUnits };
+  for (const unitId of removedSet) {
+    delete updatedUnits[unitId];
+  }
+  for (const [unitId, champion] of Object.entries(attackerHits.updatedChampions)) {
+    updatedUnits[unitId] = champion;
+  }
+  for (const [unitId, champion] of Object.entries(defenderHits.updatedChampions)) {
+    updatedUnits[unitId] = champion;
+  }
+
+  const updatedHex = {
+    ...currentHex,
+    occupants: {
+      ...currentHex.occupants,
+      [participants[0]]: attackers.filter((unitId) => !removedSet.has(unitId)),
+      [participants[1]]: defenders.filter((unitId) => !removedSet.has(unitId))
+    }
+  };
+
+  nextBoard = {
+    ...nextBoard,
+    units: updatedUnits,
+    hexes: {
+      ...nextBoard.hexes,
+      [hexKey]: updatedHex
+    }
+  };
+  nextUnits = updatedUnits;
+  nextState = {
+    ...nextState,
+    board: nextBoard,
+    rngState
+  };
+  if (uniqueChampionIds.length > 0) {
+    nextState = removeChampionModifiers(nextState, uniqueChampionIds);
+  }
+
+  const killedChampions = [
+    ...defenderHits.killedChampions,
+    ...attackerHits.killedChampions
+  ];
+  if (killedChampions.length > 0) {
+    nextState = applyChampionDeathEffects(nextState, killedChampions);
+  }
+
+  if (defenderHits.killedChampions.length > 0) {
+    nextState = applyChampionKillRewards(nextState, {
+      killerPlayerId: participants[0],
+      victimPlayerId: participants[1],
+      killedChampions: defenderHits.killedChampions,
+      bounty: defenderHits.bounty,
+      hexKey,
+      source: "battle"
+    });
+  }
+  if (attackerHits.killedChampions.length > 0) {
+    nextState = applyChampionKillRewards(nextState, {
+      killerPlayerId: participants[1],
+      victimPlayerId: participants[0],
+      killedChampions: attackerHits.killedChampions,
+      bounty: attackerHits.bounty,
+      hexKey,
+      source: "battle"
+    });
+  }
+
+  nextBoard = nextState.board;
+  nextUnits = nextState.board.units;
+
+  const postRoundHex = nextBoard.hexes[hexKey];
+  const remainingAttackers = postRoundHex?.occupants[participants[0]] ?? [];
+  const remainingDefenders = postRoundHex?.occupants[participants[1]] ?? [];
+  let endReason: CombatEndReason | null = null;
+  if (remainingAttackers.length === 0 || remainingDefenders.length === 0) {
+    endReason = "eliminated";
+  } else if (retreatAfterRound) {
+    nextState = applyRetreatMoves(nextState, hexKey, retreatPlans);
+    endReason = "retreated";
+  }
+
+  return {
+    state: nextState,
+    roundState: { round: battleRound + 1, staleRounds, bodyguardUsed },
+    endReason,
+    resolvedRound: battleRound
+  };
+};
+
+const finalizeCombat = (
+  state: GameState,
+  hexKey: HexKey,
+  participants: [PlayerID, PlayerID],
+  endReason: CombatEndReason,
+  battleRound: number
+): GameState => {
+  const finalHex = state.board.hexes[hexKey];
+  const finalAttackers = finalHex?.occupants[participants[0]] ?? [];
+  const finalDefenders = finalHex?.occupants[participants[1]] ?? [];
+  const winnerPlayerId =
+    finalAttackers.length > 0 && finalDefenders.length === 0
+      ? participants[0]
+      : finalDefenders.length > 0 && finalAttackers.length === 0
+        ? participants[1]
+        : null;
+
+  const endContext: CombatEndContext = {
+    hexKey,
+    attackerPlayerId: participants[0],
+    defenderPlayerId: participants[1],
+    round: battleRound,
+    reason: endReason,
+    winnerPlayerId,
+    attackers: finalAttackers,
+    defenders: finalDefenders
+  };
+
+  let nextState = emit(state, {
+    type: "combat.end",
+    payload: {
+      hexKey,
+      reason: endReason,
+      winnerPlayerId,
+      attackers: {
+        playerId: participants[0],
+        ...summarizeUnits(finalAttackers, state.board.units)
+      },
+      defenders: {
+        playerId: participants[1],
+        ...summarizeUnits(finalDefenders, state.board.units)
+      }
+    }
+  });
+
+  nextState = runModifierEvents(
+    nextState,
+    getCombatModifiers(nextState, hexKey),
+    (hooks) => hooks.afterBattle,
+    endContext
+  );
+
+  return expireEndOfBattleModifiers(nextState, hexKey);
 };
 
 export const resolveBattleAtHex = (
@@ -762,47 +1292,9 @@ export const resolveBattleAtHex = (
     return state;
   }
 
-  const retreatPlans: Array<{ playerId: PlayerID; destination: HexKey }> = [];
-  if (retreatChoices) {
-    for (const playerId of participants) {
-      const edgeKey = retreatChoices[playerId];
-      if (!edgeKey) {
-        continue;
-      }
-      const bridge = state.board.bridges[edgeKey];
-      if (!bridge || bridge.locked) {
-        continue;
-      }
-      const destination = getRetreatDestination(hexKey, edgeKey);
-      if (!destination || !canRetreatToHex(state, playerId, destination)) {
-        continue;
-      }
-      const player = state.players.find((entry) => entry.id === playerId);
-      if (!player || player.resources.mana < 1) {
-        continue;
-      }
-      retreatPlans.push({ playerId, destination });
-    }
-  }
-
-  let nextState: GameState = state;
-  if (retreatPlans.length > 0) {
-    const retreating = new Set(retreatPlans.map((plan) => plan.playerId));
-    nextState = {
-      ...nextState,
-      players: nextState.players.map((player) =>
-        retreating.has(player.id)
-          ? {
-              ...player,
-              resources: {
-                ...player.resources,
-                mana: Math.max(0, player.resources.mana - 1)
-              }
-            }
-          : player
-      )
-    };
-  }
+  const retreatResult = buildRetreatPlans(state, hexKey, participants, retreatChoices);
+  const retreatPlans = retreatResult.plans;
+  let nextState: GameState = retreatResult.state;
 
   const initialAttackers = hex.occupants[participants[0]] ?? [];
   const initialDefenders = hex.occupants[participants[1]] ?? [];
@@ -1261,6 +1753,10 @@ export const resolveCombatRetreatBlock = (
   state: GameState,
   block: Extract<BlockState, { type: "combat.retreat" }>
 ): GameState => {
+  const participants: [PlayerID, PlayerID] = [
+    block.payload.attackers.playerId,
+    block.payload.defenders.playerId
+  ];
   const retreatChoices: Record<PlayerID, EdgeKey> = {};
   for (const [playerId, choice] of Object.entries(block.payload.choices)) {
     if (!choice || choice === "stay") {
@@ -1269,7 +1765,74 @@ export const resolveCombatRetreatBlock = (
     retreatChoices[playerId] = choice;
   }
 
-  return resolveBattleAtHex(state, block.payload.hexKey, retreatChoices);
+  const retreatResult = buildRetreatPlans(
+    state,
+    block.payload.hexKey,
+    participants,
+    retreatChoices
+  );
+  let nextState: GameState = {
+    ...retreatResult.state,
+    blocks: undefined
+  };
+  const retreatPlans = retreatResult.plans;
+  let roundState: CombatRoundState = {
+    round: block.payload.round,
+    staleRounds: block.payload.staleRounds,
+    bodyguardUsed: block.payload.bodyguardUsed
+  };
+
+  if (roundState.round === 1) {
+    nextState = emitCombatStart(nextState, block.payload.hexKey, participants);
+  }
+
+  let roundResult = resolveCombatRoundAtHex(
+    nextState,
+    block.payload.hexKey,
+    participants,
+    roundState,
+    retreatPlans
+  );
+  nextState = roundResult.state;
+  roundState = roundResult.roundState;
+  let endReason = roundResult.endReason;
+  let lastResolvedRound = roundResult.resolvedRound;
+
+  while (!endReason) {
+    const nextBlock = createCombatRetreatBlock(nextState, block.payload.hexKey, {
+      participants,
+      roundState
+    });
+    if (nextBlock) {
+      return {
+        ...nextState,
+        blocks: nextBlock
+      };
+    }
+
+    roundResult = resolveCombatRoundAtHex(
+      nextState,
+      block.payload.hexKey,
+      participants,
+      roundState,
+      []
+    );
+    nextState = roundResult.state;
+    roundState = roundResult.roundState;
+    endReason = roundResult.endReason;
+    lastResolvedRound = roundResult.resolvedRound;
+  }
+
+  return finalizeCombat(
+    {
+      ...nextState,
+      blocks: undefined
+    },
+    block.payload.hexKey,
+    participants,
+    endReason,
+    lastResolvedRound
+  );
 };
 
 export const resolveImmediateBattles = (state: GameState): GameState => {

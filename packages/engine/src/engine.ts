@@ -269,10 +269,9 @@ export const runUntilBlocked = (state: GameState): GameState => {
         return nextState;
       }
       nextState = resolveCombatRetreatBlock(nextState, nextState.blocks);
-      nextState = {
-        ...nextState,
-        blocks: undefined
-      };
+      if (nextState.blocks?.type === "combat.retreat") {
+        return nextState;
+      }
       continue;
     }
 

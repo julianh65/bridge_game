@@ -121,6 +121,7 @@ export const CombatRetreatOverlay = ({
             <p className="combat-overlay__eyebrow">Retreat decision</p>
             <h2 className="combat-overlay__title">{hexLabel ?? combat.hexKey}</h2>
             <div className="combat-overlay__meta">
+              <span className="combat-overlay__badge">Round {combat.round}</span>
               <span className="combat-overlay__badge">Retreat costs 1 mana</span>
             </div>
           </div>

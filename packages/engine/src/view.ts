@@ -108,6 +108,7 @@ const buildCombatRetreatView = (
 ): CombatRetreatPublicView => {
   return {
     hexKey: block.payload.hexKey,
+    round: block.payload.round,
     attackers: block.payload.attackers,
     defenders: block.payload.defenders,
     waitingForPlayerIds: block.waitingFor,

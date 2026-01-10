@@ -21,12 +21,13 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-- (owner: agent4) Enable mid-combat retreat prompts between rounds (round-by-round combat retreat blocks + UI round label); scope combat block flow + retreat overlay; files: `packages/engine/src/combat.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `implementation_plan.md`. (status: in progress)
+None.
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
 ## Audits
 - Audited combat/siege UI flow for stuck states; found no missing popups, but flagged stall risks (combat roll sync and combat retreat blocks wait indefinitely on absent players). Added a plan item for combat failsafes. (Files: `packages/engine/src/engine.ts`, `packages/engine/src/combat.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CombatOverlay.tsx`, `apps/server/src/server.ts`, `implementation_plan.md`.) (owner: agent1)
+- Deepened combat flow audit: identified additional stall risks where non-combat blocks wait indefinitely (action declarations, market bids/roll-offs, collection choices, quiet study, scout report) and non-participants are locked by the combat overlay until combatants advance. Added a plan item for block timeouts/host override. (Files: `packages/engine/src/engine.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/market.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/card-effects.ts`, `apps/web/src/components/CombatOverlay.tsx`, `implementation_plan.md`.) (owner: agent1)
 ## Test fixes
 - Updated engine tests for market bid winners, Quiet Study hand-size behavior, and setup flow expectations (deck preview gating + card totals) to match current config/flow. (Files: `packages/engine/src/market.test.ts`, `packages/engine/src/round-flow.test.ts`, `packages/engine/src/setup-flow.test.ts`.) (owner: agent1)
 - Investigated engine test failures: `action-flow.test.ts` fails in `pickNonAdjacentMinePair` because 2-player maps only place 2 mines and can be adjacent, so the test can't find a non-adjacent pair (seed 123). (owner: agent2)
@@ -38,6 +39,7 @@
 - Added Attrition card-effect coverage for force loss + champion damage; marked the plan checkbox complete. (Files: `packages/engine/src/card-effects.attrition.test.ts`, `implementation_plan.md`.) (owner: agent5)
 
 ## Fourth Playthrough progress
+- Enabled mid-combat retreat prompts by tracking combat round state in retreat blocks, reissuing retreat prompts between rounds, and adding a round badge to the retreat overlay; marked the plan item complete. (Files: `packages/engine/src/combat.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Formatted the champion HP chit as current/max and reduced the text size to fit. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
 - Fixed GameScreen crash (multiPathTargets used before initialization) by moving the memo above target validation hooks. (Files: `apps/web/src/components/GameScreen.tsx`.) (owner: agent4)
 - Swapped command center table meta text from seat numbers to faction names for clearer at-a-glance info. (Files: `apps/web/src/components/GameScreenSidebar.tsx`, `implementation_plan.md`.) (owner: agent3)
