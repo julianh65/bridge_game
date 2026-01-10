@@ -1043,7 +1043,7 @@ export const GameScreen = ({
     marketWinner.cardIndex === lastMarketCardIndex;
   const shouldForceMarketOverlay = Boolean(isLastMarketWinner);
   const showMarketOverlay =
-    !actionRevealInFlight &&
+    !overlayBlockers &&
     ((isMarketPhase && (isMarketOverlayOpen || shouldForceMarketOverlay)) ||
       shouldHoldMarketOverlay);
   const canToggleMarketOverlay = isMarketPhase && !shouldForceMarketOverlay;

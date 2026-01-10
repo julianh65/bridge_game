@@ -478,7 +478,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] I STILL don't see mid combat round retreat options, like i see the initial retreat options but not during combat, this is very important to get right, make sure that there are no bugs and most importantly that this cannot enter a bad state with the UI or something such that the game halts (combat retreat blocks now re-prompt each round with round label)
 - [x] Sabotage bridge doesn't let me select a bridge to destroy
 - [x] the retreat to unoccupied is correct, but one small amendment, if the cell is occupied by their own forces they should be able to retreat there
-- [ ] during capital sieges the market overlay is shown in the background
+- [x] during capital sieges the market overlay is shown in the background
 
 
 ### Refactor Milestone

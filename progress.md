@@ -41,6 +41,7 @@
 
 ## Fourth Playthrough progress
 - Synced dice-roll overlays with action reveal playback by queueing rollGold logs until the reveal overlay is visible; marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/DiceRollOverlay.tsx`, `implementation_plan.md`.) (owner: agent3)
+- Hid the market overlay while combat/retreat overlays are active so capital sieges no longer show the market UI in the background; marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent3)
 - Enabled mid-combat retreat prompts by tracking combat round state in retreat blocks, reissuing retreat prompts between rounds, and adding a round badge to the retreat overlay; marked the plan item complete. (Files: `packages/engine/src/combat.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Formatted the champion HP chit as current/max and reduced the text size to fit. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
 - Fixed GameScreen crash (multiPathTargets used before initialization) by moving the memo above target validation hooks. (Files: `apps/web/src/components/GameScreen.tsx`.) (owner: agent4)
