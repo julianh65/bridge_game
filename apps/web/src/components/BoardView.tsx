@@ -1762,6 +1762,9 @@ export const BoardView = ({
                 const hpRadius = 5;
                 const hpCx = token.cx + tokenRadius - 3.5;
                 const hpCy = token.cy - tokenRadius + 3.5;
+                const hpLabel = token.champion
+                  ? `${token.champion.hp}/${token.champion.maxHp}`
+                  : "";
                 const abilityCount = token.champion
                   ? getAbilityUseTotal(token.champion.abilityUses)
                   : 0;
@@ -1817,7 +1820,7 @@ export const BoardView = ({
                           x={hpCx}
                           y={hpCy + 0.4}
                         >
-                          {token.champion.hp}
+                          {hpLabel}
                         </text>
                       </g>
                     ) : null}
