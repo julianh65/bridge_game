@@ -594,6 +594,7 @@ export type PlayerPublicView = {
 
 export type PlayerPrivateView = {
   playerId: PlayerID;
+  movedThisRound: boolean;
   hand: CardInstanceID[];
   handCards: CardInstance[];
   deckCounts: {

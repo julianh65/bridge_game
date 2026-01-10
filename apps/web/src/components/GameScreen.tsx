@@ -499,6 +499,15 @@ export const GameScreen = ({
     }
     return isOccupiedByPlayer(centerHex, localPlayerId);
   }, [localPlayer?.factionId, localPlayerId, centerHexKey, view.public.board.hexes]);
+  const hasAerialTailwind = useMemo(() => {
+    if (!localPlayerId || localPlayer?.factionId !== "aerial") {
+      return false;
+    }
+    if (!view.private) {
+      return false;
+    }
+    return !view.private.movedThisRound;
+  }, [localPlayer?.factionId, localPlayerId, view.private?.movedThisRound]);
 
   const linkedNeighborsByHex = useMemo(() => {
     const map = new Map<string, Set<string>>();
@@ -2607,6 +2616,7 @@ export const GameScreen = ({
     const validTargets = new Set<string>();
     const previewEdges = new Set<string>();
     const startTargets = new Set<string>();
+    const tailwindBonus = hasAerialTailwind ? 1 : 0;
     const board = view.public.board;
     const boardHexes = board.hexes;
     const hexKeys = Object.keys(boardHexes);
@@ -2834,6 +2844,25 @@ export const GameScreen = ({
           continue;
         }
         validTargets.add(neighbor);
+      }
+      if (tailwindBonus > 0) {
+        for (const mid of getMoveNeighbors(marchFrom)) {
+          if (!canMoveBetween(marchFrom, mid, requiresBridge)) {
+            continue;
+          }
+          if (hasEnemy(mid)) {
+            continue;
+          }
+          for (const next of getMoveNeighbors(mid)) {
+            if (next === marchFrom) {
+              continue;
+            }
+            if (!canMoveBetween(mid, next, requiresBridge)) {
+              continue;
+            }
+            validTargets.add(next);
+          }
+        }
       }
     }
 
@@ -3080,12 +3109,17 @@ export const GameScreen = ({
         moveStackEffect && moveStackEffect.requiresBridge === false
           ? false
           : targetSpec.requiresBridge !== false;
-      const maxDistance =
+      const baseMaxDistance =
         isEdgeMove && typeof moveStackEffect?.maxDistance === "number"
           ? moveStackEffect.maxDistance
           : typeof targetSpec.maxDistance === "number"
             ? targetSpec.maxDistance
             : null;
+      const pathTailwindBonus =
+        tailwindBonus > 0 && (cardTargetKind !== "multiPath" || multiPathTargets.length === 0)
+          ? tailwindBonus
+          : 0;
+      const maxDistance = baseMaxDistance === null ? null : baseMaxDistance + pathTailwindBonus;
       const stopOnOccupied =
         moveStackEffect?.stopOnOccupied === true || targetSpec.stopOnOccupied === true;
       const canStart = maxDistance === null || maxDistance >= 1;
@@ -3657,7 +3691,9 @@ export const GameScreen = ({
     edgeMoveMode,
     targetRecord,
     selectedMultiEdgeKeys,
-    isBridgePivotCard
+    isBridgePivotCard,
+    hasAerialTailwind,
+    multiPathTargets
   ]);
   const boardValidHexKeys = useMemo(() => {
     if (isCombatRetreatWaiting) {

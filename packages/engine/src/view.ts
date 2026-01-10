@@ -13,7 +13,7 @@ import type {
 } from "./types";
 import { getControlBonus } from "./modifiers";
 import { getControlTotals } from "./round-flow";
-import { CARD_SCALING_COUNTERS_FLAG } from "./player-flags";
+import { CARD_SCALING_COUNTERS_FLAG, MOVED_THIS_ROUND_FLAG } from "./player-flags";
 
 type SetupBlockState = Extract<
   BlockState,
@@ -280,6 +280,7 @@ export const buildView = (state: GameState, viewerPlayerId: PlayerID | null): Ga
     private: viewer
       ? {
           playerId: viewer.id,
+          movedThisRound: Boolean(viewer.flags[MOVED_THIS_ROUND_FLAG]),
           hand: viewer.deck.hand,
           handCards: mapCardInstances(state, viewer.deck.hand),
           deckCounts: {
