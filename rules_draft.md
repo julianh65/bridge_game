@@ -515,7 +515,7 @@ Zap ×1
 Cost: 1 mana
 Init: 20 / 100
 Type: Order
-Deal 1 damage to any Champion within 1 cell of a cell you occupy.
+Deal 1 damage to a Champion within distance 1 of one of your Champions.
 22.2 Faction Unique Starter Spells (1 each)
 Bastion — Hold the Line
 Cost: 1 mana

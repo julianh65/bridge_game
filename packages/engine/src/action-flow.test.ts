@@ -125,6 +125,19 @@ const pickNonAdjacentMinePair = (board: BoardState): [HexKey, HexKey] => {
   return [mines[0].key, mines[1].key];
 };
 
+const pickAdjacentMinePair = (board: BoardState): [HexKey, HexKey] | null => {
+  const mines = Object.values(board.hexes).filter((hex) => hex.tile === "mine");
+  const mineKeys = new Set(mines.map((hex) => hex.key));
+  for (const mine of mines) {
+    for (const neighbor of neighborHexKeys(mine.key)) {
+      if (mineKeys.has(neighbor)) {
+        return [mine.key, neighbor];
+      }
+    }
+  }
+  return null;
+};
+
 const buildLinearPath = (start: HexKey, steps: number, board: BoardState): HexKey[] => {
   const neighbors = neighborHexKeys(start).filter((key) => Boolean(board.hexes[key]));
   const first = neighbors[0];
@@ -1136,6 +1149,100 @@ describe("action flow", () => {
     let { state } = setupToActionPhase({ p1: "prospect" });
     const [fromMine, toMine] = pickNonAdjacentMinePair(state.board);
 
+    state = {
+      ...state,
+      board: addForcesToHex(state.board, "p1", fromMine, 1)
+    };
+    state = {
+      ...state,
+      board: addForcesToHex(state.board, "p1", toMine, 1)
+    };
+
+    state = applyCommand(
+      state,
+      {
+        type: "SubmitAction",
+        payload: { kind: "basic", action: { kind: "march", from: fromMine, to: toMine } }
+      },
+      "p1"
+    );
+    state = applyCommand(state, { type: "SubmitAction", payload: { kind: "done" } }, "p2");
+
+    state = runUntilBlocked(state);
+
+    const fromHex = state.board.hexes[fromMine];
+    const toHex = state.board.hexes[toMine];
+    expect(fromHex.occupants["p1"]?.length ?? 0).toBe(0);
+    expect(toHex.occupants["p1"]?.length ?? 0).toBe(2);
+  });
+
+  it("allows Prospect deep tunnels to march between adjacent occupied mines without bridges", () => {
+    let { state } = setupToActionPhase({ p1: "prospect" });
+    let board = state.board;
+    let minePair = pickAdjacentMinePair(board);
+
+    if (!minePair) {
+      const candidate = Object.values(board.hexes).find((hex) => {
+        if (hex.tile !== "normal") {
+          return false;
+        }
+        if (countPlayersOnHex(hex) > 0) {
+          return false;
+        }
+        return neighborHexKeys(hex.key).some((neighbor) => {
+          const neighborHex = board.hexes[neighbor];
+          if (!neighborHex || neighborHex.tile !== "normal") {
+            return false;
+          }
+          if (countPlayersOnHex(neighborHex) > 0) {
+            return false;
+          }
+          return true;
+        });
+      });
+
+      if (!candidate) {
+        throw new Error("no adjacent normal hex pair for deep tunnels test");
+      }
+
+      const neighbor = neighborHexKeys(candidate.key).find((neighborKey) => {
+        const neighborHex = board.hexes[neighborKey];
+        if (!neighborHex || neighborHex.tile !== "normal") {
+          return false;
+        }
+        if (countPlayersOnHex(neighborHex) > 0) {
+          return false;
+        }
+        return true;
+      });
+
+      if (!neighbor) {
+        throw new Error("no adjacent normal hex neighbor for deep tunnels test");
+      }
+
+      board = {
+        ...board,
+        hexes: {
+          ...board.hexes,
+          [candidate.key]: { ...board.hexes[candidate.key], tile: "mine" },
+          [neighbor]: { ...board.hexes[neighbor], tile: "mine" }
+        }
+      };
+      minePair = [candidate.key, neighbor];
+    }
+
+    if (!minePair) {
+      throw new Error("no adjacent mines available for deep tunnels test");
+    }
+
+    const [fromMine, toMine] = minePair;
+    const bridgeKey = getBridgeKey(fromMine, toMine);
+    if (board.bridges[bridgeKey]) {
+      const { [bridgeKey]: _removed, ...bridges } = board.bridges;
+      board = { ...board, bridges };
+    }
+
+    state = { ...state, board };
     state = {
       ...state,
       board: addForcesToHex(state.board, "p1", fromMine, 1)

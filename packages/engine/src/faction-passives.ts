@@ -97,6 +97,32 @@ const createProspectDeepTunnelsModifier = (playerId: PlayerID): Modifier => ({
   ownerPlayerId: playerId,
   duration: { type: "permanent" },
   hooks: {
+    getMoveRequiresBridge: ({ modifier, playerId: movingPlayerId, from, to, path, state }, current) => {
+      if (!current) {
+        return current;
+      }
+      if (path.length !== 2) {
+        return current;
+      }
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== movingPlayerId) {
+        return current;
+      }
+      const fromHex = state.board.hexes[from];
+      const toHex = state.board.hexes[to];
+      if (!fromHex || !toHex) {
+        return current;
+      }
+      if (fromHex.tile !== "mine" || toHex.tile !== "mine") {
+        return current;
+      }
+      if (!isOccupiedByPlayer(fromHex, movingPlayerId)) {
+        return current;
+      }
+      if (!isOccupiedByPlayer(toHex, movingPlayerId)) {
+        return current;
+      }
+      return false;
+    },
     getMoveAdjacency: ({ modifier, playerId: movingPlayerId, from, to, state }, current) => {
       if (current) {
         return current;
