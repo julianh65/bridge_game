@@ -45,6 +45,7 @@
 - Clarified forge collection choices with a divider and larger draft heading to distinguish from reforge picks; marked the plan item complete. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2) (Overlap note: commit included pre-staged zap-range test updates in `packages/engine/src/action-flow.test.ts`.)
 - Restyled the victory screen for the dark theme so the modal matches in-game palette. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
 - Unclipped combat hit markers by letting combat unit tokens overflow so HP loss markers remain readable; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
+- Restricted combat retreat destinations to empty hexes and added coverage for retreat option filtering; marked the plan item complete. (Files: `packages/engine/src/combat.ts`, `packages/engine/src/combat.test.ts`, `implementation_plan.md`.) (owner: agent2)
 - Biased special tile placement away from board edges by adding a small edge-distance score in special tile selection. (Files: `packages/engine/src/board-generation.ts`, `implementation_plan.md`.) (owner: agent3)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)

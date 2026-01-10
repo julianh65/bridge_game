@@ -602,11 +602,7 @@ const canRetreatToHex = (state: GameState, playerId: PlayerID, hexKey: HexKey): 
   if (!hex) {
     return false;
   }
-  const occupants = getPlayerIdsOnHex(hex);
-  if (occupants.length < 2) {
-    return true;
-  }
-  return occupants.includes(playerId);
+  return getPlayerIdsOnHex(hex).length === 0;
 };
 
 const getRetreatEdgesForPlayer = (

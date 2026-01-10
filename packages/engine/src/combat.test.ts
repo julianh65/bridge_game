@@ -3,7 +3,12 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import * as shared from "@bridgefront/shared";
 
 import { createBaseBoard } from "./board-generation";
-import { resolveBattleAtHex, resolveImmediateBattles, resolveSieges } from "./combat";
+import {
+  createCombatRetreatBlock,
+  resolveBattleAtHex,
+  resolveImmediateBattles,
+  resolveSieges
+} from "./combat";
 import { getBridgeKey } from "./board";
 import { applyChampionDeployment } from "./champions";
 import { emit } from "./events";
@@ -1003,6 +1008,71 @@ describe("combat resolution", () => {
     const remaining = resolved.modifiers.map((modifier) => modifier.id).sort();
 
     expect(remaining).toEqual(["m2", "m3"]);
+  });
+
+  it("filters combat retreat options to empty hexes", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    const occupiedHex = "1,0";
+    const emptyHex = "0,1";
+    const occupiedEdge = getBridgeKey(hexKey, occupiedHex);
+    const emptyEdge = getBridgeKey(hexKey, emptyHex);
+
+    board.hexes[hexKey] = {
+      ...board.hexes[hexKey],
+      occupants: {
+        p1: ["f1"],
+        p2: ["f2"]
+      }
+    };
+    board.hexes[occupiedHex] = {
+      ...board.hexes[occupiedHex],
+      occupants: {
+        p1: ["f3"]
+      }
+    };
+    board.units = {
+      f1: { id: "f1", ownerPlayerId: "p1", kind: "force", hex: hexKey },
+      f2: { id: "f2", ownerPlayerId: "p2", kind: "force", hex: hexKey },
+      f3: { id: "f3", ownerPlayerId: "p1", kind: "force", hex: occupiedHex }
+    };
+    board.bridges[occupiedEdge] = {
+      key: occupiedEdge,
+      from: hexKey,
+      to: occupiedHex,
+      ownerPlayerId: "p1"
+    };
+    board.bridges[emptyEdge] = {
+      key: emptyEdge,
+      from: hexKey,
+      to: emptyHex,
+      ownerPlayerId: "p1"
+    };
+
+    const state = {
+      ...base,
+      phase: "round.action",
+      blocks: undefined,
+      rngState: createRngState(11),
+      board,
+      players: base.players.map((player) => ({
+        ...player,
+        resources: {
+          ...player.resources,
+          mana: 1
+        }
+      }))
+    };
+
+    const block = createCombatRetreatBlock(state, hexKey);
+
+    expect(block?.payload.availableEdges.p1).toEqual([emptyEdge]);
+    expect(block?.payload.availableEdges.p2).toEqual([emptyEdge]);
   });
 
   it("retreats after one round and spends mana", () => {
