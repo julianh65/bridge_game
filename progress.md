@@ -21,7 +21,7 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-- (none)
+- (owner: agent3) [status: in progress] Restyle the victory screen for the dark game theme; files: `apps/web/src/styles.css`, `implementation_plan.md`, `progress.md`.
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -42,7 +42,7 @@
 - Applied the dark game theme to the debug map screen by toggling the game theme class for debug view. (Files: `apps/web/src/App.tsx`, `implementation_plan.md`.) (owner: agent3) (Overlap note: `progress.md` still has an in-progress entry for the same task.)
 - Added a Prospect deep tunnels test for adjacent occupied mines and let mine-to-mine marches ignore bridges so adjacent mines can connect; marked the plan item complete. (Files: `packages/engine/src/faction-passives.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent5)
 - Zap now requires a friendly champion within distance 1 to target a champion; rules text + tests updated and checklist marked complete. (Files: `packages/engine/src/content/cards/starter.ts`, `packages/engine/src/action-flow.test.ts`, `rules_draft.md`, `implementation_plan.md`.) (owner: agent1)
-- Clarified forge collection choices with a divider and larger draft heading to distinguish from reforge picks; marked the plan item complete. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
+- Clarified forge collection choices with a divider and larger draft heading to distinguish from reforge picks; marked the plan item complete. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2) (Overlap note: commit included pre-staged zap-range test updates in `packages/engine/src/action-flow.test.ts`.)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Tightened the setup lobby/deck preview layout so the player panel stays narrow and the main panels fill more width. (File: `apps/web/src/styles.css`.) (owner: agent2)
