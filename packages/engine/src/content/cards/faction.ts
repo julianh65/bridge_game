@@ -59,7 +59,7 @@ export const AIR_DROP: CardDef = {
     allowCapital: false,
     ignoresBridges: true
   },
-  effects: [{ kind: "deployForces", count: 3, ignoresBridges: true }],
+  effects: [{ kind: "deployForces", count: 2, ignoresBridges: true }],
   factionId: "aerial"
 };
 
@@ -259,10 +259,10 @@ export const WORMHOLE_ARTIFICER: CardDef = {
     occupied: true
   },
   champion: {
-    hp: 5,
+    hp: 4,
     attackDice: 2,
     hitFaces: 3,
-    bounty: 3,
+    bounty: 4,
     goldCostByChampionCount: [1, 3, 5]
   },
   factionId: "gatewright"

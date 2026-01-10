@@ -150,7 +150,7 @@ export const ZAP: CardDef = {
   type: "Order",
   deck: "starter",
   tags: ["starter"],
-  cost: { mana: 1 },
+  cost: { mana: 1, gold: 1 },
   initiative: 220,
   burn: false,
   targetSpec: {

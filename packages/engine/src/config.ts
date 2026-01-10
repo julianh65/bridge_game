@@ -2,20 +2,20 @@ import type { GameConfig } from "./types";
 
 export const DEFAULT_CONFIG: GameConfig = {
   MAX_MANA: 6,
-  START_GOLD: 4,
-  BASE_INCOME: 0,
+  START_GOLD: 3,
+  BASE_INCOME: 2,
   HAND_LIMIT: 10,
-  HAND_DRAW_SIZE: 7,
+  HAND_DRAW_SIZE: 6,
   CHAMPION_LIMIT: 3,
-  ROUNDS_MAX: 10,
+  ROUNDS_MAX: 12,
   VP_TO_WIN: 6,
-  ACTION_REVEAL_DURATION_MS: 2500,
+  ACTION_REVEAL_DURATION_MS: 2700,
   ACTION_REVEAL_HIGHLIGHT_PAUSE_MS: 1500,
-  MARKET_ROLLOFF_DURATION_MS: 1500,
+  MARKET_ROLLOFF_DURATION_MS: 900,
   COMBAT_ROLL_LOCK_MS: 800,
-  COMBAT_ROLL_ASSIGN_MS: 1300,
-  COMBAT_ROLL_DONE_MS: 1900,
-  COMBAT_AUTO_CLOSE_MS: 2200,
+  COMBAT_ROLL_ASSIGN_MS: 1000,
+  COMBAT_ROLL_DONE_MS: 1300,
+  COMBAT_AUTO_CLOSE_MS: 2300,
   basicActionFactionOrder: ["aerial", "veil", "cipher", "prospect", "gatewright", "bastion"],
   boardRadiusByPlayerCount: {
     2: 2,
@@ -26,8 +26,8 @@ export const DEFAULT_CONFIG: GameConfig = {
   },
   tileCountsByPlayerCount: {
     2: { mines: 2, forges: 1, center: 1, randomBridges: 5 },
-    3: { mines: 2, forges: 1, center: 1, randomBridges: 5 },
-    4: { mines: 3, forges: 2, center: 1, randomBridges: 8 },
+    3: { mines: 3, forges: 1, center: 1, randomBridges: 5 },
+    4: { mines: 4, forges: 2, center: 1, randomBridges: 8 },
     5: { mines: 4, forges: 2, center: 1, randomBridges: 8 },
     6: { mines: 5, forges: 3, center: 1, randomBridges: 8 }
   },
@@ -54,11 +54,11 @@ export const DEFAULT_CONFIG: GameConfig = {
     maxAttempts: 50,
     topK: 5,
     mineValueWeights: [
-      { value: 3, weight: 25 },
+      { value: 3, weight: 28},
       { value: 4, weight: 35 },
       { value: 5, weight: 25 },
       { value: 6, weight: 10 },
-      { value: 7, weight: 5 }
+      { value: 7, weight: 2 }
     ]
   },
   ageByRound: {
