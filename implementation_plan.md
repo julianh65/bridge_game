@@ -459,7 +459,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 	- [ ] after this as a seperate task but similar, audit the different champion cards to make sure they all work as intended
 		- [x] Add engine test coverage for Wormhole Artificer +1 move distance when moving alone.
 		- [x] Add engine test coverage for Archivist Prime attack dice scaling with cards played.
-		- [ ] Add engine test coverage for Bannerman/Center Bannerman control bonuses.
+		- [x] Add engine test coverage for Bannerman/Center Bannerman control bonuses.
 		- [ ] Audit remaining champion abilities against rules text for gaps.
 - [ ] the dice cards need to sync up the dice roll with the action reveal phase to show everyone the dice rolling and what the result is, that is the ones that are like dice roll to see what you get from the card
 - [x] clicking on the draw pile or discard or burned or scrapped icons should take the player to the deck screen

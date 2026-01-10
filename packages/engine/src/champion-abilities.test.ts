@@ -16,6 +16,7 @@ import { getCardDef } from "./content/cards";
 import { createNewGame } from "./engine";
 import { applyModifierQuery, getCombatModifiers, runModifierEvents } from "./modifiers";
 import { incrementCardsPlayedThisRound } from "./player-flags";
+import { applyScoring } from "./round-flow";
 import { applyChampionKillRewards } from "./rewards";
 import type { GameEvent, GameState } from "./types";
 import { addChampionToHex, addForcesToHex } from "./units";
@@ -175,6 +176,88 @@ describe("champion abilities", () => {
     });
 
     expect(path).toEqual([fromHex, midHex, toHex]);
+  });
+
+  it("adds control bonus for Bannerman while on the board", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const bannerman = addChampionToHex(board, "p1", "1,0", {
+      cardDefId: "champion.power.bannerman",
+      hp: 3,
+      attackDice: 2,
+      hitFaces: 2,
+      bounty: 5
+    });
+
+    let state: GameState = {
+      ...base,
+      board: bannerman.board
+    };
+    state = applyChampionDeployment(state, bannerman.unitId, "champion.power.bannerman", "p1");
+
+    const next = applyScoring(state);
+    const p1 = next.players.find((player) => player.id === "p1");
+
+    expect(p1?.vp.control).toBe(1);
+  });
+
+  it("only grants Center Bannerman control bonus while on the center", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const onCenter = addChampionToHex(board, "p1", "0,0", {
+      cardDefId: "champion.age3.center_bannerman",
+      hp: 3,
+      attackDice: 2,
+      hitFaces: 2,
+      bounty: 5
+    });
+
+    let stateOnCenter: GameState = {
+      ...base,
+      board: onCenter.board
+    };
+    stateOnCenter = applyChampionDeployment(
+      stateOnCenter,
+      onCenter.unitId,
+      "champion.age3.center_bannerman",
+      "p1"
+    );
+
+    const scoredCenter = applyScoring(stateOnCenter);
+    const p1Center = scoredCenter.players.find((player) => player.id === "p1");
+
+    expect(p1Center?.vp.control).toBe(2);
+
+    const offCenterBoard = createBaseBoard(1);
+    const offCenter = addChampionToHex(offCenterBoard, "p1", "1,0", {
+      cardDefId: "champion.age3.center_bannerman",
+      hp: 3,
+      attackDice: 2,
+      hitFaces: 2,
+      bounty: 5
+    });
+
+    let stateOffCenter: GameState = {
+      ...base,
+      board: offCenter.board
+    };
+    stateOffCenter = applyChampionDeployment(
+      stateOffCenter,
+      offCenter.unitId,
+      "champion.age3.center_bannerman",
+      "p1"
+    );
+
+    const scoredOffCenter = applyScoring(stateOffCenter);
+    const p1OffCenter = scoredOffCenter.players.find((player) => player.id === "p1");
+
+    expect(p1OffCenter?.vp.control).toBe(0);
   });
 
   it("uses bodyguard hit assignment when forces protect a champion", () => {

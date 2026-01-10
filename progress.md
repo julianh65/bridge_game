@@ -21,7 +21,7 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-- (none)
+- (owner: agent2) Add mine-only collection popup/ack flow so mine income shows during collection even with no prompts; scope engine collection block + UI submit affordance; files: `packages/engine/src/round-flow.ts`, `packages/engine/src/round-flow.test.ts`, `apps/web/src/components/CollectionPanel.tsx`, `implementation_plan.md`. (status: in progress)
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -55,6 +55,7 @@
 - Biased special tile placement away from board edges by adding a small edge-distance score in special tile selection. (Files: `packages/engine/src/board-generation.ts`, `implementation_plan.md`.) (owner: agent3)
 - Always show the combat retreat prompt in the combat overlay (removed hand-panel retreat UI) so it appears regardless of hand visibility; marked the urgent retreat item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
 - Added champion audit tests for Wormhole Artificer movement bonus and Archivist Prime attack-dice scaling; marked audit subitems in the plan. (Files: `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.) (owner: agent3)
+- Added Bannerman/Center Bannerman control bonus tests (including off-center case) and marked the audit subitem complete. (Files: `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.) (owner: agent3)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Tightened the setup lobby/deck preview layout so the player panel stays narrow and the main panels fill more width. (File: `apps/web/src/styles.css`.) (owner: agent2)
