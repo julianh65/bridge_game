@@ -15,6 +15,7 @@ import { validateMovePath } from "./card-effects";
 import { getCardDef } from "./content/cards";
 import { createNewGame } from "./engine";
 import { applyModifierQuery, getCombatModifiers, runModifierEvents } from "./modifiers";
+import { incrementCardsPlayedThisRound } from "./player-flags";
 import { applyChampionKillRewards } from "./rewards";
 import type { GameEvent, GameState } from "./types";
 import { addChampionToHex, addForcesToHex } from "./units";
@@ -138,6 +139,42 @@ describe("champion abilities", () => {
     });
 
     expect(path).toEqual([fromHex, toHex]);
+  });
+
+  it("grants Wormhole Artificer +1 move distance when moving alone", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(2);
+    const card = getChampionCard("champion.gatewright.wormhole_artificer");
+    const fromHex = "0,0";
+    const midHex = "1,0";
+    const toHex = "2,0";
+    const deployed = addChampionToHex(board, "p1", fromHex, {
+      cardDefId: card.id,
+      hp: card.champion.hp,
+      attackDice: card.champion.attackDice,
+      hitFaces: card.champion.hitFaces,
+      bounty: card.champion.bounty
+    });
+
+    let state = {
+      ...base,
+      board: deployed.board,
+      phase: "round.action",
+      blocks: undefined
+    };
+
+    state = applyChampionDeployment(state, deployed.unitId, card.id, "p1");
+
+    const path = validateMovePath(state, "p1", [fromHex, midHex, toHex], {
+      maxDistance: 1,
+      requiresBridge: false,
+      requireStartOccupied: true
+    });
+
+    expect(path).toEqual([fromHex, midHex, toHex]);
   });
 
   it("uses bodyguard hit assignment when forces protect a champion", () => {
@@ -649,6 +686,57 @@ describe("champion abilities", () => {
     );
 
     expect(diceWithEnemy).toBe(bruteUnitWithEnemy.attackDice);
+  });
+
+  it("scales Archivist Prime attack dice with cards played this round", () => {
+    const base = createNewGame(DEFAULT_CONFIG, 1, [
+      { id: "p1", name: "Player 1" },
+      { id: "p2", name: "Player 2" }
+    ]);
+    const board = createBaseBoard(1);
+    const hexKey = "0,0";
+    const card = getChampionCard("champion.cipher.archivist_prime");
+    const deployed = addChampionToHex(board, "p1", hexKey, {
+      cardDefId: card.id,
+      hp: card.champion.hp,
+      attackDice: card.champion.attackDice,
+      hitFaces: card.champion.hitFaces,
+      bounty: card.champion.bounty
+    });
+
+    let state = {
+      ...base,
+      board: deployed.board,
+      phase: "round.action",
+      blocks: undefined
+    };
+
+    state = applyChampionDeployment(state, deployed.unitId, card.id, "p1");
+    state = incrementCardsPlayedThisRound(state, "p1", 3);
+
+    const archivist = state.board.units[deployed.unitId];
+    if (!archivist || archivist.kind !== "champion") {
+      throw new Error("missing archivist prime");
+    }
+
+    const modifiers = getCombatModifiers(state, hexKey);
+    const dice = applyModifierQuery(
+      state,
+      modifiers,
+      (hooks) => hooks.getChampionAttackDice,
+      {
+        hexKey,
+        attackerPlayerId: "p1",
+        defenderPlayerId: "p2",
+        round: 1,
+        side: "attackers",
+        unitId: deployed.unitId,
+        unit: archivist
+      },
+      archivist.attackDice
+    );
+
+    expect(dice).toBe(archivist.attackDice + 3);
   });
 
   it("grants Duelist Exemplar +1 die when an enemy champion is present", () => {

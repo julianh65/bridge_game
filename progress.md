@@ -22,7 +22,6 @@
 
 ## Active tasks
 - (owner: agent1) Audit combat/siege/popups flow end-to-end for stuck states across engine/UI; scope combat blocks, retreat prompts, and UI overlays; planned files: `packages/engine/src/engine.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/types.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/ActionRevealOverlay.tsx`. (status: in progress)
-- (owner: agent3) Champion audit: add engine tests for Wormhole Artificer movement bonus and Archivist Prime dice scaling; planned files: `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`, `progress.md`. (status: in progress)
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -52,6 +51,7 @@
 - Restricted combat retreat destinations to empty hexes and added coverage for retreat option filtering; marked the plan item complete. (Files: `packages/engine/src/combat.ts`, `packages/engine/src/combat.test.ts`, `implementation_plan.md`.) (owner: agent2)
 - Biased special tile placement away from board edges by adding a small edge-distance score in special tile selection. (Files: `packages/engine/src/board-generation.ts`, `implementation_plan.md`.) (owner: agent3)
 - Always show the combat retreat prompt in the combat overlay (removed hand-panel retreat UI) so it appears regardless of hand visibility; marked the urgent retreat item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
+- Added champion audit tests for Wormhole Artificer movement bonus and Archivist Prime attack-dice scaling; marked audit subitems in the plan. (Files: `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.) (owner: agent3)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Tightened the setup lobby/deck preview layout so the player panel stays narrow and the main panels fill more width. (File: `apps/web/src/styles.css`.) (owner: agent2)
