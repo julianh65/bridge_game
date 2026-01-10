@@ -333,7 +333,8 @@ export const GameScreen = ({
     const mapping: Record<string, string> = {};
     for (const player of view.public.players) {
       if (player.capitalHex) {
-        mapping[player.capitalHex] = player.name ?? player.id;
+        const factionName = player.factionId ? getFactionName(player.factionId) : null;
+        mapping[player.capitalHex] = factionName || player.name || player.id;
       }
     }
     return mapping;

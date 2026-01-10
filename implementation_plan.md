@@ -452,7 +452,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] make the debug map screen same dark theme
 - [ ] test occupied mines prospect adjacent
 - [x] make the champion health chit be formatted as current health / max health, you may need to slightly decrease text size to make this work
-- [ ] when mousing over capital hex of other players it should say who’s capital it is, like Prospect Capital
+- [x] when mousing over capital hex of other players it should say who’s capital it is, like Prospect Capital
 - [x] On the name area on the right in command center instead of seat 0 or seat 1 let’s put the faction name there
 - [ ] make zap be within range 1 of one of your champions
 - [ ] wormhole artificer moving alone doesn’t add +1 movement, needs to be kind of like skystriker where when you select just it it gets an extra movement

@@ -1315,7 +1315,7 @@ export const BoardView = ({
         const isHomeCapital = homeCapitalHexKey === hex.key;
         const capitalOwner = hex.tile === "capital" ? capitalOwnerByHex?.[hex.key] : null;
         const baseTileLabelText = capitalOwner
-          ? `Capital: ${capitalOwner}${isHomeCapital ? " (Home)" : ""}`
+          ? `${capitalOwner} Capital${isHomeCapital ? " (Home)" : ""}`
           : isHomeCapital
             ? "Home Capital"
             : tileLabel(hex.tile);
@@ -1356,7 +1356,7 @@ export const BoardView = ({
         if (hex.tile === "capital") {
           const ownerLabel = capitalOwnerByHex?.[hex.key];
           if (ownerLabel) {
-            hexTitleParts.push(`Capital: ${ownerLabel}`);
+            hexTitleParts.push(`${ownerLabel} Capital`);
           }
         }
         if (isHomeCapital) {
