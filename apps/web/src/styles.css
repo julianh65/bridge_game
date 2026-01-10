@@ -4122,59 +4122,6 @@ body.is-game .dice-reveal__gain {
   font-size: 11px;
 }
 
-.combat-retreat-panel {
-  display: grid;
-  gap: 8px;
-  padding: 8px;
-  border-radius: 10px;
-  border: 1px solid var(--panel-inset-border);
-  background: var(--panel-inset);
-}
-
-.combat-retreat-panel__header {
-  display: grid;
-  gap: 4px;
-}
-
-.combat-retreat-panel__eyebrow {
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.combat-retreat-panel__title {
-  font-size: 13px;
-  color: var(--ink);
-}
-
-.combat-retreat-panel__note {
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.combat-retreat-panel__body {
-  display: grid;
-  gap: 6px;
-}
-
-.combat-retreat-panel__hint,
-.combat-retreat-panel__selection {
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.combat-retreat-panel__buttons {
-  display: grid;
-  gap: 6px;
-}
-
-.combat-retreat-panel__buttons .btn {
-  width: 100%;
-  padding: 6px 8px;
-  font-size: 11px;
-}
-
 .hand-targets {
   display: grid;
   gap: 6px;

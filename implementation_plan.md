@@ -468,7 +468,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Can we somehow modify the board setup algorithm to slightly bias against putting special tiles on the edge of the board?
 - [ ] The aerial faction passive of extra movement didn't work for me
 - [x] In combat the -hp on champions display isn't fully visible, looks like it's "contained" by the champion chit and i can't read how much hp was reduced
-- [ ] URGENT During combat I only see the retreat options at the start, this is a regression, the retreat options should be clickable from the combat modal URGENT
+- [x] URGENT During combat I only see the retreat options at the start, this is a regression, the retreat options should be clickable from the combat modal URGENT (retreat prompt always shown in combat overlay)
 - [x] Restrict combat retreat destinations to unoccupied hexes to avoid retreating into occupied hexes that can leave contested hexes unresolved
 
 

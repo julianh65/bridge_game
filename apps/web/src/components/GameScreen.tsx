@@ -958,43 +958,6 @@ export const GameScreen = ({
       pendingCombat.waitingForPlayerIds.includes(localPlayerId)
   );
   const combatRetreatHexKeys = isCombatRetreatWaiting ? combatRetreatTargets.hexKeys : [];
-  const combatRetreatPanel = useMemo(() => {
-    if (!pendingCombat || !localPlayerId) {
-      return null;
-    }
-    if (
-      pendingCombat.attackers.playerId !== localPlayerId &&
-      pendingCombat.defenders.playerId !== localPlayerId
-    ) {
-      return null;
-    }
-    const options = pendingCombat.availableEdges[localPlayerId] ?? [];
-    const selection = pendingCombat.choices[localPlayerId] ?? null;
-    const canAct = pendingCombat.waitingForPlayerIds.includes(localPlayerId);
-    const labeledOptions = options
-      .map((edgeKey) => {
-        let destination: string | null = null;
-        try {
-          const [from, to] = parseEdgeKey(edgeKey);
-          destination =
-            from === pendingCombat.hexKey ? to : to === pendingCombat.hexKey ? from : null;
-        } catch {
-          destination = null;
-        }
-        if (!destination) {
-          return null;
-        }
-        const label = hexLabels[destination] ?? destination;
-        return { edgeKey, label };
-      })
-      .filter((entry): entry is { edgeKey: string; label: string } => Boolean(entry));
-    return {
-      hexLabel: pendingCombatLabel ?? pendingCombat.hexKey,
-      options: labeledOptions,
-      selection,
-      canAct
-    };
-  }, [hexLabels, localPlayerId, pendingCombat, pendingCombatLabel]);
   const activeCombatHex = activeCombat
     ? view.public.board.hexes[activeCombat.start.hexKey] ?? null
     : null;
@@ -1046,8 +1009,7 @@ export const GameScreen = ({
     isCollectionPhase && isCollectionOverlayOpen && !actionRevealInFlight;
   const canShowHandPanel =
     Boolean(view.private) && isActionPhase && !showMarketOverlay;
-  const shouldShowRetreatOverlay =
-    Boolean(pendingCombat) && (!canShowHandPanel || !isHandPanelOpen);
+  const shouldShowRetreatOverlay = Boolean(pendingCombat);
   const showVictoryScreen = Boolean(view.public.winnerPlayerId && isVictoryVisible);
   const canDeclareAction =
     status === "connected" &&
@@ -4737,14 +4699,6 @@ export const GameScreen = ({
         primaryAction={primaryAction}
         primaryActionLabel={primaryActionLabel}
         canSubmitDone={canSubmitDone}
-        combatRetreat={
-          combatRetreatPanel && pendingCombat
-            ? {
-                ...combatRetreatPanel,
-                onSubmit: (edgeKey) => handleCombatRetreat(pendingCombat.hexKey, edgeKey)
-              }
-            : null
-        }
       />
     </section>
   );

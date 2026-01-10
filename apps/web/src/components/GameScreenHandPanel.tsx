@@ -119,19 +119,6 @@ type BurnedGhost = {
   index: number;
 };
 
-type CombatRetreatPanelOption = {
-  edgeKey: string;
-  label: string;
-};
-
-type CombatRetreatPanelState = {
-  hexLabel: string | null;
-  options: CombatRetreatPanelOption[];
-  selection: string | null;
-  canAct: boolean;
-  onSubmit: (edgeKey: string | null) => void;
-};
-
 type GameScreenHandPanelProps = {
   canShowHandPanel: boolean;
   isHandPanelOpen: boolean;
@@ -168,7 +155,6 @@ type GameScreenHandPanelProps = {
   primaryAction: ActionDeclaration | null;
   primaryActionLabel: string;
   canSubmitDone: boolean;
-  combatRetreat: CombatRetreatPanelState | null;
 };
 
 export const GameScreenHandPanel = ({
@@ -206,8 +192,7 @@ export const GameScreenHandPanel = ({
   onSubmitAction,
   primaryAction,
   primaryActionLabel,
-  canSubmitDone,
-  combatRetreat
+  canSubmitDone
 }: GameScreenHandPanelProps) => {
   const showHandPanel = canShowHandPanel && isHandPanelOpen;
   const handCount = handCards.length;
@@ -218,25 +203,6 @@ export const GameScreenHandPanel = ({
     : null;
   const selectedLabel = selectedCardDef?.name ?? selectedCard?.defId ?? null;
   const selectedTargetHint = getCardTargetHint(selectedCardDef);
-  const retreatSelectionLabel = (() => {
-    if (!combatRetreat) {
-      return null;
-    }
-    if (combatRetreat.selection === "stay") {
-      return "Staying in battle.";
-    }
-    if (combatRetreat.selection) {
-      const match = combatRetreat.options.find(
-        (option) => option.edgeKey === combatRetreat.selection
-      );
-      const label = match ? match.label : combatRetreat.selection;
-      return `Retreating to ${label}.`;
-    }
-    if (combatRetreat.options.length === 0) {
-      return "No retreat options from this battle.";
-    }
-    return "Waiting on retreat decisions...";
-  })();
   const [isPassConfirming, setIsPassConfirming] = useState(false);
   const shouldConfirmPass = availableMana > 0;
   const manaLabel = `${availableMana}/${maxMana}`;
@@ -818,51 +784,6 @@ export const GameScreenHandPanel = ({
                 </div>
               ) : null}
               {actionHint ? <p className="action-panel__hint">{actionHint}</p> : null}
-              {combatRetreat ? (
-                <div className="combat-retreat-panel">
-                  <div className="combat-retreat-panel__header">
-                    <span className="combat-retreat-panel__eyebrow">Retreat decision</span>
-                    <strong className="combat-retreat-panel__title">
-                      {combatRetreat.hexLabel ?? "Battle"}
-                    </strong>
-                    <span className="combat-retreat-panel__note">
-                      Retreat costs 1 mana and still resolves one final combat round before moving.
-                    </span>
-                  </div>
-                  <div className="combat-retreat-panel__body">
-                    {combatRetreat.canAct ? (
-                      <>
-                        <span className="combat-retreat-panel__hint">
-                          Click a highlighted hex on the map or choose below.
-                        </span>
-                        <div className="combat-retreat-panel__buttons">
-                          {combatRetreat.options.map((option) => (
-                            <button
-                              key={option.edgeKey}
-                              type="button"
-                              className="btn btn-tertiary"
-                              onClick={() => combatRetreat.onSubmit(option.edgeKey)}
-                            >
-                              Retreat to {option.label}
-                            </button>
-                          ))}
-                          <button
-                            type="button"
-                            className="btn btn-secondary"
-                            onClick={() => combatRetreat.onSubmit(null)}
-                          >
-                            Stay & fight
-                          </button>
-                        </div>
-                      </>
-                    ) : (
-                      <span className="combat-retreat-panel__selection">
-                        {retreatSelectionLabel}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ) : null}
               <ActionPanel
                 player={player}
                 canSubmitAction={canSubmitAction}

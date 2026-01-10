@@ -47,6 +47,7 @@
 - Unclipped combat hit markers by letting combat unit tokens overflow so HP loss markers remain readable; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 - Restricted combat retreat destinations to empty hexes and added coverage for retreat option filtering; marked the plan item complete. (Files: `packages/engine/src/combat.ts`, `packages/engine/src/combat.test.ts`, `implementation_plan.md`.) (owner: agent2)
 - Biased special tile placement away from board edges by adding a small edge-distance score in special tile selection. (Files: `packages/engine/src/board-generation.ts`, `implementation_plan.md`.) (owner: agent3)
+- Always show the combat retreat prompt in the combat overlay (removed hand-panel retreat UI) so it appears regardless of hand visibility; marked the urgent retreat item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Tightened the setup lobby/deck preview layout so the player panel stays narrow and the main panels fill more width. (File: `apps/web/src/styles.css`.) (owner: agent2)
