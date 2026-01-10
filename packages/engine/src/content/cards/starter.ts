@@ -146,7 +146,7 @@ export const QUICK_MOVE_GATEWRIGHT: CardDef = createStarterVariant(
 export const ZAP: CardDef = {
   id: "starter.zap",
   name: "Zap",
-  rulesText: "Deal 1 damage to any Champion.",
+  rulesText: "Deal 1 damage to a Champion within distance 1 of one of your Champions.",
   type: "Order",
   deck: "starter",
   tags: ["starter"],
@@ -155,7 +155,9 @@ export const ZAP: CardDef = {
   burn: false,
   targetSpec: {
     kind: "champion",
-    owner: "any"
+    owner: "any",
+    maxDistance: 1,
+    requiresFriendlyChampion: true
   },
   effects: [{ kind: "dealChampionDamage", amount: 1 }]
 };
