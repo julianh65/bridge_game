@@ -44,6 +44,7 @@
 - Zap now requires a friendly champion within distance 1 to target a champion; rules text + tests updated and checklist marked complete. (Files: `packages/engine/src/content/cards/starter.ts`, `packages/engine/src/action-flow.test.ts`, `rules_draft.md`, `implementation_plan.md`.) (owner: agent1)
 - Clarified forge collection choices with a divider and larger draft heading to distinguish from reforge picks; marked the plan item complete. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2) (Overlap note: commit included pre-staged zap-range test updates in `packages/engine/src/action-flow.test.ts`.)
 - Restyled the victory screen for the dark theme so the modal matches in-game palette. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
+- Unclipped combat hit markers by letting combat unit tokens overflow so HP loss markers remain readable; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Tightened the setup lobby/deck preview layout so the player panel stays narrow and the main panels fill more width. (File: `apps/web/src/styles.css`.) (owner: agent2)
