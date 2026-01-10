@@ -137,7 +137,7 @@ const CAPITAL_BALANCE_WEIGHT = 4;
 const GLOBAL_SPREAD_WEIGHT = 3;
 const BRIDGE_SPECIAL_WEIGHT = 4;
 const BRIDGE_SPREAD_WEIGHT = 3;
-const EDGE_DISTANCE_WEIGHT = 1;
+const EDGE_DISTANCE_WEIGHT = 2;
 
 const cloneBoard = (board: BoardState): BoardState => {
   const hexes: Record<HexKey, HexState> = {};

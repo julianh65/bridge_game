@@ -21,7 +21,7 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-- (owner: agent5) Investigate/fix Aerial tailwind passive (+1 movement) not applying; scope movement modifiers + validation/tests; planned files: `packages/engine/src/faction-passives.ts`, `packages/engine/src/card-effects-movement.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md`. (status: in progress)
+- (owner: agent1) Audit combat/siege/popups flow end-to-end for stuck states across engine/UI; scope combat blocks, retreat prompts, and UI overlays; planned files: `packages/engine/src/engine.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/types.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/ActionRevealOverlay.tsx`. (status: in progress)
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -45,6 +45,8 @@
 - Clarified forge collection choices with a divider and larger draft heading to distinguish from reforge picks; marked the plan item complete. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2) (Overlap note: commit included pre-staged zap-range test updates in `packages/engine/src/action-flow.test.ts`.)
 - Restyled the victory screen for the dark theme so the modal matches in-game palette. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
 - Unclipped combat hit markers by letting combat unit tokens overflow so HP loss markers remain readable; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
+- Enabled Aerial tailwind movement bonus in UI path picking so the first move each round can extend by one hex, and exposed moved-this-round in the private view; marked the plan item complete. (Files: `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent5)
+- Increased special-tile placement preference for inner rings so forges/mines are less likely to land on the board edge. (File: `packages/engine/src/board-generation.ts`.) (owner: agent2)
 - Restricted combat retreat destinations to empty hexes and added coverage for retreat option filtering; marked the plan item complete. (Files: `packages/engine/src/combat.ts`, `packages/engine/src/combat.test.ts`, `implementation_plan.md`.) (owner: agent2)
 - Biased special tile placement away from board edges by adding a small edge-distance score in special tile selection. (Files: `packages/engine/src/board-generation.ts`, `implementation_plan.md`.) (owner: agent3)
 - Always show the combat retreat prompt in the combat overlay (removed hand-panel retreat UI) so it appears regardless of hand visibility; marked the urgent retreat item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
