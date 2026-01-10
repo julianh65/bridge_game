@@ -139,6 +139,7 @@ type GameScreenHandPanelProps = {
   onHideHandPanel: () => void;
   handCards: NonNullable<GameView["private"]>["handCards"];
   deckCounts: NonNullable<GameView["private"]>["deckCounts"] | null;
+  onOpenDeck?: () => void;
   cardScalingCounters: Record<string, number> | null;
   availableMana: number;
   maxMana: number;
@@ -177,6 +178,7 @@ export const GameScreenHandPanel = ({
   onHideHandPanel,
   handCards,
   deckCounts,
+  onOpenDeck,
   cardScalingCounters,
   availableMana,
   maxMana,
@@ -590,6 +592,7 @@ export const GameScreenHandPanel = ({
         }
       ]
     : [];
+  const canOpenDeck = Boolean(onOpenDeck);
 
   const displayCards = (() => {
     if (burnedGhosts.length === 0) {
@@ -632,27 +635,49 @@ export const GameScreenHandPanel = ({
             <div className="hand-controls">
               {deckCounts ? (
                 <div className="deck-pills" aria-label="Deck counts">
-                  {deckPills.map((pill) => (
-                    <span
-                      key={`${pill.id}-${pill.pulseKey}`}
-                      className={`deck-pill deck-pill--${pill.id} ${
-                        pill.delta !== 0 ? "is-pulsing" : ""
-                      }`}
-                      aria-label={`${pill.label} ${pill.count}`}
-                    >
-                      <span className="deck-pill__label">{pill.label}</span>
-                      <strong>{pill.count}</strong>
-                      {pill.delta !== 0 ? (
-                        <span
-                          className={`deck-pill__delta ${
-                            pill.delta > 0 ? "is-positive" : "is-negative"
-                          }`}
+                  {deckPills.map((pill) => {
+                    const className = `deck-pill deck-pill--${pill.id} ${
+                      pill.delta !== 0 ? "is-pulsing" : ""
+                    }${canOpenDeck ? " deck-pill--button" : ""}`;
+                    const content = (
+                      <>
+                        <span className="deck-pill__label">{pill.label}</span>
+                        <strong>{pill.count}</strong>
+                        {pill.delta !== 0 ? (
+                          <span
+                            className={`deck-pill__delta ${
+                              pill.delta > 0 ? "is-positive" : "is-negative"
+                            }`}
+                          >
+                            {pill.delta > 0 ? `+${pill.delta}` : pill.delta}
+                          </span>
+                        ) : null}
+                      </>
+                    );
+                    if (canOpenDeck) {
+                      return (
+                        <button
+                          key={`${pill.id}-${pill.pulseKey}`}
+                          type="button"
+                          className={className}
+                          aria-label={`${pill.label} ${pill.count}`}
+                          data-sfx="soft"
+                          onClick={onOpenDeck}
                         >
-                          {pill.delta > 0 ? `+${pill.delta}` : pill.delta}
-                        </span>
-                      ) : null}
-                    </span>
-                  ))}
+                          {content}
+                        </button>
+                      );
+                    }
+                    return (
+                      <span
+                        key={`${pill.id}-${pill.pulseKey}`}
+                        className={className}
+                        aria-label={`${pill.label} ${pill.count}`}
+                      >
+                        {content}
+                      </span>
+                    );
+                  })}
                 </div>
               ) : null}
               <button type="button" className="btn btn-tertiary" onClick={onHideHandPanel}>

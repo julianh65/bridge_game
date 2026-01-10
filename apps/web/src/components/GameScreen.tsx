@@ -4693,6 +4693,7 @@ export const GameScreen = ({
         onHideHandPanel={() => setIsHandPanelOpen(false)}
         handCards={handCards}
         deckCounts={deckCounts}
+        onOpenDeck={onOpenDeck}
         cardScalingCounters={view.private?.cardScalingCounters ?? null}
         availableMana={availableMana}
         maxMana={maxMana}

@@ -22,7 +22,7 @@
 
 ## Active tasks
 - (owner: agent4) Investigate/fix urgent siege-capital battle popup not appearing and game stalling after siege (1v1 pass sequence); scope engine combat/blocks + UI overlay gating; planned files: `packages/engine/src/action-flow.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`. (status: investigating)
-- (owner: agent1) Make deck pile pills (draw/discard/scrapped/burned) open the Deck view; scope GameScreen hand panel UI wiring; planned files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`. (status: in progress)
+- (owner: agent3) [status: in progress] Show faction-labeled capital hover text (e.g., "Prospect Capital"); files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/BoardView.tsx`, `implementation_plan.md`, `progress.md`.
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -118,6 +118,9 @@
 - HUD VP chip now shows current VP alongside the win threshold to clarify when victories trigger; updated the plan checklist. (Files: `apps/web/src/components/GameScreenHeader.tsx`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent3)
 - Added a capital safety HUD pill (safe/contested) to make victory gating visible; noted the update in the plan. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHeader.tsx`, `implementation_plan.md`.) (owner: agent1)
 - Checked off remaining after-third-play-test checklist items already implemented (action reveal champion stats + rules, draw pile unordered label, Quick Move initiative note, spectator battle close). (File: `implementation_plan.md`.) (owner: agent1)
+
+## Fourth Playthrough progress
+- Deck pile pills (draw/discard/scrapped/burned) now open the Deck view from the hand panel. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent1)
 ## Planning updates
 - Added plan TODOs for the forge collection hard-lock audit + backup plan. (File: `implementation_plan.md`.) (owner: codex)
 - Prevented forge collection hard-locks by skipping forge prompts when no draft cards and no scrap candidates exist; updated the plan checklist. (Files: `packages/engine/src/round-flow.ts`, `packages/engine/src/round-flow.test.ts`, `implementation_plan.md`.) (owner: agent3)

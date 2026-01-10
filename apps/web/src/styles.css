@@ -3963,6 +3963,10 @@ body.is-game .dice-reveal__gain {
   color: var(--ink);
 }
 
+.deck-pill--button {
+  cursor: pointer;
+}
+
 .deck-pill__label {
   text-transform: uppercase;
   letter-spacing: 0.08em;
