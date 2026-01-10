@@ -447,8 +447,14 @@ describe("collection", () => {
     };
 
     const created = createCollectionBlock(state);
-    expect(created.block).toBeNull();
-    const player = created.state.players.find((entry) => entry.id === "p1");
+    expect(created.block).not.toBeNull();
+    const block = created.block!;
+    expect(block.payload.mineGoldByPlayer).toEqual({ p1: 3 });
+    let nextState = { ...created.state, blocks: block };
+    nextState = applyCollectionChoice(nextState, [], "p1");
+    expect(nextState.blocks?.waitingFor).toHaveLength(0);
+    const resolved = resolveCollectionChoices(nextState);
+    const player = resolved.players.find((entry) => entry.id === "p1");
     expect(player?.resources.gold).toBe(3);
   });
 
@@ -507,8 +513,14 @@ describe("collection", () => {
     };
 
     const created = createCollectionBlock(state);
-    expect(created.block).toBeNull();
-    const player = created.state.players.find((entry) => entry.id === "p1");
+    expect(created.block).not.toBeNull();
+    const block = created.block!;
+    expect(block.payload.mineGoldByPlayer).toEqual({ p1: 3 });
+    let nextState = { ...created.state, blocks: block };
+    nextState = applyCollectionChoice(nextState, [], "p1");
+    expect(nextState.blocks?.waitingFor).toHaveLength(0);
+    const resolved = resolveCollectionChoices(nextState);
+    const player = resolved.players.find((entry) => entry.id === "p1");
     expect(player?.resources.gold).toBe(3);
   });
 
@@ -553,10 +565,16 @@ describe("collection", () => {
     };
 
     const created = createCollectionBlock(state);
-    expect(created.block).toBeNull();
-    const player = created.state.players.find((entry) => entry.id === "p1");
+    expect(created.block).not.toBeNull();
+    const block = created.block!;
+    expect(block.payload.mineGoldByPlayer).toEqual({ p1: 3 });
+    let nextState = { ...created.state, blocks: block };
+    nextState = applyCollectionChoice(nextState, [], "p1");
+    expect(nextState.blocks?.waitingFor).toHaveLength(0);
+    const resolved = resolveCollectionChoices(nextState);
+    const player = resolved.players.find((entry) => entry.id === "p1");
     expect(player?.deck.drawPile).toHaveLength(0);
-    expect(created.state.marketDecks.I).toEqual(deck);
+    expect(resolved.marketDecks.I).toEqual(deck);
   });
 
   it("reforges at a forge by scrapping a card and returning reveals", () => {

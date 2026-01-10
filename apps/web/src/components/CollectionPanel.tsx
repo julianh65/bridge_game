@@ -230,6 +230,7 @@ export const CollectionPanel = ({
     return waitingFor.map((playerId) => {
       const playerName = playerNames.get(playerId) ?? playerId;
       const promptsForPlayer = collectionPublic.promptSummaryByPlayer?.[playerId] ?? [];
+      const hasMineGold = (collectionPublic.mineGoldByPlayer[playerId] ?? 0) > 0;
       const detail =
         promptsForPlayer.length > 0
           ? promptsForPlayer
@@ -238,7 +239,9 @@ export const CollectionPanel = ({
                 return `${kindLabel} ${formatHexLabel(prompt.hexKey, labelByHex)}`;
               })
               .join(", ")
-          : "Making collection choices";
+          : hasMineGold
+            ? "Reviewing mine income"
+            : "Making collection choices";
       return { playerId, playerName, detail };
     });
   }, [collectionPublic, labelByHex, playerNames, waitingFor]);
@@ -322,6 +325,9 @@ export const CollectionPanel = ({
   const hasSubmitted = existingChoices !== null;
   const canInteract =
     status === "connected" && isCollectionPhase && !isSpectator && !hasSubmitted;
+  const isMineSummaryOnly = prompts.length === 0 && mineGoldEntries.length > 0;
+  const needsMineAck =
+    isMineSummaryOnly && Boolean(player) && waitingFor.includes(player.id);
 
   const { preparedChoices, allValid } = useMemo(() => {
     const prepared: CollectionChoice[] = [];
@@ -341,7 +347,8 @@ export const CollectionPanel = ({
     return { preparedChoices: prepared, allValid: valid };
   }, [prompts, scrapCardIds, selections]);
 
-  const canSubmit = canInteract && prompts.length > 0 && allValid;
+  const canSubmit =
+    canInteract && ((prompts.length > 0 && allValid) || needsMineAck);
 
   const handleSubmit = () => {
     if (!canSubmit) {
@@ -368,7 +375,11 @@ export const CollectionPanel = ({
   } else if (hasSubmitted) {
     hint = "Choices submitted.";
   } else if (prompts.length === 0) {
-    hint = "No collection prompts for you this round.";
+    hint = needsMineAck
+      ? "Review mine income, then continue."
+      : mineGoldEntries.length > 0
+        ? "Mine income tallied."
+        : "No collection prompts for you this round.";
   } else if (!allValid) {
     hint = "Pick an option for each collection prompt.";
   }
@@ -379,6 +390,9 @@ export const CollectionPanel = ({
           .map((id) => playerNames.get(id) ?? id)
           .join(", ")}`
       : null;
+  const emptyPromptLabel = isMineSummaryOnly
+    ? "No forge or center prompts this round."
+    : "No collection prompts for you this round.";
 
   return (
     <div className="sidebar-section">
@@ -425,7 +439,7 @@ export const CollectionPanel = ({
             </div>
           ) : null}
           {prompts.length === 0 ? (
-            <div className="hand-empty">No collection prompts for you this round.</div>
+            <div className="hand-empty">{emptyPromptLabel}</div>
           ) : (
             <>
               <div className="collection-summary">
@@ -632,7 +646,7 @@ export const CollectionPanel = ({
         {waitingLabel ? <div className="hand-meta">{waitingLabel}</div> : null}
         {canSubmit ? (
           <button type="button" className="btn btn-primary" onClick={handleSubmit}>
-            Submit choices
+            {needsMineAck ? "Continue" : "Submit choices"}
           </button>
         ) : null}
       </div>

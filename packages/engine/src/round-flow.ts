@@ -400,7 +400,16 @@ export const createCollectionBlock = (
     .filter((player) => (nextPrompts[player.id] ?? []).length > 0)
     .map((player) => player.id);
 
-  if (waitingFor.length === 0) {
+  const mineSummaryWaitingFor =
+    waitingFor.length === 0
+      ? playersInSeatOrder
+          .filter((player) => (mineGoldByPlayer[player.id] ?? 0) > 0)
+          .map((player) => player.id)
+      : [];
+  const nextWaitingFor =
+    waitingFor.length > 0 ? waitingFor : mineSummaryWaitingFor;
+
+  if (nextWaitingFor.length === 0) {
     return {
       state: {
         ...stateWithMineGold,
@@ -433,7 +442,7 @@ export const createCollectionBlock = (
     state: nextState,
     block: {
       type: "collection.choices",
-      waitingFor,
+      waitingFor: nextWaitingFor,
       payload: {
         prompts: nextPrompts,
         choices: Object.fromEntries(
@@ -530,10 +539,6 @@ export const applyCollectionChoice = (
   }
 
   const prompts = block.payload.prompts[playerId] ?? [];
-  if (prompts.length === 0) {
-    return state;
-  }
-
   if (!areCollectionChoicesValid(state, playerId, prompts, choices)) {
     return state;
   }

@@ -21,7 +21,7 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-- (owner: agent2) Add mine-only collection popup/ack flow so mine income shows during collection even with no prompts; scope engine collection block + UI submit affordance; files: `packages/engine/src/round-flow.ts`, `packages/engine/src/round-flow.test.ts`, `apps/web/src/components/CollectionPanel.tsx`, `implementation_plan.md`. (status: in progress)
+- (none)
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -46,6 +46,7 @@
 - Added a Prospect deep tunnels test for adjacent occupied mines and let mine-to-mine marches ignore bridges so adjacent mines can connect; marked the plan item complete. (Files: `packages/engine/src/faction-passives.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent5)
 - Zap now requires a friendly champion within distance 1 to target a champion; rules text + tests updated and checklist marked complete. (Files: `packages/engine/src/content/cards/starter.ts`, `packages/engine/src/action-flow.test.ts`, `rules_draft.md`, `implementation_plan.md`.) (owner: agent1)
 - Clarified forge collection choices with a divider and larger draft heading to distinguish from reforge picks; marked the plan item complete. (Files: `apps/web/src/components/CollectionPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2) (Overlap note: commit included pre-staged zap-range test updates in `packages/engine/src/action-flow.test.ts`.)
+- Added a mine-only collection summary popup by keeping the collection block active with an empty-choice acknowledgement, and updated collection tests; marked the plan item complete. (Files: `packages/engine/src/round-flow.ts`, `packages/engine/src/round-flow.test.ts`, `apps/web/src/components/CollectionPanel.tsx`, `implementation_plan.md`.) (owner: agent2)
 - Restyled the victory screen for the dark theme so the modal matches in-game palette. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
 - Unclipped combat hit markers by letting combat unit tokens overflow so HP loss markers remain readable; marked the plan item complete. (Files: `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent2)
 - Enabled Wormhole Artificer solo-move targeting in the UI by extending march/path max distance when only that champion moves; marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`.) (owner: agent5)

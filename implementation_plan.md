@@ -465,7 +465,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] clicking on the draw pile or discard or burned or scrapped icons should take the player to the deck screen
 - [ ] prospect union passive mine connected isn’t working and i can’t march between two occupied mines
 	- [ ] after this as a seperate task but similar, audit the different faction abilities to make sure they all work as intended
-- [ ] right now during the collection phase if only mines are occupied i don’t see a pop up for it, we need a pop up showing everyone who collected what from the mines
+- [x] right now during the collection phase if only mines are occupied i don’t see a pop up for it, we need a pop up showing everyone who collected what from the mines
 - [x] the collection screen the choices need to be more clear for forge, like increase the size of text of forge draft choose one versus the discard area
 - [x] the game over victory screen is not styled correctly
 - [x] URGENT: the siege capital battle pop up never showed and the game just stalled out, this happened after I tested a 1v1 and moved forces into an enemy capital and then got both players to pass
