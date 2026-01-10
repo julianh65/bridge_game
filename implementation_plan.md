@@ -453,12 +453,12 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] test occupied mines prospect adjacent
 - [x] make the champion health chit be formatted as current health / max health, you may need to slightly decrease text size to make this work
 - [ ] when mousing over capital hex of other players it should say who’s capital it is, like Prospect Capital
-- [ ] On the name area on the right in command center instead of seat 0 or seat 1 let’s put the faction name there
+- [x] On the name area on the right in command center instead of seat 0 or seat 1 let’s put the faction name there
 - [ ] make zap be within range 1 of one of your champions
 - [ ] wormhole artificer moving alone doesn’t add +1 movement, needs to be kind of like skystriker where when you select just it it gets an extra movement
 	- [ ] after this as a seperate task but similar, audit the different champion cards to make sure they all work as intended
 - [ ] the dice cards need to sync up the dice roll with the action reveal phase to show everyone the dice rolling and what the result is
-- [ ] clicking on the draw pile or discard or burned or scrapped icons should take the player to the deck screen
+- [x] clicking on the draw pile or discard or burned or scrapped icons should take the player to the deck screen
 - [ ] prospect union passive mine connected isn’t working and i can’t march between two occupied mines
 	- [ ] after this as a seperate task but similar, audit the different faction abilities to make sure they all work as intended
 - [ ] right now during the collection phase if only mines are occupied i don’t see a pop up for it, we need a pop up showing everyone who collected what from the mines

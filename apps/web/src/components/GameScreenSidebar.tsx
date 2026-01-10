@@ -262,6 +262,7 @@ export const GameScreenSidebar = ({
                 const timingAverage = formatActionDuration(player.actionTiming.averageMs);
                 const timingLast = formatActionDuration(player.actionTiming.lastMs);
                 const timingTitle = `Last ${timingLast} · Avg ${timingAverage} · Turns ${player.actionTiming.count}`;
+                const factionName = getFactionName(player.factionId);
                 const rowClassName = [
                   "table-row",
                   actionStep
@@ -285,7 +286,7 @@ export const GameScreenSidebar = ({
                       <div>
                         <span className="player-name">{player.name}</span>
                         <span className="player-meta" title={timingTitle}>
-                          Seat {player.seatIndex} · Avg {timingAverage}
+                          {factionName} · Avg {timingAverage}
                         </span>
                       </div>
                     </div>

@@ -38,6 +38,7 @@
 
 ## Fourth Playthrough progress
 - Formatted the champion HP chit as current/max and reduced the text size to fit. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
+- Swapped command center table meta text from seat numbers to faction names for clearer at-a-glance info. (Files: `apps/web/src/components/GameScreenSidebar.tsx`, `implementation_plan.md`.) (owner: agent3)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Tightened the setup lobby/deck preview layout so the player panel stays narrow and the main panels fill more width. (File: `apps/web/src/styles.css`.) (owner: agent2)
