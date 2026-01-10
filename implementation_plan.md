@@ -476,7 +476,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Restrict combat retreat destinations to unoccupied hexes to avoid retreating into occupied hexes that can leave contested hexes unresolved
 - [ ] The combat overlay should be hideable and unhideable to see the board, importantly when there are the retreat buttons this needs to be a thing
 - [ ] I STILL don't see mid combat round retreat options, like i see the initial retreat options but not during combat, this is very important to get right, make sure that there are no bugs and most importantly that this cannot enter a bad state with the UI or something such that the game halts
-- [ ] Sabotage bridge doesn't let me select a bridge to destroy
+- [x] Sabotage bridge doesn't let me select a bridge to destroy
 
 
 ### Refactor Milestone

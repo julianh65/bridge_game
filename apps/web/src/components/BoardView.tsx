@@ -1446,43 +1446,6 @@ export const BoardView = ({
         );
       })}
 
-      {previewSegments.map((segment) => (
-        <g
-          key={`preview-${segment.key}`}
-          className={edgeClickable ? "bridge-preview is-clickable" : "bridge-preview"}
-        >
-          {edgeClickable ? (
-            <line
-              className="bridge bridge--preview bridge--hitbox"
-              x1={segment.from.x}
-              y1={segment.from.y}
-              x2={segment.to.x}
-              y2={segment.to.y}
-              onClick={() => handleEdgeClick(segment.key)}
-            />
-          ) : null}
-          <line
-            className={`bridge bridge--preview ${edgeClickable ? "bridge--clickable" : ""}`}
-            x1={segment.from.x}
-            y1={segment.from.y}
-            x2={segment.to.x}
-            y2={segment.to.y}
-          />
-        </g>
-      ))}
-
-      {previewHexLink ? (
-        <g className="hex-link-preview" aria-hidden="true">
-          <line
-            className="hex-link-preview__line"
-            x1={previewHexLink.from.x}
-            y1={previewHexLink.from.y}
-            x2={previewHexLink.to.x}
-            y2={previewHexLink.to.y}
-          />
-        </g>
-      ) : null}
-
       {bridgeSegments.map((bridge) => {
         if (bridge.length <= 0.01) {
           return null;
@@ -1567,6 +1530,43 @@ export const BoardView = ({
           </g>
         );
       })}
+
+      {previewSegments.map((segment) => (
+        <g
+          key={`preview-${segment.key}`}
+          className={edgeClickable ? "bridge-preview is-clickable" : "bridge-preview"}
+        >
+          {edgeClickable ? (
+            <line
+              className="bridge bridge--preview bridge--hitbox"
+              x1={segment.from.x}
+              y1={segment.from.y}
+              x2={segment.to.x}
+              y2={segment.to.y}
+              onClick={() => handleEdgeClick(segment.key)}
+            />
+          ) : null}
+          <line
+            className={`bridge bridge--preview ${edgeClickable ? "bridge--clickable" : ""}`}
+            x1={segment.from.x}
+            y1={segment.from.y}
+            x2={segment.to.x}
+            y2={segment.to.y}
+          />
+        </g>
+      ))}
+
+      {previewHexLink ? (
+        <g className="hex-link-preview" aria-hidden="true">
+          <line
+            className="hex-link-preview__line"
+            x1={previewHexLink.from.x}
+            y1={previewHexLink.from.y}
+            x2={previewHexLink.to.x}
+            y2={previewHexLink.to.y}
+          />
+        </g>
+      ) : null}
 
       {effectBadges.hexBadges.map((badge) => (
         <g key={`effect-hex-${badge.key}`} className="board-effect board-effect--hex">

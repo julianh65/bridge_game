@@ -21,7 +21,7 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-- (none)
+- (owner: agent4) Enable mid-combat retreat prompts between rounds (round-by-round combat retreat blocks + UI round label); scope combat block flow + retreat overlay; files: `packages/engine/src/combat.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `implementation_plan.md`. (status: in progress)
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -57,6 +57,7 @@
 - Always show the combat retreat prompt in the combat overlay (removed hand-panel retreat UI) so it appears regardless of hand visibility; marked the urgent retreat item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent4)
 - Added champion audit tests for Wormhole Artificer movement bonus and Archivist Prime attack-dice scaling; marked audit subitems in the plan. (Files: `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.) (owner: agent3)
 - Added Bannerman/Center Bannerman control bonus tests (including off-center case) and marked the audit subitem complete. (Files: `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.) (owner: agent3)
+- Fixed existing-bridge edge selection by drawing preview edges above built bridges so Sabotage Bridge can pick a target; marked the plan item complete. (Files: `apps/web/src/components/BoardView.tsx`, `implementation_plan.md`.) (owner: agent5)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Tightened the setup lobby/deck preview layout so the player panel stays narrow and the main panels fill more width. (File: `apps/web/src/styles.css`.) (owner: agent2)
