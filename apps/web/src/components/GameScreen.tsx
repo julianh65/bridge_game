@@ -664,6 +664,12 @@ export const GameScreen = ({
     }
     return edgeKeys;
   }, [cardTargetKind, targetRecord]);
+  const multiPathTargets = useMemo(() => {
+    if (cardTargetKind !== "multiPath") {
+      return [];
+    }
+    return getTargetPaths(targetRecord);
+  }, [cardTargetKind, targetRecord]);
   const isChampionTargeting =
     cardTargetKind === "champion" || cardTargetKind === "championMove";
   const championTargetOwner =
@@ -3856,12 +3862,6 @@ export const GameScreen = ({
     }
     return "Pick multiple edges on the board.";
   }, [multiEdgeLimits, isBridgePivotCard, bridgePivotAllowAnywhere]);
-  const multiPathTargets = useMemo(() => {
-    if (cardTargetKind !== "multiPath") {
-      return [];
-    }
-    return getTargetPaths(targetRecord);
-  }, [cardTargetKind, targetRecord]);
   const multiPathLimits = useMemo(() => {
     if (!selectedCardDef || cardTargetKind !== "multiPath") {
       return null;

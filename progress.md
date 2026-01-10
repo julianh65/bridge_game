@@ -22,6 +22,7 @@
 
 ## Active tasks
 - (owner: agent1) Audit combat/siege/popups flow end-to-end for stuck states across engine/UI; scope combat blocks, retreat prompts, and UI overlays; planned files: `packages/engine/src/engine.ts`, `packages/engine/src/action-flow.ts`, `packages/engine/src/round-flow.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/types.ts`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `apps/web/src/components/ActionRevealOverlay.tsx`. (status: in progress)
+- (owner: agent3) Champion audit: add engine tests for Wormhole Artificer movement bonus and Archivist Prime dice scaling; planned files: `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`, `progress.md`. (status: in progress)
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -37,6 +38,7 @@
 
 ## Fourth Playthrough progress
 - Formatted the champion HP chit as current/max and reduced the text size to fit. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
+- Fixed GameScreen crash (multiPathTargets used before initialization) by moving the memo above target validation hooks. (Files: `apps/web/src/components/GameScreen.tsx`.) (owner: agent4)
 - Swapped command center table meta text from seat numbers to faction names for clearer at-a-glance info. (Files: `apps/web/src/components/GameScreenSidebar.tsx`, `implementation_plan.md`.) (owner: agent3)
 - Updated capital hover labels to show the owning faction (e.g., "Prospect Capital"). (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/BoardView.tsx`, `implementation_plan.md`.) (owner: agent3)
 - Applied the dark game theme to the debug map screen by toggling the game theme class for debug view. (Files: `apps/web/src/App.tsx`, `implementation_plan.md`.) (owner: agent3) (Overlap note: `progress.md` still has an in-progress entry for the same task.)
