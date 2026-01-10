@@ -5803,6 +5803,20 @@ body.is-game .collection-prompt__meta {
   gap: 6px;
 }
 
+.collection-prompt__section--draft {
+  gap: 10px;
+}
+
+.collection-prompt__divider {
+  height: 1px;
+  background: var(--border);
+  opacity: 0.7;
+}
+
+body.is-game .collection-prompt__divider {
+  background: #3a2a1f;
+}
+
 .collection-roll {
   display: flex;
   align-items: center;
@@ -5863,6 +5877,17 @@ body.is-game .collection-roll {
 .collection-prompt__label {
   font-size: 12px;
   color: var(--muted);
+}
+
+.collection-prompt__label--reforge {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.collection-prompt__label--draft {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
 }
 
 .collection-prompt__options {

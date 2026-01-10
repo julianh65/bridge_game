@@ -477,7 +477,7 @@ export const CollectionPanel = ({
                       <span className="collection-prompt__meta">{hexLabel}</span>
                     </div>
                     <div className="collection-prompt__section">
-                      <span className="collection-prompt__label">
+                      <span className="collection-prompt__label collection-prompt__label--reforge">
                         Reforge (scrap 1 card)
                       </span>
                       <p className="collection-prompt__note">
@@ -518,8 +518,9 @@ export const CollectionPanel = ({
                         </div>
                       ))}
                     </div>
-                    <div className="collection-prompt__section">
-                      <span className="collection-prompt__label">
+                    <div className="collection-prompt__divider" aria-hidden="true" />
+                    <div className="collection-prompt__section collection-prompt__section--draft">
+                      <span className="collection-prompt__label collection-prompt__label--draft">
                         Forge draft (choose 1)
                       </span>
                       {prompt.revealed.length === 0 ? (

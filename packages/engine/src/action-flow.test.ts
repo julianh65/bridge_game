@@ -3008,6 +3008,11 @@ describe("action flow", () => {
     }
     const created = addChampionToHex(state, "p2", p2Capital, { hp: 1, maxHp: 3, bounty: 4 });
     state = created.state;
+    const neighbor = neighborHexKeys(p2Capital).find((key) => Boolean(state.board.hexes[key]));
+    if (!neighbor) {
+      throw new Error("missing neighbor hex for zap range");
+    }
+    state = addChampionToHex(state, "p1", neighbor).state;
 
     const injected = addCardToHand(state, "p1", "starter.zap");
     state = injected.state;
@@ -3162,6 +3167,11 @@ describe("action flow", () => {
 
     const target = addChampionToHex(state, "p2", p2Capital);
     state = target.state;
+    const neighbor = neighborHexKeys(p2Capital).find((key) => Boolean(state.board.hexes[key]));
+    if (!neighbor) {
+      throw new Error("missing neighbor hex for zap range");
+    }
+    state = addChampionToHex(state, "p1", neighbor).state;
 
     const wardCard: CardDef = {
       id: "test.ward",
@@ -3209,6 +3219,11 @@ describe("action flow", () => {
 
     const target = addChampionToHex(state, "p2", p2Capital);
     state = target.state;
+    const neighbor = neighborHexKeys(p2Capital).find((key) => Boolean(state.board.hexes[key]));
+    if (!neighbor) {
+      throw new Error("missing neighbor hex for zap range");
+    }
+    state = addChampionToHex(state, "p1", neighbor).state;
 
     const immunityField: CardDef = {
       id: "test.immunity_field",

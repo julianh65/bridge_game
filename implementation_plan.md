@@ -450,11 +450,11 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 
 ### Fourth Playthrough
 - [x] make the debug map screen same dark theme
-- [ ] test occupied mines prospect adjacent
+- [x] test occupied mines prospect adjacent
 - [x] make the champion health chit be formatted as current health / max health, you may need to slightly decrease text size to make this work
 - [x] when mousing over capital hex of other players it should say who’s capital it is, like Prospect Capital
 - [x] On the name area on the right in command center instead of seat 0 or seat 1 let’s put the faction name there
-- [ ] make zap be within range 1 of one of your champions
+- [x] make zap be within range 1 of one of your champions
 - [ ] wormhole artificer moving alone doesn’t add +1 movement, needs to be kind of like skystriker where when you select just it it gets an extra movement
 	- [ ] after this as a seperate task but similar, audit the different champion cards to make sure they all work as intended
 - [ ] the dice cards need to sync up the dice roll with the action reveal phase to show everyone the dice rolling and what the result is
@@ -462,10 +462,12 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] prospect union passive mine connected isn’t working and i can’t march between two occupied mines
 	- [ ] after this as a seperate task but similar, audit the different faction abilities to make sure they all work as intended
 - [ ] right now during the collection phase if only mines are occupied i don’t see a pop up for it, we need a pop up showing everyone who collected what from the mines
-- [ ] the collection screen the choices need to be more clear for forge, like increase the size of text of forge draft choose one versus the discard area
+- [x] the collection screen the choices need to be more clear for forge, like increase the size of text of forge draft choose one versus the discard area
 - [ ] the game over victory screen is not styled correctly
 - [x] URGENT: the siege capital battle pop up never showed and the game just stalled out, this happened after I tested a 1v1 and moved forces into an enemy capital and then got both players to pass
 - [ ] Can we somehow modify the board setup algorithm to slightly bias against putting special tiles on the edge of the board?
+- [ ] The aerial faction passive of extra movement didn't work for me
+- [ ] In combat the -hp on champions display isn't fully visible, looks like it's "contained" by the champion chit and i can't read how much hp was reduced
 
 
 
