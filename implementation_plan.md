@@ -464,7 +464,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [ ] right now during the collection phase if only mines are occupied i don’t see a pop up for it, we need a pop up showing everyone who collected what from the mines
 - [ ] the collection screen the choices need to be more clear for forge, like increase the size of text of forge draft choose one versus the discard area
 - [ ] the game over victory screen is not styled correctly
-- [ ] URGENT: the siege capital battle pop up never showed and the game just stalled out, this happened after I tested a 1v1 and moved forces into an enemy capital and then got both players to pass
+- [x] URGENT: the siege capital battle pop up never showed and the game just stalled out, this happened after I tested a 1v1 and moved forces into an enemy capital and then got both players to pass
 - [ ] Can we somehow modify the board setup algorithm to slightly bias against putting special tiles on the edge of the board?
 
 

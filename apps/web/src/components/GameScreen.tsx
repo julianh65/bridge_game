@@ -26,6 +26,7 @@ import { type BasicActionIntent, type BoardPickMode } from "./ActionPanel";
 import { ActionRevealOverlay, type ActionRevealOverlayData } from "./ActionRevealOverlay";
 import { type BoardActionAnimation } from "./BoardView";
 import { CombatOverlay } from "./CombatOverlay";
+import { CombatRetreatOverlay } from "./CombatRetreatOverlay";
 import { DiceRollOverlay, type DiceRollOverlayData } from "./DiceRollOverlay";
 import { GameScreenCues, type AgeCue, type PhaseCue } from "./GameScreenCues";
 import { GameScreenBoardSection } from "./GameScreenBoardSection";
@@ -1045,6 +1046,8 @@ export const GameScreen = ({
     isCollectionPhase && isCollectionOverlayOpen && !actionRevealInFlight;
   const canShowHandPanel =
     Boolean(view.private) && isActionPhase && !showMarketOverlay;
+  const shouldShowRetreatOverlay =
+    Boolean(pendingCombat) && (!canShowHandPanel || !isHandPanelOpen);
   const showVictoryScreen = Boolean(view.public.winnerPlayerId && isVictoryVisible);
   const canDeclareAction =
     status === "connected" &&
@@ -4546,6 +4549,17 @@ export const GameScreen = ({
           config={view.public.config}
           onRequestRoll={handleCombatRoll}
           onClose={handleCombatClose}
+        />
+      ) : null}
+      {pendingCombat && shouldShowRetreatOverlay ? (
+        <CombatRetreatOverlay
+          combat={pendingCombat}
+          playersById={playerNames}
+          playerFactionsById={playerFactions}
+          viewerId={playerId}
+          hexLabel={pendingCombatLabel}
+          hexLabels={hexLabels}
+          onSubmitRetreat={handleCombatRetreat}
         />
       ) : null}
       {showVictoryScreen && view.public.winnerPlayerId ? (
