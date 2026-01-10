@@ -441,6 +441,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] Be creative and add a balanced age 2 card that gives VP, don't make it too crazy just make it basic, add it to the rules, the game and everywhere (War Bonds).
 - [x] Be creative and add to each age a balanced more "basic" champion card that dosen't do anything crazy but is balanced, add it to the rules, the game and everywhere
 - [x] add a cool favicon
+- [x] expand the free starting card pool with more age 1 non-champion options
 - [x] remove the how it works on the main screen and "core loop" container
 - [x] For cards that kind of "scale" like propoganda recruitment or future investment we need to represent on the card (in a very simple way, what the value would be if they played it is)
 - [x] Add a small countdown of how many rounds are left in the game

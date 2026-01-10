@@ -96,6 +96,14 @@ export const DEFAULT_CONFIG: GameConfig = {
     "age1.trade_caravan",
     "age1.temporary_bridge",
     "age1.patch_up",
-    "age1.quick_study"
+    "age1.quick_study",
+    "age1.flank_step",
+    "age1.salvage_wager",
+    "age1.spoils_of_war",
+    "age1.scavengers_market",
+    "age1.rapid_span",
+    "age1.bridge_trap",
+    "age1.cycle_notes",
+    "age1.scout_report"
   ]
 };
