@@ -22,7 +22,8 @@
 
 ## Active tasks
 - (owner: agent4) Investigate/fix urgent siege-capital battle popup not appearing and game stalling after siege (1v1 pass sequence); scope engine combat/blocks + UI overlay gating; planned files: `packages/engine/src/action-flow.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`. (status: investigating)
-- (owner: agent2) Add capital hover labels to show the owning faction (e.g., "Prospect Capital"); scope board tooltips/labels + capital owner mapping; planned files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/BoardView.tsx`, `implementation_plan.md`, `progress.md`. (status: in progress)
+- (owner: agent2) Apply the dark game theme to the debug map view; scope debug view theming + plan/progress updates; planned files: `apps/web/src/App.tsx`, `implementation_plan.md`, `progress.md`. (status: in progress)
+- (owner: agent5) Add Prospect deep tunnels coverage for occupied adjacent mines and allow march between occupied mines without bridges; scope movement validation + action-flow test; planned files: `packages/engine/src/faction-passives.ts`, `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`, `progress.md`. (status: in progress)
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -40,6 +41,7 @@
 - Formatted the champion HP chit as current/max and reduced the text size to fit. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
 - Swapped command center table meta text from seat numbers to faction names for clearer at-a-glance info. (Files: `apps/web/src/components/GameScreenSidebar.tsx`, `implementation_plan.md`.) (owner: agent3)
 - Updated capital hover labels to show the owning faction (e.g., "Prospect Capital"). (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/BoardView.tsx`, `implementation_plan.md`.) (owner: agent3)
+- Applied the dark game theme to the debug map screen by toggling the game theme class for debug view. (Files: `apps/web/src/App.tsx`, `implementation_plan.md`.) (owner: agent3) (Overlap note: `progress.md` still has an in-progress entry for the same task.)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Tightened the setup lobby/deck preview layout so the player panel stays narrow and the main panels fill more width. (File: `apps/web/src/styles.css`.) (owner: agent2)

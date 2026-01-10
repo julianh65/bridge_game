@@ -449,7 +449,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 
 
 ### Fourth Playthrough
-- [ ] make the debug map screen same dark theme
+- [x] make the debug map screen same dark theme
 - [ ] test occupied mines prospect adjacent
 - [x] make the champion health chit be formatted as current health / max health, you may need to slightly decrease text size to make this work
 - [x] when mousing over capital hex of other players it should say who’s capital it is, like Prospect Capital

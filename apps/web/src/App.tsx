@@ -78,6 +78,7 @@ export default function App() {
   const showEditor = import.meta.env.DEV;
   const isThemeView =
     view === "play" ||
+    view === "debug" ||
     view === "cards" ||
     view === "deck" ||
     view === "battle" ||
