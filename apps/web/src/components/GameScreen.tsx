@@ -560,6 +560,26 @@ export const GameScreen = ({
     return ids;
   }, [localPlayerId, view.public.modifiers]);
 
+  const wormholeUnitIds = useMemo(() => {
+    const ids = new Set<string>();
+    if (!localPlayerId) {
+      return ids;
+    }
+    for (const modifier of view.public.modifiers) {
+      if (modifier.ownerPlayerId && modifier.ownerPlayerId !== localPlayerId) {
+        continue;
+      }
+      if (!modifier.id.endsWith(".wormhole_artificer")) {
+        continue;
+      }
+      const unitId = modifier.data?.unitId;
+      if (typeof unitId === "string" && unitId.length > 0) {
+        ids.add(unitId);
+      }
+    }
+    return ids;
+  }, [localPlayerId, view.public.modifiers]);
+
   const reinforceOptions = useMemo(() => {
     if (!localPlayerId) {
       return [];
@@ -2668,6 +2688,39 @@ export const GameScreen = ({
       }
       return { forceUnits, championUnits };
     };
+    const getWormholeMoveBonus = (
+      key: string,
+      forceCount: number | null,
+      includeChampions?: boolean
+    ) => {
+      if (wormholeUnitIds.size === 0) {
+        return 0;
+      }
+      const { forceUnits, championUnits } = getLocalUnitsAt(key);
+      const include =
+        typeof includeChampions === "boolean" ? includeChampions : forceCount == null;
+      if (!include) {
+        return 0;
+      }
+      if (forceCount === null || forceCount === undefined) {
+        const unitIds = [...forceUnits, ...championUnits];
+        return unitIds.length === 1 && wormholeUnitIds.has(unitIds[0]) ? 1 : 0;
+      }
+      if (!Number.isFinite(forceCount)) {
+        return 0;
+      }
+      const normalized = Math.max(0, Math.floor(forceCount));
+      if (forceUnits.length < normalized) {
+        return 0;
+      }
+      if (normalized !== 0) {
+        return 0;
+      }
+      if (championUnits.length !== 1) {
+        return 0;
+      }
+      return wormholeUnitIds.has(championUnits[0]) ? 1 : 0;
+    };
     const canBypassBridges = (
       key: string,
       forceCount: number | null,
@@ -2845,13 +2898,16 @@ export const GameScreen = ({
         resolvedMarchIncludeChampions,
         false
       );
+      const marchMoveBonus =
+        tailwindBonus +
+        getWormholeMoveBonus(marchFrom, marchForceCount, resolvedMarchIncludeChampions);
       for (const neighbor of getMoveNeighbors(marchFrom)) {
         if (!canMoveBetween(marchFrom, neighbor, requiresBridge)) {
           continue;
         }
         validTargets.add(neighbor);
       }
-      if (tailwindBonus > 0) {
+      if (marchMoveBonus > 0) {
         for (const mid of getMoveNeighbors(marchFrom)) {
           if (!canMoveBetween(marchFrom, mid, requiresBridge)) {
             continue;
@@ -3125,10 +3181,11 @@ export const GameScreen = ({
         tailwindBonus > 0 && (cardTargetKind !== "multiPath" || multiPathTargets.length === 0)
           ? tailwindBonus
           : 0;
-      const maxDistance = baseMaxDistance === null ? null : baseMaxDistance + pathTailwindBonus;
+      const maxDistanceBase =
+        baseMaxDistance === null ? null : baseMaxDistance + pathTailwindBonus;
       const stopOnOccupied =
         moveStackEffect?.stopOnOccupied === true || targetSpec.stopOnOccupied === true;
-      const canStart = maxDistance === null || maxDistance >= 1;
+      const canStart = maxDistanceBase === null || maxDistanceBase >= 1;
       const startCandidates = new Set<string>();
       if (canStart) {
         for (const key of hexKeys) {
@@ -3159,6 +3216,13 @@ export const GameScreen = ({
           validTargets.add(key);
         }
       } else {
+        const last = pendingPath[pendingPath.length - 1];
+        const startKey = pendingPath[0] ?? last;
+        const wormholeBonus = startKey
+          ? getWormholeMoveBonus(startKey, cardMoveForceCount, cardMoveIncludeChampions)
+          : 0;
+        const maxDistance =
+          maxDistanceBase === null ? null : maxDistanceBase + wormholeBonus;
         const stepsSoFar = pendingPath.length - 1;
         if (maxDistance !== null && stepsSoFar >= maxDistance) {
           return {
@@ -3167,7 +3231,6 @@ export const GameScreen = ({
             startHexKeys: Array.from(startTargets)
           };
         }
-        const last = pendingPath[pendingPath.length - 1];
         if (!last || !hasHex(last)) {
           return {
             validHexKeys: [],
@@ -3679,6 +3742,7 @@ export const GameScreen = ({
     view.public.board,
     linkedNeighborsByHex,
     bridgeBypassUnitIds,
+    wormholeUnitIds,
     boardPickMode,
     marchFrom,
     marchForceCount,

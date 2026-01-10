@@ -455,7 +455,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] when mousing over capital hex of other players it should say who’s capital it is, like Prospect Capital
 - [x] On the name area on the right in command center instead of seat 0 or seat 1 let’s put the faction name there
 - [x] make zap be within range 1 of one of your champions
-- [ ] wormhole artificer moving alone doesn’t add +1 movement, needs to be kind of like skystriker where when you select just it it gets an extra movement
+- [x] wormhole artificer moving alone doesn’t add +1 movement, needs to be kind of like skystriker where when you select just it it gets an extra movement
 	- [ ] after this as a seperate task but similar, audit the different champion cards to make sure they all work as intended
 		- [x] Add engine test coverage for Wormhole Artificer +1 move distance when moving alone.
 		- [x] Add engine test coverage for Archivist Prime attack dice scaling with cards played.
@@ -474,6 +474,9 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] In combat the -hp on champions display isn't fully visible, looks like it's "contained" by the champion chit and i can't read how much hp was reduced
 - [x] URGENT During combat I only see the retreat options at the start, this is a regression, the retreat options should be clickable from the combat modal URGENT (retreat prompt always shown in combat overlay)
 - [x] Restrict combat retreat destinations to unoccupied hexes to avoid retreating into occupied hexes that can leave contested hexes unresolved
+- [ ] The combat overlay should be hideable and unhideable to see the board, importantly when there are the retreat buttons this needs to be a thing
+- [ ] I STILL don't see mid combat round retreat options, like i see the initial retreat options but not during combat, this is very important to get right, make sure that there are no bugs and most importantly that this cannot enter a bad state with the UI or something such that the game halts
+- [ ] Sabotage bridge doesn't let me select a bridge to destroy
 
 
 ### Refactor Milestone
@@ -840,6 +843,7 @@ Done
 - [x] Add a victory screen (winner, final VP, recap, rematch/exit).
 - [x] Upgrade on-board visuals for units/champions/factions (distinct tokens, faction badges).
 - [x] Add bridge art assets (top-down) and render them in BoardView (SVG symbol/pattern instead of plain lines).
+- [ ] Add combat flow failsafes (timeouts/host override) for combat roll sync and retreat decisions so the UI never stalls on disconnects.
 - [ ] Low priority: add at least one targeted test for each card effect/card.
   - [x] Age I market: Flank Step movement without bridges.
   - [x] Age I market: Scavenger's Market gold + draw.
