@@ -33,6 +33,8 @@ type CombatOverlayProps = {
   combatSync?: CombatSyncState | null;
   serverTimeOffset?: number | null;
   config?: GameConfig | null;
+  isMinimized?: boolean;
+  onToggleMinimize?: () => void;
   onRequestRoll?: (roundIndex: number) => void;
   onClose: () => void;
 };
@@ -244,6 +246,8 @@ export const CombatOverlay = ({
   combatSync,
   serverTimeOffset,
   config,
+  isMinimized = false,
+  onToggleMinimize,
   onRequestRoll,
   onClose
 }: CombatOverlayProps) => {
@@ -498,6 +502,9 @@ export const CombatOverlay = ({
       : "No rounds logged";
 
   const syncParticipants = syncInfo?.playerIds ?? [];
+  const overlayClassName = `combat-overlay${
+    isMinimized ? " combat-overlay--minimized" : ""
+  }`;
   const isLocalParticipant = Boolean(viewerId && syncParticipants.includes(viewerId));
   const rawLocalReady = Boolean(
     viewerId && syncInfo?.readyByPlayerId && syncInfo.readyByPlayerId[viewerId]
@@ -773,7 +780,13 @@ export const CombatOverlay = ({
   };
 
   return (
-    <section className="combat-overlay" role="dialog" aria-live="polite" aria-modal="true">
+    <section
+      className={overlayClassName}
+      role="dialog"
+      aria-live="polite"
+      aria-modal={isMinimized ? undefined : true}
+      aria-hidden={isMinimized ? true : undefined}
+    >
       <div className="combat-overlay__scrim" />
       <div className="combat-overlay__panel">
         <header className="combat-overlay__header">
@@ -805,6 +818,15 @@ export const CombatOverlay = ({
             >
               {rollLabel}
             </button>
+            {onToggleMinimize ? (
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={onToggleMinimize}
+              >
+                {isMinimized ? "Show" : "Hide"}
+              </button>
+            ) : null}
           </div>
         </header>
 

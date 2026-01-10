@@ -4784,12 +4784,35 @@ body.is-game .market-overlay__panel {
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
+.combat-overlay-toggle {
+  position: fixed;
+  right: 32px;
+  right: calc(32px + env(safe-area-inset-right));
+  bottom: 200px;
+  bottom: calc(200px + env(safe-area-inset-bottom));
+  z-index: 66;
+  min-width: 150px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.02em;
+  box-shadow: 0 12px 24px rgba(20, 12, 6, 0.32);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
 .deck-toggle--return {
   bottom: 24px;
   bottom: calc(24px + env(safe-area-inset-bottom));
 }
 
 .deck-toggle:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(20, 12, 6, 0.38);
+}
+
+.combat-overlay-toggle:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 0 14px 28px rgba(20, 12, 6, 0.38);
 }
@@ -7588,6 +7611,10 @@ body.is-game .hex-link-preview__line {
   padding: 24px;
 }
 
+.combat-overlay--minimized {
+  display: none;
+}
+
 .combat-retreat {
   pointer-events: none;
 }
@@ -9096,6 +9123,14 @@ body.is-game .victory-score__breakdown {
     bottom: 120px;
     bottom: calc(120px + env(safe-area-inset-bottom));
     min-width: 120px;
+  }
+
+  .combat-overlay-toggle {
+    right: 20px;
+    right: calc(20px + env(safe-area-inset-right));
+    bottom: 176px;
+    bottom: calc(176px + env(safe-area-inset-bottom));
+    min-width: 130px;
   }
 
   .deck-toggle--return {

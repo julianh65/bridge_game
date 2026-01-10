@@ -421,9 +421,13 @@ export const GameScreen = ({
   const [cardRevealQueue, setCardRevealQueue] = useState<ActionCardReveal[]>([]);
   const [activeCardReveal, setActiveCardReveal] = useState<ActionCardReveal | null>(null);
   const [rollReveal, setRollReveal] = useState<DiceRollOverlayData | null>(null);
+  const [pendingRollReveal, setPendingRollReveal] = useState<DiceRollOverlayData | null>(
+    null
+  );
   const [isActionRevealOverlayVisible, setIsActionRevealOverlayVisible] = useState(false);
   const [cardRevealKey, setCardRevealKey] = useState(0);
   const [combatQueue, setCombatQueue] = useState<CombatSequence[]>([]);
+  const [isCombatOverlayHidden, setIsCombatOverlayHidden] = useState(false);
   const [phaseCue, setPhaseCue] = useState<PhaseCue | null>(null);
   const [phaseCueKey, setPhaseCueKey] = useState(0);
   const [ageCue, setAgeCue] = useState<AgeCue | null>(null);
@@ -944,6 +948,9 @@ export const GameScreen = ({
   const activeCombat = combatQueue[0] ?? null;
   const activeCombatSync =
     activeCombat && combatSync ? combatSync[activeCombat.id] ?? null : null;
+  useEffect(() => {
+    setIsCombatOverlayHidden(false);
+  }, [activeCombat?.id]);
   const hasPendingCardReveal =
     hasCardRevealBaseline.current && lastLogKey !== lastCardRevealKeyRef.current;
   const actionRevealInFlight = Boolean(
@@ -1260,6 +1267,12 @@ export const GameScreen = ({
   };
   const expandSidebar = () => {
     setIsSidebarCollapsed(false);
+  };
+  const hideCombatOverlay = () => {
+    setIsCombatOverlayHidden(true);
+  };
+  const showCombatOverlay = () => {
+    setIsCombatOverlayHidden(false);
   };
   const handleCombatClose = () => {
     setCombatQueue((queue) => queue.slice(1));
@@ -1719,11 +1732,13 @@ export const GameScreen = ({
     if (logs.length === 0) {
       lastRollEventIndex.current = -1;
       setRollReveal(null);
+      setPendingRollReveal(null);
       return;
     }
     if (logs.length - 1 < lastRollEventIndex.current) {
       lastRollEventIndex.current = logs.length - 1;
       setRollReveal(null);
+      setPendingRollReveal(null);
       return;
     }
     let latestRoll: DiceRollOverlayData | null = null;
@@ -1749,14 +1764,21 @@ export const GameScreen = ({
         cardName,
         roll,
         sides,
-        amount
+        amount,
+        cardId,
+        playerId
       };
     }
     if (latestRoll) {
-      setRollReveal(latestRoll);
+      if (actionRevealInFlight) {
+        setPendingRollReveal(latestRoll);
+      } else {
+        setPendingRollReveal(null);
+        setRollReveal(latestRoll);
+      }
     }
     lastRollEventIndex.current = logs.length - 1;
-  }, [playerNames, view.public.logs]);
+  }, [actionRevealInFlight, playerNames, view.public.logs]);
 
   useEffect(() => {
     const logs = view.public.logs;
@@ -1993,6 +2015,36 @@ export const GameScreen = ({
     actionRevealDurationMs,
     actionRevealHighlightPauseMs,
     cardRevealKey
+  ]);
+
+  useEffect(() => {
+    if (!pendingRollReveal) {
+      return;
+    }
+    if (!actionRevealInFlight) {
+      setRollReveal(pendingRollReveal);
+      setPendingRollReveal(null);
+      return;
+    }
+    if (!activeCardReveal) {
+      return;
+    }
+    const matchesCard =
+      !pendingRollReveal.cardId || pendingRollReveal.cardId === activeCardReveal.cardId;
+    const matchesPlayer =
+      !pendingRollReveal.playerId || pendingRollReveal.playerId === activeCardReveal.playerId;
+    if (!matchesCard || !matchesPlayer) {
+      return;
+    }
+    if (isActionRevealOverlayVisible) {
+      setRollReveal(pendingRollReveal);
+      setPendingRollReveal(null);
+    }
+  }, [
+    activeCardReveal,
+    actionRevealInFlight,
+    isActionRevealOverlayVisible,
+    pendingRollReveal
   ]);
 
   useEffect(() => {
@@ -4597,21 +4649,35 @@ export const GameScreen = ({
         <DiceRollOverlay reveal={rollReveal} durationMs={rollRevealDurationMs} />
       ) : null}
       {activeCombat ? (
-        <CombatOverlay
-          sequence={activeCombat}
-          playersById={playerNames}
-          playerFactionsById={playerFactions}
-          cardDefsById={CARD_DEFS_BY_ID}
-          modifiers={view.public.modifiers}
-          hexLabel={activeCombatLabel}
-          isCapitalBattle={isCapitalBattle}
-          viewerId={playerId}
-          combatSync={activeCombatSync}
-          serverTimeOffset={serverTimeOffset}
-          config={view.public.config}
-          onRequestRoll={handleCombatRoll}
-          onClose={handleCombatClose}
-        />
+        <>
+          <CombatOverlay
+            sequence={activeCombat}
+            playersById={playerNames}
+            playerFactionsById={playerFactions}
+            cardDefsById={CARD_DEFS_BY_ID}
+            modifiers={view.public.modifiers}
+            hexLabel={activeCombatLabel}
+            isCapitalBattle={isCapitalBattle}
+            viewerId={playerId}
+            combatSync={activeCombatSync}
+            serverTimeOffset={serverTimeOffset}
+            config={view.public.config}
+            isMinimized={isCombatOverlayHidden}
+            onToggleMinimize={hideCombatOverlay}
+            onRequestRoll={handleCombatRoll}
+            onClose={handleCombatClose}
+          />
+          {isCombatOverlayHidden ? (
+            <button
+              type="button"
+              className="btn btn-secondary combat-overlay-toggle"
+              data-sfx="soft"
+              onClick={showCombatOverlay}
+            >
+              Show Combat
+            </button>
+          ) : null}
+        </>
       ) : null}
       {pendingCombat && shouldShowRetreatOverlay ? (
         <CombatRetreatOverlay
