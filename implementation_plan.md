@@ -465,10 +465,11 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] the collection screen the choices need to be more clear for forge, like increase the size of text of forge draft choose one versus the discard area
 - [x] the game over victory screen is not styled correctly
 - [x] URGENT: the siege capital battle pop up never showed and the game just stalled out, this happened after I tested a 1v1 and moved forces into an enemy capital and then got both players to pass
-- [ ] Can we somehow modify the board setup algorithm to slightly bias against putting special tiles on the edge of the board?
+- [x] Can we somehow modify the board setup algorithm to slightly bias against putting special tiles on the edge of the board?
 - [ ] The aerial faction passive of extra movement didn't work for me
 - [x] In combat the -hp on champions display isn't fully visible, looks like it's "contained" by the champion chit and i can't read how much hp was reduced
 - [ ] URGENT During combat I only see the retreat options at the start, this is a regression, the retreat options should be clickable from the combat modal URGENT
+- [x] Restrict combat retreat destinations to unoccupied hexes to avoid retreating into occupied hexes that can leave contested hexes unresolved
 
 
 ### Refactor Milestone

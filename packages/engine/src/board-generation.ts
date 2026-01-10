@@ -137,6 +137,7 @@ const CAPITAL_BALANCE_WEIGHT = 4;
 const GLOBAL_SPREAD_WEIGHT = 3;
 const BRIDGE_SPECIAL_WEIGHT = 4;
 const BRIDGE_SPREAD_WEIGHT = 3;
+const EDGE_DISTANCE_WEIGHT = 1;
 
 const cloneBoard = (board: BoardState): BoardState => {
   const hexes: Record<HexKey, HexState> = {};
@@ -278,20 +279,23 @@ const scoreCandidate = (
   candidate: HexKey,
   sameTypeKeys: HexKey[],
   capitalHexes: HexKey[],
+  boardRadius: number,
   capitalCounts?: number[],
   allSpecialKeys: HexKey[] = []
 ): number => {
   const minSameType = minDistanceToSet(candidate, sameTypeKeys);
   const minAnySpecial = minDistanceToSet(candidate, allSpecialKeys);
   const minToCapital = minDistanceToSet(candidate, capitalHexes);
+  const edgeDistance = Math.max(0, boardRadius - distanceBetweenKeys(candidate, CENTER_KEY));
   const sameTypeScore = Number.isFinite(minSameType) ? minSameType * 10 : 1000;
   const spreadScore = Number.isFinite(minAnySpecial) ? minAnySpecial * GLOBAL_SPREAD_WEIGHT : 0;
   const capitalScore = Number.isFinite(minToCapital) ? minToCapital : 0;
+  const edgeScore = edgeDistance * EDGE_DISTANCE_WEIGHT;
   const balancePenalty =
     capitalCounts && capitalCounts.length > 0
       ? capitalCounts[closestCapitalIndex(candidate, capitalHexes)] * CAPITAL_BALANCE_WEIGHT
       : 0;
-  return sameTypeScore + spreadScore + capitalScore - balancePenalty;
+  return sameTypeScore + spreadScore + capitalScore + edgeScore - balancePenalty;
 };
 
 const chooseCandidate = (
@@ -299,6 +303,7 @@ const chooseCandidate = (
   candidates: HexKey[],
   sameTypeKeys: HexKey[],
   capitalHexes: HexKey[],
+  boardRadius: number,
   topK: number,
   allSpecialKeys?: HexKey[]
 ): { key: HexKey; rngState: RNGState } => {
@@ -310,6 +315,7 @@ const chooseCandidate = (
         key,
         sameTypeKeys,
         capitalHexes,
+        boardRadius,
         capitalCounts,
         allSpecialKeys ?? sameTypeKeys
       )
@@ -456,7 +462,15 @@ export const placeSpecialTiles = (
         placementFailed = true;
         break;
       }
-      const choice = chooseCandidate(rng, remaining, forgeKeys, capitalHexes, topK, forgeKeys);
+      const choice = chooseCandidate(
+        rng,
+        remaining,
+        forgeKeys,
+        capitalHexes,
+        board.radius,
+        topK,
+        forgeKeys
+      );
       rng = choice.rngState;
       forgeKeys.push(choice.key);
       working.hexes[choice.key] = {
@@ -503,6 +517,7 @@ export const placeSpecialTiles = (
         candidates,
         homeMineKeys,
         capitalHexes,
+        board.radius,
         topK,
         [...forgeKeys, ...homeMineKeys]
       );
@@ -542,6 +557,7 @@ export const placeSpecialTiles = (
         candidates,
         [...homeMineKeys, ...mineKeys],
         capitalHexes,
+        board.radius,
         topK,
         [...forgeKeys, ...homeMineKeys, ...mineKeys]
       );
