@@ -863,6 +863,7 @@ Done
     - [x] Age II market: Encirclement (adjacent force removal).
     - [x] Age II market: Center Dispatch (draw if you occupy center).
     - [x] Age II market: Repair Orders (heal all champions).
+    - [x] Age III market: Attrition (enemy force loss + champion damage).
     - [x] Age III market: Ruin the Span (destroy two bridges).
   - [ ] Champion ability tests (on-deploy, on-death, on-battle-win, dice mods, VP aura).
     - [x] Bounty Hunter bonus gold on champion kill in battle.

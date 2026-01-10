@@ -22,7 +22,6 @@
 
 ## Active tasks
 - (owner: agent4) Investigate/fix urgent siege-capital battle popup not appearing and game stalling after siege (1v1 pass sequence); scope engine combat/blocks + UI overlay gating; planned files: `packages/engine/src/action-flow.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/combat.ts`, `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/components/GameScreen.tsx`, `implementation_plan.md`. (status: investigating)
-- (owner: agent5) Add Attrition card-effect test coverage (enemy force loss + champion damage) and update plan tracking. Files: `packages/engine/src/card-effects.attrition.test.ts`, `implementation_plan.md`.
 - (owner: agent1) Make deck pile pills (draw/discard/scrapped/burned) open the Deck view; scope GameScreen hand panel UI wiring; planned files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/GameScreenHandPanel.tsx`, `implementation_plan.md`. (status: in progress)
 
 ## Blockers
@@ -35,6 +34,7 @@
 - Added a bridge trap consumption test to ensure the modifier clears after the first enemy crossing; marked the plan checkbox complete. (Files: `packages/engine/src/action-flow.test.ts`, `implementation_plan.md`.) (owner: agent5)
 - Added a Wormhole Link movement adjacency test to cover linked-hex adjacency overrides; marked the plan checkbox complete. (Files: `packages/engine/src/card-effects.wormhole-link.test.ts`, `implementation_plan.md`.) (owner: agent5)
 - Added Ruin the Span card-effect coverage to confirm multi-bridge destruction; marked the plan checkbox complete. (Files: `packages/engine/src/card-effects.ruin-the-span.test.ts`, `implementation_plan.md`.) (owner: agent5)
+- Added Attrition card-effect coverage for force loss + champion damage; marked the plan checkbox complete. (Files: `packages/engine/src/card-effects.attrition.test.ts`, `implementation_plan.md`.) (owner: agent5)
 
 ## Fourth Playthrough progress
 - Formatted the champion HP chit as current/max and reduced the text size to fit. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
