@@ -21,7 +21,7 @@ import type {
   UnitID,
   UnitState
 } from "./types";
-import { getPlayerIdsOnHex, isContestedHex } from "./board";
+import { getPlayerIdsOnHex, hasEnemyUnits, isContestedHex } from "./board";
 import { emit } from "./events";
 import {
   applyModifierQuery,
@@ -603,7 +603,7 @@ const canRetreatToHex = (state: GameState, playerId: PlayerID, hexKey: HexKey): 
   if (!hex) {
     return false;
   }
-  return getPlayerIdsOnHex(hex).length === 0;
+  return !hasEnemyUnits(hex, playerId);
 };
 
 const getRetreatEdgesForPlayer = (

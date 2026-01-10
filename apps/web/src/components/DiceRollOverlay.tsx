@@ -9,6 +9,8 @@ export type DiceRollOverlayData = {
   roll: number;
   sides: number;
   amount: number | null;
+  cardId?: string | null;
+  playerId?: string | null;
 };
 
 type DiceRollOverlayProps = {

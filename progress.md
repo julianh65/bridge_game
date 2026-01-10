@@ -21,7 +21,8 @@
 - Added a one-line redeploy checklist to the deployment docs. (File: `docs/deploy.md`.) (owner: codex)
 
 ## Active tasks
-None.
+- (owner: agent1) [in progress] Audit combat/siege/overlay flow for non-disconnect bad-state bugs (no player control), and log findings. Files: `progress.md`, `implementation_plan.md`.
+- (owner: agent4) [in progress] Allow combat retreats into friendly-occupied hexes to restore mid-round retreat options; update combat retreat tests + plan checkbox. Files: `packages/engine/src/combat.ts`, `packages/engine/src/combat.test.ts`, `implementation_plan.md`.
 
 ## Blockers
 - Save/load games: `GameState.modifiers` contains non-serializable hook functions, so naïve storage persistence will drop behavior. Need a strategy (command log replay, modifier rehydration from source IDs, or accept partial saves).
@@ -39,6 +40,7 @@ None.
 - Added Attrition card-effect coverage for force loss + champion damage; marked the plan checkbox complete. (Files: `packages/engine/src/card-effects.attrition.test.ts`, `implementation_plan.md`.) (owner: agent5)
 
 ## Fourth Playthrough progress
+- Synced dice-roll overlays with action reveal playback by queueing rollGold logs until the reveal overlay is visible; marked the plan item complete. (Files: `apps/web/src/components/GameScreen.tsx`, `apps/web/src/components/DiceRollOverlay.tsx`, `implementation_plan.md`.) (owner: agent3)
 - Enabled mid-combat retreat prompts by tracking combat round state in retreat blocks, reissuing retreat prompts between rounds, and adding a round badge to the retreat overlay; marked the plan item complete. (Files: `packages/engine/src/combat.ts`, `packages/engine/src/engine.ts`, `packages/engine/src/types.ts`, `packages/engine/src/view.ts`, `apps/web/src/components/CombatRetreatOverlay.tsx`, `implementation_plan.md`.) (owner: agent4)
 - Formatted the champion HP chit as current/max and reduced the text size to fit. (Files: `apps/web/src/components/BoardView.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent3)
 - Fixed GameScreen crash (multiPathTargets used before initialization) by moving the memo above target validation hooks. (Files: `apps/web/src/components/GameScreen.tsx`.) (owner: agent4)
@@ -60,6 +62,8 @@ None.
 - Added champion audit tests for Wormhole Artificer movement bonus and Archivist Prime attack-dice scaling; marked audit subitems in the plan. (Files: `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.) (owner: agent3)
 - Added Bannerman/Center Bannerman control bonus tests (including off-center case) and marked the audit subitem complete. (Files: `packages/engine/src/champion-abilities.test.ts`, `implementation_plan.md`.) (owner: agent3)
 - Fixed existing-bridge edge selection by drawing preview edges above built bridges so Sabotage Bridge can pick a target; marked the plan item complete. (Files: `apps/web/src/components/BoardView.tsx`, `implementation_plan.md`.) (owner: agent5)
+- Added a combat overlay hide/show toggle so players can minimize the combat modal to view the board and reopen it when needed; marked the plan item complete. (Files: `apps/web/src/components/CombatOverlay.tsx`, `apps/web/src/components/GameScreen.tsx`, `apps/web/src/styles.css`, `implementation_plan.md`.) (owner: agent5) (Overlap note: `apps/web/src/components/GameScreen.tsx` already had in-flight changes for pending dice-roll reveal state; `implementation_plan.md` included pre-existing dice-roll sync and retreat follow-up updates.)
+- Allowed combat retreats to target friendly-occupied hexes while still blocking enemy-occupied destinations; marked the plan item complete. (Files: `packages/engine/src/combat.ts`, `packages/engine/src/combat.test.ts`, `implementation_plan.md`.) (owner: agent2) (Overlap note: agent4 has an active task on the same change; verify no conflicts before merging.)
 ## Milestone After Second Full Test Play and Thinking progress
 - Added spacing between the Home action rows so the rejoin button no longer feels squished. (File: `apps/web/src/styles.css`.) (owner: agent2)
 - Tightened the setup lobby/deck preview layout so the player panel stays narrow and the main panels fill more width. (File: `apps/web/src/styles.css`.) (owner: agent2)

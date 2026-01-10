@@ -461,7 +461,7 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 		- [x] Add engine test coverage for Archivist Prime attack dice scaling with cards played.
 		- [x] Add engine test coverage for Bannerman/Center Bannerman control bonuses.
 		- [ ] Audit remaining champion abilities against rules text for gaps.
-- [ ] the dice cards need to sync up the dice roll with the action reveal phase to show everyone the dice rolling and what the result is, that is the ones that are like dice roll to see what you get from the card
+- [x] the dice cards need to sync up the dice roll with the action reveal phase to show everyone the dice rolling and what the result is, that is the ones that are like dice roll to see what you get from the card
 - [x] clicking on the draw pile or discard or burned or scrapped icons should take the player to the deck screen
 - [ ] prospect union passive mine connected isn’t working and i can’t march between two occupied mines
 	- [ ] after this as a seperate task but similar, audit the different faction abilities to make sure they all work as intended
@@ -474,9 +474,11 @@ Goal: make the board + hand feel responsive, clear, and pleasant to use.
 - [x] In combat the -hp on champions display isn't fully visible, looks like it's "contained" by the champion chit and i can't read how much hp was reduced
 - [x] URGENT During combat I only see the retreat options at the start, this is a regression, the retreat options should be clickable from the combat modal URGENT (retreat prompt always shown in combat overlay)
 - [x] Restrict combat retreat destinations to unoccupied hexes to avoid retreating into occupied hexes that can leave contested hexes unresolved
-- [ ] The combat overlay should be hideable and unhideable to see the board, importantly when there are the retreat buttons this needs to be a thing
+- [x] The combat overlay should be hideable and unhideable to see the board, importantly when there are the retreat buttons this needs to be a thing
 - [x] I STILL don't see mid combat round retreat options, like i see the initial retreat options but not during combat, this is very important to get right, make sure that there are no bugs and most importantly that this cannot enter a bad state with the UI or something such that the game halts (combat retreat blocks now re-prompt each round with round label)
 - [x] Sabotage bridge doesn't let me select a bridge to destroy
+- [x] the retreat to unoccupied is correct, but one small amendment, if the cell is occupied by their own forces they should be able to retreat there
+- [ ] during capital sieges the market overlay is shown in the background
 
 
 ### Refactor Milestone

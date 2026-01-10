@@ -1010,7 +1010,7 @@ describe("combat resolution", () => {
     expect(remaining).toEqual(["m2", "m3"]);
   });
 
-  it("filters combat retreat options to empty hexes", () => {
+  it("filters combat retreat options to empty or friendly-occupied hexes", () => {
     const base = createNewGame(DEFAULT_CONFIG, 1, [
       { id: "p1", name: "Player 1" },
       { id: "p2", name: "Player 2" }
@@ -1071,7 +1071,7 @@ describe("combat resolution", () => {
 
     const block = createCombatRetreatBlock(state, hexKey);
 
-    expect(block?.payload.availableEdges.p1).toEqual([emptyEdge]);
+    expect(block?.payload.availableEdges.p1).toEqual([occupiedEdge, emptyEdge]);
     expect(block?.payload.availableEdges.p2).toEqual([emptyEdge]);
   });
 
